@@ -20,12 +20,46 @@ CREATE TABLE comments2.TargetCategory
 GRANT insert, update, delete on comments2.TargetCategory to GUS_W;
 GRANT select on comments2.TargetCategory to GUS_R;
 
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(1, 'model', 'gene');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(2, 'name', 'gene');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(3, 'function', 'gene');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(4, 'expression', 'gene');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(5, 'sequence', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(1, 'Gene Model', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(2, 'Name/Product', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(3, 'Function', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(4, 'Expression', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(5, 'Sequence', 'gene');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(6, 'other', 'gene');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(7, 'Characteristics/Overview', 'isolate');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(8, 'Reference', 'isolate');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(9, 'Sequence', 'isolate');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(10, 'New Gene', 'genome');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(11, 'New Feature', 'genome');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(12, 'Centromere', 'genome');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(13, 'Genomic Assembly', 'genome');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(14, 'Sequence', 'genome');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(15, 'Characteristics/Overview', 'snp');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(16, 'Gene Context', 'snp');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(17, 'Strains', 'snp');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(18, 'strains', 'snp');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(19, 'Characteristics/Overview', 'est');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(20, 'Alignment', 'est');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(21, 'Sequence', 'est');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(22, 'Assembly', 'est');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(23, 'Characteristics/Overview', 'assembly');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(24, 'Consensus Sequence', 'assembly');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(25, 'Alignment', 'assembly');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(26, 'Included Est''s', 'assembly');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(27, 'Characteristics/Overview ', 'sage');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(28, 'Gene', 'sage');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(29, 'Alignment', 'sage');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(30, 'Library Counts', 'sage');
+
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(31, 'Alignment', 'orf');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(32, 'Sequence', 'orf');
+
 
 CREATE TABLE comments2.CommentTargetCategory
 (
