@@ -38,15 +38,14 @@ EOF
 
   my $cmd = " gusExtractSequences --outputFile $apiSiteFilesDir/$outputFile  --idSQL \"$sql\"";
 
-  if ($test) {
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
-  }
-
   if($undo){
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputFile");
-  }
-  else{
-    $self->runCmd($test, $cmd);
+  }else{  
+      if ($test) {
+	  $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputFile");
+      }else {
+	  $self->runCmd($test, $cmd);
+      }
   }
 }
 

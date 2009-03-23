@@ -55,14 +55,14 @@ EOF
 
 my $cmd = " makeFileWithSql --outFile $apiSiteFilesDir/$outputFile --sql \"$sql\" ";
 
-  if ($test) {
-      $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test) {
+	  $self->runCmd(0,"echo test > $apiSiteFilesDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

@@ -18,35 +18,24 @@ sub run {
 
   my $cmd = "$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $apiSiteFilesDir/$inputFile";
 
-  
-  if($test){
-
-      $self->testInputFile('inputFile', "$apiSiteFilesDir/$inputFile");
-      $self->testInputFile('outputDir', "$apiSiteFilesDir/$outputDir");
-      $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.xnd");
-
-  }
-
   if($undo) {
-
     $self->runCmd(0, "rm -f $apiSiteFilesDir/$outputDir/${formattedFileName}.x*");
   } else{
-
-    if($args =~/\-p/){
-
-      my $tempFile = "$apiSiteFilesDir/$inputFile.temp";
-
-      $self->runCmd($test,"cat $apiSiteFilesDir/$inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
-
-      $self->runCmd($test,"$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $tempFile");
-
-      $self->runCmd($test,"rm -fr $tempFile");
-
-    }else {
-      $self->runCmd($test, $cmd);
-    }
+      if($test){
+	  $self->testInputFile('inputFile', "$apiSiteFilesDir/$inputFile");
+	  $self->testInputFile('outputDir', "$apiSiteFilesDir/$outputDir");
+	  $self->runCmd(0, "echo test > $apiSiteFilesDir/$outputDir/$formattedFileName.xnd");
+      }else {
+	   if($args =~/\-p/){
+	       my $tempFile = "$apiSiteFilesDir/$inputFile.temp";
+	       $self->runCmd($test,"cat $apiSiteFilesDir/$inputFile | perl -pe 'unless (/^>/){s/J/X/g;}' > $tempFile");
+	       $self->runCmd($test,"$blastPath/xdformat $args -o $apiSiteFilesDir/$outputDir/$formattedFileName $tempFile");
+	       $self->runCmd($test,"rm -fr $tempFile");
+	   }else {
+	       $self->runCmd($test, $cmd);
+	   }
+       }
   }
-
 }
 
 sub getParamsDeclaration {

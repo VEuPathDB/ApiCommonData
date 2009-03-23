@@ -19,23 +19,22 @@ sub run {
 
   my ($filename, $relativeDir) = fileparse($fileOrDirToMirror);
 
-  if ($test) {
-    $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
-    if ($outputFiles) {
-      my @outputFiles = split(/\,\s*/,$outputFiles);
-      foreach my $outputFile (@outputFiles) {
-	$self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
-      }
-    };
-  } else {
-
-      if($undo){
-	  $self->runCmd(0, "rm -fr $localDataDir/$fileOrDirToMirror");
+  if($undo){
+      $self->runCmd(0, "rm -fr $localDataDir/$fileOrDirToMirror");
+  }else {
+      if ($test) {
+	  $self->runCmd(0, "mkdir -p $localDataDir/$outputDir");
+	  if ($outputFiles) {
+	      my @outputFiles = split(/\,\s*/,$outputFiles);
+	      foreach my $outputFile (@outputFiles) {
+		  $self->runCmd(0, "echo test > $localDataDir/$outputDir/$outputFile")
+		  }
+	  };
       }else{
 	  $self->copyFromCluster("$computeClusterDataDir/$relativeDir", $filename, "$localDataDir/$relativeDir");
       }
-
   }
+
 }
 
 sub getParamDeclaration {
