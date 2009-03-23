@@ -62,7 +62,7 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="maxIntronSize">20000</paramValue>
+    <paramValue name="maxIntronSize">2000</paramValue>
     <paramValue name="calculateTranslatedProteins">false</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Trypanosoma</paramValue>
     <paramValue name="runSplign">false</paramValue>
@@ -100,7 +100,7 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="maxIntronSize">20000</paramValue>
+    <paramValue name="maxIntronSize">2000</paramValue>
     <paramValue name="calculateTranslatedProteins">true</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Trypanosoma</paramValue>
     <paramValue name="runSplign">false</paramValue>
@@ -139,7 +139,7 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="maxIntronSize">20000</paramValue>
+    <paramValue name="maxIntronSize">2000</paramValue>
     <paramValue name="calculateTranslatedProteins">true</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Leishmania</paramValue>
     <paramValue name="runSplign">false</paramValue>
@@ -177,7 +177,7 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="maxIntronSize">20000</paramValue>
+    <paramValue name="maxIntronSize">2000</paramValue>
     <paramValue name="calculateTranslatedProteins">true</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Leishmania</paramValue>
     <paramValue name="runSplign">false</paramValue>
@@ -189,18 +189,42 @@
     <depends name="common"/>
   </subgraph>
 
-  <subgraph name="MercatorAnalysis" xmlFile="mercatorAnalysis.xml">
-    <paramValue name="mercator_genomes"></paramValue>
-    <paramValue name="mercator_reference_genome"></paramValue>
-    <paramValue name="mercator_draft_genomes"></paramValue>
-    <paramValue name="mercator_nondraft_genomes"></paramValue>
-    <paramValue name="mercator_tree"></paramValue>
-    <paramValue name="syntenyExtDbRlsSpec"></paramValue>
+  <subgraph name="LbraziliensisAnalysis" xmlFile="organismAnalysis.xml">
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Lbraziliensis</paramValue>
+    <paramValue name="organismFullName">Leishmania braziliensis</paramValue>
+    <paramValue name="organismTwoLetterAbbrev">Lb</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$lbraziliensisExtDbRlsSpec$$</paramValue>
     <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
-    <paramValue name="genomeExtDbRlsSpec"></paramValue>
-    <paramValue name="mercatorDir">$$mercatorDir$$</paramValue>
-    <depends name="TcruziAnalysis"/>
-    <depends name="TbruceiAnalysis"/>
+    <paramValue name="genomeSource">$$lbraziliensisGenomeSource$$</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
+    <paramValue name="soVersion">$$soVersion$$</paramValue>
+    <paramValue name="goVersion">$$goVersion$$</paramValue>
+    <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId">5664</paramValue>
+    <paramValue name="parentNcbiTaxonId">5660</paramValue>
+    <paramValue name="usePredictedTranscripts">false</paramValue>
+    <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>
+    <paramValue name="useVirtualSeqs">false</paramValue>
+    <paramValue name="runtRNAScan">false</paramValue>
+    <paramValue name="runExportPred">false</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="maxIntronSize">2000</paramValue>
+    <paramValue name="calculateTranslatedProteins">true</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota, Kinetoplastida, Leishmania</paramValue>
+    <paramValue name="runSplign">false</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Leishmania</paramValue>
+    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeSize">31373798</paramValue>
+    <paramValue name="skipProteomeAnalysis">false</paramValue>
+    <depends name="common"/>
   </subgraph>
 
 </workflowGraph>
