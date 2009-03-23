@@ -212,6 +212,8 @@ eval {
       ApiCommonData::Load::TuningConfig::Log::addLogPreamble("     " . $tuningTables{$table}->getName())
 	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
     }
+  }
+
 
   # list updated/outdated tables
   if ($neededUpdateCount) {
@@ -225,9 +227,6 @@ eval {
 	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "neededUpdate";
     }
   }
-
-  }
-
 
   if (!$indexesConfigured) {
     ApiCommonData::Load::TuningConfig::Log::addLogPreamble("No tuningIndex entities were defined in the config file");
