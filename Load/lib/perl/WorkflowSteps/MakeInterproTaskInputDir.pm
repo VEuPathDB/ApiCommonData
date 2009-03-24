@@ -44,7 +44,7 @@ email=$email
 crc=false
 ";
 
-       &runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+       #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
   }
 }
 

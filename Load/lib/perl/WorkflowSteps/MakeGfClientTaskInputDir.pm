@@ -51,7 +51,7 @@ maxIntron=$maxIntronSize
 				    "$localDataDir/$taskInputDir/targetList",
 				    "$computeClusterDataDir/$targetDir");
 
-    &runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+    #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
   }
 }
 

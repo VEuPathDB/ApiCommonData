@@ -17,6 +17,7 @@
     <step name="runPfilt" stepClass="ApiCommonData::Load::WorkflowSteps::RunPfilt">
       <paramValue name="inputFile">$$nrdbFileShortDefline$$</paramValue>
       <paramValue name="outputFile">$$psipredNrdbFile$$</paramValue>
+      <depends name="makeDataDir"/>
     </step>
 
     <step name="fixProteinIds" stepClass="ApiCommonData::Load::WorkflowSteps::FixProteinIdsForPsipred">

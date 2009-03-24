@@ -65,7 +65,7 @@ $vendorString
        open(F, ">$localBlastParamsFile") || die "Can't open blast params file '$localBlastParamsFile' for writing";;
        print F "$blastArgs\n";
        close(F);
-       &runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+       #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
       
   }
 }
