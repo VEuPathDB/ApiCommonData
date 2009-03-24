@@ -2479,7 +2479,7 @@ tablespace indx
          SELECT distinct
          ga.source_id as gene_source_id, 
          cf.name as probe_id,cf.score,
-         cf.analysis_name,cf.strain,cf.antibody,cf.rep,
+         cf.analysis_name,cf.strain,cf.treatment,cf.antibody,cf.rep,
          CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
               ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END as distance,
          CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
