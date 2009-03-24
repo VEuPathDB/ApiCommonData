@@ -1,19 +1,23 @@
 <unionization>
 
-  <union name="apidb.GeneAttributes">
+  <union name="apidb.SequenceId">
     <source dblink="CRYPTO"/>
     <source dblink="GIARDIA"/>
     <source dblink="PLASMO"/>  
-    <source dblink="TOXO"/>  
+    <source dblink="TOXO"/>
     <source dblink="TRITRYP"/>  
 
     <source>
       <query> 
         <![CDATA[ 
-          select * from apidb.GeneAttributes@AMITO where project_id = 'TrichDB' 
+          select gi.id,gi.sequence  
+          from apidb.sequenceid@AMITO gi, apidb.sequenceattributes@AMITO ga 
+          where gi.sequence = ga.source_id 
+          and ga.project_id = 'TrichDB'
         ]]> 
       </query>
     </source>
+
 
   </union>
 
