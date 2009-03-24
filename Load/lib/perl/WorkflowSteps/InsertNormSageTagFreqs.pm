@@ -21,10 +21,15 @@ sub run {
   
   my $configFile = "configFile";
 
+  my $args = "--configFile '$configFile' --subclass_view RAD::DataTransformationResult";
+
   if($undo){
     $self->runCmd(0,"rm -rf $configFile");
   }else{
 
+      if ($test) {
+	  $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+      }
       opendir (DIR,"$localDataDir/$inputDir") || die "Can not open dir $localDataDir/$inputDir";
 
       my @files = grep { /\w*\.dat/ && -f "$localDataDir/$inputDir/$_" } readdir(DIR); 
@@ -41,15 +46,13 @@ sub run {
       }
      
       close F;
+      
+      $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertRadAnalysis", $args);
   }
 
-  my $args = "--configFile '$configFile' --subclass_view RAD::DataTransformationResult";
 
-  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::InsertRadAnalysis", $args);
 
-  if ($test) {
-    $self->testInputFile('inputDir', "$localDataDir/$inputDir");
-  }
+
 
 }
 

@@ -16,15 +16,15 @@ sub run {
 
   my $cmd = "snpFastaMUMmerGff --gff_file $localDataDir/$inputFile --reference_strain $strain --output_file $localDataDir/$outputFile --make_fasta_file_only --gff_format gff2";
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/*${outputFile}");
   } else {
-    $self->runCmd($test, $cmd);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test, $cmd);
+      }
   }
 
 }

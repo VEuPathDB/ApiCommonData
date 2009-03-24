@@ -24,7 +24,13 @@ sub run {
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test, $cmd);
+      if ($test) {
+	  $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
+	  $self->testInputFile('sageTagFile', "$localDataDir/$sageTagFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test, $cmd);
+      }
   }
 
 }

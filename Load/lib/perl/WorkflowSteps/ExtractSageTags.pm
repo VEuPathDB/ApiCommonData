@@ -22,14 +22,16 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-    if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-    }
+
 
     if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$outputFile");
     } else {
-      $self->runCmd($test,"gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose");
+	if ($test) {
+	    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+	}else{
+	    $self->runCmd($test,"gusExtractSequences --outputFile $localDataDir/$outputFile --idSQL \"$sql\" --verbose");
+	}
     }
 }
   

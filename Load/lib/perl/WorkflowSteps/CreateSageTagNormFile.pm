@@ -19,10 +19,6 @@ sub run {
       
   my $args = "--paramValue $paramValue --studyName '$studyName' --fileDir $localDataDir/$outputDir";
 
-  if ($test) {
-    $self->runCmd(0,"echo test > $localDataDir/$outputDir/test.out");
-  }
-
   if($undo){
 
       my $normFileDir = $studyName; 
@@ -33,10 +29,14 @@ sub run {
 
       $self->runCmd(0,"rm -fr $localDataDir/$outputDir/$normFileDir");
 
+  }else{
+      if ($test) {
+	  $self->runCmd(0,"mkdir -p $localDataDir/$outputDir/$normFileDir");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputDir/$normFileDir/test.out");
+      }else{
+	  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles", $args);
+      }
   }
-
-  $self->runPlugin($test, $undo, "ApiCommonData::Load::Plugin::CreateSageTagNormalizationFiles", $args);
-
 }
 
 sub getParamDeclaration {

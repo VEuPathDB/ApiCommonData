@@ -16,16 +16,18 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $cmd = "snpFastaMUMmerGff --gff_file $localDataDir/$gffFile --mummer_file $localDataDir/$inputFile --output_file $localDataDir/$outputFile --reference_strain $strain --gff_format gff2 --skip_multiple_matches --error_log step.err";
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->testInputFile('gffFile', "$localDataDir/$gffFile");
-    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  }
+
 
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test, $cmd);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->testInputFile('gffFile', "$localDataDir/$gffFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test, $cmd);
+      }
   }
 
 }

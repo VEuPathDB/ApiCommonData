@@ -20,8 +20,11 @@ sub run {
 
     if (scalar @inputFileNames==0){
 	die "No input files. Please check inputDir: $inputDir\n";
-    }else {
+    }
 
+    if ($undo) {
+	$self->runCmd(0, "rm -f $localDataDir/$outputFile");
+    }else{
 	if ($test) {
 	    $self->testInputFile('inputDir', "$localDataDir/$inputDir");
 	    $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
@@ -32,10 +35,7 @@ sub run {
 		$self->runCmd($test,$cmd);
 	    }
 	}
-
     }
-
-
 }
 
 sub getParamsDeclaration {
