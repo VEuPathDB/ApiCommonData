@@ -18,15 +18,15 @@ sub run {
 
   my $cmd = "${binPath}/exportpred --input=$localDataDir/$proteinsFile --output=$localDataDir/$outputFile";
 
-  if ($test) {
-      $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test) {
+	  $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

@@ -22,16 +22,15 @@ sub run {
 
   $repeatFinderArgs =~ s/\s+/\./g;
 
+  if ($undo) {
+    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
+  } else {
   if ($test) {
     $self->testInputFile('seqsFile', "$localDataDir/$seqsFile");
 
     $self->runCmd(0,"echo test > $localDataDir/$outputFile");
 
   }
-
-  if ($undo) {
-    $self->runCmd(0, "rm -f $localDataDir/$outputFile");
-  } else {
     $self->runCmd($test, $cmd);
     $self->runCmd($test, "mv $stepDir/genomicSeqs.fsa.$repeatFinderArgs.dat $localDataDir/$outputFile");
   }

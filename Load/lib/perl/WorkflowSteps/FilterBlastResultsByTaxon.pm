@@ -31,16 +31,16 @@ sub run {
 
   my $cmd = "splitAndFilterBLASTX --taxon \"$taxonList\" --gi2taxidFile $gi2taxidFile --inputFile $localDataDir/$unfilteredOutputFile --outputFile $localDataDir/$filteredOutputFile";
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$unfilteredOutputFile");
     $self->runCmd(0, "rm -f $localDataDir/$filteredOutputFile");
-  } else {
-    $self->runCmd($test,$cmd);
+  } else {  
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$filteredOutputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

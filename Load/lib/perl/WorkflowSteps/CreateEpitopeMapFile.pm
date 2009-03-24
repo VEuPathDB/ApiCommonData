@@ -22,17 +22,19 @@ sub run {
 
     my $cmd = "createEpitopeMappingFileWorkflow  --ncbiBlastPath $ncbiBlastPath --inputDir $localDataDir/$inputDir --queryDir $localDataDir/$queryDir --outputDir $localDataDir/$outputDir --blastDatabase $localDataDir/$blastDbDir/AnnotatedProteins.fsa --idRegex '$idRegex' --subjectFile $localDataDir/$proteinsFile";
 
-    if ($test) {
-      $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
-      $self->testInputFile('inputDir', "$localDataDir/$inputDir");
-      $self->runCmd(0,"mkdir -p $localDataDir/$outputDir");
-      $self->runCmd(0,"echo hello > $localDataDir/$outputDir/IEDBExport.out");
-    }
+
 
     if ($undo) {
       $self->runCmd(0, "rm -fr $localDataDir/$outputDir");
     } else {
-      $self->runCmd($test, $cmd);
+	if ($test) {
+	    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+	    $self->testInputFile('inputDir', "$localDataDir/$inputDir");
+	    $self->runCmd(0,"mkdir -p $localDataDir/$outputDir");
+	    $self->runCmd(0,"echo hello > $localDataDir/$outputDir/IEDBExport.out");
+	}else{
+	    $self->runCmd($test, $cmd);
+	}
     }
 }
 

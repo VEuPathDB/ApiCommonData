@@ -19,21 +19,20 @@ sub run {
 
     opendir(DIR, "$localDataDir/$outputDir") || die "Can't open directory '$localDataDir/$outputDir'";
 
-    if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputDir/testFile");
-    }
-
-
     if ($undo) {
       $self->runCmd(0, "rm -rf $localDataDir/$outputDir");
-    } else {
-      my @files = readdir(DIR);
-      foreach my $file (@files) {
-	next if $file=~ /^\.\.?$/;  # skip . and ..
-        my $original = $file;
-        $file =~ s/(\S+)_(\d)/$1-$2/g;
-        $self->runCmd($test, "mv $localDataDir/$outputDir/$original $localDataDir/$outputDir/$file");
-      }
+    } else {    
+	if ($test) {
+	    $self->runCmd(0,"echo test > $localDataDir/$outputDir/testFile");
+	}else{
+	    my @files = readdir(DIR);
+	    foreach my $file (@files) {
+		next if $file=~ /^\.\.?$/;  # skip . and ..
+		my $original = $file;
+		$file =~ s/(\S+)_(\d)/$1-$2/g;
+		$self->runCmd($test, "mv $localDataDir/$outputDir/$original $localDataDir/$outputDir/$file");
+	    }
+	}
     }
 }
 

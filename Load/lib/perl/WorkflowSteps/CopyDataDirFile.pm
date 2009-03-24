@@ -13,17 +13,15 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-
-  if ($test) {
-    $self->testInputFile('fromFile', "$localDataDir/$fromFile");
-  }
-
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$toFile");
-  } else {
-      $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
+  } else {  
+      if ($test) {
+	  $self->testInputFile('fromFile', "$localDataDir/$fromFile");
+      }else{
+	  $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
+      }
   }
-
 }
 
 sub getParamsDeclaration {

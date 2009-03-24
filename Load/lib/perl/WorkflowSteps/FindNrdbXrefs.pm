@@ -17,18 +17,18 @@ sub run {
   my $localDataDir = $self->getLocalDataDir();
 
   my $cmd = "dbXRefBySeqIdentity --proteinFile '$localDataDir/$proteinsFile' --nrFile '$localDataDir/$nrdbFile' --outputFile '$localDataDir/$outputFile' --sourceIdRegex \"$nrdbFileRegex\" --protDeflnRegex \"$proteinsFileRegex\" ";
-  if ($test) {
-    $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
-    $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
-    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-    }
 
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test) {
+	  $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
+	  $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
-
 }
 
 sub getParamsDeclaration {

@@ -28,29 +28,27 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
-    $self->testInputFile('subjectFile', "$localDataDir/$subjectFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -rf $localDataDir/$taskInputDir/");
   }else {
-    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
+      if ($test) {
+	  $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+	  $self->testInputFile('subjectFile', "$localDataDir/$subjectFile");
+      }else{
+	  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
-    # make controller.prop file
-    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+	  # make controller.prop file
+	  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::BlastSimilarityTask"); 
+	  # make task.prop file
+	  my $ccBlastParamsFile = "blastParams";
+	  my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
+	  my $vendorString = $vendor? "blastVendor=$vendor" : "";
 
-    # make task.prop file
-    my $ccBlastParamsFile = "blastParams";
-    my $localBlastParamsFile = "$localDataDir/$taskInputDir/blastParams";
-    my $vendorString = $vendor? "blastVendor=$vendor" : "";
+	  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+	  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
-    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
-
-    print F
+	  print F
 "blastBinDir=$blastBinPathCluster
 dbFilePath=$computeClusterDataDir/$subjectFile
 inputFilePath=$computeClusterDataDir/$queryFile
@@ -60,13 +58,14 @@ blastProgram=$blastType
 blastParamsFile=$ccBlastParamsFile
 $vendorString
 ";
-    close(F);
+	  close(F);
 
-    # make blastParams file
-    open(F, ">$localBlastParamsFile") || die "Can't open blast params file '$localBlastParamsFile' for writing";;
-    print F "$blastArgs\n";
-    close(F);
-    #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+	  # make blastParams file
+	  open(F, ">$localBlastParamsFile") || die "Can't open blast params file '$localBlastParamsFile' for writing";;
+	  print F "$blastArgs\n";
+	  close(F);
+	  &runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+      }
   }
 }
 

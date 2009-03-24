@@ -26,23 +26,21 @@ sub run {
     $fileToFormat = "$localDataDir/$outputBlastDbDir/$filename";
   }
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0,"echo test > $localDataDir/$outputBlastDbDir/format.test");
-  }
-
   if ($undo) {
     if ($outputBlastDbDir ne $relativeDir) {
       $self->runCmd(0,"rm -f $fileToFormat");
     }
     $self->runCmd(0, "rm -f ${fileToFormat}.p*");
-  }
-
-  else {
-    if ($outputBlastDbDir ne $relativeDir) {
-      $self->runCmd(0,"ln -s $localDataDir/$inputFile $fileToFormat");
-    }
-    $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
+  } else {
+      if ($outputBlastDbDir ne $relativeDir) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0,"ln -s $localDataDir/$inputFile $fileToFormat");
+      }
+      if ($test) {
+	  $self->runCmd(0,"echo test > $localDataDir/$outputBlastDbDir/format.pin");
+      }else {
+	  $self->runCmd($test,"$ncbiBlastPath/formatdb -i $fileToFormat -p $formatterArgs");
+      }
   }
 }
 

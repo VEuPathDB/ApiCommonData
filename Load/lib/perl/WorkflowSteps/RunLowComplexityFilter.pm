@@ -20,15 +20,16 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-    $self->testInputFile('seqFile', "$localDataDir/$seqFile");
-    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-  }
 
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
+      if ($test) {
+	  $self->testInputFile('seqFile', "$localDataDir/$seqFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,"$filter $localDataDir/$seqFile $options > $localDataDir/$outputFile");
+      }
   }
 }
 

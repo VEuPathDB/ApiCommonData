@@ -33,15 +33,15 @@ sub run {
 
   my $cmd2 = "dumpSequencesFromTable.pl --outputfile $localDataDir/$outputFile --idSQL \"$sql2\" --verbose";
 
-  if ($test) {
-      $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd1);
-    $self->runCmd($test,$cmd2);
+      if ($test) {
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd1);
+	  $self->runCmd($test,$cmd2);
+      }
   }
 
 

@@ -19,30 +19,29 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-    $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -rf $localDataDir/$taskInputDir/");
   }else {
-    $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
+      if ($test) {
+	  $self->testInputFile('genomicSeqsFile', "$localDataDir/$genomicSeqsFile");
+      }else{
+	  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
-    # make controller.prop file
-    $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+	  # make controller.prop file
+	  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::tRNAscanTask"); 
 
-    # make task.prop file
-    my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-    open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+	  # make task.prop file
+	  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+	  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
-    print F
+	  print F
 "tRNAscanDir=$tRNAscanDir
 inputFilePath=$computeClusterDataDir/$genomicSeqsFile
 trainingOption=C
 ";
-    close(F);
-
+	  close(F);
+      }
   }
 }
 

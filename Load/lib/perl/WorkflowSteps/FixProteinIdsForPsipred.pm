@@ -17,15 +17,15 @@ sub run {
 
   my $cmd = "cat $localDataDir/$inputProteinsFile | perl -pe '$fix' > $localDataDir/$outputProteinsFile";
 
-  if ($test){
-    $self->testInputFile('inputProteinsFile', "$localDataDir/$inputProteinsFile");
-    $self->runCmd(0,"echo test > $localDataDir/$outputProteinsFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputProteinsFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test){
+	  $self->testInputFile('inputProteinsFile', "$localDataDir/$inputProteinsFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputProteinsFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

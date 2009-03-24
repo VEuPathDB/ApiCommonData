@@ -21,15 +21,15 @@ orfFinder --dataset  $localDataDir/$seqFile \\
 --outFile $localDataDir/$outputFile
 EOF
 
-  if ($test) {
-    $self->testInputFile('seqFile', "$localDataDir/$seqFile");
-    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test) {
+	  $self->testInputFile('seqFile', "$localDataDir/$seqFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

@@ -13,24 +13,18 @@ sub run {
   my $idType = $self->getParamValue('idType');
   my $outputFile = $self->getParamValue('outputFile');
 
-  # i don't think this is needed, as the cmd handles it -steve
-  #  $self->runCmd($test,"gunzip -f $inputFile") if ($inputFile=~ /\.gz/);
-
   my $localDataDir = $self->getLocalDataDir();
-
   my $cmd = "makeIdFileFromBlastSimOutput --$idType --subject --blastSimFile $localDataDir/$inputFile --outFile $localDataDir/$outputFile";
-
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-
-    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-
-  }
 
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 
 }
