@@ -20,16 +20,16 @@ sub run {
 
   my $args = "--taxon_id $taxonId --target_table_name ExternalNASequence --mixedESTs --target_db_rel_id $targetDbRlsId --out $localDataDir/$outputFile --sort 1 --distanceBetweenStarts $maxIntronSize";
 
-  if ($test) {
-    $self->runCmd(0,"echo test > $localDataDir/$outputFile");
-  }
-
   #plugin does not modify db, only makes output file
 
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runPlugin($test,0, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
+      if ($test) {
+	  $self->runCmd(0,"echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runPlugin($test,0, "DoTS::DotsBuild::Plugin::ClusterByGenome", $args);
+      }
   }
 
 }

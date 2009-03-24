@@ -18,9 +18,8 @@ sub run {
   } else {  
       if ($test) {
 	  $self->testInputFile('fromFile', "$localDataDir/$fromFile");
-      }else{
-	  $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
       }
+      $self->runCmd(0, "cp $localDataDir/$fromFile $localDataDir/$toFile");
   }
 }
 

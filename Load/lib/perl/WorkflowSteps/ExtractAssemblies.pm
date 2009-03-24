@@ -19,14 +19,14 @@ sub run {
 
   my $cmd = "gusExtractSequences --outputFile $localDataDir/$outputFile --verbose --idSQL \"$sql\"";
 
-  if ($test){
-      $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   } else {
-    $self->runCmd($test, $cmd);
+      if ($test){
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test, $cmd);
+      }
   }
 
 }

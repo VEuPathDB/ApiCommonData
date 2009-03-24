@@ -30,14 +30,13 @@ sub run {
 
   my $cmd = "runUpdateAssembliesPlugin --clusterFile $localDataDir/$inputFile --pluginCmd \"$pluginCmd\"";
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-  }
-
   if ($undo) {
     $self->runPlugin($test, $undo, $pluginCmd);
   }else {
-    $self->runCmd($test, $cmd);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+      }
+      $self->runCmd($test, $cmd);
   }
 }
 

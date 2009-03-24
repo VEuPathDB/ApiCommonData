@@ -16,16 +16,17 @@ sub run {
 
   my $cmd = "splitClusterFile $localDataDir/$inputFile $localDataDir/$outputSmallFile $localDataDir/$outputBigFile";
 
-  if ($test){
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0,"echo hello > $localDataDir/$outputSmallFile");
-    $self->runCmd(0,"echo hello > $localDataDir/$outputBigFile");
-  }
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputSmallFile");
     $self->runCmd(0, "rm -f $localDataDir/$outputBigFile");
   } else {
-    $self->runCmd($test,$cmd);
+      if ($test){
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0,"echo hello > $localDataDir/$outputSmallFile");
+	  $self->runCmd(0,"echo hello > $localDataDir/$outputBigFile");
+      }else{
+	  $self->runCmd($test,$cmd);
+      }
   }
 }
 

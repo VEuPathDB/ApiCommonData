@@ -13,15 +13,15 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-    $self->runCmd(0, "echo test > $localDataDir/$outputFile");
-  }
-
   if ($undo) {
     $self->runCmd(0, "rm -f $localDataDir/$outputFile");
   }else {
-    $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
+      }else{
+	  $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
+      }
   }
 }
 

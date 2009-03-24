@@ -26,25 +26,25 @@ sub run {
       if ($test) {
 	  $self->testInputFile('proteinsFile', "$localDataDir/$proteinsFile");
 	  $self->testInputFile('nrdbFile', "$localDataDir/$nrdbFile");
-      }else{
-	  $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
+      }
+      
+      $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
-	  # make controller.prop file
-	  $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
+      # make controller.prop file
+      $self->makeClusterControllerPropFile($taskInputDir, 2, $taskSize,
 				       "DJob::DistribJobTasks::PsipredTask");
 
-	  # make task.prop file
-	  my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
-	  open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
+      # make task.prop file
+      my $taskPropFile = "$localDataDir/$taskInputDir/task.prop";
+      open(F, ">$taskPropFile") || die "Can't open task prop file '$taskPropFile' for writing";
 
-	  print F
+      print F
 "psipredDir=$psipredPath
 dbFilePath=$computeClusterDataDir/$nrdbFile
 inputFilePath=$computeClusterDataDir/$proteinsFile
 ncbiBinDir=$ncbiBinPath
 ";
-	  close(F);
-      }
+      close(F);
   }
 }
 

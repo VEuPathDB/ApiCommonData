@@ -31,15 +31,15 @@ sub run {
 
       $cmd = "tuningManager -configFile $gusHome/$configFile  --instance '$instance' --propFile $xmlConfigFileName --doUpdate --notifyEmail '$email' --cleanupAge 0";
 
-  if ($test) {
-      $self->testInputFile('configFile', "$gusHome/$configFile");
-      
-  }
-  
+
   if ($undo){
      $self->runCmd(0, "echo Doing nothing for \"undo\" Tuning Manager.\n");  
   }else{
-     $self->runCmd($test, $cmd);
+      if ($test) {
+	  $self->testInputFile('configFile', "$gusHome/$configFile");
+      }else {
+	  $self->runCmd($test, $cmd);
+      }
   }
 
 

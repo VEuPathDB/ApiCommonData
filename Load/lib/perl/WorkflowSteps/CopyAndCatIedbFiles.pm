@@ -30,14 +30,13 @@ sub run {
 
    $cmd .= " >$localDataDir/$outputDir/IEDBExport.txt";
 
+    if ($undo) {
+      $self->runCmd(0, "rm -f $localDataDir/$outputDir/IEDBExport.txt");
+    } else {
     if ($test) {
       $self->testInputFile('inputDir', "$inputDir");
       $self->testInputFile('outputDir', "$localDataDir/$outputDir");
     }
-
-    if ($undo) {
-      $self->runCmd(0, "rm -f $localDataDir/$outputDir/IEDBExport.txt");
-    } else {
       $self->runCmd($test, $cmd);
     }
 }

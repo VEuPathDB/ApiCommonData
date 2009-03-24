@@ -23,12 +23,18 @@ sub run {
 
   my $cmd = "getUnalignedAssemSeqIds --alignedClustersFile $localDataDir/$alignedClustersFile --outputFile $localDataDir/$allClustersOutputFile --repeatMaskErrFile $localDataDir/$repeatMaskErrFile --taxonIdList $taxonIdList --targetTaxonId $targetTaxonId";
 
-  if ($test) {
-    $self->testInputFile('alignedClustersFile', "$localDataDir/$alignedClustersFile");
-    $self->testInputFile('repeatMaskErrFile', "$localDataDir/$repeatMaskErrFile");
-    $self->runCmd(0, "echo test > $localDataDir/$allClustersOutputFile");
+  if($undo){
+      $self->runCmd(0,"rm -f  $localDataDir/$allClustersOutputFile");
+  }else{
+      if ($test) {
+	  $self->testInputFile('alignedClustersFile', "$localDataDir/$alignedClustersFile");
+	  $self->testInputFile('repeatMaskErrFile', "$localDataDir/$repeatMaskErrFile");
+	  $self->runCmd(0, "echo test > $localDataDir/$allClustersOutputFile");
+      }else{
+	  $self->runCmd($test, $cmd);
+      }
   }
-  $self->runCmd($test, $cmd);
+  
 }
 
 

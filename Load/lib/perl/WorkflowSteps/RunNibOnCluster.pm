@@ -17,16 +17,16 @@ sub run {
 
   my $cmd = "runFaToNib --filesFile $computeClusterDataDir/$inputFile";
 
-  if ($test) {
-      $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-      $self->testInputFile('outputDir', "$localDataDir/$outputDir");
-      $self->runCmdOnCluster(0,"echo test > $computeClusterDataDir/$outputDir/test.nib") unless $undo;
-  }
-
   if ($undo) {
-    $self->runCmdOnCluster($test,"rm -f $computeClusterDataDir/$outputDir/test.nib");
+    $self->runCmdOnCluster(0,"rm -f $computeClusterDataDir/$outputDir/test.nib");
   } else {
-    $self->runCmdOnCluster($test,$cmd);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+	  $self->testInputFile('outputDir', "$localDataDir/$outputDir");
+	  $self->runCmdOnCluster(0,"echo test > $computeClusterDataDir/$outputDir/test.nib") unless $undo;
+      }else{
+	  $self->runCmdOnCluster($test,$cmd);
+      }
   }
 }
 
@@ -44,12 +44,3 @@ sub getConfigDeclaration {
 	 );
 }
 
-sub restart {
-}
-
-sub undo {
-
-}
-
-sub getDocumentation {
-}

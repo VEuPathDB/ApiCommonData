@@ -20,14 +20,15 @@ sub run {
   my $computeClusterDataDir = $self->getComputeClusterDataDir();
   my $localDataDir = $self->getLocalDataDir();
 
-  if ($test) {
-    $self->testInputFile('queryFile', "$localDataDir/$queryFile");
-    $self->testInputFile('targetDir', "$localDataDir/$targetDir");
-  }
-
   if ($undo) {
     $self->runCmd(0,"rm -rf $localDataDir/$taskInputDir");
   }else {
+
+   if ($test) {
+        $self->testInputFile('queryFile', "$localDataDir/$queryFile");
+        $self->testInputFile('targetDir', "$localDataDir/$targetDir");
+    }
+
     $self->runCmd(0,"mkdir -p $localDataDir/$taskInputDir");
 
     # make controller.prop file
@@ -50,7 +51,7 @@ maxIntron=$maxIntronSize
 				    "$localDataDir/$taskInputDir/targetList",
 				    "$computeClusterDataDir/$targetDir");
 
-    #&runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
+    &runCmd($test, "chmod -R g+w $localDataDir/similarity/$queryName-$subjectName");
   }
 }
 
