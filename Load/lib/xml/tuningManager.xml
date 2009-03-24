@@ -53,11 +53,13 @@ SELECT DISTINCT pairs.alias, pairs.gene FROM
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAlias_gene_idx&1 ON apidb.GeneAlias&1 (gene)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -77,6 +79,7 @@ FROM dots.VirtualSequence ens
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SequenceAlias_idx&1 ON apidb.SequenceAlias&1(lowercase_source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -132,6 +135,7 @@ ORDER BY o.ontology, gt.go_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GoTermSum_sourceId_idx&1 ON apidb.GoTermSummary&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -186,6 +190,7 @@ ORDER BY taf.source_id, eas.source_id
       <![CDATA[
 CREATE INDEX apidb.PdbSim_sourceId_ix&1
 ON apidb.PdbSimilarity&1 (source_id, score DESC)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -350,24 +355,28 @@ commit
       <![CDATA[
 create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
              (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_feature_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
              (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index apidb.fl_seq_st_end_feat_idx&1
       on apidb.FeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index apidb.featloc3_ix&1 on apidb.FeatureLocation&1
              (na_feature_id, na_sequence_id, is_top_level)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -466,11 +475,13 @@ WHERE pred_loc.feature_type = 'GenePrediction'
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -508,11 +519,13 @@ UNION
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SequenceId_sequence_idx&1 ON apidb.SequenceId&1 (sequence)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SequenceId_id_idx&1 ON apidb.SequenceId&1 (id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -563,6 +576,7 @@ WHERE t.parent_id = gf.na_feature_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Epi_srcId_ix&1 ON apidb.EpitopeSummary&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -590,6 +604,7 @@ WHERE gfl.na_sequence_id = mfl.na_sequence_id
       <![CDATA[
 CREATE INDEX apidb.GCent_loc_ix&1
        ON apidb.GeneCentromereDistance&1 (genomic_sequence, centromere_distance)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -786,6 +801,7 @@ group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
     <sql>
       <![CDATA[
 create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, composite_element_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -923,6 +939,7 @@ WHERE gene.source_id = annotated_go_component.source_id(+)
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneGoAttr_sourceId ON apidb.GeneGoAttributes (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -955,6 +972,7 @@ WHERE gene.source_id = expn.source_id(+)
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Derisi_sourceId ON apidb.DerisiExpn (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -980,6 +998,7 @@ WHERE gene.source_id = expn.source_id(+)
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Winzeler_sourceId ON apidb.WinzelerExpn (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -1022,6 +1041,7 @@ where g.source_id = type3vstype1.source_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Toxo_sourceId ON apidb.ToxoExpn (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -1091,6 +1111,7 @@ WHERE gene.source_id = protein.source_id(+)
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GPA_sourceId ON apidb.GeneProteinAttributes (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -1316,36 +1337,42 @@ WHERE gf.source_id is not null
       <![CDATA[
 CREATE UNIQUE INDEX apidb.GeneAttr_sourceId&1
        ON apidb.GeneAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_exon_ix&1
        ON apidb.GeneAttributes&1 (exon_count, source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_loc_ix&1
        ON apidb.GeneAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_feat_ix&1
        ON apidb.GeneAttributes&1 (na_feature_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_geneid_ix&1
        ON apidb.GeneAttributes&1 (gene_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_orthoname_ix&1
        ON apidb.GeneAttributes&1 (orthomcl_name)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -1429,16 +1456,19 @@ UNION
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GS_sourceId&1 ON apidb.GenomicSequence&1 (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GS_lcSourceId&1 ON apidb.GenomicSequence&1 (lowercase_source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GS_naSeqId&1 ON apidb.GenomicSequence&1 (na_sequence_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1649,18 +1679,21 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_i
       <![CDATA[
 create INDEX apidb.Snp_nafeat_dataset_ix&1
        ON apidb.SnpAttributes&1 (na_feature_id, dataset)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Snp_Seq_ix&1
        ON apidb.SnpAttributes&1 (na_sequence_id, dataset, start_min, na_feature_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Snp_Freq_ix&1
        ON apidb.SnpAttributes&1 (dataset,strain_count,major_allele_frequency,minor_allele_frequency)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1732,6 +1765,7 @@ WHERE m.na_feature_id = taaf.na_feature_id
     <sql>
       <![CDATA[
 CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1816,11 +1850,13 @@ WHERE e.na_sequence_id = ens.na_sequence_id
     <sql>
       <![CDATA[
 CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source_id, source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1868,6 +1904,7 @@ WHERE a.taxon_id = tn.taxon_id
       <![CDATA[
 CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
 ON apidb.AssemblyAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1919,6 +1956,7 @@ WHERE ens.external_database_release_id = edr.external_database_release_id
       <![CDATA[
 CREATE UNIQUE INDEX apidb.AEAttr_source_id&1
 ON apidb.ArrayElementAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2148,6 +2186,7 @@ CREATE INDEX apidb.EstSumm_libOverlap_ix&1
              ON apidb.EstAlignmentGeneSummary&1
                 (library_id, percent_identity, is_consistent,
                  est_gene_overlap_length, percent_est_bases_aligned)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -2156,6 +2195,7 @@ CREATE INDEX apidb.EstSumm_estSite_ix&1
              ON apidb.EstAlignmentGeneSummary&1
                 (target_sequence_source_id, target_start, target_end,
                  library_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2179,6 +2219,7 @@ UNION
     <sql>
       <![CDATA[
 CREATE INDEX featso_id_ix&1 ON apidb.FeatureSo&1(na_feature_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2220,12 +2261,14 @@ CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
     <sql>
       <![CDATA[
 CREATE INDEX polymorphism_ix&1 ON apidb.Polymorphism&1(na_sequence_id, strain_a, strain_b, start_min)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX polymorphism_loc_ix&1
 ON apidb.Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, strain_b, start_min)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2348,6 +2391,7 @@ WHERE  etn.na_sequence_id = src.na_sequence_id
     <sql>
       <![CDATA[
 CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2412,12 +2456,14 @@ WHERE  a.analysis_id = r.analysis_id
       <![CDATA[
 CREATE INDEX apidb.Chfe_id_st_end_prn_str_idx&1
 ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
          CREATE INDEX apidb.Chfe_big_idx_&1
          ON apidb.ChipFeature&1 (na_sequence_id, protocol_name, strain, start_min, end_max, na_feature_id, antibody, rep, score)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2454,11 +2500,13 @@ ON apidb.ChipFeature&1(na_sequence_id, protocol_name, strain, start_min, end_max
     <sql>
       <![CDATA[
        CREATE INDEX apidb.chpgene_str_anti_rep_idx&1 ON apidb.chipchipgene&1 (strain,antibody,rep)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
        CREATE INDEX apidb.chpgene_geneid_idx&1 ON apidb.chipchipgene&1 (gene_source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2532,12 +2580,14 @@ where f.na_feature_id = gene.na_feature_id (+)
       <![CDATA[
 CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
              (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
              (na_sequence_id, start_min, end_max, is_reversed, source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2738,6 +2788,7 @@ GROUP BY gf.source_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.PlasmoExp_sourceId_idx&1 ON apidb.PlasmoExpressionGraphs&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2763,6 +2814,7 @@ GROUP BY ga.source_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.ToxoExp_sourceId_idx&1 ON apidb.ToxoExpressionGraphs&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2788,6 +2840,7 @@ GROUP BY ga.source_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.ExpGraphSum_sourceId_idx&1 ON apidb.GiardiaExpressionGraphs&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2859,11 +2912,13 @@ WHERE
     <sql>
       <![CDATA[
 CREATE BITMAP INDEX apidb.syn_query_ix&1 ON apidb.NaSynteny&1(query_na_sequence_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE BITMAP INDEX apidb.syn_target_ix&1 ON apidb.NaSynteny&1(target_na_sequence_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2901,6 +2956,7 @@ where ed.name = 'apicoplast targeting data from 4.4'
     <sql>
       <![CDATA[
 CREATE INDEX apidb.subc_ix&1 ON apidb.Subcellular&1(source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -2942,11 +2998,13 @@ WHERE pct_ps.profile_set_id = pct_p.profile_set_id
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Exp_value_ix&1 ON apidb.Expression&1 (value, element_order, source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.Exp_element_ix&1 ON apidb.Expression&1 (element_order, source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3002,24 +3060,28 @@ GROUP BY cds_length, na_feature_id, source_id,
       <![CDATA[
 CREATE INDEX apidb.SnpSummary_idx&1
        ON apidb.SnpSummary&1(na_feature_id, source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SnpSummary_strain_idx&1
        ON apidb.SnpSummary&1(strain_a, strain_b, source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SnpSummary_strainb_idx&1
        ON apidb.SnpSummary&1(strain_b, strain_a, source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 CREATE INDEX apidb.SnpSummary_srcId_idx&1
        ON apidb.SnpSummary&1(source_id, na_feature_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3099,6 +3161,7 @@ where lower(product) = dlp
     <sql>
       <![CDATA[
 CREATE INDEX geneProduct_ix&1 ON apidb.GeneProduct&1(dlp_id, na_feature_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3191,6 +3254,7 @@ where pvalue_mant = 0
       <![CDATA[
         create index apidb.spanloc_query_ix&1
         on apidb.SimilaritySpanLocation&1 (query_id, min_query_start, max_query_end, query_table_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3223,21 +3287,25 @@ and d.name in ('PlasmoDB combined SNPs','Broad SNPs','Sanger falciparum SNPs','S
     <sql>
       <![CDATA[
         create index apidb.isolatesnps_is_sid_idx&1 on apidb.isolatesnps&1 (is_source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
         create index apidb.isolatesnps_snp_db_id_idx&1 on apidb.isolatesnps&1 (snp_db_name,snp_source_id,allele)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
         create index apidb.isolatesnps_snp_id_idx&1 on apidb.isolatesnps&1 (snp_source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
         create index apidb.isnps_snp_sq_strt_idx&1 on apidb.isolatesnps&1 (snp_na_sequence_id,snp_start_min)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3293,6 +3361,7 @@ group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count,
     <sql>
       <![CDATA[
         create index apidb.MassSpec_idx&1 on apidb.MassSpecGeneTable&1 (source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3349,11 +3418,13 @@ where pvalue_mant = 0
     <sql>
       <![CDATA[
 create index apidb.bplastp_src_ix&1 on apidb.Blastp&1 (source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index apidb.bplastp_query_ix&1 on apidb.Blastp&1 (query_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
@@ -3392,11 +3463,13 @@ group by ia.source_id, fl.feature_source_id
     <sql>
       <![CDATA[
 create index apidb.gi_i_ix&1 on apidb.GeneIsolateOverlap&1 (isolate_source_id)
+tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index apidb.gi_g_ix&1 on apidb.GeneIsolateOverlap&1 (gene_source_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -3431,6 +3504,7 @@ union
     <sql>
       <![CDATA[
         create unique index apidb.weight_ix&1 on apidb.TableWeight&1(table_name)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
