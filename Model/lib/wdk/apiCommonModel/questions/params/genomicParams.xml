@@ -135,19 +135,14 @@
       <flatVocabParam name="sequenceTypes" includeProjects="GiardiaDB,ApiDB"
                      queryRef="genomicVQ.sequenceTypes"
                      prompt="Sequence Type"
-                     multiPick="true">
+                     multiPick="false">
                      <help>
                      Type of genomic sequence (chromosome, scaffold, contig, ...)
                      </help>    
 
-                    <suggest
-                     default= "supercontigs,contigs" />
-<!-- not needed
-                     allowEmpty="true" 
-                     emptyValue="supercontigs,contigs" />  
--->
+                    <suggest default= "supercontigs" /> 
 
-       <useTermOnly value="true" includeProjects="ApiDB"/>  
+                    <useTermOnly value="true" includeProjects="ApiDB"/>  
        </flatVocabParam>
 
   </paramSet>
