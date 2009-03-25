@@ -199,7 +199,9 @@ eval {
   if (!$tableCount) {
     ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
   } else {
-    my $summaryString = "\n$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount needing update, $brokenCount broken";
+    my $summaryString = "\n$tableCount table(s) defined: $upToDateCount up-to-date, $neededUpdateCount "
+      . ($doUpdate ? "updated" : "needing update")
+	. ", $brokenCount broken";
     $summaryString .= " -- tuningManager ran successfully"
       if !ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
     ApiCommonData::Load::TuningConfig::Log::addLogPreamble($summaryString);
