@@ -1,6 +1,7 @@
 package ApiCommonData::Load::Plugin::InsertAnalysisResult;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
+
 use strict;
 
 use GUS::Supported::GusConfig;
