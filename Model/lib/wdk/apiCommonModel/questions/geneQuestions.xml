@@ -1895,10 +1895,10 @@ Find genes that are predicted to encode a signal peptide.
 <i>Note about non-relevant results</i>:  Depending on how you configure it, this text search may return "non-relevant" genes (false positives).  The search mechanically matches the term you supply against the fields described in the Fields parameter.  The presence of your term in that field does not necessarily mean that the term <i>actually describes the gene</i>.  The term may be mentioned in that field for less relevant reasons.  To work around this, please choose the Fields you want to search carefully, and then, before drawing any conclusions, review the reference to your term in all matched fields in the gene page to confirm the meaning of its mention. The "Gene product" field is the most stringent and is unlikely to return false positives. 
           ]]>
          </description>
- <dynamicAttributes>
+         <dynamicAttributes>
             <columnAttribute name="text_fields"
                        displayName="Found in" align="center"/>
-        </dynamicAttributes>
+         </dynamicAttributes>
        <propertyList name="specificAttribution">
            <value>GO</value>
            <value>InterproscanData</value>
@@ -1917,11 +1917,11 @@ Find genes that are predicted to encode a signal peptide.
          recordClassRef="GeneRecordClasses.GeneRecordClass"
          includeProjects="CryptoDB,TriTrypDB">
         <attributesList includeProjects="ToxoDB"
-         summary="formatted_gene_id,organism,location_text,product,fields_matched,max_score"
+         summary="formatted_gene_id,organism,location_text,product,text_fields,max_score"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
         <attributesList excludeProjects="ToxoDB"
-         summary="organism,location_text,product,fields_matched,max_score"
+         summary="organism,location_text,product,text_fields,max_score"
          sorting="max_score desc,organism asc,location_text asc"
         /> 
         <summary>
@@ -1936,7 +1936,7 @@ Find genes that are predicted to encode a signal peptide.
           ]]>
          </description>
  <dynamicAttributes>
-            <columnAttribute name="fields_matched"
+            <columnAttribute name="text_fields"
                        displayName="Found in" align="center"/>
             <columnAttribute name="max_score"
                        displayName="Score" align="center"/>

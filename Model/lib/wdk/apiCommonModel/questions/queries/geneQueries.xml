@@ -507,7 +507,7 @@
 
     <processQuery name="GenesByTextSearch" includeProjects="ApiDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-            <paramRef ref="organismParams.text_search_organism"/>
+            <paramRef ref="organismParams.text_search_organism" quote="false"/>
             <paramRef ref="geneParams.text_fields" quote="false"/>
             <paramRef ref="sharedParams.text_expression" quote="false"/>
             <paramRef ref="geneParams.max_pvalue"  quote="false" groupRef="paramGroups.advancedParams"/>
@@ -515,7 +515,7 @@
             <wsColumn name="project_id" width="32" wsName="project_id"/>
             <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="text_fields" width="64"/>
-    </processQuery>
+     </processQuery>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -532,7 +532,7 @@
        <wsColumn name="source_id" width="32" wsName="RecordID"/>
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="max_score" width="10" wsName="MaxScore" columnType="float"/>
-       <wsColumn name="fields_matched" width="64" wsName="Datasets"/>
+       <wsColumn name="text_fields" width="64" wsName="Datasets"/>
     </processQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
