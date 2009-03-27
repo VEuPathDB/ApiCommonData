@@ -2366,9 +2366,12 @@ SELECT f.na_feature_id   as na_feature_id,
        r.float_value     as score,
        l.start_min       as start_min,
        l.end_max         as end_max,
-       substr(a.name, 1, 40) as analysis_name,
+       substr(a.name, 1, 100) as analysis_name,
        substr(p.name, 1, 40) as protocol_name,
-       decode(p.name, 'ChIP_chip_Einstein', 'raw', 'called_peaks') as protocol_type,
+       CASE
+          WHEN p.name like '%_called_peaks' then 'called_peaks'
+       ELSE 'raw'
+       END as protocol_type,
        CASE 
           WHEN a.name like '%RH%' then 'RH'
           WHEN a.name like '%TypeIII%' then 'CTG'
@@ -2378,8 +2381,14 @@ SELECT f.na_feature_id   as na_feature_id,
        CASE 
           WHEN a.name like '%H3K9%' then 'H3K9ac'
           WHEN a.name like '%H3K4%' then 'H3K4me3'
+          WHEN a.name like '%K5,K8,K12,K16%' then 'H4(K5-K8-K12-K16)ac'
        ELSE 'unknown' 
        END as antibody,
+       CASE
+          WHEN a.name like '%DMSO%' then 'DMSO Control'
+          WHEN a.name like '%FR235222%' then 'FR235222 (Drug A)'
+       ELSE 'none'
+       END as treatment,
        CASE 
           WHEN a.name like '%Rep1%' then '1'
           WHEN a.name like '%Rep2%' then '2'
@@ -2418,7 +2427,7 @@ WHERE  a.analysis_id = r.analysis_id
          SELECT distinct
          ga.source_id as gene_source_id, 
          cf.name as probe_id,cf.score,
-         cf.analysis_name,cf.strain,cf.antibody,cf.rep,
+         cf.analysis_name,cf.strain,cf.treatment,cf.antibody,cf.rep,
          CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
               ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END as distance,
          CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
