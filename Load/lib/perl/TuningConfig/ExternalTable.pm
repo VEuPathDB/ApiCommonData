@@ -10,8 +10,9 @@ use ApiCommonData::Load::TuningConfig::Log;
 
 sub new {
     my ($class,
-	$name,  # name of database table
-        $dbh)   # database handle
+	$name,      # name of database table
+        $dbh,       # database handle
+        $doUpdate)  # are we updating, not just checking, the db?
 	= @_;
 
     my $self = {};
@@ -45,6 +46,8 @@ SQL
 
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("$self->{name} does not exist")
 	if !$count;
+
+    $self->checkTrigger($doUpdate);
 
     return $self;
 }
@@ -138,6 +141,96 @@ sub exists {
     my ($self) = @_;
 
     return $self->{exists};
+}
+
+sub checkTrigger {
+    my ($self, $doUpdate) = @_;
+
+    my $dbh = $self->{dbh};
+
+    # is this a table, a view, a materialized view, a synonym, or what?
+    my $schema = $self->{schema};
+    my $table = $self->{table};
+
+    my $stmt = $dbh->prepare(<<SQL);
+ select 'table' from all_tables
+ where owner = upper('$schema') and table_name = upper('$table')
+union
+ select 'view' from all_views
+ where owner = upper('$schema') and view_name = upper('$table')
+union
+ select 'mview' from all_mviews
+ where owner = upper('$schema') and mview_name = upper('$table')
+union
+ select 'synonym' from all_synonyms
+ where owner = upper('$schema') and synonym_name = upper('$table')
+SQL
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    my ($objectType) = $stmt->fetchrow_array();
+    $stmt->finish();
+
+    if ($objectType eq "mview" || $objectType eq "synonym") {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("unsupported object type $objectType for " . $self->{name});
+    }
+
+    # if this is a view, find the underlying table
+    if ($objectType eq "view") {
+      my $stmt = $dbh->prepare(<<SQL);
+ select text from all_views
+ where owner = upper('$schema') and view_name = upper('$table')
+SQL
+      $stmt->execute()
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+      my ($viewText) = $stmt->fetchrow_array();
+      $stmt->finish();
+
+      $viewText =~ m/[.\r\n]*\bfrom\b\s*(\S*)\.(\S*)[.\r\n]*/i;
+      $schema = $1; $table = $2;
+    }
+
+    # check for a trigger
+    my $stmt = $dbh->prepare(<<SQL);
+ select trigger_name, trigger_body from all_triggers
+ where table_owner = upper('$schema') and table_name = upper('$table')
+SQL
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+    my $gotModDateTrigger;
+    while (my ($triggerName, $triggerText) = $stmt->fetchrow_array()) {
+
+      if ($triggerText =~ m/modification_date/i) {
+	$gotModDateTrigger = 1;
+      } else {
+	ApiCommonData::Load::TuningConfig::Log::addLog("Trigger $triggerName, on $table.$schema doesn't update modification_date");
+      }
+    }
+    $stmt->finish();
+
+    # if it doesn't exist and -doUpdate is not set, complain
+    ApiCommonData::Load::TuningConfig::Log::addLog("$table.$schema has no trigger to keep modification_date up to date.")
+	if (!$gotModDateTrigger && !$doUpdate);
+
+    # if it doesn't exist and -doUpdate is set, create it
+    if (!$gotModDateTrigger && $doUpdate) {
+      my $triggerName = $table . "_md_tg";
+      $triggerName =~ s/[aeiou]//gi;
+      ApiCommonData::Load::TuningConfig::Log::addLog("Creating trigger $triggerName to maintain modification_date column of " . $self->{name});
+      my $sqlReturn = $dbh->do(<<SQL);
+create or replace trigger $schema.$triggerName
+before update or insert on $schema.$table
+for each row
+begin
+  :new.modification_date := sysdate;
+end;
+SQL
+
+    if (!defined $sqlReturn) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    }
+    }
+
 }
 
 1;

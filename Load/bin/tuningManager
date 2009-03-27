@@ -71,6 +71,10 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{perl}, $dbh, $debug);
 }
 
+if ($doUpdate) {
+  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
+}
+
 # validate config / check external files
 ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
 my $undefinedInternal;
@@ -98,7 +102,7 @@ foreach my $tableName (keys(%tuningTables)) {
       # new ExternalTable instance in the hash, if we haven't seen this
       $externalTables{$dependency->{name}}
 	= ApiCommonData::Load::TuningConfig::ExternalTable->
-	  new($dependency->{name}, $dbh)
+	  new($dependency->{name}, $dbh, $doUpdate)
 	    unless ($externalTables{$dependency->{name}});
 
       # add external-table object to list of external dependencies
@@ -126,10 +130,6 @@ if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
   $doUpdate = 0;
 } else {
   ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
-}
-
-if ($doUpdate) {
-  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
 }
 
 # indexes
