@@ -68,6 +68,7 @@ CREATE TABLE uploads.UserFile
   Checksum      VARCHAR(64)    NOT NULL,
   UploadTime    TIMESTAMP      NOT NULL,
   OwnerUserId   VARCHAR2(40)   NOT NULL, /* userlogins3.users.signature */
+  Email         VARCHAR2(255),
   Title         VARCHAR(4000),
   Notes         VARCHAR(4000),
   ProjectName   VARCHAR(200),
