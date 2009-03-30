@@ -16,8 +16,6 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  $self->runCmd(0, "gunzip $downloadDir/$resourcesFile.gz") if (-e "$downloadDir/$resourcesFile.gz");
-
   if ($undo) {
       $self->runCmd(0, "rm -f $localDataDir/$toFile");
   } else {
@@ -30,6 +28,7 @@ sub run {
 	  }
 	  $self->runCmd(0,"echo test > $localDataDir/$toFile");
       }else{
+	  $self->runCmd(0, "gunzip $downloadDir/$resourcesFile.gz") if (-e "$downloadDir/$resourcesFile.gz");
 	  $self->runCmd($test, "cp $downloadDir/$resourcesFile $localDataDir/$toFile");
       }
   }
