@@ -2439,10 +2439,10 @@ sub makeMixedGenomicDownloadFile {
                 apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
-            AND sa.is_top_level = 1
+
 EOF
 
-  $sql .= " OR sa.is_top_level = 0" if $allLevels; 
+  $sql .= $allLevels ? ; " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
