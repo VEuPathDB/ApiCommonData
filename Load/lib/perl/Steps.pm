@@ -2442,7 +2442,7 @@ sub makeMixedGenomicDownloadFile {
 
 EOF
 
-  $sql .= $allLevels ? ; " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
+  $sql .= $allLevels ? " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
