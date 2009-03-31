@@ -59,60 +59,45 @@
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- BFMV -->  
+       <!-- There are currently two flavors of this query, one for the portal
+            and one for components.  The component version references the
+            apidb.scaffold_map tuning table (which doesn't exist in portal
+            instances) in order to work around a bug in apidb.SequenceAttributes.
+            The bug is that when a contig is mapped to a scaffold that's mapped
+            to a chromosome, the "chromosome" field of the scaffold gets
+            populated but in the contig it does not. Once this bug is fixed,
+            everybody can use the query now used for the portal (that is, the
+            one which does not reference scaffold_map).                  -->
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <sqlQuery name="Bfmv">
         <testParamValues includeProjects="GiardiaDB">
-         <paramValue name="source_id">CH991770</paramValue>
+        <paramValue name="source_id">CH991770</paramValue>
         </testParamValues>      
-
-
-
             <column name="chromosome" sortingColumn="chromosome_order_num"/>
             <column name="chromosome_order_num"/>
-
             <column name="source_id" ignoreCase="true"/>
-
             <column name="project_id" ignoreCase="true"/>
-
             <column name="a_count"  />
-
             <column name="c_count"/>
-
             <column name="g_count" />
-
             <column name="t_count" />
-
             <column name="other_count" />
-
             <column name="length"/>
-
-           <column name="is_top_level" />
-
+            <column name="is_top_level" />
             <column name="formatted_length" sortingColumn="length"/>
-
             <column name="secondary_identifier" includeProjects="CryptoDB" />
-
             <column name="chromosomemappingtext" includeProjects="CryptoDB,TriTrypDB" />
-
             <column name="at_percent"/>
-
             <column name="organism" ignoreCase="true"/>
-
             <column name="formatted_organism"
                     sortingColumn="organism" ignoreCase="true"/>
-
             <column name="sequence_description" includeProjects="ApiDB,PlasmoDB"
                     ignoreCase="true"/>
-
             <column name="genbank_accession" ignoreCase="true"/>
-
             <column name="externalDbName"/>
-
             <column name="externalDbVersion" />
-
             <column name="cyc_db" includeProjects="CryptoDB" />
-
-            <sql>
+            <sql excludeProjects="ApiDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
@@ -133,6 +118,32 @@
                                  WHERE  bfmv.source_id = sm.piece_source_id
                                  AND    sm.virtual_source_id = sattr.source_id )
                     END as chromosomemappingtext,
+                    bfmv.source_id as secondary_identifier,
+                    DECODE(
+                    substr(bfmv.organism, 
+                           instr(ltrim(bfmv.organism), ' ', 1, 1)+1, 
+                           instr(ltrim(bfmv.organism)||' ', ' ', 1, 2) - instr(bfmv.organism, ' ', 1, 1) -1
+                          ),
+                          'parvum', 'cparvum', 'hominis') as cyc_db
+                   FROM apidb.SequenceAttributes bfmv
+             ]]>
+           </sql>
+           <sql includeProjects="ApiDB">
+            <![CDATA[
+                SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
+                    bfmv.g_count, bfmv.t_count, bfmv.other_count,
+                    bfmv.length, bfmv.at_percent, bfmv.organism, bfmv.is_top_level,
+                    trim(to_char(bfmv.length,'999,999,999')) as formatted_length,
+                    '<i>' || SUBSTR(bfmv.organism, 1, 1) || '.' ||
+                    REGEXP_REPLACE(SUBSTR(bfmv.organism, INSTR(bfmv.organism, ' ')), '[[:space:]]+',
+                                   chr(38) || 'nbsp;') || '</i>'
+                      AS formatted_organism,
+                    bfmv.ncbi_tax_id, bfmv.sequence_description,
+                    bfmv.genbank_accession, bfmv.database_name,
+                    bfmv.database_version as externalDbVersion, database_name as externalDbName,
+                    bfmv.chromosome, bfmv.chromosome_order_num,
+                    DECODE(bfmv.chromosome, NULL, 'No chromosome mapping available.',
+                           'This contig has been mapped to chromosome ' || bfmv.chromosome || '.') as chromosomemappingtext,
                     bfmv.source_id as secondary_identifier,
                     DECODE(
                     substr(bfmv.organism, 
