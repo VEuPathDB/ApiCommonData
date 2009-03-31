@@ -40,6 +40,7 @@ CREATE TABLE uploads.UserFile
 (
   UserFileId    NUMBER(20)     NOT NULL,
   FileName      VARCHAR2(255)   NOT NULL,
+  Path          VARCHAR2(255),
   Checksum      VARCHAR2(64)    NOT NULL,
   UploadTime    TIMESTAMP      NOT NULL,
   OwnerUserId   VARCHAR2(40)   NOT NULL, /* userlogins3.users.signature */
