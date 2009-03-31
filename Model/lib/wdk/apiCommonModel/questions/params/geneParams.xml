@@ -3119,10 +3119,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
     <enumParam name="ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
              prompt="Assay Type"
+             quote="true"
              multiPick="true"
-             displayType="checkBox"
+             displayType="treeBox"
              visible="true">
-     <!--        displayType="checkBox"  NOT GOOD FOR PORTAL -->
 
          <help includeProjects="PlasmoDB">Select one or more of the assay type options.  The assay types here include male-enriched, female-enriched and mixed gametocyte preparations.</help>
 
@@ -3325,99 +3325,130 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           </enumValue>
 
          <enumValue includeProjects="ApiDB,TriTrypDB">
+            <display><![CDATA[<i>T. cruzi</i>]]></display>
+            <term>Tcruzi</term>
+            <internal>Tcruzi</internal>
+            <parentTerm></parentTerm>
+          </enumValue>
+         <enumValue includeProjects="ApiDB,TriTrypDB">
+            <display>T. cruzi</display>
+            <term>T. cruzi</term>
+            <internal>T. cruzi</internal>
+            <parentTerm></parentTerm>
+          </enumValue>
+         <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. cruzi</i> Amastigote <sup>1</sup>]]></display>
             <term>Tcruzi Proteomics-Amastigote</term>
             <internal>Tcruzi Proteomics-Amastigote</internal>
+            <parentTerm>T. cruzi</parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. cruzi</i> Epimastigote <sup>1</sup>]]></display>
             <term>Tcruzi Proteomics-Epimastigote</term>
             <internal>Tcruzi Proteomics-Epimastigote</internal>
+            <parentTerm>Tcruzi</parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. cruzi</i> Metacyclic <sup>1</sup>]]></display>
             <term>Tcruzi Proteomics-Metacyclic</term>
             <internal>Tcruzi Proteomics-Metacyclic</internal>
+            <parentTerm>Tcruzi</parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. cruzi</i> Trypomastigote <sup>1</sup><br><b>-------------------------------------</b>]]></display>
             <term>Tcruzi Proteomics-Trypomastigote</term>
             <internal>Tcruzi Proteomics-Trypomastigote</internal>
+            <parentTerm>T. cruzi</parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. brucei</i> Procyclic Form <sup>2</sup><br><b>-------------------------------------</b>]]></display>
             <term>Tbrucei Proteomics Procyclic Form</term>
             <internal>Tbrucei Proteomics Procyclic Form</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> - glycosylated <sup>3</sup>]]></display>
             <term>Linfantum Proteomics PTM-glycosylation</term>
             <internal>Linfantum Proteomics PTM-glycosylation</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> - acetylated <sup>3</sup>]]></display>
             <term>Linfantum Proteomics PTM-acetylation</term>
             <internal>Linfantum Proteomics PTM-acetylation</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> - methylated <sup>3</sup>]]></display>
             <term>Linfantum Proteomics PTM-methylation</term>
             <internal>Linfantum Proteomics PTM-methylation</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> - phosphorylated <sup>3</sup><br><b>-------------------------------------</b>]]></display>
             <term>Linfantum Proteomics PTM-phosphorylation</term>
             <internal>Linfantum Proteomics PTM-phosphorylation</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Amastigote (1DGel) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics SDS Amastigote</term>
             <internal>Linfantum Proteomics SDS Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Amastigote (2DGel pH6-9) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics 2DGel 6-9 Amastigote</term>
             <internal>Linfantum Proteomics 2DGel 6-9 Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i>  Amastigote (2DGel pH6-11) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics 2DGel 6-11 Amastigote</term>
             <internal>Linfantum Proteomics 2DGel 6-11 Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Promastigote (2DGel pH6-9) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics 2DGel 6-9 Promastigote</term>
             <internal>Linfantum Proteomics 2DGel 6-9 Promastigote</internal>
+            <parentTerm></parentTerm>
            </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Promastigote (2DGel pH6-11) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics 2DGel 6-11 Promastigote</term>
             <internal>Linfantum Proteomics 2DGel 6-11 Promastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
           <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Amastigote (1DGel) <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics SDS Amastigote</term>
             <internal>Lmajor Proteomics SDS Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
           <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Amastigote (2DGel pH6-9) <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics 2DGel 6-9 Amastigote</term>
             <internal>Lmajor Proteomics 2DGel 6-9 Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i>  Amastigote (2DGel pH6-11) <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics 2DGel 6-11 Amastigote</term>
             <internal>Lmajor Proteomics 2DGel 6-11 Amastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
           <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Promastigote (2DGel pH6-9) <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics 2DGel 6-9 Promastigote</term>
             <internal>Lmajor Proteomics 2DGel 6-9 Promastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue> 
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Promastigote (2DGel pH6-11) <sup>4*</sup><br><b>-------------------------------------</b>]]></display>
             <term>Lmajor Proteomics 2DGel 6-11 Promastigote</term>
             <internal>Lmajor Proteomics 2DGel 6-11 Promastigote</internal>
+            <parentTerm></parentTerm>
           </enumValue>
         
                
@@ -3426,47 +3457,56 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <display><![CDATA[<i>L. infantum</i>  Promastigote temperature and pH Control <sup>4</sup>]]></display>
             <term>Linfantum Proteomics Promastigote temperature and pH non-stressed</term>
             <internal>Linfantum Proteomics Promastigote temperature and pH non-stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i>  Promastigote temperature and pH stressed <sup>4</sup>]]></display>
             <term>Linfantum Proteomics Promastigote temperature and pH stressed</term>
             <internal>Linfantum Proteomics Promastigote temperature and pH stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
           <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Promastigote temperature and pH Control <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics Promastigote temperature and pH non-stressed</term>
             <internal>Lmajor Proteomics Promastigote temperature and pH non-stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Promastigote temperature and pH stressed <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics Promastigote temperature and pH stressed</term>
             <internal>Lmajor Proteomics Promastigote temperature and pH stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. braziliensis</i> Promastigote temperature and pH Control <sup>4*</sup>]]></display>
             <term>Lbraziliensis Proteomics Promastigote temperature and pH non-stressed</term>
             <internal>Lbraziliensis Proteomics Promastigote temperature and pH non-stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. braziliensis</i> Promastigote temperature and pH stressed <sup>4*</sup><br><b>-------------------------------------</b>]]></display>
             <term>Lbraziliensis Proteomics Promastigote temperature and pH stressed</term>
             <internal>Lbraziliensis Proteomics Promastigote temperature and pH stressed</internal>
+            <parentTerm></parentTerm>
           </enumValue>
 
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Amastigote (Secreted) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics Amastigote Secreted Protein</term>
             <internal>Linfantum Proteomics Amastigote Secreted Protein</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. infantum</i> Promastigote (Secreted) <sup>4</sup>]]></display>
             <term>Linfantum Proteomics Promastigote Secreted Protein</term>
             <internal>Linfantum Proteomics Promastigote Secreted Protein</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>L. major</i> Promastigote (Secreted) <sup>4*</sup>]]></display>
             <term>Lmajor Proteomics Promastigote Secreted Protein</term>
             <internal>Lmajor Proteomics Promastigote Secreted Protein</internal>
+            <parentTerm></parentTerm>
           </enumValue>
          
         
