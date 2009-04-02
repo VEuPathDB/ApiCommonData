@@ -198,14 +198,34 @@
                     <paramValue name="organism">Ch</paramValue>
                 </instance>
               
-                <instance name="cp_genes">
+               <instance name="cm_genes">
+                    <displayName><![CDATA[<i>Cm</i> Genes]]></displayName>
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium muris</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Cm</paramValue>
+                </instance>
+
+                <instance name="cp_chr6_genes">
+                    <displayName><![CDATA[<i>Cp Chr6</i> Genes]]></displayName>
+                    <description>
+                        <![CDATA[
+                              <i>Cryptosporidium parvum Chr6</i> genes.
+                            ]]>
+                    </description>   
+                    <paramValue name="organism">Cp_chr6</paramValue>
+                </instance>
+
+ <instance name="cp_genes">
                     <displayName><![CDATA[<i>Cp</i> Genes]]></displayName>
                     <description>
                         <![CDATA[
                               <i>Cryptosporidium parvum</i> genes.
                             ]]>
                     </description>   
-                    <paramValue name="organism">Cp</paramValue>
+                    <paramValue name="organism">Cryptosporidium parvum Iowa II</paramValue>
                 </instance>
 
                 <instance name="pb_genes">
@@ -310,6 +330,75 @@
                 </instance>
                
   </answerFilter>
+
+
+ <answerFilter queryRef="GeneSummaries.ApiGenes"
+                          includeProjects="ApiDB">
+                
+
+                <instance name="lb_genes">
+                    <displayName><![CDATA[<i>L. brazillensis</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania braziliensis</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania braziliensis</paramValue>
+                </instance>
+                <instance name="li_genes">
+                    <displayName><![CDATA[<i>L. infantum</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania infantum</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania infantum</paramValue>
+                </instance>
+                <instance name="lm_genes">
+                    <displayName><![CDATA[<i>L. major</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Leishmania major</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Leishmania major</paramValue>
+                </instance>
+                <instance name="tb_genes">
+                    <displayName><![CDATA[<i>T. brucei</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma brucei</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma brucei</paramValue>
+                </instance>
+
+                <instance name="tc_genes">
+                    <displayName><![CDATA[<i>T. cruzi</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Trypanosoma cruzi</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Trypanosoma cruzi</paramValue>
+                </instance>
+                
+            </answerFilter>
+
+
+ <answerFilter queryRef="GeneSummaries.PortalDistinctGenes"
+                          includeProjects="ApiDB">
+                
+                <instance name="portal_distinct_genes">
+                    <displayName><![CDATA[Ortholog Groups]]></displayName>
+                    <description>
+                        <![CDATA[
+                            Number of ortholog groups with hits in any species: the representative gene result is:  ???
+                        ]]>
+                    </description>   
+                </instance>
+                
+            </answerFilter>
 
 
   <answerFilter queryRef="GeneSummaries.CryptoGenes"
@@ -489,7 +578,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.CryptoDistinctGenes"
-                          includeProjects="CryptoDB,ApiDB">
+                          includeProjects="CryptoDB">
                 
                 <instance name="crypto_distinct_genes">
                     <displayName><![CDATA[Ortholog Groups]]></displayName>
@@ -498,9 +587,8 @@
                             Number of <i>Cryptosporidium</i> ortholog groups with hits in any species: the representative gene result is:  <i>C. parvum</i> if it exists, otherwise <i>C. hominis</i> if it exists, otherwise <i>C. muris</i> if it exists, otherwise <i>C. parvum</i> chromosome 6.
                         ]]>
                     </description>   
-                    <paramValue name="organism">Cryptosporidium</paramValue>
+  
                 </instance>
-                
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.TCruziDistinctGenes"
@@ -520,7 +608,7 @@
 
 
             <answerFilter queryRef="GeneSummaries.TriTrypDistinctGenes"
-                          includeProjects="TriTrypDB,ApiDB">
+                          includeProjects="TriTrypDB">
                 
                 <instance name="tritryp_distinct_genes">
                     <displayName><![CDATA[Ortholog Groups]]></displayName>
