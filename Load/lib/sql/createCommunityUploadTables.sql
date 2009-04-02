@@ -41,7 +41,7 @@ CREATE TABLE uploads.UserFile
   UserFileId    NUMBER(20)     NOT NULL,
   FileName      VARCHAR2(255)   NOT NULL,
   Path          VARCHAR2(255),
-  Checksum      VARCHAR2(64)    NOT NULL,
+  Checksum      VARCHAR2(64),
   Filesize      NUMBER(20),
   Format        VARCHAR2(255),
   IsDir         NUMBER(1),
