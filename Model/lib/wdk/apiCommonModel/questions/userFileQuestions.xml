@@ -5,9 +5,9 @@
          shortDisplayName="Files"
          queryRef="UserFiles.Files"
          recordClassRef="UserFileRecords.UserFile"
-         noSummaryOnSingleRecord="true">
+         noSummaryOnSingleRecord="false">
          <attributesList 
-           summary="filename, title, notes, uploadtime"
+           summary="filename, title, notes, filesize, format, uploadtime"
          />
          
          <summary>
@@ -29,6 +29,10 @@
              <columnAttribute name="notes" displayName="Description"
                               inReportMaker="false"/>
              <columnAttribute name="uploadtime" displayName="Upload Time"
+                              inReportMaker="false"/>
+             <columnAttribute name="filesize" displayName="File Size"
+                              inReportMaker="false"/>
+             <columnAttribute name="format" displayName="Format"
                               inReportMaker="false"/>
          </dynamicAttributes>
     </question>

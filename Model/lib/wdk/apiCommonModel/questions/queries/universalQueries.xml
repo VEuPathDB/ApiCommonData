@@ -60,12 +60,15 @@
         <column name="title"/>
         <column name="notes"/>
         <column name="uploadtime"/>
+        <column name="filesize"/>
+        <column name="format"/>
 
         <sql>
             <![CDATA[
             select userfileid as source_id, '@PROJECT_ID@' as project_id,
                    filename, title, notes, 
-                   to_char(uploadtime,'YYYY-MM-DD HH24:MI:SS') uploadtime
+                   to_char(uploadtime,'YYYY-MM-DD HH24:MI:SS') uploadtime,
+                   filesize, format
             from uploads.UserFile@USER_DBLINK@
            ]]>
        </sql>
