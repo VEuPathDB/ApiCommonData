@@ -19,13 +19,13 @@ sub run {
       
   my $args = "--paramValue $paramValue --studyName '$studyName' --fileDir $localDataDir/$outputDir";
 
-  if($undo){
-
-      my $normFileDir = $studyName; 
+  my $normFileDir = $studyName; 
       
-      $normFileDir=~ s/\s/_/g;
+  $normFileDir=~ s/\s/_/g;
 
-      $normFileDir =~ s/[\(\)]//g;
+  $normFileDir =~ s/[\(\)]//g;
+
+  if($undo){
 
       $self->runCmd(0,"rm -fr $localDataDir/$outputDir/$normFileDir");
 
