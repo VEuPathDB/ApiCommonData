@@ -7,9 +7,11 @@ CREATE TABLE comments2.Phenotype
   phenotype_id NUMBER(10) NOT NULL,
   comment_id NUMBER(10) NOT NULL,
   background VARCHAR2(200),
+  mutant_status_id NUMBER(2),
   mutant_type_id NUMBER(2),
   mutant_method_id NUMBER(2),
   mutant_description VARCHAR2(4000),
+  phenotype_description VARCHAR2(4000),
   phenotype_category_id NUMBER(2),
   mutant_expression_id NUMBER(2),
   CONSTRAINT phenotype_key PRIMARY KEY (phenotype_id),
@@ -52,9 +54,12 @@ GRANT select on comments2.MutantType to GUS_R;
 INSERT INTO comments2.MutantType VALUES(1, 'Gene knock out');
 INSERT INTO comments2.MutantType VALUES(2, 'Gene knock in');
 INSERT INTO comments2.MutantType VALUES(3, 'Induced mutation');
-INSERT INTO comments2.MutantType VALUES(4, 'Chromosomal substitution');
-INSERT INTO comments2.MutantType VALUES(5, 'Transfection');
-INSERT INTO comments2.MutantType VALUES(6, 'Don''t know');
+INSERT INTO comments2.MutantType VALUES(4, 'Inducible/Conditonal mutation');
+INSERT INTO comments2.MutantType VALUES(5, 'Random insertion');
+INSERT INTO comments2.MutantType VALUES(6, 'Point mutation');
+INSERT INTO comments2.MutantType VALUES(7, 'Transient/Knock down');
+INSERT INTO comments2.MutantType VALUES(8, 'Dominant negative');
+INSERT INTO comments2.MutantType VALUES(9, 'Spontaneous');
 
 CREATE TABLE comments2.MutantMethod
 (
@@ -91,10 +96,11 @@ GRANT select on comments2.MutantCategory to GUS_R;
 INSERT INTO comments2.MutantCategory VALUES(1, 'Growth');
 INSERT INTO comments2.MutantCategory VALUES(2, 'Invasion');
 INSERT INTO comments2.MutantCategory VALUES(3, 'Motility');
-INSERT INTO comments2.MutantCategory VALUES(4, 'Differenciation');
+INSERT INTO comments2.MutantCategory VALUES(4, 'Differentiation');
 INSERT INTO comments2.MutantCategory VALUES(5, 'Replication');
-INSERT INTO comments2.MutantCategory VALUES(6, 'Mouse Virulence');
-INSERT INTO comments2.MutantCategory VALUES(7, 'Other');
+INSERT INTO comments2.MutantCategory VALUES(6, 'EGRESS');
+INSERT INTO comments2.MutantCategory VALUES(7, 'Host Response');
+INSERT INTO comments2.MutantCategory VALUES(8, 'Other');
 
 CREATE TABLE comments2.MutantExpression
 (
