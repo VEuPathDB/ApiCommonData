@@ -42,8 +42,9 @@ CREATE TABLE uploads.UserFile
   FileName      VARCHAR2(255)   NOT NULL,
   Path          VARCHAR2(255),
   Checksum      VARCHAR2(64)    NOT NULL,
-  Filesize      NUMBER(20),     NOT NULL,
+  Filesize      NUMBER(20),
   Format        VARCHAR2(255),
+  IsDir         NUMBER(1),
   UploadTime    TIMESTAMP      NOT NULL,
   OwnerUserId   VARCHAR2(40)   NOT NULL, /* userlogins3.users.signature */
   Email         VARCHAR2(255),
