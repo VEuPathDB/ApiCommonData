@@ -1534,7 +1534,7 @@ UNION
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="GiardiaDB">Giardia intestinalis</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="TrichDB">none at all</sqlParamValue>
-      <sql includeProjects="CryptoDB,GiardiaDB,PlasmoDB,ToxoDB">
+      <sql includeProjects="CryptoDB,GiardiaDB,PlasmoDB,ToxoDB,TrichDB">
         <![CDATA[
           SELECT case when organisms.name = 'Giardia intestinalis' then 'Giardia  lamblia' else organisms.name end AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
