@@ -3450,8 +3450,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB,CryptoDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="PlasmoDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="TriTrypDB"/>
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
         <column name="project_id"/>
@@ -3495,8 +3495,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByPdbSimilarity" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoTrypCryptoGenes" quote="false"/>
         <paramRef ref="geneParams.clades" quote="false"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
