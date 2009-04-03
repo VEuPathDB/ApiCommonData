@@ -417,9 +417,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <sqlQuery name="SnpsByIsolatePattern" includeProjects="PlasmoDB" 
           isCacheable="true">
         <paramRef ref="snpParams.isolate_set_a"/>
-        <paramRef ref="snpParams.set_a_count"/>
+        <paramRef ref="snpParams.set_a_percent"/>
         <paramRef ref="snpParams.isolate_set_b"/>
-        <paramRef ref="snpParams.set_b_count"/>
+        <paramRef ref="snpParams.set_b_percent"/>
         <column name="source_id"/> 
         <column name="project_id"/>
         <column name="set_a_allele"/>
@@ -438,7 +438,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
               and isnp.allele is not null
               and isnp.snp_db_name = 'PlasmoDB combined SNPs'
               group by isnp.snp_source_id,isnp.allele
-              having count(*) >= $$set_a_count$$) seta,
+              having count(*) >= (select count(*) from  @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@
+                  where dataset_id = $$isolate_set_a$$) * $$set_a_percent$$ / 100) seta,
               (select isnp.snp_source_id,isnp.allele, count(*) as total
               from apidb.isolatesnps isnp, @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds
               where ds.dataset_id = $$isolate_set_b$$
@@ -446,7 +447,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
               and isnp.allele is not null
               and isnp.snp_db_name = 'PlasmoDB combined SNPs'
               group by isnp.snp_source_id,isnp.allele
-              having count(*) >= $$set_b_count$$) setb
+              having count(*) >= (select count(*) from  @WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@
+                  where dataset_id = $$isolate_set_b$$) * $$set_b_percent$$ / 100) setb
               where seta.snp_source_id = setb.snp_source_id
               and seta.allele != setb.allele
            ]]>
