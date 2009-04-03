@@ -3230,7 +3230,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByReagents -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByReagents" includeProjects="PlasmoDB,CryptoDB,ToxoDB"
+    <sqlQuery name="GenesByReagents" includeProjects="PlasmoDB,CryptoDB"
               isCacheable="true">
 
         <paramRef ref="geneParams.reagent_type"/>
@@ -3260,10 +3260,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByReagents" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-<!--
-<paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="geneParams.mr4_reagent_type" quote="false"/>
--->
+
+          <paramRef ref="organismParams.organism" queryRef="organismVQ.pf-cp"/>
           <paramRef ref="geneParams.reagent_type" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
