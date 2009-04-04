@@ -82,7 +82,7 @@
            select i.source_id, '@PROJECT_ID@' as project_id,
                   s.sequence, length(s.sequence) as length
            from apidb.isolateattributes i, dots.nasequence s
-            where i.source_id = s.source_id
+            where i.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
