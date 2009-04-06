@@ -678,7 +678,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.NaSequence ens, dots.GeneFeature gf, dots.Transcript t,
+            FROM dots.NaSequence ens, apidb.geneAttributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  dots.GoAssociation ga, sres.GoTerm gp,
                  sres.GoRelationship gr, core.TableInfo ti,
