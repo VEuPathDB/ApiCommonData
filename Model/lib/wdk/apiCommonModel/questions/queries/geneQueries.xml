@@ -2953,7 +2953,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
              AND g.na_feature_id = de.row_id
              AND t.name = 'GeneFeature'
              AND de.analysis_id = $$kappeAnalysis$$
-             AND ( $$regulated_dir$$ de.fold_change) >= $$fold_change$$
+             AND ( $$regulated_dir$$ (de.fold_change)) >= $$fold_change$$
         ]]>
        </sql>
     </sqlQuery>  
