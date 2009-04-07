@@ -373,7 +373,7 @@ group by gb.gene_id,gb.PROJECT_ID,gb.organism having count(*) = 1) i
                                                 'Toxoplasma gondii GT1', 2,
                                                 'Toxoplasma gondii VEG', 3)) AS source_id,
                             '@PROJECT_ID@' as project_id
-                  FROM $$gene_answer$$ ca, 
+                  FROM 
                     (SELECT gb.source_id, gb.project_id, ga.organism,ga.gene_id
                     FROM $$gene_answer$$ cb, apidb.geneattributes ga, apidb.geneattributes gb
                     WHERE ga.source_id = cb.source_id
