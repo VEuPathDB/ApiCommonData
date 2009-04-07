@@ -4858,7 +4858,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="internal"/>
             <column name="term"/>
             <sql>
-            select distinct REPLACE(REPLACE(REPLACE(ga.gene_type, 'non_protein_coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term, 
+            select distinct REPLACE(REPLACE(regexp_replace(ga.gene_type, 'non[ |_]protein[_| ]coding', 'misc RNA'), '_encoding', ''), '_', ' ')  AS term, 
                    ga.gene_type as internal
             from apidb.geneattributes ga
             </sql>
