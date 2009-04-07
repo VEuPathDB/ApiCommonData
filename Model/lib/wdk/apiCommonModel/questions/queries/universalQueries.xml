@@ -63,13 +63,18 @@
         <column name="filesize"/>
         <column name="format"/>
 
+        <column name="provider"/>
         <sql>
             <![CDATA[
             select userfileid as source_id, '@PROJECT_ID@' as project_id,
-                   filename, title, notes, 
-                   to_char(uploadtime,'YYYY-MM-DD HH24:MI:SS') uploadtime,
-                   filesize, format
-            from uploads.UserFile@USER_DBLINK@
+                   f.filename, f.title, f.notes, 
+                   to_char(f.uploadtime,'YYYY-MM-DD HH24:MI:SS') uploadtime,
+                   f.filesize, f.format,
+                   u.first_name || ' ' || u.last_name || '<br>' ||
+                   u.organization as provider
+            from uploads.UserFile@USER_DBLINK@ f,
+                 @LOGIN_SCHEMA@users@USER_DBLINK@ u
+            where f.owneruserid = u.signature (+)
            ]]>
        </sql>
 
