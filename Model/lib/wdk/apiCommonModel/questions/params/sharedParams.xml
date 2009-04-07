@@ -504,7 +504,7 @@
 
 
 
-     <flatVocabParam name="chromosomeOptional" includeProjects="ApiDB,TriTrypDB"
+     <flatVocabParam name="chromosomeOptional" includeProjects="TriTrypDB"
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
                      multiPick="false">
@@ -523,12 +523,18 @@
      </flatVocabParam>
 
 
+ <stringParam name="chromosomeOptional" includeProjects="ApiDB"
+                      prompt="Chromosome">
+             <suggest default="choose one"/>
+     </stringParam>
+
+
      <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB,TriTrypDB"
                       prompt="Chromosome"
                       multiPick="false"
                       default="choose one">
 
-       <enumList includeProjects="PlasmoDB,ApiDB">   
+       <enumList includeProjects="PlasmoDB">   
          <enumValue>
            <term>choose one</term>
            <internal>choose one</internal>
