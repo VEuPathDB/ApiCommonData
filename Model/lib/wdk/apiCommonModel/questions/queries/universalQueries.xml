@@ -75,6 +75,7 @@
             from uploads.UserFile@USER_DBLINK@ f,
                  @LOGIN_SCHEMA@users@USER_DBLINK@ u
             where f.owneruserid = u.signature (+)
+              and projectname = '@PROJECT_ID@'
            ]]>
        </sql>
 
