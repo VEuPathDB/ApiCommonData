@@ -10,11 +10,12 @@ sub run {
     my ($self, $test, $undo) = @_;
 
     my $algName = $self->getParamValue('algName');
+
     my $inputDir = $self->getParamValue('inputDir');
 
     my $localDataDir = $self->getLocalDataDir();
 
-    my $algImpVer = "dontcare";
+    my $algImpVer = "2.5";
     my $algInvStart = "2000-01-01";
     my $algInvEnd = "2000-01-01";
     my $args = "--predAlgName $algName  --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --predAlgInvEnd $algInvEnd --directory $localDataDir/$inputDir";

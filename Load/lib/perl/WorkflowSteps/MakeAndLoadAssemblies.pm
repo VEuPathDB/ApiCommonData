@@ -31,7 +31,7 @@ sub run {
   my $cmd = "runUpdateAssembliesPlugin --clusterFile $localDataDir/$inputFile --pluginCmd \"$pluginCmd\"";
 
   if ($undo) {
-    $self->runPlugin($test, $undo, $pluginCmd);
+    $self->runPlugin($test,$undo, "DoTS::DotsBuild::Plugin::UpdateDotsAssembliesWithCap4", '');
   }else {
       if ($test) {
 	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
