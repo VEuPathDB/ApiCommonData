@@ -7,13 +7,28 @@ use Getopt::Long qw(GetOptions);
 
 my $inputFile;
 my $outputFile;
-
+my $taxonIdMappingFile;
+my %taxonIdMappings;
+my $newDefLine;
 GetOptions("inputFile=s"     => \$inputFile,
            "outputFile=s"    => \$outputFile,
+	   "taxonIdMappingFile=s"    => \$taxonIdMappingFile,
           );
 
 unless (-e $inputFile) {
   die "\nERROR:  Must supply a valid input file!\nUsage: shortenDefLine --inputFile <FILE> --outputFile <FILE>\n\nPURPOSE: shortens the NRDB deflines to the first gi number (cuts at the first space) so that BLAST doesn't choke on the return strings.\n";
+}
+
+if ($taxonIdMappingFile){
+
+    open(MAPPING, "< $taxonIdMappingFile")|| die "File not found\n";
+
+    foreach my $line(<MAPPING>){
+	chomp $line ;
+	my @val = split(/\t/,$line);
+	$taxonIdMappings{$val[0]}=$val[1];
+    }
+
 }
 
 open(IN, "< $inputFile");
@@ -21,8 +36,18 @@ open(OUT, "> $outputFile");
 
 while(<IN>){
 	if(/(^\>gi\S+)/){
-		print OUT "$1\n";
+	    $newDefLine = $1;
 	}else{
-		print OUT;
+	    $newDefLine = $_;
 	}
+	if ($newDefLine =~ /^\>gi\|(\d+)\|/){
+	    if (exists $taxonIdMappings{$1}){
+		$newDefLine .= "$taxonIdMappings{$1}|\n" ;
+	    }elsif ($taxonIdMappingFile) {
+		$newDefLine .= "32644|\n" ;
+	    }else {
+		$newDefLine .= "\n" ;
+	    }
+        }
+	print OUT $newDefLine;
 }
