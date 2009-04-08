@@ -171,7 +171,7 @@ sub getMonomerCount{
   $self->undefPointerCache();
 }
 
-sub undoUpdatedTables {
+sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.NASequenceImp'

@@ -148,7 +148,7 @@ sub updateSourceIds {
 
 }
 
-sub undoUpdatedTables {
+sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.Asembly'

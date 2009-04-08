@@ -304,7 +304,7 @@ sub getUpdateIds {
   return $updatedRows;
 }
 
-sub undoUpdatedTables {
+sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.AASequence',
