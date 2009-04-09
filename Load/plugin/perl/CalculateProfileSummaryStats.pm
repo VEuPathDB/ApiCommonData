@@ -152,6 +152,8 @@ sub processProfileSet {
 
   my $header = $self->getHeader($profileSetName, $dbRlsId);
 
+  my $percentsHeader = $self->getHeader($self->getArg('percentProfileSet'), $dbRlsId);
+
   $self->log("Processing ProfileSet $profileSetName");
 
   my $sql = "
@@ -183,7 +185,7 @@ AND p.profile_set_id = ps.profile_set_id
     my $profileHash = $self->makeProfileHash($sourceId,\@profile, $header);
     my $percentHash = $self->makeProfileHash($sourceId,
 					     $percentsHash->{$sourceId},
-					     $header);
+					     $percentsHeader);
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
 				   $timePointMap, $sourceId);
