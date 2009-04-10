@@ -3117,11 +3117,12 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <suggest default="2"/>
         </stringParam>
 
+
+<!-- in portal this param is used for validation, and display style) -->
     <enumParam name="ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
              prompt="Assay Type"
-             multiPick="true"
-             displayType="checkBox"
-             visible="true">
+             multiPick="true" displayType="checkBox" 
+              visible="true">
      <!--        displayType="checkBox"  NOT GOOD FOR PORTAL -->
 
          <help includeProjects="PlasmoDB">Select one or more of the assay type options.  The assay types here include male-enriched, female-enriched and mixed gametocyte preparations.</help>
@@ -3192,23 +3193,29 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <internal>Ferrari_Proteomics_LTQ_intact_oocysts_merged</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,CryptoDB">
-            <display><![CDATA[Sporozoites <sup>4</sup> (C.p.)]]></display>
+            <display><![CDATA[Sporozoites <sup>4</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Ferrari_Proteomics_LTQ_Sporozoites merged</term>
             <internal>Ferrari_Proteomics_LTQ_Sporozoites_merged</internal>
           </enumValue>
 
+     <enumValue includeProjects="ApiDB,GiardiaDB">
+            <display><![CDATA[DTA-Select Filter (G.l.)<br>-------------------------------------]]></display>
+            <term>DTASelect-filter_032108_Proteomics</term>
+            <internal>DTASelect-filter_032108_Proteomics</internal>
+          </enumValue>
+
  <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Female Gametocytes]]></display>
+            <display><![CDATA[Female Gametocytes (P.b.)]]></display>
             <term>Waters Female Gametes</term>
             <internal>Waters Female Gametes</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Male Gametocytes]]></display>
+            <display><![CDATA[Male Gametocytes (P.b.)]]></display>
             <term>Waters Male Gametes</term>
             <internal>Waters Male Gametes</internal>
           </enumValue>
           <enumValue includeProjects="ApiDB,PlasmoDB">
-            <display><![CDATA[Mixed Gametocytes]]></display>
+            <display><![CDATA[Mixed Gametocytes (P.b.)<br>-------------------------------------]]></display>
             <term>Waters Mixed  Gametes</term>
             <internal>Waters Mixed Gametes</internal>
           </enumValue>
@@ -3321,16 +3328,12 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           </enumValue>
 
          <enumValue includeProjects="ApiDB,ToxoDB">
-            <display><![CDATA[RH Mass Spec Data (sample G)<sup>5</sup> (T.g)]]></display>
+            <display><![CDATA[RH Mass Spec Data (sample G)<sup>5</sup> (T.g)<br>-------------------------------------]]></display>
             <term>RH Mass Spec Data (sample G)</term>
             <internal>Moreno DTASelect filter sample G</internal>
           </enumValue>
 
-         <enumValue includeProjects="ApiDB,GiardiaDB">
-            <display><![CDATA[DTA-Select Filter]]></display>
-            <term>DTASelect-filter_032108_Proteomics</term>
-            <internal>DTASelect-filter_032108_Proteomics</internal>
-          </enumValue>
+    
 
          <enumValue includeProjects="ApiDB,TriTrypDB">
             <display><![CDATA[<i>T. cruzi</i> Amastigote <sup>1</sup>]]></display>

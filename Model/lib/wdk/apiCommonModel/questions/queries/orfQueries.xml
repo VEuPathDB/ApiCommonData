@@ -393,7 +393,7 @@
     <processQuery name="OrfsByMassSpec" includeProjects="ApiDB"
              isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
-        <paramRef ref="orfParams.orf_ms_assay"/>
+        <paramRef ref="orfParams.orf_ms_assay" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
