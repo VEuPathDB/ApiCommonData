@@ -17,14 +17,14 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(.+)' --tableName DoTS::ExternalAASequence";
+  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(gi\\|\\d+\\|\\w+\\|\\w+\\.?\\w+\\|)' --tableName DoTS::ExternalAASequence --regexNcbiTaxId '\\|(\\d+)\\|$'";
 
   if ($test) {
     $self->testInputFile('fastaFile', "$localDataDir/$fastaFile");
     $self->testInputFile('idsFile', "$localDataDir/$idsFile");
   }
 
-  $self->runPlugin($test,$undo, "GUS::Supported::Plugin::LoadFastaSequences",$args);
+  $self->runPlugin($test,$undo, "ApiCommonData::Load::Plugin::LoadFastaSequences",$args);
 
 }
 

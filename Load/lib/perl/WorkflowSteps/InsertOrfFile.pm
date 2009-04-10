@@ -38,14 +38,16 @@ EOF
     $args .= "--defaultOrganism '$defaultOrg'";
   }
 
-  if ($test) {
-    $self->testInputFile('inputFile', "$localDataDir/$inputFile");
-  }
+
 
   if ($undo){
-      $self->runCmd(0,"ga GUS::Supported::Plugin::InsertSequenceFeaturesUndo --mapFile $gusHome/$isfMappingFileRelToGusHome --algInvocationId $algInvIds --workflowContext --commit");
+      $self->runCmd($test,"ga GUS::Supported::Plugin::InsertSequenceFeaturesUndo --mapFile $gusHome/$isfMappingFileRelToGusHome --algInvocationId $algInvIds --workflowContext --commit");
   }else{
-      $self->runPlugin($test, 0,"GUS::Supported::Plugin::InsertSequenceFeatures", $args);
+      if ($test) {
+	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
+      }else{
+	  $self->runPlugin($test, 0,"GUS::Supported::Plugin::InsertSequenceFeatures", $args);
+      }
   }
 
 }

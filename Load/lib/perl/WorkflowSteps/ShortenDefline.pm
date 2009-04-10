@@ -10,6 +10,11 @@ sub run {
   # get parameters
   my $inputFile = $self->getParamValue('inputFile');
   my $outputFile = $self->getParamValue('outputFile');
+  my $mappingFileRelativeToDownloadDir = $self->getParamValue('mappingFileRelativeToDownloadDir');
+
+  my $downloadDir = $self->getGlobalConfig('downloadDir');
+
+  my $mappingFile = "$downloadDir/$mappingFileRelativeToDownloadDir";
 
   my $localDataDir = $self->getLocalDataDir();
 
@@ -20,7 +25,7 @@ sub run {
 	  $self->testInputFile('inputFile', "$localDataDir/$inputFile");
 	  $self->runCmd(0, "echo test > $localDataDir/$outputFile");
       }else{
-	  $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile");
+	  $self->runCmd($test, "shortenDefLine --inputFile $localDataDir/$inputFile --outputFile $localDataDir/$outputFile --taxonIdMappingFile '$mappingFile'");
       }
   }
 }
