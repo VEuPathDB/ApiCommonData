@@ -31,7 +31,14 @@ my $argsDeclaration =
 	       constraintFunc => undef,
 	       isList => 0,
 	       reqd => 1,
-	     })
+	     }),
+
+   stringArg({name => 'idSql',
+		descr => 'sql used to get the target AA sequences',
+		constraintFunc=> undef,
+		reqd  => 0,
+		isList => 0
+	       })
   ];
 
 
@@ -103,13 +110,21 @@ sub run {
 
   my $dbh = $self->getQueryHandle();
 
-  my $sth = $dbh->prepare(<<EOSQL);
-
+  my $sql = <<EOSQL;
   SELECT aa_sequence_id, sequence
   FROM   @{[$self->getArg('seqTable')]}
   WHERE  external_database_release_id = ?
 
 EOSQL
+ 
+  if ($self->getArg("idSql")){
+
+      $sql = $self->getArg("idSql");
+      $sql = $sql . " and external_database_release_id = ?";
+  }
+
+  my $sth = $dbh->prepare($sql);
+
 
   $sth->execute($extDbRlsId);
 
