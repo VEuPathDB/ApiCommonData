@@ -8,11 +8,13 @@
        <stringParam name="organismSite" visible="false">
              </stringParam>
 
+<!-- UNUSED, remove in a few rounds
+
  <stringParam name="hiddenOrganismGiardia" visible="false">
                <suggest includeProjects="ApiDB" 
                 default="Giardia lamblia"/>
        </stringParam>
-
+-->
 
       <flatVocabParam name="organism"
                      queryRef="organismVQ.withGenes"
@@ -56,7 +58,7 @@
           <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
 
-
+<!-- UNUSED, remove in a few rounds
       <flatVocabParam name="sequence_organism_text" includeProjects="ToxoDB,ApiDB"
                      queryRef="organismVQ.textSequenceOrganism"
                      prompt="Organism"
@@ -64,7 +66,7 @@
                      quote="true">
                      <useTermOnly value="true" includeProjects="ApiDB"/>
       </flatVocabParam>
-
+-->
 
 <!-- cannot reuse "organism" param above because apidb needs to use the internal value in the local ortholog question -->
       <flatVocabParam name="localorganism"
@@ -968,10 +970,9 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-<!--===================================================================-->
+   <!--===================================================================-->
     <!-- with genes Plasmo, TriTryp and Crypto,  used in genes by protein PDB similarity,
-        copy from withGenes
--->
+        copy from withGenes -->
     <!--===================================================================-->
 
  <sqlQuery name="withPlasmoTrypCryptoGenes" excludeProjects="ApiDB,ToxoDB,GiardiaDB,TrichDB" isCacheable="true">
@@ -1034,7 +1035,9 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-
+    <!--===================================================================-->
+    <!-- with sage tags    -->
+    <!--===================================================================-->
 
     <sqlQuery name="withSageTags" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
       <column name="internal"/>
@@ -1095,6 +1098,10 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+
+  <!--===================================================================-->
+    <!-- with genes with epitopes    -->
+    <!--===================================================================-->
 
     <sqlQuery name="withEpitopes"  includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB" isCacheable="true">
       <column name="internal"/>
@@ -1161,6 +1168,11 @@ UNION
     </processQuery>
 
 
+  <!--===================================================================-->
+    <!-- with sequencestrains, only used by Toxo
+         Toxo should use organismV!.withHenomicSeq instead like everybody
+         we do not change to not make incompatible queries     -->
+    <!--===================================================================-->
 
     <sqlQuery name="withSequenceStrains" includeProjects="ToxoDB">
       <column name="internal"/>
@@ -1188,6 +1200,7 @@ UNION
       </sql>
     </sqlQuery>
 
+<!-- UNUSED, remove in a few rounds
     <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">
       <column name="internal"/>
       <column name="term"/>
@@ -1206,6 +1219,12 @@ UNION
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
+-->
+
+
+  <!--===================================================================-->
+    <!-- used in other recordtype queries (other than gene) for dumping    -->
+    <!--===================================================================-->
 
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
@@ -1267,6 +1286,10 @@ UNION
         ]]>
       </sql>
     </sqlQuery>
+
+ <!--===================================================================-->
+    <!-- used in gene query for dumping    -->
+    <!--===================================================================-->
 
     <sqlQuery name="nameWithGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
@@ -1816,7 +1839,8 @@ UNION
 
 
 <!--===================================================================-->
-    <!-- tg withPlasmoGenes  was being used in genes by isoelectric point but it is not needed anymore , now we use withGenes  -->  
+    <!-- tg withPlasmoGenes  was being used in genes by isoelectric point 
+              but it is not needed anymore , now we use withGenes  -->  
     <!--===================================================================-->
 
 <!--  REMOVE IN A FEW WEEKS  
@@ -1949,8 +1973,9 @@ UNION
 -->
 
 
-<!--===================================================================-->
-    <!-- tg pf gl   for genes by sage tags-->
+    <!--===================================================================-->
+    <!-- tg pf gl   for genes by sage tags 
+         we should use organismVQ.withSageTags instead but chaning the parameter name makes the query incompatible -->
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf-gl" excludeProjects="ApiDB" isCacheable="true">
@@ -1990,7 +2015,9 @@ UNION
 
 
     <!--===================================================================-->
-    <!-- tg pf -->  
+    <!-- tg pf , used in genes by metabolic pathway and GenesByNonnuclearGenomicRegion, 
+         we should instead generate an organismVQ.withPlasmofToxoGenes 
+         we do not change because we would generate incompatible queries  (only in porta!)   -->  
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf" excludeProjects="ApiDB" isCacheable="true">
@@ -2067,7 +2094,7 @@ UNION
 
 
   <!--===================================================================-->
-    <!-- pf - cp  for genes by available reagents   -->  
+    <!-- pf - cp  for genes by available reagents , only on portal   -->  
     <!--===================================================================-->
 
     <sqlQuery name="pf-cp" excludeProjects="ApiDB" isCacheable="true">
