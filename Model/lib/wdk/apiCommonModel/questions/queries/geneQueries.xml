@@ -1563,7 +1563,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrII</paramValue>
         </testParamValues>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,PlasmoDB,TriTrypDB" />
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" default="Toxoplasma gondii" includeProjects="ToxoDB" />
+       <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="PlasmoDB,TriTrypDB" />
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="CryptoDB" quote="true" />
 
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
