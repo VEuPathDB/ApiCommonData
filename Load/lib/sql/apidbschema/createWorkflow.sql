@@ -6,7 +6,8 @@ create table apidb.Workflow (
   process_id            number(10),
   undo_step_id          number(10),
   metaconfig            clob,
-  xml_file_digest    	varchar(100)
+  xml_file_digest    	varchar(100),
+  test_mode             number(1)
 );
 
 ALTER TABLE apidb.Workflow
@@ -45,7 +46,9 @@ create table apidb.WorkflowStep (
   end_time            date,
   step_class          varchar(200),
   params_digest       varchar(100),
-  depth_first_order   number(5)
+  depth_first_order   number(5),
+  last_handled_time   date,
+  undo_last_handled_time date
 );
 
 ALTER TABLE apidb.WorkflowStep
