@@ -393,6 +393,18 @@
        <wsColumn name="fields_matched" width="64" wsName="Datasets"/>
     </processQuery>
 
+   <processQuery name="IsolatesByTextSearch" includeProjects="ApiDB"
+        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+       <paramRef ref="sharedParams.wdk_record_type"  quote="false"  default="isolate"/>
+       <paramRef ref="sharedParams.project_id"  quote="false"/>
+       <paramRef ref="sharedParams.text_expression"  default="Cryptosporidium hominis" quote="false"/>
+       <paramRef ref="isolateParams.text_fields"  quote="false"/>
+       <wsColumn name="source_id" width="32"  wsName="source_id"/>
+       <wsColumn name="project_id" width="32"  wsName="project_id"/>
+       <wsColumn name="max_score" width="10" columnType="float" />
+       <wsColumn name="fields_matched" width="64"/>
+    </processQuery>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- dump all isolates -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

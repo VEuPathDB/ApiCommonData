@@ -437,11 +437,10 @@
          category="Other Attributes"
          queryRef="IsolateIds.IsolatesByTextSearch"
          recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-         includeProjects="CryptoDB">
-        <attributesList 
+         includeProjects="CryptoDB,ApiDB">
+       <attributesList 
            summary="organism, strain, country, collected_by, data_type, fields_matched, max_score"
          sorting="max_score desc,strain asc"
-            
          /> 
         <summary>
              Find isolates with a text search against their reference or gene info.
@@ -454,7 +453,7 @@
 <i>Note about non-relevant results</i>:  Depending on how you configure it, this text search may return "non-relevant" isolates (false positives).  The search mechanically matches the term you supply against the fields described in the Fields parameter.  The presence of your term in that field does not necessarily mean that the term <i>actually describes the isolate</i>.  The term may be mentioned in that field for less relevant reasons.  To work around this, please choose the Fields you want to search carefully, and then, before drawing any conclusions, review the reference to your term in all matched fields in the isolate page to confirm the meaning of its mention.
           ]]>
          </description>
- <dynamicAttributes>
+        <dynamicAttributes>
             <columnAttribute name="fields_matched"
                        displayName="Found in" align="center"/>
             <columnAttribute name="max_score"
