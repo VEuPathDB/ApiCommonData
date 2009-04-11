@@ -23,7 +23,7 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $comment);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -37,6 +37,7 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
+           "comment=s" => \$comment,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
