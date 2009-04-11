@@ -120,7 +120,6 @@ EOSQL
   if ($self->getArg("idSql")){
 
       $sql = $self->getArg("idSql");
-      $sql = $sql . " and external_database_release_id = ?";
   }
 
   my $sth = $dbh->prepare($sql);
