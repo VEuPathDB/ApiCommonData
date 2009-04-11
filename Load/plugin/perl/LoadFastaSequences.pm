@@ -676,11 +676,16 @@ sub fetchTaxonId {
   eval ("require GUS::Model::SRes::Taxon");
 
   $ncbiTaxId = $self->getArg('ncbiTaxId') if $self->getArg('ncbiTaxId');
+
   my $taxon = GUS::Model::SRes::Taxon->new({ncbi_tax_id=>$ncbiTaxId});
 
-  $taxon->retrieveFromDB || die "The NCBI tax ID '$ncbiTaxId' provided on the command line is not found in the database\n";
+  if ($taxon->retrieveFromDB){
 
-  $self->{taxonId} = $taxon->getTaxonId();
+      $self->{taxonId} = $taxon->getTaxonId();
+  }else{
+
+      $self->fetchTaxonIdFromName('unknown');
+  }
 }
 
 
