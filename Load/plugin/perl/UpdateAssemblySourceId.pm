@@ -151,7 +151,7 @@ sub updateSourceIds {
 sub undoTables {
   my ($self) = @_;
 
-  return ('DoTS.Asembly'
+  return ('DoTS.Assembly'
 	 );
 }
 
