@@ -17,7 +17,7 @@ sub run {
 
   my $localDataDir = $self->getLocalDataDir();
 
-  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(gi\\|\\d+\\|\\w+\\|\\w+\\.?\\w+\\|)' --tableName DoTS::ExternalAASequence --regexNcbiTaxId '\\|(\\d+)\\|$'";
+  my $args = "--externalDatabaseName $extDbName --externalDatabaseVersion $extDbRlsVer --sequenceFile $localDataDir/$fastaFile --sourceIdsFile  $localDataDir/$idsFile --regexSourceId  '>gi\\|(\\d+)\\|' --regexDesc '^>(gi\\|\\d+\\|\\w+\\|\\w+\\.?\\w+\\|)' --regexNcbiTaxId '\\|(\\d+)\\|\$' --tableName DoTS::ExternalAASequence";
 
   if ($test) {
     $self->testInputFile('fastaFile', "$localDataDir/$fastaFile");
