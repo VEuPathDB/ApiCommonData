@@ -23,12 +23,13 @@ if ($taxonIdMappingFile){
 
     open(MAPPING, "< $taxonIdMappingFile")|| die "File not found\n";
 
-    foreach my $line(<MAPPING>){
-	chomp $line ;
-	my @val = split(/\t/,$line);
-	$taxonIdMappings{$val[0]}=$val[1];
-    }
+    while(<MAPPING>){
+	    if (/^(\d+)\s(\d+)/){
+		$taxonIdMappings{$1}=$2;
+	    }
 
+    }
+    close MAPPING;
 }
 
 open(IN, "< $inputFile");
@@ -42,12 +43,15 @@ while(<IN>){
 	}
 	if ($newDefLine =~ /^\>gi\|(\d+)\|/){
 	    if (exists $taxonIdMappings{$1}){
-		$newDefLine .= "$taxonIdMappings{$1}|\n" ;
+		$newDefLine .= "|$taxonIdMappings{$1}|\n" ;
 	    }elsif ($taxonIdMappingFile) {
-		$newDefLine .= "32644|\n" ;
+		$newDefLine .= "|32644|\n" ;
 	    }else {
 		$newDefLine .= "\n" ;
 	    }
         }
 	print OUT $newDefLine;
 }
+
+close IN;
+close OUT;
