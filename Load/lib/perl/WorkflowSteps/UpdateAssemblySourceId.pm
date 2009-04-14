@@ -14,9 +14,12 @@ sub run {
 
   my $taxonId = $self->getTaxonIdFromNcbiTaxId($test, $ncbiTaxonId);
 
-  my $args = "--prefix '${organismTwoLetterAbbrev}DT.' --suffix '.tmp' --taxonId $taxonId";
+  my $cmd = "updateAssSourceIdFromPK --prefix '${organismTwoLetterAbbrev}DT.' --suffix '.tmp' --TaxonId $taxonId";
 
-  $self->runPlugin($test, $undo,"ApiCommonData::Load::Plugin::UpdateAssemblySourceId",$args);
+  if ($undo){
+  }else{
+      self->runCmd($test, $cmd);      
+  }
 }
 
 sub getParamDeclaration {

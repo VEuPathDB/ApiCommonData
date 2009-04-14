@@ -14,12 +14,19 @@ sub run {
 
   my $gusHome = $self->getGlobalConfig('gusHome');
 
-  my $args = "--filename $gusHome/$xmlFile --tableName $gusTable";
+  my $undoArgs = "--undoTables $gusTable";
 
-  if ($test) {
-      $self->testInputFile('xmlFile', "$gusHome/$xmlFile");
+  my $args = "--filename $gusHome/$xmlFile";
+
+  if ($undo){
+      $self->runPlugin($test, $undo, "GUS::Supported::Plugin::LoadGusXml", $undoArgs);
+  }else{
+      if ($test) {
+	  $self->testInputFile('xmlFile', "$gusHome/$xmlFile");
+      }else{
+	  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::LoadGusXml", $args);
+      }
   }
-  $self->runPlugin($test, $undo, "GUS::Supported::Plugin::LoadGusXml", $args);
 
 }
 
