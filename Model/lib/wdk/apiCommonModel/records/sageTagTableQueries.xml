@@ -36,7 +36,7 @@
                    to_char(aa.raw_count, '99999') as raw_count,
                    to_char(aa.total_raw_count, '99999') as total_raw_count, 
                    to_char(aa.tag_count, '99990.99') as norm_count,
-                   to_char(aa.library_total_tag_count, '99999.99') as total_norm_count, 
+                   to_char(aa.library_total_tag_count, '999999') as total_norm_count, 
                    to_char(aa.library_tag_percentage, '990D00000') || '%' as norm_percent
             from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a, Rad.Assay ra
             where a.source_id = $$source_id$$
@@ -63,7 +63,7 @@
             <column name="bp_from_gene"/>
             <sql>
             <![CDATA[
-         select distinct $$source_id$$ AS source_id, '@PROJECT_ID@' AS project_id,
+         select distinct a.source_id AS source_id, '@PROJECT_ID@' AS project_id,
                    a.source_id AS aligned_source_id, sg.gene_source_id, g.product as gene_product,
                    g.sequence_id || ':' || g.start_min || '-' || g.end_max || '(' || 
                        case when g.is_reversed = 1 then '-' 

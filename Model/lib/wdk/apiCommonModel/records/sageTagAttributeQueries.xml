@@ -41,7 +41,7 @@
             <![CDATA[
             select sta.project_id,
                    sta.source_id, 
-                   'CATG' || sta.sequence as tag_sequence,
+                   CASE WHEN sta.sequence like 'CATG%' THEN sta.sequence ELSE 'CATG' || sta.sequence END as tag_sequence,
                    sta.sequence_source_id as sequence_id,
                    sta.start_min,
                    sta.end_max,
@@ -65,10 +65,12 @@
             <column name="total_alignments"/>
             <sql>
             <![CDATA[
-             select source_id, '@PROJECT_ID@' AS project_id, 
-                    count(composite_element_id) as total_alignments
-             from apidb.SAGETAGATTRIBUTES
-             group by source_id
+             select sta.source_id,'@PROJECT_ID@' as project_id,ct.total_alignments from (
+               select composite_element_id, '@PROJECT_ID@' AS project_id, 
+                    count(*) as total_alignments
+               from apidb.SAGETAGATTRIBUTES 
+               group by composite_element_id) ct, apidb.SAGETAGATTRIBUTES sta
+             where sta.composite_element_id = ct.composite_element_id
             ]]>
            </sql>
       </sqlQuery>
@@ -79,10 +81,13 @@
             <column name="total_gene_alignments"/>
             <sql>
             <![CDATA[
-             select source_id, '@PROJECT_ID@' AS project_id, 
-                    sum(gene_count) as total_gene_alignments
-             from apidb.SAGETAGATTRIBUTES 
-             group by source_id
+             select sta.source_id,'@PROJECT_ID@' as project_id,ct.total_gene_alignments from (
+               select composite_element_id, '@PROJECT_ID@' AS project_id, 
+                    count(*) as total_gene_alignments
+               from apidb.SAGETAGATTRIBUTES 
+               where gene_source_id is not null
+               group by composite_element_id) ct, apidb.SAGETAGATTRIBUTES sta
+             where sta.composite_element_id = ct.composite_element_id
             ]]>
            </sql>
       </sqlQuery>

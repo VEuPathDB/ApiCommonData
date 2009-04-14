@@ -141,6 +141,7 @@
          where (lower(a.sequence) = lower($$sequence$$) 
                  OR lower('catg' || a.sequence) = lower($$sequence$$) )
          and a.na_feature_id = sg.tag_feature_id $$is_within_gene$$ 
+         and sg.distance $$is_within_gene$$ = 0
          ]]>
        </sql>
     </sqlQuery>
