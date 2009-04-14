@@ -697,7 +697,52 @@
             </sql>
         </sqlQuery>
 
- 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- Old Toxo Comments -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="OldToxoComments"
+                 isCacheable="false">
+
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">25.m00188</paramValue>
+            </testParamValues>
+
+            <paramRef ref="recordParams.source_id"/>
+            <paramRef ref="recordParams.project_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="comment_id"/>
+            <column name="stable_id"/>
+            <column name="release4_id"/>
+            <column name="headline"/>
+            <column name="user_name"/>
+            <column name="organization"/>
+            <column name="comment_date"/>
+            <column name="project_version"/>
+            <sql>
+            <![CDATA[
+              SELECT DISTINCT toa.source_id, '@PROJECT_ID@' as project_id, 
+                     c.comment_id, c.stable_id,
+                     NVL(c.headline, '<i>none</i>') AS headline,
+                     (u.first_name || ' ' || u.last_name) AS user_name,
+                     u.organization,toa.old_source_id as release4_id,
+                     c.comment_date, c.project_version
+              FROM @USER_SCHEMA@users@USER_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   apidb.trackoldannotation toa
+              WHERE lower(u.email) = lower(c.email)
+                    AND c.comment_target_id = 'gene'
+                    AND toa.source_id = $$source_id$$
+                    AND c.stable_id = toa.old_source_id
+                    AND c.review_status_id != 'rejected'
+                    AND c.review_status_id != 'task'
+              ORDER BY c.comment_date DESC
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- EC number -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

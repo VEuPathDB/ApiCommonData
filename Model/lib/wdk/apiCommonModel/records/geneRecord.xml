@@ -1648,6 +1648,35 @@
           </table>
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Old ToxoDB Comments table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="OldToxoComments" includeProjects="ToxoDB"
+                 displayName="Version 4 User Comments"
+                 queryRef="GeneTables.OldToxoComments">
+        <columnAttribute name="comment_id" internal="true"/>
+        <columnAttribute name="stable_id" internal="true"/>
+        <columnAttribute name="release4_id" displayName="Release 4 ID"/>
+        <columnAttribute name="headline" internal="true"/>
+      <linkAttribute name="headline_link"
+              displayName="Headline">
+                 <displayText>
+                    <![CDATA[
+                    $$headline$$
+                    ]]>
+                 </displayText>
+        <url>
+        <![CDATA[showComment.do?projectId=oldToxoDB&stableId=$$stable_id$$#$$comment_id$$]]>
+        </url>
+      </linkAttribute>
+            <columnAttribute name="user_name" displayName="Made by"/>
+            <columnAttribute name="organization" displayName="Affiliation"/>
+            <columnAttribute name="comment_date" displayName="Date"/>
+            <columnAttribute name="project_version" displayName="Version"/>
+          </table>
+
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- EC number table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
