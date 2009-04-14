@@ -1188,6 +1188,11 @@ UNION
       </sql>
     </sqlQuery>
 
+<!--===================================================================-->
+    <!-- only in TriTrypDB and Portal: genes based on phenotype    -->
+    <!--===================================================================-->
+
+
     <sqlQuery name="withPhenotype" includeProjects="TriTrypDB">
       <column name="internal"/>
       <column name="term"/>
@@ -1199,6 +1204,13 @@ UNION
         ]]>
       </sql>
     </sqlQuery>
+
+  <processQuery name="withPhenotype" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
 
 <!-- UNUSED, remove in a few rounds
     <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">

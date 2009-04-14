@@ -58,6 +58,10 @@
        </sql>
     </sqlQuery>
 
+ <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- TriTryp Phenotype query                                       -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
     <sqlQuery name="GenesByPhenotype" includeProjects="TriTrypDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPhenotype"/>
@@ -76,6 +80,17 @@
            ]]>
        </sql>
     </sqlQuery>
+
+ <processQuery name="GenesByPhenotype" includeProjects="ApiDB"
+             isCacheable='true'
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPhenotype"/>
+        <paramRef ref="geneParams.phenotype" quote="false"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>   
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="phenotype_loi" width="32"/>
+ </processQuery>
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ChIP chip chromatin marks -->  
