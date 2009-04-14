@@ -3,14 +3,12 @@
   <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="genomeExtDbRlsSpec"/>
-  <param name="genomeVirtualSeqsExtDbRlsSpec"/>
   <param name="ncbiTaxonVersion"/>
   <param name="soVersion"/>
   <param name="ncbiTaxonId"/>
   <param name="parentNcbiTaxonId"/>
   <param name="usePredictedTranscripts"/>
   <param name="predictedTranscriptsExtDbRlsSpec"/>
-  <param name="useVirtualSeqs"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>
   <param name="maxIntronSize"/>
@@ -45,21 +43,10 @@
       <depends name="makeDataDir"/> 
     </step>
 
-    <subgraph name="dumpAndBlockMixedGenomicSeqs" xmlFile="dumpAndBlockMixedGenomicSeqs.xml">
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="organismName">$$organismName$$</paramValue>
-      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
-      <paramValue name="useVirtualSeqs">$$useVirtualSeqs$$</paramValue>
-      <depends name="makeDataDir"/> 
-    </subgraph>
-
    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenomicSeqs"/>
     </step>
-
 
     <subgraph name="blastxGenomicSeqsNrdb" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>

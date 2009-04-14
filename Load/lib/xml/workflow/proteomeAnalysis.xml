@@ -10,7 +10,6 @@
   <param name="nrdbShortDeflineFile"/>
   <param name="nrdbExtDbRlsSpec"/>
   <param name="pdbFile"/>
-  <param name="calculateTranslatedProteins"/>
   <param name="soVersion"/>
   <param name="pdbExtDbRlsSpec"/>
   <param name="goVersion"/>
@@ -20,27 +19,11 @@
   <constant name="dataDir">$$parentDataDir$$/proteome</constant>
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
 
-    <step name="calcTranslatedProteins"
-          stepClass="ApiCommonData::Load::WorkflowSteps::CalculateTranslatedProteinSequence" includeIf="$$calculateTranslatedProteins$$" stepLoadTypes="plugin">
-      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="soVersion">$$soVersion$$</paramValue>
-    </step>
-
-    <step name="updatePdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" stepLoadTypes="plugin">
-      <paramValue name="mappingFileRelativeToDownloadDir">FetchPDBidx/source.idx.processed</paramValue>
-      <paramValue name="sourceIdRegex">^(\\w+)</paramValue>
-      <paramValue name="taxonRegex">--taxonNameRegex "^\\w+\\s+(.+)"</paramValue>
-      <paramValue name="idSql">select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence</paramValue>
-      <paramValue name="extDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
-      <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
-    </step>
-
     <step name="calcAASequenceAttributes"
           stepClass="ApiCommonData::Load::WorkflowSteps::CalculateAASeqAttributes" stepLoadTypes="plugin">
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="table">DoTS.TranslatedAASequence</paramValue>
-      <depends name="calcTranslatedProteins"/>
+      <paramValue name="idSql">select taas.aa_sequence_id, taas.sequence from DoTS.TranslatedAASequence taas, DoTs.AAFeature af, DOTS.NAFeature nf where taas.aa_sequence_id=af.aa_sequence_id and af.na_feature_id=nf.na_feature_id and nf.name not in ('ORF') and taas.external_database_release_id = ?</paramValue>
     </step>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
@@ -52,7 +35,6 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="outputFile">$$proteinsFile$$</paramValue>
-      <depends name="calcTranslatedProteins"/>
       <depends name="makeDataDir"/>
     </step>
 
@@ -174,7 +156,7 @@
       <paramValue name="queryFile">$$proteinsFile$$</paramValue>
       <paramValue name="queryTable">DoTS::TranslatedAASequence</paramValue>
       <paramValue name="queryExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="subjectFile">$$nrdbFile$$</paramValue>
+      <paramValue name="subjectFile">$$nrdbShortDeflineFile$$</paramValue>
       <paramValue name="subjectTable">DoTS::ExternalAASequence</paramValue>
       <paramValue name="subjectExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
       <paramValue name="blastArgs">-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000</paramValue>

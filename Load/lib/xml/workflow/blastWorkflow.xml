@@ -75,17 +75,6 @@
       <depends name="extractIdsFromBlastResult"/>
     </step>
 
-    <step name="updateNrdbTaxonIdField"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateTaxonIdField" includeIf="$$loadSubjectSubset$$" stepLoadTypes="loadNrdbSubjectSubset,plugin">
-      <paramValue name="mappingFileRelativeToDownloadDir">taxonomy/gi_taxid_prot.dmp</paramValue>
-      <paramValue name="sourceIdRegex">^(\\d+)</paramValue>
-      <paramValue name="taxonRegex">--ncbiTaxIdRegex "^\d+\s(\d+)"</paramValue>
-      <paramValue name="idSql">select source_id, aa_sequence_id from dots.externalaasequence</paramValue>
-      <paramValue name="extDbRlsSpec">$$subjectExtDbRlsSpec$$</paramValue>
-      <paramValue name="tableName">DoTS::ExternalAASequence</paramValue>
-      <depends name="loadSubjectSubset"/>
-    </step>
-
     <step name="loadSimilarities" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlastSimilarities" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/master/mainresult/blastSimilarity.out</paramValue>
       <paramValue name="queryTable">$$queryTable$$</paramValue>
