@@ -25,7 +25,7 @@ INSERT INTO comments2.TargetCategory (target_category_id, category, comment_targ
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(3, 'Function', 'gene');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(4, 'Expression', 'gene');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(5, 'Sequence', 'gene');
-INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(6, 'other', 'gene');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(6, 'Phenotype', 'gene');
 
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(7, 'Characteristics/Overview', 'isolate');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(8, 'Reference', 'isolate');
@@ -36,6 +36,7 @@ INSERT INTO comments2.TargetCategory (target_category_id, category, comment_targ
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(12, 'Centromere', 'genome');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(13, 'Genomic Assembly', 'genome');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(14, 'Sequence', 'genome');
+INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(33, 'Phenotype', 'genome');
 
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(15, 'Characteristics/Overview', 'snp');
 INSERT INTO comments2.TargetCategory (target_category_id, category, comment_target_id) VALUES(16, 'Gene Context', 'snp');
