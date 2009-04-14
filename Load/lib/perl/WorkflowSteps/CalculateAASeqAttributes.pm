@@ -18,7 +18,7 @@ sub run {
 
   my $args = "--extDbRlsName '$extDbName' --extDbRlsVer '$extDbRlsVer' --seqTable $table";
 
-  $args .= " --idSql \'$idSql\'" if $idSql;
+  $args .= " --idSql \"$idSql\"" if $idSql;
 
   $self->runPlugin($test,$undo, "ApiCommonData::Load::Plugin::CalculateAASeqAttributes",$args);
 

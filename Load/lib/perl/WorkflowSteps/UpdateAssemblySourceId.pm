@@ -18,7 +18,7 @@ sub run {
 
   if ($undo){
   }else{
-      self->runCmd($test, $cmd);      
+      $self->runCmd($test, $cmd);      
   }
 }
 
