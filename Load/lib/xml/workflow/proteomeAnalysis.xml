@@ -15,6 +15,7 @@
   <param name="goVersion"/>
   <param name="organismName"/>
   <param name="runExportPred"/>
+  <param name="mapEpitope"/>
 
   <constant name="dataDir">$$parentDataDir$$/proteome</constant>
   <constant name="proteinsFile">$$dataDir$$/AnnotatedProteins.fsa</constant>
@@ -86,7 +87,7 @@
       <depends name="runSignalP"/>
     </step>
 
-    <subgraph name="mapEpitopesToProteins" xmlFile="epitopesWorkflow.xml">
+    <subgraph name="mapEpitopesToProteins" xmlFile="epitopesWorkflow.xml" includeIf="$$mapEpitope$$">
       <paramValue name="proteinsFile">$$proteinsFile$$</paramValue>
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
