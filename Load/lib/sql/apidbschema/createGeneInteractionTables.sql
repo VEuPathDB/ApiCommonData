@@ -30,6 +30,9 @@ CREATE TABLE apidb.GeneInteraction (
  PRIMARY KEY (gene_interaction_id)
 );
 
+CREATE INDEX apidb.GeneInteraction_revix1 ON apidb.GeneInteraction (prey_gene_feature_id, gene_interaction_id);
+CREATE INDEX apidb.GeneInteraction_revix2 ON apidb.GeneInteraction (bait_gene_feature_id, gene_interaction_id);
+
 CREATE SEQUENCE apidb.GeneInteraction_sq;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneInteraction TO gus_w;

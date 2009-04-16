@@ -33,6 +33,9 @@ ALTER TABLE apidb.OrthologGroup
 ADD CONSTRAINT og_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease;
 
+CREATE INDEX apidb.OrthologGroup_revix
+ON apidb.OrthologGroup (external_database_release_id, ortholog_group_id);
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroup TO gus_w;
 GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 
@@ -96,9 +99,15 @@ ALTER TABLE apidb.OrthomclTaxon
 ADD CONSTRAINT ot_fk1 FOREIGN KEY (parent_id)
 REFERENCES apidb.OrthomclTaxon (orthomcl_taxon_id);
 
+CREATE INDEX apidb.OrthomclTaxon_revix
+ON apidb.OrthomclTaxon (parent_id, orthomcl_taxon_id);
+
 ALTER TABLE apidb.OrthomclTaxon
 ADD CONSTRAINT ot_fk2 FOREIGN KEY (taxon_id)
 REFERENCES sres.Taxon (taxon_id);
+
+CREATE INDEX apidb.OrthomclTaxon_revix
+ON apidb.OrthomclTaxon (taxon_id, orthomcl_taxon_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthomclTaxon TO gus_w;
 GRANT SELECT ON apidb.OrthomclTaxon TO gus_r;
@@ -773,6 +782,9 @@ CREATE TABLE ApiDB.OrthomclResource (
  FOREIGN KEY (orthomcl_taxon_id) REFERENCES ApiDB.OrthomclTaxon (orthomcl_taxon_id),
  PRIMARY KEY (orthomcl_resource_id)
 );
+
+CREATE INDEX ApiDB.OrthomclResource_revix
+ON ApiDB.OrthomclResource (orthomcl_taxon_id, orthomcl_resource_id);
 
 GRANT insert, select, update, delete ON ApiDB.OrthomclResource TO gus_w;
 GRANT select ON ApiDB.OrthomclResource TO gus_r;

@@ -47,6 +47,9 @@ FROM dual,
 WHERE 'AaSequenceAttribute' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
+CREATE INDEX apidb.AaSeqAttr_revix
+ON ApiDB.AaSequenceAttribute (aa_sequence_id, aa_sequence_attribute_id);
+
 CREATE INDEX apidb.AaSeqAttr_iep_idx
 ON apidb.AaSequenceAttribute (isoelectric_point, aa_sequence_attribute_id);
 
@@ -85,6 +88,9 @@ CREATE TABLE ApiDB.NaSequenceAttribute (
   FOREIGN KEY (na_sequence_id) REFERENCES DoTS.NASequenceImp (na_sequence_id),
   PRIMARY KEY (na_sequence_attribute_id)
 );
+
+CREATE INDEX ApiDB.NaSeqAttr_revix
+ON ApiDB.NaSequenceAttribute (na_sequence_id, na_sequence_attribute_id);
 
 CREATE SEQUENCE ApiDB.NaSequenceAttribute_sq;
 

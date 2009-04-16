@@ -25,6 +25,10 @@ CREATE TABLE apidb.RelatedNaFeature (
  PRIMARY KEY (related_na_feature_id)
 );
 
+CREATE INDEX APIDB.RelatedNaFeature_revix1 ON apidb.RelatedNaFeature (external_database_release_id, related_na_feature_id);
+CREATE INDEX APIDB.RelatedNaFeature_revix2 ON apidb.RelatedNaFeature (associated_na_feature_id, related_na_feature_id);
+CREATE INDEX APIDB.RelatedNaFeature_revix3 ON apidb.RelatedNafeature (na_feature_id, related_na_feature_id);
+
 CREATE SEQUENCE apidb.RelatedNaFeature_sq;
 
 GRANT insert, select, update, delete ON apidb.RelatedNaFeature TO gus_w;

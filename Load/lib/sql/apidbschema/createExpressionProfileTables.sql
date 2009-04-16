@@ -192,7 +192,8 @@ create table ApiDB.ProfileElementName (
  PRIMARY KEY (profile_element_name_id)
 );
 
-create index PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name);
+create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name);
+create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id);
 
 create sequence ApiDB.ProfileElementName_sq;
 
@@ -264,6 +265,10 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'GeneProfileCorrelation' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
+
+create index ApiDB.GeneProfileCorrelation_revix1 on ApiDB.GeneProfileCorrelation (second_profile_set_id, gene_profile_correlation_id);
+create index ApiDB.GeneProfileCorrelation_revix2 on ApiDB.GeneProfileCorrelation (first_profile_set_id, gene_profile_correlation_id);
+create index ApiDB.GeneProfileCorrelation_revix3 on ApiDB.GeneProfileCorrelation (gene_feature_id, gene_profile_correlation_id);
 
 ----------------------------------------------------------------------------
 

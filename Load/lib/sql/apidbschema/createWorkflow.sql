@@ -58,6 +58,9 @@ ALTER TABLE apidb.WorkflowStep
 ADD CONSTRAINT workflow_step_fk1 FOREIGN KEY (workflow_id)
 REFERENCES apidb.Workflow (workflow_id);
 
+CREATE INDEX apidb.WorkflowStep_revix
+ON apidb.WorkflowStep (workflow_id, workflow_step_id);
+
 ALTER TABLE apidb.WorkflowStep
 ADD CONSTRAINT workflow_step_uniq
 UNIQUE (name, workflow_id);
@@ -65,6 +68,9 @@ UNIQUE (name, workflow_id);
 ALTER TABLE apidb.Workflow
 ADD CONSTRAINT workflow_fk1 FOREIGN KEY (undo_step_id)
 REFERENCES apidb.WorkflowStep (workflow_step_id);
+
+CREATE INDEX apidb.workflow_revix0
+ON apidb.Workflow (undo_step_id, workflow_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStep TO gus_w;
 GRANT SELECT ON apidb.WorkflowStep TO gus_r;
@@ -91,9 +97,15 @@ ALTER TABLE apidb.WorkflowStepDependency
 ADD CONSTRAINT workflow_step_d_fk1 FOREIGN KEY (parent_id)
 REFERENCES apidb.WorkflowStep (workflow_step_id);
 
+CREATE INDEX apidb.WorkflowStepDependency_revix1
+ON apidb.WorkflowStepDependency (parent_id, workflow_step_dependency_id);
+
 ALTER TABLE apidb.WorkflowStepDependency
 ADD CONSTRAINT workflow_step_d_fk2 FOREIGN KEY (child_id)
 REFERENCES apidb.WorkflowStep (workflow_step_id);
+
+CREATE INDEX apidb.WorkflowStepDependency_revix2
+ON apidb.WorkflowStepDependency (child_id, workflow_step_dependency_id);
 
 ALTER TABLE apidb.WorkflowStepDependency
 ADD CONSTRAINT workflow_step_d_uniq
@@ -123,9 +135,15 @@ ALTER TABLE apidb.WorkflowStepAlgInvocation
 ADD CONSTRAINT workflow_step_alg_inv_fk1 FOREIGN KEY (workflow_step_id)
 REFERENCES apidb.WorkflowStep (workflow_step_id);
 
+CREATE INDEX apidb.WorkflowStepAlgInv_revix1
+ON apidb.WorkflowStepAlgInvocation (workflow_step_id, workflow_step_alg_inv_id);
+
 ALTER TABLE apidb.WorkflowStepAlgInvocation
 ADD CONSTRAINT workflow_step_alg_inv_fk2 FOREIGN KEY (algorithm_invocation_id)
 REFERENCES core.AlgorithmInvocation (algorithm_invocation_id);
+
+CREATE INDEX apidb.WorkflowStepAlgInv_revix2
+ON apidb.WorkflowStepAlgInvocation (algorithm_invocation_id, workflow_step_alg_inv_id);
 
 ALTER TABLE apidb.WorkflowStepAlgInvocation
 ADD CONSTRAINT workflow_step_alg_inv_uniq
