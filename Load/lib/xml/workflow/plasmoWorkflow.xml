@@ -16,8 +16,6 @@
   <param name="PvivaxGenomeSource"/>
   <param name="PvivaxPredictedTranscriptsExtDbRlsSpec"/>
   <param name="PvivaxVirtualSeqsExtDbRlsSpec"/>
-  <param name="PvivaxMitoExtDbRlsSpec"/>
-  <param name="PvivaxMitoGenomeSource"/>
   <param name="PchabaudiExtDbRlsSpec"/>
   <param name="PchabaudiGenomeSource"/>
   <param name="PknowlesiExtDbRlsSpec"/>
@@ -125,42 +123,6 @@
     <paramValue name="genomeSize">26960075</paramValue>
     <paramValue name="skipProteomeAnalysis">false</paramValue>
     <paramValue name="mapEpitope">true</paramValue>
-    <depends name="common"/>
-  </subgraph>
-
-  <subgraph name="PvivaxMitoAnalysis" xmlFile="organismAnalysis.xml">
-    <paramValue name="projectName">$$projectName$$</paramValue>
-    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
-    <paramValue name="parentDataDir"></paramValue>
-    <paramValue name="organismName">PvivaxMito</paramValue>
-    <paramValue name="organismFullName">Plasmodium vivax Sal-1 mitochondrial</paramValue>
-    <paramValue name="organismTwoLetterAbbrev">Pv</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$PvivaxMitoExtDbRlsSpec$$</paramValue>
-    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
-    <paramValue name="genomeSource">$$PvivaxMitoGenomeSource$$</paramValue>
-    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
-    <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
-    <paramValue name="soVersion">$$soVersion$$</paramValue>
-    <paramValue name="goVersion">$$goVersion$$</paramValue>
-    <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
-    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
-    <paramValue name="ncbiTaxonId">126793</paramValue>
-    <paramValue name="parentNcbiTaxonId">5855</paramValue>
-    <paramValue name="usePredictedTranscripts">false</paramValue>
-    <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>
-    <paramValue name="runtRNAScan">false</paramValue>
-    <paramValue name="runExportPred">true</paramValue>
-    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
-    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
-    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="maxIntronSize">20000</paramValue>
-    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
-    <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
-    <paramValue name="repeatMaskSpecies">-species Plasmodium</paramValue>
-    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
-    <paramValue name="genomeSize">5990</paramValue>
-    <paramValue name="skipProteomeAnalysis">false</paramValue>
-    <paramValue name="mapEpitope">false</paramValue>
     <depends name="common"/>
   </subgraph>
 
