@@ -1122,6 +1122,25 @@
 
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- Updated annotation in genedb for tritryp -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <attributeQueryRef ref="GeneAttributes.updated_annotation" includeProjects="TriTrypDB">
+            <columnAttribute displayName="Updated Sequence" internal="true"
+                    name="updated_annotation"/>
+          </attributeQueryRef>
+        
+         <textAttribute name="GeneDB_updated"
+                        internal="true" inReportMaker="false"
+                        includeProjects="TriTrypDB">
+            <text>
+               <![CDATA[
+                     <a href="http://beta.genedb.org/NamedFeature?name=$$updated_annotation$$" target="genedb">View updated annotation at GeneDB</a>
+                     ]]>
+            </text>
+         </textAttribute>
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- PlasmoDB New Annotation -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

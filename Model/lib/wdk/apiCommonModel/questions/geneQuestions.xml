@@ -223,6 +223,36 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- updated annotation from genedb ... may replace with web services query in future -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesWithUpdatedAnnotation" includeProjects="TriTrypDB"
+         category="Gene Attributes"
+         displayName="Updated Annotation"
+         shortDisplayName="Updated GeneDB"
+         queryRef="GeneId.GenesWithUpdatedAnnotation"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList 
+              summary="organism,location_text,product,genedb_link"
+              sorting="organism asc,location_text asc"
+        />
+        <summary>
+           Find genes for which the annotation has been updated at GeneDB.
+        </summary>
+        <description>
+           <![CDATA[
+           Find genes for which the annotation has been updated at GeneDB since the last TriTrypDB build.
+          ]]>
+        </description>
+
+        <dynamicAttributes>
+             <columnAttribute name="genedb_link" displayName="GeneDB Link" align="center"
+                              inReportMaker="false"/>
+         </dynamicAttributes>
+    </question>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Exon count -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

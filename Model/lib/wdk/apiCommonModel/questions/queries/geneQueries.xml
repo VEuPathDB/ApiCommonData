@@ -77,6 +77,25 @@
        </sql>
     </sqlQuery>
 
+    <sqlQuery name="GenesWithUpdatedAnnotation" includeProjects="TriTrypDB"
+              isCacheable="true">
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="genedb_link"/>
+       <sql>
+             <![CDATA[
+                  select ga.source_id, '@PROJECT_ID@' as project_id, '<a href="http://beta.genedb.org/NamedFeature?name=' || ga.source_id || '" target="genedb">GeneDB record</a>' as genedb_link
+                  from sres.dbref r, sres.externaldatabaserelease rel, dots.dbrefnafeature rf,
+                  apidb.geneattributes ga, sres.externaldatabase ed
+                  where ga.na_feature_id = rf.na_feature_id(+)
+                  and rf.db_ref_id = r.db_ref_id
+                  and r.external_database_release_id = rel.external_database_release_id
+                  and rel.external_database_id = ed.external_database_id
+                  and ed.name = 'Updated genes DBRefs'
+           ]]>
+       </sql>
+    </sqlQuery>
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ChIP chip chromatin marks -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
