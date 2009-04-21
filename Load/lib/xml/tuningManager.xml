@@ -2838,6 +2838,33 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+  <tuningTable name="apidb.TriTrypExpressionGraphs">
+    <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.TriTrypExpressionGraphs&1 NOLOGGING AS
+SELECT ga.source_id,
+       COUNT(promastigote) as graph_infantum_promastigote
+FROM apidb.GeneAttributes ga,
+     (SELECT p.source_id, 1 AS promastigote
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Lmajor promastigote time-course biorep01'
+        AND p.profile_set_id = ps.profile_set_id) promastigote
+  WHERE ga.source_id = promastigote.source_id(+)
+GROUP BY ga.source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.TrypExpGraph_sourceId_idx1234 ON apidb.TriTrypExpressionGraphs&1 (source_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.NaSynteny">
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.NaSequenceImp"/>
