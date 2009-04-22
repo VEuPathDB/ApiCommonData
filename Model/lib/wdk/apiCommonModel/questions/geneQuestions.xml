@@ -3142,6 +3142,38 @@ References:
   <!-- Expression timing -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+    <question name="GenesByPromastigoteTimeSeries" includeProjects="TriTrypDB,ApiDB"
+         displayName="L.infantum Promastigote Time Series"
+         shortDisplayName="Promastigote Time Series"
+         category="Transcript Expression"
+         queryRef="GeneId.GenesByExpressionTiming"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList includeProjects="TriTrypDB"
+         summary="organism,product,max_fc,triTrypPromastigoteTimeSeries"
+        /> 
+        <attributesList includeProjects="ApiDB"
+         summary="organism,product,max_fc"
+        /> 
+        <summary>
+        Find L.infantum genes based on expression differences in a promastigote time series.
+        </summary>
+
+        <description>
+           <![CDATA[
+        Find L.infantum genes based on expression differences in a promastigote time series.
+          ]]>
+        </description>
+        <dynamicAttributes>
+           <columnAttribute name="max_fc" displayName="Max Fold Induction"
+                             inReportMaker="false"/>
+        </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Linfantum_promastigote_ExpressionData</value>
+       </propertyList>
+    </question>
+
+
+
     <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
          displayName="Expression Timing (P.f.)"
          shortDisplayName="Pf Expr Time"

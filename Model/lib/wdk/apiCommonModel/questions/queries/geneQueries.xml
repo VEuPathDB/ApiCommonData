@@ -2253,20 +2253,20 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Expression Timing -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionTiming" includeProjects="PlasmoDB" 
+    <sqlQuery name="GenesByExpressionTiming" includeProjects="PlasmoDB,TriTrypDB" 
               isCacheable="true">
         <paramRef ref="geneParams.profileSet"/>
         <paramRef ref="geneParams.minOrMax"/>
         <paramRef ref="geneParams.maxExprHour"/>
-        <paramRef ref="geneParams.maxPlusMinusHours"/>
+        <paramRef ref="geneParams.maxPlusMinusHours" includeProjects="PlasmoDB"/>
         <paramRef ref="geneParams.minExprHour"/>
-        <paramRef ref="geneParams.minPlusMinusHours"/>
+        <paramRef ref="geneParams.minPlusMinusHours" includeProjects="PlasmoDB"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_fc"/>
-        <sql>
+        <sql includeProjects="PlasmoDB">
           <![CDATA[
           SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc,'@PROJECT_ID@' as project_id
           FROM apidb.profile pr, apidb.profileset prs,
@@ -2275,6 +2275,23 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                  OR abs($$maxExprHour$$ - pr.equiv_max) <= $$maxPlusMinusHours$$)
           AND ($$minOrMax$$ = 'max'
                  OR abs($$minExprHour$$ - pr.equiv_min) <= $$minPlusMinusHours$$)
+          AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.max_percentile >= $$expressionPct$$ / 100
+          AND pr.source_id = gf.source_id
+          AND pr.profile_set_id = prs.profile_set_id
+          AND prs.name like ($$profileSet$$)
+          group BY gf.source_id
+          ]]>
+      </sql>
+        <sql includeProjects="TriTrypDB">
+          <![CDATA[
+          SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc,'@PROJECT_ID@' as project_id
+          FROM apidb.profile pr, apidb.profileset prs,
+               dots.nafeature gf
+          WHERE ($$minOrMax$$ = 'min'
+                 OR pr.time_of_max_expr = $$maxExprHour$$)
+          AND ($$minOrMax$$ = 'max'
+                 OR pr.time_of_min_expr = $$minExprHour$$)
           AND pr.ind_ratio >= $$inductionFold$$
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
