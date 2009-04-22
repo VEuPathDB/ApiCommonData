@@ -773,6 +773,24 @@
             </sql>
         </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- TriTryp expression graphs -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="ExpressionGraphs" includeProjects="TriTrypDB">
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="graph_infantum_promastigote" />
+            <sql>
+            <![CDATA[
+               SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
+                      NVL(graph_infantum_promastigote, 0) AS graph_infantum_promastigote
+               FROM apidb.tritrypexpressiongraphs egs,apidb.geneattributes ga
+               WHERE ga.source_id = egs.source_id(+) 
+            ]]>
+            </sql>
+        </sqlQuery>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- GFF sequence -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

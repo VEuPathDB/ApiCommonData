@@ -914,6 +914,19 @@
               </text>
             </textAttribute>
 
+           <textAttribute name="triTrypPromastigoteTimeSeries"
+                            displayName="L.infantum Promastigote Time Series - Graph"
+                           inReportMaker="false" truncateTo="100000" sortable="false"
+                           includeProjects="TriTrypDB">
+              <text>
+                <![CDATA[
+                <img src="/cgi-bin/dataPlotter.pl?type=MylerLinfantum::Ver1&project_id=TriTrypDB&model=tritryp&fmt=png&id=LinJ30_V3.1420&thumb=1"/>
+                ]]>
+              </text>
+            </textAttribute>
+
+
+
 
             <textAttribute name="derisiOverlayPct"
                             displayName="Pf-iRBC expr profile graph (GS array)"
@@ -1088,6 +1101,15 @@
 
           <attributeQueryRef ref="GeneAttributes.ExpressionGraphs" includeProjects="GiardiaDB">
             <columnAttribute name="graph_stress" internal="true"
+                             inReportMaker="false"/>
+          </attributeQueryRef>
+
+         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- TriTryp Expression attributes -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <attributeQueryRef ref="GeneAttributes.ExpressionGraphs" includeProjects="TriTrypDB">
+            <columnAttribute name="graph_infantum_promastigote" internal="true"
                              inReportMaker="false"/>
           </attributeQueryRef>
 
