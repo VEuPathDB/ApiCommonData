@@ -310,12 +310,13 @@ sub calculateSummaryStats {
     $resultHash{'min_expression'} = $min;
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
+    $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
     if ($timePointMappingRef) {
       $resultHash{'equiv_max'} = $timePointMapping{$maxKey};
       $resultHash{'equiv_min'} = $timePointMapping{$minKey};
       $resultHash{'time_of_max_expr'} = $timePointMapping{$maxKey};
       $resultHash{'time_of_min_expr'} = $timePointMapping{$minKey};
-      $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
+
     }
 
     my $maxPercentile = 0;
