@@ -2259,7 +2259,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.minOrMax"/>
         <paramRef ref="geneParams.maxExprHour"/>
         <paramRef ref="geneParams.maxPlusMinusHours" includeProjects="PlasmoDB"/>
-        <paramRef ref="geneParams.minExprHour"/>
+        <paramRef ref="geneParams.minExprHour" includeProjects="PlasmoDB"/>
         <paramRef ref="geneParams.minPlusMinusHours" includeProjects="PlasmoDB"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
@@ -2291,7 +2291,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           WHERE ($$minOrMax$$ = 'min'
                  OR pr.time_of_max_expr = $$maxExprHour$$)
           AND ($$minOrMax$$ = 'max'
-                 OR pr.time_of_min_expr = $$minExprHour$$)
+                 OR pr.time_of_min_expr = $$maxExprHour$$)
           AND pr.ind_ratio >= $$inductionFold$$
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
