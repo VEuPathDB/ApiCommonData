@@ -1187,8 +1187,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <enumParam name="minOrMax"
                      prompt="Query based on"
                      multiPick="false">
-      <help>  
+      <help excludeProjects="TriTrypDB">  
           Choosing both max and min expression restricts results using BOTH specified parameters.  By choosing one, the other will be ignored. 
+      </help>
+      <help>
+         Find genes where the expression level is at its highest or lowest point in the time series.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
@@ -1210,8 +1213,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
 
     <enumParam name="maxExprHour"
-                     prompt="Timing of Minimal/Maximal Expression"
-                     multiPick="false"
+                     prompt="Timing"
+                     multiPick="true"
                      quote="false"
                      includeProjects="TriTrypDB">
       <help>
@@ -1219,8 +1222,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </help>
       <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
-        <enumValue>
-          <term>0 hours</term>
+        <enumValue default="true">
+          <term>0 hours - promastigote</term>
           <internal>0</internal>
         </enumValue>
         <enumValue>
@@ -1247,8 +1250,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           <term>24 hours</term>
           <internal>24</internal>
         </enumValue>
-        <enumValue default="true">
-          <term>144 hours</term>
+        <enumValue>
+          <term>144 hours - amastigote</term>
           <internal>144</internal>
         </enumValue>
       </enumList>

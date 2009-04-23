@@ -2255,7 +2255,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByExpressionTiming" includeProjects="PlasmoDB,TriTrypDB" 
               isCacheable="true">
-        <paramRef ref="geneParams.profileSet"/>
         <paramRef ref="geneParams.minOrMax"/>
         <paramRef ref="geneParams.maxExprHour"/>
         <paramRef ref="geneParams.maxPlusMinusHours" includeProjects="PlasmoDB"/>
@@ -2263,6 +2262,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.minPlusMinusHours" includeProjects="PlasmoDB"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
+        <paramRef ref="geneParams.profileSet"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_fc"/>
@@ -2289,9 +2289,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
           WHERE ($$minOrMax$$ = 'min'
-                 OR pr.time_of_max_expr = $$maxExprHour$$)
+                 OR pr.time_of_max_expr in ($$maxExprHour$$))
           AND ($$minOrMax$$ = 'max'
-                 OR pr.time_of_min_expr = $$maxExprHour$$)
+                 OR pr.time_of_min_expr in ($$maxExprHour$$))
           AND pr.ind_ratio >= $$inductionFold$$
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
