@@ -3143,7 +3143,7 @@ References:
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByPromastigoteTimeSeries" includeProjects="TriTrypDB,ApiDB"
-         displayName="L.infantum Promastigote Time Series"
+         displayName="L. donovani promastigote differentiation"
          shortDisplayName="Expr Time Ser"
          category="Transcript Expression"
          queryRef="GeneId.GenesByExpressionTiming"
@@ -3155,12 +3155,37 @@ References:
          summary="organism,product,max_fc"
         /> 
         <summary>
-        Find L.infantum genes based on expression differences in a promastigote time series.
+        Find L.infantum genes based on expression differences in a promastigote-to-amastigote differentiation time series in-vitro.
         </summary>
 
         <description>
            <![CDATA[
-        Find L.infantum genes based on expression differences in a promastigote time series.
+        Find <i>L. infantum</i> genes based on expression differences in a <i>L. donovani</i> promastigote-to-amastigote differentiation time series.<p><br>
+Axenic promastigote-to-amastigote differentiation of <i>Leishmania
+donovani</i> was induced by inoculating late-log phase promastigotes in
+medium 199 at pH 5.5 containing 25% fetal bovine serum and incubating
+them at 37C in 5% CO2 environment.  RNA (and protein) was extracted
+from the cultures at 0 (promastigotes), 2.5, 5.0, 7.5, 10, 15, 24 and
+144 (mature amastigotes) hr after exposure to the differentiation
+signal.  cDNA was prepared by reverse transcription using random
+primers, labeled according to Nimblegen's standard protocol, and
+hybridized to a Nimblegen array based on the L. infantum v 3.0
+sequence, supplemented by L. major sequence for some genes.  Each
+protein-coding gene was represented by eight probes and placed on the
+microarray chip in triplicate.  A total of 16 hybridizations were
+performed, one for each time-point in two biological replicates of
+this experiment.  The raw data were subjected to quantile
+normalization across all chips, and a single value for each probe
+determined using a Tukey Biweight median value of the triplicates on
+each chip.  A single CDS-level value for each chip was similarly
+determined by a Tukey Biweight median of all probes that map to a
+given gene.  The gene-level signals were then log2-scaled to the
+corresponding 0 hour (promastigote) signal.<p><br>
+This work was carried out by Tami Lahav, Neta Holland, Hanna Volpin &
+Dan Zilberstein at the Technion Institute, Israel and Amanda Anderson-
+Green, Dhileep Sivam and Peter Myler at Seattle Biomedical Research
+Institute, USA and is described in further detail in Sivam et al.
+(manuscript in preparation).
           ]]>
         </description>
         <dynamicAttributes>
