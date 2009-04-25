@@ -3149,10 +3149,12 @@ References:
          queryRef="GeneId.GenesByExpressionTiming"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="TriTrypDB"
-         summary="organism,product,max_fc,triTrypPromastigoteTimeSeries"
+         summary="organism,product,max_fc,num_replicates,triTrypPromastigoteTimeSeries"
+         sorting="max_fc desc"         
         /> 
         <attributesList includeProjects="ApiDB"
          summary="organism,product,max_fc"
+         sorting="max_fc desc"         
         /> 
         <summary>
         Find L.infantum genes based on expression differences in a promastigote-to-amastigote differentiation time series in-vitro.
@@ -3189,8 +3191,8 @@ Institute, USA and is described in further detail in Sivam et al.
           ]]>
         </description>
         <dynamicAttributes>
-           <columnAttribute name="max_fc" displayName="Max Fold Induction"
-                             inReportMaker="false"/>
+           <columnAttribute name="max_fc" displayName="Max Fold Induction" align="center"/>
+           <columnAttribute name="num_replicates" displayName="# Replicates" align="center"/>
         </dynamicAttributes>
        <propertyList name="specificAttribution">
          <value>Linfantum_promastigote_ExpressionData</value>

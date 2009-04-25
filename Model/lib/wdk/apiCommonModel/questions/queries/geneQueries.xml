@@ -2263,12 +2263,14 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
         <paramRef ref="geneParams.profileSet"/>
+        <paramRef ref="geneParams.require_replicates" includeProjects="TriTrypDB"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_fc"/>
+        <column name="num_replicates" includeProjects="TriTrypDB"/>
         <sql includeProjects="PlasmoDB">
           <![CDATA[
-          SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc,'@PROJECT_ID@' as project_id
+          SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc, '@PROJECT_ID@' as project_id
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
           WHERE ($$minOrMax$$ = 'min'
@@ -2285,7 +2287,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
         <sql includeProjects="TriTrypDB">
           <![CDATA[
-          SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc,'@PROJECT_ID@' as project_id
+          SELECT iq.source_id, to_char(max(iq.max_fc), '999.99') as max_fc,
+                 count(*) as num_replicates, '@PROJECT_ID@' as project_id
+          from (
+          SELECT gf.source_id, prs.name, max(pr.ind_ratio) as max_fc
           FROM apidb.profile pr, apidb.profileset prs,
                dots.nafeature gf
           WHERE ($$minOrMax$$ = 'min'
@@ -2297,7 +2302,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
           AND prs.name like ($$profileSet$$)
-          group BY gf.source_id
+          group BY gf.source_id,prs.name) iq
+          group by iq.source_id
+          having count(*) >= $$require_replicates$$
           ]]>
       </sql>
     </sqlQuery>

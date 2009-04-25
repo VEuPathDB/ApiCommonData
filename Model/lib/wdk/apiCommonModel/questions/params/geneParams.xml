@@ -1129,34 +1129,57 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         Choose experiment(s) to query
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList>
-        <enumValue default="true" includeProjects="PlasmoDB">
+      <enumList includeProjects="PlasmoDB">
+        <enumValue default="true">
           <term>Any of the time courses</term>
           <internal>DeRisi % Smoothed Averaged</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue>
           <term>Dev. Series 3D7 (glass slide), DeRisi</term>
           <internal>DeRisi 3D7 Smoothed Averaged</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue>
           <term>Dev. Series Dd2 (glass slide), DeRisi</term>
           <internal>DeRisi Dd2 Smoothed Averaged</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue>
           <term>Dev. Series HB3 (glass slide), DeRisi</term>
           <internal>DeRisi HB3 Smoothed Averaged</internal>
         </enumValue>
-        <enumValue includeProjects="TriTrypDB">
-          <term>Promastigote Time Series - Either Replicate</term>
+      </enumList>
+      <enumList includeProjects="TriTrypDB">
+        <enumValue default="true">
+          <term>Either or Both Replicates (choose require replicates below)</term>
           <internal>Lmajor promastigote time-course biorep0%</internal>
         </enumValue>
-        <enumValue includeProjects="TriTrypDB">
-          <term>Promastigote Time Series - Replicate 1</term>
+        <enumValue>
+          <term>Replicate 1 (require replicate must be No)</term>
           <internal>Lmajor promastigote time-course biorep01</internal>
         </enumValue>
-        <enumValue includeProjects="TriTrypDB">
-          <term>Promastigote Time Series - Replicate 2</term>
+        <enumValue>
+          <term>Replicate 2 (require replicates must be No)</term>
           <internal>Lmajor promastigote time-course biorep02</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+    <enumParam name="require_replicates"
+                     prompt="Require Both Replicates"
+                     multiPick="false"
+                     quote="false"
+                     includeProjects="TriTrypDB">
+      <help>
+             Require that both replicates match the search parameters
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue default="true">
+          <term>No</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Yes</term>
+          <internal>2</internal>
         </enumValue>
       </enumList>
     </enumParam>
