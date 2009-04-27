@@ -2263,11 +2263,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
         <paramRef ref="geneParams.profileSet"/>
-        <paramRef ref="geneParams.require_replicates" includeProjects="TriTrypDB"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_fc"/>
-        <column name="num_replicates" includeProjects="TriTrypDB"/>
+        <column name="num_replicates" includeProjects="TriTrypDB"/> 
         <sql includeProjects="PlasmoDB">
           <![CDATA[
           SELECT gf.source_id, to_char(max(pr.ind_ratio), '999.99') as max_fc, '@PROJECT_ID@' as project_id
@@ -2301,10 +2300,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           AND pr.max_percentile >= $$expressionPct$$ / 100
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
-          AND prs.name like ($$profileSet$$)
+          AND prs.name like case when $$profileSet$$ = '2' then 'Lmajor promastigote time-course biorep0%' else $$profileSet$$ end
           group BY gf.source_id,prs.name) iq
           group by iq.source_id
-          having count(*) >= $$require_replicates$$
+          having count(*) >= case when $$profileSet$$ = '2' then 2 else 1 end
           ]]>
       </sql>
     </sqlQuery>

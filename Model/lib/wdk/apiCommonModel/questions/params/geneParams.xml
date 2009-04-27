@@ -1125,8 +1125,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                      prompt="Microarray time course(s) to query"
                      multiPick="false"
                      includeProjects="PlasmoDB,TriTrypDB">
-      <help>
+      <help includeProjects="PlasmoDB,ApiDB">
         Choose experiment(s) to query
+      </help>
+      <help includeProjects="TriTrypDB">
+        Choose replicate to query.  Note that choosing Both 1 and 2 will only return genes that match the search criteria in both replicates.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList includeProjects="PlasmoDB">
@@ -1148,17 +1151,21 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </enumValue>
       </enumList>
       <enumList includeProjects="TriTrypDB">
-        <enumValue default="true">
-          <term>Either or Both Replicates (choose require replicates below)</term>
-          <internal>Lmajor promastigote time-course biorep0%</internal>
-        </enumValue>
         <enumValue>
-          <term>Replicate 1 (require replicate must be No)</term>
+          <term>Replicate 1</term>
           <internal>Lmajor promastigote time-course biorep01</internal>
         </enumValue>
         <enumValue>
-          <term>Replicate 2 (require replicates must be No)</term>
+          <term>Replicate 2</term>
           <internal>Lmajor promastigote time-course biorep02</internal>
+        </enumValue>
+        <enumValue>
+          <term>Either replicate 1 or replicate 2</term>
+          <internal>Lmajor promastigote time-course biorep0%</internal>
+        </enumValue>
+        <enumValue default="true">
+          <term>Both replicate 1 and replicate 2</term>
+          <internal>2</internal>
         </enumValue>
       </enumList>
     </enumParam>
