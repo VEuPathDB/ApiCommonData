@@ -84,7 +84,7 @@ GRANT select on comments2.commentTargetCategory_pkseq to GUS_R;
 CREATE TABLE comments2.CommentReference
 (
   comment_reference_id NUMBER(10) NOT NULL,
-  source_id VARCHAR2(15) NOT NULL,
+  source_id VARCHAR2(100) NOT NULL,
   database_name VARCHAR2(15) NOT NULL,
   comment_id NUMBER(10) NOT NULL,
   CONSTRAINT comment_reference_key PRIMARY KEY (comment_reference_id),
