@@ -736,6 +736,7 @@
                     AND c.stable_id = gf.source_id
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
+                    AND c.is_visible = 1
               UNION
               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
                      c.comment_id, d.stable_id,
@@ -753,6 +754,7 @@
                     AND d.stable_id = gf.source_id
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
+                    AND c.is_visible = 1
               )
               ORDER BY comment_date DESC
             ]]>
