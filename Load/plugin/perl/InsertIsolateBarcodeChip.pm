@@ -128,6 +128,9 @@ sub run {
     $self->fetchSequenceOntologyId();
   }
 
+  my $dbiDb = $self->getDb();
+  $dbiDb->setMaximumNumberOfObjects(100000);
+
   while(<FILE>) {
     chomp;
     next if /^\s*$/;
