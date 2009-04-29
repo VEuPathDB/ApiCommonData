@@ -2311,7 +2311,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="geneParams.profileSet" quote="false"/>
         <paramRef ref="geneParams.minOrMax" quote="false"/>
         <paramRef ref="geneParams.maxExprHour"/>
         <paramRef ref="geneParams.maxPlusMinusHours"/>
@@ -2319,6 +2318,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.minPlusMinusHours"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
+         <paramRef ref="geneParams.profileSet" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
           <wsColumn name="max_fc" width="32" wsName="max_fc"/>
