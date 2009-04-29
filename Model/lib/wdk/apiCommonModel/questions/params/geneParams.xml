@@ -1123,8 +1123,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
     <enumParam name="profileSet"
                      prompt="Microarray time course(s) to query"
-                     multiPick="false"
-                     includeProjects="PlasmoDB,TriTrypDB">
+                     multiPick="false">
+<!--                     includeProjects="PlasmoDB,TriTrypDB">   why is this needed?    -->
       <help includeProjects="PlasmoDB,ApiDB">
         Choose experiment(s) to query
       </help>
@@ -1132,44 +1132,44 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         Choose replicate to query.  Note that choosing Both 1 and 2 will only return genes that match the search criteria in both replicates.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
-      <enumList includeProjects="PlasmoDB">
-        <enumValue default="true">
+      <enumList>
+        <enumValue default="true" includeProjects="PlasmoDB,ApiDB">
           <term>Any of the time courses</term>
           <internal>DeRisi % Smoothed Averaged</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Dev. Series 3D7 (glass slide), DeRisi</term>
           <internal>DeRisi 3D7 Smoothed Averaged</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Dev. Series Dd2 (glass slide), DeRisi</term>
           <internal>DeRisi Dd2 Smoothed Averaged</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Dev. Series HB3 (glass slide), DeRisi</term>
           <internal>DeRisi HB3 Smoothed Averaged</internal>
         </enumValue>
-      </enumList>
-      <enumList includeProjects="TriTrypDB">
-        <enumValue>
+        <enumValue includeProjects="TriTrypDB,ApiDB">
           <term>Replicate 1</term>
           <internal>Lmajor promastigote time-course biorep01</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="TriTrypDB,ApiDB">
           <term>Replicate 2</term>
           <internal>Lmajor promastigote time-course biorep02</internal>
         </enumValue>
-        <enumValue>
+        <enumValue includeProjects="TriTrypDB,ApiDB">
           <term>Either replicate 1 or replicate 2</term>
           <internal>Lmajor promastigote time-course biorep0%</internal>
         </enumValue>
-        <enumValue default="true">
+        <enumValue default="true" includeProjects="TriTrypDB,ApiDB">
           <term>Both replicate 1 and replicate 2</term>
           <internal>2</internal>
         </enumValue>
       </enumList>
     </enumParam>
 
+
+<!-- where is this param used?  -->
     <enumParam name="require_replicates"
                      prompt="Require Both Replicates"
                      multiPick="false"
@@ -1246,7 +1246,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                      prompt="Timing"
                      multiPick="true"
                      quote="false"
-                     includeProjects="TriTrypDB">
+                     includeProjects="ApiDB,TriTrypDB">  
       <help>
          Time point where expression level was minimal or maximal
       </help>
@@ -1604,202 +1604,202 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <enumParam name="minExprHour"
                      prompt="Timing of minimum expression"
                      multiPick="false"
-                     quote="false"
-                     includeProjects="PlasmoDB,TriTrypDB">
+                     quote="false">
+<!--  not needed                      includeProjects="PlasmoDB,TriTrypDB">    -->
       <help>
        Time point where expression level was minimal
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>1 hour</term>
           <internal>1</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>2 hours</term>
           <internal>2</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>3 hours</term>
           <internal>3</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>4 hours</term>
           <internal>4</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>5 hours</term>
           <internal>5</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>6 hours</term>
           <internal>6</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>7 hours</term>
           <internal>7</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>8 hours</term>
           <internal>8</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>9 hours</term>
           <internal>9</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>10 hours</term>
           <internal>10</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>11 hours</term>
           <internal>11</internal>
         </enumValue>
-        <enumValue default="true" includeProjects="PlasmoDB">
+        <enumValue default="true" includeProjects="PlasmoDB,ApiDB">
           <term>12 hours</term>
           <internal>12</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>13 hours</term>
           <internal>13</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>14 hours</term>
           <internal>14</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>15 hours</term>
           <internal>15</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>16 hours</term>
           <internal>16</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>17 hours</term>
           <internal>17</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>18 hours</term>
           <internal>18</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>19 hours</term>
           <internal>19</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>20 hours</term>
           <internal>20</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>21 hours</term>
           <internal>21</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>22 hours</term>
           <internal>22</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>23 hours</term>
           <internal>23</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>24 hours</term>
           <internal>24</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>25 hours</term>
           <internal>25</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>26 hours</term>
           <internal>26</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>27 hours</term>
           <internal>27</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>28 hours</term>
           <internal>28</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>29 hours</term>
           <internal>29</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>30 hours</term>
           <internal>30</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>31 hours</term>
           <internal>31</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>32 hours</term>
           <internal>32</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>33 hours</term>
           <internal>33</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>34 hours</term>
           <internal>34</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>35 hours</term>
           <internal>35</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>36 hours</term>
           <internal>36</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>37 hours</term>
           <internal>37</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>38 hours</term>
           <internal>38</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>39 hours</term>
           <internal>39</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>40 hours</term>
           <internal>40</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>41 hours</term>
           <internal>41</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>42 hours</term>
           <internal>42</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>43 hours</term>
           <internal>43</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>44 hours</term>
           <internal>44</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>45 hours</term>
           <internal>45</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>46 hours</term>
           <internal>46</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>47 hours</term>
           <internal>47</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>48 hours</term>
           <internal>48</internal>
         </enumValue>
