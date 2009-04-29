@@ -10,7 +10,7 @@ use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::IsolateSource;
 use GUS::Model::DoTS::IsolateFeature;
 use GUS::Model::DoTS::SnpFeature;
-
+use GUS::Model::SRes::SequenceOntology;
 use Data::Dumper;
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -89,6 +89,11 @@ my $argsDeclaration =
               isList         => 0,
               format         =>'Tab-delimited.'
            }), 
+ stringArg({  name           => 'SOTermName',
+	      descr          => 'The Sequence Ontology term for the sequence type',
+	      reqd           => 1,
+	      constraintFunc => undef,
+	      isList         => 0 }),
    ];
 
 sub new {
@@ -118,6 +123,10 @@ sub run {
   my $flag = 0;
   my %metaHash;
   my @snps;
+
+ if ($self->getArg('SOTermName')) {
+    $self->fetchSequenceOntologyId();
+  }
 
   while(<FILE>) {
     chomp;
@@ -180,6 +189,7 @@ sub run {
                        name                         => $snp_id,
                        source_id                    => $snp_id,
                        external_database_release_id => $extDbRlsId,
+		       sequence_ontology_id         => $self->{sequenceOntologyId},
                      };
 
       my $isolateFeature = GUS::Model::DoTS::IsolateFeature->new($featArgs);
@@ -244,6 +254,24 @@ sub processIsolateFeature {
   }
 
   return \@isolateFeature;
+}
+
+sub fetchSequenceOntologyId {
+  my ($self) = @_;
+
+  my $name = $self->getArg('SOTermName');
+
+  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $name });
+
+  $SOTerm->retrieveFromDB;
+
+  $self->{sequenceOntologyId} = $SOTerm->getId();
+
+  print STDERR ("SO ID:   ********** $self->{sequenceOntologyId} \n");
+
+  $self->{sequenceOntologyId}
+    || $self->userError("Can't find SO term '$name' in database");
+
 }
 
 sub undoTables {
