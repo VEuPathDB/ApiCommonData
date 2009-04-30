@@ -279,10 +279,11 @@ sub fetchSequenceOntologyId {
 
 sub undoTables {
   my ($self) = @_;
-  return ( 'DoTS.IsolateSource',
+  return ( 'DoTS.NALocation',
            'DoTS.IsolateFeature',
+	   'DoTS.IsolateSource',
            'DoTS.ExternalNASequence',
-           'DoTS.NALocation'
+           
          );
 }
 
