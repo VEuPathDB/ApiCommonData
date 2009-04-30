@@ -181,7 +181,7 @@ sub run {
       my $snpFeature = $self->getSnpFeature($snp_id);
       next unless $snpFeature;
 
-      $barcode .= $allele ? $allele : 'X';
+      $barcode .= $allele ? $allele : '-';
 
       my $chr_na_seq_id = $snpFeature->getNaSequenceId();
       my $snpNaLocation = $snpFeature->getChild('DoTS::NALocation', 1);
