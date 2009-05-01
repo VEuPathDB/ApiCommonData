@@ -4713,7 +4713,7 @@ sub runPairwiseMercatorMavid {
       @drafts =  map { "$_" } split(',', $draftString);
   }
   
-  if(uc($nonDraftString ne 'NONE'){
+  if(uc($nonDraftString) ne 'NONE'){
       @nonDrafts = map { "$_" } split(',', $nonDraftString);
   }
 
