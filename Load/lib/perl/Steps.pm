@@ -4707,8 +4707,15 @@ sub runPairwiseMercatorMavid {
   my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
   my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
 
-  my @drafts =  map { "$_" } split(',', $draftString);
-  my @nonDrafts = map { "$_" } split(',', $nonDraftString);
+  my (@drafts,@nonDrafts);
+
+  if(uc($draftString) ne 'NONE'){
+      @drafts =  map { "$_" } split(',', $draftString);
+  }
+  
+  if(uc($nonDraftString ne 'NONE'){
+      @nonDrafts = map { "$_" } split(',', $nonDraftString);
+  }
 
   foreach my $draft (@drafts) {
     my $dirName = "$mercatorDir/$draft-$referenceGenome";
