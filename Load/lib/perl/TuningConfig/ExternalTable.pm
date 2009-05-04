@@ -11,6 +11,7 @@ use ApiCommonData::Load::TuningConfig::Log;
 sub new {
     my ($class,
 	$name,      # name of database table
+        $dblink,
         $dbh,       # database handle
         $doUpdate)  # are we updating, not just checking, the db?
 	= @_;
@@ -21,6 +22,11 @@ sub new {
     $self->{name} = $name;
     $self->{dbh} = $dbh;
 
+    if ($dblink) {
+      $dblink = '@' . $dblink;
+    }
+    $self->{dblink} = $dblink;
+
     my ($schema, $table) = split(/\./, $name);
     $self->{schema} = $schema;
     $self->{table} = $table;
@@ -28,13 +34,13 @@ sub new {
     # check that this table exists in the database
     my $sql = <<SQL;
 select count(*) from (
- select owner, table_name from all_tables
+ select owner, table_name from all_tables$dblink
  where owner = upper('$schema') and table_name = upper('$table')
 union
- select owner, view_name from all_views
+ select owner, view_name from all_views$dblink
  where owner = upper('$schema') and view_name = upper('$table')
 union
- select owner, table_name from all_synonyms
+ select owner, table_name from all_synonyms$dblink
  where owner = upper('$schema') and synonym_name = upper('$table'))
 SQL
     my $stmt = $dbh->prepare($sql);
@@ -59,11 +65,12 @@ sub getTimestamp {
     return $self->{timestamp} if defined $self->{timestamp};
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
 
     # get the last-modified date for this table
     my $sql = <<SQL;
        select to_char(max(modification_date), 'yyyy-mm-dd hh24:mi:ss'), count(*)
-       from $self->{name}
+       from $self->{name}$dblink
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()
@@ -75,7 +82,7 @@ SQL
     $sql = <<SQL;
        select to_char(max_mod_date, 'yyyy-mm-dd hh24:mi:ss'), row_count,
               to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss')
-       from apidb.TuningMgrExternalDependency
+       from apidb.TuningMgrExternalDependency$dblink
        where name = upper('$self->{name}')
 SQL
     my $stmt = $dbh->prepare($sql);
@@ -106,7 +113,7 @@ SQL
 	# ExternalDependency record exists; update it
 	ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) no longer valid for $self->{name}");
 	$sql = <<SQL;
-        update apidb.TuningMgrExternalDependency
+        update apidb.TuningMgrExternalDependency$dblink
         set (max_mod_date, timestamp, row_count) =
           (select to_date('$max_mod_date', 'yyyy-mm-dd hh24:mi:ss'), sysdate, $row_count
 	  from dual)
@@ -116,7 +123,8 @@ SQL
 	# no ExternalDependency record; insert one
 	ApiCommonData::Load::TuningConfig::Log::addLog("    No stored timestamp found for $self->{name}");
 	$sql = <<SQL;
-        insert into apidb.TuningMgrExternalDependency (name, max_mod_date, timestamp, row_count)
+        insert into apidb.TuningMgrExternalDependency$dblink
+                    (name, max_mod_date, timestamp, row_count)
         select upper('$self->{name}'), to_date('$max_mod_date', 'yyyy-mm-dd hh24:mi:ss'), sysdate, $row_count
 	from dual
 SQL
@@ -147,6 +155,9 @@ sub checkTrigger {
     my ($self, $doUpdate) = @_;
 
     my $dbh = $self->{dbh};
+
+    # don't mess with triggers if we're looking at a remote table
+    return if $self->{dblink};
 
     # is this a table, a view, a materialized view, a synonym, or what?
     my $schema = $self->{schema};

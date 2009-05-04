@@ -8,11 +8,13 @@ use DBI;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::InternalTable;
 use ApiCommonData::Load::TuningConfig::ExternalTable;
+use ApiCommonData::Load::TuningConfig::ExternalTuningTable;
 use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
 
 my $configDir;
+my $props;
 my $startTime = time;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
@@ -48,10 +50,15 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
 
 $cleanupAge = 1.5 if !defined $cleanupAge;
 
-my $dbh = getDbHandle($instance, $propFile, $password);
+if ($propFile) {
+  my $simple = XML::Simple->new();
+  $props = $simple->XMLin($propFile);
+}
+
+my $dbh = getDbHandle($instance, $props, $password);
 
 my $tuningRegistry =
-  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh);
+  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
 
 $configFile = getConfigFileName($configFile, $tuningRegistry);
 ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
@@ -60,6 +67,7 @@ my ($config) = &parseConfigFile($configFile);
 # create an object for each <tuningTable> entity
 my %tuningTables;
 my %externalTables;
+my %externalTuningTables;
 foreach my $tuningTable (@{$config->{tuningTable}}) {
 
   $tuningTables{$tuningTable->{name}}
@@ -67,9 +75,11 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
       new($tuningTable->{name},
 	  $tuningTable->{internalDependency},
 	  $tuningTable->{externalDependency},
+	  $tuningTable->{externalTuningTableDependency},
 	  $tuningTable->{intermediateTable},
 	  $tuningTable->{sql},
-	  $tuningTable->{perl}, $dbh, $debug);
+	  $tuningTable->{perl},
+          $tuningTable->{unionization}, $dbh, $debug);
 }
 
 if ($doUpdate) {
@@ -80,6 +90,7 @@ if ($doUpdate) {
 ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
 my $undefinedInternal;
 my $nonexistentExternal;
+my $nonexistentExternalTuningTable;
 my $dependencyCycle;
 foreach my $tableName (keys(%tuningTables)) {
 
@@ -103,7 +114,7 @@ foreach my $tableName (keys(%tuningTables)) {
       # new ExternalTable instance in the hash, if we haven't seen this
       $externalTables{$dependency->{name}}
 	= ApiCommonData::Load::TuningConfig::ExternalTable->
-	  new($dependency->{name}, $dbh, $doUpdate)
+	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
 	    unless ($externalTables{$dependency->{name}});
 
       # add external-table object to list of external dependencies
@@ -115,6 +126,26 @@ foreach my $tableName (keys(%tuningTables)) {
       }
     }
   }
+
+  # check for externalTuningTableDependencies that aren't in the database
+  if ($tuningTables{$tableName}->getExternalTuningTableDependencyNames()) {
+    foreach my $dependency (@{$tuningTables{$tableName}->getExternalTuningTableDependencyNames()}) {
+
+      # new ExternalTuningTable instance in the hash, if we haven't seen this
+      $externalTuningTables{$dependency->{name}}
+	= ApiCommonData::Load::TuningConfig::ExternalTuningTable->
+	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
+	    unless ($externalTuningTables{$dependency->{name}});
+
+      # add externalTuning-table object to list of externalTuning dependencies
+      $tuningTables{$tableName}->addExternalTuningTableDependency($externalTuningTables{$dependency->{name}});
+
+      if (!$externalTuningTables{$dependency->{name}}->exists()) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalTuningDependency on $dependency->{name}, but no such table exists");
+	$nonexistentExternalTuningTable = 1;
+      }
+    }
+  }
 }
 
 # check for cycles in graph of dependencies
@@ -123,10 +154,7 @@ foreach my $table (keys(%tuningTables)) {
     if $tuningTables{$table}->hasDependencyCycle([]);
 }
 
-ApiCommonData::Load::TuningConfig::Log::addLog("Note that ExternalDependencies must be tables, not views or synonyms.")
-  if $nonexistentExternal;
-
-if ($undefinedInternal || $nonexistentExternal || $dependencyCycle) {
+if ($undefinedInternal || $nonexistentExternal || $nonexistentExternalTuningTable || $dependencyCycle) {
   ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
   $doUpdate = 0;
 } else {
@@ -410,15 +438,11 @@ sub parseConfigFile {
 }
 
 sub getDbHandle {
-  my ($instance, $propFile, $password) = @_;
+  my ($instance, $props, $password) = @_;
   my $username = 'apidb';
 
-  if ($propFile) {
-    my $simple = XML::Simple->new();
-    my $props = $simple->XMLin($propFile);
-    $password = $props->{password} if !$password;
-    $username = $props->{username} if $props->{username};
-  }
+  $password = $props->{password} if !$password;
+  $username = $props->{username} if $props->{username};
 
   my $dsn = "dbi:Oracle:" . $instance;
 

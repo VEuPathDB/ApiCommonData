@@ -13,9 +13,10 @@ sub new {
 	$name,                    # name of tuning table
         $internalDependencyNames,
         $externalDependencyNames,
+        $externalTuningTableDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls, $dbh, $debug)
+        $perls, $unionizations, $dbh, $debug)
 	= @_;
 
     my $self = {};
@@ -24,12 +25,15 @@ sub new {
     $self->{name} = $name;
     $self->{internalDependencyNames} = $internalDependencyNames;
     $self->{externalDependencyNames} = $externalDependencyNames;
+    $self->{externalTuningTableDependencyNames} = $externalTuningTableDependencyNames;
     $self->{intermediateTables} = $intermediateTables;
     $self->{sqls} = $sqls;
     $self->{perls} = $perls;
+    $self->{unionizations} = $unionizations;
     $self->{debug} = $debug;
     $self->{internalDependencies} = [];
     $self->{externalDependencies} = [];
+    $self->{externalTuningTableDependencies} = [];
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -61,6 +65,12 @@ sub getPerls {
   return $self->{perls};
 }
 
+sub getUnionizations {
+  my ($self) = @_;
+
+  return $self->{unionizations};
+}
+
 sub getInternalDependencyNames {
   my ($self) = @_;
 
@@ -73,6 +83,12 @@ sub getExternalDependencyNames {
   return $self->{externalDependencyNames};
 }
 
+sub getExternalTuningTableDependencyNames {
+  my ($self) = @_;
+
+  return $self->{externalTuningTableDependencyNames};
+}
+
 sub getInternalDependencies {
   my ($self) = @_;
 
@@ -83,6 +99,12 @@ sub getExternalDependencies {
   my ($self) = @_;
 
   return $self->{externalDependencies};
+}
+
+sub getExternalTuningTableDependencies {
+  my ($self) = @_;
+
+  return $self->{externalTuningTableDependencies};
 }
 
 sub getTimestamp {
@@ -107,6 +129,8 @@ sub getState {
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name}");
+print "stored: >" . $self->{dbDef} . "<\n";
+print "config: >" . $self->getDefString() . "<\n";
     $needUpdate = 1;
   }
 
@@ -132,6 +156,17 @@ sub getState {
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external table " . $dependency->getName());
     if ($dependency->getTimestamp() gt $self->{timestamp}) {
       $needUpdate = 1;
+    }
+  }
+
+  # check external tuning-table dependencies
+  if ($self->getExternalTuningTableDependencies()) {
+    foreach my $dependency (@{$self->getExternalTuningTableDependencies()}) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external tuning table table " . $dependency->getName());
+      if ($dependency->getTimestamp() gt $self->{timestamp}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    . . . which is newer.");
+	$needUpdate = 1;
+      }
     }
   }
 
@@ -172,6 +207,16 @@ sub update {
   $self->dropIntermediateTables($dbh);
 
   my $updateError;
+
+  foreach my $unionization (@{$self->{unionizations}}) {
+
+    last if $updateError;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("running unionization to build $self->{name}\n")
+	if $self->{debug};
+
+    $self->unionize($unionization, $dbh);
+  }
 
   foreach my $sql (@{$self->{sqls}}) {
 
@@ -250,11 +295,18 @@ SQL
 sub getDefString {
   my ($self) = @_;
 
+  return $self->{defString} if $self->{defString};
+
   my $sqls = $self->getSqls();
   my $defString = join(" ", @{$sqls}) if $sqls;
 
   my $perls = $self->getPerls();
   $defString .= join(" ", @{$perls}) if $perls;
+
+  $defString .= Dumper($self->getUnionizations())
+    if $self->getUnionizations();
+
+  $self->{defString} = $defString;
 
   return $defString;
 }
@@ -269,6 +321,12 @@ sub addExternalDependency {
     my ($self, $dependency) = @_;
 
     push(@{$self->{externalDependencies}}, $dependency);
+}
+
+sub addExternalTuningTableDependency {
+    my ($self, $dependency) = @_;
+
+    push(@{$self->{externalTuningTableDependencies}}, $dependency);
 }
 
 sub addInternalDependency {
@@ -400,6 +458,139 @@ SQL
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
   return $synonymRtn
+}
+
+sub unionize {
+  my ($self, $union, $dbh) = @_;
+
+  $union->{name} = $self->{name}
+    if !$union->{name};
+
+  my ($coltypeRef, $columnsRef, $columnSetRef, $sourceNumber, $fromsRef)
+    = $self->getColumnInfo($dbh, $union);
+
+  my %coltype = %{$coltypeRef};
+  my %columnSet = %{$columnSetRef};
+  my @columns = @{$columnsRef};
+  my @froms = @{$fromsRef};
+
+  # build create table
+  my @unionMembers; # array of query statements to be UNIONed
+  $sourceNumber = 0;
+
+  foreach my $source (@{$union->{source}}) {
+
+    $sourceNumber++;
+
+    my @selectees;  # array of terms for the SELECT clause
+    my $notAllNulls = 0; # TRUE if at least one column is really there (else skip the whole unionMember)
+
+    foreach my $column (@columns) {
+
+      if ($columnSet{$sourceNumber}->{$column}) {
+	$notAllNulls = 1;
+	push(@selectees, $column);
+      } else {
+	push(@selectees, 'cast (null as ' . $coltype{$column} . ') as ' . $column);
+      }
+    }
+    push(@unionMembers, 'select ' . join(', ', @selectees) . "\nfrom ". $froms[$sourceNumber])
+      if $notAllNulls;
+  }
+
+  my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
+
+  my $createTable = "create table $union->{name}$suffix as\n"
+    . join("\nunion\n", @unionMembers);
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("$createTable") if $self->{debug};
+  runSql($dbh, $createTable);
+}
+
+sub getColumnInfo {
+  my ($self, $dbh, $union) = @_;
+
+    my %coltype;
+    my @columns;
+    my %columnSet;
+    my $sourceNumber;
+    my @froms;
+
+    foreach my $source (@{$union->{source}}) {
+
+      $sourceNumber++;
+
+      my $dblink = $source->{dblink};
+      $dblink = "@" . $dblink if $dblink;
+      my $table = $source->{name};
+
+      my $tempTable;
+
+      if ($source->{query}) {
+	my $queryString = $source->{query}[0];
+	$tempTable = 'apidb.UnionizerTemp';
+	$table = $tempTable;
+	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString);
+	$froms[$sourceNumber] = '(' . $queryString . ')';
+      } else {
+	$table = $union->{name} if !$table;
+	$froms[$sourceNumber] = "$table$dblink";
+      }
+
+      my ($owner, $simpleTable) = split(/\./, $table);
+
+
+      my $sql = <<SQL;
+         select column_name, data_type, char_col_decl_length, column_id
+         from all_tab_columns$dblink
+         where owner=upper('$owner')
+           and table_name=upper('$simpleTable')
+         union
+         select tab.column_name, tab.data_type, tab.char_col_decl_length,
+                tab.column_id
+         from all_synonyms$dblink syn, all_tab_columns$dblink tab
+         where syn.table_owner = tab.owner
+           and syn.table_name = tab.table_name
+           and syn.owner=upper('$owner')
+           and syn.synonym_name=upper('$simpleTable')
+         order by column_id
+SQL
+      print "$sql\n\n" if $self->{debug};
+
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+
+      while (my ($columnName, $dataType, $charLen, $column_id) = $stmt->fetchrow_array()) {
+
+	# add this to the list of columns and store its datatype declaration
+	if (! $coltype{$columnName}) {
+	  push(@columns, $columnName);
+	  if ($dataType eq "VARCHAR2") {
+	    $coltype{$columnName} = 'VARCHAR2('.$charLen.')';
+	  } else {
+	    $coltype{$columnName} = $dataType;
+	  }
+	}
+
+	# note that this table has this column
+	$columnSet{$sourceNumber}->{$columnName} = 1;
+      }
+      $stmt->finish();
+
+      runSql($dbh, 'drop table ' . $tempTable) if ($tempTable);
+    }
+
+  return (\%coltype, \@columns, \%columnSet, $sourceNumber, \@froms);
+
+}
+
+sub runSql {
+
+  my ($dbh, $sql) = @_;
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
+  $stmt->finish();
 }
 
 1;

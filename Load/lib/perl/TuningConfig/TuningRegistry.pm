@@ -5,9 +5,11 @@ use strict;
 use ApiCommonData::Load::TuningConfig::Log;
 
 sub new {
-    my ($class, $dbh) = @_;
+    my ($class, $dbh, $dblink) = @_;
     my $self = {};
     $self->{dbh} = $dbh;
+    $dblink = "apidb.login_comment" if !$dblink;
+    $self->{dblink} = $dblink;
     bless($self, $class);
 
     return $self;
@@ -17,10 +19,11 @@ sub getInfoFromRegistry {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
 
     my $sql = <<SQL;
       select imi.instance_nickname, ti.instance_nickname, tf.subversion_url, tf.notify_emails
-      from apidb.TuningInstance\@apidb.login_comment ti, apidb.TuningFamily\@apidb.login_comment tf,
+      from apidb.TuningInstance\@$dblink ti, apidb.TuningFamily\@$dblink tf,
            apidb.InstanceMetaInfo imi
       where ti.instance_nickname(+) =  imi.instance_nickname
         and ti.family_name = tf.family_name(+)
@@ -67,10 +70,11 @@ sub setLastUpdater {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@apidb.login_comment
+      update apidb.TuningInstance\@$dblink
       set last_updater = '$processInfo'
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -83,10 +87,11 @@ sub setLastChecker {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@apidb.login_comment
+      update apidb.TuningInstance\@$dblink
       set last_checker = '$processInfo'
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -99,10 +104,11 @@ sub setOk {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@apidb.login_comment
+      update apidb.TuningInstance\@$dblink
       set last_ok = sysdate, outdated_since = null
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -115,12 +121,14 @@ sub setOutdated {
     my ($self) = @_;
 
     my $dbh = $self->{dbh};
+    my $dblink = $self->{dblink};
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@apidb.login_comment
+      update apidb.TuningInstance\@$dblink
       set outdated_since = sysdate
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
+         and outdated_since is null
 SQL
 
     $dbh->do($sql)
