@@ -42,12 +42,27 @@ sub preprocess {
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
 	    
+	  
 
-
-       
+	    if($type eq 'repeat_region'){
+		if($bioperlFeatureTree->has_tag("satellite")){
+		    $bioperlFeatureTree->primary_tag("microsatellite");
+		}
+		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
+		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
+		}
+	    }
+	    if($type eq 'STS'){
+		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
+		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
+		}
+	    }
 	    if ($type eq 'gene') {
 
-		$geneFeature = $bioperlFeatureTree;       
+		$geneFeature = $bioperlFeatureTree; 
+		if(!($geneFeature->has_tag("locus_tag"))){
+		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
+		}      
 		for my $tag ($geneFeature->get_all_tags) {    
 
 		    if($tag eq 'pseudo'){
@@ -79,6 +94,9 @@ sub preprocess {
 	    }else{
     if ($type eq 'source'){
 	$source = $bioperlFeatureTree;
+	if($source->has_tag('focus')){
+	    $source->primary_tag('focus_source');
+	}
 	if($source->has_tag('PCR_primers')){
 	    my $primerpair = '';
 	    my (@primerPairs) = $source->get_tag_values('PCR_primers');
@@ -163,16 +181,26 @@ sub traverseSeqFeatures {
              'snRNA',
              'snoRNA',
              'tRNA',
+             'ncRNA',
              )
         ) {
 
 	    my $CDSLocation;
+	    if($type eq 'ncRNA'){
+		if($geneFeature->has_tag('ncRNA_class')){
+		    my ($type) = $geneFeature->get_tag_values('ncRNA_class');
+		    $geneFeature->remove_tag('ncRNA_class');
+
+		}
+	    }
 	    if($type eq 'mRNA'){
 		$type = 'coding';
 	    }
 	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
 	    $gene = &copyQualifiers($geneFeature, $gene);
+            $gene = &copyQualifiers($RNA,$gene);
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
+	    $transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 	    
