@@ -192,7 +192,7 @@ create table ApiDB.ProfileElementName (
  PRIMARY KEY (profile_element_name_id)
 );
 
-create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name);
+create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name, profile_set_id, element_order);
 create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id);
 
 create sequence ApiDB.ProfileElementName_sq;
