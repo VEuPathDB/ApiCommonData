@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB,TriTrypDB">
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB,TriTrypDB,PlasmoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -119,6 +119,21 @@
             </sql>
         </sqlQuery>
 
+        <sqlQuery name="PlasmoGenes" isCacheable="false" includeProjects="PlasmoDB">
+            <paramRef ref="recordParams.organism"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT ga.source_id, ga.project_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
+                      AND ga.organism like $$organism$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
         <sqlQuery name="CryptoDistinctGenes" isCacheable="false" includeProjects="ApiDB,CryptoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -152,6 +167,27 @@
                                                 'Leishmania infantum', 3,
                                                 'Leishmania major', 4,
                                                 'Trypanosoma cruzi strain CL Brener', 5)) AS source_id,
+                      ga.project_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
+                      GROUP BY ga.orthomcl_name,ga.project_id 
+                ]]>
+            </sql>
+        </sqlQuery>
+
+        <sqlQuery name="PlasmoOrthologGroups" isCacheable="false" includeProjects="ApiDB,PlasmoDB">
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.organism, 'Plasmodium falciparum 3D7', 1, 
+                                                'Plasmodium vivax SaI-1', 2,
+                                                'Plasmodium yoelii yoelii str. 17XNL', 3,
+                                                'Plasmodium berghei str. ANKA', 4,
+                                                'Plasmodium chabaudi chabaudi', 5,
+                                                'Plasmodium knowlesi strain H', 6)) AS source_id,
                       ga.project_id
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id

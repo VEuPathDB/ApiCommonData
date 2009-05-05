@@ -118,6 +118,19 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
 
+        <answerFilterLayout name="plasmo_species" visible="true"
+                            displayName="Filter results by species" includeProjects="PlasmoDB">
+
+            <instanceRef ref="all_results" />
+            <instanceRef ref="plasmo_ortholog_groups" />
+            <instanceRef ref="falciparum_genes" />
+            <instanceRef ref="vivax_genes" />
+            <instanceRef ref="yoelii_genes" />
+            <instanceRef ref="berghei_genes" />
+            <instanceRef ref="chabaudi_genes" />
+            <instanceRef ref="knowlesi_genes" />
+        </answerFilterLayout>
+
         <answerFilterLayout name="crypto_species" visible="true"
                             displayName="Filter results by species" includeProjects="CryptoDB">
 
@@ -166,8 +179,8 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB,CryptoDB">
-                  <instance name="all_results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB,CryptoDB">
+                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB,CryptoDB,PlasmoDB">
+                  <instance name="all_results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB,CryptoDB,PlasmoDB">
                     <displayName><![CDATA[All Results]]></displayName>
                     <description>
                         <![CDATA[
@@ -367,6 +380,65 @@
                 
             </answerFilter>
 
+  <answerFilter queryRef="GeneSummaries.PlasmoGenes"
+                          includeProjects="PlasmoDB">
+                
+
+                <instance name="falciparum_genes">
+                    <displayName><![CDATA[<i>P. falciparum</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium falciparum</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Pf</paramValue>
+                </instance>
+                <instance name="vivax_genes">
+                    <displayName><![CDATA[<i>P. vivax</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium vivax</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Pv</paramValue>
+                </instance>
+                <instance name="yoelii_genes">
+                    <displayName><![CDATA[<i>P. yoelii</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium yoelii</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Py</paramValue>
+                </instance>
+                <instance name="berghei_genes">
+                    <displayName><![CDATA[<i>P. berghei</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium berghei</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Pb</paramValue>
+                </instance>
+                <instance name="chabaudi_genes">
+                    <displayName><![CDATA[<i>P. chabaudi</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium chabaudi</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Pc</paramValue>
+                </instance>
+                <instance name="knowlesi_genes">
+                    <displayName><![CDATA[<i>P. knowlesi</i> Genes]]></displayName>
+                    <description>
+                     <![CDATA[
+                       All <i>Plasmodium knowlesi</i> results
+                     ]]>
+                    </description>   
+                    <paramValue name="organism">Pk</paramValue>
+                </instance>
+  </answerFilter>
 
   <answerFilter queryRef="GeneSummaries.TriTrypGenes"
                           includeProjects="TriTrypDB">
@@ -533,7 +605,20 @@
                 
             </answerFilter>
 
-  
+              <answerFilter queryRef="GeneSummaries.PlasmoOrthologGroups"
+                          includeProjects="PlasmoDB,ApiDB">
+                
+                <instance name="plasmo_ortholog_groups">
+                    <displayName><![CDATA[Ortholog Groups]]></displayName>
+                    <description>
+                        <![CDATA[
+                            Number of ortholog groups across available species (the representative gene is:  <i>P.falciparum</i> if it exists, otherwise <i>P. vivax</i> if it exists, otherwise <i>P. yoelii</i> if it exists, otherwise <i>P. berghei</i> if it exists, otherwise <i>P. chabaudi</i> if it exists, otherwise <i>P. knowlesi</i>.
+                        ]]>
+                    </description>   
+                </instance>
+                
+            </answerFilter>
+
             <answerFilter queryRef="GeneSummaries.AllTgResults"
                           includeProjects="ToxoDB">
                 
