@@ -213,7 +213,7 @@ SQL
   my ($existingSvn) = $stmt->fetchrow_array();
   $stmt->finish();
 
-  if ($svn && $svn ne $existingSvn) {
+  if ($svn && $existingSvn && $svn ne $existingSvn) {
     # update to new svn
     print "Changing svn configuration from \"$existingSvn\" to \"$svn\" for family \"$family\"\n";
     my $url = svnUrl($svn);
