@@ -112,15 +112,16 @@ foreach my $tableName (keys(%tuningTables)) {
     foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
 
       # new ExternalTable instance in the hash, if we haven't seen this
-      $externalTables{$dependency->{name}}
+      my $key = $dependency->{name} . '@' . $dependency->{dblink};
+      $externalTables{$key}
 	= ApiCommonData::Load::TuningConfig::ExternalTable->
 	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
-	    unless ($externalTables{$dependency->{name}});
+	    unless ($externalTables{$key});
 
       # add external-table object to list of external dependencies
-      $tuningTables{$tableName}->addExternalDependency($externalTables{$dependency->{name}});
+      $tuningTables{$tableName}->addExternalDependency($externalTables{$key});
 
-      if (!$externalTables{$dependency->{name}}->exists()) {
+      if (!$externalTables{$key}->exists()) {
 	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
 	$nonexistentExternal = 1;
       }
@@ -132,16 +133,17 @@ foreach my $tableName (keys(%tuningTables)) {
     foreach my $dependency (@{$tuningTables{$tableName}->getExternalTuningTableDependencyNames()}) {
 
       # new ExternalTuningTable instance in the hash, if we haven't seen this
-      $externalTuningTables{$dependency->{name}}
+      my $key = $dependency->{name} . '@' . $dependency->{dblink};
+      $externalTuningTables{$key}
 	= ApiCommonData::Load::TuningConfig::ExternalTuningTable->
 	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
-	    unless ($externalTuningTables{$dependency->{name}});
+	    unless ($externalTuningTables{$key});
 
       # add externalTuning-table object to list of externalTuning dependencies
-      $tuningTables{$tableName}->addExternalTuningTableDependency($externalTuningTables{$dependency->{name}});
+      $tuningTables{$tableName}->addExternalTuningTableDependency($externalTuningTables{$key});
 
-      if (!$externalTuningTables{$dependency->{name}}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalTuningDependency on $dependency->{name}, but no such table exists");
+      if (!$externalTuningTables{$key}->exists()) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalTuningDependency on $key, but no such table exists");
 	$nonexistentExternalTuningTable = 1;
       }
     }
