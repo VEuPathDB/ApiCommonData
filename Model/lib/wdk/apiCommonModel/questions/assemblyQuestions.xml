@@ -23,7 +23,7 @@
         <description>
           <![CDATA[
  Find EST Assemblies by a list of IDs. Either enter the ID list manually, or upload a file that contains
-           the list. IDs can be delimited by a comma, a semi colon, or any white spaces. 
+           the list. IDs can be delimited by a comma, a semi colon, or any white spaces.  <br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstBySourceId">EST By Accession Query</a>.
           ]]>
         </description>
 
@@ -91,7 +91,10 @@
               includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB,PlasmoDB,TriTrypDB">
 
         <summary>Find EST Assemblies by Library Name</summary>
-        <description>Find EST Assemblies by Library Name</description>
+        <description> <![CDATA[
+Find EST Assemblies by Library Name. <br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLibrary">EST By Library Query</a>.
+        ]]>
+        </description>
 
         <attributesList
               summary="formatted_organism,est_count,length,est_library_count"
@@ -150,7 +153,7 @@
           Select a <i>C. parvum</i> chromosome from the pull-down menu or 
           enter the name of a contig for either <i>C. parvum</i> or <i>C. hominis</i>(e.g."AAEL01000057").
           If you enter both, your result will include the union. 
-          The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
+          The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.  <br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
       
@@ -162,6 +165,7 @@
           scaffold (e.g. "DS984781"). <br> 
           If you enter both, your result will include the union.
           The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+<br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
 
@@ -172,6 +176,7 @@
           <b>or</b> enter a sequence ID of a chromosome (e.g. "MAL4"). <br> 
           If you enter both, your result will include the union.
           The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+<br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
 
@@ -180,6 +185,7 @@
           Find Giardia EST assemblies that are located in a specific genomic region.<br>
           Enter a sequence ID of a chromosome (e.g. "AACB02000002").<br>
           The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+<br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
 
@@ -188,6 +194,7 @@
           Find Crypto, Giardia, Plasmo, Neospora or Toxo EST assemblies that are located in a specific genomic region.<br>
           Enter a sequence ID of a chromosome (e.g. "AACB02000002").<br>
           The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+<br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
 
@@ -205,6 +212,7 @@
           <b>Alternatively</b>, enter a genomic sequence ID from any
            species (if you supply both,  your result will include the union).<br><br>
           The Start and End locations correspond to the coordinates of the EST assembly(s) on the chromosome.
+<br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsByLocation">EST By Location Query</a>.
           ]]>
         </description>
 
@@ -237,16 +245,10 @@
            summary="formatted_organism,assembly_locations,genes,est_count, length"
            sorting="formatted_organism asc,assembly_locations asc"
         /> 
-<summary>Find EST assemblies that do or do not overlap with a gene.</summary>
-        <description includeProjects="ApiDB,ToxoDB,GiardiaDB,TriTrypDB">Find EST assemblies that Overlap a Gene.</description>
-        <description includeProjects="CryptoDB">
+        <summary>Find EST assemblies that do or do not overlap with a gene.</summary>
+        <description>
        <![CDATA[
-        Find EST assemblies that overlap a <i>C. parvum</i> gene.
-        ]]>
-        </description>
-        <description includeProjects="PlasmoDB">
-       <![CDATA[
-        Using this query one can search for EST assemblies that do or do not overlap with a gene.
+        Find EST assemblies that Overlap a Gene.  <br /><br />DoTS Assemblies represent the consensus sequence of overlapping EST's and mRNA's.  NOTE:  You can query for EST's directly by using the <a href="showQuestion.do?questionFullName=EstQuestions.EstsWithGeneOverlap">EST By Gene Overlap Query</a>.
         ]]>
         </description>
 

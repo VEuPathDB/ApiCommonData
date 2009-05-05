@@ -38,7 +38,7 @@
         <description includeProjects="CryptoDB,GiardiaDB,PlasmoDB,ToxoDB,TrichDB,TriTrypDB">
            <![CDATA[
            Find ESTs by a list of IDs. Either enter the ID list manually, or upload a file that contains
-           the list. IDs can be delimited by a comma, a semi colon, or any white spaces. 
+           the list. IDs can be delimited by a comma, a semi colon, or any white spaces. <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByEstAccession">Assemblies by EST Accession Query</a>.
              ]]>
         </description>
 
@@ -183,6 +183,7 @@
           enter the name of a contig for <i>C. muris</i> (e.g. 1104857754340),  <i>C. parvum</i> or <i>C. hominis</i> (e.g. AAEL01000057).
           If you enter both, your result will include the union.
           The Start and End locations correspond to the coordinates of the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="PlasmoDB">
@@ -192,6 +193,7 @@
           pull-down menu <i>or</i> enter a genomic sequence ID from any
           <i>Plasmodium</i> species (if you supply both,  your result will include the union).
           The Start and End locations correspond to the coordinates of the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="ApiDB">
@@ -203,6 +205,7 @@
         
           The Start and End locations correspond to the coordinates of
           the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="TrichDB">
@@ -211,6 +214,7 @@
           Enter a genomic sequence ID for any <i>T. vaginalis</I> contig.
           The Start and End locations correspond to the coordinates of
           the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="GiardiaDB">
@@ -219,6 +223,7 @@
           Enter a genomic sequence ID for any <i>G. lamblia</I> contig.
           The Start and End locations correspond to the coordinates of
           the EST(s) on the sequence.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="TriTrypDB">
@@ -235,6 +240,7 @@
           <b>Alternatively</b>, enter a genomic sequence ID from any
            species (if you supply both,  your result will include the union).<br><br>
           The Start and End locations correspond to the coordinates of the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
         <description includeProjects="ToxoDB">
@@ -245,6 +251,7 @@
           scaffold (e.g. "TGG_994746"). <br>
           If you enter both, your result will include the union.
           The Start and End locations correspond to the coordinates of the EST(s) on the chromosome.
+<br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
 
@@ -275,7 +282,11 @@
               recordClassRef="EstRecordClasses.EstRecordClass">
 
         <summary>Find ESTs by Library Name</summary>
-        <description>Find ESTs by Library Name</description>
+        <description>
+          <![CDATA[
+Find ESTs by Library Name.  <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLibrary">Assemblies by Library Query</a>.
+          ]]>
+        </description>
 
         <attributesList excludeProjects="CryptoDB,ToxoDB,GiardiaDB,TriTrypDB"
               summary="formatted_organism,dbest_name"
@@ -326,13 +337,9 @@
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_link,assembly_est_count"
            sorting="formatted_organism asc,est_locations asc"
         /> 
-<summary>Find ESTs in a Library that do or do not overlap with a gene.</summary>
-        <description excludeProjects="CryptoDB">Find ESTs that Overlap a Gene.</description>
-        <description includeProjects="CryptoDB">
-       <![CDATA[
-        Find ESTs that overlap a <i>C. parvum</i> gene.
-        ]]>
-        </description>
+        <summary>Find ESTs in a Library that do or do not overlap with a gene.</summary>
+        <description>
+          <![CDATA[ Find ESTs that Overlap a Gene.  <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesWithGeneOverlap">Assemblies by Gene Overlap Query</a>.]]></description>
 
         <dynamicAttributes excludeProjects="ApiDB">
             <columnAttribute name="est_locations" displayName="EST location(s)"/>
