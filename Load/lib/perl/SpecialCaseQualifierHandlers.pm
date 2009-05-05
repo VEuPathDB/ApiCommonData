@@ -12,20 +12,25 @@ use GUS::Model::DoTS::AASequenceEnzymeClass;
 use GUS::Model::DoTS::NAFeatureComment;
 use GUS::Model::DoTS::Repeats;
 use ApiCommonData::Load::Util;
+use Data::Dumper;
 
 # this is the list of so terms that this file uses.  we have them here so we
 # can check them at start up time.
-my $soTerms = ({"SECIS_element" => 1,
-		"stop_codon_redefinition_as_selenocysteine" => 1,
+
+my $soTerms = ({stop_codon_redefinition_as_selenocysteine => 1,
+		SECIS_element => 1,
+		centromere => 1,
+		GC_rich_promoter_region => 1,
+		tandem_repeat => 1,
+		exon => 1,
 	       });
-
-
 sub new {
   my ($class) = @_;
   my $self = {};
 
   bless($self, $class);
 
+  $self->{translationFlag};
   $self->{standardSCQH} = GUS::Supported::SpecialCaseQualifierHandlers->new();
   return $self;
 }
@@ -90,8 +95,67 @@ sub sourceIdAndTranscriptSeq {
   # first set source id, and propogate it to the transcript and aa seq
   my @tagValues = $bioperlFeature->get_tag_values($tag);
   $geneFeature->setSourceId($tagValues[0]);
+  
+  my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
 
+  my @exonFeatures = $geneFeature->getChildren("DoTS::ExonFeature");
+  
+  
+  my @exonsSorted = map { $_->[0] }
+  sort { $a->[3] ? ($b->[1] <=> $a->[1] || $b->[2] <=> $a->[2]) : ($a->[1] <=> $b->[1] || $a->[2] <=> $b->[2])}
+  map { [ $_, $_->getFeatureLocation ]}
+  @exonFeatures;
+  
+
+  my $final = scalar(@exonsSorted) - 1;
+  
+  my $order = 1;
+
+  my $prevExon;
+
+  my @exons;
+
+  for my $exon (@exonsSorted) {
+    
+
+
+
+      
+   
+      if($prevExon){
+#	  print ${[$prevExon->getFeatureLocation()]}[1]."\n";
+	  if(${[$exon->getFeatureLocation()]}[0] == ${[$prevExon->getFeatureLocation()]}[0] && ${[$exon->getFeatureLocation()]}[1] == ${[$prevExon->getFeatureLocation()]}[1] && ${[$exon->getFeatureLocation()]}[2] == ${[$prevExon->getFeatureLocation()]}[2]){
+	      $order--;
+	  
+	  }
+      }
+
+      $exon->setOrderNumber($order);
+      my $sourceId = "$tagValues[0]-$order";
+      $exon->setSourceId("$sourceId");
+      my $naLoc = $exon->getChild('DoTS::NALocation');
+
+      my $isReversed = $naLoc->getIsReversed();
+
+      my $exonStart = $isReversed ? $naLoc->getEndMax : $naLoc->getStartMin();
+      my $exonStop = $isReversed ? $naLoc->getStartMin : $naLoc->getEndMax();
+
+      if($bioperlFeature->primary_tag() eq "coding_gene" || $bioperlFeature->primary_tag() eq "pseudo_gene"){
+	  $exon->setCodingStart($exonStart);
+	  $exon->setCodingEnd($exonStop);
+      }
+	 
+      $prevExon = $exon;
+      $order++;
+      
+      push(@exons,$exon);
+      
+  }
+  
   my @transcripts = $geneFeature->getChildren("DoTS::Transcript");
+  
+
+
   my $count = 0;
   foreach my $transcript (@transcripts) {
     $count++;
@@ -119,18 +183,7 @@ sub sourceIdAndTranscriptSeq {
 
     foreach my $rnaExon ($transcript->getChildren('DoTS::RNAFeatureExon')) {
       my $exon = $rnaExon->getParent('DoTS::ExonFeature');
-      my $naLoc = $exon->getChild('DoTS::NALocation');
 
-      $isReversed = $naLoc->getIsReversed();
-
-      my $exonStart = $isReversed ? $naLoc->getEndMax : $naLoc->getStartMin();
-      my $exonStop = $isReversed ? $naLoc->getStartMin : $naLoc->getEndMax();
-
-      # This works until there are alternaltive spliced transcripts...or UTRs
-      # These will be overwritten for gff files with coding stop and start tags
-      # by the setCodingAndTranslationStart/Stop subroutines below
-      $exon->setCodingStart($exonStart);
-      $exon->setCodingEnd($exonStop);
 
       push(@exons, $exon);
     }
@@ -142,13 +195,9 @@ sub sourceIdAndTranscriptSeq {
 
     my $final = scalar(@exonsSorted) - 1;
     my $transcriptSequence;
-    my $order = 1;
+ 
 
     for my $exon (@exonsSorted) {
-      my $sourceId = "$tagValues[0]-$order";
-      $exon->setOrderNumber($order);
-      $exon->setSourceId("$sourceId");
-      $order++;
 
       my $chunk = $exon->getFeatureSequence();
       $transcriptSequence .= $chunk;
@@ -158,37 +207,74 @@ sub sourceIdAndTranscriptSeq {
     $splicedNaSeq->setSequence($transcriptSequence);
     $splicedNaSeq->setSourceId($transcript->getSourceId());
     my $transcriptLoc = $transcript->getChild('DoTS::NALocation');
-    my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
-    
-    my $seq = $transcriptSeq->getSequence();
+
+    $isReversed = $transcriptLoc->getIsReversed();
+    my $seq = $splicedNaSeq->getSequence();
     my $transcriptLength = length($seq);
-    if($bioperlFeature->primary_tag() eq "coding_gene"){
-      print STDERR $transcript->toString();
+    $transcriptLoc->setStartMin(1);
+    $transcriptLoc->setStartMax(1);
+    $transcriptLoc->setEndMin($transcriptLength);
+    $transcriptLoc->setEndMax($transcriptLength);
+    $transcriptLoc->setIsReversed(0);
+    $transcript->setIsPredicted(1);
+    
+
+    if($bioperlFeature->primary_tag() eq "coding_gene" || $bioperlFeature->primary_tag() eq "pseudo_gene"){
+ 
 
 
       my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
+      my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
+
+      my($codingStart,$codingStop);
+	foreach my $sortedExon (@exonsSorted){
+
+	    $codingStart = $sortedExon->get("coding_start");
 
 
-      my $codingStart = $exonsSorted[0]->getCodingStart();
-      my $codingStop = $exonsSorted[$final]->getCodingEnd();
+	    if($codingStart ne 'null' && $codingStart ne ''){
+		last;
+	    }
+	}
+
+	foreach my $sortedExon (reverse @exonsSorted){
+
+	    $codingStop = $sortedExon->get("coding_end");
+		
+
+	    if($codingStop ne 'null' && $codingStop ne ''){
+		last;
+	    }
+	}
+
+
+      my $firstExonLoc = $exonsSorted[0]->getChild("DoTS::NALocation");
+      my $finalExonLoc = $exonsSorted[$final]->getChild("DoTS::NALocation");
+
+      if($isReversed){
+	  $codingStart = $firstExonLoc->getEndMax() - $codingStart;
+	  $codingStop = $codingStop - $finalExonLoc->getStartMin();
+      }else{
+	  $codingStart = $codingStart - $firstExonLoc->getStartMin();
+	  $codingStop = $finalExonLoc->getEndMax() - $codingStop;
+      }
 
       my $translationStart = $self->_getTranslationStart($isReversed, $codingStart, $transcriptLoc);
 
       my $translationStop = $self->_getTranslationStop($isReversed, $codingStop, $transcriptLoc, $transcriptLength);
+
+#      print STDERR $transcript->getSourceId()."\tCoding $codingStart\t$codingStop\t$transcriptLength\t$isReversed\t$translationStart\t$translationStop\n";
       if($translatedAaFeature){
+	 
 	  $translatedAaFeature->setTranslationStart($translationStart);
 	  $translatedAaFeature->setTranslationStop($translationStop);
       }
+      
 
-  }else{
-      $transcriptLoc->setStartMin(1);
-      $transcriptLoc->setStartMax(1);
-      $transcriptLoc->setEndMin($transcriptLength);
-      $transcriptLoc->setEndMax($transcriptLength);
-      $transcriptLoc->setIsReversed(0);
+
   }
 
-
+    
   }
 
 
@@ -215,7 +301,8 @@ sub _undoSetCodingAndTranslationStart {
 }
 
 sub setCodingAndTranslationStop {
-  my ($self, $tag, $bioperlFeature, $exonFeature) = @_;
+  my ($self, $tag, $bioperlFeature, $exonFeature) = @_; 
+
 
   return $self->_setCodingAndTranslationStartAndStop($tag, $bioperlFeature, $exonFeature, 1);
 
@@ -224,18 +311,47 @@ sub setCodingAndTranslationStop {
 sub _setCodingAndTranslationStartAndStop{
   my ($self, $tag, $bioperlFeature, $exonFeature, $isStop) = @_;
 
+
+  
   my ($codingValue) = $bioperlFeature->get_tag_values($tag);
 
   if ($codingValue ne '' && $codingValue ne 'null'){
 
       my $rnaExon = $exonFeature->getChild("DoTS::RNAFeatureExon");
       my $transcript = $rnaExon->getParent("DoTS::Transcript");
+
+
+      my $gene = $transcript->getParent("DoTS::GeneFeature");
       my $transcriptLoc = $transcript->getChild("DoTS::NALocation");
       my $translatedAAFeat = $transcript->getChild("DoTS::TranslatedAAFeature");
+      my $translatedAaSequence = $translatedAAFeat->getParent("DoTS::TranslatedAASequence");
       my $transcriptSeq = $transcript->getParent("DoTS::SplicedNASequence");
-      my $exonLoc = $exonFeature->getChild("DoTS::NALocation");
 
+      my $exonLoc = $exonFeature->getChild("DoTS::NALocation");
+      my $geneLoc = $gene->getChild("DoTS::NALocation");
       my $isReversed = $exonLoc->getIsReversed();
+#      print STDERR $transcript->getSourceId()."\t$codingValue\n";
+   
+      my (@exons);
+
+      foreach my $rnaExons ($transcript->getChildren('DoTS::RNAFeatureExon')) {
+	  my $exon = $rnaExons->getParent('DoTS::ExonFeature');
+	  
+
+	  push(@exons, $exon);
+      }
+
+      my @exonsSorted = map { $_->[0] }
+      sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+	map { [ $_, $_->getFeatureLocation ]}
+	  @exons;
+
+      my $intronLength = 0;
+
+      my $final = scalar(@exonsSorted) - 1;
+
+      my $firstExonLoc = $exonsSorted[0]->getChild("DoTS::NALocation");
+      my $finalExonLoc = $exonsSorted[$final]->getChild("DoTS::NALocation");
 
       if($isStop){
 	  $exonFeature->setCodingEnd($codingValue);
@@ -243,27 +359,99 @@ sub _setCodingAndTranslationStartAndStop{
 	  my $seq = $transcriptSeq->getSequence();
 	  my $transcriptLength = length($seq);
 
+	  my $tmpExon = $finalExonLoc;
+
+	  my $ctr = $final-1;
+	  while(!($codingValue >= $tmpExon->getStartMin() && $codingValue <= $tmpExon->getEndMax())){
+	      if($isReversed){
+		  $intronLength += ($exonsSorted[$ctr]->getChild("DoTS::NALocation")->getStartMin() - $tmpExon->getEndMax()) - 1;
+#		  print "In : Intron Length: $intronLength\n";
+	      }else{
+		  $intronLength += ($tmpExon->getStartMin() - $exonsSorted[$ctr]->getChild("DoTS::NALocation")->getEndMax()) - 1;		  
+	      }
+	      $tmpExon = $exonsSorted[$ctr]->getChild("DoTS::NALocation");
+	      $ctr--;
+
+			  
+	  }
+
 	  if(!$translatedAAFeat->{tempCodingStop} || (!$isReversed && $codingValue > $translatedAAFeat->{tempCodingStop}) || ($isReversed && $codingValue < $translatedAAFeat->{tempCodingStop})){
 
 	      $translatedAAFeat->{tempCodingStop} = $codingValue;
+#   print STDERR $transcript->getSourceId()."\t$codingValue\t";
+	      if($isReversed){
+
+		  $codingValue = $codingValue - $finalExonLoc->getStartMin() - $intronLength;
+		  
+	      }else{
+
+		  $codingValue = $finalExonLoc->getEndMax() - $codingValue - $intronLength;
+		  
+	      }
 
 	      my $translationStop = $self->_getTranslationStop($isReversed, $codingValue, $transcriptLoc, $transcriptLength);
+#      print STDERR "\tExon Coding Is Stop $codingValue\t$isReversed\t$translationStop\t".$finalExonLoc->getEndMax()."\t".$finalExonLoc->getStartMin()."\t";
+#	      print STDERR ($finalExonLoc->getStartMin()+$codingValue)."\n" if $isReversed;
+#	      print STDERR ($finalExonLoc->getEndMax() - $codingValue)."\n" if !($isReversed);
 	      
 	      $translatedAAFeat->setTranslationStop($translationStop);
+	      
+	      
+
+
 	  }
       }else{
 	  $exonFeature->setCodingStart($codingValue);
 
+	  my $tmpExon = $firstExonLoc;
+
+	  my $ctr = 1;
+	  while(!($codingValue >= $tmpExon->getStartMin() && $codingValue <= $tmpExon->getEndMax())){
+	      if($isReversed){
+		  $intronLength += ($tmpExon->getStartMin() - $exonsSorted[$ctr]->getChild("DoTS::NALocation")->getEndMax()) - 1;
+	      }else{
+		  $intronLength += ($exonsSorted[$ctr]->getChild("DoTS::NALocation")->getStartMin() - $tmpExon->getEndMax()) - 1;
+	      }
+	      $tmpExon = $exonsSorted[$ctr]->getChild("DoTS::NALocation");
+	      $ctr++;
+			  
+	  }
 	  if(!$translatedAAFeat->{tempCodingStart} || (!$isReversed && $codingValue < $translatedAAFeat->{tempCodingStart}) || ($isReversed && $codingValue > $translatedAAFeat->{tempCodingStart})){
 
 	      $translatedAAFeat->{tempCodingStart} = $codingValue;
 
+
+#   print STDERR $transcript->getSourceId()."\t$codingValue\t";
+
+	      if($isReversed){
+		  $codingValue = $firstExonLoc->getEndMax() - $codingValue - $intronLength;
+
+	      }else{
+		  $codingValue = $codingValue - $firstExonLoc->getStartMin() - $intronLength;
+
+	      }
+
 	      my $translationStart = $self->_getTranslationStart($isReversed, $codingValue, $transcriptLoc);
 
+#      print STDERR "\tExon Coding $codingValue\t$isReversed\t$translationStart\t".$firstExonLoc->getStartMin()."\t".$firstExonLoc->getEndMax()."\t";
+
+#	      print STDERR ($firstExonLoc->getEndMax()-$codingValue)."\n" if $isReversed;
+#	      print STDERR ($firstExonLoc->getStartMin()+$codingValue)."\n" if !($isReversed);
 	      $translatedAAFeat->setTranslationStart($translationStart);
+
+
 	  }
       }
+  }else{
+#      print $exonFeature->getCodingStart()."\t".$exonFeature->getCodingEnd()."\n";
+      if($isStop){
+	  $exonFeature->setCodingEnd('');
+      }else{
+	  $exonFeature->setCodingStart('');
+      }
+#     print $exonFeature->getCodingStart()."\t".$exonFeature->getCodingEnd()."\n";
   }
+
   return [];
 }
 
@@ -274,17 +462,24 @@ sub _undoSetCodingAndTranslationStop {
 ################ Translation#############################
 
 sub setProvidedTranslation {
-  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
 
   my ($aaSequence) = $bioperlFeature->get_tag_values($tag);
 
-  my $transcript = $geneFeature->getChild("DoTS::Transcript");
+  my $transcript;
+  if($bioperlFeature->primary_tag() =~ /gene/){
+      $transcript = $feature->getChild("DoTS::Transcript");
+  }else{
+      $transcript = $feature;
+  }
 
   my $translatedAaFeature = $transcript->getChild('DoTS::TranslatedAAFeature');
   my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
 
   $translatedAaSequence->setSequence($aaSequence);
 
+
+ 
   return [];
 }
 
@@ -298,8 +493,9 @@ sub _undoProvidedTranslation{
 # only keep the first /product qualifier
 # cascade product name to transcript, translation and AA sequence:
 sub product {
-  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
 
+ # print $bioperlFeature->primary_tag()."\n";
   my @tagValues = $bioperlFeature->get_tag_values($tag);
     if($tagValues[0] =~ />>/){
 	my(@s) = split(/>>/,$tagValues[0]);
@@ -307,10 +503,21 @@ sub product {
 	$tagValues[0] = $s[1];
     }
 
-  $geneFeature->setProduct($tagValues[0]);
+
+#  print STDERR Dumper $feature->getSourceId();
+
+#  print STDERR "Feature Info:\n";
+#  print STDERR Dumper $feature;
+  $feature->setProduct($tagValues[0]);
 
   # cascade product name to transcript, translation and AA sequence:
-  my @transcripts = $geneFeature->getChildren("DoTS::Transcript");
+
+  my @transcripts;
+  if($bioperlFeature->primary_tag() =~ /gene/){
+      @transcripts = $feature->getChildren("DoTS::Transcript");
+  }else{
+      push(@transcripts,$feature);
+  }
   foreach my $transcript (@transcripts) {
     $transcript->setProduct($tagValues[0]);
     my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
@@ -383,7 +590,8 @@ sub _undoDbXRef{
 
 sub genbankDbXRef {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
-  my @tagValues;
+  my @tagValues; 
+
   foreach my $tagValue ($bioperlFeature->get_tag_values($tag)){
       my @split = split(/\:/,$tagValue);
       if (scalar(@split) < 2){
@@ -478,7 +686,8 @@ sub setPseudo {
       my $transcript = &getGeneTranscript($self->{plugin}, $feature);
 
       $feature->setIsPseudo(1);
-      $transcript->setIsPseudo(1);
+      $transcript->setIsPseudo(1); 
+
   }else{
       $feature->setIsPseudo(1);
   }
@@ -532,6 +741,8 @@ sub ECNumber {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
 
   my $aaSeq = &getGeneAASeq($self->{plugin},$feature);
+  
+  my $sourceId = $feature->getSourceId();
 
   foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
     if ($tagValue eq ""){
@@ -539,6 +750,7 @@ sub ECNumber {
       next;
     }
     $tagValue =~ s/^EC: //;
+    $tagValue =~ s/^EC //;
     if($tagValue =~ />>/){
 	my(@s) = split(/>>/,$tagValue);
 	$s[1] =~ s/\s+//g;
@@ -547,11 +759,14 @@ sub ECNumber {
 
     $tagValue =~ s/\_/\-/;
     my $ecId = $self->_getECNumPrimaryKey($tagValue);
-    die "Invalid Enzyme Class '$tagValue'" unless $ecId;
-    my $args = {enzyme_class_id => $ecId,
-		evidence_code => 'Annotation Center'};
-    my $aaSeqEC = GUS::Model::DoTS::AASequenceEnzymeClass->new($args);
-    $aaSeq->addChild($aaSeqEC);
+    unless ($ecId){
+	push(@{$self->{plugin}->{validationErrors}},"***ERROR********* Invalid Enzyme Class '$tagValue' associated with gene source id '$sourceId'\n");
+    }else{
+	     my $args = {enzyme_class_id => $ecId,
+			 evidence_code => 'Annotation Center'};
+	     my $aaSeqEC = GUS::Model::DoTS::AASequenceEnzymeClass->new($args);
+	     $aaSeq->addChild($aaSeqEC);
+    }
   }
 
 #  $aaSeq->submit();
@@ -669,9 +884,17 @@ sub _undoProvidedOrfTranslation{
 ################## static methods to be used by this and other S.C.Q.H.s ######
 
 sub getGeneAASeq {
-  my ($plugin, $gusGeneFeature) = @_;
+  my ($plugin, $gusFeature) = @_;
 
-  my $transcript = &getGeneTranscript($plugin,$gusGeneFeature);
+  my $transcript;
+
+
+  if ($gusFeature->toString() =~ /GeneFeature/){
+
+      $transcript = &getGeneTranscript($plugin,$gusFeature);
+  }else{
+      $transcript = $gusFeature;
+  }
 
   my $translatedAAFeat = $transcript->getChild("DoTS::TranslatedAaFeature");
 
@@ -739,30 +962,38 @@ sub _getTranslationStart{
 
   if($isReversed){
 
-    my $transcriptStop = $transcriptLoc->getEndMax();
-    $translationStart = $transcriptStop - $codingStart + 1;
+    my $transcriptStart = $transcriptLoc->getStartMin();
+
+    $translationStart = $transcriptStart + $codingStart;
 
   }else{
 
     my $transcriptStart = $transcriptLoc->getStartMin();
-    $translationStart = $codingStart - $transcriptStart + 1;
+
+    $translationStart = $transcriptStart + $codingStart;
   }
+
 
   return $translationStart;
 }
 
 sub _getTranslationStop{
-  my ($self, $isReversed, $codingStop, $transcriptLoc, $transcriptLength) = @_;
+  my ($self, $isReversed, $codingStop, $transcriptLoc, $transcriptLength,$geneLoc) = @_;
   my $translationStop;
 
   if($isReversed){
-    my $transcriptStart = $transcriptLoc->getStartMin();
-    $translationStop = $transcriptLength - ($codingStop - $transcriptStart);
+    my $transcriptStop = $transcriptLoc->getEndMax();
+
+
+    $translationStop = $transcriptStop - $codingStop;
 
   }else{
     my $transcriptStop = $transcriptLoc->getEndMax();
-    $translationStop = $transcriptLength - ($transcriptStop - $codingStop);
+
+
+    $translationStop = $transcriptStop - $codingStop;
   }
+
 
   return $translationStop;
 }
@@ -942,6 +1173,260 @@ sub _makeHTML{
 
 }
 
+sub validateCodingSequenceLength {
+    my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+    my ($msg, $warning);
+
+
+    my (@transcripts) = $feature->getChildren("DoTS::Transcript");
+
+    my $sourceId = $feature->get("source_id");
+
+    my $geneLoc = $feature->getChild("DoTS::NALocation");
+
+    foreach my $transcript (@transcripts){
+	my(@exons);
+
+	foreach my $rnaExon ($transcript->getChildren('DoTS::RNAFeatureExon')) {
+	    my $exon = $rnaExon->getParent('DoTS::ExonFeature');
+
+
+	    push(@exons, $exon);
+	}
+
+	my @exonsSorted = map { $_->[0] }
+	sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
+	map { [ $_, $_->getFeatureLocation ]}
+	  @exons;
+
+	my $firstCodingExonLoc;
+
+	my $finalCodingExonLoc;
+
+
+	my($UTR5PrimeEnd,$UTR3PrimeEnd,$UTR3Prime,$UTR5Prime, $CDSLength,$splicedNASequence);
+	$UTR3Prime = 0;
+	$UTR5Prime = 0;
+
+	foreach my $sortedExon (@exonsSorted){
+
+	    $UTR5PrimeEnd = $sortedExon->get("coding_start");
+
+
+	    if($UTR5PrimeEnd ne 'null' && $UTR5PrimeEnd ne ''){
+		$firstCodingExonLoc = $sortedExon->getChild("DoTS::NALocation");
+		last;
+	    }else{
+		$UTR5Prime += (${[$sortedExon->getFeatureLocation()]}[1] - ${[$sortedExon->getFeatureLocation()]}[0]) + 1;
+	    }
+	}
+
+	foreach my $sortedExon (reverse @exonsSorted){
+
+	    $UTR3PrimeEnd = $sortedExon->get("coding_end");
+		
+
+	    if($UTR3PrimeEnd ne 'null' && $UTR3PrimeEnd ne ''){
+		$finalCodingExonLoc = $sortedExon->getChild("DoTS::NALocation");
+		last;
+	    }else{
+		$UTR3Prime += (${[$sortedExon->getFeatureLocation()]}[1] - ${[$sortedExon->getFeatureLocation()]}[0]) + 1;
+	    }
+	}
+
+
+
+
+
+
+	if(($UTR5PrimeEnd ne '' &&  $UTR5PrimeEnd ne 'null') && ($UTR3PrimeEnd ne '' && $UTR3PrimeEnd ne 'null')){
+	    if($geneLoc->getIsReversed() == 1){
+		$UTR5Prime += $firstCodingExonLoc->getEndMax() - $UTR5PrimeEnd;
+		$UTR3Prime += $UTR3PrimeEnd - $finalCodingExonLoc->getStartMin();
+
+	    }else{
+		$UTR5Prime += $UTR5PrimeEnd - $firstCodingExonLoc->getStartMin();
+		$UTR3Prime += $finalCodingExonLoc->getEndMax() - $UTR3PrimeEnd;
+	    }
+
+	    $splicedNASequence = $transcript->getParent('DoTS::SplicedNASequence');
+	    
+
+	    $CDSLength = $splicedNASequence->getLength() - $UTR3Prime - $UTR5Prime;
+
+	}
+	
+	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+	if ($translatedAAFeat) {
+	    my $proteinSourceId = $translatedAAFeat->get("source_id");
+	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+
+#	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
+	    if($aaSeq){
+
+	    if($aaSeq->get('length') != (($CDSLength / 3) -1)){
+
+
+		my $transcriptSeq = substr($splicedNASequence->getSequence(),$translatedAAFeat->getTranslationStart(),$CDSLength);
+		my $lastCodon = substr($transcriptSeq,-3);
+
+		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
+		    $warning = "***WARNING********* The coding sequence  for protein with source id $proteinSourceId does not have a stop codon: ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
+		    if($self->{plugin}->{vlFh}){
+			$self->{plugin}->{vlFh}->print("$warning\n");
+		    }else{
+			$self->{plugin}->log("$warning\n");
+		    }
+		}else{
+		if($feature->getIsPseudo()){
+
+
+		    $warning = "***WARNING********* Translated Sequence length for protein with source id $proteinSourceId : ".$aaSeq->get('length')." : ".$aaSeq->get('sequence')." is not equal to coding sequence length [($CDSLength/3) - 1] ".(($CDSLength / 3) -1)." The transcript sequence is ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
+			
+		    if($self->{plugin}->{vlFh}){
+			$self->{plugin}->{vlFh}->print("$warning\n");
+		    }else{
+			$self->{plugin}->log("$warning\n");
+		    }
+		}else{
+		    
+		    $msg = "***ERROR********* Translated Sequence length for protein with source id $proteinSourceId : ".$aaSeq->get('length')." : ".$aaSeq->get('sequence')." is not equal to coding sequence length [($CDSLength/3) - 1] ".(($CDSLength / 3) -1)." The transcript sequence is ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
+			
+		    push(@{$self->{plugin}->{validationErrors}},$msg);
+		}
+	    }
+
+	    }
+	}
+	}
+
+    }
+
+    return [];
+}
+
+
+sub validateStopCodons {
+    my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+    my ($msg, $warning);
+
+
+    my (@transcripts) = $feature->getChildren("DoTS::Transcript");
+
+    my $sourceId = $feature->get("source_id");
+
+    my $geneLoc = $feature->getChild("DoTS::NALocation");
+
+    foreach my $transcript (@transcripts){
+
+	
+	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+	if ($translatedAAFeat) {
+	    my $proteinSourceId = $translatedAAFeat->get("source_id");
+	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+
+#	    print $aaSeq->get('sequence');
+#	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
+	    if($aaSeq){
+		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
+
+
+
+		    if($feature->getIsPseudo()){
+			$warning = "***WARNING********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+
+			if($self->{plugin}->{vlFh}){
+			    $self->{plugin}->{vlFh}->print("$warning\n");
+			}else{
+			    $self->{plugin}->log("$warning\n");
+			}
+		    }else{
+		    print "Hello\n";
+			$msg = "***ERROR********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+			push(@{$self->{plugin}->{validationErrors}},$msg);
+		    }
+		}
+
+	}
+	}
+
+    }
+
+    return [];
+}
+
+
+sub validateGene {
+    my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+    my ($msg, $warning);
+
+
+    my (@transcripts) = $feature->getChildren("DoTS::Transcript");
+
+    my $sourceId = $feature->get("source_id");
+
+    my $geneLoc = $feature->getChild("DoTS::NALocation");
+
+    if(!$sourceId){
+	$msg = "***ERROR********* This gene feature does not have a source id.\n";
+	push(@{$self->{plugin}->{validationErrors}},$msg);
+#	print $feature->getFeatureSequence();
+	return;
+    }
+    foreach my $transcript (@transcripts){
+
+
+
+	
+	
+	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+	if ($translatedAAFeat) {
+	    my $proteinSourceId = $translatedAAFeat->get("source_id");
+	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+
+#	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
+	    if($aaSeq){
+
+	    if($aaSeq->get('sequence') eq ''){
+
+
+		$aaSeq->setSequence($aaSeq->getSequence()) ;
+
+#		last;
+	    }else{
+		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
+		    $msg = "***ERROR********* Translated Sequence for protein with source id $proteinSourceId does not match with the protein/peptide sequence provided by annotators.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
+		    push(@{$self->{plugin}->{validationErrors}},$msg);
+
+		}
+		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
+		    $warning = "***WARNING********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+
+		    if($self->{plugin}->{vlFh}){
+			$self->{plugin}->{vlFh}->print("$warning\n");
+		    }else{
+			$self->{plugin}->log("$warning\n");
+		    }
+		}
+#		last;
+	    }
+
+
+	}
+
+	}
+
+	
+    }
+
+
+    return [];
+
+
+}
 ################ rpt_unit ################################
 
 # create a comma delimited list of rpt_units
