@@ -2302,15 +2302,16 @@ select na_sequence_id, taxon_id,
        project_id,
        data_type
 FROM (
-select iso.*,
+   select iso.*,
        prod.product,
-       prod.product_alias,
-       'CryptoDB' as project_id,
-       'PopSet' data_type
-from (SELECT etn.na_sequence_id, etn.taxon_id,
+       prod.product_alias
+   from (SELECT etn.na_sequence_id, etn.taxon_id,
         edr.version as external_db_version, 
         edb.name as external_db_name,
-        etn.source_id as source_id,
+        CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CP75.'||etn.na_sequence_id, 
+        'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
+        'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
+        ELSE etn.source_id END as source_id,
         src.organism as organism,
         src.strain || ' ' || src.isolate as strain,
         src.specific_host as specific_host,
@@ -2320,74 +2321,23 @@ from (SELECT etn.na_sequence_id, etn.taxon_id,
         etn.description as description,
         src.pcr_primers as pcr_primers,
         src.is_reference,
-        src.collected_by
+        src.collected_by,
+        decode(edb.name, 'Broad 75K genotyping chip', '75kChip', 
+        'Broad 3K genotyping chip', '3kChip',
+        'Isolate barcode data from Broad','Barcode','PopSet') as data_type,
+        CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
+             WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
+             WHEN lower(pinfo.name) like 'toxo%' THEN 'ToxoDB'
+        ELSE '' END as project_id
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
-           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo
       WHERE etn.na_sequence_id = src.na_sequence_id
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
-       AND edb.name = 'C. parvum isolate data'
-       AND edr.version = '2007-12-12'
+       AND pinfo.project_id = etn.row_project_id
       ) iso
-       left join (select distinct na_sequence_id, product, product_alias from dots.isolatefeature) prod
-            on prod.na_sequence_id = iso.na_sequence_id
-UNION
-SELECT etn.na_sequence_id, etn.taxon_id,
-       edr.version as external_db_version, 
-       edb.name as external_db_name,
-       'BC.' || etn.na_sequence_id as source_id,
-       src.organism,
-       src.strain,
-       src.specific_host,
-       src.isolation_source,
-       src.country,
-       src.note,
-       etn.description,
-       src.pcr_primers,
-       src.is_reference,
-       src.collected_by,
-       CAST (NULL AS VARCHAR2(1)) as product,
-       CAST (NULL AS VARCHAR2(1)) as product_alias,       
-       'PlasmoDB' as project_id,
-       'Barcode' as data_type
-FROM   dots.ExternalNaSequence etn,
-       dots.IsolateSource src,
-       sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase edb
-WHERE  etn.na_sequence_id = src.na_sequence_id
-   AND edr.external_database_id = edb.external_database_id
-   AND edr.external_database_release_id = etn.external_database_release_id
-   AND edb.name = 'Isolate barcode data from Broad'
-   AND edr.version = '2008-06-13'
-UNION
-SELECT etn.na_sequence_id, etn.taxon_id,
-       edr.version as external_db_version, 
-       edb.name as external_db_name,
-       'CP.' || etn.na_sequence_id as source_id,
-       src.organism,
-       src.strain,
-       src.specific_host,
-       src.isolation_source,
-       src.country,
-       src.note,
-       etn.description,
-       src.pcr_primers,
-       src.is_reference,
-       src.collected_by,       
-       CAST (NULL AS VARCHAR2(1)) as product,
-       CAST (NULL AS VARCHAR2(1)) as product_alias,
-       'PlasmoDB' as project_id,
-       '3kChip' as data_type
-FROM   dots.ExternalNaSequence etn,
-       dots.IsolateSource src,
-       sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase edb
-WHERE  etn.na_sequence_id = src.na_sequence_id
-   AND edr.external_database_id = edb.external_database_id
-   AND edr.external_database_release_id = etn.external_database_release_id
-   AND edb.name = 'Broad 3K genotyping chip'
-   AND edr.version = '2008-06-13'
-)
+   left join (select distinct na_sequence_id, product, product_alias from dots.isolatefeature) prod
+           on prod.na_sequence_id = iso.na_sequence_id
       ]]>
     </sql>
     <sql>
