@@ -2328,6 +2328,8 @@ FROM (
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
              WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
              WHEN lower(pinfo.name) like 'toxo%' THEN 'ToxoDB'
+             WHEN lower(pinfo.name) like 'giard%' THEN 'GiardiaDB'
+             WHEN lower(pinfo.name) like 'tritryp%' THEN 'TriTrypDB'
         ELSE '' END as project_id
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo
@@ -2336,7 +2338,10 @@ FROM (
        AND edr.external_database_release_id = etn.external_database_release_id
        AND pinfo.project_id = etn.row_project_id
       ) iso
-   left join (select distinct na_sequence_id, product, product_alias from dots.isolatefeature) prod
+   left join (select na_sequence_id, 
+               apidb.tab_to_string(CAST(COLLECT(product) AS apidb.varchartab),'; ') as product, 
+               apidb.tab_to_string(CAST(COLLECT(product_alias) AS apidb.varchartab),'; ') as product_alias 
+               from dots.isolatefeature group by na_sequence_id) prod
            on prod.na_sequence_id = iso.na_sequence_id
        )
       ]]>
