@@ -47,6 +47,10 @@ sub preprocess {
           $exon->add_tag_value('reading_frame', $frame);
         }
       }
+      
+      if($gene->score()){
+	  $gene->add_tag_value('score',$gene->score());
+      }
       # we have to remove the exons before adding the transcript b/c
       # remove_SeqFeatures() removes all subfeatures of the $gene
       $gene->remove_SeqFeatures();
