@@ -1136,7 +1136,7 @@ UNION
     <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
       <column name="internal"/>
       <column name="term"/>
-      <sql excludeProjects="ToxoDB,CryptoDB">
+      <sql excludeProjects="ToxoDB,CryptoDB,TriTrypDB">
         <![CDATA[
           SELECT organisms.name AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -1182,7 +1182,7 @@ UNION
           ORDER BY partial_ordering.rank, organisms.name
         ]]>
       </sql>
-      <sql includeProjects="ToxoDB,CryptoDB">
+      <sql includeProjects="ToxoDB,CryptoDB,TriTrypDB">
         <![CDATA[
            SELECT distinct ga.organism as term,ns.taxon_id as internal
            FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
