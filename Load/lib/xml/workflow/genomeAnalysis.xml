@@ -16,11 +16,10 @@
   <param name="nrdbExtDbRlsSpec"/>
   <param name="organismTwoLetterAbbrev"/>
   <param name="repeatMaskSpecies"/>
-  <param name="maxIntronSize"/>
   <param name="organismFullName"/>
   <param name="genomeSize"/>
   <param name="runtRNAScan"/>
-
+  <param name="makeAndBlockAssemblySeqs"/>
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
@@ -133,7 +132,7 @@
       <depends name="runLowComplexityFilter"/>
     </step>
 
-    <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml">
+    <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
@@ -144,7 +143,7 @@
       <depends name="extractGenomicSeqs"/>
     </subgraph>
 
-    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml">
+    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -153,11 +152,10 @@
       <paramValue name="assemblySeqsDataDir">$$assemblySeqsDataDir$$</paramValue>
       <paramValue name="dataDir">$$mapAssemblySeqsDataDir$$</paramValue>
       <paramValue name="genomicSeqsDir">$$mapAssemblySeqsDataDir$$/genomicSeqs</paramValue>
-      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <depends name="makeAndBlockAssemblySeqs"/>
     </subgraph>
 
-    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml">
+    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -169,7 +167,7 @@
       <depends name="mapAssemblySeqsToGenome"/>
     </subgraph>
 
-    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml">
+    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
