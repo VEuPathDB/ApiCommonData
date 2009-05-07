@@ -2314,7 +2314,8 @@ FROM (
         'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
         ELSE etn.source_id END as source_id,
         src.organism as organism,
-        src.strain || ' ' || src.isolate as strain,
+        CASE WHEN src.strain != src.isolate THEN src.strain || ' ' || src.isolate 
+             WHEN src.strain is  not null THEN src.strain ELSE src.isolate END as strain,
         src.specific_host as specific_host,
         src.isolation_source as isolation_source,
         src.country as country,

@@ -43,12 +43,12 @@
     <!-- Isolate Author -->
     <!-- ************************************************************ -->
 
-    <sqlQuery name="IsolateByAuthor" doNotTest="true"  includeProjects="CryptoDB"
+    <sqlQuery name="IsolateByAuthor" doNotTest="true"  includeProjects="CryptoDB,PlasmoDB"
               displayName="Author" isCacheable="true">
       <paramRef ref="isolateParams.author"/>
       <column name="source_id"/>
       <column name="project_id"/>
-      <sql includeProjects="CryptoDB">
+      <sql>
       <![CDATA[
           SELECT distinct etn.source_id as source_id,
                  '@PROJECT_ID@' as project_id
@@ -86,22 +86,18 @@
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type" includeProjects="PlasmoDB"/>
-        <sql includeProjects="CryptoDB">
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
+        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB">
+            <![CDATA[
+             AND  i.data_type in ($$type$$) 
+            ]]>
+        </sqlParamValue>
+        <sql>
           <![CDATA[
            select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
             from apidb.isolateattributes i
             where i.organism in ($$strain$$)
-            ORDER BY i.source_id
-            ]]>
-         </sql>
-
-        <sql includeProjects="PlasmoDB">
-          <![CDATA[
-            SELECT src.source_id, '@PROJECT_ID@' as project_id, src.data_type,src.strain
-            FROM   ApiDB.IsolateAttributes src
-            WHERE  lower(regexp_replace(src.strain, '[-_/]', '-')) in ($$strain$$)
-            AND  src.data_type in ($$type$$)
-            ORDER BY src.strain
+            &&dataTypeOptional&&
             ]]>
          </sql>
     </sqlQuery>
@@ -119,7 +115,7 @@
     <!-- Host name (Specific_host) -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="IsolateByHost" includeProjects="CryptoDB">
+    <sqlQuery name="IsolateByHost" includeProjects="CryptoDB,PlasmoDB">
 
         <testParamValues includeProjects="CryptoDB">
             <paramValue name="specific_host">human</paramValue>
@@ -153,7 +149,7 @@
     <!-- Isolation Source -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="IsolateByIsolationSource" includeProjects="CryptoDB">
+    <sqlQuery name="IsolateByIsolationSource" includeProjects="CryptoDB,PlasmoDB">
         <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -180,7 +176,7 @@
     <!-- Isolate by Product -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="IsolateByProduct" includeProjects="CryptoDB">
+    <sqlQuery name="IsolateByProduct" includeProjects="CryptoDB,PlasmoDB">
         <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -209,7 +205,7 @@
     <!-- Isolate by Study -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="IsolateByStudy" includeProjects="CryptoDB">
+    <sqlQuery name="IsolateByStudy" includeProjects="CryptoDB,PlasmoDB">
         <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -253,7 +249,7 @@
         <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
         <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB">
             <![CDATA[
-             AND  src.data_type in ($$type$$) 
+             AND  i.data_type in ($$type$$) 
             ]]>
         </sqlParamValue>
         <sql>
@@ -381,7 +377,7 @@
     <!-- keyword search (based on Oracle Text) -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="IsolatesByTextSearch" includeProjects="CryptoDB"
+    <processQuery name="IsolatesByTextSearch" includeProjects="PlasmoDB,CryptoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin">
        <paramRef ref="sharedParams.wdk_record_type" default="isolate"/>
        <paramRef ref="sharedParams.project_id" default="CryptoDB" includeProjects="CryptoDB"/>

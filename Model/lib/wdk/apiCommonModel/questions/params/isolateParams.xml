@@ -32,17 +32,17 @@
 -->
         <stringParam name="gene_id" prompt="Gene Name">
             <help>Enter an Gene Name.  Wildcards (*) are allowed.</help>
-            <suggest includeProjects="CryptoDB,ApiDB"
+            <suggest includeProjects="CryptoDB,PlasmoDB,ApiDB"
                      sample="cgd5_3160, cgd5_31*, *"
                      default="cgd5_3160"/>
         </stringParam>
 
         <stringParam name="author" prompt="Author/Submitter">
             <help>Enter an Author name.  Wildcards (*) are allowed.</help> 
-            <suggest includeProjects="CryptoDB,ApiDB" sample="Xiao" default="Xiao"/> 
+            <suggest includeProjects="CryptoDB,PlasmoDB,ApiDB" sample="Xiao" default="Xiao"/> 
         </stringParam>
 
-        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,ApiDB"
+        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,PlasmoDB,ApiDB"
              queryRef="organismIQ.withIsolates"
             prompt="Organism"
             multiPick="true"
@@ -50,7 +50,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="specific_host" includeProjects="CryptoDB,ApiDB"
+        <flatVocabParam name="specific_host" includeProjects="CryptoDB,PlasmoDB,ApiDB,PlasmoDB"
              queryRef="hostVQ.withIsolates"
              default="Mammals - human"
              prompt="Host"
@@ -60,7 +60,7 @@
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,ApiDB"
+        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ApiDB"
              queryRef="isolationSourceVQ.withIsolates"
              prompt="Isolation Source"
              multiPick="true"
@@ -68,7 +68,7 @@
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="product" includeProjects="CryptoDB,ApiDB"
+        <flatVocabParam name="product" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="productVQ.withIsolates"
             prompt="Product Name"
             multiPick="true"
@@ -77,12 +77,12 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="study" includeProjects="CryptoDB,ApiDB"
+        <flatVocabParam name="study" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="studyVQ.withIsolates"
             prompt="Study Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB,ApiDB"/>
+            <useTermOnly value="true" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ApiDB"
@@ -93,6 +93,7 @@
             quote="false"
             displayType="treeBox">
             <useTermOnly value="true" includeProjects="ApiDB"/>
+            <suggest selectMode="none" />
         </flatVocabParam>
 
         <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,ApiDB"
@@ -104,62 +105,31 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam> 
 
-        <flatVocabParam name="strain" includeProjects="PlasmoDB,ApiDB"
+        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ApiDB"
             queryRef="strainVQ.withIsolates"
-            prompt="Strain/Taxon Name"
+            prompt="Species/Strain Name"
             multiPick="true"
             quote="false"
             displayType="treeBox">
                   <help>
-                          Strain name for isolate barcodes and 3k Chip data
+                         Species Name (and strain if appropriate)
                         </help>
             <useTermOnly value="true" includeProjects="ApiDB"/>
+            <suggest selectMode="none" />
        </flatVocabParam>
 
-        <flatVocabParam name="strain" includeProjects="CryptoDB"
-            queryRef="strainVQ.withIsolates"
-            prompt="Species Name"
-            multiPick="true"
-            quote="false"
-            displayType="treeBox">
-                  <help>
-                         Species Name
-                        </help>
-       </flatVocabParam>
-
-
-     <enumParam name="type"
-                 prompt="Isolate assay type"
-                 multiPick="true"
-                 quote="true">
-        <help>
-         There are two isolate types in PlasmoDB - Barcode and 3K Chip 
-        </help>
-        <enumList>
-          <enumValue default="true">
-            <term>3kChip</term>
-            <internal>3kChip</internal>
-          </enumValue>
-          <enumValue default="true">
-            <term>Barcode</term>
-            <internal>Barcode</internal>
-          </enumValue>
-        </enumList>
-      </enumParam>
-
-<!--
        <flatVocabParam name="type" includeProjects="PlasmoDB,ApiDB"
             queryRef="typeVQ.withIsolates"
             prompt="Isolate assay type"
             multiPick="true"
             quote="true"> 
         <help>
-         There are two isolate types in PlasmoDB - Barcode and 3K Chip 
+          Choose the isolate type you want to query
             </help>
-            <useTermOnly value="true" includeProjects="ApiDB"/> 
+        <useTermOnly value="true" includeProjects="ApiDB"/> 
+        <suggest selectMode="all" />
        </flatVocabParam>
 
--->
        <flatVocabParam name="submitter" includeProjects="PlasmoDB,ApiDB"
             queryRef="submitterVQ.withIsolates"
             prompt="Submitter"
@@ -225,7 +195,7 @@
     </paramSet>
 
     <querySet name="organismIQ" queryType="vocab">
-      <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+      <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -250,7 +220,7 @@
   </querySet>
 
   <querySet name="hostVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
     <column name="internal"/>
     <column name="term"/>
     <column name="parentTerm"/>
@@ -291,7 +261,7 @@
     </querySet>
 
   <querySet name="isolationSourceVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
     <column name="term"/>
     <column name="internal"/>
     <sql>
@@ -314,7 +284,7 @@ order by term asc
     </querySet>
 
   <querySet name="productVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
     <column name="internal"/>
     <column name="term"/>
     <column name="parentTerm"/>
@@ -339,7 +309,7 @@ select 'others' as term, 'others' as internal, '' as parentterm from dual
      </querySet>
 
   <querySet name="studyVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -463,7 +433,23 @@ select 'environmental samples' as term, 'environmental samples' as internal, 'Cr
      ]]>
       </sql>
 
+      <sql  includeProjects="PlasmoDB">
+      <![CDATA[
+select distinct i.organism as term, tn.name as internal, p.name as parentTerm 
+from apidb.isolateattributes i, sres.taxonname tn, 
+     sres.taxon t, sres.TaxonName p
+where i.organism = tn.name
+and tn.taxon_id = t.taxon_id
+and tn.name_class = 'scientific name'
+and t.parent_id = p.taxon_id
+and p.name_class =  'scientific name'
+union
+select 'unclassified Plasmodium' as term, 'Unknown' as internal, '' as parentTerm from dual
+      ]]>
+      </sql>
 
+    </sqlQuery>
+<!--
       <sql  includeProjects="PlasmoDB">
       <![CDATA[
     select 'P.f. ' || new as term, new as internal, '' as parentTerm
@@ -475,6 +461,7 @@ select 'environmental samples' as term, 'environmental samples' as internal, 'Cr
       ]]>
       </sql>
     </sqlQuery>
+-->
 
  <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
       <wsColumn name="internal" width="200" wsName="internal"/>

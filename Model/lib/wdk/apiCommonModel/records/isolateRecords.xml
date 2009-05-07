@@ -60,33 +60,20 @@
       <!-- sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.Sequence" includeProjects="CryptoDB,PlasmoDB,ApiDB"> 
+      <attributeQueryRef ref="IsolateAttributes.Attributes" includeProjects="CryptoDB,PlasmoDB,ApiDB"> 
          <columnAttribute name="pcr_primers" displayName="PCR primer" internal="true"/>
          <columnAttribute name="country" displayName="Country" internal="false"/>
-
-         <columnAttribute name="organism" displayName="Organism" internal="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="organism" displayName="Organism" internal="true" includeProjects="PlasmoDB"/>
-
+         <columnAttribute name="organism" displayName="Organism" internal="false"/>
          <columnAttribute name="strain" displayName="Strain" internal="false"/> 
-
-         <columnAttribute name="specific_host" displayName="Host" internal="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="specific_host" displayName="Host" internal="true" includeProjects="PlasmoDB"/>
-
-         <columnAttribute name="isolation_source" displayName="Isolation Source" internal="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="isolation_source" displayName="Isolation Source" internal="true" includeProjects="PlasmoDB"/>
-
+         <columnAttribute name="specific_host" displayName="Host" internal="false"/>
+         <columnAttribute name="isolation_source" displayName="Isolation Source" internal="false"/>
          <columnAttribute name="description" displayName="Description" internal="false"/> 
-
          <columnAttribute name="note" displayName="Note" internal="true"/> 
-
-         <columnAttribute name="product" displayName="Isolate Product" internal="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="product" displayName="Isolate Product" internal="true" includeProjects="PlasmoDB"/>
-
-         <columnAttribute name="is_reference" displayName="Is Reference" internal="false" includeProjects="CryptoDB,ApiDB"/>
-         <columnAttribute name="is_reference" displayName="Is Reference" internal="true" includeProjects="PlasmoDB"/>
-
+         <columnAttribute name="product" displayName="Isolate Product" internal="false"/>
+         <columnAttribute name="is_reference" displayName="Is Reference" internal="false"/>
          <columnAttribute name="data_type" displayName="Isolate Type" internal="false"/> 
          <columnAttribute name="collected_by" displayName="Submitter" internal="false"/>
+         <columnAttribute name="length" displayName="Length" internal="false"/>
       </attributeQueryRef>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -103,8 +90,7 @@
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,ApiDB,PlasmoDB">
-         <columnAttribute name="sequence" displayName="DNA Sequence" internal="true" includeProjects="CryptoDB,PlasmoDB"/>
-         <columnAttribute name="length" displayName="Length" internal="true" includeProjects="ApiDB,CryptoDB,PlasmoDB"/>
+         <columnAttribute name="sequence" displayName="DNA Sequence" internal="true"/>
       </attributeQueryRef>
 
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

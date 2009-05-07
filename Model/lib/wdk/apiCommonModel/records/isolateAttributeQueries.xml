@@ -15,7 +15,7 @@
            select count(*) from dots.isolatesource
       </testRowCountSql>
 
-       <sqlQuery name="Sequence">
+       <sqlQuery name="Attributes">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="organism" /> 
@@ -30,6 +30,7 @@
             <column name="product"/> 
             <column name="collected_by"/> 
             <column name="is_reference"/> 
+            <column name="length"/> 
             <sql>
                SELECT iso.source_id, 
                       iso.project_id, 
@@ -43,6 +44,7 @@
                       iso.note,
                       iso.collected_by,
                       iso.product,
+                      /* iso.length, */ 'length' as length,
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
                       iso.data_type
                 FROM   ApiDB.IsolateAttributes iso
@@ -77,10 +79,9 @@
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="sequence"/>
-            <column name="length"/>
             <sql>
            select i.source_id, '@PROJECT_ID@' as project_id,
-                  s.sequence, length(s.sequence) as length
+                  s.sequence
            from apidb.isolateattributes i, dots.nasequence s
             where i.na_sequence_id = s.na_sequence_id
            </sql>

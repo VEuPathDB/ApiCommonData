@@ -18,7 +18,7 @@
              <attributesList includeProjects="CryptoDB"
                summary="organism, strain, product, specific_host"/>
               <attributesList includeProjects="PlasmoDB"
-                 summary="strain, country, data_type" /> 
+                 summary="organism, strain, country, specific_host, data_type" /> 
              <summary>
                Find Isolates by ID.
              </summary>
@@ -117,7 +117,7 @@
               <attributesList includeProjects="CryptoDB"
                  summary="organism, strain, product, specific_host" /> 
               <attributesList includeProjects="PlasmoDB"
-                 summary="strain, country, data_type, length" />
+                 summary="organism, strain, country, specific_host, data_type" /> 
               <attributesList includeProjects="ApiDB"
                  summary="organism, strain, country, product, data_type, length, specific_host" /> 
               
@@ -209,10 +209,8 @@
               shortDisplayName="Product Name"
               queryRef="IsolateIds.IsolateByProduct"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB">
-            <attributesList
-                 summary="organism, strain, product, specific_host"
-            /> 
+              includeProjects="CryptoDB,ApiDB,PlasmoDB">
+            <attributesList summary="organism, strain, country, specific_host, data_type" /> 
         <summary> 
            Find isolates by product name.
         </summary> 
@@ -238,10 +236,8 @@
               shortDisplayName="Study Name"
               queryRef="IsolateIds.IsolateByStudy"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB">
-         <attributesList
-              summary="organism, strain, product, specific_host"
-         /> 
+              includeProjects="CryptoDB,ApiDB,PlasmoDB">
+            <attributesList summary="organism, strain, country, specific_host, data_type" /> 
       <summary> 
         Find isolates by study name.
       </summary> 
@@ -270,10 +266,10 @@
               includeProjects="CryptoDB,PlasmoDB,ApiDB">
          <attributesList includeProjects="CryptoDB"
               summary="organism, strain, product, specific_host, country" /> 
- <attributesList includeProjects="ApiDB"
-              summary="organism, strain, country, data_type, product, length, specific_host" /> 
          <attributesList includeProjects="PlasmoDB"
-              summary="strain, country, data_type, length" />
+                 summary="organism, strain, country, specific_host, data_type" /> 
+         <attributesList includeProjects="ApiDB"
+              summary="organism, strain, country, data_type, product, length, specific_host" /> 
       <summary> 
       Find isolates by country and/or continent.
     </summary> 
@@ -313,7 +309,7 @@
               shortDisplayName="Author"
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlsmoDB">
        <attributesList summary="organism, strain, product, specific_host" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
@@ -405,9 +401,15 @@
            Find Isolates that have BLAST similarity to your input sequence.
         </summary>
 
-        <description>
+        <description includeProjects="PlasmoDB">
             <![CDATA[ 
-            Find Isolates Barcode that have BLAST similarity to your input query sequence.  <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.  
+            Find Isolates that have BLAST similarity to your input query sequence.  Note that you can search the barcode isolates using the 24 character barcode as the input sequence. <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.  
+            ]]> 
+         </description> 
+         
+        <description includeProjects="CryptoDB,ApiDB">
+            <![CDATA[ 
+            Find Isolates that have BLAST similarity to your input query sequence.  <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.  
             ]]> 
          </description> 
          
@@ -437,7 +439,7 @@
          category="Other Attributes"
          queryRef="IsolateIds.IsolatesByTextSearch"
          recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-         includeProjects="CryptoDB">
+         includeProjects="CryptoDB,PlasmoDB">
         <attributesList 
            summary="organism, strain, country, collected_by, data_type, fields_matched, max_score"
          sorting="max_score desc,strain asc"
