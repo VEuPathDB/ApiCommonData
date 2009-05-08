@@ -398,5 +398,54 @@
 
     </question>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- by isolate source_id                           -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <question name="SnpsByIsolateId" includeProjects="PlasmoDB"
+              category="Other Attributes"
+              displayName="assayed in an isolate"
+              shortDisplayName="Isolate ID"
+              queryRef="SnpsBy.SnpsByIsolateId"
+              recordClassRef="SnpRecordClasses.SnpRecordClass">
+        <attributesList
+              summary="snp_location,is_source_id, isolate_allele,major_allele,minor_allele"
+              sorting="snp_location asc"
+        />
+        <summary>
+            <![CDATA[
+              Find SNPs that are present in a specific isolate.
+            ]]>
+        </summary>
+
+        <propertyList name="organism">
+             <value>P. falciparum</value>
+        </propertyList>
+
+	<description>
+            <![CDATA[
+              Find SNPs that were assayed for a specific isolate.
+            ]]>
+        </description>
+
+         <dynamicAttributes> 
+           <columnAttribute name="isolate_allele" displayName="Isolate allele" align="center" inReportMaker="true"/> 
+           <columnAttribute name="is_source_id" displayName="Isolate ID" inReportMaker="true"/> 
+         </dynamicAttributes>
+
+        <propertyList name="specificAttribution">
+           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value>Broad_Isolate_Barcode</value>
+           <value>Broad_3K_Genotyping</value>
+           <value>Broad_75K_Genotyping</value>
+        </propertyList>
+
+        <propertyList name="genomeAttribution">
+          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+       </propertyList>
+
+    </question>
+
   </questionSet>
 </wdkModel>

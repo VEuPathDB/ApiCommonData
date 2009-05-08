@@ -550,6 +550,30 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
 
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate source id -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="SnpsByIsolateId" includeProjects="PlasmoDB" 
+          isCacheable="true">
+        <paramRef ref="snpParams.isolate_id"/>
+        <column name="source_id"/> 
+        <column name="project_id"/>
+        <column name="isolate_allele"/>
+        <column name="is_source_id"/>
+        <sql>
+            <![CDATA[
+              select isnp.snp_source_id as source_id, $$isolate_id$$ as is_source_id, 
+                     isnp.allele as isolate_allele, '@PROJECT_ID@' as project_id
+              from apidb.ISOLATESNPS isnp, apidb.SNPATTRIBUTES sa
+              where isnp.is_source_id = $$isolate_id$$
+              and isnp.allele is not null
+              and isnp.snp_db_name = 'PlasmoDB combined SNPs'
+              and isnp.snp_source_id = sa.source_id
+           ]]>
+       </sql>
+    </sqlQuery>
+
   </querySet>
 
 </wdkModel>
