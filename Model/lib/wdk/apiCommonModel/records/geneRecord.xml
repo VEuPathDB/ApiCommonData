@@ -1548,6 +1548,57 @@
           </table>
 
 
+
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+          <!-- plasmo version5.5 genes table -->  
+          <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+          <table name="PlasmoVer5Genes" includeProjects="PlasmoDB"
+                 displayName="Release 5.5 Genes"
+                 queryRef="GeneTables.PlasmoVer5Genes">
+            <columnAttribute displayName= "Gene ID" name="old_source_id" internal="false"/>
+            <columnAttribute displayName= "Product" name="product" internal="false"/>
+            <columnAttribute displayName= "Sequence ID" name="sequence_id" internal="false" align="center"/>
+            <textAttribute inReportMaker="true" name="location" displayName="Location">
+                  <text>
+                    <![CDATA[
+                      $$start_min$$ - $$end_max$$ ($$strand$$)
+                    ]]>
+                  </text>
+            </textAttribute>
+            <columnAttribute displayName= "= Release 6 protein ? " name="same_protein" internal="false" align="center"/>
+            <linkAttribute displayName="OrthoMCL" name="orthomcl_link" inReportMaker="false" internal="false" align="center" >
+                 <displayText>
+                    <![CDATA[
+                       OrthoMCL
+                     ]]>
+                 </displayText>
+                   <url>
+                    <![CDATA[
+                      http://orthomcl.org/cgi-bin/OrthoMclWeb.cgi?rm=sequenceList&in=Accession&q=$$cyc_gene_id$$
+                        ]]>
+                   </url>
+            </linkAttribute>
+            <linkAttribute name="plasmocyc" displayName="PlasmoCyc" internal="false" inReportMaker="false" align="center">
+               <displayText>
+                  <![CDATA[
+                     PlamsoCyc
+                     ]]>
+               </displayText>
+               <url>
+                  <![CDATA[
+                        http://apicyc.apidb.org/PLASMO/NEW-IMAGE?type=GENE&object=$$cyc_gene_id$$
+                        ]]>
+               </url>
+            </linkAttribute>
+            <columnAttribute displayName= "cyc_gene_id" name="cyc_gene_id" internal="true"/>
+            <columnAttribute displayName= "start" name="start_min" internal="true"/>
+            <columnAttribute displayName= "end" name="end_max" internal="true"/>
+            <columnAttribute displayName= "strand" name="strand" internal="true"/>
+          </table>
+
+
+
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- toxo version4 genes table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
