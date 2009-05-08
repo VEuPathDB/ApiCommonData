@@ -1867,6 +1867,36 @@
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- plasmo version 5.5  genes -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+     <sqlQuery name="PlasmoVer5Genes" isCacheable="false" includeProjects="PlasmoDB">
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="old_source_id"/>
+            <column name="start_min"/>
+            <column name="end_max"/>
+            <column name="strand"/>
+            <column name="product"/>
+            <column name="same_protein"/>
+            <column name="cyc_gene_id"/>
+            <sql>
+            <![CDATA[
+            SELECT toa.source_id,'@PROJECT_ID@' AS project_id,
+                   toa.old_source_id, ens.source_id as sequence_id, fl.start_min, fl.end_max,
+                   decode (fl.is_reversed, 0, '+1', 1, '-1', '.') strand,gf.product,
+                   decode(toa.new_protein,0,'Yes',1,'No') as same_protein,
+                   upper(toa.source_id) as cyc_gene_id
+            FROM   ApiDB.TrackOldAnnotation toa, DOTS.GeneFeature gf,
+                   ApiDB.FeatureLocation fl, DOTS.ExternalNaSequence ens
+            WHERE  toa.old_source_id = gf.source_id
+            AND    gf.na_feature_id = fl.na_feature_id
+            AND    fl.na_sequence_id = ens.na_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Antibody -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
