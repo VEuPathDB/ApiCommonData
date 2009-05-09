@@ -25,6 +25,6 @@ alter table dots.SecondaryStructureCall
 add constraint SecStructCall_fk foreign key (SECONDARY_STRUCTURE_ID)
 references DOTS.SECONDARYSTRUCTURE (SECONDARY_STRUCTURE_ID);
 
-create index ssc_secStruc_ix on dots.SecondaryStructureCall (secondary_structure_id);
+create index dots.ssc_secStruc_ix on dots.SecondaryStructureCall (secondary_structure_id);
 
 exit
