@@ -107,6 +107,8 @@ sub WriteGFF {
   my $GFFFile = "$species.gff";
   my $rowcount = 0;
 
+  my $GFFString = new  Bio::Tools::GFF(-file => ">>$GFFFile",  -gff_version => 3);
+
   while (my  @Recordrow = $$StatementHandle->fetchrow_array) {
 
     my $SequenceFeature = Bio::SeqFeature::Gene::Exon->new(-seq_id       => $Recordrow[0],
@@ -120,7 +122,7 @@ sub WriteGFF {
                                                            -score        => $Recordrow[5],
                                                            -tag          => {ID => $Recordrow[8]}
                                                           );
-    my $GFFString = new  Bio::Tools::GFF(-file => ">>$GFFFile",  -gff_version => 1);
+
     $GFFString->write_feature($SequenceFeature);
     $rowcount++;
   }
@@ -162,20 +164,26 @@ sub GetExonQuery {
            AND    nl.is_top_level = 1
            AND    nl.na_sequence_id = ns.na_sequence_id
            AND    ns.taxon_id in ($TaxonID)
-           ORDER BY ef.order_number");
+           ORDER BY ef.source_id,ef.order_number");
 }
 
 sub GetCDSQuery {
 
   my ($TaxonID) = @_;
+
   return ("SELECT ns.source_id as gff_seqname,
                   'ApiDB' as gff_source,
                   'CDS' as gff_feature, 
-                  least(nl.start_min, nl.end_max) as gff_start,
-                  greatest(nl.start_min, nl.end_max) as gff_end,
-                  '.' as gff_score,
-                  decode(nl.is_reversed, 1, '-', '+') as gff_strand,
-                  '.'  as gff_frame,
+                   least(nl.coding_start, nl.coding_end) as gff_start,
+                   greatest(nl.coding_start, nl.coding_end) as gff_end,
+                   '.' as gff_score,
+                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
+                   mod(3 - mod((select nvl(sum(greatest(ef2.coding_start, ef2.coding_end)
+                                               - least(ef2.coding_start, ef2.coding_end) +1
+                                               ), 0)
+                        from dots.ExonFeature ef2
+                        where parent_id = ef.parent_id
+                          and order_number < ef.order_number), 3), 3) as gff_frame,
                   ef.source_id as gff_group
            FROM   DoTS.GeneFeature gf,
                   DoTS.Transcript rna,
@@ -197,5 +205,5 @@ sub GetCDSQuery {
            AND    gf.sequence_ontology_id = so.sequence_ontology_id
            AND    so.term_name in ('protein_coding', 'repeat_region')
            AND    ns.taxon_id in ($TaxonID)
-           ORDER BY ef.order_number");
+           ORDER BY ef.source_id,ef.order_number");
 }
