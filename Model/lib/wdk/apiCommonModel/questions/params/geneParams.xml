@@ -379,6 +379,8 @@
         </enumList>
       </enumParam>
 
+<!--Not needed for the querying the genes based on old  annotation 
+
       <enumParam name="plasmo_snapshot_changed"
                  prompt="Updated since the July 15, 2008 re-annotation snapshot"
                  multiPick="false"
@@ -401,13 +403,13 @@
           </enumValue>
         </enumList>
       </enumParam>
-
+-->
       <enumParam name="plasmo_annot_status"
-                 prompt="Re-annotation status"
+                 prompt="Status change from old(v 5.5)  to new(v 6.0) annotation"
                  multiPick="true"
                  quote="true">
         <help>
-           Choose which genes to return based on their re-annotation status.
+           Choose which genes to return based on their change in status from old to new annotation.
         </help>
         <enumList>
           <enumValue default="true">
@@ -418,26 +420,15 @@
             <term>New</term>
             <internal>new</internal>
           </enumValue>
-         <enumValue>
-            <term>New - Organellar</term>
-            <internal>new_organellar</internal>
-          </enumValue>
           <enumValue>
             <term>Deleted</term>
             <internal>deleted</internal>
           </enumValue>
-        <enumValue>
-            <term>Deprecated - Organellar</term>
-            <internal>deleted_organellar</internal>
-          </enumValue>
           <enumValue>
-            <term>Reviewed - not changed</term>
-            <internal>reviewed</internal>
+            <term>Unchanged</term>
+            <internal>unchanged</internal>
           </enumValue>
-          <enumValue>
-            <term>Not reviewed</term>
-            <internal>not reviewed</internal>
-          </enumValue>
+
         </enumList>
       </enumParam>
 

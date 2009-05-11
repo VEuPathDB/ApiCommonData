@@ -52,6 +52,38 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
         </dynamicAttributes>
     </question>
 -->
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!--Old Annotation genes (v 5.5) -->  
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+
+       <question name="GenesByOldAnnotation" 
+         includeProjects="PlasmoDB"
+         category="Old Annotation"
+         displayName="Old (v.5.5) Annotation"
+              queryRef="GeneId.GenesByOldAnnotation"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+         <attributesList
+              summary="location_text,product,new_product_desc,annot_status"
+              sorting="location_text asc"
+        />
+        <summary>
+           Find genes that have modified annotation based on the recent Plasmodium falciparum annotation workshop
+        </summary>
+        <description>
+           <![CDATA[
+          ]]>
+        </description>
+        <dynamicAttributes>
+          <columnAttribute name="annot_status" displayName="Status"/>
+          <columnAttribute name="new_product_desc" displayName="New Product Description"/>
+        </dynamicAttributes>
+    </question>
+
+
+
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Location -->  
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
