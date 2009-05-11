@@ -1,0 +1,13 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use WDK::Model::CommandHelper;
+
+my $GUS_HOME = $ENV{GUS_HOME};
+my $CLASSPATH = &WDK::Model::CommandHelper::getJavaClasspath($GUS_HOME);
+my $sysProps = &WDK::Model::CommandHelper::getSystemProps($GUS_HOME, 'fullRecordDump');
+my $args = &WDK::Model::CommandHelper::getJavaArgs(@ARGV);
+
+my $cmd = "java $sysProps -classpath $CLASSPATH org.apidb.apicommon.model.report.FullRecordCacheCreator $args";
+
+system($cmd);
