@@ -2286,6 +2286,7 @@ CREATE TABLE apidb.IsolateAttributes&1 NOLOGGING AS
 select na_sequence_id, taxon_id,
        external_db_version,
        external_db_name,
+       na_feature_id,
        source_id,
        decode(organism, null, 'Unknown', substr(organism, 1, 100)) as organism,
        decode(strain, null, 'Unknown', substr(strain, 1, 100)) as strain,
@@ -2307,7 +2308,7 @@ FROM (
        prod.product,
        prod.product_alias
    from (SELECT etn.na_sequence_id, etn.taxon_id,etn.length,
-        edr.version as external_db_version, 
+        edr.version as external_db_version, src.na_feature_id,
         edb.name as external_db_name,
         CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CP75.'||etn.na_sequence_id, 
         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
@@ -3241,27 +3242,20 @@ tablespace indx
 
   <tuningTable name="apidb.IsolateSNPs">
     <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="dots.NaLocation"/>
-    <externalDependency name="sres.ExternalDatabase"/>
-    <externalDependency name="sres.ExternalDatabaseRelease"/>
     <internalDependency name="apidb.IsolateAttributes"/>
+    <internalDependency name="apidb.SnpAttributes"/>
     <sql>
       <![CDATA[
 create table apidb.IsolateSNPs&1 NOLOGGING as
-select s.na_sequence_id as is_na_sequence_id,atr.source_id as is_source_id, s.name,s.isolate, 
-f.allele,snpf.source_id as snp_source_id,d.name as snp_db_name,snpf.na_sequence_id as snp_na_sequence_id,snpl.start_min as snp_start_min
-from dots.ISOLATEFEATURE f, dots.ISOLATESOURCE s, dots.NALOCATION il, dots.SNPFEATURE snpf, 
-dots.NALOCATION snpl,apidb.ISOLATEATTRIBUTES atr, sres.externaldatabaserelease rel, sres.externaldatabase d
-where s.na_feature_id = f.parent_id
-and s.na_sequence_id = atr.NA_SEQUENCE_ID
-and il.na_feature_id = f.na_feature_id
-and snpf.na_sequence_id = f.na_sequence_id
-and snpl.na_feature_id = snpf.na_feature_id
-and snpl.start_min = il.start_min
-and snpf.external_database_release_id = rel.external_database_release_id
-and rel.external_database_id = d.external_database_id
-and d.name = 'PlasmoDB combined SNPs'
+select atr.na_sequence_id as is_na_sequence_id,atr.source_id as is_source_id,
+isof.allele,sa.source_id as snp_source_id,sa.dataset as snp_db_name,sa.na_sequence_id as snp_na_sequence_id,sa.start_min as snp_start_min
+from dots.ISOLATEFEATURE isof,  dots.NALOCATION isol, apidb.SNPATTRIBUTES sa, apidb.ISOLATEATTRIBUTES atr
+where atr.na_feature_id = isof.parent_id
+and isof.na_feature_id = isol.na_feature_id
+and sa.na_sequence_id = isof.na_sequence_id
+and sa.start_min = isol.start_min
+and sa.dataset in ('PlasmoDB combined SNPs','Broad SNPs')
       ]]>
     </sql>
     <sql>
@@ -3286,6 +3280,58 @@ tablespace indx
       <![CDATA[
         create index apidb.isnps_snp_sq_strt_idx&1 on apidb.isolatesnps&1 (snp_na_sequence_id,snp_start_min)
 tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.SnpsWithIsolates">
+    <internalDependency name="apidb.IsolateAttributes"/>
+    <internalDependency name="apidb.IsolateSNPs"/>
+    <sql>
+      <![CDATA[
+create table apidb.SnpsWithIsolates&1 NOLOGGING as
+select iso_ext_db_name,snp_source_id, 
+ apidb.tab_to_string(CAST(COLLECT(CASE WHEN frequency < 0.5 THEN allele END) AS apidb.varchartab), ', ') as minor_allele,
+ apidb.tab_to_string(CAST(COLLECT(CASE WHEN frequency > 0.5 THEN allele END) AS apidb.varchartab), ', ') as major_allele,
+ to_char(min(frequency), '0.99') as minor_allele_frequency,
+ min(number_isolates) as number_isolates
+from (
+ select s.snp_source_id as snp_source_id, s.external_db_name as iso_ext_db_name, s.allele, s.ct/t.tot as frequency, s.ct as allele_count, t.tot as number_isolates
+                 from (
+                       select ia.external_db_name, isos.snp_source_id,isos.allele,count(*) as ct
+                       from apidb.ISOLATESNPS isos,apidb.ISOLATEATTRIBUTES ia
+                       where  isos.allele in ('A','C','G','T')
+                       and isos.is_source_id = ia.source_id
+                       group by ia.external_db_name, isos.snp_source_id,isos.allele
+                       ) s,
+                       (
+                       select ia.external_db_name, isos.snp_source_id, count(*) as tot
+                       from apidb.isolatesnps isos,apidb.ISOLATEATTRIBUTES ia
+                       where  isos.allele in ('A','C','G','T')
+                       and isos.is_source_id = ia.source_id
+                       group by ia.external_db_name, isos.snp_source_id
+                       ) t
+                       where s.snp_source_id = t.snp_source_id
+                       and s.external_db_name = t.external_db_name
+                       )
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index apidb.snpswiso_id_db_idx&1 on apidb.snpswithisolates&1 (snp_source_id,iso_ext_db_name)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+update SnpsWithIsolates&1 swa
+set swa.major_allele = (select max(allele) from apidb.ISOLATEATTRIBUTES ia, apidb.ISOLATESNPS isnp 
+                    where isnp.snp_source_id = swa.snp_source_id and ia.EXTERNAL_DB_NAME = swa.iso_ext_db_name
+                    group by isnp.snp_source_id,ia.EXTERNAL_DB_NAME),
+swa.minor_allele = (select min(allele) from apidb.ISOLATEATTRIBUTES ia, apidb.ISOLATESNPS isnp 
+                    where isnp.snp_source_id = swa.snp_source_id and ia.EXTERNAL_DB_NAME = swa.iso_ext_db_name
+                    group by isnp.snp_source_id,ia.EXTERNAL_DB_NAME)
+where swa.major_allele is null;
       ]]>
     </sql>
   </tuningTable>
