@@ -3332,7 +3332,7 @@ set swa.major_allele = (select max(allele) from apidb.ISOLATEATTRIBUTES ia, apid
 swa.minor_allele = (select min(allele) from apidb.ISOLATEATTRIBUTES ia, apidb.ISOLATESNPS isnp 
                     where isnp.snp_source_id = swa.snp_source_id and ia.EXTERNAL_DB_NAME = swa.iso_ext_db_name
                     group by isnp.snp_source_id,ia.EXTERNAL_DB_NAME)
-where swa.major_allele is null;
+where swa.major_allele is null
       ]]>
     </sql>
   </tuningTable>
