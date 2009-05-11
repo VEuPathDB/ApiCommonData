@@ -713,6 +713,7 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_id"/>
+            <column name="pmids"/>
             <column name="stable_id"/>
             <column name="headline"/>
             <column name="user_name"/>
@@ -721,7 +722,10 @@
             <column name="project_version"/>
             <sql>
             <![CDATA[
-              SELECT * FROM (
+              SELECT a.source_id, a.project_id, a.comment_id,
+                     a.stable_id, a.headline, a.user_name, a.organization,
+                    a.comment_date, a.project_version, b.pmids 
+              FROM (
               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
                      c.comment_id, c.stable_id,
                      NVL(c.headline, '<i>none</i>') AS headline,
@@ -755,7 +759,16 @@
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
                     AND c.is_visible = 1
-              )
+              ) a,
+              (SELECT d.comment_id,
+                      apidb.tab_to_string(cast(collect(cf.source_id) as apidb.varchartab),',') as pmids
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ d,
+                      @COMMENT_SCHEMA@CommentReference@COMMENT_DBLINK@ cf
+               WHERE  d.comment_id=cf.comment_id 
+                  AND cf.database_name='pubmed' 
+               GROUP BY d.comment_id
+              ) b 
+              WHERE a.comment_id = b.comment_id(+) 
               ORDER BY comment_date DESC
             ]]>
             </sql>
