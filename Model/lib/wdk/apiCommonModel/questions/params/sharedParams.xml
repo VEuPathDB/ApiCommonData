@@ -1016,7 +1016,7 @@
        </flatVocabParam>
 
  <flatVocabParam name="libraryIdAssemblies"
-                      queryRef="SharedVQ.EstLibraries"
+                      queryRef="SharedVQ.EstLibrariesGenes"
                       prompt="EST Library"
                       multiPick="true"
                       quote="false"
@@ -1030,7 +1030,7 @@
 
 
        <flatVocabParam name="libraryIdGenes"
-                      queryRef="SharedVQ.EstLibraries"
+                      queryRef="SharedVQ.EstLibrariesGenes"
                       prompt="EST Library"
                       multiPick="true"
                       quote="false"
@@ -1905,14 +1905,15 @@ where att.PROJECT_ID = '@PROJECT_ID@'
   <processQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
+            <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>
         </processQuery>
 
 
 
-<!--
  <sqlQuery name="EstLibrariesAssemblies" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
+            <column name="parentTerm"/>
             <sql>
                 SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
                        l.library_id AS internal
@@ -1935,21 +1936,28 @@ where att.PROJECT_ID = '@PROJECT_ID@'
         <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
+            <column name="parentTerm"/>
              <sql>
-                SELECT distinct REPLACE(att.dbest_name, ',', ' - ') AS term,
-                       l.library_id AS internal
-                FROM apidb.estattributes att, dots.library l
-                WHERE att.dbest_name = l.dbest_name
-                AND att.project_id = '@PROJECT_ID@'
-                ORDER BY term
+select distinct t.* from
+(select distinct REGEXP_SUBSTR(ORGANISM,'[[:alpha:]]+[[:space:]]+[[:alpha:]]+') as term, 0 as internal, '' as parentTerm 
+from apidb.ESTATTRIBUTES
+where PROJECT_ID = '@PROJECT_ID@'
+union
+select  distinct CASE WHEN att.stage != 'unknown' and att.DBEST_NAME not like '%'||att.stage||'%' 
+            THEN  REPLACE(att.dbest_name, ',', ';') || ' (' || REPLACE(att.stage, ',', ';') || ')' ELSE REPLACE(att.dbest_name, ',', ';')  END AS term, 
+att.library_id as internal, REGEXP_SUBSTR(att.ORGANISM,'[[:alpha:]]+[[:space:]]+[[:alpha:]]+') as parentTerm
+from apidb.ESTATTRIBUTES att
+where att.PROJECT_ID = '@PROJECT_ID@') t, apidb.GENEATTRIBUTES ga
+where t.parentTerm = ga.species
+or t.term = ga.species
             </sql>
         </sqlQuery>
 
         <processQuery name="EstLibrariesGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
+            <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>
         </processQuery>
--->
 
 
 
