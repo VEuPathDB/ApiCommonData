@@ -715,6 +715,7 @@
             <column name="comment_id"/>
             <column name="pmids"/>
             <column name="categories"/>
+            <column name="genenum"/>
             <column name="stable_id"/>
             <column name="headline"/>
             <column name="user_name"/>
@@ -725,7 +726,8 @@
             <![CDATA[
               SELECT a.source_id, a.project_id, a.comment_id,
                      a.stable_id, a.headline, a.user_name, a.organization,
-                    a.comment_date, a.project_version, b.pmids, c.categories
+                     a.comment_date, a.project_version, b.pmids, 
+                     c.categories, d.genenum
               FROM (
               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
                      c.comment_id, c.stable_id,
@@ -777,9 +779,16 @@
                WHERE  c1.comment_id=c2.comment_id 
                   AND c2.target_category_id = c3.target_category_id
                GROUP BY c1.comment_id
-              ) c 
+              ) c, 
+              (SELECT d1.comment_id, count(d1.stable_id) as genenum
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ d1,
+                      @COMMENT_SCHEMA@CommentStableId@COMMENT_DBLINK@ d2
+               WHERE  d1.comment_id=d2.comment_id 
+               GROUP BY d1.comment_id
+              ) d 
               WHERE a.comment_id = b.comment_id(+) 
                 AND a.comment_id = c.comment_id(+)
+                AND a.comment_id = d.comment_id(+)
               ORDER BY comment_date DESC
             ]]>
             </sql>
