@@ -2036,6 +2036,18 @@
                 and r.external_database_release_id = rel.external_database_release_id
                 and rel.external_database_id = ed.external_database_id
                 and ed.name like 'PASA%'
+                UNION
+                SELECT gf.source_id, '@PROJECT_ID@' AS project_id,
+                       DECODE(ed.name,'Phenotype DBRefs','RMgm Phenotype Data') as dataset,
+                       r.primary_identifier as link_url
+                FROM   sres.dbref r, sres.externaldatabaserelease rel, 
+                       dots.dbrefnafeature rf,
+                       dots.genefeature gf, sres.externaldatabase ed
+                WHERE  gf.na_feature_id = rf.na_feature_id 
+                   AND rf.db_ref_id = r.db_ref_id 
+                   AND r.external_database_release_id = rel.external_database_release_id 
+                   AND rel.external_database_id = ed.external_database_id 
+                   AND ed.name = 'Phenotype DBRefs'
                 ]]>
             </sql>
         </sqlQuery>
