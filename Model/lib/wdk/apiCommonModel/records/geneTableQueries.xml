@@ -714,6 +714,7 @@
             <column name="project_id"/>
             <column name="comment_id"/>
             <column name="pmids"/>
+            <column name="categories"/>
             <column name="stable_id"/>
             <column name="headline"/>
             <column name="user_name"/>
@@ -724,7 +725,7 @@
             <![CDATA[
               SELECT a.source_id, a.project_id, a.comment_id,
                      a.stable_id, a.headline, a.user_name, a.organization,
-                    a.comment_date, a.project_version, b.pmids 
+                    a.comment_date, a.project_version, b.pmids, c.categories
               FROM (
               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
                      c.comment_id, c.stable_id,
@@ -767,8 +768,18 @@
                WHERE  d.comment_id=cf.comment_id 
                   AND cf.database_name='pubmed' 
                GROUP BY d.comment_id
-              ) b 
+              ) b, 
+              (SELECT c1.comment_id,
+                      apidb.tab_to_string(cast(collect(c3.category) as apidb.varchartab),',') as categories
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ c1,
+                      @COMMENT_SCHEMA@CommentTargetCategory@COMMENT_DBLINK@ c2,
+                      @COMMENT_SCHEMA@targetCategory@COMMENT_DBLINK@ c3
+               WHERE  c1.comment_id=c2.comment_id 
+                  AND c2.target_category_id = c3.target_category_id
+               GROUP BY c1.comment_id
+              ) c 
               WHERE a.comment_id = b.comment_id(+) 
+                AND a.comment_id = c.comment_id(+)
               ORDER BY comment_date DESC
             ]]>
             </sql>
