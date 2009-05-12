@@ -1895,7 +1895,7 @@ from Apidb.ESTATTRIBUTES
 where PROJECT_ID = '@PROJECT_ID@'
 union
 select  distinct CASE WHEN att.stage != 'unknown' and att.DBEST_NAME not like '%'||att.stage||'%' 
-            THEN  REPLACE(att.dbest_name, ',', ' - ') ||' ('||att.stage||')' ELSE REPLACE(att.dbest_name, ',', ' - ')  END AS term, 
+            THEN  REPLACE(att.dbest_name, ',', ';') || ' (' || REPLACE(att.stage, ',', ';') || ')' ELSE REPLACE(att.dbest_name, ',', ';')  END AS term, 
 att.library_id as internal, att.organism as parentTerm
 from apidb.ESTATTRIBUTES att
 where att.PROJECT_ID = '@PROJECT_ID@'
