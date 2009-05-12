@@ -7,7 +7,7 @@ use Bio::SeqIO;
 use File::Basename;
 
 
-my ($verbose, $help, $ePcrDir, $stsFile, $seqFile, $outFile, $margin, $mismatch, $gap, $msInfo, $logFile);
+my ($verbose, $help, $ePcrDir, $stsFile, $seqFile, $outFile, $margin, $mismatch, $gap, $wordSize, $discontiguous, $msInfo, $logFile);
 
 
 &GetOptions('verbose' => \$verbose,
@@ -18,6 +18,8 @@ my ($verbose, $help, $ePcrDir, $stsFile, $seqFile, $outFile, $margin, $mismatch,
             'output_file=s' => \$outFile,
             'margin=i' => \$margin,
             'mismatch=i' => \$mismatch,
+            'wordsize=i' => \$wordSize,
+            'discontiguous_words=i' => \$discontiguous,
             'gap=i' => \$gap,
             'microsatellite_info=s' => \$msInfo,
             'log_file=s' => \$logFile,
@@ -43,6 +45,13 @@ unless (defined $mismatch) {
   $mismatch = 0;
 }
 
+unless (defined $wordSize) {
+    $wordSize = 7;
+}
+
+unless (defined $discontiguous) {
+    $discontiguous = 0;
+}
 
 my $base = basename($outFile);
 my $dir = dirname($outFile);
@@ -51,7 +60,7 @@ my $ePcrOut = $dir."/".$base."_epcr";
 
 
 
-system("$ePcrDir/e-PCR $stsFile $seqFile M=$margin N=$mismatch G=$gap T=3 O=$ePcrOut");
+system("$ePcrDir/e-PCR $stsFile $seqFile M=$margin N=$mismatch G=$gap T=3 W=$wordSize F=$discontiguous O=$ePcrOut");
 
 my $stsHashRef = &makeGFFFile($ePcrOut,$outFile,$msInfo);
 
@@ -92,7 +101,7 @@ sub makeGFFFile{
     $strand =~ tr/)(//d;
 
     if($stsHash{$accession}){
-      print STDERR "$accession\n";
+      print STDERR "Repeated accessions: $accession\n";
     }
     $stsHash{$accession} = $accession;
     print OUT "$chr\t$msInfo\tmicrosatellite\t$start\t$end\t.\t$strand\t.\tID $accession\n";
@@ -118,6 +127,8 @@ sub usage {
 --epcr_dir <directory where e-PCR binary is located (required)> \\
 --margin <=integer, default 50 (optional)> \\
 --mismatch <=integer, default 0 (optional)> \\
+--wordsize <=integer, default 7 (optional)> \\
+--discontiguous_words <=integer (optional)> \\
 --gap <=integer, default 0 (optional)> \\
 --microsatellite_info <default \"microsatellite_annotation\" (optional)> \\
 --verbose <boolean-a little extra STDERR out> \\
