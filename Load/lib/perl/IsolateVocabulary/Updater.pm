@@ -83,7 +83,14 @@ sub update {
 
       $mapValue =~ s/\'//g;
 
-      my $updateSql = "update dots.$mapTable set $mapField = '$mapValue', modification_date = sysdate where na_sequence_id = ?";
+      my $updateSql;
+
+      if($mapTable eq 'IsolateFeature') {
+        $updateSql = "update dots.$mapTable set $mapField = '$mapValue', modification_date = sysdate where na_feature_id = ?";        
+      }
+      else {
+        $updateSql = "update dots.$mapTable set $mapField = '$mapValue', modification_date = sysdate where na_sequence_id = ?";        
+      }
 
       unless($mapValue) {
         print STDERR Dumper $term;
@@ -119,7 +126,7 @@ sub queryForExisting {
   my $data = {};
 
   my %all_sql = ('IsolateFeature' => <<Sql,
-select distinct na_sequence_id, product from dots.isolatefeature
+select distinct na_feature_id, source_id from dots.isolatefeature
 Sql
              'IsolateSource' => <<Sql,
 select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
@@ -139,13 +146,13 @@ Sql
     $sh->execute();
 
     while(my $row = $sh->fetchrow_hashref) {
-      my $naSequenceId = $row->{NA_SEQUENCE_ID};
+      my $identifier = $table eq 'IsolateFeature' ? $row->{NA_FEATURE_ID} : $row->{NA_SEQUENCE_ID};
 
       foreach my $field (keys %$row) {
         my $rowValue = $row->{$field};
 
-        unless($field eq 'NA_SEQUENCE_ID') {
-          push @{$data->{$table}->{$field}->{$rowValue}}, $naSequenceId;
+        unless($field eq 'NA_SEQUENCE_ID' || $field eq 'NA_FEATURE_ID') {
+          push @{$data->{$table}->{$field}->{$rowValue}}, $identifier;
         }
       }
     }
