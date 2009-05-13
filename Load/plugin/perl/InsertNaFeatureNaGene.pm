@@ -118,7 +118,7 @@ sub run {
 sub makeNaFeatureNaGene {
   my ($self, $sourceId, $alias) = @_;
 
-  my $naGene = $self->_getNAGene($alias);
+  my $naGene = $self->_getNAGeneId($alias);
 
   my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId});
 
