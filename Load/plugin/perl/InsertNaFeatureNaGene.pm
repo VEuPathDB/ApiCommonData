@@ -18,6 +18,7 @@ use FileHandle;
 use Carp;
 use ApiCommonData::Load::Util;
 use GUS::Model::DoTS::NAGene;
+use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::NAFeatureNAGene;
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -62,7 +63,7 @@ my $argsDeclaration =
 	  reqd => 1,
 	  isList => 0,
 	  mustExist => 1,
-	  format => 'Two column tab delimited file: dots.nafeature na_feature_id,alias'
+	  format => 'Two column tab delimited file: dots.GeneFeature.source_id ,alias'
         }),
   ];
 
@@ -88,74 +89,62 @@ sub run {
 
   my $mappingFile = $self->getArg('MappingFile');
 
-  my $msg = $self->getMapping($mappingFile);
-
-  return $msg;
-
-}
-
-sub getMapping {
-  my ($self, $mappingFile) = @_;
-
   my $lineCt = 0;
 
   open (XREFMAP, "$mappingFile") ||
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
   while (<XREFMAP>) {
-    $self->undefPointerCache(); #if at bottom, not always hit
-
-    next if /^(\s)*$/;
     chomp;
+    next unless $_;
+    $self->undefPointerCache(); #if at bottom, not always hit
 
     my @vals = split(/\t/, $_);
 
-    my $na_feature_id = $vals[0];
+    my $sourceId = $vals[0];
+    my $alias = $vals[1];
 
-    my $primary_name = $vals[1];
+    my $naFeatureNaGene = $self->makeNaFeatureNaGene($sourceId, $alias);
+    $naFeatureNaGene->submit();
 
-    $self->makeNaFeatureNaGene($na_feature_id,$primary_name);
-    
     $lineCt++;
   }
 
   close (XREFMAP);
 
-  my $msg = "Finished processing Mapping file, number of lines: $lineCt \n";
-
-  return $msg;
+  return "Finished processing Mapping file, number of lines: $lineCt \n";
 }
 
 sub makeNaFeatureNaGene {
-  my ($self, $na_feature_id, $primary_name) = @_;
-  
-  my $geneID = $self->_getNAGeneId($primary_name);;
+  my ($self, $sourceId, $alias) = @_;
 
-  my $gene = GUS::Model::DoTS::NAFeatureNAGene->new({
-				na_gene_id => $geneID,
-				na_feature_id => $na_feature_id,
-			       });
+  my $naGene = $self->_getNAGene($alias);
 
-  $gene->submit() unless $gene->retrieveFromDB();
+  my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId});
 
+  unless($geneFeature->retrieveFromDB()) {
+    $self->userError("No Dots.GeneFeature retrieved from source_id: $sourceId");
+  }
+
+  my $naFeatureNaGene = GUS::Model::DoTS::NAFeatureNAGene->new();
+
+  $naFeatureNaGene->setParent($geneFeature);
+  $naFeatureNaGene->setParent($naGene);
+
+  return $naFeatureNaGene
 }
 
 
-sub _getNAGeneId {   
-  my ($self, $geneName) = @_;
+sub _getNAGeneId {
+  my ($self, $alias) = @_;
 
-  $self->{geneNameIds} = {} unless $self->{geneNameIds};
+  my $naGene = GUS::Model::DoTS::NAGene->new({name => $alias});
 
-  if (!$self->{geneNameIds}->{$geneName}) {
-
-    my $gene = GUS::Model::DoTS::NAGene->new({name => $geneName});
-    unless ($gene->retrieveFromDB()){
-      $gene->setIsVerified(0);
-      $gene->submit();
-    }
-    $self->{geneNameIds}->{$geneName} = $gene->getId();
+  unless ($naGene->retrieveFromDB()){
+    $naGene->setIsVerified(0);
   }
-  return $self->{geneNameIds}->{$geneName};
+
+  return $naGene;
 }
 
 sub undoTables{
