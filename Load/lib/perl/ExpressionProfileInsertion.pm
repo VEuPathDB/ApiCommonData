@@ -13,6 +13,8 @@ use GUS::Model::ApiDB::ProfileSet;
 use GUS::Model::ApiDB::ProfileElement;
 use GUS::Model::ApiDB::ProfileElementName;
 
+use GUS::Model::DoTS::GeneFeature;
+
 # parse an input file into in-memory structures
 sub parseInputFile {
   my ($plugin, $file, $name, $skipSecondRow) = @_;
@@ -117,6 +119,16 @@ sub makeProfile {
     $subjectTableId = $plugin->className2TableId('DoTS::GeneFeature');
     $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,
 								 $sourceId);
+
+    # ensure we are loading the source id from genefeature and not an alias
+    my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $subjectRowId});
+
+    unless($geneFeature->retrieveFromDB()) {
+      $plugin->error("No GeneFeature found for na_feature_id $subjectRowId");
+    }
+
+    $sourceId = $geneFeature->getSourceId();
+
   } elsif ($sourceIdType eq 'oligo') {
     $subjectTableId = $plugin->className2TableId('DoTS::ExternalNaSequence');
     $subjectRowId = &_getExternalNaSequenceId($plugin, $sourceId);
