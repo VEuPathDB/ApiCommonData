@@ -23,7 +23,7 @@ sub getInfoFromRegistry {
 
     my $sql = <<SQL;
       select imi.instance_nickname, ti.instance_nickname, tf.subversion_url, tf.notify_emails
-      from apidb.TuningInstance\@$dblink ti, apidb.TuningFamily\@$dblink tf,
+      from apidb_r.TuningInstance\@$dblink ti, apidb_r.TuningFamily\@$dblink tf,
            apidb.InstanceMetaInfo imi
       where ti.instance_nickname(+) =  imi.instance_nickname
         and ti.family_name = tf.family_name(+)
@@ -74,7 +74,7 @@ sub setLastUpdater {
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@$dblink
+      update apidb_r.TuningInstance\@$dblink
       set last_updater = '$processInfo'
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -91,7 +91,7 @@ sub setLastChecker {
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@$dblink
+      update apidb_r.TuningInstance\@$dblink
       set last_checker = '$processInfo'
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -108,7 +108,7 @@ sub setOk {
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@$dblink
+      update apidb_r.TuningInstance\@$dblink
       set last_ok = sysdate, outdated_since = null
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
@@ -125,7 +125,7 @@ sub setOutdated {
     my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
     my $sql = <<SQL;
-      update apidb.TuningInstance\@$dblink
+      update apidb_r.TuningInstance\@$dblink
       set outdated_since = sysdate
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
          and outdated_since is null

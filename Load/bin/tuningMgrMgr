@@ -164,7 +164,7 @@ sub list {
                  then to_char(outdated_since, 'yy-mon-dd hh24:mi') || ' (' || round( (sysdate - outdated_since) * 24) || ' hours ago)'
                  else to_char(outdated_since, 'yy-mon-dd hh24:mi') || ' (' || round(sysdate - outdated_since) || ' days ago)'
              end as outdated_since
-      from apidb.TuningInstance$dblink ti, apidb.TuningFamily$dblink tf
+      from apidb_r.TuningInstance$dblink ti, apidb_r.TuningFamily$dblink tf
       where (ti.archived is null or ti.archived = 0) and
             ti.family_name = tf.family_name(+)
       order by ti.family_name, ti.instance_nickname
@@ -204,7 +204,7 @@ sub addInstance {
   # find out whether this family exists
   my $stmt = $dbh->prepare(<<SQL);
       select replace(replace(subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', '')
-      from apidb.TuningFamily\@apidb.login_comment
+      from apidb_r.TuningFamily\@apidb.login_comment
       where family_name = '$family'
 SQL
 
@@ -218,7 +218,7 @@ SQL
     print "Changing svn configuration from \"$existingSvn\" to \"$svn\" for family \"$family\"\n";
     my $url = svnUrl($svn);
     $dbh->do(<<SQL) or die $dbh->errstr;
-      update apidb.TuningFamily\@apidb.login_comment
+      update apidb_r.TuningFamily\@apidb.login_comment
       set subversion_url = '$url'
       where family_name = '$family'
 SQL
@@ -226,7 +226,7 @@ SQL
     # insert new family
       my $url = svnUrl($svn);
       $dbh->do(<<SQL) or die $dbh->errstr;
-        insert into apidb.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails)
+        insert into apidb_r.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails)
         values ('$family', '$url',
                 'TuningMgr\@pcbi.upenn.edu')
 SQL
@@ -245,7 +245,7 @@ SQL
 
   # insert new TuningInstance
   $dbh->do(<<SQL) or die $dbh->errstr;
-      insert into apidb.TuningInstance\@apidb.login_comment
+      insert into apidb_r.TuningInstance\@apidb.login_comment
           (instance_nickname, family_name)
       values ('$instanceNickname', '$family')
 SQL
@@ -264,7 +264,7 @@ sub removeInstance {
 
   # get family name
   my $stmt = $dbh->prepare(<<SQL);
-    select family_name from apidb.TuningInstance$dblink
+    select family_name from apidb_r.TuningInstance$dblink
     where instance_nickname = '$instanceNickname'
 SQL
   $stmt->execute() or print STDERR $dbh->errstr;
@@ -273,21 +273,21 @@ SQL
 
   # remove instance
   my $rowCount = $dbh->do(<<SQL) or die $dbh->errstr;
-    delete from apidb.TuningInstance$dblink
+    delete from apidb_r.TuningInstance$dblink
     where instance_nickname = '$instanceNickname'
 SQL
 
   printf "removed %d " . ($rowCount == 1 ? "instance" : "instances") . ", nicknamed \"$instanceNickname\", from the family \"$family\"\n", $rowCount;
 
   # is this the last member of the family?
-  my $stmt = $dbh->prepare("select count(*) from apidb.TuningInstance$dblink where family_name = '$family'");
+  my $stmt = $dbh->prepare("select count(*) from apidb_r.TuningInstance$dblink where family_name = '$family'");
   $stmt->execute() or print STDERR $dbh->errstr;
   my ($familyCount) = $stmt->fetchrow_array();
   $stmt->finish();
 
   # if so, remove the family
   if (!$familyCount) {
-    $dbh->do("delete from apidb.TuningFamily$dblink where family_name = '$family'")
+    $dbh->do("delete from apidb_r.TuningFamily$dblink where family_name = '$family'")
       or die $dbh->errstr;
   }
 }
@@ -298,7 +298,7 @@ sub changeSvn {
    # set svn, based on family
    my $url = svnUrl($svn);
    my $familyCount = $dbh->do(<<SQL);
-     update apidb.TuningFamily$dblink
+     update apidb_r.TuningFamily$dblink
        set subversion_url = '$url'
        where family_name = '$family'
 SQL
@@ -315,7 +315,7 @@ sub archive {
   my ($dbh, $dblink, $instanceNickname, $archiveFlag) = @_;
 
   my $rowCount = $dbh->do(<<SQL) or die $dbh->errstr;
-     update apidb.TuningInstance$dblink
+     update apidb_r.TuningInstance$dblink
        set archived = $archiveFlag
   where instance_nickname = '$instanceNickname'
 SQL
