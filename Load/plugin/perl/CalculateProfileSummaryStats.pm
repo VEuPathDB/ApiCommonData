@@ -9,6 +9,11 @@ use Data::Dumper;
 
 my $argsDeclaration =
 [
+ booleanArg ({name => 'isLogged',
+              descr => 'Set to true if the values are log base 2',
+              reqd => 0,
+              default => 0
+             }),
    stringArg({name           => 'profileSetNames',
 	      descr          => 'Names of ProfileSets to update',
 	      reqd           => 1,
@@ -310,7 +315,15 @@ sub calculateSummaryStats {
     $resultHash{'min_expression'} = $min;
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
-    $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
+
+
+    if($self->getArg('isLogged')) {
+      $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
+    }
+    else {
+      $resultHash{'ind_ratio'} = $max/$min;
+    }
+
     if ($timePointMappingRef) {
       $resultHash{'equiv_max'} = $timePointMapping{$maxKey};
       $resultHash{'equiv_min'} = $timePointMapping{$minKey};
