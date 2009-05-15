@@ -3439,7 +3439,7 @@ sub documentExpressionStatistics {
 
 }
 sub calculateExpressionStats {
-  my ($mgr,$dbSpec,$profileSet,$mappingFile,$percentsAveraged) = @_;
+  my ($mgr,$dbSpec,$profileSet,$mappingFile,$percentsAveraged, $isLogged) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -3453,6 +3453,8 @@ sub calculateExpressionStats {
 
   $args .= " --timePointsMappingFile '$projectDir/$mappingFile'"
     if $mappingFile;
+
+  $args .= " --isLogged" if $isLogged;
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::CalculateProfileSummaryStats", $args,
@@ -6334,7 +6336,7 @@ my $propertySet = $mgr->{propertySet};
 
 my $gus_config_file = $propertySet->getProp('gusConfigFile');
 
-my $cmd = "updateIsolateVocabulary --gus_config_file $gus_config_file --inFile $inFile";
+my $cmd = "updateIsolateVocabulary.pl --gus_config_file $gus_config_file --inFile $inFile";
 
 $mgr->runCmd($cmd);
 
