@@ -119,15 +119,17 @@ sub makeProfile {
     $subjectTableId = $plugin->className2TableId('DoTS::GeneFeature');
     $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,
 								 $sourceId);
+    if($subjectRowId){
+	# ensure we are loading the source id from genefeature and not an alias
+	my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $subjectRowId});
 
-    # ensure we are loading the source id from genefeature and not an alias
-    my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $subjectRowId});
+	unless($geneFeature->retrieveFromDB()) {
 
-    unless($geneFeature->retrieveFromDB()) {
-      $plugin->error("No GeneFeature found for na_feature_id $subjectRowId");
+	    $plugin->error("No GeneFeature found for na_feature_id $subjectRowId");
+	}
+
+	$sourceId = $geneFeature->getSourceId();
     }
-
-    $sourceId = $geneFeature->getSourceId();
 
   } elsif ($sourceIdType eq 'oligo') {
     $subjectTableId = $plugin->className2TableId('DoTS::ExternalNaSequence');
