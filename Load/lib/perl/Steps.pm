@@ -3577,15 +3577,16 @@ sub InsertExtNaSeqFromShortOligos {
 sub InsertCompositeElementNaSequences {
   my ($mgr,$arrayName,$tolerateUnmappables, $transcriptFileName) = @_;
 
-  $arrayName =~ s/\s/_/g;
+  my $fixed_arrayName =$arrayName;
+  $fixed_arrayName=~ s/\s/_/g;
 
-  my $signal = "insertCompositeElementNaSeqs-$arrayName";
+  my $signal = "insertCompositeElementNaSeqs-$fixed_arrayName";
 
   $signal =~ s/\s//g;
 
-  return if $mgr->startStep("Loading CompostieElementSequences for $arrayName", $signal);
+  return if $mgr->startStep("Loading CompostieElementSequences for $fixed_arrayName", $signal);
 
-  my $file = "$mgr->{dataDir}/microarray/${arrayName}To${transcriptFileName}.tab";
+  my $file = "$mgr->{dataDir}/microarray/${fixed_arrayName}To${transcriptFileName}.tab";
 
   my $args;
   if ($transcriptFileName) {
@@ -3596,7 +3597,7 @@ sub InsertCompositeElementNaSequences {
 
   $mgr->runPlugin($signal,
                   "ApiCommonData::Load::Plugin::InsertCompositeElementNaSequences", $args,
-		  "Inserting CompositeElementNaSequences for '$arrayName'");
+		  "Inserting CompositeElementNaSequences for '$fixed_arrayName'");
 
 }
 
