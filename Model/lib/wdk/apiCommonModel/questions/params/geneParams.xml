@@ -1163,6 +1163,38 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
+    <enumParam name="profileSetVivax"
+                     prompt="Microarray time course(s) to query"
+                     multiPick="false"
+                     includeProjects="ApiDB,PlasmoDB">
+      <help>
+        Choose replicate to query.  Note that choosing All replicates will only return genes that match the search criteria in all three replicates.
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue>
+          <term>Replicate 1</term>
+          <internal>ZB Pvivax time series normalized_averaged 1</internal>
+        </enumValue>
+        <enumValue>
+          <term>Replicate 2</term>
+          <internal>ZB Pvivax time series normalized_averaged 2</internal>
+        </enumValue>
+        <enumValue>
+          <term>Replicate 3</term>
+          <internal>ZB Pvivax time series normalized_averaged 3</internal>
+        </enumValue>
+        <enumValue>
+          <term>Any replicate</term>
+          <internal>ZB Pvivax time series normalized_averaged %</internal>
+        </enumValue>
+        <enumValue default="true">
+          <term>All replicates</term>
+          <internal>3</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
 
 <!-- where is this param used?  -->
     <enumParam name="require_replicates"
@@ -1228,7 +1260,54 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
-
+    <enumParam name="exprHourVivax"
+                     prompt="Timing"
+                     multiPick="true"
+                     quote="false"
+                     includeProjects="ApiDB,PlasmoDB">  
+      <help>
+         Time point where expression level was minimal or maximal
+      </help>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <enumList>
+        <enumValue default="true">
+          <term>9 hours</term>
+          <internal>1</internal>
+        </enumValue>
+        <enumValue>
+          <term>13 hours</term>
+          <internal>2</internal>
+        </enumValue>
+        <enumValue>
+          <term>17 hours</term>
+          <internal>3</internal>
+        </enumValue>
+        <enumValue>
+          <term>20 hours</term>
+          <internal>4</internal>
+        </enumValue>
+        <enumValue>
+          <term>23 hours</term>
+          <internal>5</internal>
+        </enumValue>
+        <enumValue>
+          <term>29 hours</term>
+          <internal>6</internal>
+        </enumValue>
+        <enumValue>
+          <term>35 hours</term>
+          <internal>7</internal>
+        </enumValue>
+        <enumValue>
+          <term>40 hours</term>
+          <internal>8</internal>
+        </enumValue>
+        <enumValue>
+          <term>43 hours</term>
+          <internal>9</internal>
+        </enumValue>
+      </enumList>
+    </enumParam>
 
     <enumParam name="maxExprHour"
                      prompt="Timing"

@@ -2344,6 +2344,41 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
     </sqlQuery>
 
+    <sqlQuery name="GenesByVivaxExpressionTiming" includeProjects="PlasmoDB" 
+              isCacheable="true">
+        <paramRef ref="geneParams.minOrMax"/>
+        <paramRef ref="geneParams.exprHourVivax"/>
+        <paramRef ref="geneParams.inductionFold"/>
+        <paramRef ref="geneParams.expressionPct"/>
+        <paramRef ref="geneParams.profileSetVivax"/>
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_fc"/>
+        <column name="num_replicates"/> 
+        <sql>
+          <![CDATA[
+          SELECT iq.source_id, to_char(max(iq.max_fc), '99999.99') as max_fc,
+                 count(*) as num_replicates, '@PROJECT_ID@' as project_id
+          from (
+          SELECT gf.source_id, prs.name, max(pr.ind_ratio) as max_fc
+          FROM apidb.profile pr, apidb.profileset prs,
+               dots.nafeature gf
+          WHERE ($$minOrMax$$ = 'min'
+                 OR pr.time_of_max_expr in ($$exprHourVivax$$))
+          AND ($$minOrMax$$ = 'max'
+                 OR pr.time_of_min_expr in ($$exprHourVivax$$))
+          AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.max_percentile >= $$expressionPct$$ / 100
+          AND pr.source_id = gf.source_id
+          AND pr.profile_set_id = prs.profile_set_id
+          AND prs.name like case when $$profileSetVivax$$ = '3' then 'ZB Pvivax time series normalized_averaged %' else $$profileSetVivax$$ end
+          group BY gf.source_id,prs.name) iq
+          group by iq.source_id
+          having count(*) >= case when $$profileSetVivax$$ = '3' then 3 else 1 end
+          ]]>
+      </sql>
+    </sqlQuery>
+
     <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.minOrMax" quote="false"/>

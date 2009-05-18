@@ -3279,6 +3279,39 @@ Institute, USA and is described in further detail in Sivam et al.
        </propertyList>
     </question>
 
+    <question name="GenesByVivaxExpressionTiming" includeProjects="PlasmoDB,ApiDB"
+         displayName="P. vivax Expression Timing"
+         shortDisplayName="Pv Expr Time"
+         category="Transcript Expression"
+         queryRef="GeneId.GenesByVivaxExpressionTiming"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList 
+              summary="organism,product,max_fc" 
+              sorting="max_fc desc"
+        /> 
+        <summary>
+           <![CDATA[
+          Find <i>P. vivax</i> genes with peaks or troughs occuring within specified times during the intraerythrocytic infection cycle.
+          ]]>
+        </summary>
+
+        <propertyList name="organism">
+           <value>P. vivax</value>
+        </propertyList>
+
+        <description>
+           <![CDATA[
+              Find <i>P. vivax</i> genes with peaks or troughs occuring within specified times during the intraerythrocytic infection cycle. <br><br>The transcriptome of Plasmodium vivax reveals divergence and diversity of transcriptional regulation in malaria parasites.  <a href="http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=18852452">Bozdech et. al. PNAS, 2008</a>.
+          ]]>
+        </description>
+        <dynamicAttributes>
+           <columnAttribute name="max_fc" displayName="Max Fold Induction"
+                             inReportMaker="false"/>
+        </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Pvivax_ZB_Time_Series_ExpressionData</value>
+       </propertyList>
+    </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Profile Similarity -->
