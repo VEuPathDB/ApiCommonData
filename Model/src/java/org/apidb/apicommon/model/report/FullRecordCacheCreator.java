@@ -48,8 +48,8 @@ public class FullRecordCacheCreator extends BaseCLI {
     private static final String COLUMN_CONTENT = "content";
     private static final String COLUMN_ROW_COUNT = "row_count";
 
-    private static final String FUNCTION_CHAR_CLOB_AGG = "char_clob_agg";
-    private static final String FUNCTION_CLOB_CLOB_AGG = "clob_clob_agg";
+    private static final String FUNCTION_CHAR_CLOB_AGG = "apidb.char_clob_agg";
+    private static final String FUNCTION_CLOB_CLOB_AGG = "apidb.clob_clob_agg";
 
     private static final Logger logger = Logger.getLogger(FullRecordCacheCreator.class);
 

@@ -5,6 +5,8 @@ package org.apidb.apicommon.model.report;
 
 import java.io.IOException;
 
+import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 import org.gusdb.wdk.model.RecordClass;
 import org.gusdb.wdk.model.WdkModel;
 import org.gusdb.wdk.model.WdkModelException;
@@ -16,7 +18,44 @@ import org.gusdb.wdk.model.query.SqlQuery;
  */
 public class GffCacheCreator extends DumpCreator {
 
+
+    private static final String ARG_PROJECT_ID = "model";
+    private static final String ARG_SQL_FILE = "sqlFile";
+    private static final String ARG_RECORD = "record";
+    private static final String ARG_TABLE_FIELD = "field";
+    private static final String ARG_CACHE_TABLE = "cacheTable";
+
+    private static final String COLUMN_FIELD_NAME = "field_name";
+    private static final String COLUMN_FIELD_TITLE = "field_title";
+    private static final String COLUMN_CONTENT = "content";
+    private static final String COLUMN_ROW_COUNT = "row_count";
+
+    private static final String FUNCTION_CHAR_CLOB_AGG = "char_clob_agg";
+    private static final String FUNCTION_CLOB_CLOB_AGG = "clob_clob_agg";
+
+    private static final Logger logger = Logger.getLogger(FullRecordCacheCreator.class);
+
+    /**
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+        String cmdName = System.getProperty("cmdName");
+        if (cmdName == null) cmdName = FullRecordCacheCreator.class.getName();
+        FullRecordCacheCreator creator = new FullRecordCacheCreator(cmdName,
+                "Create the Dump Table");
+        try {
+            creator.parseCommandLine(args);
+        } catch (ParseException ex) {
+            creator.printUsage();
+            System.exit(-1);
+        }
+        creator.invoke();
+        System.exit(0);
+    }
+
     private WdkModel wdkModel;
+    private String cacheTable;
 
     public GffCacheCreator(WdkModel wdkModel) {
 
