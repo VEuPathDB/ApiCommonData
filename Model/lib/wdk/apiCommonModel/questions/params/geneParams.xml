@@ -1117,17 +1117,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                      multiPick="false"
                      includeProjects="ApiDB,PlasmoDB,TriTrypDB">
       <help includeProjects="PlasmoDB,ApiDB">
-        Choose experiment(s) to query
+        Choose experiment(s) to query.  Note that all of the time courses will only return genes that match the search criteria in all experiments.
       </help>
       <help includeProjects="TriTrypDB">
         Choose replicate to query.  Note that choosing Both 1 and 2 will only return genes that match the search criteria in both replicates.
       </help>
- <useTermOnly value="true" includeProjects="ApiDB"/>
+      <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
-        <enumValue default="true" includeProjects="PlasmoDB,ApiDB">
-          <term>Any of the time courses</term>
-          <internal>DeRisi % Smoothed Averaged</internal>
-        </enumValue>
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Dev. Series 3D7 (glass slide), DeRisi</term>
           <internal>DeRisi 3D7 Smoothed Averaged</internal>
@@ -1139,6 +1135,14 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <enumValue includeProjects="PlasmoDB,ApiDB">
           <term>Dev. Series HB3 (glass slide), DeRisi</term>
           <internal>DeRisi HB3 Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue default="true" includeProjects="PlasmoDB,ApiDB">
+          <term>Any of the time courses</term>
+          <internal>DeRisi % Smoothed Averaged</internal>
+        </enumValue>
+        <enumValue  includeProjects="PlasmoDB,ApiDB">
+          <term>All of the time courses</term>
+          <internal>3</internal>
         </enumValue>
         <enumValue includeProjects="TriTrypDB,ApiDB">
           <term>Replicate 1</term>
@@ -1208,10 +1212,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <enumParam name="minOrMax"
                      prompt="Query based on"
                      multiPick="false">
-      <help excludeProjects="TriTrypDB">  
-          Choosing both max and min expression restricts results using BOTH specified parameters.  By choosing one, the other will be ignored. 
-      </help>
-      <help includeProjects="TriTrypDB">
+      <help>
          Find genes where the expression level is at its highest or lowest point in the time series.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
@@ -1223,10 +1224,6 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <enumValue>
           <term>Timing of minimal expression</term>
           <internal>min</internal>
-        </enumValue>
-       <enumValue excludeProjects="TriTrypDB">
-          <term>Timing of both max and min expression</term>
-          <internal>both</internal>
         </enumValue>
       </enumList>
     </enumParam>
@@ -1280,12 +1277,12 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
 
     <enumParam name="maxExprHour"
-                     prompt="Timing of maximal expression"
+                     prompt="Timing of expression"
                      multiPick="false"
                      quote="false"
                      includeProjects="PlasmoDB">
       <help>
-         Time point where expression level was maximal
+         Time point where expression level is maximal or minimal depending on above parameter choice.
       </help>
  <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
@@ -1485,7 +1482,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     </enumParam>
 
     <enumParam name="maxPlusMinusHours"
-                     prompt="Maximal expression time +/- "
+                     prompt="Expression time +/- "
                      multiPick="false"
                      quote="false">
       <help>
