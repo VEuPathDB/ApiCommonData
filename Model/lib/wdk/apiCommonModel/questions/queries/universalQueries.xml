@@ -73,7 +73,7 @@
                    u.first_name || ' ' || u.last_name || '<br>' ||
                    u.organization as provider
             from uploads.UserFile@USER_DBLINK@ f,
-                 @LOGIN_SCHEMA@users@USER_DBLINK@ u
+                 @USER_SCHEMA@users@USER_DBLINK@ u
             where f.owneruserid = u.signature (+)
               and projectname = '@PROJECT_ID@'
            ]]>
