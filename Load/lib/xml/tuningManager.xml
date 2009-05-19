@@ -2628,6 +2628,7 @@ SELECT * FROM apidb.AsmAlignmentGene
       <![CDATA[
 CREATE TABLE apidb.PlasmoExpressionGraphs&1 NOLOGGING AS
 SELECT gf.source_id,
+       COUNT(zb_pvivax) AS graph_zb_pvivax,
        COUNT(derisi_winzeler) AS graph_derisi_winzeler,
        COUNT(winzeler) AS graph_winzeler, COUNT(ThreeD7) AS graph_3d7,
        COUNT(HB3) AS graph_hb3, COUNT(Dd2) AS graph_dd2,
@@ -2652,6 +2653,28 @@ FROM dots.GeneFeature gf,
         AND ps3.name = 'DeRisi 3D7 Smoothed Averaged'
         AND ps5.name = 'DeRisi Dd2 Smoothed Averaged'
         AND ps7.name = 'winzeler_cc_sorbExp') combo,
+     (SELECT p1.source_id, 1 AS zb_pvivax
+      FROM apidb.profile p1, apidb.profileSet ps1,
+           apidb.profile p2, apidb.profileSet ps2,
+           apidb.profile p3, apidb.profileSet ps3,
+           apidb.profile p4, apidb.profileSet ps4,
+           apidb.profile p5, apidb.profileSet ps5,
+           apidb.profile p6, apidb.profileSet ps6
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND p2.profile_set_id = ps2.profile_set_id
+        AND p3.profile_set_id = ps3.profile_set_id
+        AND p4.profile_set_id = ps4.profile_set_id
+        AND p5.profile_set_id = ps5.profile_set_id
+        AND p6.profile_set_id = ps6.profile_set_id
+        AND p1.source_id = p3.source_id
+        AND p1.source_id = p5.source_id
+        AND p1.source_id = p7.source_id
+        AND ps1.name = 'ZB Pvivax time series normalized_averaged 3'
+        AND ps2.name = 'ZB Pvivax time series normalized_averaged 2'
+        AND ps3.name = 'ZB Pvivax time series normalized_averaged 1'
+        AND ps4.name = 'ZB Pvivax time series percentiles 3'
+        AND ps5.name = 'ZB Pvivax time series percentiles 2'
+        AND ps6.name = 'ZB Pvivax time series percentiles 1') zbpvivax
      (SELECT p1.source_id, 1 AS winzeler
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
