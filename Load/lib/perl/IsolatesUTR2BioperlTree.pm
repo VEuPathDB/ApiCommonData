@@ -54,10 +54,10 @@ sub preprocess {
 	    $primer .= $bioperlSeq->subseq($start,$end);
 	}
 
-	if($primerBind{$bioperlSeq->accession()}){
-	    $primerBind{$bioperlSeq->accession()} = $primer;
+	if($primerBind{$bioperlSeq->accession_number()}){
+	    $primerBind{$bioperlSeq->accession_number()} = $primer;
 	}else{
-	     $primerBind{$bioperlSeq->accession()} .= ", ".$primer;
+	     $primerBind{$bioperlSeq->accession_number()} .= ", ".$primer;
 	}
 	
     }
@@ -89,10 +89,13 @@ sub preprocess {
 
 
 
+  my $featureNumber = 1;
+  my $sourceNumber = 1;
   foreach my $bioperlFeatureTree (@seqFeatures) {
     my $type = $bioperlFeatureTree->primary_tag();
     if (grep {$type eq $_} ("CDS", "tRNA", "rRNA", "snRNA", "misc_RNA", "snoRNA","ncRNA")) {
       $type = "coding" if $type eq "CDS";
+
 
       if($type eq "ncRNA"){
 	  if($bioperlFeatureTree->has_tag("ncRNA_class")){
@@ -311,7 +314,12 @@ sub preprocess {
 #          $transcript->add_SeqFeature($exon);
       }
 
+      if($gene->has_tag('locus_tag')){
+	  $gene->remove_tag('locus_tag');
 
+      }
+      $gene->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$featureNumber");
+      $featureNumber++;
  
 	  $bioperlSeq->add_SeqFeature($gene);
 
@@ -319,6 +327,12 @@ sub preprocess {
      
       if($type eq 'gene' && $geneFlag == 1){
 	  $bioperlFeatureTree->primary_tag('coding_gene');
+	  if($bioperlFeatureTree->has_tag('locus_tag')){
+	      $bioperlFeatureTree->remove_tag('locus_tag');
+
+	  }
+	  $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$featureNumber");
+	  $featureNumber++;
 	  if($bioperlFeatureTree->has_tag('pseudo')){
 	      $bioperlFeatureTree->remove_tag('pseudo');
 	      $bioperlFeatureTree->add_tag_value('pseudo',1);
@@ -328,9 +342,28 @@ sub preprocess {
 	  if($bioperlFeatureTree->has_tag("satellite")){
 	      $bioperlFeatureTree->primary_tag("microsatellite");
 	  }
-      }
-    if ($type eq 'source'){
+	  if($bioperlFeatureTree->has_tag('locus_tag')){
+	      $bioperlFeatureTree->remove_tag('locus_tag');
 
+	  }
+	  $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$featureNumber");
+	  $featureNumber++;
+      }
+    if ($type eq 'STS'){
+      if($bioperlFeatureTree->has_tag('locus_tag')){
+	  $bioperlFeatureTree->remove_tag('locus_tag');
+
+      }
+      $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$sourceNumber");
+      $featureNumber++;
+  }
+    if ($type eq 'source'){
+      if($bioperlFeatureTree->has_tag('locus_tag')){
+	  $bioperlFeatureTree->remove_tag('locus_tag');
+
+      }
+      $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$sourceNumber");
+      $sourceNumber++;
 	if($bioperlFeatureTree->has_tag('focus')){
 	    $bioperlFeatureTree->primary_tag('focus_source');
 	}
@@ -344,8 +377,8 @@ sub preprocess {
 	    $bioperlFeatureTree->remove_tag('PCR_primers');
 	    $bioperlFeatureTree->add_tag_value('PCR_primers',$primerpair);
 	}else{
-	    if($primerBind{$bioperlSeq->accession()}){
-		$bioperlFeatureTree->add_tag_value('PCR_primers',$primerBind{$bioperlSeq->accession()});
+	    if($primerBind{$bioperlSeq->accession_number()}){
+		$bioperlFeatureTree->add_tag_value('PCR_primers',$primerBind{$bioperlSeq->accession_number()});
 	    }
 	}
 
