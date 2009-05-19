@@ -3407,7 +3407,57 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <parentTerm></parentTerm>
           </enumValue>
 
- <enumValue includeProjects="ApiDB,PlasmoDB">
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[Merozoite <sup>1</sup>]]></display>
+          <term>Merozoite</term>
+          <internal>Florens Mass Spec Data 2002</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[Trophozoite <sup>1</sup>]]></display>
+          <term>Trophozoite</term>
+          <internal>Florens Mass Spec Data 2002</internal> 
+       </enumValue> 
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[Schizont <sup>1</sup>]]></display>
+          <term>Troph/Schizont</term>
+          <internal>Florens Mass Spec Data 2004</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[Gametocyte <sup>1</sup>]]></display>
+          <term>Gametocyte</term> 
+          <internal>Florens Mass Spec Data 2002</internal>
+        </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[Sporozoite <sup>1</sup>]]></display>
+          <term>Sporozoite</term>
+          <internal>Florens Mass Spec Data 2002</internal>
+        </enumValue>
+         <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Merozoite Peptides <sup>2</sup>]]></display>
+            <term>Shahid Khan Merozoite Peptides</term>
+            <internal>Kahn Pfalciparum merozoite peptides</internal>
+        </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Oocyst Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Oocyst Peptides</term>
+            <internal>Lasonder Mosquito oocyst peptides</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Oocyst-derived Sporozoite Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Oocyst-derived Sporozoite Peptides</term>
+            <internal>Lasonder Mosquito oocyst-derived sporozoite peptides</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Mosquito Salivary Gland Sporozoite Peptides <sup>3</sup>]]></display>
+            <term>Mosquito Salivary Gland Sporozoite Peptides</term>
+            <internal>Lasonder Mosquito salivary gland sporozoite peptides</internal>
+          </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+          <display><![CDATA[iRBC Membrane (PIESPs) <sup>4</sup>]]></display>
+          <term>iRBC Membrane</term>
+          <internal>Florens Mass Spec Data 2004</internal>
+        </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
             <display><![CDATA[Female Gametocytes]]></display>
             <term>Waters Female Gametes</term>
             <internal>Waters Female Gametes</internal>
@@ -3424,6 +3474,16 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <term>Waters Mixed  Gametes</term>
             <internal>Waters Mixed Gametes</internal>
             <parentTerm></parentTerm>
+          </enumValue>
+        <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[ Liver Stage LS40]]></display>
+            <term>Liver Stage LS40</term>
+            <internal>Pyoelii LiverStage LS40</internal>
+          </enumValue>
+          <enumValue includeProjects="ApiDB,PlasmoDB">
+            <display><![CDATA[Liver Stage LS50]]></display>
+            <term>Liver Stage LS50</term>
+            <internal>Pyoelii LiverStage LS50</internal>
           </enumValue>
 
           <enumValue includeProjects="ApiDB,ToxoDB">
@@ -3830,13 +3890,16 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 </enumList>
 </enumParam>
 
-    <enumParam name="ms_assay_4" includeProjects="ApiDB,PlasmoDB"
+
+<!--The Query calling this param has become obsolete and has been merged with the P. Berghei query
+   
+ <enumParam name="ms_assay_4" includeProjects="ApiDB,PlasmoDB"
              prompt="Assay Type"
              multiPick="true"
              visible="true">
-
+-->
 <!--             displayType="checkBox">  -->
-    <useTermOnly value="true" includeProjects="ApiDB"/>
+<!--    <useTermOnly value="true" includeProjects="ApiDB"/>
       <enumList>
      <enumValue includeProjects="ApiDB,PlasmoDB">
             <display><![CDATA[ Liver Stage LS40]]></display>
@@ -3851,7 +3914,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           </enumValue>
 </enumList>
 </enumParam>
+-->
 
+
+<!--The Query calling this param has become obsolete and has been merged with the P. Berghei query
 
     <enumParam name="mass_spec_stage_sample_pf"
                      prompt="Lifecycle Stage"
@@ -3889,7 +3955,6 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           <internal>sporozoite</internal>
         </enumValue>
         <enumValue>
-          <term>-------------</term>
           <internal>nothing will be returned</internal>
         </enumValue>
         <enumValue includeProjects="ApiDB,PlasmoDB">
@@ -3898,8 +3963,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <internal>Kahn Pfalciparum merozoite peptides</internal>
         </enumValue>
         <enumValue>
-          <term>--------------</term>
-          <internal>nothing will be returned</internal>
+         <internal>nothing will be returned</internal>
         </enumValue>
           <enumValue includeProjects="ApiDB,PlasmoDB">
             <display><![CDATA[Mosquito Oocyst Peptides <sup>3</sup>]]></display>
@@ -3917,8 +3981,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <internal>Lasonder Mosquito salivary gland sporozoite peptides</internal>
           </enumValue>
         <enumValue>
-          <term>---------------</term>
-          <internal>nothing will be returned</internal>
+    <internal>nothing will be returned</internal>
         </enumValue>
         <enumValue>
           <display><![CDATA[iRBC Membrane (PIESPs) <sup>4</sup>]]></display>
@@ -3927,7 +3990,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </enumValue>
       </enumList>
     </enumParam>
-
+-->
         <stringParam name="genbank_accession"
                      prompt="GenBank Accession Number"
                      substitute="yes">

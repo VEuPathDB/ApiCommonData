@@ -666,13 +666,12 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
             in male and female gametocytes.
           ]]>
         </summary>
- <summary includeProjects="PlasmoDB">
+         <summary includeProjects="PlasmoDB">
            <![CDATA[
-            Find <i>P. berghei</i> genes that have evidence for protein expression
-            in male and female gametocytes.
+            Find <i>P. berghei</i> , <i>P. falciparum</i> and <i>P. yoelii</i> genes that have evidence for protein expression.
           ]]>
-        </summary>
- <summary includeProjects="ToxoDB">
+           </summary>
+          <summary includeProjects="ToxoDB">
            <![CDATA[
             Find <i>T. gondii</i> genes that have evidence for protein expression
             in male and female gametocytes.
@@ -692,17 +691,56 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
         </summary>
 
         <propertyList name="organism">
-           <value includeProjects="PlasmoDB,ApiDB">P. berghei</value>
            <value includeProjects="CryptoDB,ApiDB">C. parvum</value>
            <value includeProjects="ToxoDB,ApiDB ">T. gondii</value>
         </propertyList>
 
         <description includeProjects="PlasmoDB">
             <![CDATA[
-            Find <i>P. berghei</i> genes that have evidence for protein expression
-            in male and female gametocytes.
-<p>
+            Find genes that have evidence for protein expression
+<br><br>
+<p><i>P. falciparum </i>
+<br><br>
+Find <I>P. falciparum</I> genes that have evidence of
+                expression in a specific lifecycle stage
+                or within a subcellular fraction. 
+                Select the stage or subcellular fraction and the 
+                threshold conditions for tandem mass spectrometry, 
+                MS/MS, evidence and only genes with mass-spec evidence will be
+                returned. A lower value for the minimum percent coverage or number of spans
+                will result in increased sensitivity and lower stringency.
+                If the minimum percent coverage is set to 0%, which is the default,
+                only genes with at least some mass-spec evidence will be returned.
+                Specifying a higher number of spectra will result in the
+                selection of proteins that are more abundant.
+                These values are not strictly quantitative
+                as the detection of proteins in MS/MS analyses is dependent on
+                solubility of the proteins and other factors.
+                <br><br>
+                Selecting "any" will result in returning genes that appear in
+                any of the available datasets.
+                <BR>
+                Please refer to the original papers for more information
+                on the experiments and experimental conditions.
+                <p><sup>1</sup> In this study, the proteomes of merozoite, trophozoite, gametocyte and sporozoite stages of <i>P. falciparum</i> were analyzed using multidimensional protein identification technology (MudPIT). Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368866">here</a> for more information.
+                <p><sup>2</sup> <i>P. falciparum</i> merozoites were purified and collected (NIMR, London, UK) in sufficient quantity to perform high-throughput LC-MSMS.  Over 1000 proteins were identified (most peptides have a MASCOT score >30). (Leiden Malaria Group, unpublished).
+              
+           <p><sup>3</sup> OOCYST (OOC): oocysts (1-2 x 10^4) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 7-8 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). 
+                                                                                                                                OOCYST-DERIVED SPOROZOITES (ODS): oocyst-derived sporozoites (1.4-3.8 x10^7) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 13-14 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). 
+                                                                                                                                SALIVARY GLAND SPOROZOITES (SGS): Salivary gland sporozoites (1.3-2.5 x10^7) were collected from salivary glands of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 18-22 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain).     
+  <p><sup>4</sup> Mass spec data from fractionated parasite-infected erythrocytes. iRBC = infected red blood cell.  PIESPs = parasite-infected erythrocyte surface proteins. Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/15287581">here</a> for more information.
+</p>
+
+<br><br><br>
+<p> P. yoelii
+<br><br>
+Mass Spec of <i>Plasmodium yoelii</i> proteins identified in LS-infected hepatocytes isolated 40 and 50 hrs post-infection (LS40 and LS50).             Publication: Tarun et al. A combined transcriptome and proteome survey of malaria parasite liver stages. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18172196">Proc. Natl. Acad. Sci. U.S.A. (2008) vol. 105 (1) pp. 305-10</a>.
+</p>
+<br><br><br>
+<p> P. <i> berghei</i>
+<br><br>
 Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodium berghei</i>, one which specifically expressed green fluorescent protein (GFP) in female gametocytes (PbPFPcon) and another which exclusively expressed GFP in male gametocytes (PbGFPtub). The sex-specific expression of GFP in these clones was exploited to collect highly purified male or female gametocytes by Fluorescent Assisted Cell Sorting (FACS), in sufficient quantity to perform high-throughput liquid chromatography tandem mass spectrometry (LC-MSMS). The male proteome contained 650 proteins of which 36% (i.e. 236) were specific to the male gametocyte. The female proteome contained 541 proteins of which 19% (i.e. 101) were female-specific. However, when only the gametocyte proteome was analyzed (i.e. the 351 proteins which were also expressed in asexual stages were removed) it was observed that only 69 proteins were commonly expressed in male and female gametocytes, emphasizing the diverged features of the sexes. Of all the malaria life-cycle stages analyzed, the male gametocyte has the most distinct proteome, containing many proteins involved in flagella-based motility and rapid genome replication. See <a href="http://www.ncbi.nlm.nih.gov/pubmed/15935755">Khan et al. Cell (2005) <b>121</b>(5):675-87</a> for more details.
+</p>
            ]]>
         </description>
 
@@ -713,7 +751,8 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
            <value includeProjects="ApiDB,CryptoDB">WastlingMudPitSolMassSpec</value>
            <value includeProjects="ApiDB,CryptoDB">WastlingMudPitInsolMassSpec</value>
            <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolExcystedMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
+           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>
+           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
            <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Oocyst_walls</value>
            <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_intact_oocysts_merged</value>
            <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Sporozoites_merged</value>
@@ -723,6 +762,14 @@ Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodiu
            <value includeProjects="ApiDB,PlasmoDB">Waters_female_gametes</value>
            <value includeProjects="ApiDB,PlasmoDB">Waters_male_gametes</value>
            <value includeProjects="ApiDB,PlasmoDB">Waters_mixed_gametes</value>
+           <value includeProjects="ApiDB,PlasmoDB">Pyoelii_LiverStage_LS40</value>
+           <value includeProjects="ApiDB,PlasmoDB">Pyoelii_LiverStage_LS50</value>
+           <value includeProjects="ApiDB,PlasmoDB">FlorensMassSpecData2002</value>
+           <value includeProjects="ApiDB,PlasmoDB">FlorensMassSpecData2004</value>
+           <value includeProjects="ApiDB,PlasmoDB">Pf_Merozoite_Peptides</value>
+           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_Oocysts</value>
+           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_oocyst_derived_sporozoites</value>
+           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_salivary_gland_sporozoites</value>
            <value includeProjects="ApiDB,ToxoDB">Wastling-Rhoptry</value>
            <value includeProjects="ApiDB,ToxoDB">Wastling1D_SDSPage</value>
            <value includeProjects="ApiDB,ToxoDB">Wastling-1D_SDSPage-Soluble</value>
@@ -1048,7 +1095,10 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
 -->
 
-    <question name="GenesByMassSpecPf" includeProjects="PlasmoDB,ApiDB"
+
+<!-- This question has been unified with the Berghei question
+ 
+   <question name="GenesByMassSpecPf" includeProjects="PlasmoDB,ApiDB"
          displayName="P.f. Mass Spec. Evidence"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpecPf"
@@ -1117,6 +1167,10 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
     </question>
+-->
+
+
+<!-- This question has been unified with the Berghei question
 
     <question name="GenesByMassSpec4" includeProjects="PlasmoDB,ApiDB"
          displayName="P.y. Mass Spec. Evidence"
@@ -1156,6 +1210,9 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
     </question>
+-->
+
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Epitopes -->
@@ -3534,7 +3591,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
-         displayName="P.b. Mass Spec. Evidence (life cycle)"
+         displayName="P.b. life cycle  Mass Spec. Evidence"
          shortDisplayName="Pb Mass Spec"
          category="Protein Expression"
          queryRef="GeneId.GenesByProteomicsProfile"

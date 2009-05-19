@@ -1177,7 +1177,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 <!-- TODO: add Mass spec query for Trypdb -->
     <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB" 
             isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB,PlasmoDB"/>
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
@@ -1186,12 +1186,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" columnType="number" width="12" />
          
-        <sqlParamValue name="restrainOrganism" excludeProjects="TriTrypDB">
+        <sqlParamValue name="restrainOrganism" excludeProjects="TriTrypDB,PlasmoDB">
                 <![CDATA[
                    and nas.taxon_id in ($$organism$$)
                 ]]>
        </sqlParamValue>
-       <sqlParamValue name="restrainOrganism" includeProjects="TriTrypDB" />
+       <sqlParamValue name="restrainOrganism" includeProjects="TriTrypDB,PlasmoDB" />
 
 
         <sql>
@@ -1250,11 +1250,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <wsColumn name="sum_spectrum_count" />
     </processQuery>
 
+<!-- this query has been unified with the P. Bergheii generic mass spec query GenesByMassSpec
+
     <sqlQuery name="GenesByMassSpecPf" includeProjects="PlasmoDB"
               isCacheable="true">
         <paramRef ref="geneParams.mass_spec_stage_sample_pf"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
-        <!-- paramRef ref="sharedParams.min_spectrum_count"/ -->
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="sum_sequence_count"/>
@@ -1299,6 +1300,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <wsColumn name="sum_sequence_count" />
         <wsColumn name="sum_spectrum_count" />
     </processQuery>
+-->
 
 <!--
 
@@ -1371,6 +1373,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 
 
+<!-- This query has been unified with the generic P Berghei  mass spec query GenesByMassSpec
+
     <sqlQuery name="GenesByMassSpec4" includeProjects="PlasmoDB" 
             isCacheable='true'>
         <paramRef ref="geneParams.ms_assay_4"/>
@@ -1436,6 +1440,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <wsColumn name="sum_sequence_count" />
         <wsColumn name="sum_spectrum_count" />
     </processQuery>
+-->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesOrthologousToAGivenGene   COULD HAVE SQL ERRORS FOR APIDB -->
