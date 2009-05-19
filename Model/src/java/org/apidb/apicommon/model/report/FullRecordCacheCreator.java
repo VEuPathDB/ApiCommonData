@@ -194,6 +194,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         sql.append(content).append(" AS ").append(COLUMN_CONTENT).append(' ');
         sql.append(getJoinedSql(table, idSql, idqName, tqName));
 
+        logger.debug("++++++ create-cache: \n" + sql);
         SqlUtils.executeUpdate(dataSource, sql.toString());
         return cacheName;
     }
@@ -208,6 +209,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         sql.append(" FROM ").append(cacheName);
         sql.append(" GROUP BY ").append(pkColumns);
 
+        logger.debug("++++++ insert-from-cache: \n" + sql);
         DataSource dataSource = wdkModel.getQueryPlatform().getDataSource();
         SqlUtils.executeUpdate(dataSource, sql.toString());
     }
@@ -247,6 +249,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         sql.append(" GROUP BY ").append(pkColumns);
 
         DataSource dataSource = wdkModel.getQueryPlatform().getDataSource();
+        logger.debug("++++++ insert-from-sql: \n" + sql);
         SqlUtils.executeUpdate(dataSource, sql.toString());
     }
 
