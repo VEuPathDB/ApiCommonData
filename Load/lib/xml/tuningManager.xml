@@ -2635,7 +2635,9 @@ SELECT gf.source_id,
        COUNT(waters) AS graph_waters, COUNT(gametocyte) as graph_gametocyte,
        COUNT(cowman) AS graph_cowman, COUNT(mexp128) AS graph_mexp128,
        COUNT(mexp494) AS graph_mexp494, COUNT(kappe) as graph_kappe,
-       COUNT(daily) as graph_daily
+       COUNT(daily) as graph_daily,
+       COUNT(westenberger) as graph_westenberger,
+       COUNT(winzeler_py_mixed) as graph_winzeler_py_mixed
 FROM dots.GeneFeature gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2728,7 +2730,15 @@ FROM dots.GeneFeature gf,
     (SELECT p1.source_id, 1 AS daily
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE ps1.name = 'daily correlations'
-       AND p1.profile_set_id = ps1.profile_set_id) daily
+       AND p1.profile_set_id = ps1.profile_set_id) daily,
+    (SELECT p1.source_id, 1 AS westenberger
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'westenberger vivax expression profile'
+       AND p1.profile_set_id = ps1.profile_set_id) westenberger,
+    (SELECT p1.source_id, 1 AS winzeler_py_mixed
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'winzeler py mixed RMAouput naturalscale'
+       AND p1.profile_set_id = ps1.profile_set_id) winzeler_py_mixed
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
@@ -2742,6 +2752,8 @@ FROM dots.GeneFeature gf,
   AND gf.source_id = kappe.source_id(+)
   AND gf.source_id = daily.source_id(+)
   AND gf.source_id = zbpvivax.source_id(+)
+  AND gf.source_id = westenberger.source_id(+)
+  AND gf.source_id = winzeler_py_mixed.source_id(+)
 GROUP BY gf.source_id
       ]]>
     </sql>
