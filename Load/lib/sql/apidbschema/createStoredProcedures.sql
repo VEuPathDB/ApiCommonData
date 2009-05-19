@@ -134,94 +134,261 @@ GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_r;
 GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_w;
 
 -------------------------------------------------------------------------------
-create or replace type apidb.clobagg_type as object
+/* ========================================================================== *
+ * char_clob_agg function
+ * aggregate varchar2 rows into a clob; delimited by new line
+ * ========================================================================== */
+create or replace type apidb.char_clob_agg_type as object
 (
-  string clob,
-  delimiter varchar2(10),
+  char_content varchar2(29990),
+  clob_content clob,
+  delimiter char(1),
 
   static function ODCIAggregateInitialize
-    ( sctx in out clobagg_type )
+    ( sctx in out NOCOPY  char_clob_agg_type )
     return number ,
 
   member function ODCIAggregateIterate
-    ( self  in out clobagg_type ,
-      value in     clob
+    ( self  in out NOCOPY char_clob_agg_type ,
+      value in            varchar2
     ) return number ,
 
   member function ODCIAggregateTerminate
-    ( self        in  clobagg_type,
-      returnvalue out clob,
-      flags in number
+    ( self        in  char_clob_agg_type,
+      returnvalue out NOCOPY clob,
+      flags       in  number
     ) return number ,
 
   member function ODCIAggregateMerge
-    ( self in out clobagg_type,
-      ctx2 in     clobagg_type
+    ( self in out NOCOPY char_clob_agg_type,
+      ctx2 in            char_clob_agg_type
     ) return number
 );
 /
 
-create or replace type body apidb.clobagg_type
+create or replace type body apidb.char_clob_agg_type
 is
 
   static function ODCIAggregateInitialize
-  ( sctx in out clobagg_type )
+  ( sctx in out NOCOPY char_clob_agg_type )
   return number
   is
   begin
 
-    sctx := clobagg_type(EMPTY_CLOB() , chr(10) ) ;
-    dbms_lob.createtemporary(sctx.string, TRUE);
-    
+    sctx := char_clob_agg_type(NULL, NULL, chr(10)) ;
+    dbms_lob.createtemporary(sctx.clob_content, true);
+
     return ODCIConst.Success ;
 
   end;
 
   member function ODCIAggregateIterate
-  ( self  in out clobagg_type ,
-    value in     clob
+  ( self  in out NOCOPY char_clob_agg_type ,
+    value in            varchar2
   ) return number
   is
+    current_length NUMBER;
+    input_length NUMBER;
   begin
 
-    IF dbms_lob.getlength(self.string) > 0 THEN
-      if dbms_lob.getlength(value) > 0 THEN
-        dbms_lob.writeappend(self.string, 1, self.delimiter);
+    current_length := length(self.char_content);
+    input_length := length(value);
+    IF current_length + input_length > 29900 THEN
+      IF dbms_lob.getlength(self.clob_content) > 0 THEN
+        dbms_lob.writeappend(self.clob_content, 1, self.delimiter);
       END IF;
+      dbms_lob.writeappend(self.clob_content, current_length, self.char_content);
+      self.char_content := value;
+    ELSIF input_length > 0 THEN
+      IF current_length > 0 THEN
+        self.char_content := self.char_content || self.delimiter;
+      END IF;
+      self.char_content := self.char_content || value;
     END IF;
-    dbms_lob.append(self.string, value);
 
     return ODCIConst.Success;
 
   end;
 
   member function ODCIAggregateTerminate
-  ( self        in  clobagg_type ,
-    returnvalue out clob ,
-    flags       in  number
+  ( self        in         char_clob_agg_type ,
+    returnvalue out NOCOPY clob ,
+    flags       in         number
   ) return number
   is
+    char_length NUMBER;
   begin
 
-    returnValue := self.string;
-    
+    char_length := length(self.char_content);
+    returnValue := self.clob_content;
+    IF char_length > 0 THEN
+      IF dbms_lob.getlength(returnValue) > 0 THEN
+        dbms_lob.writeappend(returnValue, 1, self.delimiter);
+      END IF;
+      dbms_lob.writeappend(returnValue, char_length, self.char_content);
+    END IF;
+
     return ODCIConst.Success;
 
   end;
 
   member function ODCIAggregateMerge
-  ( self in out clobagg_type ,
-    ctx2 in     clobagg_type
+  ( self in out NOCOPY char_clob_agg_type ,
+    ctx2 in            char_clob_agg_type
   ) return number
+  is
+    current_length NUMBER;
+    input_length NUMBER;
+  begin
+   
+    current_length := length(self.char_content);
+    input_length := length(ctx2.char_content);
+    IF dbms_lob.getlength(ctx2.clob_content) > 0 THEN
+     IF dbms_lob.getlength(self.clob_content) > 0 THEN
+        dbms_lob.writeappend(self.clob_content, 1, self.delimiter);
+      END IF;
+      IF current_length > 0 THEN
+        dbms_lob.writeappend(self.clob_content, current_length + 1, self.char_content || self.delimiter);
+      END IF;
+      dbms_lob.append(self.clob_content, ctx2.clob_content);
+      self.char_content := ctx2.char_content;
+    ELSIF current_length + input_length > 29900 THEN
+      IF dbms_lob.getlength(self.clob_content) > 0 THEN
+        dbms_lob.writeappend(self.clob_content, 1, self.delimiter);
+      END IF;
+      dbms_lob.writeappend(self.clob_content, current_length, self.char_content);
+      self.char_content := ctx2.char_content;
+    ELSIF input_length > 0 THEN
+      IF current_length > 0 THEN
+          self.char_content := self.char_content || self.delimiter;
+      END IF;
+      self.char_content := self.char_content || ctx2.char_content;
+    END IF;
+    
+    return ODCIConst.Success;
+
+  end;
+
+end;
+/
+
+create or replace function apidb.char_clob_agg
+  ( input varchar2 )
+  return clob
+  deterministic
+  parallel_enable
+  aggregate using char_clob_agg_type
+;
+/
+
+grant execute on apidb.char_clob_agg to public;
+
+-------------------------------------------------------------------------------
+/* ========================================================================== *
+ * clob_clob_agg function
+ * aggregate clob rows into a clob; delimited by new line
+ * ========================================================================== */
+create or replace type apidb.clob_clob_agg_type as object
+(
+  clob_content clob,
+  delimiter char(1),
+
+  static function ODCIAggregateInitialize
+    ( sctx in out NOCOPY  clob_clob_agg_type )
+    return number ,
+
+  member function ODCIAggregateIterate
+    ( self  in out NOCOPY clob_clob_agg_type ,
+      value in            CLOB
+    ) return number ,
+
+  member function ODCIAggregateTerminate
+    ( self        in  clob_clob_agg_type,
+      returnvalue out NOCOPY CLOB,
+      flags       in  number
+    ) return number ,
+
+  member function ODCIAggregateMerge
+    ( self in out NOCOPY clob_clob_agg_type,
+      ctx2 in            clob_clob_agg_type
+    ) return number
+);
+/
+
+create or replace type body apidb.clob_clob_agg_type
+is
+
+  static function ODCIAggregateInitialize
+  ( sctx in out NOCOPY clob_clob_agg_type )
+  return number
   is
   begin
 
-    IF dbms_lob.getlength(self.string) > 0 THEN
-      IF dbms_lob.getlength(ctx2.string) > 0 THEN
-        dbms_lob.writeappend(self.string, 1, self.delimiter);
+    sctx := clob_clob_agg_type(NULL, chr(10)) ;
+    dbms_lob.createtemporary(sctx.clob_content, true);
+
+    return ODCIConst.Success ;
+
+  end;
+
+  member function ODCIAggregateIterate
+  ( self  in out NOCOPY clob_clob_agg_type ,
+    value in            CLOB
+  ) return number
+  is
+    current_length NUMBER;
+    input_length NUMBER;
+  begin
+
+
+    current_length := dbms_lob.getlength(self.clob_content);
+    input_length   := dbms_lob.getlength(value);
+
+    IF input_length > 0 THEN
+      IF current_length > 0 THEN
+        dbms_lob.writeappend(self.clob_content, 1, self.delimiter);
       END IF;
+      dbms_lob.append(self.clob_content, value);
     END IF;
-    dbms_lob.append(self.string, ctx2.string);
+
+    return ODCIConst.Success;
+
+  end;
+
+  member function ODCIAggregateTerminate
+  ( self        in         clob_clob_agg_type ,
+    returnValue out NOCOPY CLOB ,
+    flags       in         number
+  ) return number
+  is
+    char_length NUMBER;
+  begin
+
+    returnValue := self.clob_content;
+
+    return ODCIConst.Success;
+
+  end;
+
+  member function ODCIAggregateMerge
+  ( self in out NOCOPY clob_clob_agg_type ,
+    ctx2 in            clob_clob_agg_type
+  ) return number
+  is
+    current_length NUMBER;
+    input_length NUMBER;
+  begin
+
+/*   
+    current_length := dbms_lob.getlength(self.clob_content);
+    input_length   := dbms_lob.getlength(ctx2.clob_content);
+    IF input_length > 0 THEN
+      IF current_length > 0 THEN
+        dbms_lob.writeappend(self.clob_content, 1, self.delimiter);
+      END IF;
+      dbms_lob.append(self.clob_content, ctx2.clob_content);
+    END IF;
+*/
 
     return ODCIConst.Success;
 
@@ -230,16 +397,16 @@ is
 end;
 /
 
-create or replace function apidb.clobagg
+create or replace function apidb.clob_clob_agg
   ( input clob )
   return clob
   deterministic
-  parallel_enable
-  aggregate using clobagg_type
+  --parallel_enable
+  aggregate using clob_clob_agg_type
 ;
 /
 
-GRANT execute ON apidb.clobagg TO gus_r;
-GRANT execute ON apidb.clobagg TO gus_w;
+grant execute on apidb.clob_clob_agg to public;
+
 -------------------------------------------------------------------------------
 exit;
