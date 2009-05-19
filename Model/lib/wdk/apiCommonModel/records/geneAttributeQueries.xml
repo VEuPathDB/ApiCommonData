@@ -721,6 +721,8 @@
             <column name="graph_kappe"/>
             <column name="graph_daily"/>
             <column name="graph_zb_pvivax"/>
+            <column name="graph_westenberger"/>
+            <column name="graph_winzeler_py_mixed"/>
             <sql>
             <![CDATA[
            SELECT egs.source_id, 'PlasmoDB' as project_id,
@@ -735,6 +737,8 @@
                       NVL(MAX(graph_cowman), 0) AS graph_cowman,
                       NVL(MAX(graph_mexp128), 0) AS graph_mexp128,
                       NVL(MAX(graph_kappe), 0) AS graph_kappe,
+                      NVL(MAX(graph_westenberger), 0) AS graph_westenberger,
+                      NVL(MAX(graph_winzeler_py_mixed), 0) AS graph_winzeler_py_mixed,
                       NVL(MAX(graph_daily), 0) AS graph_daily
                FROM apidb.PlasmoExpressionGraphs egs, apidb.geneattributes ga
                 where ga.source_id = egs.source_id (+)
