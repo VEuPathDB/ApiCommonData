@@ -2344,6 +2344,22 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
     </sqlQuery>
 
+    <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="geneParams.minOrMax" quote="false"/>
+        <paramRef ref="geneParams.maxExprHour"/>
+        <paramRef ref="geneParams.maxPlusMinusHours"/>
+        <paramRef ref="geneParams.minExprHour"/>
+        <paramRef ref="geneParams.minPlusMinusHours"/>
+        <paramRef ref="geneParams.inductionFold"/>
+        <paramRef ref="geneParams.expressionPct"/>
+         <paramRef ref="geneParams.profileSet" quote="false"/>
+	  <wsColumn name="source_id" width="32" wsName="source_id"/>
+	  <wsColumn name="project_id" width="32" wsName="project_id"/>
+          <wsColumn name="max_fc" width="32" wsName="max_fc"/>
+          <wsColumn name="num_replicates" width="32" wsName="max_fc"/>
+    </processQuery>
+
     <sqlQuery name="GenesByVivaxExpressionTiming" includeProjects="PlasmoDB" 
               isCacheable="true">
         <paramRef ref="geneParams.minOrMax"/>
@@ -2379,20 +2395,17 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
+    <processQuery name="GenesByVivaxExpressionTiming" includeProjects="ApiDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.minOrMax" quote="false"/>
-        <paramRef ref="geneParams.maxExprHour"/>
-        <paramRef ref="geneParams.maxPlusMinusHours"/>
-        <paramRef ref="geneParams.minExprHour"/>
-        <paramRef ref="geneParams.minPlusMinusHours"/>
+        <paramRef ref="geneParams.exprHourVivax"/>
         <paramRef ref="geneParams.inductionFold"/>
         <paramRef ref="geneParams.expressionPct"/>
-         <paramRef ref="geneParams.profileSet" quote="false"/>
-	  <wsColumn name="source_id" width="32" wsName="source_id"/>
-	  <wsColumn name="project_id" width="32" wsName="project_id"/>
-          <wsColumn name="max_fc" width="32" wsName="max_fc"/>
-          <wsColumn name="num_replicates" width="32" wsName="max_fc"/>
+        <paramRef ref="geneParams.profileSetVivax" quote="false"/>
+	<wsColumn name="source_id" width="32" wsName="source_id"/>
+	<wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="max_fc" width="32" wsName="max_fc"/>
+        <wsColumn name="num_replicates" width="32" wsName="max_fc"/>
     </processQuery>
 
              
