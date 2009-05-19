@@ -258,8 +258,8 @@
             <![CDATA[
               SELECT source_id, '@PROJECT_ID@' AS project_id,
               source_id as gene_source_id,
-              'Pf-' || replace(strain_a,' ','%20') as strain_a_query,
-              CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-'|| replace(strain_b,' ','%20') END  as strain_b_query,
+              'Pf-' || replace(strain_a,' ','') as strain_a_query,
+              CASE WHEN strain_b = 'Preich' THEN 'P. reichenowi (vs. 3D7 only)' ELSE 'Pf-'|| replace(strain_b,' ','') END  as strain_b_query,
               CASE WHEN strain_b = 'Preich' THEN 'Sp. Pf-'||strain_a ELSE strain_a END as strain_a_disp,
               CASE WHEN strain_b = 'Preich' THEN 'Sp. P.reichenowi' ELSE strain_b END as strain_b_disp,
               CASE WHEN strain_b = 'Preich' THEN 0 ELSE total END as ord, cds_length,
