@@ -2729,7 +2729,7 @@ FROM dots.GeneFeature gf,
        AND p1.profile_set_id = ps1.profile_set_id) kappe,
     (SELECT p1.source_id, 1 AS daily
       FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'daily correlations'
+      WHERE ps1.name = 'daily_age_percents'
        AND p1.profile_set_id = ps1.profile_set_id) daily,
     (SELECT p1.source_id, 1 AS westenberger
       FROM apidb.profile p1, apidb.profileSet ps1
