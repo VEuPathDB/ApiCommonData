@@ -40,8 +40,6 @@
                 <paramValue name="source_id">CM000442</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="start_min" />
@@ -52,19 +50,34 @@
             <column name="piece_strand" />
             <sql>
             <![CDATA[
+          SELECT * FROM (
             select vs.source_id as source_id, '@PROJECT_ID@' AS project_id,
                    sp.distance_from_left + 1 as start_min, 
                    es.length + sp.distance_from_left as end_max,
                    case when es.source_id is null then '(N)-' || es.length else es.source_id end as piece_source_id,
                    1 as piece_min,
                    es.length as piece_max,
-                   sp.strand_orientation as piece_strand
+                   sp.strand_orientation as piece_strand,
+                   sp.sequence_order
             from Dots.SEQUENCEPIECE sp, Dots.NASEQUENCE vs, Dots.NASEQUENCE es
             where vs.na_sequence_id = sp.virtual_na_sequence_id
             and es.na_sequence_id = sp.piece_na_sequence_id
             and sp.strand_orientation is not null
-            and (vs.source_id = $$source_id$$ or es.source_id = $$source_id$$)
-            order by vs.source_id, sp.sequence_order
+            UNION
+            select es.source_id as source_id, '@PROJECT_ID@' AS project_id,
+                   sp.distance_from_left + 1 as start_min, 
+                   es.length + sp.distance_from_left as end_max,
+                   case when es.source_id is null then '(N)-' || es.length else es.source_id end as piece_source_id,
+                   1 as piece_min,
+                   es.length as piece_max,
+                   sp.strand_orientation as piece_strand,
+                   sp.sequence_order
+            from Dots.SEQUENCEPIECE sp, Dots.NASEQUENCE vs, Dots.NASEQUENCE es
+            where vs.na_sequence_id = sp.virtual_na_sequence_id
+            and es.na_sequence_id = sp.piece_na_sequence_id
+            and sp.strand_orientation is not null
+            )
+            order by source_id, sequence_order
              ]]>
            </sql>
         </sqlQuery>
@@ -79,8 +92,6 @@
             </testParamValues>
             <testParamValues minRows="0" includeProjects="ToxoDB,TrichDB,GiardiaDB,CryptoDB,TriTrypDB"/>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="start_min" />
@@ -91,8 +102,7 @@
                    nl.start_min, nl.end_max
             FROM dots.NaSequence ens, dots.Miscellaneous m,
                  dots.NaLocation nl, sres.SequenceOntology so
-            WHERE ens.source_id = $$source_id$$
-              AND ens.na_sequence_id = m.na_sequence_id
+            WHERE ens.na_sequence_id = m.na_sequence_id
               AND m.na_feature_id = nl.na_feature_id
               AND m.sequence_ontology_id = so.sequence_ontology_id
               AND so.term_name = 'centromere'
@@ -108,8 +118,6 @@
               <paramValue name="source_id">MAL9</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="comment_id"/>
@@ -132,7 +140,6 @@
               WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'genome'
                     AND c.stable_id = ens.source_id
-                    AND ens.source_id = $$source_id$$
             ]]>
             </sql>
         </sqlQuery>
@@ -143,8 +150,6 @@
                <paramValue name="source_id">TGME49_chrIa</paramValue>
             </testParamValues>
 
-       <paramRef ref="recordParams.source_id"/>
-        <paramRef ref="recordParams.project_id"/>
         <column name="source_id" />
         <column name="project_id" />
         <column name="gff_dbxref"/>
@@ -157,21 +162,18 @@
             SELECT ens.source_id, '@PROJECT_ID@' AS project_id,
                    'taxon:' || t.ncbi_tax_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.Taxon t
-            WHERE ens.source_id = $$source_id$$
-              AND ens.taxon_id = t.taxon_id
+            WHERE ens.taxon_id = t.taxon_id
 /*           UNION
             SELECT ens.source_id, '@PROJECT_ID@' AS project_id, so.so_id AS gff_dbxref
             FROM dots.NaSequence ens, sres.SequenceOntology so
-            WHERE ens.source_id = $$source_id$$
-              AND ens.sequence_ontology_id = so.sequence_ontology_id
+            WHERE ens.sequence_ontology_id = so.sequence_ontology_id
 */           UNION
             SELECT ens.source_id,  '@PROJECT_ID@' AS project_id,
                    'GenBank:' || dr.primary_identifier AS gff_dbxref
             FROM dots.NaSequence ens, dots.dbrefNaSequence drns,
                  sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                  sres.ExternalDatabase ed
-            WHERE ens.source_id = $$source_id$$
-              AND ens.na_sequence_id = drns.na_sequence_id
+            WHERE ens.na_sequence_id = drns.na_sequence_id
               AND drns.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id
                   = edr.external_database_release_id
@@ -181,7 +183,6 @@
             SELECT ens.source_id, '@PROJECT_ID@' AS project_id,
                    '&&brcName&&:' || ens.source_id AS gff_dbxref
             FROM dots.NaSequence ens
-            WHERE ens.source_id = $$source_id$$
           ]]>
         </sql>
     </sqlQuery>
