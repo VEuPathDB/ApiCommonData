@@ -54,7 +54,7 @@
             FROM apidb.EstAttributes ea,
                  apidb.AssemblyAttributes aa
             WHERE aa.source_id = ea.assembly_source_id
-              AND ea.library_id in ($$libraryId$$)
+              AND ea.library_id in ($$libraryIdAssemblies$$)
               AND ea.assembly_est_count >= $$min_ests_in_assembly$$
               AND aa.project_id = '@PROJECT_ID@'
             GROUP BY aa.source_id, aa.project_id
