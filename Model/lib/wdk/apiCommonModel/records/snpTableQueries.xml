@@ -23,8 +23,6 @@
 
         <sqlQuery name="Strains" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
               isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="strain"/>
@@ -52,8 +50,7 @@
              (select gene.source_id, gene_loc.is_reversed, gene.na_feature_id
                FROM dots.GeneFeature gene, dots.NaLocation gene_loc
                WHERE gene.na_feature_id = gene_loc.na_feature_id) gene_info
-       WHERE snp.source_id = $$source_id$$
-        AND  var.parent_id = snp.na_feature_id
+       WHERE var.parent_id = snp.na_feature_id
         AND gene_info.na_feature_id(+) = snp.parent_id
         ORDER BY var.strain
              ]]>
@@ -66,8 +63,6 @@
 
         <sqlQuery name="Providers" includeProjects="ToxoDB,PlasmoDB,CryptoDB" 
                isCacheable="false">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="source_id_link"/>
@@ -79,7 +74,7 @@
                       ed.name
             </sqlParamValue>
             <sqlParamValue name="filter" includeProjects="PlasmoDB">
-                and sb.source_id != $$source_id$$
+                and sb.source_id != sa.source_id
             </sqlParamValue>
             <sqlParamValue name="filter" includeProjects="ToxoDB,CryptoDB">
             </sqlParamValue>
@@ -91,8 +86,7 @@
                &&name&& as name
                FROM  dots.SnpFeature sa, dots.snpfeature sb, dots.nalocation la, dots.nalocation lb,
                      sres.externaldatabase ed, sres.externaldatabaserelease edr
-               WHERE sa.source_id = $$source_id$$
-                AND sa.na_feature_id = la.na_feature_id
+               WHERE sa.na_feature_id = la.na_feature_id
                 and sb.na_feature_id = lb.na_feature_id
                 and sa.na_sequence_id = sb.na_sequence_id
                 and la.start_min = lb.start_min
@@ -114,8 +108,6 @@
                <paramValue name="source_id">CombinedSNP.MAL2.3180</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="isolate_id"/>
@@ -129,8 +121,7 @@
               atr.SOURCE_ID as isolate_id, atr.strain as strain, atr.country, 
               isnp.allele, atr.DATA_TYPE as assay_type
               from apidb.isolateattributes atr, apidb.isolatesnps isnp
-              where isnp.snp_source_id = $$source_id$$
-              and isnp.is_source_id = atr.SOURCE_ID
+              where isnp.is_source_id = atr.SOURCE_ID
               order by atr.country,atr.strain
             ]]>
            </sql>
@@ -144,8 +135,6 @@
                <paramValue name="source_id">CombinedSNP.MAL2.3180</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="allele"/>
@@ -167,7 +156,6 @@
                        group by snp_source_id
                        ) t
                        where s.snp_source_id = t.snp_source_id
-                       and s.snp_source_id = $$source_id$$
                        order by s.ct desc  
             ]]>
            </sql>

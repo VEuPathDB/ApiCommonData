@@ -33,8 +33,6 @@
       </defaultTestParamValues>
 
      <sqlQuery name="Locations" isCacheable="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TrichDB,GiardiaDB,TriTrypDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence_source_id"/>
@@ -59,8 +57,7 @@
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl, apidb.orfattributes oa 
-              WHERE oa.source_id=$$source_id$$
-                AND fl.feature_source_id = oa.source_id
+              WHERE fl.feature_source_id = oa.source_id
               ORDER BY fl.is_top_level desc
             ]]>
             </sql>

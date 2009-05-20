@@ -19,8 +19,6 @@
 
 
       <sqlQuery name="Experiments" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="experiment"/>
@@ -39,8 +37,7 @@
                    to_char(aa.library_total_tag_count, '999999') as total_norm_count, 
                    to_char(aa.library_tag_percentage, '990D00000') || '%' as norm_percent
             from apidb.SAGETAGANALYSISATTRIBUTES aa, apidb.SAGETAGATTRIBUTES a, Rad.Assay ra
-            where a.source_id = $$source_id$$
-            and a.composite_element_id = aa.composite_element_id
+            where a.composite_element_id = aa.composite_element_id
             and ra.name = aa.library_name
             order by ra.assay_id
             ]]>
@@ -51,8 +48,6 @@
 
 
        <sqlQuery name="AlignedGenes" isCacheable="false" includeProjects="ToxoDB,PlasmoDB,GiardiaDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="aligned_source_id"/>
@@ -73,10 +68,6 @@
                   sg.distance as bp_from_gene
             from apidb.SAGETAGGENE sg, apidb.SAGETAGATTRIBUTES a, apidb.GENEATTRIBUTES g
             where a.na_feature_id = sg.tag_feature_id
-            and a.composite_element_id in
-                    (select composite_element_id
-                     from apidb.SageTagAttributes
-                     where source_id = $$source_id$$)
             and sg.gene_source_id = g.source_id
             order by gene_strand desc, bp_from_gene asc, a.source_id
             ]]>
@@ -84,8 +75,6 @@
       </sqlQuery>
 
      <sqlQuery name="Locations" isCacheable="false" includeProjects="GiardiaDB,PlasmoDB,ToxoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="sequence_source_id"/>
@@ -108,8 +97,7 @@
                     (fl.start_min-5000)as start_context,
                     (fl.end_max+5000)as end_context
               FROM apidb.featurelocation fl, apidb.sagetagattributes sta
-              WHERE sta.source_id=$$source_id$$
-                AND fl.na_feature_id = sta.na_feature_id
+              WHERE fl.na_feature_id = sta.na_feature_id
               ORDER BY fl.is_top_level desc
             ]]>
             </sql>
