@@ -484,17 +484,6 @@
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <flatVocabParam name="dailyAnalysis" includeProjects="PlasmoDB,ApiDB"
-                     queryRef="GeneVQ.dailyAnalysis"
-                     prompt="Factor"
-                     multiPick="false">
-        <help>
-             Select a Factor
-        </help>
-<useTermOnly value="true" includeProjects="ApiDB"/>
-      </flatVocabParam>
-
-
 
       <flatVocabParam name="kappeAnalysis" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.kappeAnalysis"
@@ -5276,25 +5265,6 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </sqlQuery>
 
         <processQuery name="DayAndStrain" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
-            <wsColumn name="internal" width="32"/>
-            <wsColumn name="term" width="32"/>
-        </processQuery>
-
-
-        <sqlQuery name="dailyAnalysis" includeProjects="PlasmoDB">
-            <column name="internal"/>
-            <column name="term"/>
-            <sql>
-            select a.name as term, a.analysis_id as internal
-             from rad.protocol p, rad.analysis a 
-             where p.name = 'Daily Correlations'
-              and p.protocol_id = a.protocol_id
-              order by a.name
-            </sql>
-        </sqlQuery>
-
-
-        <processQuery name="dailyAnalysis" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
             <wsColumn name="internal" width="32"/>
             <wsColumn name="term" width="32"/>
         </processQuery>
