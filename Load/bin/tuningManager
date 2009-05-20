@@ -292,7 +292,8 @@ $tuningRegistry->setLastUpdater()
   if !$tables && !$doUpdate;
 
 $tuningRegistry->setOk()
-  if !$tables && !$neededUpdateCount && !$brokenCount;
+  if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate);
+  # looked at everything, nothing was broken, and if updates were needed, we did them.
 
 $tuningRegistry->setOutdated()
   if $neededUpdateCount || $brokenCount;
