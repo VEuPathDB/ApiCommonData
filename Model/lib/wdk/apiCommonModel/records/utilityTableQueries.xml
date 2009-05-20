@@ -152,21 +152,29 @@
             select $$source_id$$ AS source_id, 
                    '@PROJECT_ID@' AS project_id,
                     name, 
-                    timestamp 
+                    to_char(timestamp, 'YYYY/MM/DD HH24:MI:SS') timestamp 
             from apidb.tuningtable 
             order by timestamp desc
             ]]>
            </sql>
         </sqlQuery>
 
-        <!-- UtilityQueries.TuningManager -->
+        <!-- UtilityQueries.TuningManager 
+        
+        If there was an update, last_ok == outdated_since
+
+        If no update was needed, outdated_since is null
+
+        If an update is needed, but not performed, outdated_since > last_ok
+        
+        -->
         <sqlQuery name="TuningManager" isCacheable='false'>
             <column name="source_id" />
             <column name="project_id" />
             <column name="family_name" /> 
-            <column name="last_update" /> 
+            <column name="last_ok" /> 
             <column name="last_updater" /> 
-            <column name="last_check" /> 
+            <column name="outdated_since" /> 
             <column name="last_checker" /> 
             <column name="instance_nickname" />
             <column name="subversion_url" /> 
@@ -174,23 +182,53 @@
             <column name="elapsedCheckDays" />
             <column name="elapsedCheckHours" />
             <column name="elapsedCheckMinutes" />
+            <column name="last_check" />
+            <column name="state" />
            <sql> 
             <![CDATA[           
             select $$source_id$$ AS source_id, 
                    '@PROJECT_ID@' AS project_id,
                    ti.family_name family_name,
-                   last_update, 
+                   to_char(last_ok, 'YYYY/MM/DD HH24:MI:SS') last_ok, 
                    last_updater, 
-                   last_check, 
+                   to_char(outdated_since, 'YYYY/MM/DD HH24:MI:SS') outdated_since, 
                    last_checker, 
                    mi.instance_nickname,
                    subversion_url, 
                    notify_emails,
-                   trunc(sysdate - last_check) elapsedCheckDays,
-                   to_char(   trunc(sysdate) + (sysdate - last_check),  'HH24') elapsedCheckHours,
-                   to_char(   trunc(sysdate) + (sysdate - last_check),  'MI') elapsedCheckMinutes
-            from apidb.TuningInstance@apidb.login_comment ti,
-                   apidb.tuningfamily@apidb.login_comment tf,
+                   trunc(sysdate - GREATEST(
+                      NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')), 
+                      NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy')))) elapsedCheckDays,
+                   to_char(
+                        trunc(sysdate) + (sysdate - GREATEST(
+                          NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')), 
+                          NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy')))),  
+                           'HH24') elapsedCheckHours,
+                   to_char(
+                        trunc(sysdate) + (sysdate - GREATEST(
+                          NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')), 
+                          NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy')))),
+                        'MI') elapsedCheckMinutes,
+                    to_char(GREATEST(
+                       NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')), 
+                       NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy'))),
+                       'YYYY/MM/DD HH24:MI:SS') last_check,
+                   (CASE 
+                      WHEN 
+                        outdated_since is null
+                      THEN '0'
+                      WHEN
+                        NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')) >= 
+                        NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy'))
+                      THEN '1'
+                      WHEN
+                        NVL(last_ok, to_date('01-Jan-1970', 'dd-mon-yyyy')) < 
+                        NVL(outdated_since, to_date('01-Jan-1970', 'dd-mon-yyyy'))
+                      THEN '2'
+                      ELSE '3'
+                    END) state
+            from apidb_r.TuningInstance@USER_DBLINK@ ti,
+                   apidb_R.tuningfamily@USER_DBLINK@ tf,
                    apidb.instancemetainfo mi
             where mi.instance_nickname = ti.instance_nickname
             and   ti.family_name = tf.family_name
