@@ -131,8 +131,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SNP" isCacheable="true" includeProjects="ApiDB,PlasmoDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
             <column name="project_id" />
             <column name="start_min"/>
@@ -147,7 +145,7 @@
             SELECT nal.start_min,
                    chr.source_id chromosome,
                    if.source_id snp_id, 
-                   if.source_id source_id, 
+                   etn.source_id source_id, 
                    if.allele,
                    case when if.allele = snp.major_allele
                         then '<font color=#342D7E><b>' || if.allele || '</b></font>'
@@ -168,7 +166,6 @@
                AND nal.na_feature_id = if.na_feature_id
                AND chr.na_sequence_id = if.na_sequence_id
                AND snp.source_id = if.source_id
-               AND etn.source_id = $$source_id$$
             ORDER BY if.source_id
             ]]>
             </sql>
@@ -180,8 +177,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="gene"/>
@@ -220,7 +215,6 @@
                   and t.name = 'ExternalNASequence'
                   ) gene
                   on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id
-            where sim.source_id = $$source_id$$ 
              and pvalue_exp <= &&pvalueCutoff&&
             order by sim.pvalue_exp, pvalue_mant
             ]]>
@@ -233,8 +227,6 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="organism"/>
@@ -242,14 +234,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.organism
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="description"/>
@@ -257,14 +246,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.description
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="product"/>
@@ -272,14 +258,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.product
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="strain"/>
@@ -287,14 +270,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.strain
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="host"/>
@@ -302,14 +282,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.specific_host as host
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="note"/>
@@ -317,14 +294,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.note
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="isolation_source"/>
@@ -332,14 +306,11 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.isolation_source
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
 
       <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="geographic_location"/>
@@ -347,7 +318,6 @@
             <![CDATA[
             select ia.source_id, '@PROJECT_ID@' as project_id, ia.country as geographic_location
             from apidb.IsolateAttributes ia
-            where ia.source_id = $$source_id$$ 
             ]]>
            </sql>
       </sqlQuery>
@@ -362,8 +332,6 @@
             <paramValue name="source_id">AB089288</paramValue>
          </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="protein_sequence"/>
@@ -382,7 +350,6 @@
                   AND trp.parent_id = gf.na_feature_id
                   AND etn.na_sequence_id = gf.na_sequence_id
                   AND l.na_feature_id = gf.na_feature_id
-                  AND etn.source_id = $$source_id$$
                   ORDER by etn.source_id, l.start_min
             ]]>
            </sql>
@@ -390,8 +357,6 @@
 
 
       <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ApiDB">
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="title"/>
@@ -414,7 +379,6 @@
                    apidb.isolateattributes ia
             WHERE   nasr.reference_id = ref.reference_id
                AND etn.na_sequence_id = nasr.na_sequence_id
-               AND ia.source_id = $$source_id$$
                AND ia.source_id = etn.source_id (+)
             ]]>
            </sql>
