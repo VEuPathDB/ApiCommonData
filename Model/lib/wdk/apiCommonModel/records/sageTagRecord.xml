@@ -74,7 +74,8 @@
       </attributeQueryRef>
 
       <attributeQueryRef ref="SageTagAttributes.GeneAlignmentCount">
-         <columnAttribute name="total_gene_alignments" displayName="Gene Count" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="total_gene_alignments" displayName="Gene Count (ALL)" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
+         <columnAttribute name="local_gene_alignments" displayName="Gene Count (Alignment)" internal="true" includeProjects="ApiDB,ToxoDB,GiardiaDB,PlasmoDB"/>
       </attributeQueryRef>
 
 
@@ -86,8 +87,9 @@
              Sequence Id: $$sequence_id$$<br>
              Tag Start: $$start_min$$<br>
              Tag End: $$end_max$$<br>
-             Number of Genomic Alignments:  $$total_alignments$$<br>
-             Number of Genes Hit:  $$total_gene_alignments$$
+             Total Number of Genomic Alignments:  $$total_alignments$$<br>
+             Total Number of Genes which align to this sequence:  $$total_gene_alignments$$<br>
+             Number of Genes which align at this genomic location:  $$local_gene_alignments$$
              ]]>
         </text>
       </textAttribute>

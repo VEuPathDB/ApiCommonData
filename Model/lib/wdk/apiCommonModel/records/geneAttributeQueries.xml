@@ -64,9 +64,11 @@
             <column name="old_project_id"/>
             <sql includeProjects="PlasmoDB">
               <![CDATA[
-                SELECT gene as source_id, '@PROJECT_ID@' AS project_id,
-                       alias as old_source_id, '@PROJECT_ID@' AS old_project_id
-                FROM apidb.GeneAlias
+                SELECT ga.source_id, 
+                       '@PROJECT_ID@' AS project_id,
+                       a.alias as old_source_id, '@PROJECT_ID@' AS old_project_id
+                FROM apidb.GeneAlias a, apidb.geneattributes ga
+                 where ga.source_id = a.gene
               ]]>
             </sql>
             <sql includeProjects="ToxoDB">

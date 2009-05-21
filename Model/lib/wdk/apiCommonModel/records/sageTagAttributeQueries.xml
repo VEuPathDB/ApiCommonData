@@ -2,7 +2,7 @@
     <querySet name="SageTagAttributes" queryType="attribute" includeProjects="ApiDB,PlasmoDB,ToxoDB,GiardiaDB">
 
              <defaultTestParamValues includeProjects="PlasmoDB">
-               <paramValue name="source_id">MAL11-1259434-1259448.1</paramValue>
+               <paramValue name="source_id">Pf3D7_11-1295354-1295368.0</paramValue>
                <paramValue name="project_id">PlasmoDB</paramValue>
             </defaultTestParamValues>
 
@@ -45,6 +45,7 @@
                    sta.sequence_source_id as sequence_id,
                    sta.start_min,
                    sta.end_max,
+                   sta.is_reversed,
                    case when sta.is_reversed = 1 then '-' when sta.is_reversed = 0 then '+' else '.' end as strand,
                    sta.start_min - 5000 as context_start,
                    sta.end_max + 5000 as context_end,
@@ -79,15 +80,17 @@
             <column name="project_id"/>
             <column name="source_id"/>
             <column name="total_gene_alignments"/>
+            <column name="local_gene_alignments"/>
             <sql>
             <![CDATA[
-             select sta.source_id,'@PROJECT_ID@' as project_id,ct.total_gene_alignments from (
+             select sta.source_id,'@PROJECT_ID@' as project_id, NVL(ct.total_gene_alignments,0) as total_gene_alignments,
+                    sta.gene_count as local_gene_alignments from (
                select composite_element_id, '@PROJECT_ID@' AS project_id, 
                     count(*) as total_gene_alignments
                from apidb.SAGETAGATTRIBUTES 
-               where gene_source_id is not null
+                where gene_source_id is not null
                group by composite_element_id) ct, apidb.SAGETAGATTRIBUTES sta
-             where sta.composite_element_id = ct.composite_element_id
+             where sta.composite_element_id = ct.composite_element_id (+) 
             ]]>
            </sql>
       </sqlQuery>
