@@ -722,7 +722,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Go Term -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByGoTerm" excludeProjects="ApiDB">
+    <sqlQuery name="GenesByGoTerm" excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="geneParams.go_term"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
@@ -766,7 +766,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Signal Peptide -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithSignalPeptide" excludeProjects="ApiDB">
+    <sqlQuery name="GenesWithSignalPeptide" excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.min_sigp_d_score" groupRef="paramGroups.advancedParams"/>
@@ -903,7 +903,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- ExonCount -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExonCount" excludeProjects="ApiDB">
+    <sqlQuery name="GenesByExonCount" excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="geneParams.num_exons_gte"/>
         <paramRef ref="geneParams.num_exons_lte"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -1020,7 +1020,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Metabolic Pathway -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMetabolicPathway" includeProjects="ToxoDB,PlasmoDB">
+    <sqlQuery name="GenesByMetabolicPathway" includeProjects="ToxoDB,PlasmoDB" isCacheable="true">
         <paramRef ref="geneParams.metabolic_pathway"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -1083,7 +1083,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Taxon (Species) -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByTaxon" excludeProjects="ApiDB">
+    <sqlQuery name="GenesByTaxon" excludeProjects="ApiDB" isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -1115,7 +1115,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="GenesWithEpitopes" includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
-           isCacheable='true'>
+           isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEpitopes"/>
         <paramRef ref="geneParams.epitope_confidence"/>
         <column name="source_id" />
@@ -1900,7 +1900,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- SageTags -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesBySageTag" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+    <sqlQuery name="GenesBySageTag" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
        <paramRef ref="geneParams.sage_tag_library"/>
        <paramRef ref="geneParams.st_max_five_prime_distance"/>
        <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -1954,7 +1954,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 -->
 	 </processQuery>
 
-    <sqlQuery name="GenesBySageTagRStat" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,GiardiaDB">
+    <sqlQuery name="GenesBySageTagRStat" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
       <paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
                  includeProjects="GiardiaDB,ToxoDB"/> 
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
@@ -2034,7 +2034,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- ESTOverlap -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB">
+    <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB" isCacheable="true">
 
         <testParamValues includeProjects="ToxoDB">
            <paramValue name="libraryIdGenes">TgME49 3 day invitro bradyzoite</paramValue>
@@ -2982,7 +2982,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesByExpressionPercentileA -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB"> 
+    <sqlQuery name="GenesByExpressionPercentileA" includeProjects="PlasmoDB" isCacheable="true"> 
        <paramRef ref="geneParams.cowmanSample"/>
        <paramRef ref="geneParams.percentile"/>
         <column name="project_id"/>
