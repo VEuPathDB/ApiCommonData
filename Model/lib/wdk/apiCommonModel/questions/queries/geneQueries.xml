@@ -592,7 +592,7 @@
         <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
         <column name="source_id" />
         <column name="project_id" />
-        <column name="orthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB"/>
+        <column name="orthologs"/>
 
         <sql includeProjects="TriTrypDB,CryptoDB">
             <![CDATA[
@@ -668,17 +668,18 @@ sns2.external_database_release_id=extr.external_database_release_id
        
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT ga.source_id, '@PROJECT_ID@' AS project_id
-            FROM apidb.GeneAttributes ga
-            WHERE ga.gene_id IN
-                    (SELECT ga.gene_id
-                     FROM apidb.GeneAttributes ga, $$gene_result$$ c
-                     WHERE ga.source_id = c.source_id
-                     AND ga.gene_id is NOT NULL)
-              AND ga.ncbi_tax_id IN ($$organism$$)
+            SELECT ga.source_id, 
+             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
+             '@PROJECT_ID@' AS project_id
+            FROM apidb.GeneAttributes ga, $$gene_result$$ c
+            WHERE ga.source_id = c.source_id
+            AND ga.gene_id is NOT NULL
+            AND ga.ncbi_tax_id IN ($$organism$$)
              UNION
              SELECT
-             DISTINCT gf.source_id, '@PROJECT_ID@' AS project_id
+             gf.source_id, 
+             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
+             '@PROJECT_ID@' AS project_id
              FROM 
              apidb.GeneAttributes ga,
              apidb.GeneAttributes gb,
@@ -697,9 +698,12 @@ sns2.external_database_release_id=extr.external_database_release_id
              AND gf.na_sequence_id = ns.na_sequence_id
              AND ns.taxon_id = tn.taxon_id
              AND tn.ncbi_tax_id IN ($$organism$$)
+             GROUP BY gf.source_id
              UNION
              SELECT
-             DISTINCT gb.source_id, '@PROJECT_ID@' as project_id
+             gb.source_id, 
+             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
+             '@PROJECT_ID@' AS project_id
              FROM 
              apidb.geneattributes ga,
              apidb.geneattributes gb,
