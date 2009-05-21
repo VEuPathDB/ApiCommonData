@@ -56,7 +56,7 @@ public class FullRecordFileCreator extends BaseCLI {
      */
     public static void main(String[] args) throws Exception {
         String cmdName = System.getProperty("cmdName");
-        if (cmdName == null) cmdName = FullRecordCacheCreator.class.getName();
+        if (cmdName == null) cmdName = FullRecordFileCreator.class.getName();
         FullRecordFileCreator writer = new FullRecordFileCreator(cmdName,
                 "Create the Dump File from dump table");
         try {
@@ -164,27 +164,29 @@ public class FullRecordFileCreator extends BaseCLI {
     private Question createQuestion(RecordClass recordClass, String idSql)
             throws WdkModelException, NoSuchAlgorithmException, SQLException,
             JSONException, WdkUserException {
+        String name = recordClass.getFullName().replaceAll("\\W", "_");
         QuestionSet questionSet = wdkModel.getQuestionSet(Utilities.INTERNAL_QUESTION_SET);
         Query query = createQuery(recordClass, idSql);
         Question question = new Question();
-        question.setQuestionSet(questionSet);
-        question.setName("InternalDumpQuestion");
+        question.setName(name + "_dump");
         question.setRecordClass(recordClass);
         question.setQuery(query);
         question.setWdkModel(wdkModel);
         // question.setFullAnswer(true);
+        questionSet.addQuestion(question);
         return question;
     }
 
     private SqlQuery createQuery(RecordClass recordClass, String idSql)
             throws NoSuchAlgorithmException, WdkModelException, SQLException,
             JSONException, WdkUserException {
+        String name = recordClass.getFullName().replaceAll("\\W", "_");
         QuerySet querySet = wdkModel.getQuerySet(Utilities.INTERNAL_QUERY_SET);
         SqlQuery query = new SqlQuery();
-        query.setQuerySet(querySet);
-        query.setName("InternalDumpQuery");
-        query.setIsCacheable(true);
+        query.setName(name + "_dump");
+        query.setIsCacheable(false);
         query.setSql(idSql);
+        querySet.addQuery(query);
         String[] columnNames = recordClass.getPrimaryKeyAttributeField().getColumnRefs();
         Column[] columns = new Column[columnNames.length];
         for (int i = 0; i < columns.length; i++) {
