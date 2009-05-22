@@ -4706,7 +4706,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!-- text fields -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <enumParam name="text_fields" excludeProjects="CryptoDB,TriTrypDB"
+    <enumParam name="text_fields" excludeProjects="CryptoDB,TriTrypDB,PlasmoDB"
                      prompt="Fields"
                      multiPick="true">
       <help>
@@ -4754,7 +4754,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
-    <enumParam name="text_fields" includeProjects="CryptoDB,TriTrypDB"
+    <enumParam name="text_fields" includeProjects="CryptoDB,TriTrypDB,PlasmoDB"
                      prompt="Fields"
                      multiPick="true">
       <help>
@@ -4765,6 +4765,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <enumValue>
           <term>Gene product</term>
           <internal>Product</internal>
+        </enumValue>
+        <enumValue includeProjects="PlasmoDB">
+          <term>Release 5.5 Genes</term>
+          <internal>PlasmoVer5Genes</internal>
         </enumValue>
         <enumValue includeProjects="TriTrypDB">
           <term>Phenotype</term>
