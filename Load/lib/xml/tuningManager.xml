@@ -47,6 +47,7 @@ SELECT DISTINCT pairs.alias, pairs.gene FROM
                        'TigrScan', 'TwinScan predictions',
                        'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
                        'Pfalciparum workshop annotations reviewed and changed',
+                       'Sanger P. falciparum old annotations',
                        'Old annotation for ME49')
       ]]>
     </sql>
@@ -253,6 +254,7 @@ select case
                               'TwinScanEt predictions', -- not 'tRNAscan-SE',
                               'P. falciparum Evigan Gene Models',
                               'Pfalciparum workshop annotations reviewed and changed',
+                              'Sanger P. falciparum old annotations',
                               'Old annotation for ME49')
            then 'GenePrediction'
          else nf.subclass_view
