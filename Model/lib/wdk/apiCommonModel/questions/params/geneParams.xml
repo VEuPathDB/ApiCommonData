@@ -2201,10 +2201,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <suggest default="100"/>
         </stringParam>
 
+
       <flatVocabParam name="extraerythrocytic_stages" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.ExtraerythrocyticStages"
                      prompt="Extraerythrocytic Lifecycle Stage"
-                     multiPick="false">
+                     multiPick="true">
         <help>
              Results will be sorted ascending or descending order
         </help>
@@ -2214,7 +2215,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       <flatVocabParam name="intraerythrocytic_stages" includeProjects="PlasmoDB,ApiDB"
                      queryRef="GeneVQ.IntraerythrocyticStages"
                      prompt="Intraerythrocytic Lifecycle Stage"
-                     multiPick="false">
+                     multiPick="true">
         <help>
              Results will be sorted ascending or descending order
         </help>
@@ -5970,12 +5971,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="internal"/>
             <column name="term"/>
             <sql>
-                SELECT name AS term, element_order AS internal
+                SELECT distinct name AS term, element_order AS internal
                 FROM apidb.profileElementName
                 WHERE name IN
                      ('Sporozoite', 'Gametocyte')
-                UNION SELECT 'Either' AS term, 0 as internal FROM dual
-                ORDER BY internal
             </sql>
         </sqlQuery>
 
@@ -5988,13 +5987,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="internal"/>
             <column name="term"/>
             <sql>
-                SELECT name AS term, element_order AS internal
+                SELECT distinct name AS term, element_order AS internal
                 FROM apidb.profileElementName
                 WHERE name IN
                      ('Early Ring', 'Late Ring', 'Early Schizogony', 'Late Schizogony',
                      'Early Trophozoite', 'Late Trophozoite', 'Merozoite')
-                UNION SELECT 'Any' AS term, 0 as internal FROM dual
-                ORDER BY internal
             </sql>
         </sqlQuery>
 

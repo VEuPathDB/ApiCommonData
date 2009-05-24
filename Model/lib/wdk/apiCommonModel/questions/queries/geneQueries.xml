@@ -2804,7 +2804,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB" 
            isCacheable="true">
         <paramRef ref="geneParams.synchronization"/>
-        <paramRef ref="geneParams.intraerythrocytic_stages"/>
+        <paramRef ref="geneParams.intraerythrocytic_stages"/> 
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
         <column name="project_id"/>
@@ -2816,8 +2816,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             SELECT e.source_id, '@PROJECT_ID@' as project_id, MAX(e.value) AS max_percentile,
                    MIN(e.value) AS min_percentile
             FROM apidb.Expression e
-            WHERE (e.element_order = $$intraerythrocytic_stages$$
-                   OR $$intraerythrocytic_stages$$ = 0)
+            WHERE e.element_order in ($$intraerythrocytic_stages$$)
               AND e.profile_set_name in ($$synchronization$$)
               AND e.value >= $$min_expression_percentile$$ / 100
               AND e.value <= $$max_expression_percentile$$ / 100
@@ -2858,8 +2857,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    MIN(e.value) AS min_percentile
             FROM apidb.Expression e
             WHERE e.profile_set_name in ('winzeler_cc_sorbPct', 'winzeler_cc_sporPct')
-              AND (e.element_order = $$extraerythrocytic_stages$$
-                   OR $$extraerythrocytic_stages$$ = 0)
+              AND e.element_order in ($$extraerythrocytic_stages$$)
               AND e.value >= $$min_expression_percentile$$ / 100
               AND e.value <= $$max_expression_percentile$$ / 100
             GROUP BY e.source_id
