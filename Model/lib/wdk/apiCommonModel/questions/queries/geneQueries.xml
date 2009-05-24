@@ -331,8 +331,7 @@
               AND t.na_feature_id = taf.na_feature_id
               AND taf.aa_sequence_id = asec.aa_sequence_id
               AND asec.enzyme_class_id = ec.enzyme_class_id
-              AND ec.ec_number LIKE REPLACE(REPLACE($$ec_number_pattern$$,' ',''),
-                                            '-', '%')
+              AND ec.ec_number LIKE REPLACE(REPLACE(REPLACE(REPLACE(lower($$ec_number_pattern$$),' ',''),'-', '%'),'*','%'),'any','%')
             ORDER BY gf.source_id
        </sql>
     </sqlQuery>
