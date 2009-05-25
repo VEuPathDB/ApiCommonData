@@ -64,6 +64,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
          includeProjects="PlasmoDB"
          category="Old Annotation"
          displayName="Release 5.5 Annotation "
+             shortDisplayName="Rel. 5.5 annot."
               queryRef="GeneId.GenesByOldAnnotation"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
          <attributesList
@@ -113,6 +114,8 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem10">here for
          sorting="formatted_gene_id asc,dynamic_location asc"
         />
 
+<!-- portal will use static attribute in mat view until all projects have dynamic location on -->
+<!-- portal will use static attribute in mat view until all projects have dynamic location on -->
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
         <attributesList  includeProjects="ApiDB"
          summary="organism,location_text,product"
@@ -2128,6 +2131,7 @@ Find genes that are predicted to encode a signal peptide.
     <question name="GenesByChIPchip"    includeProjects="ToxoDB,ApiDB"
          category="Transcript Expression"
          displayName="ChIP chip"
+         shortDisplayName="ChIP chip"
          queryRef="GeneId.GenesByChIPchip"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -2504,6 +2508,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     <question name="GiardiaGenesByDifferentialExpression" includeProjects="GiardiaDB,ApiDB"
               category="Transcript Expression"
               displayName="Stress Response in Giardia lamblia Trophozoites"
+              shortDisplayName="Stress resp. troph."
               queryRef="GeneId.GiardiaGenesByDifferentialExpression" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -2586,6 +2591,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     <question name="ToxoGenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB,ApiDB"
               category="Transcript Expression"
               displayName="Differential Expression of individual strains (T.g.)"
+              shortDisplayName="diff exp indv strns"
               queryRef="GeneId.GenesByDifferentialExpressionChooseComparisons" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary>
@@ -3036,7 +3042,8 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
     <question name="GenesByKappeFoldChange" includeProjects="PlasmoDB, ApiDB"
               category="Transcript Expression"
               displayName="P.y. liver, mosquito, and red cell stages"
-              queryRef="GeneId.GenesByKappeFoldChange" 
+              queryRef="GeneId.GenesByKappeFoldChange"
+              shortDisplayName="Py livr mosquito rdcell" 
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
               summary="product,fold_change"
@@ -3921,6 +3928,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
  <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="P.f. Expression Percentile: All"
+              shortDisplayName="Pf Expr %ile all"
               queryRef="GeneId.GenesByExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
@@ -3943,6 +3951,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
                displayName="P.f. Expression Percentile: Asexual"
+               shortDisplayName="Pf Expr %ile Asex."
               queryRef="GeneId.GenesByIntraerythrocyticExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <description>
@@ -3964,6 +3973,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
 
     <question name="GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
               displayName="P.f. Expression Percentile: Sexual"
+              shortDisplayName="Pf Expr %ile Sex"
               queryRef="GeneId.GenesByExtraerythrocyticExpression"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList includeProjects="PlasmoDB"
@@ -4164,7 +4174,8 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
     </question>
 
      <question name="GenesByExpandResult" includeProjects="ToxoDB"
-         displayName="Expand"
+              displayName="Expand"
+              shortDisplayName="Expand"
               queryRef="GeneTransforms.GenesByExpandResult"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList
@@ -4191,7 +4202,7 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
   <questionSet name="GeneDumpQuestions" excludeProjects="ApiDB"
              displayName="Gene Data Dump Questions"
              internal="true">
-
+  
   <!--===========================================================================-->
   <!-- question that retrieves all genes by organism  -->
   <!--===========================================================================-->
