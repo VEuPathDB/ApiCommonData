@@ -2393,7 +2393,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           AND ($$minOrMax$$ = 'max'
                  OR pr.time_of_min_expr in ($$exprHourVivax$$))
           AND pr.ind_ratio >= $$inductionFold$$
-          AND pr.max_percentile >= $$expressionPct$$ / 100
+          AND pr.max_percentile >= $$expressionPct$$
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
           AND prs.name like case when $$profileSetVivax$$ = '3' then 'ZB Pvivax time series normalized_averaged %' else $$profileSetVivax$$ end
