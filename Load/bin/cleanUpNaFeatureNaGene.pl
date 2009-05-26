@@ -78,8 +78,7 @@ foreach my $dup (@pretenderAliases) {
   $delete1 ->execute($dup->[1]);
   my $delete1Rows = $delete1->rows;
   $NaFeatureNaGeneCount = $NaFeatureNaGeneCount + $delete1Rows;
-
-  $delete2 ->execute($_);
+  $delete2 ->execute($dup->[2]);
   my $delete2Rows = $delete2->rows;
   $NaGeneCount = $NaGeneCount + $delete2Rows;
 
@@ -90,7 +89,7 @@ foreach my $dup (@pretenderAliases) {
     $error = 1;
   }
   unless($delete2Rows == 1 ) {
-    print STDERR "ERROR:   na_gene_id [$dup->[1]] deleted $delete2Rows rows from dots.nagene !!!\n";
+    print STDERR "ERROR:   na_gene_id [$dup->[2]] deleted $delete2Rows rows from dots.nagene !!!\n";
     $error = 1;
   }
 }
