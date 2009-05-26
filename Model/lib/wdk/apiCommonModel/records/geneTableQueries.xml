@@ -110,12 +110,12 @@
                 gm.start_min as gm_start, gm.end_max as gm_end,
                 gm.type, gl.is_reversed
          from dots.GeneFeature gf, apidb.FeatureLocation gl, dots.NaSequence s,
-              (select  'exon' as type, ef.parent_id as na_feature_id,
+              (select  'exon' as type, el.parent_id as na_feature_id,
                        el.start_min as start_min , el.end_max as end_max
-               from dots.ExonFeature ef, apidb.FeatureLocation el
-               where ef.na_feature_id = el.na_feature_id
+               from apidb.FeatureLocation el
+               where el.feature_type = 'ExonFeature'
                and el.is_top_level = 1
-              union
+              union ALL
                select 'intron' as type, left.parent_id as na_feature_id,
                       leftLoc.end_max + 1  as start_min, rightLoc.start_min - 1 as end_max
                from dots.ExonFeature left, apidb.FeatureLocation leftLoc,
