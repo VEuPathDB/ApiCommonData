@@ -1,8 +1,8 @@
 create table apidb.GeneDetail (
       SOURCE_ID VARCHAR2(50 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
-      FIELD_NAME CHAR(50 BYTE),
-      FIELD_TITLE CHAR(1000 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
       CONTENT CLOB
 );
@@ -23,8 +23,8 @@ GRANT select ON apidb.GeneDetail TO gus_r;
 create table apidb.IsolateDetail (
       SOURCE_ID VARCHAR2(50 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
-      FIELD_NAME CHAR(50 BYTE),
-      FIELD_TITLE CHAR(1000 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
       CONTENT CLOB
 );
@@ -45,8 +45,8 @@ GRANT select ON apidb.IsolateDetail TO gus_r;
 create table apidb.SequenceDetail (
       SOURCE_ID VARCHAR2(50 BYTE),
       PROJECT_ID VARCHAR2(50 BYTE),
-      FIELD_NAME CHAR(50 BYTE),
-      FIELD_TITLE CHAR(1000 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
       CONTENT CLOB
 );
