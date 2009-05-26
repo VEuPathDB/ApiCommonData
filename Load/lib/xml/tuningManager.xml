@@ -2970,28 +2970,20 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Expression&1 NOLOGGING AS
-SELECT pct_p.source_id, pct_pe.value, pct_ps.name AS profile_set_name,
+  SELECT pct_p.source_id, pct_pe.value, pct_ps.name AS profile_set_name,
        pct_pe.element_order, pen.name AS element_name
-FROM apidb.ProfileSet pct_ps,
-     apidb.Profile pct_p, apidb.ProfileElement pct_pe,
+  FROM apidb.ProfileSet pct_ps,
+     apidb.Profile pct_p, apidb.ProfileElement pct_pe,apidb.ProfileElementName pen,
      apidb.ProfileSet exp_ps,
-     apidb.Profile exp_p, apidb.ProfileElement exp_pe,
-     apidb.ProfileSet lgp_ps,
-     apidb.Profile lgp_p, apidb.ProfileElement lgp_pe,
-     apidb.ProfileElementName pen
-WHERE pct_ps.profile_set_id = pct_p.profile_set_id
+     apidb.Profile exp_p, apidb.ProfileElement exp_pe
+  WHERE pct_ps.profile_set_id = pct_p.profile_set_id
   AND pct_p.profile_id = pct_pe.profile_id
+  AND pct_ps.name like '%Pct'
   AND exp_ps.profile_set_id = exp_p.profile_set_id
   AND exp_p.profile_id = exp_pe.profile_id
   AND exp_pe.element_order = pct_pe.element_order
   AND exp_p.source_id = pct_p.source_id
   AND exp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Exp')
-  AND lgp_ps.profile_set_id = lgp_p.profile_set_id
-  AND lgp_p.profile_id = lgp_pe.profile_id
-  AND lgp_pe.element_order = exp_pe.element_order
-  AND lgp_p.source_id = pct_p.source_id
-  AND lgp_ps.name = REPLACE(pct_ps.name, 'Pct', 'Lgp')
-  AND lgp_ps.name LIKE '%Lgp'
   AND pct_ps.profile_set_id = pen.profile_set_id
   AND exp_pe.element_order = pen.element_order
       ]]>
