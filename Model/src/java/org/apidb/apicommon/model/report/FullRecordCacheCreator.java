@@ -126,6 +126,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         if (fieldNames != null) { // dump individual table
             String[] names = fieldNames.split(",");
             for (String fieldName : names) {
+                fieldName = fieldName.trim();
                 TableField table = tables.get(fieldName);
                 if (table == null)
                     throw new WdkModelException(
