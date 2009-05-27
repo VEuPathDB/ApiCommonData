@@ -18,7 +18,7 @@ sub run {
     my $algImpVer = "2.5";
     my $algInvStart = "2000-01-01";
     my $algInvEnd = "2000-01-01";
-    my $args = "--predAlgName $algName  --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --predAlgInvEnd $algInvEnd --directory $localDataDir/$inputDir";
+    my $args = "--predAlgName $algName  --predAlgImpVersion $algImpVer --predAlgInvStart $algInvStart --predAlgInvEnd $algInvEnd --directory $localDataDir/$inputDir --setPercentages";
 
     if ($test) {
       $self->testInputFile('inputDir', "$localDataDir/$inputDir");
