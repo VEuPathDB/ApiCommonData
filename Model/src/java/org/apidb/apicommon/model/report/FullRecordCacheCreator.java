@@ -97,8 +97,9 @@ public class FullRecordCacheCreator extends BaseCLI {
         addSingleValueOption(ARG_CACHE_TABLE, true, null, "The name of the "
                 + "cache table where the cached results are stored.");
 
-        addSingleValueOption(ARG_TABLE_FIELD, false, null, "The name of a "
-                + "single table field to be dumped.");
+        addSingleValueOption(ARG_TABLE_FIELD, false, null, "Optional. A comma"
+                + " separated list of the name(s) of the table field(s) to be"
+                + " dumped.");
     }
 
     /*
@@ -114,7 +115,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         String sqlFile = (String) getOptionValue(ARG_SQL_FILE);
         String recordClassName = (String) getOptionValue(ARG_RECORD);
         cacheTable = (String) getOptionValue(ARG_CACHE_TABLE);
-        String fieldName = (String) getOptionValue(ARG_TABLE_FIELD);
+        String fieldNames = (String) getOptionValue(ARG_TABLE_FIELD);
 
         String gusHome = System.getProperty(Utilities.SYSTEM_PROPERTY_GUS_HOME);
         wdkModel = WdkModel.construct(projectId, gusHome);
@@ -122,12 +123,15 @@ public class FullRecordCacheCreator extends BaseCLI {
         String idSql = loadIdSql(sqlFile);
         RecordClass recordClass = wdkModel.getRecordClass(recordClassName);
         Map<String, TableField> tables = recordClass.getTableFieldMap(FieldScope.REPORT_MAKER);
-        if (fieldName != null) { // dump individual table
-            TableField table = tables.get(fieldName);
-            if (table == null)
-                throw new WdkModelException("The table field doesn't exist: "
-                        + fieldName);
-            dumpTable(table, idSql);
+        if (fieldNames != null) { // dump individual table
+            String[] names = fieldNames.split(",");
+            for (String fieldName : names) {
+                TableField table = tables.get(fieldName);
+                if (table == null)
+                    throw new WdkModelException(
+                            "The table field doesn't exist: " + fieldName);
+                dumpTable(table, idSql);
+            }
         } else { // no table specified, dump all tables
             for (TableField table : tables.values()) {
                 dumpTable(table, idSql);
@@ -203,7 +207,8 @@ public class FullRecordCacheCreator extends BaseCLI {
             throws SQLException {
         String pkColumns = getPkColumns(table.getRecordClass(), null);
         StringBuilder sql = new StringBuilder("INSERT /*+ append */ INTO ");
-        sql.append(cacheTable).append(getSelectSql(table, pkColumns)).append(',');
+        sql.append(cacheTable).append(getSelectSql(table, pkColumns)).append(
+                ',');
         sql.append(FUNCTION_CLOB_CLOB_AGG).append('(').append(COLUMN_CONTENT);
         sql.append(") AS ").append(COLUMN_CONTENT);
         sql.append(" FROM ").append(cacheName);
