@@ -1606,9 +1606,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="PlasmoDB">
           <paramValue name="sequenceId">Pf3D7_05</paramValue>
         </testParamValues>
-        <testParamValues includeProjects="PlasmoDB">
-          <paramValue name="organism">Plasmodium vivax</paramValue>
-        </testParamValues>
         <testParamValues includeProjects="CryptoDB">
           <paramValue name="sequenceId">AAEE01000001</paramValue>
         </testParamValues>
@@ -1618,7 +1615,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrII</paramValue>
         </testParamValues>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,PlasmoDB,TriTrypDB" />
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,TriTrypDB" />
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="PlasmoDB" default="Plasmodium vivax"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="CryptoDB" quote="true" />
 
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
