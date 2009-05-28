@@ -2112,7 +2112,7 @@ ORDER BY tn.name, gf2.source_id
                 and ed.name like 'PASA%'
                 UNION
                 SELECT gf.source_id, '@PROJECT_ID@' AS project_id,
-                       DECODE(ed.name,'Phenotype DBRefs','RMgm Phenotype Data') as dataset,
+                       DECODE(ed.name,'Phenotype DBRefs','Genetically Modified Rodent Malaria Parasite database') as dataset,
                        r.primary_identifier as link_url
                 FROM   sres.dbref r, sres.externaldatabaserelease rel, 
                        dots.dbrefnafeature rf,
