@@ -1063,6 +1063,7 @@
             <column name="ortho_source_id"/>
             <column name="species"/>
             <column name="product"/>
+            <column name="is_syntenic" includeProjects="PlasmoDB"/>
             <column name="phenotype_count" includeProjects="PlasmoDB"/>
             <column name="comment_count" includeProjects="PlasmoDB"/>
             <sql excludeProjects="ToxoDB,PlasmoDB">
@@ -1131,6 +1132,13 @@
             <![CDATA[
 SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
        gf1.source_id,
+       (SELECT count(*) 
+        FROM apidb.synteny s, apidb.geneattributes gattr
+        WHERE a_na_sequence_id = gf1.na_sequence_id --check
+          AND gattr.source_id = gf2.source_id
+          AND b_na_sequence_id = gattr.na_sequence_id 
+          AND b_end > gattr.start_min
+          AND b_start < gattr.end_max) is_syntenic,
        (SELECT count(*)
         FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr, 
              sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
