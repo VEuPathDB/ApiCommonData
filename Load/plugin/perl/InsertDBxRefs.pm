@@ -86,6 +86,15 @@ my $argsDeclaration =
                constraintFunc => undef,
                isList=> 1
               }),
+
+
+   stringArg({name => 'idURL',
+	      descr => 'the URL for external dabase links',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
    enumArg({name => 'tableName',
 	    descr => 'The name of the mapping table for the sequences we are loading DBxRefs for. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
@@ -137,6 +146,14 @@ sub getMapping {
       || die "Couldn't retrieve external database!\n";
 
   my $cols = $self->getArg('columnSpec');
+
+  if ($self->getArg('idURL')){
+      my $url=$self->getArg('idURL');
+
+      $self->updateIdURL($dbRls,$url);
+  }
+
+
 
 
 
@@ -234,7 +251,18 @@ sub getTableParams{
   return \%tables;
 }
 
+sub updateIdURL{
+  my ($self,$dbRls,$url) = @_;
 
+  my $DbRlsObj = GUS::Model::SRes::ExternalDatabaseRelease-> new({external_database_release_id => $dbRls});
+
+  $DbRlsObj -> retrieveFromDB();
+ 
+  $DbRlsObj -> set('setIdUrl',$url); 
+
+  $DbRlsObj->submit();
+
+}
 sub undoTables {
   my ($self) = @_;
 
