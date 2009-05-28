@@ -20,7 +20,7 @@ use FileHandle;
 use Carp;
 use ApiCommonData::Load::Util;
 use GUS::Model::SRes::DbRef;
-
+use GUS::Model::SRes::ExternalDatabaseRelease;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature, DoTS.DbRefAAFeature, DoTS.DbRefNASequence, or DoTS.AASequenceDbRef to represent new DBxRef associations with NAFeature, AAFeature, NASequence, or AASequence.
@@ -258,7 +258,7 @@ sub updateIdURL{
 
   $DbRlsObj -> retrieveFromDB();
  
-  $DbRlsObj -> set('setIdUrl',$url); 
+  $DbRlsObj -> setIdUrl($url); 
 
   $DbRlsObj->submit();
 
