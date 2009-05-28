@@ -68,8 +68,8 @@
                   includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" includeProjects="PlasmoDB,ToxoDB,CryptoDB,TriTrypDB"/>
-
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" includeProjects="ToxoDB,CryptoDB,TriTrypDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesESTs" multiPick="false" default="Plasmodium vivax" includeProjects="PlasmoDB"/>
         <paramRef ref="sharedParams.chromosomeOptional"  includeProjects="PlasmoDB,CryptoDB,ToxoDB,TriTrypDB"/>
   
         <paramRef ref="sharedParams.sequenceId"/>
