@@ -238,8 +238,11 @@
 
     <sqlQuery name="IsolateByCountry" includeProjects="CryptoDB, PlasmoDB" isCacheable="true">
 
-        <testParamValues includeProjects="CryptoDB,PlasmoDB">
+        <testParamValues includeProjects="CryptoDB">
             <paramValue name="country">USA</paramValue>
+        </testParamValues>     
+        <testParamValues includeProjects="PlasmoDB">
+            <paramValue name="country">Cambodia</paramValue>
         </testParamValues>     
 
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
