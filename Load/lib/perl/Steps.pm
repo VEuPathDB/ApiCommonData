@@ -685,7 +685,7 @@ sub fixIndividualNaSeqFileNames{
 
 
 sub startPsipredOnComputeCluster {
-  my ($mgr,$query,$subject,$queue) = @_;
+  my ($mgr,$query,$subject,$queue, $ppn) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -697,7 +697,7 @@ sub startPsipredOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runPsipred $mgr->{clusterDataDir} NUMBER_OF_NODES $query $subject $queue";
+  my $clusterCmdMsg = "runPsipred $mgr->{clusterDataDir} NUMBER_OF_NODES $query $subject $queue $ppn";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/${query}-${subject}.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
@@ -3247,6 +3247,7 @@ sub loadBlastWithSqlldr {
 
   $mgr->endStep($signal);
 
+
 }
 
 sub orthomclEdges {
@@ -3297,6 +3298,54 @@ evalueExponentCutoff=-5
 
 }
 
+sub orthomclPairs {
+  my ($mgr, $cleanup, $startAfter) = @_;
+
+  my $signal = 'findOrthoMclPairs';
+
+  return if $mgr->startStep("Find pairs for orthoMCL", $signal);
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $gus_config_file = $propertySet->getProp('gusConfigFile');
+
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
+  my $login = $gusconfig->{props}->{databaseLogin};
+  my $password = $gusconfig->{props}->{databasePassword};
+  my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $configString =
+"dbConnectString=$dsn
+dbLogin=$login
+dbPassword=$password
+dbVendor=oracle
+similarSequencesTable=apidb.SimilarSequences
+orthologTable=apidb.Ortholog
+inParalogTable=apidb.InParalog
+coOrthologTable=apidb.CoOrtholog
+interTaxonMatchView=apidb.InterTaxonMatch
+percentMatchCutoff=50
+evalueExponentCutoff=-5
+";
+
+  my $configFile = $propertySet->getProp('orthoMclPairsConfig');;
+  open(CONFIG, ">$configFile") || die "Can't open '$configFile' for writing";
+  print CONFIG $configString;
+  close(CONFIG);
+
+  my $cmd = "nohup orthomclPairs $configFile $logfile cleanup=$cleanup";
+
+  $cmd .= " startAfter=$startAfter" if $startAfter;
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
 sub makeOrthoAbcFile {
   my ($mgr) = @_;
 
@@ -3316,7 +3365,7 @@ sub makeOrthoAbcFile {
 
   my $propertySet = $mgr->{propertySet};
 
-  my $config = $propertySet->getProp('orthoMclEdgesConfig');
+  my $config = $propertySet->getProp('orthoMclPairsConfig');
 
   my $cmd = "dumpMclAbcFile $config  > $abcFile 2>> $logfile";
 
@@ -3389,7 +3438,7 @@ dbPassword=$password
   $mgr->runCmd($cmd);
 
   my $outFile = "$mgr->{dataDir}/mcl/orthomclGroups.txt";
-  my $cmd = "mclOutput2groupsFile OG21_ 10000 < $tmpFile > $outFile 2>> $logfile";
+  my $cmd = "mclOutput2groupsFile OG30_ 10000 < $tmpFile > $outFile 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
@@ -3923,7 +3972,7 @@ sub startRepeatMaskOnComputeCluster {
   if($repeatMaskSubdir){
       $buildDir .= "/$repeatMaskSubdir";
   }
-  my $clusterCmdMsg = "runRepeatMask --buildDir $buildDir --numnodes NUMBER_OF_NODES --query $queryFile --queue $queue";
+  my $clusterCmdMsg = "runRepeatMask --buildDir $buildDir --numnodes NUMBER_OF_NODES --query $queryFile --queue $queue --ppn $ppn";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->endStep($signal);
@@ -3931,7 +3980,7 @@ sub startRepeatMaskOnComputeCluster {
 }
 
 sub startGfClientWORepMaskOnComputeCluster {
-  my ($mgr,$queryFile,$targetDir,$queue) = @_;
+  my ($mgr,$queryFile,$targetDir,$queue, $ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $name = $queryFile . "-" . $targetDir;
@@ -3942,7 +3991,7 @@ sub startGfClientWORepMaskOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runGfClientWORepMask --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue";
+  my $clusterCmdMsg = "runGfClientWORepMask --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --query $queryFile --target $targetDir --queue $queue --ppn $ppn";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
@@ -3973,7 +4022,7 @@ sub documentTRNAScan {
 }
 
 sub startTRNAscanOnComputeCluster {
-  my ($mgr,$subjectFile,$queue) = @_;
+  my ($mgr,$subjectFile,$queue, $ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "start${subjectFile}TRNAscan";
@@ -3981,7 +4030,7 @@ sub startTRNAscanOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runTRNAscan $mgr->{clusterDataDir} NUMBER_OF_NODES $subjectFile $queue";
+  my $clusterCmdMsg = "runTRNAscan $mgr->{clusterDataDir} NUMBER_OF_NODES $subjectFile $queue, $ppn";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/*.log and xxxxx.xxxx.stdout";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, 1);
@@ -5116,7 +5165,7 @@ sub documentRepeatMasker {
 
   my $description = "RepeatMasker uses cross-match and a RepBase repeat library to screen DNA sequences for interspersed repeats and low complexity DNA sequences and outputs a modified version of the query sequence in which all the repeats have been masked.";
   my $documentation =    { name => "RepeatMasker",
-                         input => "Fasta file of nucleic acid sequences and RepBase ",
+                           input => "Fasta file of nucleic acid sequences and RepBase ",
 			   output => "Fasta file of masked nucleic acid sequences",
 			   descrip => $description,
                            tools => [{ name => "RepeatMasker",
@@ -6279,7 +6328,7 @@ sub startIprScanOnComputeCluster {
 
   $mgr->endStep($signal);
 
-  my $clusterCmdMsg = "runIprScan $mgr->{clusterDataDir} NUMBER_OF_NODES $dir $queue";
+  my $clusterCmdMsg = "runIprScan $mgr->{clusterDataDir} NUMBER_OF_NODES $dir $queue, $ppn";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/${dir}_Iprscan.log";
 
   $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, $returnImmediately);
