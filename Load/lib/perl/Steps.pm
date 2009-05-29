@@ -6318,7 +6318,7 @@ sub createIprscanDir{
 }
 
 sub startIprScanOnComputeCluster {
-  my ($mgr,$dir,$queue, $returnImmediately) = @_;
+  my ($mgr,$dir,$queue, $returnImmediately, $ppn) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
