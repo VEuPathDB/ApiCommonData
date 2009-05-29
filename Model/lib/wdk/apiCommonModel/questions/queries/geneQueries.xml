@@ -1180,6 +1180,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 <!-- TODO: add Mass spec query for Trypdb -->
     <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB" 
             isCacheable='true'>
+
+        <testParamValues includeProjects="PlasmoDB">
+          <paramValue name="ms_assay">Merozoite</paramValue>
+        </testParamValues>
+
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB,PlasmoDB"/>
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
