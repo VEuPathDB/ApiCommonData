@@ -414,7 +414,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <!-- Isolate Pattern -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SnpsByIsolatePattern" includeProjects="PlasmoDB" 
+    <sqlQuery name="SnpsByIsolatePattern" doNotTest="true" includeProjects="PlasmoDB" 
           isCacheable="true">
         <paramRef ref="snpParams.isolate_set_a"/>
         <paramRef ref="snpParams.set_a_percent"/>
@@ -556,6 +556,11 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <sqlQuery name="SnpsByIsolateId" includeProjects="PlasmoDB" 
           isCacheable="true">
+
+        <testParamValues>
+            <paramValue name="isolate_id">CP3.911227</paramValue>
+        </testParamValues>
+
         <paramRef ref="snpParams.isolate_id"/>
         <column name="source_id"/> 
         <column name="project_id"/>
