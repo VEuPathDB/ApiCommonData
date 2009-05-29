@@ -292,18 +292,19 @@ order by term asc
 
   <querySet name="productVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
+    <column name="display"/>
     <column name="internal"/>
     <column name="term"/>
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
-select v.term, v.term as internal, v.parent as parentTerm
+select v.term as display, replace(v.term, ',', '_') as term, v.term as internal, v.parent as parentTerm
 from apidb.isolatevocabulary v, 
      (select distinct regexp_replace(product, ':.*') term from apidb.isolateattributes) c
 where v.term = c.term
 and v.type = 'product'
 union
-select 'others' as term, 'others' as internal, '' as parentterm from dual
+select 'others' as display, 'others' as term, 'others' as internal, '' as parentterm from dual
     ]]>
     </sql>
     </sqlQuery>
