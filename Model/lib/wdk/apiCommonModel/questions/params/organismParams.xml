@@ -304,7 +304,7 @@
                                 SELECT ns.taxon_id
                                 FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                                 WHERE so.sequence_ontology_id = ns.sequence_ontology_id
-                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence')
                                 AND ga.source_id = ns.source_id
                                 AND ga.project_id = '@PROJECT_ID@' 
                                   ))) organisms,
@@ -865,7 +865,7 @@ UNION
                              (SELECT ns.taxon_id
                               FROM dots.NaSequence ns, sres.SequenceOntology so,apidb.sequenceattributes ga
                               WHERE so.sequence_ontology_id = ns.sequence_ontology_id
-                                AND so.term_name IN ('contig', 'supercontig', 'chromosome')
+                                AND so.term_name IN ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence')
                                 AND ga.source_id = ns.source_id
                                 AND ga.project_id = '@PROJECT_ID@'
                               ))) organisms,
