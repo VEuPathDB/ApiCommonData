@@ -189,7 +189,8 @@
         <columnAttribute  name="gene" internal="true" displayName="Overlapping Gene"/>
         <columnAttribute  name="pvalue_mant" internal="true"/>
         <columnAttribute  name="pvalue_exp" internal="true"/>
-
+        <columnAttribute  name="start_min" internal="true"/>
+        <columnAttribute  name="end_max" internal="true"/>
         <columnAttribute  name="sequence_source_id" internal="true" displayName="Genomic Sequence"/>
 
         <columnAttribute  displayName="Organism" name="organism" internal="false"/>
@@ -204,8 +205,28 @@
               ]]>
             </url>
         </linkAttribute>
-        <columnAttribute  displayName="Alignment Start" name="start_min" internal="false"/>
-        <columnAttribute  displayName="Alignment End" name="end_max" internal="false"/>
+
+        <linkAttribute displayName="Alignment Start" name="gbrowse_link_start" inReportMaker="false" internal="false" >
+           <displayText>
+            <![CDATA[ $$start_min$$  ]]>
+           </displayText>
+           <url>
+            <![CDATA[                       
+              /cgi-bin/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes;enable=IsolatePopset;h_feat=$$sequence_source_id$$@thistle
+              ]]>
+            </url>
+        </linkAttribute>
+
+        <linkAttribute displayName="Alignment End" name="gbrowse_link_end" inReportMaker="false" internal="false" >
+           <displayText>
+            <![CDATA[ $$end_max$$  ]]>
+           </displayText>
+           <url>
+            <![CDATA[                       
+              /cgi-bin/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes;enable=IsolatePopset;h_feat=$$sequence_source_id$$@thistle             
+              ]]>
+            </url>
+        </linkAttribute>
 
         <textAttribute inReportMaker="false" name="pvalue" displayName="P Value">
              <text>
