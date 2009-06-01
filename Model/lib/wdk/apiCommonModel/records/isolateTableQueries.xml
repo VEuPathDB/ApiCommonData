@@ -377,7 +377,8 @@
                    '@PROJECT_ID@' as project_id,
                    case when title is null then 'N/A'
                         when title = 'Direct Submission' then 'N/A'
-                   else '<a href="showSummary.do?questionFullName=IsolateQuestions.IsolateByStudy&' || 'myProp(study)=' || title || '">view</a>' end as studyLink
+                   else '<a href="showSummary.do?questionFullName=IsolateQuestions.IsolateByStudy&' || 'myProp(study)=' || replace( replace( replace(title, '\+', '%2B'), '#', '%23'), ',', ';')
+		   || '">view</a>' end as studyLink
             FROM   DoTS.NASequence etn,
                    DoTS.NASequenceRef nasr,
                    SRES.Reference ref,
