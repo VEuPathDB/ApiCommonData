@@ -194,7 +194,7 @@
             <sql>
             <![CDATA[
             select sim.*, gene.gene, gene.gene_product, '@PROJECT_ID@' as project_id
-            from (select i.source_id, s.pvalue_mant , s.pvalue_exp,  tn.name as organism,
+            from ((select i.source_id, s.pvalue_mant , s.pvalue_exp,  tn.name as organism,
                    s.min_subject_start as start_min, s.max_subject_end as end_max, nas.source_id as sequence_source_id
                   from dots.similarity s, apidb.isolateattributes i, 
                        core.tableinfo t, dots.nasequence nas, sres.taxonname tn
@@ -217,8 +217,8 @@
                   and s.max_subject_end <= g.end_max
                   and t.name = 'ExternalNASequence'
                   ) gene
-                  on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id
-             and pvalue_exp <= &&pvalueCutoff&&
+                  on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id)
+             where pvalue_exp <= &&pvalueCutoff&&
             order by sim.pvalue_exp, pvalue_mant
             ]]>
            </sql>
