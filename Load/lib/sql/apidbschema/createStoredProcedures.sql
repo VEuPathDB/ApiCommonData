@@ -409,4 +409,20 @@ create or replace function apidb.clob_clob_agg
 grant execute on apidb.clob_clob_agg to public;
 
 -------------------------------------------------------------------------------
+
+/**** remove all special characters from input string ****/
+
+create or replace function apidb.alphanumeric_str(in_string varchar2)
+return varchar2
+is
+    rslt varchar2(4000);
+begin
+    rslt := regexp_replace(in_string, '( *[[:punct:]])', '');
+    return rslt;
+end alphanumeric_str;
+/
+
+grant execute on apidb.alphanumeric_str to public;
+
+-------------------------------------------------------------------------------
 exit;
