@@ -2319,7 +2319,7 @@ FROM (
    from (SELECT etn.na_sequence_id, etn.taxon_id,etn.length,
         edr.version as external_db_version, src.na_feature_id,
         edb.name as external_db_name,
-        CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CP75.'||etn.na_sequence_id, 
+        CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
         'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
         ELSE etn.source_id END as source_id,
@@ -2334,7 +2334,7 @@ FROM (
         src.pcr_primers as pcr_primers,
         src.is_reference,
         src.collected_by,
-        decode(edb.name, 'Broad 75K genotyping chip', '75kChip', 
+        decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
         'Broad 3K genotyping chip', '3kChip',
         'Isolate barcode data from Broad','Barcode','PopSet') as data_type,
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
