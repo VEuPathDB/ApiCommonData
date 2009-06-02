@@ -423,7 +423,7 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       SELECT distinct src.data_type AS term,
              src.data_type AS internal
       FROM   ApiDB.IsolateAttributes src
-             where src.data_type != 'PopSet'
+             where src.data_type != 'Genbank'
       ORDER BY src.data_type
       ]]>
       </sql>
