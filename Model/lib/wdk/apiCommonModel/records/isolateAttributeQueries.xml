@@ -44,7 +44,7 @@
                       iso.note,
                       iso.collected_by,
                       iso.product,
-                      /* iso.length, */ 'length' as length,
+                      iso.length, 
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
                       iso.data_type
                 FROM   ApiDB.IsolateAttributes iso
