@@ -298,7 +298,7 @@ order by term asc
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
-select v.term as display, replace(v.term, ',', '_') as term, v.term as internal, v.parent as parentTerm
+select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal, v.parent as parentTerm
 from apidb.isolatevocabulary v, 
      (select distinct regexp_replace(product, ':.*') term from apidb.isolateattributes) c
 where v.term = c.term
