@@ -241,7 +241,7 @@ eval {
   # list broken tables
   if ($brokenCount) {
     ApiCommonData::Load::TuningConfig::Log::addLogPreamble("   broken table(s):");
-    foreach my $table (keys(%tuningTables)) {
+    foreach my $table (@tableList) {
       ApiCommonData::Load::TuningConfig::Log::addLogPreamble("     " . $tuningTables{$table}->getName())
 	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "broken";
     }
@@ -255,7 +255,7 @@ eval {
     } else {
       ApiCommonData::Load::TuningConfig::Log::addLogPreamble("   table(s) needing update:");
     }
-    foreach my $table (keys(%tuningTables)) {
+    foreach my $table (@tableList) {
       ApiCommonData::Load::TuningConfig::Log::addLogPreamble("     " . $tuningTables{$table}->getName())
 	  if $tuningTables{$table}->getState($doUpdate, $dbh) eq "neededUpdate";
     }
