@@ -220,7 +220,7 @@
             WHERE nasr.reference_id = ref.reference_id
             AND nasr.na_sequence_id = etn.na_sequence_id
             and ia.source_id = etn.source_id
-            AND replace(ref.title, ',', ';') IN ($$study$$)
+            AND ref.title IN $$study$$
 
             ]]>
          </sql>

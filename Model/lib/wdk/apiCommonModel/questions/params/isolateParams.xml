@@ -78,7 +78,7 @@
             prompt="Study Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
+            <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
         <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ApiDB"
@@ -322,8 +322,8 @@ select 'others' as display, 'others' as term, 'others' as internal, '' as parent
     <column name="term"/>
     <sql>
     <![CDATA[
-    select distinct replace(r.title, ',', ';') as term,
-                    replace(r.title, ',', ';') as internal
+    select distinct apidb.alphanumeric_str(r.title) as term,
+                    r.title as internal
     from apidb.isolateattributes ia, dots.nasequenceref sr, sres.reference r
     where ia.na_sequence_id = sr.na_sequence_id
     and r.reference_id = sr.reference_id
