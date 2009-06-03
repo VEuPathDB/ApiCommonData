@@ -714,21 +714,19 @@
             <column name="project_id"/>
             <column name="comment_id"/>
             <column name="pmids"/>
-            <column name="categories"/>
             <column name="genecount"/>
             <column name="filecount"/>
             <column name="stable_id"/>
             <column name="headline"/>
-            <column name="user_name"/>
-            <column name="organization"/>
+            <column name="user_name_org"/>
             <column name="comment_date"/>
-            <column name="project_version"/>
             <sql>
             <![CDATA[
               SELECT a.source_id, a.project_id, a.comment_id,
-                     a.stable_id, a.headline, a.user_name, a.organization,
-                     a.comment_date, a.project_version, b.pmids, 
-                     c.categories, d.genecount, e.filecount
+                     a.stable_id, a.headline, 
+                     a.user_name || ', ' || a.organization as user_name_org,
+                     a.comment_date, b.pmids, 
+                     d.genecount, e.filecount
               FROM (
               SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
                      c.comment_id, c.stable_id,
@@ -772,15 +770,6 @@
                   AND cf.database_name='pubmed' 
                GROUP BY d.comment_id
               ) b, 
-              (SELECT c1.comment_id,
-                      apidb.tab_to_string(cast(collect(c3.category) as apidb.varchartab),',') as categories
-               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ c1,
-                      @COMMENT_SCHEMA@CommentTargetCategory@COMMENT_DBLINK@ c2,
-                      @COMMENT_SCHEMA@targetCategory@COMMENT_DBLINK@ c3
-               WHERE  c1.comment_id=c2.comment_id 
-                  AND c2.target_category_id = c3.target_category_id
-               GROUP BY c1.comment_id
-              ) c, 
               (SELECT d1.comment_id, count(d1.stable_id) as genecount
                FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ d1,
                       @COMMENT_SCHEMA@CommentStableId@COMMENT_DBLINK@ d2
@@ -794,7 +783,6 @@
                GROUP BY e1.comment_id
               ) e 
               WHERE a.comment_id = b.comment_id(+) 
-                AND a.comment_id = c.comment_id(+)
                 AND a.comment_id = d.comment_id(+)
                 AND a.comment_id = e.comment_id(+)
               ORDER BY comment_date DESC
