@@ -813,8 +813,6 @@
                <paramValue name="source_id">25.m00188</paramValue>
             </testParamValues>
 
-            <paramRef ref="recordParams.source_id"/>
-            <paramRef ref="recordParams.project_id"/>
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_id"/>
@@ -838,7 +836,6 @@
                    apidb.trackoldannotation toa
               WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'gene'
-                    AND toa.source_id = $$source_id$$
                     AND c.stable_id = toa.old_source_id
                     AND c.review_status_id != 'rejected'
                     AND c.review_status_id != 'task'
