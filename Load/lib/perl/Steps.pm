@@ -1411,7 +1411,7 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1460,7 +1460,13 @@ sub makeTranscriptDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-$sql .= " AND organism = '$organism'" if $organism;
+  $sql .= " AND organism = '$organism'" if $organism;
+
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 }
@@ -1709,7 +1715,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1750,7 +1756,9 @@ sub makeDerivedCdsDownloadFileTransformed {
                 apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                dots.translatedaafeature taaf
+                dots.translatedaafeature taaf,
+                apidb.sequenceattributes sa,
+                sres.sequenceontology so
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -1762,6 +1770,12 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -1940,7 +1954,7 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1980,7 +1994,9 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,
-                dots.translatedaasequence taas
+                dots.translatedaasequence taas,
+                apidb.sequenceattributes sa,
+                sres.sequenceontology so
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -1992,6 +2008,9 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
+
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2160,7 +2179,7 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2198,7 +2217,9 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
-            dots.nasequence enas
+            dots.nasequence enas,
+            apidb.sequenceattributes sa,
+            sres.sequenceontology so
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND m.na_feature_id = fl.na_feature_id
@@ -2214,13 +2235,15 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
+
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2258,7 +2281,9 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
-            dots.nasequence enas
+            dots.nasequence enas,
+            apidb.sequenceattributes sa,
+            sres.sequenceontology so
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND m.na_feature_id = fl.na_feature_id
@@ -2273,6 +2298,8 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2312,14 +2339,15 @@ sub makeOrfNaDownloadFileWithAbrevDefline {
         AND enas.na_sequence_id = m.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = 'ORF'
+        AND m.sequence_ontology_id = so1.sequence_ontology_id
+        AND so1.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
   makeDownloadFile($mgr, $species, $name, $sql,$project);
+
 
 }
 
@@ -2409,7 +2437,7 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels,$termName) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2436,13 +2464,15 @@ sub makeMixedGenomicDownloadFile {
                as defline,
                ns.sequence
            FROM dots.nasequence ns,
-                apidb.sequenceattributes sa
+                apidb.sequenceattributes sa,
+                sres.sequenceontology so
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
 
 EOF
 
   $sql .= $allLevels ? " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
+  $sql .= " AND so.term_name = '$termName' AND so.so_id = sa.so_id" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
@@ -3962,7 +3992,7 @@ sub startGenomeAlignOnComputeCluster {
 }
 
 sub startRepeatMaskOnComputeCluster {
-  my ($mgr, $queryFile, $queue, $repeatMaskSubdir) = @_;
+  my ($mgr, $queryFile, $queue, $repeatMaskSubdir,$ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "startRepeatMask$queryFile";
