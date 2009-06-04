@@ -157,7 +157,7 @@
               from apidb.CHIPCHIPGENE 
               where antibody || '|' || treatment in ($$chip_antibodies$$) 
               and distance <= $$chip_distance$$ 
-              and direction in ($$chip_direction$$) 
+              and ('Either' = $$chip_direction$$ OR direction = $$chip_direction$$)
               and strain = $$chip_strain$$
               group by gene_source_id,antibody,treatment) inner
             where inner.num_reps >= $$chip_reps$$
