@@ -6173,30 +6173,33 @@ SELECT distinct lg.name AS term,
              emac's syntax highlighting
         -->
         <sqlQuery name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB">
+            <column name="display"/>
             <column name="internal"/>
             <column name="term"/>
 
             <sql includeProjects="PlasmoDB">
              SELECT DISTINCT dr.primary_identifier AS internal,
-                    TRIM(REPLACE(REGEXP_REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
-                           dr.lowercase_secondary_identifier),'[,|"]', ' ' ), CHR(191),'')) AS term
+                    TRIM(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier), CHR(191),'')) AS display,
+                           dr.primary_identifier AS term
              FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
              WHERE dr.external_database_release_id = edr.external_database_release_id
                AND edr.external_database_id = ed.external_database_id
                AND ed.name = 'Links to Pathway Maps'
                AND dr.primary_identifier != 'qualityControl'
-             ORDER BY term
+             ORDER BY display
             </sql>
 
             <sql includeProjects="ToxoDB">
              SELECT DISTINCT dr.primary_identifier AS internal,
                     decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
-                           dr.lowercase_secondary_identifier) AS term
+                           dr.lowercase_secondary_identifier) AS display,
+                           dr.primary_identifier AS term
              FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
              WHERE dr.external_database_release_id = edr.external_database_release_id
                AND edr.external_database_id = ed.external_database_id
                AND ed.name = 'Links to Pathway Maps'
-             ORDER BY term
+             ORDER BY display
             </sql>
 
         </sqlQuery>
