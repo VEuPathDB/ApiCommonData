@@ -1185,7 +1185,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           <paramValue name="ms_assay">Merozoite</paramValue>
         </testParamValues>
 
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB,PlasmoDB"/>
+       <!-- <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb" excludeProjects="TriTrypDB,PlasmoDB"/> -->
         <paramRef ref="geneParams.ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
@@ -1194,12 +1194,12 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <column name="sum_sequence_count" />
         <column name="sum_spectrum_count" columnType="number" width="12" />
          
-        <sqlParamValue name="restrainOrganism" excludeProjects="TriTrypDB,PlasmoDB">
+     <!--   <sqlParamValue name="restrainOrganism" excludeProjects="TriTrypDB,PlasmoDB">
                 <![CDATA[
                    and nas.taxon_id in ($$organism$$)
                 ]]>
        </sqlParamValue>
-       <sqlParamValue name="restrainOrganism" includeProjects="TriTrypDB,PlasmoDB" />
+       <sqlParamValue name="restrainOrganism" includeProjects="TriTrypDB,PlasmoDB" /> -->
 
 
         <sql>
@@ -1235,7 +1235,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           where mss.aa_sequence_id = taaf.aa_sequence_id
           and taaf.na_feature_id = t.na_feature_id
           and t.parent_id = ga.na_feature_id
-          and ga.na_sequence_id = nas.na_sequence_id  &&restrainOrganism&&
+          and ga.na_sequence_id = nas.na_sequence_id
           and mss.aa_sequence_id = seq.aa_sequence_id
           and mss.aa_sequence_id = spec.aa_sequence_id
            ]]>
