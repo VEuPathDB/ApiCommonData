@@ -1449,7 +1449,9 @@ sub makeTranscriptDownloadFileTransformed {
            FROM apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                apidb.featurelocation fl
+                apidb.featurelocation fl,
+                apidb.sequenceattributes sa,
+                sres.sequenceontology so
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -1535,7 +1537,7 @@ EOF
 }
 
 sub makeInterproDownloadFile {
-  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB) = @_;
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB,$termName) = @_;
 
   my $signal = "${species}${name}DownloadFile";
 
@@ -1586,7 +1588,9 @@ sub makeInterproDownloadFile {
     dots.genefeature gf,
     dots.transcript t, 
     dots.translatedaafeature taf,
-    dots.translatedaasequence tas 
+    dots.translatedaasequence tas,
+    apidb.sequenceattributes sa,
+    sres.sequenceontology so
   WHERE
    gf.external_database_release_id = xdr2.external_database_release_id 
      AND xdr2.version = '$genomeExtDbVer' 
@@ -1606,6 +1610,12 @@ sub makeInterproDownloadFile {
      AND xdr3.external_database_id = xd3.external_database_id 
      AND xd3.name = '$interproExtDb'
 EOF
+
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND gf.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
   my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
@@ -2009,7 +2019,11 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
@@ -2213,13 +2227,13 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
-            sres.sequenceontology so,
+            sres.sequenceontology so1,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
             dots.nasequence enas,
             apidb.sequenceattributes sa,
-            sres.sequenceontology so
+            sres.sequenceontology so2
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND m.na_feature_id = fl.na_feature_id
@@ -2227,15 +2241,19 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND enas.na_sequence_id = fl.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = 'ORF'
+        AND m.sequence_ontology_id = so1.sequence_ontology_id
+        AND so1.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so2.so_id AND so2.term_name in ($names)" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2277,13 +2295,13 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
-            sres.sequenceontology so,
+            sres.sequenceontology so1,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
             dots.nasequence enas,
             apidb.sequenceattributes sa,
-            sres.sequenceontology so
+            sres.sequenceontology so2
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
         AND m.na_feature_id = fl.na_feature_id
@@ -2291,15 +2309,19 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND enas.na_sequence_id = fl.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so.sequence_ontology_id
-        AND so.term_name = 'ORF'
+        AND m.sequence_ontology_id = so1.sequence_ontology_id
+        AND so1.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name = '$termName'" if $termName;
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames); 
+
+  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so2.so_id AND so2.term_name in ($names)" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2472,7 +2494,12 @@ sub makeMixedGenomicDownloadFile {
 EOF
 
   $sql .= $allLevels ? " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
-  $sql .= " AND so.term_name = '$termName' AND so.so_id = sa.so_id" if $termName;
+
+  my @termNames = map{"'$_'"} split (/,/,$termName);
+
+  my $names = join(",", @termNames);
+
+  $sql .= " AND so.term_name in ($names) AND so.so_id = sa.so_id" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
