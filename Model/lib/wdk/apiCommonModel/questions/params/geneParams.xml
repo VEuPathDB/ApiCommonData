@@ -6160,8 +6160,8 @@ SELECT distinct lg.name AS term,
 
             <sql includeProjects="PlasmoDB">
              SELECT DISTINCT dr.primary_identifier AS internal,
-                    TRIM(REPLACE(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
-                           dr.lowercase_secondary_identifier),'"',''), CHR(191),'')) AS term
+                    TRIM(REPLACE(REGEXP_REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
+                           dr.lowercase_secondary_identifier),'[,|"]', ' ' ), CHR(191),'')) AS term
              FROM sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
              WHERE dr.external_database_release_id = edr.external_database_release_id
                AND edr.external_database_id = ed.external_database_id
