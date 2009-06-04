@@ -1,4 +1,3 @@
-
 <wdkModel>
 
 <!-- notes
@@ -992,7 +991,7 @@
             <sql includeProjects="PlasmoDB,ApiDB">
             <![CDATA[
             SELECT DISTINCT dr.primary_identifier AS pathway_id,
-                            decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier) AS pathway_name,
+                            TRIM(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier), CHR(191),'')) AS pathway_name,
                             dr.remark as activity, 
                             gf.source_id, '@PROJECT_ID@' as project_id
             FROM dots.GeneFeature gf,
