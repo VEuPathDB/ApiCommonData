@@ -1046,8 +1046,8 @@
             <column name="ortho_source_id"/>
             <column name="species"/>
             <column name="product"/>
-            <column name="is_syntenic" includeProjects="PlasmoDB,CryptoDB,TriTrypDB"/>
-            <column name="comment_count" includeProjects="PlasmoDB,CryptoDB,TriTrypDB"/>
+            <column name="is_syntenic" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
+            <column name="comment_count" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
             <column name="phenotype_count" includeProjects="PlasmoDB"/>
             <sql excludeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB">
             <![CDATA[
@@ -1072,9 +1072,27 @@
             </sql>
             <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT ortho_source_id,species,product,source_id, '@PROJECT_ID@' as project_id FROM
-             (SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
-                   gf1.source_id
+            SELECT ortho_source_id,species,product,source_id,
+                   is_syntenic,comment_count, '@PROJECT_ID@' as project_id FROM
+            (SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
+                             gf1.source_id,
+                   (SELECT count(*) 
+                    FROM apidb.synteny s, apidb.geneattributes gattr
+                    WHERE a_na_sequence_id = gf1.na_sequence_id
+                      AND gattr.source_id = gf2.source_id
+                      AND b_na_sequence_id = gattr.na_sequence_id 
+                      AND b_end > gattr.start_min
+                      AND b_start < gattr.end_max) is_syntenic,
+                   (SELECT count(*) as comment_count
+                    FROM userlogins3.users@apidb.LOGIN_COMMENT u,
+                         comments2.comments@apidb.LOGIN_COMMENT c, dots.GeneFeature gf
+                    WHERE lower(u.email) = lower(c.email)
+                      AND c.comment_target_id = 'gene'
+                      AND c.stable_id = gf.source_id
+                      AND c.review_status_id != 'rejected'
+                      AND c.review_status_id != 'task'
+                      AND c.is_visible = 1 
+                      AND gf.source_id = gf2.source_id) as comment_count                   
             FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
                  dots.NaSequence ens, core.TableInfo ti,
@@ -1089,9 +1107,25 @@
               AND tn.name_class = 'scientific name'
               AND ti.name = 'GeneFeature'
               AND gf2.source_id != gf1.source_id
-            UNION
-              SELECT DISTINCT gf.source_id AS ortho_source_id, tn.name as species, gf.product, 
-                   ga1.source_id
+       UNION
+       SELECT DISTINCT gf.source_id AS ortho_source_id, tn.name as species, gf.product, ga1.source_id,
+               (SELECT count(*) 
+                FROM apidb.synteny s, apidb.geneattributes gattr
+                WHERE a_na_sequence_id = ga1.na_sequence_id
+                  AND gattr.source_id = gf.source_id
+                  AND b_na_sequence_id = gattr.na_sequence_id 
+                  AND b_end > gattr.start_min
+                  AND b_start < gattr.end_max) is_syntenic,
+               (SELECT count(*) as comment_count
+                FROM userlogins3.users@apidb.LOGIN_COMMENT u,
+                     comments2.comments@apidb.LOGIN_COMMENT c, dots.GeneFeature gff
+                WHERE lower(u.email) = lower(c.email)
+                  AND c.comment_target_id = 'gene'
+                  AND c.stable_id = gf.source_id
+                  AND c.review_status_id != 'rejected'
+                  AND c.review_status_id != 'task'
+                  AND c.is_visible = 1 
+                  AND gff.source_id = gf.source_id) as comment_count 
             FROM dots.SequenceSequenceGroup ssg1,
                  dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf,
                  dots.NaSequence ens, core.TableInfo ti,
@@ -1107,8 +1141,8 @@
               AND ens.taxon_id = tn.taxon_id
               AND tn.name_class = 'scientific name'
               AND ti.name = 'GeneFeature'
-              AND gf.source_id != ga2.source_id)
-            ORDER BY species, source_id
+              AND gf.source_id != ga2.source_id   
+       ) ORDER BY species, source_id
             ]]>
             </sql>
            <sql includeProjects="PlasmoDB">
