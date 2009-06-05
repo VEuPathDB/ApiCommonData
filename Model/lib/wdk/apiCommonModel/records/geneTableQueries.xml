@@ -1090,7 +1090,6 @@
                       AND c.comment_target_id = 'gene'
                       AND c.stable_id = gf.source_id
                       AND c.review_status_id != 'rejected'
-                      AND c.review_status_id != 'task'
                       AND c.is_visible = 1 
                       AND gf.source_id = gf2.source_id) as comment_count                   
             FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
@@ -1123,7 +1122,6 @@
                   AND c.comment_target_id = 'gene'
                   AND c.stable_id = gf.source_id
                   AND c.review_status_id != 'rejected'
-                  AND c.review_status_id != 'task'
                   AND c.is_visible = 1 
                   AND gff.source_id = gf.source_id) as comment_count 
             FROM dots.SequenceSequenceGroup ssg1,
