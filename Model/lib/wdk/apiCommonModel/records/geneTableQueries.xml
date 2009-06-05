@@ -437,6 +437,7 @@
 
        <sqlQuery name="Strains" isCacheable="false" includeProjects="ToxoDB">
             <column name="source_id"/>
+            <column name="strain_source_id"/>
             <column name="project_id"/>
             <column name="strain"/>
             <column name="product"/>
@@ -448,7 +449,8 @@
             <column name="user_comment"/>
             <sql>
             <![CDATA[
-               select gb.SOURCE_ID, replace(gb.organism,'Toxoplasma gondii ','') as strain, 
+               select ga.source_id, gb.SOURCE_ID as strain_source_id, 
+                 replace(gb.organism,'Toxoplasma gondii ','') as strain, 
                  gb.project_id, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,
                  CASE WHEN gb.SIGNALP_SCORES is null THEN 'No' ELSE 'Yes' END as signalp_scores,
                  gb.TM_COUNT,
@@ -463,7 +465,7 @@
                and t.na_feature_id = taaf.na_feature_id(+)
                and taaf.aa_sequence_id = ms.aa_sequence_id(+)
                and gb.source_id = c.stable_id(+)
-               group by gb.SOURCE_ID, gb.project_id, gb.organism, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,gb.SIGNALP_SCORES,gb.TM_COUNT
+               group by ga.source_id, gb.SOURCE_ID, gb.project_id, gb.organism, gb.PRODUCT, gb.EXON_COUNT,gb.PROTEIN_LENGTH,gb.SIGNALP_SCORES,gb.TM_COUNT
                order by gb.organism
              ]]>
             </sql>
