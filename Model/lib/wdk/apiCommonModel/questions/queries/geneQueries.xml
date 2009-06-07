@@ -674,6 +674,7 @@ sns2.external_database_release_id=extr.external_database_release_id
             WHERE ga.source_id = c.source_id
             AND ga.gene_id is NOT NULL
             AND ga.ncbi_tax_id IN ($$organism$$)
+            GROUP BY ga.source_id
              UNION
              SELECT
              gf.source_id, 
@@ -717,6 +718,7 @@ sns2.external_database_release_id=extr.external_database_release_id
              AND  ga.na_feature_id = ossg.sequence_id
              AND  gb.gene_id = ga.gene_id
              AND gb.ncbi_tax_id IN ($$organism$$)
+             GROUP BY gb.source_id
             ]]>
        </sql>
     </sqlQuery>
