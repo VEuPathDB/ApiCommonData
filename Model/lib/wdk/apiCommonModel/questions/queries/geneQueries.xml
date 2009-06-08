@@ -667,58 +667,15 @@ sns2.external_database_release_id=extr.external_database_release_id
        
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT ga.source_id, 
-             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
-             '@PROJECT_ID@' AS project_id
-            FROM apidb.GeneAttributes ga, $$gene_result$$ c
-            WHERE ga.source_id = c.source_id
-            AND ga.gene_id is NOT NULL
-            AND ga.ncbi_tax_id IN ($$organism$$)
-            GROUP BY ga.source_id
-             UNION
-             SELECT
-             gf.source_id, 
-             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
-             '@PROJECT_ID@' AS project_id
-             FROM 
-             apidb.GeneAttributes ga,
-             apidb.GeneAttributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             $$gene_result$$ c,
-              dots.NaSequence ns,
-             sres.taxon tn
-             WHERE ga.source_id = c.source_id
-             AND  ga.gene_id = gb.gene_id
-             AND  ssg.sequence_id = gb.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND ossg.sequence_id != ssg.sequence_id
-             AND  gf.na_feature_id = ossg.sequence_id
-             AND gf.na_sequence_id = ns.na_sequence_id
-             AND ns.taxon_id = tn.taxon_id
-             AND tn.ncbi_tax_id IN ($$organism$$)
-             GROUP BY gf.source_id
-             UNION
-             SELECT
-             gb.source_id, 
-             apidb.tab_to_string(CAST(COLLECT(c.source_id) AS apidb.varchartab),',') as orthologs,
-             '@PROJECT_ID@' AS project_id
-             FROM 
-             apidb.geneattributes ga,
-             apidb.geneattributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             $$gene_result$$ c
-             WHERE gf.source_id = c.source_id
-             AND  ssg.sequence_id = gf.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND  ossg.sequence_id != ssg.sequence_id
-             AND  ga.na_feature_id = ossg.sequence_id
-             AND  gb.gene_id = ga.gene_id
-             AND gb.ncbi_tax_id IN ($$organism$$)
-             GROUP BY gb.source_id
+select gb.source_id,'@PROJECT_ID@' as project_id,
+                   apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as
+ orthologs 
+from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,
+     $$gene_result$$ gr
+where ga.source_id = gr.source_id 
+and gb.orthomcl_name = ga.orthomcl_name
+and gb.ncbi_tax_id in ($$organism$$)
+group by gb.source_id
             ]]>
        </sql>
     </sqlQuery>
