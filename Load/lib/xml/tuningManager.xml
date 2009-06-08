@@ -1403,19 +1403,13 @@ tablespace indx
     </sql>
     <sql>
       <![CDATA[
-        update apidb.GENEATTRIBUTES&1
-        set orthomcl_name = source_id 
-        where orthomcl_name is null
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
 update apidb.GENEATTRIBUTES&1 ga
 set ga.orthomcl_name = (select distinct gb.orthomcl_name from apidb.GENEATTRIBUTES gb
                      where gb.gene_id = ga.GENE_ID
+                     and gb.orthomcl_name is not null
                      and gb.source_id != gb.orthomcl_name)
 where ga.organism like 'Toxo%' 
-and ga.source_id = ga.ORTHOMCL_NAME
+and ga.ORTHOMCL_NAME is null
       ]]>
     </sql>
     <sql>
