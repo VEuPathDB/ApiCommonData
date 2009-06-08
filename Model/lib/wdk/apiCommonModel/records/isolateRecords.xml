@@ -206,17 +206,19 @@
             </url>
         </linkAttribute>
 
-        <linkAttribute displayName="Alignment Start" name="gbrowse_link_start" inReportMaker="false" internal="false" >
+        <linkAttribute displayName="Genome Browser" name="gbrowse_link_start" inReportMaker="false" internal="false" >
            <displayText>
-            <![CDATA[ $$start_min$$  ]]>
+            <![CDATA[ view  ]]>
            </displayText>
            <url>
             <![CDATA[                       
-              /cgi-bin/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes;enable=IsolatePopset;h_feat=$$sequence_source_id$$@thistle
+              /cgi-bin/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes-IsolatePopset;h_feat=$$sequence_source_id$$@thistle
               ]]>
             </url>
         </linkAttribute>
 
+
+    <!-- only need one gbrowse link and not needed to show the pvalue
         <linkAttribute displayName="Alignment End" name="gbrowse_link_end" inReportMaker="false" internal="false" >
            <displayText>
             <![CDATA[ $$end_max$$  ]]>
@@ -228,6 +230,7 @@
             </url>
         </linkAttribute>
 
+
         <textAttribute inReportMaker="false" name="pvalue" displayName="P Value">
              <text>
               <![CDATA[
@@ -235,7 +238,7 @@
                     ]]>
                   </text>
             </textAttribute>
-
+  -->
         <linkAttribute displayName="Overlapping Gene" name="gene_link" inReportMaker="false" internal="false" >
            <displayText>
             <![CDATA[ $$gene$$  ]]>
