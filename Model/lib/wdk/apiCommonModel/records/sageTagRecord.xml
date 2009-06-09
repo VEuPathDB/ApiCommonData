@@ -120,7 +120,8 @@
       <table name="Locations" includeProjects="GiardiaDB,PlasmoDB,ToxoDB"
                  displayName="Genomic Locations"
                  queryRef="SageTagTables.Locations">
-            <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
+            <columnAttribute displayName= "Is Top Level" name="is_top_level" internal="true" inReportMaker="false"/>
+            <columnAttribute displayName= "Sequence Type" name="term_name" internal="false"/>
             <columnAttribute displayName= "Genomic Sequence" name="sequence_source_id" internal="false"/>
             <textAttribute inReportMaker="true" name="location" displayName="Location">
                   <text>
@@ -146,7 +147,7 @@
                    </url> 
                    <url includeProjects="ToxoDB">
                     <![CDATA[
-                    /cgi-bin/gbrowse_img/toxodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;embed=1;h_feat=$$feature_source_id$$@thistle;width=600;label=SAGEtags;label=AnnotatedGenes;base=/cgi-bin/gbrowse
+                    /cgi-bin/gbrowse/toxodb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=SAGEtags;label=AnnotatedGenes;h_feat=$$feature_source_id$$
                         ]]>
                    </url> 
            </linkAttribute>
