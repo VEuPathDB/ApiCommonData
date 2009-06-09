@@ -129,8 +129,6 @@ sub getState {
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name}");
-print "stored: >" . $self->{dbDef} . "<\n";
-print "config: >" . $self->getDefString() . "<\n";
     $needUpdate = 1;
   }
 
