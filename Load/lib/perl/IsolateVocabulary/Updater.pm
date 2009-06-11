@@ -126,7 +126,7 @@ sub queryForExisting {
   my $data = {};
 
   my %all_sql = ('IsolateFeature' => <<Sql,
-select distinct na_feature_id, source_id from dots.isolatefeature
+select distinct na_feature_id, source_id, product from dots.isolatefeature
 Sql
              'IsolateSource' => <<Sql,
 select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
