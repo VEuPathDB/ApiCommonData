@@ -16,6 +16,7 @@ package ApiCommonData::Load::Plugin::LoadNothing;
 use strict;
 
 
+
 use GUS::PluginMgr::Plugin;
 
 my $purposeBrief = <<PURPOSEBRIEF;
