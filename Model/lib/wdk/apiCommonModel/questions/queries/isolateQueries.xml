@@ -210,12 +210,14 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-          select distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
-          from apidb.isolateattributes s, 
-              dots.isolatefeature if 
-          where s.na_sequence_id = if.na_sequence_id and if.prediction_number in ($$genotype$$) 
-            ORDER BY source_id
-            ]]>
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   apidb.isolateattributes s, 
+                 dots.isolatefeature if 
+          WHERE  s.na_sequence_id = if.na_sequence_id 
+             AND if.prediction_number in ($$genotype$$) 
+             AND s.data_type = 'RFLP' 
+          ORDER BY source_id
+          ]]>
          </sql>
     </sqlQuery>
 
