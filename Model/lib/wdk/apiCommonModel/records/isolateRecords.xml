@@ -1,7 +1,7 @@
 <wdkModel>
-    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB, ApiDB">
+    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB,ToxoDB, ApiDB">
 
-      <recordClass name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+      <recordClass name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
 
     
       <testParamValues includeProjects="PlasmoDB">
@@ -15,7 +15,7 @@
       </testParamValues>
 
       <testParamValues includeProjects="ToxoDB">
-         <paramValue name="source_id">none</paramValue>
+         <paramValue name="source_id">EF639858</paramValue>
          <paramValue name="project_id">ToxoDB</paramValue>
       </testParamValues>
 
@@ -60,7 +60,7 @@
       <!-- sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.Attributes" includeProjects="CryptoDB,PlasmoDB,ApiDB"> 
+      <attributeQueryRef ref="IsolateAttributes.Attributes" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"> 
          <columnAttribute name="pcr_primers" displayName="PCR primer" internal="true"/>
          <columnAttribute name="country" displayName="Country" internal="false"/>
          <columnAttribute name="organism" displayName="Organism" internal="false"/>
@@ -89,7 +89,7 @@
       <!-- Isolate DNA Sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,ApiDB,PlasmoDB">
+      <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,ApiDB,ToxoDB,PlasmoDB">
          <columnAttribute name="sequence" displayName="DNA Sequence" internal="true"/>
       </attributeQueryRef>
 
@@ -122,7 +122,7 @@
       <!-- Protein Sequence Count ie. number of protein sequence for this isolate -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.ProteinSequenceCount" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequenceCount" includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB">
          <columnAttribute name="protein_sequence_count"  internal="true"  inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
      </attributeQueryRef>
 

@@ -6,12 +6,12 @@
 
   -->
 
-  <paramSet name="isolateParams" includeProjects="CryptoDB,PlasmoDB, ApiDB">
+  <paramSet name="isolateParams" includeProjects="CryptoDB,PlasmoDB,ToxoDB, ApiDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <datasetParam name="isolate_id" prompt="Isolate ID" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+        <datasetParam name="isolate_id" prompt="Isolate ID" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
             <help>Input a comma delimited set of  Isolate IDs, or upload a file. Wildcards (*) are allowed.</help>
             <suggest includeProjects="CryptoDB"
                      sample="AF527841, DQ1145002, DQ115*"
@@ -19,6 +19,9 @@
             <suggest includeProjects="PlasmoDB"
                      sample="FJ490884, CPHD.911318"
                      default="FJ490884, CPHD.911318"/>
+            <suggest includeProjects="ToxoDB"
+                     sample="EF394331, EF639858"
+                     default="EF394331, EF639858"/>
            <suggest includeProjects="ApiDB" 
                      sample="AF527841, DQ1145002, DQ115*"
                      default="AF527841"/>
@@ -46,7 +49,7 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="specific_host" includeProjects="CryptoDB,PlasmoDB,ApiDB,PlasmoDB"
+        <flatVocabParam name="specific_host" includeProjects="CryptoDB,PlasmoDB,ApiDB"
              queryRef="hostVQ.withIsolates"
              default="Mammals - human"
              prompt="Host"
