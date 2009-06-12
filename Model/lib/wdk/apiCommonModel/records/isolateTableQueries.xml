@@ -184,7 +184,7 @@
        <!-- GeneOverlap -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="gene"/>
@@ -234,7 +234,7 @@
        <!-- Attributes as tables (to feed text search)  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="organism"/>
@@ -246,7 +246,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="description"/>
@@ -258,7 +258,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="product"/>
@@ -270,7 +270,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="strain"/>
@@ -282,7 +282,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="host"/>
@@ -294,7 +294,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="note"/>
@@ -306,7 +306,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="isolation_source"/>
@@ -318,7 +318,7 @@
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ApiDB">
+      <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="geographic_location"/>
@@ -335,13 +335,17 @@
        <!-- ProteinSequence -->
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ApiDB" doNotTest="true">
+      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB" doNotTest="true">
          <testParamValues includeProjects="CryptoDB">
             <paramValue name="source_id">AB089288</paramValue>
          </testParamValues>
          <testParamValues includeProjects="PlasmoDB">
             <paramValue name="source_id">AF063138</paramValue>
          </testParamValues>
+      <testParamValues includeProjects="ToxoDB">
+         <paramValue name="source_id">EF639858</paramValue>
+      </testParamValues>
+
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="protein_sequence"/>
@@ -366,7 +370,7 @@
       </sqlQuery>
 
 
-      <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+      <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="title"/>
