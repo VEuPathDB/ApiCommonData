@@ -80,8 +80,7 @@
             queryRef="genotypeVQ.withIsolates"
             prompt="Genotype #"
             multiPick="true"
-            quote="false"
-            displayType="treeBox">
+            quote="false">
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
@@ -328,7 +327,6 @@ select 'others' as display, 'others' as term, 'others' as internal, '' as parent
 
      </querySet>
 
-
   <querySet name="genotypeVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="ToxoDB">
     <column name="display"/>
@@ -337,7 +335,7 @@ select 'others' as display, 'others' as term, 'others' as internal, '' as parent
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
-select distinct v.prediction_number as display, 
+select distinct 'Genotype #' || v.prediction_number as display, 
       v.prediction_number as term, v.prediction_number as internal, '' as parentTerm
 from dots.isolatefeature v 
 where name = 'RFLP'
