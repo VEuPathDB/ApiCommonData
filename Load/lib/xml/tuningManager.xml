@@ -2376,6 +2376,9 @@ FROM (
         src.collected_by,
         decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
         'Broad 3K genotyping chip', '3kChip',
+        'Toxoplasma RFLPs from Chunlei Su', 'RFLP',
+        'Toxoplasma isolates From Genbank', 'Genbank',
+        'Toxoplasma isolates From David Sibley', 'Genbank',
         'Isolate barcode data from Broad','Barcode','Genbank') as data_type,
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
              WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
@@ -2459,7 +2462,7 @@ WHERE  a.analysis_id = r.analysis_id
    AND t.table_id = r.table_id
    AND r.row_id = f.na_feature_id
    AND t.name = 'ArrayElementFeature'
-	 AND f.na_feature_id = l.na_feature_id
+   AND f.na_feature_id = l.na_feature_id
       ]]>
     </sql>
     <sql>
