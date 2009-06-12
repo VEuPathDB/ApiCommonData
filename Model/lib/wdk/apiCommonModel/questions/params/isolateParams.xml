@@ -76,6 +76,15 @@
             <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
+        <flatVocabParam name="genotype" includeProjects="ToxoDB,ApiDB"
+            queryRef="genotypeVQ.withIsolates"
+            prompt="Genotype #"
+            multiPick="true"
+            quote="false"
+            displayType="treeBox">
+            <useTermOnly value="true" includeProjects="ApiDB"/>
+        </flatVocabParam>
+
         <flatVocabParam name="study" includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB"
             queryRef="studyVQ.withIsolates"
             prompt="Study Name"
@@ -318,6 +327,31 @@ select 'others' as display, 'others' as term, 'others' as internal, '' as parent
     </processQuery>
 
      </querySet>
+
+
+  <querySet name="genotypeVQ" queryType="vocab">
+    <sqlQuery name="withIsolates" includeProjects="ToxoDB">
+    <column name="display"/>
+    <column name="internal"/>
+    <column name="term"/>
+    <column name="parentTerm"/>
+    <sql>
+    <![CDATA[
+select distinct v.prediction_number as display, 
+      v.prediction_number as term, v.prediction_number as internal, '' as parentTerm
+from dots.isolatefeature v 
+where name = 'RFLP'
+order by v.prediction_number
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+      <wsColumn name="internal" width="100" wsName="internal"/>
+      <wsColumn name="term" width="100" wsName="term"/>
+    </processQuery>
+
+   </querySet> 
 
   <querySet name="studyVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
