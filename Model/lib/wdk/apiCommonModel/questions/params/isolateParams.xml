@@ -59,7 +59,7 @@
              <useTermOnly value="true" includeProjects="ApiDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
              queryRef="isolationSourceVQ.withIsolates"
              prompt="Isolation Source"
              multiPick="true"
@@ -271,7 +271,7 @@
     </querySet>
 
   <querySet name="isolationSourceVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
     <column name="term"/>
     <column name="internal"/>
     <sql>
