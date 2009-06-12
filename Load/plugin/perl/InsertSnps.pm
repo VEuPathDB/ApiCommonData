@@ -2,6 +2,7 @@ package ApiCommonData::Load::Plugin::InsertSnps;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 
+
 use strict;
 
 use GUS::PluginMgr::Plugin;
