@@ -206,13 +206,23 @@
             </url>
         </linkAttribute>
 
-        <linkAttribute displayName="Genome Browser" name="gbrowse_link_start" inReportMaker="false" internal="false" >
+        <linkAttribute displayName="Genome Browser" name="gbrowse_link_start" inReportMaker="false" internal="false">
            <displayText>
             <![CDATA[ view  ]]>
            </displayText>
-           <url>
+           <url includeProjects="PlasmoDB">
             <![CDATA[                       
               /cgi-bin/gbrowse/plasmodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes-IsolatePopset;h_feat=$$sequence_source_id$$@thistle
+              ]]>
+            </url>
+           <url includeProjects="CryptoDB">
+            <![CDATA[                       
+              /cgi-bin/gbrowse/cryptodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes-IsolatePopset;h_feat=$$sequence_source_id$$@thistle
+              ]]>
+            </url>
+           <url includeProjects="ToxoDB">
+            <![CDATA[                       
+              /cgi-bin/gbrowse/toxodb/?name=$$sequence_source_id$$%3A$$start_min$$-$$end_max$$;enable=AnnotatedGenes-IsolatePopset;h_feat=$$sequence_source_id$$@thistle
               ]]>
             </url>
         </linkAttribute>
