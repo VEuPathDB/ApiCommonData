@@ -274,12 +274,12 @@
         </testParamValues>
 
         <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
+        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB,ToxoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
-        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB,ToxoDB">        </sqlParamValue>
-        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB">
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
+        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
              AND  i.data_type in ($$type$$) 
             ]]>

@@ -125,7 +125,7 @@
             <suggest selectMode="all" />
        </flatVocabParam>
 
-       <flatVocabParam name="type" includeProjects="PlasmoDB,ApiDB"
+       <flatVocabParam name="type" includeProjects="PlasmoDB,ToxoDB,ApiDB"
             queryRef="typeVQ.withIsolates"
             prompt="Isolate assay type"
             multiPick="true"
@@ -432,7 +432,7 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
 
 
   <querySet name="typeVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,ToxoDB,PlasmoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
