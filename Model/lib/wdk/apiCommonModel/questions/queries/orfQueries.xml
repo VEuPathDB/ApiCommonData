@@ -14,7 +14,7 @@
     <!-- ORF ID -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="OrfByOrfId" doNotTest="true"  excludeProjects="ApiDB"
+    <sqlQuery name="OrfByOrfId" doNotTest="true"  excludeProjects="EuPathDB"
               displayName="ID" isCacheable="true">
         <paramRef ref="orfParams.orf_id"/>
         <column name="project_id"/>
@@ -31,7 +31,7 @@
         </sql>
     </sqlQuery>
 
-    <processQuery name="OrfByOrfId" includeProjects="ApiDB"
+    <processQuery name="OrfByOrfId" includeProjects="EuPathDB"
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="orfParams.orf_id"/>
@@ -46,7 +46,7 @@
     <!-- ************************************************************ -->
  
     <sqlQuery name="OrfsByLocation" 
-               isCacheable="true" excludeProjects="ApiDB">
+               isCacheable="true" excludeProjects="EuPathDB">
 
         <testParamValues includeProjects="CryptoDB">
           <paramValue name="sequenceId">AAEE01000001</paramValue>
@@ -68,7 +68,7 @@
         <paramRef ref="organismParams.organismWithChromosomes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,TriTrypDB,ApiDB"/>
+        <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,CryptoDB,ToxoDB,TriTrypDB,EuPathDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>
         <paramRef ref="sharedParams.end_point"/>
@@ -168,7 +168,7 @@
                  (used to access all sites when sequenceID is used)             -->
 <!--========================================================================-->
 
-     <processQuery name="OrfsByLocation" includeProjects="ApiDB"
+     <processQuery name="OrfsByLocation" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
         <paramRef ref="sharedParams.chromosomeOptional"   quote="false"/>
@@ -186,7 +186,7 @@
     <!-- Motif search -->  
     <!-- ************************************************************ -->
  
-    <processQuery name="OrfsByMotifSearch"   excludeProjects="ApiDB"
+    <processQuery name="OrfsByMotifSearch"   excludeProjects="EuPathDB"
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression" quote="false"/>
        <paramRef ref="orfSimilarityParams.motif_organism" quote="false"/>
@@ -198,7 +198,7 @@
     </processQuery>
 
 
-    <processQuery name="OrfsByMotifSearch" includeProjects="ApiDB"
+    <processQuery name="OrfsByMotifSearch" includeProjects="EuPathDB"
                 processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="orfSimilarityParams.motif_organism"  quote="false"/>
        <paramRef ref="sharedParams.motif_expression" quote="false"/>
@@ -273,7 +273,7 @@
     </processQuery>
 
 <!--
-    <processQuery name="OrfsBySimilarity" includeProjects="ApiDB"
+    <processQuery name="OrfsBySimilarity" includeProjects="EuPathDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="orfSimilarityParams.BlastDatabaseOrganism"/>
@@ -391,7 +391,7 @@
        </sql>
     </sqlQuery>   
 
-    <processQuery name="OrfsByMassSpec" includeProjects="ApiDB"
+    <processQuery name="OrfsByMassSpec" includeProjects="EuPathDB"
              isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
         <paramRef ref="orfParams.orf_ms_assay"/>

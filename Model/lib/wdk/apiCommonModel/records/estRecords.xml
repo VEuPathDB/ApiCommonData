@@ -53,7 +53,7 @@
           <!-- =============================================================== -->
           <reporter name="tabular" displayName="Summary - TAB Delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
+          <reporter name="fullRecord" displayName="Detailed" excludeProjects="EuPathDB" 
                     implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
 
            <!-- =================================================================== -->
@@ -99,7 +99,7 @@
                 <columnAttribute name="sequence" displayName="Sequence" internal="true"/>
             </attributeQueryRef>
 
-            <table name="ReferenceInfo" displayName="Reference" queryRef="EstAttributes.Reference" excludeProjects="ApiDB">
+            <table name="ReferenceInfo" displayName="Reference" queryRef="EstAttributes.Reference" excludeProjects="EuPathDB">
                 <columnAttribute inReportMaker="false" name="source_id" displayName="Source ID"     internal="true" />
                 <columnAttribute inReportMaker="false" name="author"   displayName="Author"    internal="false" />
                 <columnAttribute inReportMaker="false" name="affiliation" displayName="Affiliation" internal="false" />
@@ -107,14 +107,14 @@
             </table>
 
            <!--
-            <attributeQueryRef ref="EstAttributes.Reference" excludeProjects="ApiDB">
+            <attributeQueryRef ref="EstAttributes.Reference" excludeProjects="EuPathDB">
                 <columnAttribute inReportMaker="false" name="author"      internal="true" />
                 <columnAttribute inReportMaker="false" name="affiliation" internal="true" />
                 <columnAttribute inReportMaker="false" name="address"     internal="true" />
             </attributeQueryRef>
    -->
 
-            <attributeQueryRef ref="EstAttributes.LinkOut" excludeProjects="ApiDB">
+            <attributeQueryRef ref="EstAttributes.LinkOut" excludeProjects="EuPathDB">
                 <columnAttribute inReportMaker="false" name="linkout"     internal="true" />
             </attributeQueryRef>
 
@@ -147,7 +147,7 @@
       <!-- Tables ++++++++-->
       <!-- =================================================================== -->
 
-            <table name="AlignmentInfo" excludeProjects="ApiDB" 
+            <table name="AlignmentInfo" excludeProjects="EuPathDB" 
                    displayName="Alignments to genomic sequence"
                    queryRef="EstTables.AlignmentInfo">
                 <columnAttribute inReportMaker="true"  name="accession" displayName="Accession"   internal="false" />

@@ -10,7 +10,7 @@
      <datasetParam name="sequenceId"
              prompt="Genomic sequence ID">
 
- <help includeProjects="ApiDB">
+ <help includeProjects="EuPathDB">
            Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
          </help>
 
@@ -36,7 +36,7 @@
          <help includeProjects="PlasmoDB">
              Sequence IDs for &#60;i&#62; P. falciparum &#60;/i&#62; chromosomes are 'Pf3D7_01' through 'Pf3D7_14.'  Sequence IDs for &#60;i&#62; P. yoelii &#60;/i&#62; contigs begin with 'MALPY'.  Sequence IDs for &#60;i&#62; P. vivax &#60;/i&#62; contigs begin with 'ctg_'.  &#60;i&#62;P. berghei &#60;/i&#62; sequences start with PB,  &#60;i&#62; P. chabaudi &#60;/i&#62; sequences start with PC, and  &#60;i&#62;P.knowlesi &#60;/i&#62; sequences start with PKH. Wild cards are permitted  in most queries, i.e. use MALPY* to ask for all &#60;i&#62; P. yoelii &#60;/i&#62; sequences.
          </help>
- <suggest includeProjects="ApiDB"
+ <suggest includeProjects="EuPathDB"
              sample="AAEL010000057, AAEE01000009, BX526834, Pf3D7_04, MALPY00019, VIIa, TGG_994746"
              default="AAEL01000057,VIIb,Pf3D7_04,DS113177"/>
 
@@ -68,13 +68,13 @@
 
 <!--
      <stringParam name="sequenceId"
-             prompt="Genomic sequence ID" includeProjects="ApiDB">
+             prompt="Genomic sequence ID" includeProjects="EuPathDB">
 
-         <help includeProjects="ApiDB">
+         <help includeProjects="EuPathDB">
            Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
          </help>
 
-         <suggest includeProjects="ApiDB"
+         <suggest includeProjects="EuPathDB"
              sample="AAEL010000057, AAEE01000009, BX526834, Pf3D7_04, MALPY00019, VIIa, TGG_994746"
              default="(Example: AAEL01000057)"/>
      </stringParam>    
@@ -92,7 +92,7 @@
       <help>
              The type of sequence you want to BLAST against
       </help>
-   <useTermOnly value="true" includeProjects="ApiDB"/>
+   <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>
         <enumValue>
           <term>Genome</term>
@@ -113,7 +113,7 @@
       <help>
              Type of genomic sequence (chromosome, scaffold, contig, ...)
       </help>
-   <useTermOnly value="true" includeProjects="ApiDB"/>
+   <useTermOnly value="true" includeProjects="EuPathDB"/>
 
       <enumList>
       <enumValue default="true">
@@ -132,7 +132,7 @@
        </enumList>
     </enumParam>
 
-      <flatVocabParam name="sequenceTypes" includeProjects="GiardiaDB,ApiDB"
+      <flatVocabParam name="sequenceTypes" includeProjects="GiardiaDB,EuPathDB"
                      queryRef="genomicVQ.sequenceTypes"
                      prompt="Sequence Type"
                      multiPick="false">
@@ -142,7 +142,7 @@
 
                     <suggest default= "supercontigs" /> 
 
-                    <useTermOnly value="true" includeProjects="ApiDB"/>  
+                    <useTermOnly value="true" includeProjects="EuPathDB"/>  
        </flatVocabParam>
 
   </paramSet>
@@ -172,7 +172,7 @@
             </sql>
    </sqlQuery>
 
-   <processQuery name="sequenceTypes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+   <processQuery name="sequenceTypes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
    </processQuery>

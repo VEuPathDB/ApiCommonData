@@ -26,7 +26,7 @@
 	      shortDisplayName="EST Accessn."
 	      queryRef="EstIds.EstBySourceId"
 	      recordClassRef="EstRecordClasses.EstRecordClass"
-              noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+              noSummaryOnSingleRecord="true" excludeProjects="EuPathDB">
 
         <attributesList
            summary="formatted_organism,dbest_name"
@@ -64,7 +64,7 @@
 	      shortDisplayName="ID"
 	      queryRef="EstIds.EstBySourceId"
 	      recordClassRef="EstRecordClasses.EstRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="EuPathDB">
 
         <attributesList
            summary="formatted_organism,dbest_name"
@@ -126,15 +126,15 @@
           <value/>
        </propertyList>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
-           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="EuPathDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="EuPathDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
            <value includeProjects="CryptoDB">dbEST</value>
-           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
        </propertyList>
         <propertyList name="attribution">
            <value>dbEST</value>
@@ -153,11 +153,11 @@
               queryRef="EstIds.EstsByLocation"
               recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB,GiardiaDB,TriTrypDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB,EuPathDB,GiardiaDB,TriTrypDB"
               summary="formatted_organism,dbest_name,est_location"
               sorting="formatted_organism asc, est_location asc"
         /> 
-<attributesList includeProjects="ApiDB"
+<attributesList includeProjects="EuPathDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc, est_location asc"
         />
@@ -196,7 +196,7 @@
 <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByLocation">Assemblies by Location Query</a>.
           ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
           <![CDATA[
           Find ESTs within a given genomic region.<br>
           Either select an organism and a genomic sequence from the
@@ -257,15 +257,15 @@
 
 
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
-           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="EuPathDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="EuPathDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
            <value includeProjects="CryptoDB">dbEST</value>
-           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
        </propertyList>
     </question>
 
@@ -301,15 +301,15 @@ Find ESTs by Library Name.  <br /><br />EST's have been clustered/assembled into
           <value/>
        </propertyList>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
-           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="EuPathDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="EuPathDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
            <value includeProjects="CryptoDB">dbEST</value>
-           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
        </propertyList>
   </question>
 
@@ -324,11 +324,11 @@ Find ESTs by Library Name.  <br /><br />EST's have been clustered/assembled into
          queryRef="EstIds.EstsWithGeneOverlap"
          recordClassRef="EstRecordClasses.EstRecordClass">
 
-        <attributesList excludeProjects="ToxoDB,CryptoDB,ApiDB,GiardiaDB,TriTrypDB"
+        <attributesList excludeProjects="ToxoDB,CryptoDB,EuPathDB,GiardiaDB,TriTrypDB"
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
         /> 
-<attributesList includeProjects="ApiDB"
+<attributesList includeProjects="EuPathDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc"
         />
@@ -341,20 +341,20 @@ Find ESTs by Library Name.  <br /><br />EST's have been clustered/assembled into
         <description>
           <![CDATA[ Find ESTs that Overlap a Gene.  <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesWithGeneOverlap">Assemblies by Gene Overlap Query</a>.]]></description>
 
-        <dynamicAttributes excludeProjects="ApiDB">
+        <dynamicAttributes excludeProjects="EuPathDB">
             <columnAttribute name="est_locations" displayName="EST location(s)"/>
             <columnAttribute name="genes" displayName="Gene(s)"/>
         </dynamicAttributes>
 
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumESTs</value>
-           <value includeProjects="ApiDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">Florent_ESTLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePv_EstLibrary</value>
-           <value includeProjects="ApiDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
+           <value includeProjects="EuPathDB,GiardiaDB,PlasmoDB,TrichDB,ToxoDB">dbEST</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumESTs</value>
+           <value includeProjects="EuPathDB,CryptoDB">WatanabeCpHNJ-1_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ZhangGardnerPf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Florent_ESTLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePf3D7_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePv_EstLibrary</value>
+           <value includeProjects="EuPathDB,PlasmoDB">WatanabePy17XL_EstLibrary</value>
        </propertyList>
     </question>
 

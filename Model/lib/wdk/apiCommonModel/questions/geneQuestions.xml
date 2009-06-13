@@ -31,7 +31,7 @@
            Find genes that have modified annotation based on the recent <i>Plasmodium falciparum</i> annotation workshop.  Modified annotation includes gene models, GO and EC assignments and product names. <p>
 <br><br>
 <b><i>Plasmodium falciparum</i> reannotation workshop:</b>  
-The effort to systematically update the annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the ApiDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and ApiDB teams. During the workshop 2700 genes were edited using Artemis and ACT software, mainly with the addition of new or alternative functional descriptions (e.g. product names, GO terms, EC numbers and miscellaneous textual comments). 
+The effort to systematically update the annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. During the workshop 2700 genes were edited using Artemis and ACT software, mainly with the addition of new or alternative functional descriptions (e.g. product names, GO terms, EC numbers and miscellaneous textual comments). 
 <p>
 After the workshop, intensive manual reannotation of the genome has continued at WTSI with the help of several members of the community. First, the structures of more than 700 gene models have been changed and new gene models have been added. In addition, curation staff at GeneDB have reviewed all User Comments submitted to PlasmoDB. Over the coming months, the emphasis will switch to a careful genome-wide review of functional annotation.
 <p>
@@ -79,7 +79,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem1">here for 
            Find genes that have modified annotation based on the recent <i>Plasmodium falciparum</i> annotation workshop.  Modified annotation includes gene models, GO and EC assignments and product names. <p>
 <br><br>
 <b><i>Plasmodium falciparum</i> reannotation workshop:</b>  
-The effort to systematically update the annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the ApiDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and ApiDB teams. During the workshop 2700 genes were edited using Artemis and ACT software, mainly with the addition of new or alternative functional descriptions (e.g. product names, GO terms, EC numbers and miscellaneous textual comments). 
+The effort to systematically update the annotation for <i>P. falciparum</i> 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. During the workshop 2700 genes were edited using Artemis and ACT software, mainly with the addition of new or alternative functional descriptions (e.g. product names, GO terms, EC numbers and miscellaneous textual comments). 
 <p>
 After the workshop, intensive manual reannotation of the genome has continued at WTSI with the help of several members of the community. First, the structures of more than 700 gene models have been changed and new gene models have been added. In addition, curation staff at GeneDB have reviewed all User Comments submitted to PlasmoDB. Over the coming months, the emphasis will switch to a careful genome-wide review of functional annotation.
 <p>
@@ -105,7 +105,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem10">here for
          queryRef="GeneId.GenesByLocation"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
  
-       <attributesList  excludeProjects="ToxoDB,ApiDB" 
+       <attributesList  excludeProjects="ToxoDB,EuPathDB" 
          summary="dynamic_location,product"
          sorting="dynamic_location asc"
         />
@@ -117,7 +117,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem10">here for
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
 <!-- portal will use static attribute in mat view until all projects have dynamic location on -->
-        <attributesList  includeProjects="ApiDB"
+        <attributesList  includeProjects="EuPathDB"
          summary="organism,location_text,product"
          sorting="project asc,organism asc,dynamic_location asc"
         />
@@ -161,7 +161,7 @@ Click <a href="showXmlDataContent.do?name=XmlQuestions.News#newsItem10">here for
           Select a genomic sequence from the pull-down menu <i>and/or</i> enter a genomic sequence ID from any <i>Plasmodium</i> species (if you supply both,  your result will include the union). The Start and End locations correspond to the coordinates of the gene(s) on the chromosome.
           ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
 	  <![CDATA[
 	  Find genes within a given genomic region.<br>
           Either select an organism and a genomic sequence from the
@@ -219,11 +219,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               summary="formatted_gene_id,organism,location_text,product,is_pseudo"
               sorting="formatted_gene_id asc,organism asc,location_text asc"
         />
-         <attributesList excludeProjects="ApiDB,ToxoDB,GiardiaDB"
+         <attributesList excludeProjects="EuPathDB,ToxoDB,GiardiaDB"
               summary="organism,location_text,product,is_pseudo"
               sorting="primary_key asc,organism asc,location_text asc"
         />
-         <attributesList includeProjects="ApiDB"
+         <attributesList includeProjects="EuPathDB"
               summary="organism,location_text,product,is_pseudo"
               sorting="project asc,organism asc,location_text asc"
         />
@@ -313,11 +313,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
               summary="formatted_gene_id,organism,location_text,product,exon_count"
               sorting="formatted_gene_id asc,exon_count desc,location_text asc"
         />
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
               summary="organism,location_text,product,exon_count"
               sorting="project asc,organism asc,exon_count desc,location_text asc"
         />
-        <attributesList excludeProjects="ToxoDB,ApiDB"
+        <attributesList excludeProjects="ToxoDB,EuPathDB"
               summary="organism,location_text,product,exon_count"
               sorting="primary_key asc,organism asc,exon_count desc,location_text asc"
         />
@@ -334,7 +334,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
         To find genes with a desired number of exons, enter the minimum and maximum number of exons, and select <i>T. gondii</i>, <i>N. caninum</i> or both.
           ]]>
         </description>
-		<description includeProjects="CryptoDB,GiardiaDB,TrichDB,TriTrypDB,ApiDB">
+		<description includeProjects="CryptoDB,GiardiaDB,TrichDB,TriTrypDB,EuPathDB">
 			<![CDATA[
         To find genes with a desired number of exons, enter the minimum and maximum number of exons, and select an organism and/or species.
           ]]>
@@ -355,11 +355,11 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
          summary="formatted_gene_id,organism,location_text,product,isoelectric_point"
          sorting="formatted_gene_id asc,isoelectric_point asc, location_text asc"
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
          summary="organism,location_text,product,isoelectric_point"
          sorting="project asc,organism asc,isoelectric_point asc, location_text asc"
         />  
-        <attributesList excludeProjects="ToxoDB,GiardiaDB,ApiDB"
+        <attributesList excludeProjects="ToxoDB,GiardiaDB,EuPathDB"
          summary="organism,location_text,product,isoelectric_point"
          sorting="primary_key asc,organism asc,isoelectric_point asc, location_text asc"
         /> 
@@ -414,7 +414,7 @@ If you enter a specific ID and select a chromosome from the pull-down menu, your
   <!-- Secondary structure -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,ApiDB,TriTrypDB,CryptoDB"
+    <question name="GenesBySecondaryStructure" includeProjects="PlasmoDB,EuPathDB,TriTrypDB,CryptoDB"
               displayName="Protein Secondary Structure"
               shortDisplayName="2D Struct"
               category="Predicted Proteins"
@@ -509,7 +509,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
             <a href="http://www.tigr.org/~ipaulsen">Ian Paulsen</a> (TIGR)
             ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
               <![CDATA[
               Find genes that have been assigned a particular Enzyme Commission (EC) number. 
               Use '-' in place of numbers to denote partial EC Numbers, for example, '2.7.7.-'. <p>
@@ -526,20 +526,20 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
         <propertyList name="organism" includeProjects="ToxoDB">
            <value>T. gondii</value>
         </propertyList>
-        <propertyList name="organism" includeProjects="ApiDB">
+        <propertyList name="organism" includeProjects="EuPathDB">
            <value>P. falciparum</value>
            <value>T gondii</value>
         </propertyList>
 
         <propertyList name="specificAttribution">
            <value>enzymeDB</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumEC-KEGG</value>
-           <value includeProjects="ApiDB,CryptoDB">ChominisEC-KEGG</value>
-           <value includeProjects="ApiDB,CryptoDB">CparvumEC-CryptoCyc</value>
-           <value includeProjects="ApiDB,CryptoDB">ChominisEC-CryptoCyc</value>
-           <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
-           <value includeProjects="ApiDB,PlasmoDB">P.falciparum_chromosomes</value>
-           <value includeProjects="ApiDB,ToxoDB">ME49_Annotation</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumEC-KEGG</value>
+           <value includeProjects="EuPathDB,CryptoDB">ChominisEC-KEGG</value>
+           <value includeProjects="EuPathDB,CryptoDB">CparvumEC-CryptoCyc</value>
+           <value includeProjects="EuPathDB,CryptoDB">ChominisEC-CryptoCyc</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ecMappings_Hagai</value>
+           <value includeProjects="EuPathDB,PlasmoDB">P.falciparum_chromosomes</value>
+           <value includeProjects="EuPathDB,ToxoDB">ME49_Annotation</value>
        </propertyList> 
     </question>
 
@@ -547,7 +547,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
   <!-- SNPs  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesBySnps" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+    <question name="GenesBySnps" includeProjects="EuPathDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Population Biology"
               displayName="SNP Characteristics"
               shortDisplayName="SNPs"
@@ -571,7 +571,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
         <propertyList name="organism" includeProjects="CryptoDB">
            <value>C. parvum</value>
         </propertyList>
-        <propertyList name="organism" includeProjects="ApiDB">
+        <propertyList name="organism" includeProjects="EuPathDB">
            <value>P. falciparum, T gondii, C. parvum</value>
         </propertyList>
 
@@ -598,7 +598,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
 	     <br><br>
             ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
             <![CDATA[
 	Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc. Note that if you don't care about one of the parameters, don't change the defaults on that parameter and you will get all genes irrespective of that parameter.  
             ]]>
@@ -631,14 +631,14 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
 	</dynamicAttributes>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
-           <value includeProjects="CryptoDB,ApiDB">Widmer_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">GeneticMarkers_Sibley</value>
+           <value includeProjects="ToxoDB,EuPathDB">ME49_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">AmitAlignmentSnps</value>
+           <value includeProjects="CryptoDB,EuPathDB">Widmer_SNPs</value>
         </propertyList> 
     </question>
 
@@ -647,7 +647,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
   <!-- Mass Spec -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB,GiardiaDB,TriTrypDB"
+    <question name="GenesByMassSpec" includeProjects="PlasmoDB,ToxoDB,CryptoDB,EuPathDB,GiardiaDB,TriTrypDB"
          displayName="Mass Spec. Evidence"
          shortDisplayName="Mass Spec"
          category="Protein Expression"
@@ -657,11 +657,11 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
               summary="formatted_gene_id,location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="formatted_gene_id asc,sum_sequence_count desc,sum_spectrum_count desc"
         /> 
-        <attributesList excludeProjects="ApiDB,ToxoDB"
+        <attributesList excludeProjects="EuPathDB,ToxoDB"
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
               summary="organism,location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="project asc,organism asc,sum_sequence_count desc,sum_spectrum_count desc"
         /> 
@@ -682,7 +682,7 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
             in male and female gametocytes.
           ]]>
         </summary>
-         <summary includeProjects="ApiDB">
+         <summary includeProjects="EuPathDB">
            <![CDATA[
             Find <i>C. parvum</i>,<i>P. berghei</i> ,<i>T. gondii</i>  genes that have evidence for protein expression.
           ]]>
@@ -696,8 +696,8 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
         </summary>
 
         <propertyList name="organism">
-           <value includeProjects="CryptoDB,ApiDB">C. parvum</value>
-           <value includeProjects="ToxoDB,ApiDB ">T. gondii</value>
+           <value includeProjects="CryptoDB,EuPathDB">C. parvum</value>
+           <value includeProjects="ToxoDB,EuPathDB ">T. gondii</value>
         </propertyList>
 
         <description includeProjects="PlasmoDB">
@@ -750,82 +750,82 @@ Find <I>P. falciparum</I> genes that have evidence of
 
 
         <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,CryptoDB">Wastling1DGelLSMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">Wastling2DGelLSMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">WastlingMudPitSolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">WastlingMudPitInsolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolExcystedMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Oocyst_walls</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_intact_oocysts_merged</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Sporozoites_merged</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_16May2006_1D_gel</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_24Jun2006_1D_gel</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_14Aug2006_1D_gel</value>
-           <value includeProjects="ApiDB,PlasmoDB">Waters_female_gametes</value>
-           <value includeProjects="ApiDB,PlasmoDB">Waters_male_gametes</value>
-           <value includeProjects="ApiDB,PlasmoDB">Waters_mixed_gametes</value>
-           <value includeProjects="ApiDB,PlasmoDB">Pyoelii_LiverStage_LS40</value>
-           <value includeProjects="ApiDB,PlasmoDB">Pyoelii_LiverStage_LS50</value>
-           <value includeProjects="ApiDB,PlasmoDB">FlorensMassSpecData2002</value>
-           <value includeProjects="ApiDB,PlasmoDB">FlorensMassSpecData2004</value>
-           <value includeProjects="ApiDB,PlasmoDB">Pf_Merozoite_Peptides</value>
-           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_Oocysts</value>
-           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_oocyst_derived_sporozoites</value>
-           <value includeProjects="ApiDB,PlasmoDB">Lasonder_Mosquito_salivary_gland_sporozoites</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling-Rhoptry</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling1D_SDSPage</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling-1D_SDSPage-Soluble</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling-1D_SDSPage-Insoluble</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling-MudPIT-Soluble</value>
-           <value includeProjects="ApiDB,ToxoDB">Wastling-MudPIT-Insoluble</value>
-           <value includeProjects="ApiDB,ToxoDB">Murray-Roos_Proteomics_Conoid-enriched</value>
-           <value includeProjects="ApiDB,ToxoDB">Murray-Roos_Proteomics_Conoid-depleted</value>
-           <!--value includeProjects="ApiDB,ToxoDB">1D_tg_35bands_022706_Proteomics</value-->
-           <value includeProjects="ApiDB,ToxoDB">Dec2006_Tg_membrane_Fayun_Proteomics</value>
-           <!--value includeProjects="ApiDB,ToxoDB">March2007Tg_Cyto_Proteins_Proteomics</value-->
-           <value includeProjects="ApiDB,ToxoDB">Oct2006_Tg_membrane_Fayun_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_1D_tg_1frac_020306_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_june30_2006_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_may02-03_2006_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_may10_2006_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_May2007_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_May22_2007_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_membrane_frac_frac_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">Moreno-1-annotated</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_Carruthers_2destinct_peptides</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_MudPIT_Twinscan_hits</value>
-          <!--  <value includeProjects="ApiDB,ToxoDB">Moreno-1-orf_apr</value> -->
-           <value includeProjects="ApiDB,GiardiaDB">DTASelect-filter_032108_Proteomics</value>
-           <value includeProjects="ApiDB,TriTrypDB">Tcruzi Proteomics-Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Tcruzi Proteomics-Epimastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Tcruzi Proteomics-Metacyclic</value>
-           <value includeProjects="ApiDB,TriTrypDB">Tcruzi Proteomics-Trypomastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Tbrucei Proteomics Procyclic Form</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics PTM-glycosylation</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics PTM-acetylation</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics PTM-methylation</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics PTM-phosphorylation</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics SDS Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics 2DGel 6-11 Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics 2DGel 6-11 Promastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics 2DGel 6-9 Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics 2DGel 6-9 Promastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics Amastigote Secreted Protein</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics Promastigote Secreted Protein</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics Promastigote temperature and pH non-stressed</value>
-           <value includeProjects="ApiDB,TriTrypDB">Linfantum Proteomics Promastigote temperature and pH stressed</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics Promastigote Secreted Protein</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics SDS Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics 2DGel 6-11 Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics 2DGel 6-11 Promastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics 2DGel 6-9 Amastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics 2DGel 6-9 Promastigote</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics Promastigote temperature and pH non-stressed</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lmajor Proteomics Promastigote temperature and pH stressed</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lbraziliensis Proteomics Promastigote temperature and pH non-stressed</value>
-           <value includeProjects="ApiDB,TriTrypDB">Lbraziliensis Proteomics Promastigote temperature and pH stressed</value>
+           <value includeProjects="EuPathDB,CryptoDB">Wastling1DGelLSMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">Wastling2DGelLSMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">WastlingMudPitSolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">WastlingMudPitInsolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSInsolExcystedMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_Oocyst_walls</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_intact_oocysts_merged</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_Sporozoites_merged</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_16May2006_1D_gel</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_24Jun2006_1D_gel</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_14Aug2006_1D_gel</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Waters_female_gametes</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Waters_male_gametes</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Waters_mixed_gametes</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Pyoelii_LiverStage_LS40</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Pyoelii_LiverStage_LS50</value>
+           <value includeProjects="EuPathDB,PlasmoDB">FlorensMassSpecData2002</value>
+           <value includeProjects="EuPathDB,PlasmoDB">FlorensMassSpecData2004</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Pf_Merozoite_Peptides</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Lasonder_Mosquito_Oocysts</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Lasonder_Mosquito_oocyst_derived_sporozoites</value>
+           <value includeProjects="EuPathDB,PlasmoDB">Lasonder_Mosquito_salivary_gland_sporozoites</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling-Rhoptry</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling1D_SDSPage</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling-1D_SDSPage-Soluble</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling-1D_SDSPage-Insoluble</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling-MudPIT-Soluble</value>
+           <value includeProjects="EuPathDB,ToxoDB">Wastling-MudPIT-Insoluble</value>
+           <value includeProjects="EuPathDB,ToxoDB">Murray-Roos_Proteomics_Conoid-enriched</value>
+           <value includeProjects="EuPathDB,ToxoDB">Murray-Roos_Proteomics_Conoid-depleted</value>
+           <!--value includeProjects="EuPathDB,ToxoDB">1D_tg_35bands_022706_Proteomics</value-->
+           <value includeProjects="EuPathDB,ToxoDB">Dec2006_Tg_membrane_Fayun_Proteomics</value>
+           <!--value includeProjects="EuPathDB,ToxoDB">March2007Tg_Cyto_Proteins_Proteomics</value-->
+           <value includeProjects="EuPathDB,ToxoDB">Oct2006_Tg_membrane_Fayun_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_1D_tg_1frac_020306_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_june30_2006_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_may02-03_2006_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_may10_2006_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_May2007_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_May22_2007_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_membrane_frac_frac_Proteomics</value>
+           <value includeProjects="EuPathDB,ToxoDB">Moreno-1-annotated</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_Carruthers_2destinct_peptides</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_MudPIT_Twinscan_hits</value>
+          <!--  <value includeProjects="EuPathDB,ToxoDB">Moreno-1-orf_apr</value> -->
+           <value includeProjects="EuPathDB,GiardiaDB">DTASelect-filter_032108_Proteomics</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Tcruzi Proteomics-Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Tcruzi Proteomics-Epimastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Tcruzi Proteomics-Metacyclic</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Tcruzi Proteomics-Trypomastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Tbrucei Proteomics Procyclic Form</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics PTM-glycosylation</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics PTM-acetylation</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics PTM-methylation</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics PTM-phosphorylation</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics SDS Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics 2DGel 6-11 Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics 2DGel 6-11 Promastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics 2DGel 6-9 Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics 2DGel 6-9 Promastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics Amastigote Secreted Protein</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics Promastigote Secreted Protein</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics Promastigote temperature and pH non-stressed</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Linfantum Proteomics Promastigote temperature and pH stressed</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics Promastigote Secreted Protein</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics SDS Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics 2DGel 6-11 Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics 2DGel 6-11 Promastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics 2DGel 6-9 Amastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics 2DGel 6-9 Promastigote</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics Promastigote temperature and pH non-stressed</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lmajor Proteomics Promastigote temperature and pH stressed</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lbraziliensis Proteomics Promastigote temperature and pH non-stressed</value>
+           <value includeProjects="EuPathDB,TriTrypDB">Lbraziliensis Proteomics Promastigote temperature and pH stressed</value>
 
         </propertyList>
         
@@ -888,7 +888,7 @@ Subcellular proteomic analysis of <i>C. parvum</i> oocysts. Proteome analysis wa
 
 
 
-<description includeProjects="ApiDB">
+<description includeProjects="EuPathDB">
             <![CDATA[
             Find <i>Plasmodium berghei</i>, <i>Cryptosporidium parvum</i> and <i>Toxoplasma gondii</i> genes that have evidence for protein expression.
              <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides 
@@ -1026,7 +1026,7 @@ Carruthers lab analyzed a large cohort of freely released Toxoplasma secretory p
 The samples were prepared by Silvia Moreno's laboratory at the University of Georgia, Athens, GA and analyzed by James Thompson and  John  Yates, III  at The Scripps Research Institute, La Jolla, CA
              ]]>
              </description>
-	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB,GiardiaDB,TriTrypDB">
+	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB,TriTrypDB">
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
@@ -1045,13 +1045,13 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
 
 <!--
-    <question name="GenesByMassSpec2" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByMassSpec2" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Mass Spec. Evidence (life cycle)"
          shortDisplayName="Pf Mass Spec"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec2"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList includeProjects="PlasmoDB,ApiDB"
+        <attributesList includeProjects="PlasmoDB,EuPathDB"
          summary="product"
         /> 
         <summary>
@@ -1061,11 +1061,11 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         </summary>
 
        
-        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+        <propertyList name="organism" includeProjects="PlasmoDB,EuPathDB">
            <value>P. falciparum</value>
         </propertyList>
 
-        <description includeProjects="PlasmoDB,ApiDB">
+        <description includeProjects="PlasmoDB,EuPathDB">
             <![CDATA[
                 Find <I>P. falciparum</I> genes that have evidence of
                 expression in a specific lifecycle stage
@@ -1102,12 +1102,12 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
 <!-- This question has been unified with the Berghei question
  
-   <question name="GenesByMassSpecPf" includeProjects="PlasmoDB,ApiDB"
+   <question name="GenesByMassSpecPf" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Mass Spec. Evidence"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpecPf"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList includeProjects="PlasmoDB,ApiDB" 
+        <attributesList includeProjects="PlasmoDB,EuPathDB" 
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
@@ -1119,11 +1119,11 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         </summary>
 
        
-        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+        <propertyList name="organism" includeProjects="PlasmoDB,EuPathDB">
            <value>P. falciparum</value>
         </propertyList>
 
-        <description includeProjects="PlasmoDB,ApiDB">
+        <description includeProjects="PlasmoDB,EuPathDB">
             <![CDATA[
  Find <I>P. falciparum</I> genes that have evidence of
                 expression in a specific lifecycle stage
@@ -1166,7 +1166,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         </propertyList>
 
 
-	<dynamicAttributes includeProjects="PlasmoDB,ApiDB">
+	<dynamicAttributes includeProjects="PlasmoDB,EuPathDB">
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
@@ -1176,12 +1176,12 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 
 <!-- This question has been unified with the Berghei question
 
-    <question name="GenesByMassSpec4" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByMassSpec4" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.y. Mass Spec. Evidence"
          category="Protein Expression"
          queryRef="GeneId.GenesByMassSpec4"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList includeProjects="PlasmoDB,ApiDB" 
+        <attributesList includeProjects="PlasmoDB,EuPathDB" 
               summary="location_text,product,sum_sequence_count,sum_spectrum_count"
               sorting="sum_sequence_count desc,sum_spectrum_count desc"
         /> 
@@ -1194,11 +1194,11 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
         </summary>
 
        
-        <propertyList name="organism" includeProjects="PlasmoDB,ApiDB">
+        <propertyList name="organism" includeProjects="PlasmoDB,EuPathDB">
            <value>P. yoelii</value>
         </propertyList>
 
-        <description includeProjects="PlasmoDB,ApiDB">
+        <description includeProjects="PlasmoDB,EuPathDB">
             <![CDATA[
            Mass Spec of <i>Plasmodium yoelii</i> proteins identified in LS-infected hepatocytes isolated 40 and 50 hrs post-infection (LS40 and LS50).
              Publication: Tarun et al. A combined transcriptome and proteome survey of malaria parasite liver stages. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18172196">Proc. Natl. Acad. Sci. U.S.A. (2008) vol. 105 (1) pp. 305-10</a>.
@@ -1209,7 +1209,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
            <value>Pyoelii_LiverStage_LS40</value>
            <value>Pyoelii_LiverStage_LS50</value>
         </propertyList>
-	<dynamicAttributes includeProjects="PlasmoDB,ApiDB">
+	<dynamicAttributes includeProjects="PlasmoDB,EuPathDB">
 	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
 	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
 	</dynamicAttributes>
@@ -1222,7 +1222,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
   <!-- Epitopes -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesWithEpitopes" includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB" 
+    <question name="GenesWithEpitopes" includeProjects="EuPathDB,CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB" 
               category="Other Attributes"
               displayName="Epitope Presence"
               shortDisplayName="Epitopes"
@@ -1257,7 +1257,7 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
            <columnAttribute name="confidence" displayName="Confidence" align="center"/>
         </dynamicAttributes>
 
-        <propertyList includeProjects="ApiDB,CryptoDB,ToxoDB,PlasmoDB" name="specificAttribution">
+        <propertyList includeProjects="EuPathDB,CryptoDB,ToxoDB,PlasmoDB" name="specificAttribution">
            <value>IEDB_Epitopes</value>
         </propertyList>
         <propertyList includeProjects="GiardiaDB" name="specificAttribution">
@@ -1586,7 +1586,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
            <value>GO</value>
            <value>GO_evidence_codes</value>
            <value>InterproscanData</value>
-           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
      </question>
 
@@ -1606,11 +1606,11 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          summary="formatted_gene_id,location_text,product,met_pathways"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
-        <attributesList excludeProjects="ApiDB,ToxoDB"
+        <attributesList excludeProjects="EuPathDB,ToxoDB"
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
         /> 
- <attributesList includeProjects="ApiDB"
+ <attributesList includeProjects="EuPathDB"
          summary="organism,location_text,product,met_pathways"
          sorting="project asc,organism asc,location_text asc"
         /> 
@@ -1618,7 +1618,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         Find genes involved in a specific metabolic pathway.
         </summary>
        
- <description includeProjects="ApiDB">
+ <description includeProjects="EuPathDB">
             <![CDATA[
                 Find genes involved in a specific metabolic pathway. 
           <br><br>
@@ -1654,8 +1654,8 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
 	</dynamicAttributes>
 
        <propertyList name="specificAttribution">
-           <value includeProjects="ToxoDB,ApiDB">MetabolicDbXRefs_Feng</value>
-           <value includeProjects="PlasmoDB,ApiDB">pathwayMappings_Hagai</value>
+           <value includeProjects="ToxoDB,EuPathDB">MetabolicDbXRefs_Feng</value>
+           <value includeProjects="PlasmoDB,EuPathDB">pathwayMappings_Hagai</value>
        </propertyList>
     </question>
 
@@ -1751,7 +1751,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Orthology profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,ApiDB,ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
+    <question name="GenesByOrthologPattern" includeProjects="PlasmoDB,EuPathDB,ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
          displayName="Orthology Phylogenetic Profile"
          shortDisplayName="Ortho Ph Pro"
          category="Evolution"
@@ -1768,7 +1768,7 @@ Find genes that are predicted to encode a signal peptide.
         <summary>
         Find genes that have a specified orthology-based phylogenetic profile.
         </summary>
-        <description includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,ApiDB">
+        <description includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,EuPathDB">
             <![CDATA[
             Find genes that have a specified orthology-based phylogenetic profile. The phylogenetic profile of a gene is a series of 87 "present" or "absent" calls, reflecting the presence or absence of a putative ortholog in 87 genomes.
            <br><br>
@@ -1858,7 +1858,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Single locus tag -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <question name="GeneBySingleLocusTag" excludeProjects="ApiDB"
+     <question name="GeneBySingleLocusTag" excludeProjects="EuPathDB"
          category="Other Attributes"
          displayName="ID"
          shortDisplayName="ID"
@@ -1889,7 +1889,7 @@ Find genes that are predicted to encode a signal peptide.
         </description>
     </question>
 
-     <question name="GeneBySingleLocusTag" includeProjects="ApiDB"
+     <question name="GeneBySingleLocusTag" includeProjects="EuPathDB"
          category="Other Attributes"
          displayName="ID"
          shortDisplayName="ID"
@@ -1919,7 +1919,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- Gene locus tag -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <question name="GeneByLocusTag" excludeProjects="ApiDB"
+     <question name="GeneByLocusTag" excludeProjects="EuPathDB"
          category="Other Attributes"
          displayName="Gene ID(s)"
          shortDisplayName="Gene ID(s)"
@@ -1988,7 +1988,7 @@ Find genes that are predicted to encode a signal peptide.
         </description>
     </question>
 
-     <question name="GeneByLocusTag" includeProjects="ApiDB"
+     <question name="GeneByLocusTag" includeProjects="EuPathDB"
          category="Other Attributes"
          displayName="List of IDs"
          shortDisplayName="IDs List"
@@ -2048,8 +2048,8 @@ Find genes that are predicted to encode a signal peptide.
        <propertyList name="specificAttribution">
            <value>GO</value>
            <value>InterproscanData</value>
-           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-           <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ecMappings_Hagai</value>
            <value>NRDB</value>
        </propertyList>
     </question>
@@ -2086,8 +2086,8 @@ Find genes that are predicted to encode a signal peptide.
        <propertyList name="specificAttribution">
            <value>GO</value>
            <value>InterproscanData</value>
-           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-           <value includeProjects="ApiDB,PlasmoDB">ecMappings_Hagai</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+           <value includeProjects="EuPathDB,PlasmoDB">ecMappings_Hagai</value>
            <value>NRDB</value>
        </propertyList>
     </question>
@@ -2124,7 +2124,7 @@ Find genes that are predicted to encode a signal peptide.
   <!-- ChIP chip -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByChIPchip"    includeProjects="ToxoDB,ApiDB"
+    <question name="GenesByChIPchip"    includeProjects="ToxoDB,EuPathDB"
          category="Transcript Expression"
          displayName="ChIP chip"
          shortDisplayName="ChIP chip"
@@ -2165,8 +2165,8 @@ Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arra
              <columnAttribute name="chip_distance" displayName="Distance From Gene End" align="center"/>
          </dynamicAttributes>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,ToxoDB">ChIP_Chip_einstein</value>
-           <value includeProjects="ApiDB,ToxoDB">ChIP_Chip_Hakimi</value>
+           <value includeProjects="EuPathDB,ToxoDB">ChIP_Chip_einstein</value>
+           <value includeProjects="EuPathDB,ToxoDB">ChIP_Chip_Hakimi</value>
        </propertyList>
     </question>
 
@@ -2180,7 +2180,7 @@ Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arra
          shortDisplayName="Sage Tags"
          queryRef="GeneId.GenesBySageTag"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
-         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
+         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB">
         <attributesList includeProjects="ToxoDB"
          summary="formatted_gene_id,organism,location_text,product,sense_count,antisense_count"
          sorting="formatted_gene_id asc,sense_count desc"
@@ -2192,7 +2192,7 @@ Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arra
         <summary>
             Find genes with evidence of expression based on SAGE tag experiments.
         </summary>
-        <description includeProjects="PlasmoDB,GiardiaDB,ApiDB">
+        <description includeProjects="PlasmoDB,GiardiaDB,EuPathDB">
            <![CDATA[
             <p>Find genes with evidence of expression based on SAGE tag experiments.  Set the 5' and 3' distance to greater than 0 to include tags in the UTRs (or beyond).  The result includes a column showing the summed frequency of all tags thus associated with a gene.</p>
 <p>This query sums the counts of SAGE tags falling within/near a gene.  See the related <a href="showQuestion.do?questionFullName=SageTagQuestions.SageTagByExpressionLevel"><b>SAGE Tags by Expression Level</b></a> query to find counts for a specific SAGE tag and also for interrogating SAGE tags which don't align to predicted genes.
@@ -2223,13 +2223,13 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
                               inReportMaker="false"/>
          </dynamicAttributes>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
-           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
-          <!-- <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value> -->
-          <!-- <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value> -->
-           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
-           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+           <value includeProjects="EuPathDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="EuPathDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="EuPathDB,ToxoDB">3primeToxoSageTags</value>
+          <!-- <value includeProjects="EuPathDB,ToxoDB">5primeToxoSageTags</value> -->
+          <!-- <value includeProjects="EuPathDB,ToxoDB">ToxoSageTagFreqs</value> -->
+           <value includeProjects="EuPathDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="EuPathDB,PlasmoDB">PlasmoSageTagFreqs</value>
        </propertyList>
     </question>
 
@@ -2240,7 +2240,7 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
          shortDisplayName="SAGE Diff Ex"
          queryRef="GeneId.GenesBySageTagRStat"
          recordClassRef="GeneRecordClasses.GeneRecordClass"
-         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
+         includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB">
         <attributesList includeProjects="ToxoDB"
          summary="formatted_gene_id,organism,location_text,product,R"
          sorting="formatted_gene_id asc, R desc"
@@ -2252,7 +2252,7 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
         <summary>
             Find genes with evidence of differential expression based on SAGE tag experiments.
         </summary>
-        <description includeProjects="PlasmoDB,GiardiaDB,ApiDB">
+        <description includeProjects="PlasmoDB,GiardiaDB,EuPathDB">
            <![CDATA[
             <p>Find genes with evidence of differential expression based on SAGE tag experiments by choosing libraries (more than one) to compare across.  A large R value indicates differential expression (Antisense SAGE tags are NOT included in the calculation). 
 
@@ -2288,13 +2288,13 @@ msj&nbsp;= TypeIII-VEGmsj. <br>
                               inReportMaker="false"/>
          </dynamicAttributes>
        <propertyList name="specificAttribution">
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
-           <value includeProjects="ApiDB,GiardiaDB">GiardiaSageTagFreqs</value>
-           <value includeProjects="ApiDB,ToxoDB">3primeToxoSageTags</value>
-           <!-- <value includeProjects="ApiDB,ToxoDB">5primeToxoSageTags</value> -->
-           <!-- <value includeProjects="ApiDB,ToxoDB">ToxoSageTagFreqs</value> -->
-           <value includeProjects="ApiDB,PlasmoDB">SageTagArrayDesign</value>
-           <value includeProjects="ApiDB,PlasmoDB">PlasmoSageTagFreqs</value>
+           <value includeProjects="EuPathDB,GiardiaDB">GiardiaSageTagArrayDesign</value>
+           <value includeProjects="EuPathDB,GiardiaDB">GiardiaSageTagFreqs</value>
+           <value includeProjects="EuPathDB,ToxoDB">3primeToxoSageTags</value>
+           <!-- <value includeProjects="EuPathDB,ToxoDB">5primeToxoSageTags</value> -->
+           <!-- <value includeProjects="EuPathDB,ToxoDB">ToxoSageTagFreqs</value> -->
+           <value includeProjects="EuPathDB,PlasmoDB">SageTagArrayDesign</value>
+           <value includeProjects="EuPathDB,PlasmoDB">PlasmoSageTagFreqs</value>
        </propertyList>
     </question>
 
@@ -2341,7 +2341,7 @@ Advanced parameters can be modified for a more specific search (please go to the
 	       "View this sequence in the genome browser" link and turning on the EST Alignments track.
             ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
               <![CDATA[
               Find genes with evidence of expression based on expressed sequence tags (ESTs).
               For example:  What <i>P. falciparum</i> genes overlap with aligned ESTs from the 3D7 gametocyte library?<p>
@@ -2384,7 +2384,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Non-nuclear location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByNonnuclearLocation"  includeProjects="PlasmoDB,ToxoDB,ApiDB"
+    <question name="GenesByNonnuclearLocation"  includeProjects="PlasmoDB,ToxoDB,EuPathDB"
          category="Genomic Position"
          displayName="Non-nuclear Chromosomal Location"
          shortDisplayName="Exnuc Chr Lo"
@@ -2401,14 +2401,14 @@ Advanced parameters can be modified for a more specific search (please go to the
         />
 
         <propertyList name="organism">
-           <value includeProjects="PlasmoDB,ApiDB">P. falciparum</value>
-           <value includeProjects="ToxoDB,ApiDB">T. gondii</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P. falciparum</value>
+           <value includeProjects="ToxoDB,EuPathDB">T. gondii</value>
         </propertyList>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_mitochondrial</value>
-           <value includeProjects="PlasmoDB,ApiDB">P.falciparum_plastid</value>
-           <value includeProjects="ToxoDB,ApiDB">TgondiiApicoplast</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_mitochondrial</value>
+           <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_plastid</value>
+           <value includeProjects="ToxoDB,EuPathDB">TgondiiApicoplast</value>
         </propertyList>
 
         <summary>
@@ -2427,7 +2427,7 @@ Advanced parameters can be modified for a more specific search (please go to the
           ]]>
         </description>
 
- <description includeProjects="ApiDB">
+ <description includeProjects="EuPathDB">
           <![CDATA[
           Find genes that are encoded in a specified region of the non-nuclear genome.
           The Plasmodium plastid (apicoplast) genome contains two inverted repeats (IR-A and IR-B), and was deposited to EMBL and GenBank in two halves; the IR-A half 
@@ -2445,7 +2445,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Orthologous to a gene -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB,TriTrypDB"
+    <question name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB,TriTrypDB"
               displayName="Orthologs and Paralogs"
               shortDisplayName="Orthol/Paral"
               category="Evolution"
@@ -2464,7 +2464,7 @@ Advanced parameters can be modified for a more specific search (please go to the
               Find genes that have been identified by the OrthoMCL project as orthologous (or paralagous) to a given gene.
           ]]>
         </summary>
-        <description excludeProjects="ApiDB">
+        <description excludeProjects="EuPathDB">
           <![CDATA[
               Find genes that have been identified by the
               <a href="http://orthomcl.org/">OrthoMCL</a>
@@ -2472,7 +2472,7 @@ Advanced parameters can be modified for a more specific search (please go to the
           ]]>
         </description>
 
- <description includeProjects="ApiDB">
+ <description includeProjects="EuPathDB">
           <![CDATA[
               Find genes of <i>Cryptosporidium</i>, <i>Giardia</i>, <i>Plasmodium</i> and <i>Toxoplasma</i> that have been identified by the
               <a href="http://orthomcl.org/">OrthoMCL</a>
@@ -2498,7 +2498,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Giardia differential expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GiardiaGenesByDifferentialExpression" includeProjects="GiardiaDB,ApiDB"
+    <question name="GiardiaGenesByDifferentialExpression" includeProjects="GiardiaDB,EuPathDB"
               category="Transcript Expression"
               displayName="Stress Response in Giardia lamblia Trophozoites"
               shortDisplayName="Strss troph."
@@ -2539,7 +2539,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Toxo differential expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,ApiDB"
+    <question name="ToxoGenesByDifferentialExpression" includeProjects="ToxoDB,EuPathDB"
               category="Transcript Expression"
               displayName="Differential Expression across 3 archetypal lineages (T.g.)"
               shortDisplayName="Tg Diff Expr"
@@ -2581,7 +2581,7 @@ Advanced parameters can be modified for a more specific search (please go to the
     </question>
 
 
-    <question name="ToxoGenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB,ApiDB"
+    <question name="ToxoGenesByDifferentialExpressionChooseComparisons" includeProjects="ToxoDB,EuPathDB"
               category="Transcript Expression"
               displayName="Differential Expression of individual strains (T.g.)"
               shortDisplayName="diff ind str"
@@ -2627,7 +2627,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Toxo expression percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="ToxoGenesByExpressionPercentile" includeProjects="ToxoDB,ApiDB"
+    <question name="ToxoGenesByExpressionPercentile" includeProjects="ToxoDB,EuPathDB"
               category="Transcript Expression"
               displayName="Expression Percentile (T.g.)"
               shortDisplayName="Tg Expr %ile"
@@ -2670,7 +2670,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByCentromereProximity" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByCentromereProximity" includeProjects="PlasmoDB, EuPathDB"
               displayName="Proximity to Centromeres"
               shortDisplayName="Centromeric"
               category="Genomic Position"
@@ -2700,7 +2700,7 @@ Advanced parameters can be modified for a more specific search (please go to the
         </dynamicAttributes>
 
        <propertyList name="specificAttribution">
-         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+         <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
     </question>
 
@@ -2709,7 +2709,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <question name="GenesByTelomereProximity"
-              includeProjects="PlasmoDB, ApiDB"
+              includeProjects="PlasmoDB, EuPathDB"
               displayName="Proximity to Telomeres"
               shortDisplayName="Telomeric"
               category="Genomic Position"
@@ -2739,7 +2739,7 @@ Advanced parameters can be modified for a more specific search (please go to the
         </propertyList>
 
         <propertyList name="specificAttribution">
-         <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+         <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
     </question>
 
@@ -2748,7 +2748,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- PDB similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,ApiDB,TriTrypDB,CryptoDB"
+    <question name="GenesByPdbSimilarity" includeProjects="PlasmoDB,EuPathDB,TriTrypDB,CryptoDB"
          displayName="PDB 3-D Structures"
          shortDisplayName="PDB 3D Struc"
          category="Predicted Proteins"
@@ -2763,7 +2763,7 @@ Advanced parameters can be modified for a more specific search (please go to the
             Find genes whose protein product has high BLAST similarity to a chain of a <a href="http://www.rcsb.org/pdb">Protein Data Bank (PDB)</a> structure.
             ]]>
         </summary>
-        <summary includeProjects = "ApiDB">
+        <summary includeProjects = "EuPathDB">
             <![CDATA[
             Find genes whose protein product has high BLAST similarity to a chain of a Protein Data Bank (PDB) structure.
             ]]>
@@ -2780,7 +2780,7 @@ Advanced parameters can be modified for a more specific search (please go to the
             <columnAttribute name="pvalue" displayName="P-value" align="center"/>
         </dynamicAttributes>
        <propertyList name="specificAttribution">
-         <value includeProjects="PlasmoDB,ApiDB">PDBProteinSequences</value>
+         <value includeProjects="PlasmoDB,EuPathDB">PDBProteinSequences</value>
        </propertyList>
     </question>
 
@@ -2788,7 +2788,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Structure prediction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesWithStructurePrediction" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesWithStructurePrediction" includeProjects="PlasmoDB,EuPathDB"
               displayName="Predicted 3D Structure"
               shortDisplayName="3D Structure"
               category="Predicted Proteins"
@@ -2821,7 +2821,7 @@ Advanced parameters can be modified for a more specific search (please go to the
           ]]>
         </description>
        <propertyList name="specificAttribution">
-         <value includeProjects="PlasmoDB,ApiDB">predictedProteinStructures</value>
+         <value includeProjects="PlasmoDB,EuPathDB">predictedProteinStructures</value>
        </propertyList>
     </question>
 
@@ -2830,7 +2830,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Protein low complxity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesWithProteinLowComplexity"  includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesWithProteinLowComplexity"  includeProjects="PlasmoDB,EuPathDB"
               displayName="Low Complexity Proteins"
               shortDisplayName="Low Complex"
               category="Predicted Proteins"
@@ -2861,7 +2861,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!-- Y2H -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByProteinProteinInteraction" includeProjects="PlasmoDB,EuPathDB"
               displayName="Y2H Protein Interaction"
               shortDisplayName="Y2H Interact"
               category="Putative Function"
@@ -2940,7 +2940,7 @@ Protein interactions were experimentally determined using the yeast two-hybrid s
   <!-- Functional interaction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByFunctionalInteraction" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByFunctionalInteraction" includeProjects="PlasmoDB,EuPathDB"
          displayName="Predicted Functional Interaction"
          shortDisplayName="Func Interac"
          category="Putative Function"
@@ -2988,7 +2988,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
   <!-- Daily Pf Microarray Correlation -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 <!--
-    <question name="GenesByDailyCorrelation" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByDailyCorrelation" includeProjects="PlasmoDB, EuPathDB"
               category="Transcript Expression"
               displayName="Correlation between expression and various factors from malaria infected patients (P.f.)"
               queryRef="GeneId.GenesByDailyCorrelation" 
@@ -3032,7 +3032,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
 
 
 
-    <question name="GenesByKappeFoldChange" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByKappeFoldChange" includeProjects="PlasmoDB, EuPathDB"
               category="Transcript Expression"
               displayName="P.y. liver, mosquito, and red cell stages"
               shortDisplayName="Py Expression"
@@ -3079,7 +3079,7 @@ Find <i>Plasmodium falciparum</i> genes identified by the <a href="http://www.cb
   <!-- Waters Differential Expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByWatersDifferentialExpression" includeProjects="PlasmoDB, EuPathDB"
               category="Transcript Expression"
               displayName="P.b. Diff. expression in DOZI mutant vs. WT"
               shortDisplayName="PbDOZI vs WT"
@@ -3123,7 +3123,7 @@ Mair GR, Braks JA, Garver LS, Wiegant JC, Hall N, Dirks RW, Khan SM, Dimopoulos 
   <!-- Differential mean expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByDifferentialMeanExpression" includeProjects="PlasmoDB, EuPathDB"
               category="Transcript Expression"
               displayName="P.f. Diff. expression (fold-change) in KO vs. WT"
               shortDisplayName="PfKO v WT Df"
@@ -3181,7 +3181,7 @@ References:
   <!-- Expression percentile in KO/WT -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, ApiDB"
+    <question name="GenesByExpressionPercentileA" includeProjects="PlasmoDB, EuPathDB"
               category="Transcript Expression"
               displayName="P.f. Expression percentile in KO and WT"
               shortDisplayName="PfKO WT %ile"
@@ -3243,7 +3243,7 @@ References:
   <!-- Expression timing -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByPromastigoteTimeSeries" includeProjects="TriTrypDB,ApiDB"
+    <question name="GenesByPromastigoteTimeSeries" includeProjects="TriTrypDB,EuPathDB"
          displayName="L. donovani promastigote differentiation"
          shortDisplayName="Expr Time Ser"
          category="Transcript Expression"
@@ -3253,7 +3253,7 @@ References:
          summary="organism,product,max_fc,num_replicates,triTrypPromastigoteTimeSeries"
          sorting="max_fc desc"         
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
          summary="organism,product,max_fc,num_replicates"
          sorting="max_fc desc"         
         /> 
@@ -3302,7 +3302,7 @@ Institute, USA and is described in further detail in Sivam et al.
 
 
 
-    <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByExpressionTiming" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Expression Timing"
          shortDisplayName="Pf Expr Time"
          category="Transcript Expression"
@@ -3311,7 +3311,7 @@ Institute, USA and is described in further detail in Sivam et al.
         <attributesList includeProjects="PlasmoDB"
          summary="organism,product,max_fc,derisiOverlayPct"
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
          summary="organism,product,max_fc"
         /> 
         <summary>
@@ -3339,7 +3339,7 @@ Institute, USA and is described in further detail in Sivam et al.
        </propertyList>
     </question>
 
-    <question name="GenesByVivaxExpressionTiming" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByVivaxExpressionTiming" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.v. Expression Timing"
          shortDisplayName="Pv Expr Time"
          category="Transcript Expression"
@@ -3377,7 +3377,7 @@ Institute, USA and is described in further detail in Sivam et al.
   <!-- Profile Similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByProfileSimilarity" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Expression Profile Similarity"
          shortDisplayName="Pf Expr Sim"
          category="Transcript Expression"
@@ -3386,7 +3386,7 @@ Institute, USA and is described in further detail in Sivam et al.
         <attributesList  includeProjects="PlasmoDB" 
          summary="organism,distance,time_shift,profilesGraph"
         /> 
-<attributesList  includeProjects="ApiDB" 
+<attributesList  includeProjects="EuPathDB" 
          summary="organism,distance,time_shift"
         /> 
          <summary>
@@ -3433,7 +3433,7 @@ Institute, USA and is described in further detail in Sivam et al.
   <!-- Expression Percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByExpressionPercentile" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Expression Percentile"
          shortDisplayName="Pf Expr %ile"
          category="Transcript Expression"
@@ -3497,7 +3497,7 @@ Institute, USA and is described in further detail in Sivam et al.
   <!-- Gametocyte Expression -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByGametocyteExpression" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.f. Gametocyte Expression"
          shortDisplayName="Pf Gam Expr"
          category="Transcript Expression"
@@ -3555,7 +3555,7 @@ Institute, USA and is described in further detail in Sivam et al.
   <!-- Berghei expression percentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,ApiDB"
+    <question name="BergheiGenesByExpressionPercentile" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.b. Expression Percentile"
          shortDisplayName="Pb Expr %ile"
          category="Transcript Expression"
@@ -3593,7 +3593,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Berghei protein expression  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByProteomicsProfile" includeProjects="PlasmoDB,EuPathDB"
          displayName="P.b. life cycle  Mass Spec. Evidence"
          shortDisplayName="Pb Mass Spec"
          category="Protein Expression"
@@ -3627,7 +3627,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Subcellular localization -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesBySubcellularLocalization" includeProjects="PlasmoDB,EuPathDB"
          category="Cellular Location"
          displayName="Subcellular Localization (P.f.)"
          shortDisplayName="Subcell Loc"
@@ -3668,7 +3668,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Export prediction -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByExportPrediction" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByExportPrediction" includeProjects="PlasmoDB,EuPathDB"
          displayName="Exported Protein"
          shortDisplayName="Export Prot"
          category="Cellular Location"
@@ -3699,7 +3699,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Phyletic profile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByPhyleticProfile" includeProjects="PlasmoDB,EuPathDB"
          displayName="Homology Phylogenetic Profile"
          shortDisplayName="Homol Phy Pr"
          category="Evolution"
@@ -3762,7 +3762,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Protein DB Accession  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByProteinDbAccession" includeProjects="PlasmoDB,EuPathDB"
               displayName="Protein Accession"
               shortDisplayName="Protein Acc"
               category="Other Attributes"
@@ -3791,7 +3791,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- MR4 reagents  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,ApiDB,CryptoDB,ToxoDB"
+    <question name="GenesByMr4Reagents" includeProjects="PlasmoDB,EuPathDB,CryptoDB,ToxoDB"
          displayName="Reagents Availability"
          shortDisplayName="Reagents"
          category="Other Attributes"
@@ -3868,7 +3868,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 -->
 
-   <question name="GenesByProteinStructure" includeProjects="ApiDB,GiardiaDB,TrichDB"
+   <question name="GenesByProteinStructure" includeProjects="EuPathDB,GiardiaDB,TrichDB"
               displayName="Protein Secondary Structure"
               shortDisplayName="2D Structure"
               category="Predicted Proteins"
@@ -3919,7 +3919,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!--===========================================================================-->
 
 
- <question name="GenesByExpression" includeProjects="PlasmoDB,ApiDB"
+ <question name="GenesByExpression" includeProjects="PlasmoDB,EuPathDB"
               displayName="P.f. Expression Percentile: All"
               shortDisplayName="Pf exp %il all"
               queryRef="GeneId.GenesByExpression"
@@ -3930,7 +3930,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList includeProjects="PlasmoDB"
               summary="product,winzelerPct"
         /> 
-         <attributesList includeProjects="ApiDB"
+         <attributesList includeProjects="EuPathDB"
               summary="product"
         /> 
          <dynamicAttributes>
@@ -3942,7 +3942,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     </question>
 
 
-    <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByIntraerythrocyticExpression" includeProjects="PlasmoDB,EuPathDB"
               displayName="P.f. Expression Percentile: Asexual"
               shortDisplayName="Pf Erythro %ile"
               queryRef="GeneId.GenesByIntraerythrocyticExpression"
@@ -3953,7 +3953,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList includeProjects="PlasmoDB"
               summary="organism,winzelerPct"
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
               summary="organism"
         /> 
          <dynamicAttributes>
@@ -3964,7 +3964,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
          </dynamicAttributes>
     </question>
 
-    <question name="GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB,ApiDB"
+    <question name="GenesByExtraerythrocyticExpression" includeProjects="PlasmoDB,EuPathDB"
               displayName="P.f. Expression Percentile: Sexual"
               shortDisplayName="Pf Gam/Spo %ile"
               queryRef="GeneId.GenesByExtraerythrocyticExpression"
@@ -3972,7 +3972,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
         <attributesList includeProjects="PlasmoDB"
               summary="organism,winzelerPct"
         /> 
-        <attributesList includeProjects="ApiDB"
+        <attributesList includeProjects="EuPathDB"
               summary="organism"
         /> 
         <description>
@@ -3993,7 +3993,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
    <question name="GenesByMicroarrayEvidence" 
               displayName="Microarray Evidence"
               shortDisplayName="Microarray"
-              includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
+              includeProjects="EuPathDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
@@ -4007,7 +4007,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     Find <i>L.infantum</i> genes based on transcript expression data from microarray experiments.
             ]]>
        </summary>
-        <summary includeProjects="ApiDB">
+        <summary includeProjects="EuPathDB">
            <![CDATA[
            Find Gl, Li, Pf, Pb, Py, Tg genes based on transcript expression data from microarray experiments.
             ]]>
@@ -4027,7 +4027,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     Find <i>L.infantum</i> genes based on transcript expression data from microarray experiments.
             ]]>
         </description>
-        <description includeProjects="ApiDB,ToxoDB,GiardiaDB">
+        <description includeProjects="EuPathDB,ToxoDB,GiardiaDB">
            <![CDATA[
            Find genes based on transcript expression data from microarray experiments.
             ]]>
@@ -4041,7 +4041,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
    <question name="GenesBySageTagEvidence"
               displayName="Sage Tag Evidence"
               shortDisplayName="Sage Tag"
-              includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB"
+              includeProjects="EuPathDB,ToxoDB,PlasmoDB,GiardiaDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
 
@@ -4065,7 +4065,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     <question name="GenesByMassSpecEvidence"
               displayName="Mass Spectrometry Evidence"
               shortDisplayName="Mass Spec"
-              includeProjects="ApiDB,ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TriTrypDB"
+              includeProjects="EuPathDB,ToxoDB,PlasmoDB,CryptoDB,GiardiaDB,TriTrypDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <summary includeProjects="PlasmoDB">
@@ -4087,7 +4087,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
     <question name="GenesByProteinStructure"
               displayName="Protein Structure"
               shortDisplayName="Prot Struct"
-              includeProjects="ApiDB,PlasmoDB,TriTrypDB,CryptoDB"
+              includeProjects="EuPathDB,PlasmoDB,TriTrypDB,CryptoDB"
               queryRef="GeneId.DontCare"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
  <summary>
@@ -4141,7 +4141,7 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
   <!-- Internal question for ortholog link on history/results page  -->
   <!--===========================================================================-->
 
-     <question name="GenesByOrthologs" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
+     <question name="GenesByOrthologs" includeProjects="EuPathDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
          displayName="Orthologs of Genes in the Previous Step"
          shortDisplayName="Orthologs"
               queryRef="GeneId.GenesByOrthologs"
@@ -4192,14 +4192,14 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-  <questionSet name="GeneDumpQuestions" excludeProjects="ApiDB"
+  <questionSet name="GeneDumpQuestions" excludeProjects="EuPathDB"
              displayName="Gene Data Dump Questions"
              internal="true">
   
   <!--===========================================================================-->
   <!-- question that retrieves all genes by organism  -->
   <!--===========================================================================-->
-    <question name="GeneDumpQuestion" excludeProjects="ApiDB"
+    <question name="GeneDumpQuestion" excludeProjects="EuPathDB"
          displayName="Find genes to dump"
          shortDisplayName="Genes to dump"
               queryRef="GeneId.GeneDumpQuery"

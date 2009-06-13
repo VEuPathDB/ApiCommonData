@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <paramSet name="sageTagParams" includeProjects="ApiDB,ToxoDB,PlasmoDB,GiardiaDB">
+  <paramSet name="sageTagParams" includeProjects="EuPathDB,ToxoDB,PlasmoDB,GiardiaDB">
 
 
         <stringParam name="single_gene_id"
@@ -19,7 +19,7 @@
            <suggest includeProjects="TrichDB"
 		    sample="TVAG_386080, TVAG_486660"
                     default="TVAG_386080"/>
-           <suggest includeProjects="ApiDB"
+           <suggest includeProjects="EuPathDB"
 		    sample="PF11_0344, cgd7_230, TGME49_039250"
                     default="GL50803_17134"/>
         </stringParam>
@@ -38,7 +38,7 @@
            <suggest includeProjects="PlasmoDB"
                     sample="GTAATAAATG, TAGAAAATTC"
                     default="GTAATAAATG"/>
-           <suggest includeProjects="ApiDB,GiardiaDB"
+           <suggest includeProjects="EuPathDB,GiardiaDB"
                     sample="GGGCTCTAGTG, CCTGTATTCTG"
                     default="GGGCTCTAGTG"/>
         </stringParam>
@@ -56,19 +56,19 @@
            <suggest includeProjects="PlasmoDB"
                     sample="MAL11-1259434-1259448.1,MAL2-128298-128312.0"
                     default="MAL11-1259434-1259448.1"/>
-<suggest includeProjects="ApiDB"
+<suggest includeProjects="EuPathDB"
                     sample="670,880,MAL2-128298-128312.0"
                     default="670,MAL11-1259434-1259448.1"/>
 
 	</datasetParam>
 <!--
-       <stringParam name="rad_source_id" includeProjects="ApiDB"
+       <stringParam name="rad_source_id" includeProjects="EuPathDB"
                      prompt="ID"
                      substitute="yes">
             <help>
                Enter an external identifier or a SAGE Tag ID. Wildcards (*) are allowed.
             </help>
-           <suggest includeProjects="ApiDB"
+           <suggest includeProjects="EuPathDB"
                     sample="670,880,MAL2-128298-128312.0"
                     default="670"/>
         </stringParam>
@@ -81,7 +81,7 @@
           <help>
              SAGE Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to SAGE tags falling within a gene.
           </help>
-<useTermOnly value="true" includeProjects="ApiDB"/>
+<useTermOnly value="true" includeProjects="EuPathDB"/>
           <enumList>   
             <enumValue>
               <term>Yes</term>
@@ -101,7 +101,7 @@
           <help>
              SAGE Tags are short sequences and can align to several geomic coordinates.  Choose Yes to restrict to SAGE tags falling within a gene.
           </help>
-<useTermOnly value="true" includeProjects="ApiDB"/>
+<useTermOnly value="true" includeProjects="EuPathDB"/>
           <enumList>   
             <enumValue>
               <term>Yes</term>
@@ -115,7 +115,7 @@
         </enumParam>
 
 
-       <stringParam name="st_min_count" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+       <stringParam name="st_min_count" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
                      prompt="Minimum tag count"
                      substitute="yes"
                      quote="false">
@@ -129,7 +129,7 @@
           <help>
              Choose normalized or raw data.
           </help>
-<useTermOnly value="true" includeProjects="ApiDB"/>
+<useTermOnly value="true" includeProjects="EuPathDB"/>
           <enumList>   
             <enumValue>
               <term>Normalized</term>
@@ -142,7 +142,7 @@
           </enumList>   
         </enumParam>
 
-       <flatVocabParam name="sage_experiment" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB"
+       <flatVocabParam name="sage_experiment" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
                      queryRef="SAGEtgVQ.experimentname"
                      prompt="Experiment Name"
                      multiPick="false">
@@ -170,7 +170,7 @@
          ]]>
             </sql>
    </sqlQuery>
-   <processQuery name="experimentname" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+   <processQuery name="experimentname" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
    </processQuery>

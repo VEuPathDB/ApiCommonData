@@ -9,7 +9,7 @@
 <wdkModel>
   <modelName includeProjects="PlasmoDB" name="PlasmoDB" displayName="PlasmoDB" 
              version="5.3"/>
-  <modelName includeProjects="ApiDB" name="ApiDB" displayName="ApiDB"
+  <modelName includeProjects="EuPathDB" name="EuPathDB" displayName="EuPathDB"
              version="2.2"/>
   <modelName includeProjects="ToxoDB" name="ToxoDB" displayName="ToxoDB"
              version="3.3"/>
@@ -34,7 +34,7 @@
     <value value="T. gondii"/>
   </defaultPropertyList>
 
-  <defaultPropertyList includeProjects="ApiDB" name="organism">
+  <defaultPropertyList includeProjects="EuPathDB" name="organism">
     <value value="P. falciparum"/>
     <value value="P. vivax"/>
     <value value="P. yoelii"/>
@@ -147,7 +147,7 @@
            <value value="C. parvum"/>
         </propertyList>
 
-        <propertyList name="organism" includeProjects="ApiDB">
+        <propertyList name="organism" includeProjects="EuPathDB">
            <value value="P. falciparum"/>
            <value value="T. gondii"/>
            <value value="C. parvum"/>
@@ -169,7 +169,7 @@
     <!-- Genomic region  -->
     <!------------------------------------------------------------------>
 
-    <sqlQuery name="GenesByGenomicRegion" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByGenomicRegion" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="params.pfGenomicSequenceOrNot"/>
         <paramRef ref="params.genomicSequence"/>
@@ -192,7 +192,7 @@
        </sql>
     </sqlQuery>
 
-    <wsQuery name="GenesByLocation" includeProjects="ApiDB"
+    <wsQuery name="GenesByLocation" includeProjects="EuPathDB"
              displayName="by  genomic location" isCacheable='true' 
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                <paramRef ref="params.genomicSequence"/>
@@ -219,7 +219,7 @@
         <help>
              Results will be sorted ascending or descending order
         </help>
-        <useTermOnly value="true" includeProjects="ApiDB,ToxoDB,PlasmoDB"/>
+        <useTermOnly value="true" includeProjects="EuPathDB,ToxoDB,PlasmoDB"/>
         <enumList>
           <enumValue default="true">
             <term>choose one</term>
@@ -242,7 +242,7 @@
                      multiPick="true">
 
         <suggest default="one,seven,nine"/>
-        <useTermOnly value="true" includeProjects="ApiDB"/>
+        <useTermOnly value="true" includeProjects="EuPathDB"/>
 
         <help>
              Choose one or more strain/day combination

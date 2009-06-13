@@ -32,13 +32,13 @@
             <suggest includeProjects="TriTrypDB"
                sample="CF890597,CF890498"
                default="CF890597,CF890498"/>
-            <suggest  includeProjects="ApiDB"
+            <suggest  includeProjects="EuPathDB"
                sample="AU087658, N98084,AA009308, AA011973"
                default="AU087658,AA009308,EV500870,AA420947,CV202103"/>
 
       </datasetParam>
 <!--
-      <stringParam name="est_id" includeProjects="ApiDB"
+      <stringParam name="est_id" includeProjects="EuPathDB"
                      prompt="EST ID"
                      substitute="yes">
             <help>Enter an EST ID (Accession Number)</help>
@@ -59,7 +59,7 @@
       <help>
              The type of sequence you want to BLAST against (the subject)
       </help>
-   <useTermOnly value="true" includeProjects="ApiDB"/>
+   <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>
         <enumValue>
           <term>EST</term>
@@ -83,7 +83,7 @@
       <help>
              Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
       </help>
-   <useTermOnly value="true" includeProjects="ApiDB"/>
+   <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>   
         <enumValue>
           <term>does overlap with a gene</term>

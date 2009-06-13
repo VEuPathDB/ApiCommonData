@@ -1,7 +1,7 @@
 <wdkModel>
-    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB,ToxoDB, ApiDB">
+    <recordClassSet name="IsolateRecordClasses" includeProjects="CryptoDB,PlasmoDB,ToxoDB, EuPathDB">
 
-      <recordClass name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
+      <recordClass name="IsolateRecordClass" type="Isolate" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
 
     
       <testParamValues includeProjects="PlasmoDB">
@@ -39,7 +39,7 @@
       <reporter name="tabular" displayName="Summary - TAB Delimited"
                 implementation="org.gusdb.wdk.model.report.TabularReporter" />
 
-      <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
+      <reporter name="fullRecord" displayName="Detailed" excludeProjects="EuPathDB" 
                   implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
 
           <!-- the report maker used on commandline to generate detailed download files -->
@@ -60,7 +60,7 @@
       <!-- sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.Attributes" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"> 
+      <attributeQueryRef ref="IsolateAttributes.Attributes" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"> 
          <columnAttribute name="pcr_primers" displayName="PCR primer" internal="true"/>
          <columnAttribute name="country" displayName="Country" internal="false"/>
          <columnAttribute name="organism" displayName="Organism" internal="false"/>
@@ -80,16 +80,16 @@
       <!-- Protein Sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 <!--
-      <attributeQueryRef ref="IsolateAttributes.ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequence" includeProjects="CryptoDB,PlasmoDB,EuPathDB">
          <columnAttribute name="protein_sequence" displayName="Protein Sequence" internal="true" includeProjects="CryptoDB,PlasmoDB"/>
-         <columnAttribute name="gene_description" displayName="Gene Description" internal="true" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
+         <columnAttribute name="gene_description" displayName="Gene Description" internal="true" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
       </attributeQueryRef>
 -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Isolate DNA Sequence attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,ApiDB,ToxoDB,PlasmoDB">
+      <attributeQueryRef ref="IsolateAttributes.NucleicAcidSequence" includeProjects="CryptoDB,EuPathDB,ToxoDB,PlasmoDB">
          <columnAttribute name="sequence" displayName="DNA Sequence" internal="true"/>
       </attributeQueryRef>
 
@@ -99,9 +99,9 @@
 
 <!--
 
-      <attributeQueryRef ref="IsolateAttributes.GeneOverlap" includeProjects="CryptoDB,PlasmoDB,ApiDB">
-         <columnAttribute name="gene" displayName="Gene" internal="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="gene_product" displayName="Gene Product" internal="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
+      <attributeQueryRef ref="IsolateAttributes.GeneOverlap" includeProjects="CryptoDB,PlasmoDB,EuPathDB">
+         <columnAttribute name="gene" displayName="Gene" internal="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="gene_product" displayName="Gene Product" internal="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
       </attributeQueryRef>
 
 -->
@@ -109,28 +109,28 @@
       <!-- Reference attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 <!--
-      <attributeQueryRef ref="IsolateAttributes.Reference" includeProjects="CryptoDB,PlasmoDB,ApiDB">
-         <columnAttribute name="title" displayName="Title" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="year" displayName="Year" internal="true"  inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="journal" displayName="Journal Name" inReportMaker="false" internal="true" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="journal_vol" displayName="Volume" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
-         <columnAttribute name="journal_page" displayName="Page" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ApiDB"/>
+      <attributeQueryRef ref="IsolateAttributes.Reference" includeProjects="CryptoDB,PlasmoDB,EuPathDB">
+         <columnAttribute name="title" displayName="Title" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="author" displayName="Author" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="year" displayName="Year" internal="true"  inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="journal" displayName="Journal Name" inReportMaker="false" internal="true" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="journal_vol" displayName="Volume" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
+         <columnAttribute name="journal_page" displayName="Page" internal="true" inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,EuPathDB"/>
       </attributeQueryRef>
 -->
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Protein Sequence Count ie. number of protein sequence for this isolate -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <attributeQueryRef ref="IsolateAttributes.ProteinSequenceCount" includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB">
-         <columnAttribute name="protein_sequence_count"  internal="true"  inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"/>
+      <attributeQueryRef ref="IsolateAttributes.ProteinSequenceCount" includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB">
+         <columnAttribute name="protein_sequence_count"  internal="true"  inReportMaker="false" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"/>
      </attributeQueryRef>
 
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Isolates Publication table -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Reference"
             queryRef="IsolateTables.Reference">
         <columnAttribute internal="true" name="title"/>
@@ -153,7 +153,7 @@
 
 <!--
 
-     <table name="IsoStudy" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+     <table name="IsoStudy" includeProjects="CryptoDB,PlasmoDB,EuPathDB"
             displayName="All the isolate in the study"
             queryRef="IsolateTables.IsoStudy">
         <columnAttribute displayName="Isolates" name="source_id" internal="true"/>
@@ -181,7 +181,7 @@
      <!-- Gene Overlap -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,ApiDB"
+     <table name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB"
             displayName="Blast Similarity Alignments and Overlapping Genes"
             queryRef="IsolateTables.GeneOverlap">
         <columnAttribute name="source_id" internal="true"/>
@@ -267,7 +267,7 @@
      <!-- Protein Sequence -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Protein Sequence"
             queryRef="IsolateTables.ProteinSequence">
         <columnAttribute name="protein_sequence" internal="true"/>
@@ -280,49 +280,49 @@
             when fullRecordDump starts including attributes -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="organism" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="organism" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Organism"
             queryRef="IsolateTables.organism">
         <columnAttribute name="organism" internal="true"/>
      </table>
 
-     <table name="description" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="description" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Description"
             queryRef="IsolateTables.description">
         <columnAttribute name="description" internal="true"/>
      </table>
 
-     <table name="product" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="product" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Product"
             queryRef="IsolateTables.product">
         <columnAttribute name="product" internal="true"/>
      </table>
 
-     <table name="strain" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="strain" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Strain"
             queryRef="IsolateTables.strain">
         <columnAttribute name="strain" internal="true"/>
      </table>
 
-     <table name="host" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="host" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Host"
             queryRef="IsolateTables.host">
         <columnAttribute name="host" internal="true"/>
      </table>
 
-     <table name="note" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="note" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Note"
             queryRef="IsolateTables.note">
         <columnAttribute name="note" internal="true"/>
      </table>
 
-     <table name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Isolation Source"
             queryRef="IsolateTables.isolation_source">
         <columnAttribute name="isolation_source" internal="true"/>
      </table>
 
-     <table name="geographic_location" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+     <table name="geographic_location" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             displayName="Geographic Location"
             queryRef="IsolateTables.geographic_location">
         <columnAttribute name="geographic_location" internal="true"/>
@@ -332,7 +332,7 @@
      <!-- Isolates Barcode SNP table -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <table name="SNP" includeProjects="ApiDB,PlasmoDB"
+     <table name="SNP" includeProjects="EuPathDB,PlasmoDB"
             displayName="Isolates SNP Features"
             queryRef="IsolateTables.SNP">
         <columnAttribute displayName="Allele" name="allele" internal="true"/>
@@ -357,7 +357,7 @@
      <!-- overview -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <textAttribute name="overview" displayName="Overview"
-          internal="true" inReportMaker="false" includeProjects="CryptoDB,ApiDB,ToxoDB,PlasmoDB">
+          internal="true" inReportMaker="false" includeProjects="CryptoDB,EuPathDB,ToxoDB,PlasmoDB">
           <text>
           <![CDATA[
            <table width="100%">

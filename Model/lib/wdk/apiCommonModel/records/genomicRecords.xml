@@ -65,9 +65,9 @@
 
           <reporter name="tabular" displayName="Summary - Tab delimited"
                     implementation="org.gusdb.wdk.model.report.TabularReporter"/>
-          <reporter name="gff3" displayName="Summary - GFF3" excludeProjects="ApiDB" 
+          <reporter name="gff3" displayName="Summary - GFF3" excludeProjects="EuPathDB" 
                     implementation="org.apidb.apicommon.model.report.Gff3Reporter"/>
-          <reporter name="fullRecord" displayName="Detailed" excludeProjects="ApiDB" 
+          <reporter name="fullRecord" displayName="Detailed" excludeProjects="EuPathDB" 
                     implementation="org.gusdb.wdk.model.report.FullRecordReporter"/>
           <reporter name="srt" displayName="FASTA"
                     implementation=""/>
@@ -86,7 +86,7 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
 
- <answerFilter queryRef="GenomicSummaries.AllResults"   includeProjects="ApiDB">
+ <answerFilter queryRef="GenomicSummaries.AllResults"   includeProjects="EuPathDB">
                   <instance name="all_results" displayName="All Results" default="true">
                     <description>
                         <![CDATA[
@@ -99,7 +99,7 @@
 
 
 <answerFilter queryRef="GenomicSummaries.ApiGenomics"
-                          includeProjects="ApiDB">
+                          includeProjects="EuPathDB">
                 
                 <instance name="ch_genomics" displayName="Ch Gen.Seq.">
                     <description>
@@ -256,7 +256,7 @@
             <columnAttribute name="formatted_organism" 
                  displayName="Organism" inReportMaker="false"/>
 
-            <columnAttribute name="sequence_description" includeProjects="ApiDB,PlasmoDB"
+            <columnAttribute name="sequence_description" includeProjects="EuPathDB,PlasmoDB"
                  displayName="Description" />
 
             <columnAttribute name="genbank_accession" 
@@ -274,11 +274,11 @@
         </attributeQueryRef>
 
        <attributeQueryRef ref="SequenceAttributes.GeneCount">
-            <columnAttribute name="gene_count" excludeProjects="ApiDB"  displayName="Gene Count" internal="false"   />
+            <columnAttribute name="gene_count" excludeProjects="EuPathDB"  displayName="Gene Count" internal="false"   />
         </attributeQueryRef>
 
        <attributeQueryRef ref="SequenceAttributes.HasMSA">
-            <columnAttribute name="has_msa" excludeProjects="ApiDB"  displayName="Has MSA" internal="true"   />
+            <columnAttribute name="has_msa" excludeProjects="EuPathDB"  displayName="Has MSA" internal="true"   />
         </attributeQueryRef>
 
        <attributeQueryRef ref="SequenceAttributes.Aliases" includeProjects="GiardiaDB">
@@ -292,7 +292,7 @@
         <!-- data dump attributes -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <attributeQueryRef ref="SequenceAttributes.SequenceGffAttrs" excludeProjects="ApiDB">
+          <attributeQueryRef ref="SequenceAttributes.SequenceGffAttrs" excludeProjects="EuPathDB">
               <columnAttribute displayName="SeqId" name="gff_seqid" inReportMaker="false" internal="true"/>
               <columnAttribute displayName="Data Source" name="gff_source" inReportMaker="false" internal="true"/>
               <columnAttribute displayName="Feature Type" name="gff_type" inReportMaker="false" internal="true"/>
@@ -314,7 +314,7 @@
           </attributeQueryRef>
 
 
-          <attributeQueryRef ref="SequenceAttributes.SequenceGffSequence" excludeProjects="ApiDB">
+          <attributeQueryRef ref="SequenceAttributes.SequenceGffSequence" excludeProjects="EuPathDB">
               <columnAttribute displayName="Sequence" name="gff_sequence" inReportMaker="false" internal="true"/>
           </attributeQueryRef>
 
@@ -367,7 +367,7 @@
                   Number of genes: $$gene_count$$
               ]]>
            </text>
-           <text includeProjects="ApiDB">
+           <text includeProjects="EuPathDB">
                 <![CDATA[
                 Organism: $$formatted_organism$$<br>
                 $$chromosomemappingtext$$<br>
@@ -392,7 +392,7 @@
            </text>
          </textAttribute>
 
-         <textAttribute name="gbrowseTracks"  excludeProjects="ApiDB" 
+         <textAttribute name="gbrowseTracks"  excludeProjects="EuPathDB" 
                          inReportMaker="false" internal="true">
            <text includeProjects="CryptoDB">
               <![CDATA[
@@ -627,7 +627,7 @@
         <!-- comments -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <table name="SequenceComments" excludeProjects="ApiDB"
+        <table name="SequenceComments" excludeProjects="EuPathDB"
                  displayName="User Comments"
                  queryRef="SequenceTables.SequenceComments">
             <columnAttribute name="comment_id" internal="true"/>
@@ -651,7 +651,7 @@
         <!-- data dump table -->  
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="SequenceGffDbxrefs" excludeProjects="ApiDB"
+          <table name="SequenceGffDbxrefs" excludeProjects="EuPathDB"
                  displayName="Sequence DbXrefs"
                  queryRef="SequenceTables.SequenceGffDbxrefs" inReportMaker="false">
               <columnAttribute displayName="Dbxref" name="gff_dbxref"/>

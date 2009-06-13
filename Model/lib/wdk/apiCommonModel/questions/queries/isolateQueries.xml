@@ -1,5 +1,5 @@
 <wdkModel>
-  <querySet name="IsolateIds" queryType="id" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
+  <querySet name="IsolateIds" queryType="id" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
 
    <!-- notes
       
@@ -31,7 +31,7 @@
 
     </sqlQuery>
 
-    <processQuery name="IsolateByIsolateId" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByIsolateId" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.isolate_id"/>
        <paramRef ref="sharedParams.signature"  quote="false"/>    
        <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -68,7 +68,7 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByAuthor" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByAuthor" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.author" quote="false"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -102,7 +102,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByTaxon" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
    <!--   <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true"/>  -->
       <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates"  quote="false"/>
       <paramRef ref="isolateParams.type"  quote="false"/>
@@ -139,7 +139,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByHost" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByHost" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -167,7 +167,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByIsolationSource" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByIsolationSource" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.isolation_source" queryRef="isolationSourceVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -194,7 +194,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByProduct" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByProduct" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.product" queryRef="productVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -221,7 +221,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByGenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByGenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.genotype" queryRef="productVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -251,7 +251,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByStudy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByStudy" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.study" queryRef="studyVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -297,7 +297,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateByCountry" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.country" queryRef="countryVQ.withIsolates"  quote="false"/>
       <paramRef ref="isolateParams.continent" queryRef="continentVQ.withIsolates"  quote="false"/>
       <paramRef ref="isolateParams.type"  quote="false"/>
@@ -325,7 +325,7 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateBySubmitter" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="IsolateBySubmitter" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -361,7 +361,7 @@
       </sql> 
     </sqlQuery> 
 
-    <processQuery name="IsolateWithGeneOverlap" includeProjects="ApiDB"
+    <processQuery name="IsolateWithGeneOverlap" includeProjects="EuPathDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="isolateParams.gene_id"/>
         <wsColumn name="source_id" width="60" wsName="source_id"/>

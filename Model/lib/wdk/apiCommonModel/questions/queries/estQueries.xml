@@ -10,7 +10,7 @@
     <!-- Source id  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="EstBySourceId" doNotTest="true" excludeProjects="ApiDB"
+    <sqlQuery name="EstBySourceId" doNotTest="true" excludeProjects="EuPathDB"
          isCacheable="true">
         <paramRef ref="estParams.est_id"/>
         <column name="source_id"/>
@@ -29,7 +29,7 @@
        </sql>
     </sqlQuery>
 
-    <processQuery name="EstBySourceId" includeProjects="ApiDB"
+    <processQuery name="EstBySourceId" includeProjects="EuPathDB"
           isCacheable='true' 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="estParams.est_id"/>
@@ -42,7 +42,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <sqlQuery name="EstsByLocation" excludeProjects="ApiDB"
+    <sqlQuery name="EstsByLocation" excludeProjects="EuPathDB"
           isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
@@ -200,7 +200,7 @@
         </sql>
     </sqlQuery>
 
-    <processQuery name="EstsByLocation" includeProjects="ApiDB" 
+    <processQuery name="EstsByLocation" includeProjects="EuPathDB" 
           isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
@@ -223,7 +223,7 @@
     <!-- Library  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="EstsByLibrary" excludeProjects="ApiDB" 
+    <sqlQuery name="EstsByLibrary" excludeProjects="EuPathDB" 
              isCacheable='true'>
         <paramRef ref="sharedParams.libraryId"/>
         <column name="source_id" />
@@ -236,7 +236,7 @@
        </sql>
     </sqlQuery>
 
-    <processQuery name="EstsByLibrary" includeProjects="ApiDB" 
+    <processQuery name="EstsByLibrary" includeProjects="EuPathDB" 
              displayName="Library Name" isCacheable='true' 
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
         <paramRef ref="sharedParams.libraryId"/>
@@ -249,7 +249,7 @@
     <!-- Gene Overlap  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="EstsWithGeneOverlap" excludeProjects="ApiDB"
+    <sqlQuery name="EstsWithGeneOverlap" excludeProjects="EuPathDB"
             isCacheable='true'>
        <paramRef ref="sharedParams.libraryIdGenes" />
        <paramRef ref="sharedParams.bp_overlap_gte"/>
@@ -305,7 +305,7 @@
     </sqlQuery>
 
 
-    <processQuery name="EstsWithGeneOverlap" includeProjects="ApiDB"
+    <processQuery name="EstsWithGeneOverlap" includeProjects="EuPathDB"
        isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.libraryIdGenes"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
@@ -373,7 +373,7 @@
     </processQuery>
 
 <!--
-    <processQuery name="EstsBySimilarity" includeProjects="ApiDB"
+    <processQuery name="EstsBySimilarity" includeProjects="EuPathDB"
          displayName="BLAST ESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.BlastDatabaseType"/>
        <paramRef ref="estSimilarityParams.BlastDatabaseOrganism"/>

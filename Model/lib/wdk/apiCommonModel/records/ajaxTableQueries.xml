@@ -41,7 +41,7 @@
                <paramValue name="project_id">TriTrypDB</paramValue>
             </defaultTestParamValues>
 
-        <sqlQuery name="InterproTermList" isCacheable='true' excludeProjects="ApiDB"> 
+        <sqlQuery name="InterproTermList" isCacheable='true' excludeProjects="EuPathDB"> 
             <paramRef ref="recordParams.source_id"/> 
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -66,7 +66,7 @@
                   AND ed.name = $$source_id$$
             </sql>
 
- <!--        <sql includeProjects="ApiDB">
+ <!--        <sql includeProjects="EuPathDB">
  
            SELECT accession, name, description FROM 
            ( (SELECT DISTINCT dr.primary_identifier AS accession,
@@ -112,7 +112,7 @@
 
         </sqlQuery>
 
-        <processQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="InterproTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <paramRef ref="recordParams.source_id" quote="false"/> 
             <paramRef ref="recordParams.project_id" quote="false"/>
             <wsColumn name="source_id"  width="100"/>
@@ -303,7 +303,7 @@
                  ) t
              </sql>
 
-             <sql  includeProjects="ApiDB">
+             <sql  includeProjects="EuPathDB">
 
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
@@ -335,7 +335,7 @@
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
-        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="ApiDB,CryptoDB,PlasmoDB">
+        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="EuPathDB,CryptoDB,PlasmoDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -364,7 +364,7 @@
               FROM DUAL 
             </sql>
  
-            <sql includeProjects="ApiDB">
+            <sql includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
@@ -440,7 +440,7 @@
                  ) t
              </sql>
 
-            <sql  includeProjects="ApiDB">
+            <sql  includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
@@ -533,7 +533,7 @@
                  ) t
              </sql>
 
-            <sql  includeProjects="ApiDB">
+            <sql  includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
@@ -639,7 +639,7 @@
                  ) t
              </sql>
 
-            <sql  includeProjects="ApiDB">
+            <sql  includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
@@ -673,7 +673,7 @@
         </sqlQuery>
 
         <!-- AjaxTables.BlastAssembliesOrganismTermList -->
-  <sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,PlasmoDB,TriTrypDB,ApiDB">
+  <sqlQuery name="BlastAssembliesOrganismTermList" isCacheable='true' includeProjects="GiardiaDB,CryptoDB,ToxoDB,PlasmoDB,TriTrypDB,EuPathDB">
       <paramRef ref="recordParams.source_id"/>
       <paramRef ref="recordParams.project_id"/>
         <column name="source_id" />
@@ -699,7 +699,7 @@
           ) t
       </sql>
 
-      <sql includeProjects="ApiDB">
+      <sql includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
@@ -746,7 +746,7 @@
 <!-- AJAX TERM QUERIES-->
 <!--=====================================================================-->
 
-    <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="AjaxQuery" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <paramRef ref="recordParams.primaryKey" quote="false"/> 
             <paramRef ref="recordParams.project_id"/>
             <wsColumn name="primaryKey"  width="100"/>

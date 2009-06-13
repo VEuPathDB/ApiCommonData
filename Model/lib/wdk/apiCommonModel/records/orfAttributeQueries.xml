@@ -72,7 +72,7 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence"/>
-            <sql excludeProjects="ApiDB">
+            <sql excludeProjects="EuPathDB">
                SELECT nf.source_id,ts.sequence, '@PROJECT_ID@' as project_id
                FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
                     dots.NaFeature nf, sres.SequenceOntology so
@@ -83,7 +83,7 @@
            </sql>
 
 
-           <sql includeProjects="ApiDB">
+           <sql includeProjects="EuPathDB">
                   SELECT taas.source_id as source_id, ext.name as project_id, taas.sequence
                 	  from dots.TranslatedAASequence taas,
                       	 sres.SequenceOntology s,

@@ -1,5 +1,5 @@
 <wdkModel>
-  <paramSet name="snpParams" includeProjects="ToxoDB,PlasmoDB,ApiDB,CryptoDB">
+  <paramSet name="snpParams" includeProjects="ToxoDB,PlasmoDB,EuPathDB,CryptoDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
@@ -15,13 +15,13 @@
                 sample="SNP_Ia_17864, SNP_Ia_130295"/>
             <suggest includeProjects="CryptoDB"
                 default="chr3-2_66329"/>
- <suggest  includeProjects="ApiDB" 
+ <suggest  includeProjects="EuPathDB" 
                default="CombinedSNP.MAL10.6541,SNP_Ia_17864,chr3-2_66329"
                sample="SNP_Ia_17864, WTSI_PFAL.GHANA1.0.MAL10.1384630.1384630.0"/>
 
 	</datasetParam>
 <!--
-        <stringParam name="snp_id"  includeProjects="ApiDB"
+        <stringParam name="snp_id"  includeProjects="EuPathDB"
                      prompt="SNP ID"
                      substitute="yes">
                      <help>Enter a SNP ID</help>
@@ -76,34 +76,34 @@
                      prompt="Minimum number of isolates in Set A with same allele >= "
                      quote="false">
             <help>Lower Bound on the number of isolates in set A that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set A.</help>
-            <suggest includeProjects="ApiDB,PlasmoDB" default="8"/>
+            <suggest includeProjects="EuPathDB,PlasmoDB" default="8"/>
         </stringParam>
 
        <stringParam name="set_b_count"
                      prompt="Minimum number of isolates in Set B with same allele >= "
                      quote="false">
             <help>Lower Bound on the number of isolates in set B that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this number should be equal to the number of isolate identifiers in set B.</help>
-            <suggest includeProjects="ApiDB,PlasmoDB" default="12"/>
+            <suggest includeProjects="EuPathDB,PlasmoDB" default="12"/>
         </stringParam>
 
        <stringParam name="set_a_percent"
                      prompt="Minimum percentage of isolates in Set A with same allele >= "
                      quote="false">
             <help>Lower Bound on the percentage of isolates in set A that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this percentage should be 100.</help>
-            <suggest includeProjects="ApiDB,PlasmoDB" default="100"/>
+            <suggest includeProjects="EuPathDB,PlasmoDB" default="100"/>
         </stringParam>
 
        <stringParam name="set_b_percent"
                      prompt="Minimum percentage of isolates in Set B with same allele >= "
                      quote="false">
             <help>Lower Bound on the percentage of isolates in set B that have the same allele at any SNP position.  Note: for the highest confidence SNPs, this percentage should be 100.</help>
-            <suggest includeProjects="ApiDB,PlasmoDB" default="100"/>
+            <suggest includeProjects="EuPathDB,PlasmoDB" default="100"/>
         </stringParam>
 
         <datasetParam name="isolate_set_a"
                       prompt="Set A isolate identifiers">
             <help>input a comma delimited set of isolate ids, or upload a file.</help>
-           <suggest includeProjects="PlasmoDB,ApiDB"
+           <suggest includeProjects="PlasmoDB,EuPathDB"
 					sample=""
                     default="CP3.911178, CP3.911215, CP3.911216, CP3.911217, CP3.911218, CP3.911219, CP3.911220, CP3.911221"/>
         </datasetParam>
@@ -111,7 +111,7 @@
         <datasetParam name="isolate_set_b"
                       prompt="Set B isolate identifiers">
             <help>input a comma delimited set of isolate ids, or upload a file.</help>
-           <suggest includeProjects="PlasmoDB,ApiDB"
+           <suggest includeProjects="PlasmoDB,EuPathDB"
 					sample=""
                     default="CP3.911166, CP3.911227, CP3.911229, CP3.911230, CP3.911232, CP3.911233, CP3.911234, CP3.911235, CP3.911236, CP3.911237, CP3.911239, CP3.911240"/>
         </datasetParam>

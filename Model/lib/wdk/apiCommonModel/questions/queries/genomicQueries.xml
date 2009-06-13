@@ -15,7 +15,7 @@
     <!-- SourceId -->  
     <!-- ************************************************************ -->
  
-    <sqlQuery name="SequenceBySourceId" doNotTest="true" excludeProjects="ApiDB"
+    <sqlQuery name="SequenceBySourceId" doNotTest="true" excludeProjects="EuPathDB"
         isCacheable="true">
         <paramRef ref="genomicParams.sequenceId" default="TGME49_chrIa" includeProjects="ToxoDB"/> 
         <paramRef ref="genomicParams.sequenceId" default="Pf3D7_04" includeProjects="PlasmoDB"/> 
@@ -32,7 +32,7 @@
         </sql>
     </sqlQuery>
     
-    <processQuery name="SequenceBySourceId" includeProjects="ApiDB"
+    <processQuery name="SequenceBySourceId" includeProjects="EuPathDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="genomicParams.sequenceId"/>
         <paramRef ref="sharedParams.signature" quote="false"/>
@@ -45,7 +45,7 @@
     <!-- Species -->  
     <!-- ************************************************************ -->
 
-    <sqlQuery name="SequencesByTaxon" excludeProjects="ApiDB"
+    <sqlQuery name="SequencesByTaxon" excludeProjects="EuPathDB"
         isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"
                   excludeProjects="ToxoDB"/>
@@ -77,7 +77,7 @@
         </sql>
     </sqlQuery>
     
-    <processQuery name="SequencesByTaxon" includeProjects="ApiDB"
+    <processQuery name="SequencesByTaxon" includeProjects="EuPathDB"
         isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenomicSeq"/>
   <!--     <paramRef ref="genomicParams.sequenceTypes" visible="false"  quote="false"/>  -->
@@ -144,7 +144,7 @@
     </processQuery>
     
 <!--
-    <processQuery name="SequencesBySimilarity" includeProjects="ApiDB" 
+    <processQuery name="SequencesBySimilarity" includeProjects="EuPathDB" 
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.BlastDatabaseType"/>
         <paramRef ref="genomicSimilarityParams.BlastDatabaseOrganism"/>
@@ -169,7 +169,7 @@
   <!-- Query that retrieves all sequences by organism -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceDumpQuery" isCacheable="true" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceDumpQuery" isCacheable="true" excludeProjects="EuPathDB">
         <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
         <column name="project_id"/>
         <column name="source_id"/>

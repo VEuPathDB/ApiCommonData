@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <questionSet name="IsolateQuestions" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+  <questionSet name="IsolateQuestions" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
                displayName="Search Isolates">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -25,7 +25,7 @@
                Find Isolates by ID.
              </summary>
              
-             <description excludeProjects="ApiDB,ToxoDB,PlasmoDB">
+             <description excludeProjects="EuPathDB,ToxoDB,PlasmoDB">
                Find Isolates by ID. The IDs are usually the Genbank accession number. Either enter the 
                ID list manually, or upload a file that contains the list. IDs can be delimited by a comma, 
                a semi colon, or any white spaces. 
@@ -63,15 +63,15 @@
               shortDisplayName="Isolate IDs"
               queryRef="IsolateIds.IsolateByIsolateId" 
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="EuPathDB">
 
        
- <attributesList includeProjects="ApiDB"
+ <attributesList includeProjects="EuPathDB"
                summary="organism, strain, country, data_type, product, length, specific_host"/>
              <summary>
                Find Isolates by ID.
              </summary>
-          <description includeProjects="ApiDB">
+          <description includeProjects="EuPathDB">
              <![CDATA[
                Find Isolates by ID. Currently we have <i>Cryptosporidium</i> and <i>Plasmodium</i> isolates.  
                Either enter the ID list manually, or upload a file that contains the list.  
@@ -95,9 +95,9 @@
               shortDisplayName="Gene Overlap"
               queryRef="IsolateIds.IsolateWithGeneOverlap"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="CryptoDB,EuPathDB">
 
-      <attributesList includeProjects="CryptoDB,ApiDB"
+      <attributesList includeProjects="CryptoDB,EuPathDB"
            summary="organism, product, gene, gene_product" />
 
       <summary>
@@ -126,12 +126,12 @@
               queryRef="IsolateIds.IsolateByTaxon"
               displayName="Taxon/Strain"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
+              includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
               <attributesList includeProjects="CryptoDB,ToxoDB"
                  summary="organism, strain, product, specific_host" /> 
               <attributesList includeProjects="PlasmoDB"
                  summary="organism, strain, country, specific_host, data_type" />
-              <attributesList includeProjects="ApiDB"
+              <attributesList includeProjects="EuPathDB"
                  summary="organism, strain, country, product, data_type, length, specific_host" /> 
               
         <summary>
@@ -169,7 +169,7 @@
               shortDisplayName="Host Name"
               queryRef="IsolateIds.IsolateByHost"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ToxoDB,ApiDB">
+              includeProjects="CryptoDB,ToxoDB,EuPathDB">
           <attributesList
               summary="organism, strain, product, specific_host"
           /> 
@@ -198,7 +198,7 @@
               shortDisplayName="Isolate Src."
               queryRef="IsolateIds.IsolateByIsolationSource"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ToxoDB,ApiDB">
+              includeProjects="CryptoDB,ToxoDB,EuPathDB">
          <attributesList
               summary="organism, strain, product, specific_host, isolation_source"
          /> 
@@ -227,7 +227,7 @@
               shortDisplayName="Product Name"
               queryRef="IsolateIds.IsolateByProduct"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB,PlasmoDB,ToxoDB">
+              includeProjects="CryptoDB,EuPathDB,PlasmoDB,ToxoDB">
             <attributesList summary="organism, strain, country, specific_host, data_type" /> 
         <summary> 
            Find isolates by product name.
@@ -254,7 +254,7 @@
               shortDisplayName="Genotype #"
               queryRef="IsolateIds.IsolateByGenotype"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="ToxoDB,ApiDB">
+              includeProjects="ToxoDB,EuPathDB">
             <attributesList summary="organism, strain, country, specific_host, data_type" /> 
           <summary>
               Find isolates by genotype #.
@@ -280,7 +280,7 @@
               shortDisplayName="Study Name"
               queryRef="IsolateIds.IsolateByStudy"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ApiDB,PlasmoDB,ToxoDB">
+              includeProjects="CryptoDB,EuPathDB,PlasmoDB,ToxoDB">
             <attributesList summary="organism, strain, country, specific_host, data_type" /> 
       <summary> 
         Find isolates by study name.
@@ -307,12 +307,12 @@
               shortDisplayName="Geograph Loc"
               queryRef="IsolateIds.IsolateByCountry"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB">
+              includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB">
          <attributesList includeProjects="CryptoDB,ToxoDB"
               summary="organism, strain, product, specific_host, country" /> 
          <attributesList includeProjects="PlasmoDB"
                  summary="organism, strain, country, specific_host, data_type" /> 
-         <attributesList includeProjects="ApiDB"
+         <attributesList includeProjects="EuPathDB"
               summary="organism, strain, country, data_type, product, length, specific_host" /> 
       <summary> 
       Find isolates by country and/or continent.
@@ -377,7 +377,7 @@
               shortDisplayName="Author"
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="EuPathDB">
        <attributesList summary="organism, strain, product, specific_host" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
@@ -420,7 +420,7 @@
               shortDisplayName="Submitter"
               queryRef="IsolateIds.IsolateBySubmitter"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+              noSummaryOnSingleRecord="false" includeProjects="EuPathDB">
        <attributesList summary="strain, country, collected_by, data_type, length"/> 
        <summary>Find Isolates by submitter.</summary> 
        <description>
@@ -445,7 +445,7 @@
               category="Similarity/Pattern"
               queryRef="IsolateIds.IsolatesBySimilarity"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              fullAnswer="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
+              fullAnswer="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
 
         <attributesList summary="Header,TabularRow,Alignment,Footer" 
                         sorting="Counter asc"
@@ -460,7 +460,7 @@
             ]]> 
          </description> 
          
-        <description includeProjects="CryptoDB,ToxoDB,ApiDB">
+        <description includeProjects="CryptoDB,ToxoDB,EuPathDB">
             <![CDATA[ 
             Find Isolates that have BLAST similarity to your input query sequence.  <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.  
             ]]> 
@@ -530,14 +530,14 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-  <questionSet name="IsolateDumpQuestions" excludeProjects="ApiDB,TriTrypDB,GiardiaDB,TrichDB"
+  <questionSet name="IsolateDumpQuestions" excludeProjects="EuPathDB,TriTrypDB,GiardiaDB,TrichDB"
              displayName="Isolate Data Dump Questions"
              internal="true">
 
   <!--===========================================================================-->
   <!-- question that retrieves all isolates by organism  -->
   <!--===========================================================================-->
-    <question name="IsolateDumpQuestion" excludeProjects="ApiDB"
+    <question name="IsolateDumpQuestion" excludeProjects="EuPathDB"
          displayName="Find isolates to dump"
               shortDisplayName="Isolates dmp"
               queryRef="IsolateIds.IsolateDump"
@@ -560,7 +560,7 @@
     <question name="IsolatesByRFLP"
                   displayName="Reference RFLP Gel Images"
                   shortDisplayName="RFLP Images"
-                  includeProjects="ApiDB,CryptoDB"
+                  includeProjects="EuPathDB,CryptoDB"
                   queryRef="IsolateIds.DontCare"
                   recordClassRef="IsolateRecordClasses.IsolateRecordClass"> 
         <summary includeProjects="CryptoDB"> 
@@ -576,7 +576,7 @@
     <question name="IsolatesByClustering"
                   displayName="Isolates Clustering"
                   shortDisplayName="Isolates Clustering"
-                  includeProjects="ApiDB,PlasmoDB"
+                  includeProjects="EuPathDB,PlasmoDB"
                   queryRef="IsolateIds.DontCare"
                   recordClassRef="IsolateRecordClasses.IsolateRecordClass"> 
         <summary includeProjects="PlasmoDB"> 

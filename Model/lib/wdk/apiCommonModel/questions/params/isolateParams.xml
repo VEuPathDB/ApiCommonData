@@ -6,12 +6,12 @@
 
   -->
 
-  <paramSet name="isolateParams" includeProjects="CryptoDB,PlasmoDB,ToxoDB, ApiDB">
+  <paramSet name="isolateParams" includeProjects="CryptoDB,PlasmoDB,ToxoDB, EuPathDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <datasetParam name="isolate_id" prompt="Isolate ID" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
+        <datasetParam name="isolate_id" prompt="Isolate ID" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
             <help>Input a comma delimited set of  Isolate IDs, or upload a file. Wildcards (*) are allowed.</help>
             <suggest includeProjects="CryptoDB"
                      sample="AF527841, DQ1145002, DQ115*"
@@ -22,7 +22,7 @@
             <suggest includeProjects="ToxoDB"
                      sample="EF394331, EF639858"
                      default="EF394331, EF639858"/>
-           <suggest includeProjects="ApiDB" 
+           <suggest includeProjects="EuPathDB" 
                      sample="AF527841, DQ1145002, DQ115*"
                      default="AF527841"/>
          </datasetParam>
@@ -31,88 +31,88 @@
 
         <stringParam name="gene_id" prompt="Gene Name">
             <help>Enter an Gene Name.  Wildcards (*) are allowed.</help>
-            <suggest includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB"
+            <suggest includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB"
                      sample="cgd5_3160, cgd5_31*, *"
                      default="cgd5_3160"/>
         </stringParam>
 
         <stringParam name="author" prompt="Author/Submitter">
             <help>Enter an Author name.  Wildcards (*) are allowed.</help> 
-            <suggest includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB" sample="Xiao" default="Xiao"/> 
+            <suggest includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB" sample="Xiao" default="Xiao"/> 
         </stringParam>
 
-        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,PlasmoDB,EuPathDB"
              queryRef="organismIQ.withIsolates"
             prompt="Organism"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="specific_host" includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB"
+        <flatVocabParam name="specific_host" includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB"
              queryRef="hostVQ.withIsolates"
              default="Mammals - human"
              prompt="Host"
              multiPick="true"
              quote="false"
              displayType="treeBox">
-             <useTermOnly value="true" includeProjects="ApiDB"/>
+             <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+        <flatVocabParam name="isolation_source" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
              queryRef="isolationSourceVQ.withIsolates"
              prompt="Isolation Source"
              multiPick="true"
              quote="false">
-             <useTermOnly value="true" includeProjects="ApiDB"/>
+             <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="product" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+        <flatVocabParam name="product" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             queryRef="productVQ.withIsolates"
             prompt="Product Name"
             multiPick="true"
             quote="false"
             displayType="treeBox">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="genotype" includeProjects="ToxoDB,ApiDB"
+        <flatVocabParam name="genotype" includeProjects="ToxoDB,EuPathDB"
             queryRef="genotypeVQ.withIsolates"
             prompt="Genotype #"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="study" includeProjects="CryptoDB,PlasmoDB,ApiDB,ToxoDB"
+        <flatVocabParam name="study" includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB"
             queryRef="studyVQ.withIsolates"
             prompt="Study Name"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+        <flatVocabParam name="country" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             queryRef="countryVQ.withIsolates"
             prompt="Geographic Locations"
             default="Unknown"
             multiPick="true"
             quote="false"
             displayType="treeBox">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
             <suggest selectMode="all" />
         </flatVocabParam>
 
-        <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,ApiDB"
+        <flatVocabParam name="continent" includeProjects="CryptoDB,PlasmoDB,EuPathDB"
             queryRef="continentVQ.withIsolates"
             prompt="Continent Name"
             default="--None--"
             multiPick="true"
             quote="false">
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam> 
 
-        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB"
+        <flatVocabParam name="strain" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
             queryRef="strainVQ.withIsolates"
             prompt="Species/Strain Name"
             multiPick="true"
@@ -121,11 +121,11 @@
                   <help>
                          Species Name (and strain if appropriate)
                         </help>
-            <useTermOnly value="true" includeProjects="ApiDB"/>
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
             <suggest selectMode="all" />
        </flatVocabParam>
 
-       <flatVocabParam name="type" includeProjects="PlasmoDB,ToxoDB,ApiDB"
+       <flatVocabParam name="type" includeProjects="PlasmoDB,ToxoDB,EuPathDB"
             queryRef="typeVQ.withIsolates"
             prompt="Isolate assay type"
             multiPick="true"
@@ -133,11 +133,11 @@
         <help>
           Choose the isolate type you want to query
             </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/> 
+        <useTermOnly value="true" includeProjects="EuPathDB"/> 
         <suggest selectMode="all" />
        </flatVocabParam>
 
-       <flatVocabParam name="snp_assay_type" includeProjects="PlasmoDB,ApiDB"
+       <flatVocabParam name="snp_assay_type" includeProjects="PlasmoDB,EuPathDB"
             queryRef="typeVQ.snps_only"
             prompt="Isolate assay type"
             multiPick="true"
@@ -145,10 +145,10 @@
         <help>
           Choose the isolate type you want to query
             </help>
-        <useTermOnly value="true" includeProjects="ApiDB"/> 
+        <useTermOnly value="true" includeProjects="EuPathDB"/> 
        </flatVocabParam>
 
-       <flatVocabParam name="submitter" includeProjects="PlasmoDB,ApiDB"
+       <flatVocabParam name="submitter" includeProjects="PlasmoDB,EuPathDB"
             queryRef="submitterVQ.withIsolates"
             prompt="Submitter"
             multiPick="true"
@@ -156,7 +156,7 @@
                         <help>
                           Search isolates by submitter name.
                         </help>
-            <useTermOnly value="true" includeProjects="ApiDB"/> 
+            <useTermOnly value="true" includeProjects="EuPathDB"/> 
        </flatVocabParam>
 
        <enumParam name="text_fields"
@@ -165,7 +165,7 @@
          <help>
              Choose which text fields to search.
          </help>
-         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <useTermOnly value="true" includeProjects="EuPathDB"/>
          <enumList>
            <enumValue>
              <term>Organism</term>
@@ -230,7 +230,7 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
@@ -271,7 +271,7 @@
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="100" wsName="internal"/>
       <wsColumn name="term" width="100" wsName="term"/>
     </processQuery>
@@ -294,7 +294,7 @@ order by term asc
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
@@ -320,7 +320,7 @@ select 'others' as display, 'others' as term, 'others' as internal, '' as parent
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="100" wsName="internal"/>
       <wsColumn name="term" width="100" wsName="term"/>
     </processQuery>
@@ -344,7 +344,7 @@ order by v.prediction_number
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="100" wsName="internal"/>
       <wsColumn name="term" width="100" wsName="term"/>
     </processQuery>
@@ -367,7 +367,7 @@ order by v.prediction_number
     </sql>
     </sqlQuery>
 
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
@@ -398,7 +398,7 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
     </sqlQuery>
 
  
-    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
@@ -424,7 +424,7 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
      </sql> 
   </sqlQuery>
 
-  <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"> 
+  <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"> 
       <wsColumn name="internal" width="200" wsName="internal"/> 
       <wsColumn name="term" width="200" wsName="term"/> 
   </processQuery> 
@@ -445,12 +445,12 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       </sql>
     </sqlQuery>
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
 
-    <sqlQuery name="snps_only" includeProjects="CryptoDB,PlasmoDB,ApiDB">
+    <sqlQuery name="snps_only" includeProjects="CryptoDB,PlasmoDB,EuPathDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -537,7 +537,7 @@ select 'unclassified Toxoplasma' as term, 'Unknown' as internal, '' as parentTer
     </sqlQuery>
 -->
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>
@@ -559,7 +559,7 @@ select 'unclassified Toxoplasma' as term, 'Unknown' as internal, '' as parentTer
       </sql>
     </sqlQuery>
 
- <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+ <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="200" wsName="internal"/>
       <wsColumn name="term" width="200" wsName="term"/>
     </processQuery>

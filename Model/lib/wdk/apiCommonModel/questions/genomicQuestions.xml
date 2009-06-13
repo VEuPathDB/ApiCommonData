@@ -12,7 +12,7 @@
       shortDisplayName="Gen Seq IDs"
       queryRef="SequenceIds.SequenceBySourceId"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass"
-      noSummaryOnSingleRecord="true" excludeProjects="ApiDB">
+      noSummaryOnSingleRecord="true" excludeProjects="EuPathDB">
          
       <attributesList 
         summary="formatted_organism"
@@ -46,7 +46,7 @@
       shortDisplayName="ID"
       queryRef="SequenceIds.SequenceBySourceId"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass"
-      noSummaryOnSingleRecord="false" includeProjects="ApiDB">
+      noSummaryOnSingleRecord="false" includeProjects="EuPathDB">
          
       <attributesList 
         summary="formatted_organism,formatted_length,chromosome"
@@ -77,11 +77,11 @@
       queryRef="SequenceIds.SequencesByTaxon"
       recordClassRef="SequenceRecordClasses.SequenceRecordClass">
       
-      <attributesList excludeProjects="ApiDB" 
+      <attributesList excludeProjects="EuPathDB" 
         summary="formatted_organism,formatted_length,chromosome"
         sorting="formatted_length desc"
       />
-       <attributesList includeProjects="ApiDB" 
+       <attributesList includeProjects="EuPathDB" 
         summary="formatted_organism,formatted_length,chromosome"
         sorting="organism asc,formatted_length desc"
       />
@@ -93,7 +93,7 @@
       <description includeProjects="CryptoDB,GiardiaDB,TrichDB">
         Find genomic sequences (contigs) for one or more species.
       </description>
-      <description includeProjects="PlasmoDB,ToxoDB,ApiDB,TriTrypDB">
+      <description includeProjects="PlasmoDB,ToxoDB,EuPathDB,TriTrypDB">
         Find genomic sequences (chromosomes or contigs) for one or more species.
       </description>
     </question>
@@ -152,14 +152,14 @@
   <!--===========================================================================-->
   <!--===========================================================================-->
 
-  <questionSet name="SequenceDumpQuestions" excludeProjects="ApiDB"
+  <questionSet name="SequenceDumpQuestions" excludeProjects="EuPathDB"
              displayName="Genomic Sequence Data Dump Questions"
              internal="true">
 
   <!--===========================================================================-->
   <!-- question that retrieves all genes by organism  -->
   <!--===========================================================================-->
-    <question name="SequenceDumpQuestion" excludeProjects="ApiDB"
+    <question name="SequenceDumpQuestion" excludeProjects="EuPathDB"
          displayName="Find Sequences to dump"
               shortDisplayName="Seq. to dump"
               queryRef="SequenceIds.SequenceDumpQuery"

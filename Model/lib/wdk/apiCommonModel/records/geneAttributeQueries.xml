@@ -213,17 +213,17 @@
             <column name="winz_max_timing" includeProjects="PlasmoDB"/>
             <column name="winz_max_pct" includeProjects="PlasmoDB"/>
 
-            <column name="type3_type1_fold_change"  includeProjects="ToxoDB,ApiDB"/>
-            <column name="type3_type2_fold_change"  includeProjects="ToxoDB,ApiDB"/>
-            <column name="type2_type1_fold_change"   includeProjects="ToxoDB,ApiDB"/>
+            <column name="type3_type1_fold_change"  includeProjects="ToxoDB,EuPathDB"/>
+            <column name="type3_type2_fold_change"  includeProjects="ToxoDB,EuPathDB"/>
+            <column name="type2_type1_fold_change"   includeProjects="ToxoDB,EuPathDB"/>
 
             <column name="formatted_gene_id"  
-                    sortingColumn="gene_id" includeProjects="ToxoDB,ApiDB"/>
-            <column name="gene_id" includeProjects="ToxoDB,ApiDB"/>
+                    sortingColumn="gene_id" includeProjects="ToxoDB,EuPathDB"/>
+            <column name="gene_id" includeProjects="ToxoDB,EuPathDB"/>
 
             <column name="is_deprecated"  includeProjects="GiardiaDB"/>
 
-             <sqlParamValue name="toxo_expression" includeProjects="ToxoDB,ApiDB">
+             <sqlParamValue name="toxo_expression" includeProjects="ToxoDB,EuPathDB">
                 <![CDATA[
                    bfmv.type3_type1_fold_change, bfmv.type3_type2_fold_change, 
                    bfmv.type2_type1_fold_change, gene_id,
@@ -231,7 +231,7 @@
                         ELSE to_char(bfmv.gene_id) END as formatted_gene_id,
                 ]]>
             </sqlParamValue>
-            <sqlParamValue name="toxo_expression" excludeProjects="ToxoDB,ApiDB">
+            <sqlParamValue name="toxo_expression" excludeProjects="ToxoDB,EuPathDB">
                 <![CDATA[
                 ]]>
             </sqlParamValue>
@@ -245,7 +245,7 @@
                 <![CDATA[
                 ]]>
             </sqlParamValue>
-            <sqlParamValue name="cyc_db" includeProjects="PlasmoDB,ApiDB">
+            <sqlParamValue name="cyc_db" includeProjects="PlasmoDB,EuPathDB">
                 <![CDATA[
                    DECODE(bfmv.organism,
                           'Plasmodium falciparum 3D7', 'PLASMO', null)
@@ -386,7 +386,7 @@
             FROM apidb.GeneAttributes bfmv
             ]]>
             </sql>
-            <sql includeProjects="ApiDB">
+            <sql includeProjects="EuPathDB">
             <![CDATA[
             SELECT bfmv.source_id, bfmv.gene_type, bfmv.product, bfmv.project_id,
                    start_min, end_max,
@@ -507,7 +507,7 @@
 
 
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" excludeProjects="ApiDB">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" excludeProjects="EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
@@ -524,7 +524,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" includeProjects="ApiDB">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" includeProjects="EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
@@ -597,7 +597,7 @@
             </sql>
         </sqlQuery>
 -->
-        <sqlQuery name="TranscriptSequence"  excludeProjects="ApiDB" 
+        <sqlQuery name="TranscriptSequence"  excludeProjects="EuPathDB" 
                        displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -612,7 +612,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="TranscriptSequence"  includeProjects="ApiDB">
+        <sqlQuery name="TranscriptSequence"  includeProjects="EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="transcript_sequence"/>
@@ -663,7 +663,7 @@
 -->
 
 
-        <sqlQuery name="CDS" excludeProjects="ApiDB" 
+        <sqlQuery name="CDS" excludeProjects="EuPathDB" 
                        displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
@@ -685,7 +685,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="CDS"  includeProjects="ApiDB">
+        <sqlQuery name="CDS"  includeProjects="EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="cds"/>

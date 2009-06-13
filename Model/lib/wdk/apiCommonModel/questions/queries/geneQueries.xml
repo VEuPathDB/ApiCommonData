@@ -166,7 +166,7 @@
        </sql>
     </sqlQuery>
 
-  <processQuery name="GenesByChIPchip" includeProjects="ApiDB"
+  <processQuery name="GenesByChIPchip" includeProjects="EuPathDB"
              isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.chip_strain"  quote="false"/>
@@ -191,7 +191,7 @@
   <!-- Locus Tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneByLocusTag"  doNotTest="true" excludeProjects="ApiDB"
+    <sqlQuery name="GeneByLocusTag"  doNotTest="true" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="sharedParams.ds_gene_ids"/>
         <column name="source_id"/>
@@ -241,7 +241,7 @@
 
     </sqlQuery>
 
-    <processQuery name="GeneByLocusTag" includeProjects="ApiDB"
+    <processQuery name="GeneByLocusTag" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids" quote="false"/>
         <paramRef ref="sharedParams.signature"  quote="false"/>
@@ -254,7 +254,7 @@
   <!-- Single locus tag  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="ApiDB"
+    <sqlQuery name="GeneBySingleLocusTag" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="geneParams.single_gene_id"/>
         <column name="source_id"/>
@@ -301,7 +301,7 @@
 
     </sqlQuery>
 
-    <processQuery name="GeneBySingleLocusTag" includeProjects="ApiDB"
+    <processQuery name="GeneBySingleLocusTag" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.single_gene_id" quote="false"/>
         <wsColumn name="source_id" width="50" wsName="source_id"/>
@@ -313,7 +313,7 @@
   <!-- EC number -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByEcNumber" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByEcNumber" excludeProjects="EuPathDB"
                isCacheable="true">
         <paramRef ref="geneParams.ec_number_pattern"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
@@ -337,7 +337,7 @@
     </sqlQuery>
 
     <processQuery name="GenesByEcNumber" 
-             isCacheable='true' includeProjects="ApiDB"
+             isCacheable='true' includeProjects="EuPathDB"
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withEC"/>
         <paramRef ref="geneParams.ec_number_pattern" quote="false"/>
@@ -348,7 +348,7 @@
   <!-- Transmembrane domains -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByTransmembraneDomains" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByTransmembraneDomains" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="geneParams.min_tm"/>
         <paramRef ref="geneParams.max_tm"/>
@@ -368,7 +368,7 @@
         </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByTransmembraneDomains" includeProjects="ApiDB"
+    <processQuery name="GenesByTransmembraneDomains" includeProjects="EuPathDB"
              isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -401,7 +401,7 @@
   <!-- Gene type -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByGeneType" excludeProjects="ApiDB" 
+    <sqlQuery name="GenesByGeneType" excludeProjects="EuPathDB" 
               isCacheable="true">
         <paramRef ref="geneParams.geneType"/>
         <paramRef ref="geneParams.includePseudogenes"/>
@@ -424,7 +424,7 @@
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByGeneType" includeProjects="ApiDB"
+    <processQuery name="GenesByGeneType" includeProjects="EuPathDB"
          isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
        <paramRef ref="geneParams.includePseudogenes"/>
@@ -481,7 +481,7 @@
 
 <!--
                      
-    <processQuery name="GenesBySimilarity" includeProjects="ApiDB" 
+    <processQuery name="GenesBySimilarity" includeProjects="EuPathDB" 
           processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.BlastDatabaseType"/>
        <paramRef ref="geneSimilarityParams.BlastDatabaseOrganism"/>
@@ -504,7 +504,7 @@
   <!-- Motif search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByMotifSearch" excludeProjects="ApiDB"  
+    <processQuery name="GenesByMotifSearch" excludeProjects="EuPathDB"  
              processName="org.apidb.apicomplexa.wsfplugin.motifsearch.MotifSearchPlugin">
        <paramRef ref="sharedParams.motif_expression" quote="false"/>
        <paramRef ref="geneSimilarityParams.motif_organism" quote="false" />
@@ -515,7 +515,7 @@
        <wsColumn name="Sequence" width="3999"/>
     </processQuery>
 
-    <processQuery name="GenesByMotifSearch" includeProjects="ApiDB"  
+    <processQuery name="GenesByMotifSearch" includeProjects="EuPathDB"  
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneSimilarityParams.motif_organism" quote="false" />
        <paramRef ref="sharedParams.motif_expression" quote="false"/>
@@ -530,7 +530,7 @@
   <!-- old Text Search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByTextSearch" excludeProjects="ApiDB,CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB"
+    <processQuery name="GenesByTextSearch" excludeProjects="EuPathDB,CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="sharedParams.text_expression"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
@@ -542,7 +542,7 @@
        <wsColumn name="text_fields" width="64" wsName="Datasets"/>
     </processQuery>
 
-    <processQuery name="GenesByTextSearch" includeProjects="ApiDB"
+    <processQuery name="GenesByTextSearch" includeProjects="EuPathDB"
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.text_search_organism"/>
             <paramRef ref="geneParams.text_fields" quote="false"/>
@@ -577,7 +577,7 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="ApiDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
+    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="EuPathDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.gene_result"/>
         <paramRef ref="organismParams.organism" 
@@ -588,7 +588,7 @@
                   includeProjects="ToxoDB"
                   default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
                   allowEmpty="true"/>
-        <paramRef ref="organismParams.localorganism" includeProjects="ApiDB"/>
+        <paramRef ref="organismParams.localorganism" includeProjects="EuPathDB"/>
         <column name="source_id" />
         <column name="project_id" />
         <column name="orthologs"/>
@@ -631,7 +631,7 @@
            ]]>
        </sql>
 
-       <sql includeProjects="ApiDB">
+       <sql includeProjects="EuPathDB">
             <![CDATA[
 SELECT DISTINCT subq.source_id, subq.project_id,
        apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
@@ -684,7 +684,7 @@ group by gb.source_id
   <!-- Go Term -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByGoTerm" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesByGoTerm" excludeProjects="EuPathDB" isCacheable="true">
         <paramRef ref="geneParams.go_term"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
@@ -716,7 +716,7 @@ group by gb.source_id
     </sqlQuery>
 
 
-	<processQuery name="GenesByGoTerm" includeProjects="ApiDB" 
+	<processQuery name="GenesByGoTerm" includeProjects="EuPathDB" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	              <paramRef ref="geneParams.go_term" quote="false"/>
@@ -728,7 +728,7 @@ group by gb.source_id
   <!-- Signal Peptide -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesWithSignalPeptide" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesWithSignalPeptide" excludeProjects="EuPathDB" isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.min_sigp_d_score" groupRef="paramGroups.advancedParams"/>
@@ -764,7 +764,7 @@ group by gb.source_id
        </sql>
     </sqlQuery>
 
-	<processQuery name="GenesWithSignalPeptide" includeProjects="ApiDB"
+	<processQuery name="GenesWithSignalPeptide" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
             <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	    <paramRef ref="geneParams.min_sigp_sum_score" groupRef="paramGroups.advancedParams"/>
@@ -783,7 +783,7 @@ group by gb.source_id
   <!-- IsoElectric Point -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByIsoelectricPoint" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByIsoelectricPoint" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.min_isoelectric_point"/>
@@ -810,7 +810,7 @@ group by gb.source_id
     </sqlQuery>
 
 	<processQuery name="GenesByIsoelectricPoint"
-                   includeProjects="ApiDB"
+                   includeProjects="EuPathDB"
                    isCacheable="true" 
                    processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg" quote="false"/>	  
@@ -825,7 +825,7 @@ group by gb.source_id
   <!-- Molecular Weight -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByMolecularWeight" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByMolecularWeight" excludeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="geneParams.min_molecular_weight"/>
         <paramRef ref="geneParams.max_molecular_weight"/>
@@ -851,7 +851,7 @@ group by gb.source_id
     </sqlQuery>
 
 
-	<processQuery name="GenesByMolecularWeight" includeProjects="ApiDB"
+	<processQuery name="GenesByMolecularWeight" includeProjects="EuPathDB"
 		isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -865,7 +865,7 @@ group by gb.source_id
   <!-- ExonCount -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByExonCount" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesByExonCount" excludeProjects="EuPathDB" isCacheable="true">
         <paramRef ref="geneParams.num_exons_gte"/>
         <paramRef ref="geneParams.num_exons_lte"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
@@ -884,7 +884,7 @@ group by gb.source_id
     </sqlQuery>
 
     <processQuery name="GenesByExonCount" 
-	   includeProjects="ApiDB"
+	   includeProjects="EuPathDB"
        isCacheable='true' 
        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
@@ -965,7 +965,7 @@ group by gb.source_id
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByOrthologPattern" includeProjects="ApiDB"
+    <processQuery name="GenesByOrthologPattern" includeProjects="EuPathDB"
              isCacheable='true'
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                     <paramRef ref="geneParams.profile_pattern" quote="false"/>
@@ -1031,7 +1031,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </sql>
     </sqlQuery>
 
-	<processQuery name="GenesByMetabolicPathway" includeProjects="ApiDB"
+	<processQuery name="GenesByMetabolicPathway" includeProjects="EuPathDB"
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
 	        <paramRef ref="geneParams.metabolic_pathway" quote="false"/>
@@ -1045,7 +1045,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Taxon (Species) -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByTaxon" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesByTaxon" excludeProjects="EuPathDB" isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -1064,7 +1064,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByTaxon" includeProjects="ApiDB"
+    <processQuery name="GenesByTaxon" includeProjects="EuPathDB"
            processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
@@ -1122,7 +1122,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </sql>
     </sqlQuery>   
 
-    <processQuery name="GenesWithEpitopes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesWithEpitopes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
            isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="geneParams.epitope_confidence" quote="false"/>
@@ -1137,7 +1137,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 <!-- TODO: add Mass spec query for Trypdb -->
-    <sqlQuery name="GenesByMassSpec" excludeProjects="ApiDB,TrichDB" 
+    <sqlQuery name="GenesByMassSpec" excludeProjects="EuPathDB,TrichDB" 
             isCacheable='true'>
 
         <testParamValues includeProjects="PlasmoDB">
@@ -1205,7 +1205,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     </sqlQuery>   
 
-    <processQuery name="GenesByMassSpec" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesByMassSpec" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
             isCacheable='true'>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg-pb"/>
         <paramRef ref="geneParams.ms_assay" quote="false"/>
@@ -1257,7 +1257,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery> 
 
-    <processQuery name="GenesByMassSpecPf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesByMassSpecPf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
             isCacheable='true'>
         <paramRef ref="geneParams.mass_spec_stage_sample_pf" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
@@ -1271,7 +1271,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 <!--
 
-    <processQuery name="GenesByMassSpec2" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesByMassSpec2" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
             isCacheable='true'>
         <paramRef ref="geneParams.mass_spec_stage"/>
         <paramRef ref="sharedParams.min_seq_coverage"/>
@@ -1397,7 +1397,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     
     </sqlQuery>   
 
-    <processQuery name="GenesByMassSpec4" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesByMassSpec4" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
             isCacheable='true'>
         <paramRef ref="geneParams.ms_assay_4" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
@@ -1413,7 +1413,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- GenesOrthologousToAGivenGene   COULD HAVE SQL ERRORS FOR APIDB -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB,ApiDB"
+    <sqlQuery name="GenesOrthologousToAGivenGene" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB,EuPathDB"
               isCacheable="true">
 
         <testParamValues includeProjects="PlasmoDB">
@@ -1425,8 +1425,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </testParamValues>
 
 
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" excludeProjects="ApiDB"/>
- <paramRef ref="organismParams.localorganism"  includeProjects="ApiDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" excludeProjects="EuPathDB"/>
+ <paramRef ref="organismParams.localorganism"  includeProjects="EuPathDB"/>
         <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
         <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="TGME49_053730" />
         <column name="project_id"/>
@@ -1508,7 +1508,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 ORDER BY gf2.source_id
            ]]>
        </sql>
-<sql includeProjects="ApiDB">
+<sql includeProjects="EuPathDB">
 
 <![CDATA[
                 SELECT DISTINCT snas2.source_id, ext.name as project_id 
@@ -1564,7 +1564,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByLocation" excludeProjects="ApiDB"
+    <sqlQuery name="GenesByLocation" excludeProjects="EuPathDB"
               isCacheable="true">
 
         <testParamValues includeProjects="PlasmoDB">
@@ -1648,7 +1648,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-	<processQuery name="GenesByLocation" includeProjects="ApiDB" 
+	<processQuery name="GenesByLocation" includeProjects="EuPathDB" 
                     isCacheable='true'
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                        <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes"/>-->
@@ -1726,7 +1726,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB"
+    <processQuery name="GenesBySnps" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
               isCacheable="true">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
         <paramRef ref="sharedParams.snp_strain_a" quote="false"/>
@@ -1792,7 +1792,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 
 	<processQuery name="GenesBySecondaryStructure"
-	    includeProjects="ApiDB"        
+	    includeProjects="EuPathDB"        
 		isCacheable="true" 
 		processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                 <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoTrichGiardiaGenes"/>
@@ -1814,7 +1814,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Interpro -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByInterproDomain" excludeProjects="ApiDB"  
+    <sqlQuery name="GenesByInterproDomain" excludeProjects="EuPathDB"  
 			isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
@@ -1854,7 +1854,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-	 <processQuery name="GenesByInterproDomain" includeProjects="ApiDB"
+	 <processQuery name="GenesByInterproDomain" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
                       <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
 	              <paramRef ref="geneParams.domain_database" quote="false"/>
@@ -1904,9 +1904,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>
 
-	 <processQuery name="GenesBySageTag" includeProjects="ApiDB"
+	 <processQuery name="GenesBySageTag" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="ApiDB"/> 
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="EuPathDB"/> 
                 <paramRef ref="geneParams.sage_tag_library" quote="false"/>
                 <paramRef ref="geneParams.st_max_five_prime_distance"/>
                 <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -1982,7 +1982,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 
 
-    <processQuery name="GenesBySageTagRStat" includeProjects="ApiDB"
+    <processQuery name="GenesBySageTagRStat" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl"/> 
@@ -2003,7 +2003,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- ESTOverlap -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByESTOverlap" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="GenesByESTOverlap" excludeProjects="EuPathDB" isCacheable="true">
 
         <testParamValues includeProjects="ToxoDB">
            <paramValue name="libraryIdGenes">TgME49 3 day invitro bradyzoite</paramValue>
@@ -2065,7 +2065,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     </sqlQuery>
 
 
-    <processQuery name="GenesByESTOverlap" includeProjects="ApiDB"
+    <processQuery name="GenesByESTOverlap" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
            <paramRef ref="organismParams.organism" queryRef="organismVQ.withESTsAndGenes"/>
 	       <paramRef ref="sharedParams.libraryIdGenes"/>
@@ -2096,7 +2096,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </sql>
     </sqlQuery>
     
-    <sqlQuery name="DontCarePlasmoExpression" doNotTest="true" includeProjects="ApiDB,PlasmoDB" isCacheable="true">
+    <sqlQuery name="DontCarePlasmoExpression" doNotTest="true" includeProjects="EuPathDB,PlasmoDB" isCacheable="true">
         <paramRef ref="geneParams.extraerythrocytic_stages"/>
         <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
@@ -2115,7 +2115,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Query that retrieves all genes by organism -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GeneDumpQuery" isCacheable="true" excludeProjects="ApiDB">
+    <sqlQuery name="GeneDumpQuery" isCacheable="true" excludeProjects="EuPathDB">
         <paramRef ref="organismParams.gff_organism" queryRef="organismVQ.withGenesGFF"/>
         <column name="project_id"/>
         <column name="source_id"/>
@@ -2222,7 +2222,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-   <processQuery name="GenesByProteinProteinInteraction" includeProjects="ApiDB"
+   <processQuery name="GenesByProteinProteinInteraction" includeProjects="EuPathDB"
                         isCacheable="true" 
                         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"> 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
@@ -2307,7 +2307,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByExpressionTiming" includeProjects="ApiDB"
+    <processQuery name="GenesByExpressionTiming" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.minOrMax" quote="false"/>
         <paramRef ref="geneParams.maxExprHour"/>
@@ -2358,7 +2358,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
       </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByVivaxExpressionTiming" includeProjects="ApiDB"
+    <processQuery name="GenesByVivaxExpressionTiming" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.minOrMax" quote="false"/>
         <paramRef ref="geneParams.exprHourVivax"/>
@@ -2394,7 +2394,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <wsColumn name="query_source_id" wsName="QueryGeneId" width="50"/>
     </processQuery>
 
-    <processQuery name="GenesByProfileSimilarity" includeProjects="ApiDB"  
+    <processQuery name="GenesByProfileSimilarity" includeProjects="EuPathDB"  
              processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
        <paramRef ref="geneParams.ProfileGeneId"/>
@@ -2480,7 +2480,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByPhyleticProfile" includeProjects="ApiDB"
+    <processQuery name="GenesByPhyleticProfile" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids" default="PY03942" quote="false"/>
  <paramRef ref="sharedParams.signature"  quote="false"/>
@@ -2551,7 +2551,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>
 
-    <processQuery name="GenesByFunctionalInteraction" includeProjects="ApiDB"
+    <processQuery name="GenesByFunctionalInteraction" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids" default="PF11_0344" quote="false"/>
 <paramRef ref="sharedParams.signature"  quote="false"/>
@@ -2598,7 +2598,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByDifferentialExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByDifferentialExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.exprnsample" quote="false"/>
        <paramRef ref="geneParams.confidence"/>
@@ -2651,7 +2651,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="ApiDB"
+    <processQuery name="GenesByDifferentialExpressionChooseComparisons" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.lineages_a" quote="false"/>
        <paramRef ref="geneParams.lineages_b" quote="false"/>
@@ -2698,7 +2698,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>  
 
-    <processQuery name="GiardiaGenesByDifferentialExpression" includeProjects="ApiDB"
+    <processQuery name="GiardiaGenesByDifferentialExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.gl_exprnsample"  quote="false"/>
        <paramRef ref="geneParams.confidence"/>
@@ -2739,7 +2739,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>  
 
-    <processQuery name="ToxoGenesByExpressionPercentile" includeProjects="ApiDB"  
+    <processQuery name="ToxoGenesByExpressionPercentile" includeProjects="EuPathDB"  
         displayName="By Expression Percentile" 
         isCacheable='true' 
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">      
@@ -2780,7 +2780,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByIntraerythrocyticExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByIntraerythrocyticExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.synchronization"  quote="false"/>
         <paramRef ref="geneParams.intraerythrocytic_stages" quote="false"/>
@@ -2820,7 +2820,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByExtraerythrocyticExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByExtraerythrocyticExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.extraerythrocytic_stages"  quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile"/>
@@ -2860,7 +2860,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.min_expression_percentile"/>
         <paramRef ref="geneParams.max_expression_percentile"/>
@@ -2924,7 +2924,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>    
 
-    <processQuery name="GenesByDifferentialMeanExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByDifferentialMeanExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.diffMeanExpr_reference" quote="false"/>
        <paramRef ref="geneParams.diffMeanExpr_comparitor" quote="false"/>
@@ -2973,7 +2973,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           </sql>
     </sqlQuery>    
 
-    <processQuery name="GenesByExpressionPercentileA" includeProjects="ApiDB"
+    <processQuery name="GenesByExpressionPercentileA" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.cowmanSample" quote="false"/>
        <paramRef ref="geneParams.percentile"/>
@@ -3010,7 +3010,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByDailyCorrelation" includeProjects="ApiDB"
+    <processQuery name="GenesByDailyCorrelation" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.fold_change"/>
        <paramRef ref="geneParams.regulated_dir" quote="false"/>
@@ -3046,7 +3046,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByKappeFoldChange" includeProjects="ApiDB"
+    <processQuery name="GenesByKappeFoldChange" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
          <paramRef ref="geneParams.kappeAnalysis" quote="false"/>
          <paramRef ref="geneParams.fold_change"/>
@@ -3108,7 +3108,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByWatersDifferentialExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByWatersDifferentialExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="geneParams.confidence"/>
        <paramRef ref="geneParams.fold_change"/>
@@ -3200,7 +3200,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="BergheiGenesByExpressionPercentile" includeProjects="ApiDB"
+    <processQuery name="BergheiGenesByExpressionPercentile" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.waters_profilesets" quote="false"/>
         <paramRef ref="geneParams.r_min_expression_percentile"/>
@@ -3234,7 +3234,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesBySubcellularLocalization" includeProjects="ApiDB"
+    <processQuery name="GenesBySubcellularLocalization" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
  <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.localization" quote="false"/>
@@ -3301,7 +3301,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByProteomicsProfile" includeProjects="ApiDB"
+    <processQuery name="GenesByProteomicsProfile" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organismSite" default="Plasmodium berghei"  quote="false"/>
         <paramRef ref="geneParams.asexual_blood_stages_value" quote="false"/>
@@ -3345,7 +3345,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByReagents" includeProjects="ApiDB"
+    <processQuery name="GenesByReagents" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 <!--
 <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
@@ -3385,7 +3385,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByExportPrediction" includeProjects="ApiDB"
+    <processQuery name="GenesByExportPrediction" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
@@ -3419,7 +3419,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByCentromereProximity" includeProjects="ApiDB"
+    <processQuery name="GenesByCentromereProximity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.max_centromere_distance"  quote="false"/>
@@ -3455,7 +3455,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByTelomereProximity" includeProjects="ApiDB"
+    <processQuery name="GenesByTelomereProximity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.distanceFromTelomere"  quote="false"/>
@@ -3489,7 +3489,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByNonnuclearGenomicRegion" includeProjects="ApiDB"
+    <processQuery name="GenesByNonnuclearGenomicRegion" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
         <paramRef ref="geneParams.nonnuclearSequence"  quote="false"/>
@@ -3525,7 +3525,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesWithStructurePrediction" includeProjects="ApiDB"
+    <processQuery name="GenesWithStructurePrediction" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -3582,7 +3582,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByPdbSimilarity" includeProjects="ApiDB"
+    <processQuery name="GenesByPdbSimilarity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
@@ -3629,7 +3629,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByProteinDbAccession" includeProjects="ApiDB"
+    <processQuery name="GenesByProteinDbAccession" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.accession"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
@@ -3668,7 +3668,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesWithProteinLowComplexity" includeProjects="ApiDB"
+    <processQuery name="GenesWithProteinLowComplexity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.percentLowComplexity"/>
         <paramRef ref="sharedParams.chromosome"/>
@@ -3705,7 +3705,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
-    <processQuery name="GenesByGametocyteExpression" includeProjects="ApiDB"
+    <processQuery name="GenesByGametocyteExpression" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.day_and_strain" quote="false"/>
         <paramRef ref="geneParams.min_expression_percentile" default="80"/>

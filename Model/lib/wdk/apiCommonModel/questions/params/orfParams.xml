@@ -14,7 +14,7 @@
                      prompt="ORF ID input set">
             <help>Input a comma delimited set of ORF ids, or upload a file</help>
 
-<suggest includeProjects="ApiDB" 
+<suggest includeProjects="EuPathDB" 
                      sample="AAEL01000259-5-3339-3085, AAEE01000009*, Ia-6-99955-99632, Pf3D7_01-1-105160-105438"
                      default="AAEL01000259-5-3339-3085,Pf3D7_01-1-105160-105438,Ia-1-1000180-1000404,AACB02000007-6-227160-226945,DS113375-1-114214-114468"/>
 
@@ -39,7 +39,7 @@
         </datasetParam>
 
 <!--
-        <stringParam name="orf_id" includeProjects="ApiDB"
+        <stringParam name="orf_id" includeProjects="EuPathDB"
                      prompt="ORF ID">
         <help>
              Enter an ORF ID.  Wildcards (*) are allowed.
@@ -69,7 +69,7 @@
       <help>
              Organism(s) from which the sequences in the BLAST database originated
       </help>
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>
         <enumValue>
           <term>ORF</term>
@@ -81,147 +81,147 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- mass spec assay -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <enumParam name="orf_ms_assay" includeProjects="ApiDB,CryptoDB,ToxoDB,GiardiaDB"
+    <enumParam name="orf_ms_assay" includeProjects="EuPathDB,CryptoDB,ToxoDB,GiardiaDB"
              prompt="Assay Type"
              multiPick="true"
              visible="true">
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel LC-MS/MS <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec 1D Gel LC-MS/MS</term>
             <internal>Wastling MassSpec 1D Gel LC-MS/MS</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[2D Gel LC-MS/MS <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec 2D Gel LC-MS/MS</term>
             <internal>Wastling MassSpec 2D Gel LC-MS/MS</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[MudPit Soluble fractions <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec MudPit Soluble</term>
             <internal>Wastling MassSpec MudPit Soluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[MudPit Insoluble fractions <sup>1</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Wastling MassSpec MudPit Insoluble</term>
             <internal>Wastling MassSpec MudPit Insoluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Insoluble Excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Insoluble Non-excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Soluble Excysted and Non-excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</term>
             <internal>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</internal>
           </enumValue>
 
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 14Aug2006 <sup>3</sup> (C.p.)]]></display>
             <term>Fiser_Proteomics_14Aug2006_1D_gel</term>
             <internal>Fiser_Proteomics_14Aug2006_1D_gel</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 16May2006 <sup>3</sup> (C.p.)]]></display>
             <term>Fiser_Proteomics_16May2006_1D_gel</term>
             <internal>Fiser_Proteomics_16May2006_1D_gel</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 24Jun2006 <sup>3</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Fiser_Proteomics_24Jun2006_1D_gel</term>
             <internal>Fiser_Proteomics_24Jun2006_1D_gel</internal>
           </enumValue>
 
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Oocyst walls <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_Oocyst_walls</term>
             <internal>Ferrari_Proteomics_LTQ_Oocyst_walls</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Intact Oocysts <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_intact_oocysts_merged</term>
             <internal>Ferrari_Proteomics_LTQ_intact_oocysts_merged</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,CryptoDB">
+          <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Sporozoites <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_Sporozoites merged</term>
             <internal>Ferrari_Proteomics_LTQ_Sporozoites_merged</internal>
           </enumValue>
 
         
-  <enumValue includeProjects="ApiDB,GiardiaDB">
+  <enumValue includeProjects="EuPathDB,GiardiaDB">
            <display><![CDATA[DTA-Select Filter (G.l.)]]></display>
            <term>DTASelect-filter_032108_Proteomics</term>
            <internal>DTASelect-filter_032108_Proteomics</internal>
           </enumValue>
 
-  <enumValue includeProjects="ApiDB,ToxoDB">
+  <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE</term>
             <internal>Wastling 1-D SDS PAGE</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE Soluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE Soluble</term>
             <internal>Wastling 1-D SDS PAGE Soluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE Insoluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE Insoluble</term>
             <internal>Wastling 1-D SDS PAGE Insoluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[MudPIT Insoluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling MudPIT Insoluble</term>
             <internal>Wastling MudPIT Insoluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[MudPIT Soluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling MudPIT Soluble</term>
             <internal>Wastling MudPIT Soluble</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Rhoptry Fraction<sup>1*</sup> (T.g)]]></display>
             <term>Wastling Rhoptry</term>
             <internal>Wastling Rhoptry</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Conoid-enriched Fraction<sup>2</sup> (T.g)]]></display>
             <term>Murray Conoid-enriched Fraction</term>
             <internal>Murray Conoid-enriched Fraction</internal>
           </enumValue>
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Conoid-depleted Fraction<sup>2</sup> (T.g)]]></display>
             <term>Murray Conoid-depleted Fraction</term>
             <internal>Murray Conoid-depleted Fraction</internal>
           </enumValue>
 
-         <enumValue includeProjects="ApiDB,ToxoDB">
+         <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[MS RH Secretome fraction 2destinct peptides<sup>3</sup> (T.g)]]></display>
             <term>MS Carruthers 2destinct peptides</term>
             <internal>MS Carruthers 2destinct peptides</internal>
           </enumValue>
 
-         <enumValue includeProjects="ApiDB,ToxoDB">
+         <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[MS RH Secretome fraction MudPIT Twinscan hits<sup>3</sup> (T.g)]]></display>
             <term>MS Carruthers MudPIT Twinscan hits</term>
             <internal>MS Carruthers MudPIT Twinscan hits</internal>
           </enumValue>
 
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[RH Mass Spec Data (sample A)<sup>4</sup> (T.g)]]></display>
             <term>RH Mass Spec Data (sample A)</term>
             <internal>Moreno DTASelect filter sample A</internal>
           </enumValue>
 
-          <enumValue includeProjects="ApiDB,ToxoDB">
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[RH Mass Spec Data (sample G)<sup>4</sup> (T.g)]]></display>
             <term>RH Mass Spec Data (sample G)</term>
             <internal>Moreno DTASelect filter sample G</internal>

@@ -21,7 +21,7 @@
             Find SNPs by ID.
           </summary>
 	 
-	  <description excludeProjects="ApiDB">
+	  <description excludeProjects="EuPathDB">
 	        <![CDATA[ 
               Find SNPs by SNP ID. Either enter the ID list manually, or upload a file that contains the list. 
              IDs can be delimited by a comma, a semi colon, or any white spaces. 
@@ -31,19 +31,19 @@
 	  </description>
 
          <propertyList name="organism">
-             <value includeProjects="PlasmoDB,ApiDB">P. falciparum</value>
-             <value includeProjects="ToxoDB,ApiDB">T. gondii</value>
+             <value includeProjects="PlasmoDB,EuPathDB">P. falciparum</value>
+             <value includeProjects="ToxoDB,EuPathDB">T. gondii</value>
          </propertyList>
  
         <propertyList name="specificAttribution">
-           <value includeProjects="CryptoDB,ApiDB">Widmer_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
-           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
+           <value includeProjects="CryptoDB,EuPathDB">Widmer_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">ME49_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">AmitAlignmentSnps</value>
+           <value includeProjects="ToxoDB,EuPathDB">GeneticMarkers_Sibley</value>
         </propertyList>
         <propertyList name="genomeAttribution">
           <value></value>
@@ -51,7 +51,7 @@
       </question>
 
 
-      <question name="SnpBySourceId" includeProjects="ApiDB"
+      <question name="SnpBySourceId" includeProjects="EuPathDB"
                displayName="ID"
                shortDisplayName="ID"
                queryRef="SnpsBy.SnpBySourceId"
@@ -80,7 +80,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Gene ID -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-      <question name="SnpsByGeneId" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+      <question name="SnpsByGeneId" includeProjects="EuPathDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Gene"
               displayName="Gene ID"
               shortDisplayName="Gene ID"
@@ -101,7 +101,7 @@
               SNP data was provided by <a href="showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.
             ]]>
         </description>
-	<description includeProjects="ApiDB">
+	<description includeProjects="EuPathDB">
             <![CDATA[
               Find SNPs that are contained within a gene. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>.<br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.  <br>C.p. SNP data was provided by <a href="http://cryptodb.org/cryptodb/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Widmer_SNPs&title=Query#Widmer_SNPs">Giovanni Widmer</a>.
             ]]>
@@ -127,32 +127,32 @@
 	</dynamicAttributes>
 
          <propertyList name="organism">
-             <value includeProjects="PlasmoDB,ApiDB">P. falciparum</value>
-             <value includeProjects="ToxoDB,ApiDB">T. gondii</value>
-             <value includeProjects="CryptoDB,ApiDB">C. parvum</value>
+             <value includeProjects="PlasmoDB,EuPathDB">P. falciparum</value>
+             <value includeProjects="ToxoDB,EuPathDB">T. gondii</value>
+             <value includeProjects="CryptoDB,EuPathDB">C. parvum</value>
          </propertyList>
  
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
-           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
-           <value includeProjects="CryptoDB,ApiDB">Widmer_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">ME49_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">AmitAlignmentSnps</value>
+           <value includeProjects="ToxoDB,EuPathDB">GeneticMarkers_Sibley</value>
+           <value includeProjects="CryptoDB,EuPathDB">Widmer_SNPs</value>
         </propertyList>
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-          <value includeProjects="ToxoDB,ApiDB">ChromosomeMap</value>
-          <value includeProjects="ToxoDB,ApiDB">ME49_Annotation</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+          <value includeProjects="ToxoDB,EuPathDB">ChromosomeMap</value>
+          <value includeProjects="ToxoDB,EuPathDB">ME49_Annotation</value>
        </propertyList>
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Location  -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <question name="SnpsByLocation" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+    <question name="SnpsByLocation" includeProjects="EuPathDB,PlasmoDB,ToxoDB,CryptoDB"
               category="Genomic Position"
               displayName="Chromosomal Location"
               shortDisplayName="Chromo Loc"
@@ -179,7 +179,7 @@
               Find SNPs between any two strains by chromosomal location.
             ]]>
         </description>
-	<description includeProjects="ApiDB">
+	<description includeProjects="EuPathDB">
             <![CDATA[
               Find SNPs by chromosomal location. <br>P.f. SNP data was provided by <a href="http://plasmodb.org/plasmo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=Su_SNPs,Broad_SNPs,sangerItGhanaSnps,sangerReichenowiSnps&title=SNPs%20Summary">Broad, NIH and WTSI</a>. <br> T.g. SNP data was provided by <a href="http://toxodb.org/toxo/showXmlDataContent.do?name=XmlQuestions.DataSources&datasets=ME49_SNPs,AmitAlignmentSnps&title=SNPs%20Summary ">Wastling and Roos</a>.
             ]]>
@@ -199,31 +199,31 @@
 	     <columnAttribute name="phenotype" displayName="Phenotype" align="center"/>
 	</dynamicAttributes>
          <propertyList name="organism">
-             <value includeProjects="PlasmoDB,ApiDB">P. falciparum</value>
-             <value includeProjects="ToxoDB,ApiDB">T. gondii</value>
+             <value includeProjects="PlasmoDB,EuPathDB">P. falciparum</value>
+             <value includeProjects="ToxoDB,EuPathDB">T. gondii</value>
          </propertyList>
  
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">ME49_SNPs</value>
-           <value includeProjects="ToxoDB,ApiDB">AmitAlignmentSnps</value>
-           <value includeProjects="ToxoDB,ApiDB">GeneticMarkers_Sibley</value>
-           <value includeProjects="CryptoDB,ApiDB">Widmer_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">ME49_SNPs</value>
+           <value includeProjects="ToxoDB,EuPathDB">AmitAlignmentSnps</value>
+           <value includeProjects="ToxoDB,EuPathDB">GeneticMarkers_Sibley</value>
+           <value includeProjects="CryptoDB,EuPathDB">Widmer_SNPs</value>
         </propertyList>
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-          <value includeProjects="ToxoDB,ApiDB">ChromosomeMap</value>
-          <value includeProjects="ToxoDB,ApiDB">ME49_Annotation</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+          <value includeProjects="ToxoDB,EuPathDB">ChromosomeMap</value>
+          <value includeProjects="ToxoDB,EuPathDB">ME49_Annotation</value>
        </propertyList>
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Allele Frequency -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <question name="SnpsByAlleleFrequency" includeProjects="ApiDB,PlasmoDB"
+    <question name="SnpsByAlleleFrequency" includeProjects="EuPathDB,PlasmoDB"
               category="Other Attributes"
               displayName="Allele Frequency"
               shortDisplayName="Allele Freq"
@@ -251,14 +251,14 @@
         </description>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerReichenowiSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerReichenowiSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
         </propertyList>
 
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
 
     </question>
@@ -267,7 +267,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- isolate characteristics by dataset -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <question name="SnpsByIsolatePattern" includeProjects="ApiDB,PlasmoDB"
+    <question name="SnpsByIsolatePattern" includeProjects="EuPathDB,PlasmoDB"
               category="Other Attributes"
               displayName="Isolate Comparison"
               shortDisplayName="Isolate Comp"
@@ -300,13 +300,13 @@
 	</dynamicAttributes>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
         </propertyList>
 
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
 
     </question>
@@ -315,7 +315,7 @@
     <!-- isolate characteristics by history id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 <!--
-    <question name="SnpsByIsolatePatternHistory" includeProjects="ApiDB,PlasmoDB"
+    <question name="SnpsByIsolatePatternHistory" includeProjects="EuPathDB,PlasmoDB"
               category="Other Attributes"
               displayName="Isolate Comparison using History IDs"
               queryRef="SnpsBy.SnpsByIsolatePatternHistory"
@@ -345,13 +345,13 @@
 	</dynamicAttributes>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
         </propertyList>
 
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
 
     </question>
@@ -360,7 +360,7 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- that are isolates -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <question name="SnpsByIsolateType" includeProjects="ApiDB,PlasmoDB"
+    <question name="SnpsByIsolateType" includeProjects="EuPathDB,PlasmoDB"
               category="Other Attributes"
               displayName="Presence in isolate assay"
               shortDisplayName="Isolate Assy"
@@ -387,13 +387,13 @@
         </description>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
         </propertyList>
 
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
 
     </question>
@@ -433,16 +433,16 @@
          </dynamicAttributes>
 
         <propertyList name="specificAttribution">
-           <value includeProjects="PlasmoDB,ApiDB">Broad_SNPs</value>
-           <value includeProjects="PlasmoDB,ApiDB">sangerItGhanaSnps</value>
-           <value includeProjects="PlasmoDB,ApiDB">Su_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Broad_SNPs</value>
+           <value includeProjects="PlasmoDB,EuPathDB">sangerItGhanaSnps</value>
+           <value includeProjects="PlasmoDB,EuPathDB">Su_SNPs</value>
            <value>Broad_Isolate_Barcode</value>
            <value>Broad_3K_Genotyping</value>
            <value>Broad_75K_Genotyping</value>
         </propertyList>
 
         <propertyList name="genomeAttribution">
-          <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
+          <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
        </propertyList>
 
     </question>

@@ -12,7 +12,7 @@
        <!-- Gene strains summary-->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="AllResults" isCacheable="false" includeProjects="ApiDB,ToxoDB,GiardiaDB,CryptoDB,TriTrypDB,PlasmoDB">
+        <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB,ToxoDB,GiardiaDB,CryptoDB,TriTrypDB,PlasmoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -39,7 +39,7 @@
             </sql>
         </sqlQuery>
 
- <sqlQuery name="ApiGenes" isCacheable="false" includeProjects="ApiDB">
+ <sqlQuery name="ApiGenes" isCacheable="false" includeProjects="EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -55,7 +55,7 @@
         </sqlQuery>
 
 
- <sqlQuery name="ApiGiardiaGenes" isCacheable="false" includeProjects="ApiDB">
+ <sqlQuery name="ApiGiardiaGenes" isCacheable="false" includeProjects="EuPathDB">
             <paramRef ref="recordParams.deprecated_genes"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -134,7 +134,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="CryptoDistinctGenes" isCacheable="false" includeProjects="ApiDB,CryptoDB">
+        <sqlQuery name="CryptoDistinctGenes" isCacheable="false" includeProjects="EuPathDB,CryptoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -155,7 +155,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="TriTrypDistinctGenes" isCacheable="false" includeProjects="ApiDB,TriTrypDB">
+        <sqlQuery name="TriTrypDistinctGenes" isCacheable="false" includeProjects="EuPathDB,TriTrypDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -175,7 +175,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="PlasmoOrthologGroups" isCacheable="false" includeProjects="ApiDB,PlasmoDB">
+        <sqlQuery name="PlasmoOrthologGroups" isCacheable="false" includeProjects="EuPathDB,PlasmoDB">
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
             <column name="project_id"/>
@@ -196,7 +196,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="TCruziDistinctGenes" isCacheable="false" includeProjects="ApiDB,TriTrypDB">
+        <sqlQuery name="TCruziDistinctGenes" isCacheable="false" includeProjects="EuPathDB,TriTrypDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -217,7 +217,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="ToxoGenes" isCacheable="false" includeProjects="ApiDB,ToxoDB">
+        <sqlQuery name="ToxoGenes" isCacheable="false" includeProjects="EuPathDB,ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -237,7 +237,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="NeosporaGenes" isCacheable="false" includeProjects="ApiDB,ToxoDB">
+        <sqlQuery name="NeosporaGenes" isCacheable="false" includeProjects="EuPathDB,ToxoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>

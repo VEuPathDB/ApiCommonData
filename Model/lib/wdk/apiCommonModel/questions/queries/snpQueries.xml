@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <querySet name="SnpsBy" queryType="id" includeProjects="PlasmoDB,ToxoDB,ApiDB,CryptoDB">
+  <querySet name="SnpsBy" queryType="id" includeProjects="PlasmoDB,ToxoDB,EuPathDB,CryptoDB">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- ID -->
@@ -19,7 +19,7 @@
 	  </sql>
       </sqlQuery>
 
-     <processQuery name="SnpBySourceId" includeProjects="ApiDB" 
+     <processQuery name="SnpBySourceId" includeProjects="EuPathDB" 
               isCacheable="true" 
               processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
           <paramRef ref="snpParams.snp_id"/>
@@ -110,7 +110,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     </sqlQuery>
 
-    <processQuery name="SnpsByGeneId" includeProjects="ApiDB" 
+    <processQuery name="SnpsByGeneId" includeProjects="EuPathDB" 
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="sharedParams.ds_gene_ids"  default="cgd3_510" quote="false"/>
         <paramRef ref="sharedParams.snp_strain_a" default="Cp-IOWA II" quote="false"/>
@@ -345,7 +345,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <processQuery name="SnpsByLocation" includeProjects="ApiDB"
+    <processQuery name="SnpsByLocation" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" >
 
         <testParamValues includeProjects="CryptoDB">
@@ -396,7 +396,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <processQuery name="SnpsByAlleleFrequency" includeProjects="ApiDB"
+    <processQuery name="SnpsByAlleleFrequency" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
          <paramRef ref="snpParams.min_strain_count" quote="false"/>
@@ -455,7 +455,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <processQuery name="SnpsByIsolatePattern" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolatePattern" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
  <paramRef ref="sharedParams.signature" quote="false"/>
@@ -509,7 +509,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <processQuery name="SnpsByIsolatePatternHistory" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolatePatternHistory" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="sharedParams.isolateHistoryIdA"/>
@@ -542,7 +542,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
        </sql>
     </sqlQuery>
 
-    <processQuery name="SnpsByIsolateType" includeProjects="ApiDB"
+    <processQuery name="SnpsByIsolateType" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="isolateParams.type" quote="false"/>

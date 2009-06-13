@@ -44,7 +44,7 @@
           The Start and End locations correspond to the coordinates of the ORF(s) on the chromosome.
           ]]>
         </description>
-        <description includeProjects="ApiDB">
+        <description includeProjects="EuPathDB">
           <![CDATA[
           Find ORFs within a given genomic region.<br>
           Either select an organism and a genomic sequence from the
@@ -106,7 +106,7 @@
     <!-- Id -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="OrfByOrfId" excludeProjects="ApiDB" 
+    <question name="OrfByOrfId" excludeProjects="EuPathDB" 
               displayName="Orf ID(s)"
               shortDisplayName="Orf ID(s)"
               queryRef="OrfIds.OrfByOrfId" 
@@ -215,7 +215,7 @@
        </propertyList>
     </question>
 
-    <question name="OrfByOrfId" includeProjects="ApiDB" 
+    <question name="OrfByOrfId" includeProjects="EuPathDB" 
               displayName="Orfs by ID"
               shortDisplayName="ID"
               queryRef="OrfIds.OrfByOrfId" 
@@ -249,7 +249,7 @@
     <!-- Mass Spec -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <question name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,ApiDB,GiardiaDB" 
+    <question name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,EuPathDB,GiardiaDB" 
               category="Other Attributes"
               displayName="Mass Spec. Evidence"
               shortDisplayName="Mass Spec"
@@ -321,7 +321,7 @@ Subcellular proteomic analysis of <i>C. parvum</i> oocysts. Proteome analysis wa
              ]]>
              </description>
 
- <description includeProjects="ApiDB">
+ <description includeProjects="EuPathDB">
               <![CDATA[
              Find <i>Cryptosporidium</i> and <i>Toxoplasma</i> open reading frames that have evidence of expression 
              based on peptides identified by MS/MS analysis in an sporozoite excystation mixture. Some contaiminating oocyst proteins will also be in the mixture.<p>
@@ -422,18 +422,18 @@ Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mappin
 	</dynamicAttributes>
        <propertyList name="specificAttribution">
 
-           <value includeProjects="ApiDB,CryptoDB">Wastling1DGelLSMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">Wastling2DGelLSMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">WastlingMudPitSolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">WastlingMudPitInsolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolExcystedMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>           <value includeProjects="ApiDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Oocyst_walls</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_intact_oocysts_merged</value>
-           <value includeProjects="ApiDB,CryptoDB">Ferrari_Proteomics_LTQ_Sporozoites_merged</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_16May2006_1D_gel</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_24Jun2006_1D_gel</value>
-           <value includeProjects="ApiDB,CryptoDB">Fiser_Proteomics_14Aug2006_1D_gel</value>
+           <value includeProjects="EuPathDB,CryptoDB">Wastling1DGelLSMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">Wastling2DGelLSMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">WastlingMudPitSolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">WastlingMudPitInsolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSInsolExcystedMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSInsolNonExcystedMassSpec</value>           <value includeProjects="EuPathDB,CryptoDB">CryptoLoweryLCMSMSSolMassSpec</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_Oocyst_walls</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_intact_oocysts_merged</value>
+           <value includeProjects="EuPathDB,CryptoDB">Ferrari_Proteomics_LTQ_Sporozoites_merged</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_16May2006_1D_gel</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_24Jun2006_1D_gel</value>
+           <value includeProjects="EuPathDB,CryptoDB">Fiser_Proteomics_14Aug2006_1D_gel</value>
 
            <value includeProjects="ToxoDB">Wastling-Rhoptry</value>
            <value includeProjects="ToxoDB">Wastling1D_SDSPage</value>
@@ -442,10 +442,10 @@ Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mappin
            <value includeProjects="ToxoDB">Wastling-MudPIT-Soluble</value>
            <value includeProjects="ToxoDB">Wastling-MudPIT-Insoluble</value>
            <value includeProjects="GiardiaDB">DTASelect-filter_032108_Proteomics</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_Carruthers_2destinct_peptides</value>
-           <value includeProjects="ApiDB,ToxoDB">massspec_MudPIT_Twinscan_hits</value>
-           <value includeProjects="ApiDB,ToxoDB">Moreno-1-annotated</value>
-           <value includeProjects="ApiDB,ToxoDB">Moreno-1-orf_apr</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_Carruthers_2destinct_peptides</value>
+           <value includeProjects="EuPathDB,ToxoDB">massspec_MudPIT_Twinscan_hits</value>
+           <value includeProjects="EuPathDB,ToxoDB">Moreno-1-annotated</value>
+           <value includeProjects="EuPathDB,ToxoDB">Moreno-1-orf_apr</value>
            </propertyList>
     </question>
 

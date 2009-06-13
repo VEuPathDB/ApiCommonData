@@ -17,7 +17,7 @@
                      prompt="Organism"
                      multiPick="true"
                      quote="false">
-          <useTermOnly value="true" includeProjects="ApiDB"/>
+          <useTermOnly value="true" includeProjects="EuPathDB"/>
           <suggest selectMode="all" />
       </flatVocabParam>
     
@@ -26,7 +26,7 @@
                      prompt="Organism"
                      multiPick="true"
                      quote="false">
-          <useTermOnly value="true" includeProjects="ApiDB"/>
+          <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
       <flatVocabParam name="gff_organism_name"
@@ -34,7 +34,7 @@
                      prompt="Organism"
                      multiPick="true"
                      quote="false">
-          <useTermOnly value="true" includeProjects="ApiDB"/>
+          <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
       <flatVocabParam name="organism_with_sagetags"
@@ -42,8 +42,8 @@
                      prompt="Organism"
                      multiPick="true"
                      quote="false"
-                     includeProjects="PlasmoDB,ToxoDB,GiardiaDB,ApiDB">
-          <useTermOnly value="true" includeProjects="ApiDB"/>
+                     includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB">
+          <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
       <flatVocabParam name="organism_with_epitopes"
@@ -52,16 +52,16 @@
                      multiPick="true"
                      quote="false"
                      includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB">
-          <useTermOnly value="true" includeProjects="ApiDB"/>
+          <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
 
-      <flatVocabParam name="sequence_organism_text" includeProjects="ToxoDB,ApiDB"
+      <flatVocabParam name="sequence_organism_text" includeProjects="ToxoDB,EuPathDB"
                      queryRef="organismVQ.textSequenceOrganism"
                      prompt="Organism"
                      multiPick="false"
                      quote="true">
-                     <useTermOnly value="true" includeProjects="ApiDB"/>
+                     <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
 
@@ -88,39 +88,39 @@
 
     <enumParam name="organismWithChromosomes"
                      prompt="Organism"
-                     multiPick="false" includeProjects="CryptoDB,PlasmoDB,ToxoDB,ApiDB">
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+                     multiPick="false" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>   
-        <enumValue includeProjects="CryptoDB,ApiDB">
+        <enumValue includeProjects="CryptoDB,EuPathDB">
           <term>Cryptosporidium parvum</term>
           <internal>Cryptosporidium parvum%</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium falciparum</term>
           <internal>Plasmodium falciparum 3D7</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium knowlesi</term>
           <internal>Plasmodium knowlesi strain H</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium vivax</term>
           <internal>Plasmodium vivax SaI-1</internal>
         </enumValue>
 
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii ME49</term>
           <internal>Toxoplasma gondii ME49</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii GT1</term>
           <internal>Toxoplasma gondii GT1</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii VEG</term>
           <internal>Toxoplasma gondii VEG</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Neospora caninum</term>
           <internal>Neospora caninum</internal>
         </enumValue>
@@ -139,14 +139,14 @@
     <enumParam name="organismWithEstsInChromosomes"
                      prompt="Organism"
                      multiPick="false"
-                     includeProjects="PlasmoDB,ApiDB" >
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+                     includeProjects="PlasmoDB,EuPathDB" >
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>   
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium falciparum</term>
           <internal>Plasmodium falciparum 3D7</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium vivax</term>
           <internal>Plasmodium vivax SaI-1</internal>
         </enumValue>
@@ -163,50 +163,50 @@
                      prompt="Organism"
                      multiPick="true"
                      excludeProjects="TrichDB,TriTrypDB" >
-      <useTermOnly value="true" includeProjects="ApiDB"/>
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>   
-  <enumValue includeProjects="CryptoDB,ApiDB">
+  <enumValue includeProjects="CryptoDB,EuPathDB">
           <term>Cryptosporidium parvum</term>
           <internal>Cryptosporidium parvum Iowa II</internal>
         </enumValue>
-  <enumValue includeProjects="CryptoDB,ApiDB">
+  <enumValue includeProjects="CryptoDB,EuPathDB">
           <term>Cryptosporidium muris</term>
           <internal>Cryptosporidium muris</internal>
         </enumValue>
-  <enumValue includeProjects="GiardiaDB,ApiDB">
+  <enumValue includeProjects="GiardiaDB,EuPathDB">
           <term>Giardia lamblia</term>
           <internal>Giardia lamblia</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium falciparum</term>
           <internal>Plasmodium falciparum 3D7</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium vivax</term>
           <internal>Plasmodium vivax SaI-1</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium berghei</term>
           <internal>Plasmodium berghei strain ANKA</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB,ApiDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Plasmodium yoelii</term>
           <internal>Plasmodium yoelii yoelii str. 17XNL</internal>
         </enumValue>
 
- <enumValue includeProjects="ToxoDB,ApiDB">
+ <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii ME49</term>
           <internal>Toxoplasma gondii ME49</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii GT1</term>
           <internal>Toxoplasma gondii GT1</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Toxoplasma gondii VEG</term>
           <internal>Toxoplasma gondii VEG</internal>
         </enumValue>
-        <enumValue includeProjects="ToxoDB,ApiDB">
+        <enumValue includeProjects="ToxoDB,EuPathDB">
           <term>Neospora caninum</term>
           <internal>Neospora caninum</internal>
         </enumValue>
@@ -273,7 +273,7 @@
     <!-- all -->
     <!--===================================================================-->
 
-    <sqlQuery name="all" excludeProjects="ApiDB">
+    <sqlQuery name="all" excludeProjects="EuPathDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -349,7 +349,7 @@
       </sql>
     </sqlQuery>
 
-    <processQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="all" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -454,7 +454,7 @@
 
 
 
-    <processQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withChromosomes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -537,7 +537,7 @@
 
 
 
-    <processQuery name="withChromosomesESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withChromosomesESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -628,7 +628,7 @@
 
 
 
-    <processQuery name="withChromosomesAssems" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withChromosomesAssems" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -715,7 +715,7 @@
 
 
 
-    <processQuery name="withChromosomesORFs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withChromosomesORFs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -731,7 +731,7 @@
     <!--===================================================================-->
 
 
-<sqlQuery name="withChromosomesORFsValid" includeProjects="ApiDB">
+<sqlQuery name="withChromosomesORFsValid" includeProjects="EuPathDB">
       <column name="internal"/>
       <column name="term"/>
 
@@ -821,7 +821,7 @@ UNION
 
 
 
-    <processQuery name="withChromosomesSNPs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withChromosomesSNPs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -837,7 +837,7 @@ UNION
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="withGenomicSeq" excludeProjects="ApiDB">
+    <sqlQuery name="withGenomicSeq" excludeProjects="EuPathDB">
       <column name="internal"/>
       <column name="term"/>
       <sql excludeProjects="ToxoDB">
@@ -893,7 +893,7 @@ UNION
 
     </sqlQuery>
 
-    <processQuery name="withGenomicSeq" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withGenomicSeq" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -908,7 +908,7 @@ UNION
          them.
                                                                            -->
     <!--===================================================================-->
-    <sqlQuery name="withGenes" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="withGenes" excludeProjects="EuPathDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
 
@@ -959,7 +959,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withGenes" includeProjects="ApiDB"
+    <processQuery name="withGenes" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
@@ -1015,7 +1015,7 @@ UNION
     </sqlQuery>
 
 
-    <processQuery name="withSageTags" includeProjects="ApiDB"
+    <processQuery name="withSageTags" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
@@ -1115,13 +1115,13 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="textSequenceOrganism" includeProjects="ApiDB"
+    <processQuery name="textSequenceOrganism" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-    <sqlQuery name="withGenesGFF" excludeProjects="ApiDB">
+    <sqlQuery name="withGenesGFF" excludeProjects="EuPathDB">
       <column name="internal"/>
       <column name="term"/>
       <sql excludeProjects="ToxoDB,CryptoDB,TriTrypDB">
@@ -1179,7 +1179,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <sqlQuery name="nameWithGenesGFF" excludeProjects="ApiDB">
+    <sqlQuery name="nameWithGenesGFF" excludeProjects="EuPathDB">
       <column name="internal"/>
       <column name="term"/>
       <sql excludeProjects="ToxoDB,CryptoDB,TriTrypDB">
@@ -1218,13 +1218,13 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withGenesGFF" includeProjects="ApiDB"
+    <processQuery name="withGenesGFF" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
- <processQuery name="nameWithGenesGFF" includeProjects="ApiDB"
+ <processQuery name="nameWithGenesGFF" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
@@ -1234,7 +1234,7 @@ UNION
     <!-- with ESTs -->  
     <!--===================================================================-->
 
-        <sqlQuery name="withESTs" excludeProjects="ApiDB" isCacheable="true">
+        <sqlQuery name="withESTs" excludeProjects="EuPathDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
              <sql>
@@ -1264,13 +1264,13 @@ UNION
             </sql>
         </sqlQuery>
 
-<processQuery name="withESTs" includeProjects="ApiDB"
+<processQuery name="withESTs" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-        <sqlQuery name="withESTsAndGenes" excludeProjects="ApiDB" isCacheable="true">
+        <sqlQuery name="withESTsAndGenes" excludeProjects="EuPathDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
              <sql>
@@ -1312,7 +1312,7 @@ UNION
             </sql>
         </sqlQuery>
 
-    <processQuery name="withESTsAndGenes" includeProjects="ApiDB"
+    <processQuery name="withESTsAndGenes" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
@@ -1322,7 +1322,7 @@ UNION
     <!-- with EC -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withEC" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="withEC" excludeProjects="EuPathDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
       <sql>
@@ -1369,7 +1369,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withEC" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withEC" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1385,7 +1385,7 @@ UNION
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg" excludeProjects="ApiDB,TriTrypDB" isCacheable="true">
+    <sqlQuery name="cp-tg" excludeProjects="EuPathDB,TriTrypDB" isCacheable="true">
 
       <testParamValues excludeProjects="CryptoDB,ToxoDB" minRows="0"/>
 
@@ -1415,7 +1415,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="cp-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="cp-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1431,7 +1431,7 @@ UNION
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg-pb" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="cp-tg-pb" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="CryptoDB,ToxoDB,PlasmoDB" minRows="0"/>
 
@@ -1462,7 +1462,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="cp-tg-pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="cp-tg-pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1479,7 +1479,7 @@ UNION
                                                                            -->
     <!--===================================================================-->
 
-    <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="cp-tg-pf-tv-gl" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="CryptoDB,ToxoDB,PlasmoDB,TrichDB,GiardiaDB" minRows="0"/>
 
@@ -1511,7 +1511,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="cp-tg-pf-tv-gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="cp-tg-pf-tv-gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1520,7 +1520,7 @@ UNION
     <!-- withPlasmoGenes  -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withPlasmoGenes" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="withPlasmoGenes" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
 
@@ -1564,7 +1564,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withPlasmoGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withPlasmoGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1608,7 +1608,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withTriTrypGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withTriTrypGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1666,7 +1666,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="withPlasmoTrichGiardiaGenes" includeProjects="ApiDB"
+    <processQuery name="withPlasmoTrichGiardiaGenes" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
@@ -1677,7 +1677,7 @@ UNION
     <!-- tg withPlasmoGenes -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withPlasmoGenes-tg" excludeProjects="ApiDB,CryptoDB" isCacheable="true">
+    <sqlQuery name="withPlasmoGenes-tg" excludeProjects="EuPathDB,CryptoDB" isCacheable="true">
 
       <testParamValues excludeProjects="ToxoDB" minRows="0"/>
 
@@ -1794,7 +1794,7 @@ UNION
 
     </sqlQuery>
 
-    <processQuery name="withPlasmoGenes-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="withPlasmoGenes-tg" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1803,7 +1803,7 @@ UNION
     <!-- tg pf gl   for genes by sage tags-->
     <!--===================================================================-->
 
-    <sqlQuery name="tg-pf-gl" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="tg-pf-gl" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="GiardiaDB,ToxoDB,PlasmoDB" minRows="0"/>
 
@@ -1833,7 +1833,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="tg-pf-gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="tg-pf-gl" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1843,7 +1843,7 @@ UNION
     <!-- tg pf -->  
     <!--===================================================================-->
 
-    <sqlQuery name="tg-pf" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="tg-pf" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="ToxoDB,PlasmoDB" minRows="0"/>
 
@@ -1872,7 +1872,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="tg-pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="tg-pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1881,7 +1881,7 @@ UNION
     <!-- pf -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pf" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="pf" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
 
@@ -1909,7 +1909,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="pf" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
@@ -1918,7 +1918,7 @@ UNION
     <!-- pb -->  
     <!--===================================================================-->
 
-    <sqlQuery name="pb" excludeProjects="ApiDB" isCacheable="true">
+    <sqlQuery name="pb" excludeProjects="EuPathDB" isCacheable="true">
 
       <testParamValues excludeProjects="PlasmoDB" minRows="0"/>
 
@@ -1946,7 +1946,7 @@ UNION
       </sql>
     </sqlQuery>
 
-    <processQuery name="pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+    <processQuery name="pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>

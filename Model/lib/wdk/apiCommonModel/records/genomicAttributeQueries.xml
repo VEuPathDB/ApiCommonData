@@ -91,13 +91,13 @@
             <column name="organism" ignoreCase="true"/>
             <column name="formatted_organism"
                     sortingColumn="organism" ignoreCase="true"/>
-            <column name="sequence_description" includeProjects="ApiDB,PlasmoDB"
+            <column name="sequence_description" includeProjects="EuPathDB,PlasmoDB"
                     ignoreCase="true"/>
             <column name="genbank_accession" ignoreCase="true"/>
             <column name="externalDbName"/>
             <column name="externalDbVersion" />
             <column name="cyc_db" includeProjects="CryptoDB" />
-            <sql excludeProjects="ApiDB">
+            <sql excludeProjects="EuPathDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
@@ -128,7 +128,7 @@
                    FROM apidb.SequenceAttributes bfmv
              ]]>
            </sql>
-           <sql includeProjects="ApiDB">
+           <sql includeProjects="EuPathDB">
             <![CDATA[
                 SELECT bfmv.source_id, bfmv.project_id, bfmv.a_count, bfmv.c_count,
                     bfmv.g_count, bfmv.t_count, bfmv.other_count,
@@ -245,7 +245,7 @@
     <!-- GFF sequence-->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceGffSequence" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceGffSequence" excludeProjects="EuPathDB">
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="gff_sequence"/>
@@ -262,7 +262,7 @@
     <!-- GFF attributes (other than sequence) -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="SequenceGffAttrs" excludeProjects="ApiDB">
+    <sqlQuery name="SequenceGffAttrs" excludeProjects="EuPathDB">
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="gff_seqid"/>

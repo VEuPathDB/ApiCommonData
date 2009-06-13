@@ -33,7 +33,7 @@
            <suggest includeProjects="TriTrypDB"
 					sample="Tb927.8.620, Tb11.03.0160, Tb09.v4.0039"
                     default="Tb927.8.620, Tb11.03.0160, Tb09.v4.0039"/>
-           <suggest includeProjects="ApiDB"
+           <suggest includeProjects="EuPathDB"
 					sample="PF11_0344, cgd7_230, 65.m01111"
                     default="PF11_0344, cgd7_230, 65.m01111"/>
         </datasetParam>
@@ -44,7 +44,7 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <stringParam name="signature" 
-                                 includeProjects="ApiDB"
+                                 includeProjects="EuPathDB"
                                  prompt="User Signature"
                                  visible="false">
              <help>
@@ -62,7 +62,7 @@
        <help>
               Select yes to return only those EST alignments that are the best alignment for the EST.  Many of the ESTs align at multiple positions in the genome.  Selecting yes will consider only those alignments that are the best for each EST
        </help>
-       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <useTermOnly value="true" includeProjects="EuPathDB"/>
        <enumList>   
          <enumValue>
            <term>Yes</term>
@@ -95,7 +95,7 @@
        <help>
               Select yes to return only those EST alignments that are consistent.  We define define consistent as having >= 95% identity (the majority have >= 99%) and aligning the EST sequence in a manner that is consistent with a gene model.  Ie, there can be gaps (representing introns) in the target genomic sequence but not in the EST query.
        </help>
-       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <useTermOnly value="true" includeProjects="EuPathDB"/>
        <enumList>   
          <enumValue>
            <term>No</term>
@@ -226,11 +226,11 @@
            <term>EST</term>
            <internal>EST</internal> 
          </enumValue>
-         <enumValue includeProjects="CryptoDB,ToxoDB,ApiDB,PlasmoDB,GiardiaDB,TriTrypDB">
+         <enumValue includeProjects="CryptoDB,ToxoDB,EuPathDB,PlasmoDB,GiardiaDB,TriTrypDB">
            <term>Assemblies</term>
            <internal>Assemblies</internal>
          </enumValue> 
-         <enumValue includeProjects="CryptoDB,PlasmoDB,ApiDB">
+         <enumValue includeProjects="CryptoDB,PlasmoDB,EuPathDB">
            <term>Isolates</term>
            <internal>Isolates</internal>
          </enumValue> 
@@ -295,62 +295,62 @@
      <enumParam name="chromosome"
                       prompt="Chromosome"
                       multiPick="true" 
-                      includeProjects="PlasmoDB,ApiDB">
-       <useTermOnly value="true" includeProjects="ApiDB"/>
+                      includeProjects="PlasmoDB,EuPathDB">
+       <useTermOnly value="true" includeProjects="EuPathDB"/>
        <enumList>   
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 1</term>
            <internal>Pf3D7_01</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 2</term>
            <internal>Pf3D7_02</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 3</term>
            <internal>Pf3D7_03</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 4</term>
            <internal>Pf3D7_04</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 5</term>
            <internal>Pf3D7_05</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 6</term>
            <internal>Pf3D7_06</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 7</term>
            <internal>Pf3D7_07</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 8</term>
            <internal>Pf3D7_08</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 9</term>
            <internal>Pf3D7_09</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 10</term>
            <internal>Pf3D7_10</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 11</term>
            <internal>Pf3D7_11</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 12</term>
            <internal>Pf3D7_12</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 13</term>
            <internal>Pf3D7_13</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 14</term>
            <internal>Pf3D7_14</internal>
          </enumValue>
@@ -367,59 +367,59 @@
                       multiPick="true" >
       
        <enumList includeProjects="PlasmoDB">   
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 1</term>
            <internal>Pf3D7_01</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 2</term>
            <internal>Pf3D7_02</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 3</term>
            <internal>Pf3D7_03</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 4</term>
            <internal>Pf3D7_04</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 5</term>
            <internal>Pf3D7_05</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 6</term>
            <internal>Pf3D7_06</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 7</term>
            <internal>Pf3D7_07</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 8</term>
            <internal>Pf3D7_08</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 9</term>
            <internal>Pf3D7_09</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 10</term>
            <internal>Pf3D7_10</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 11</term>
            <internal>Pf3D7_11</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 12</term>
            <internal>Pf3D7_12</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 13</term>
            <internal>Pf3D7_13</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P.f. chromosome 14</term>
            <internal>Pf3D7_14</internal>
          </enumValue>
@@ -494,7 +494,7 @@
   
      </enumParam>
 
- <stringParam name="chromosomeOptional2" includeProjects="ApiDB"
+ <stringParam name="chromosomeOptional2" includeProjects="EuPathDB"
                       prompt="Chromosome">
              <suggest default="choose one"/>
      </stringParam>
@@ -504,7 +504,7 @@
 
 
 
-     <flatVocabParam name="chromosomeOptional" includeProjects="ApiDB,TriTrypDB"
+     <flatVocabParam name="chromosomeOptional" includeProjects="EuPathDB,TriTrypDB"
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
                      multiPick="false">
@@ -523,12 +523,12 @@
      </flatVocabParam>
 
 
-     <enumParam name="chromosomeOptional" excludeProjects="ApiDB,GiardiaDB,TrichDB,TriTrypDB"
+     <enumParam name="chromosomeOptional" excludeProjects="EuPathDB,GiardiaDB,TrichDB,TriTrypDB"
                       prompt="Chromosome"
                       multiPick="false"
                       default="choose one">
 
-       <enumList includeProjects="PlasmoDB,ApiDB">   
+       <enumList includeProjects="PlasmoDB,EuPathDB">   
          <enumValue>
            <term>choose one</term>
            <internal>choose one</internal>
@@ -700,13 +700,13 @@
 
 <!--  not being used in ests by location, uaing chromosomeOptional instead
 
-    <stringParam name="chromosomeOptionalForEsts" includeProjects="ApiDB"
+    <stringParam name="chromosomeOptionalForEsts" includeProjects="EuPathDB"
                       prompt="Chromosome">
              <suggest default="choose one"/>
      </stringParam>
 
  
-     <enumParam name="chromosomeOptionalForEsts" excludeProjects="ApiDB,GiardiaDB,TrichDB,TriTrypDB"
+     <enumParam name="chromosomeOptionalForEsts" excludeProjects="EuPathDB,GiardiaDB,TrichDB,TriTrypDB"
                       prompt="Chromosome"
                       multiPick="false"
                       default="choose one">
@@ -928,7 +928,7 @@
      <stringParam name="sequenceId"
              prompt="Genomic sequence ID">
 
-         <help includeProjects="ApiDB">
+         <help includeProjects="EuPathDB">
            Enter an identifier for a genomic sequence. The IDs correspond to the accession numbers in the GenBank records supplied by the sequencing centers. Wild cards are permitted in most queries, i.e. use AAEE* to ask for all &lt;i&gt; C.parvum &lt;/i&gt; contigs. Genes By Chromosomal Location does not allow wildcards.
          </help>
          <help includeProjects="TriTrypDB">
@@ -962,7 +962,7 @@
              default="(Example: AAEE01000006)"
              allowEmpty="true"
              emptyValue="No Match"/>
-         <suggest includeProjects="ApiDB"
+         <suggest includeProjects="EuPathDB"
              sample="AAEL010000057, AAEE01000009, BX526834, Pf3D7_04, MALPY00019, VIIa, TGG_994746"
              default="(Example: AAEL01000057)"/>
          <suggest includeProjects="ToxoDB"
@@ -1011,7 +1011,7 @@
          <help>
               Select a clone library.
          </help>
-         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <useTermOnly value="true" includeProjects="EuPathDB"/>
          <suggest selectMode="all" />
        </flatVocabParam>
 
@@ -1024,7 +1024,7 @@
          <help>
               Select a clone library.
          </help>
-         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <useTermOnly value="true" includeProjects="EuPathDB"/>
          <suggest selectMode="all" />
        </flatVocabParam>
 
@@ -1038,7 +1038,7 @@
          <help>
               Select a clone library.
          </help>
-         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <useTermOnly value="true" includeProjects="EuPathDB"/>
          <suggest selectMode="all" />
        </flatVocabParam>
 
@@ -1046,136 +1046,136 @@
      <!-- SNPs -->  
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <enumParam name="snp_strain_a" includeProjects="ApiDB,PlasmoDB,ToxoDB,CryptoDB"
+       <enumParam name="snp_strain_a" includeProjects="EuPathDB,PlasmoDB,ToxoDB,CryptoDB"
                       prompt="Reference"
                       multiPick="false">
        <help>
               Choose a reference from the list of strains.  Strains are sorted by number of SNPs in descending order.
        </help>
 
-       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <useTermOnly value="true" includeProjects="EuPathDB"/>
 
  <!-- cannot set enumLists per component site, wdk complains that apidb has more than one enumList, 
       so we need to specify the includeProject per value 
   -->
        <enumList>
 
-      <enumValue  includeProjects="CryptoDB,ApiDB">
+      <enumValue  includeProjects="CryptoDB,EuPathDB">
              <term>Cp-IOWA II</term>
              <internal>iowa_II</internal>
            </enumValue>
-           <enumValue includeProjects="CryptoDB,ApiDB">
+           <enumValue includeProjects="CryptoDB,EuPathDB">
              <term>Cp-TU114</term>
              <internal>tu114</internal>
            </enumValue>
-           <enumValue includeProjects="CryptoDB,ApiDB">
+           <enumValue includeProjects="CryptoDB,EuPathDB">
              <term>Cp-MD</term>
              <internal>md</internal>
            </enumValue>
 
 
-         <enumValue  includeProjects="PlasmoDB,ApiDB">
+         <enumValue  includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-3D7</term>
            <internal>3D7</internal>
          </enumValue>
-         <enumValue  includeProjects="PlasmoDB,ApiDB">
+         <enumValue  includeProjects="PlasmoDB,EuPathDB">
            <term>P. reichenowi (vs. 3D7 only)</term>
            <internal>Preich</internal>
          </enumValue>
-         <enumValue  includeProjects="PlasmoDB,ApiDB">
+         <enumValue  includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-HB3</term>
            <internal>HB3</internal>
          </enumValue>
-         <enumValue  includeProjects="PlasmoDB,ApiDB">
+         <enumValue  includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-GHANA1</term>
            <internal>GHANA1</internal>
          </enumValue>
-         <enumValue  includeProjects="PlasmoDB,ApiDB">
+         <enumValue  includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-V1_S</term>
            <internal>V1_S</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Dd2</term>
            <internal>Dd2</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-7G8</term>
            <internal>7G8</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-RO-33</term>
            <internal>RO-33</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-D10</term>
            <internal>D10</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-K1</term>
            <internal>K1</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-D6</term>
            <internal>D6</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCC-2</term>
            <internal>FCC-2</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3404</term>
            <internal>Senegal3404</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-IT</term>
            <internal>IT</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-SantaLucia</term>
            <internal>SantaLucia</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCB</term>
            <internal>FCB</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCR3</term>
            <internal>FCR3</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-106_1</term>
            <internal>106_1</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3504</term>
            <internal>Senegal3504</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3101</term>
            <internal>Senegal3101</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal5102</term>
            <internal>Senegal5102</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Malayan</term>
            <internal>Malayan</internal>
          </enumValue>
 
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-ME49 (type II)</term>
              <internal>ME49</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-VEG (type III)</term>
              <internal>VEG</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-GT1 (type I)</term>
              <internal>GT1</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-RH (type I)</term>
              <internal>RH</internal>
            </enumValue>
@@ -1187,14 +1187,14 @@
 
 
 
-       <flatVocabParam name="snp_strain_b" includeProjects="ApiDB,PlasmoDB"
+       <flatVocabParam name="snp_strain_b" includeProjects="EuPathDB,PlasmoDB"
                       queryRef="SharedVQ.SnpStrainB"
                       prompt="Comparator"
                       multiPick="false">
          <help>
               Choose a comparator from the list to compare to your reference.  Strains below the ---------- were sequenced at low or specific coverage
          </help>
-         <useTermOnly value="true" includeProjects="ApiDB"/>
+         <useTermOnly value="true" includeProjects="EuPathDB"/>
        </flatVocabParam>
 
        <enumParam name="snp_strain_b" includeProjects="ToxoDB"
@@ -1220,132 +1220,132 @@
        </enumParam>
 
 
-  <enumParam name="snp_strain_m" includeProjects="CryptoDB,ApiDB,PlasmoDB,ToxoDB"
+  <enumParam name="snp_strain_m" includeProjects="CryptoDB,EuPathDB,PlasmoDB,ToxoDB"
                       prompt="Comparator(s)"
                       multiPick="true">
          <help>
               Choose a comparator(s) from the list  to compare to your reference.  Strains are ordered by number of SNPs in descending order.
          </help>
 
-       <useTermOnly value="true" includeProjects="ApiDB"/>
+       <useTermOnly value="true" includeProjects="EuPathDB"/>
 
        <enumList>
 
-           <enumValue includeProjects="CryptoDB,ApiDB">
+           <enumValue includeProjects="CryptoDB,EuPathDB">
              <term>Cp-IOWA II</term>
              <internal>iowa_II</internal>
            </enumValue>
-           <enumValue includeProjects="CryptoDB,ApiDB">
+           <enumValue includeProjects="CryptoDB,EuPathDB">
              <term>Cp-TU114</term>
              <internal>tu114</internal>
            </enumValue>
-           <enumValue includeProjects="CryptoDB,ApiDB">
+           <enumValue includeProjects="CryptoDB,EuPathDB">
              <term>Cp-MD</term>
              <internal>md</internal>
            </enumValue>
 
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-3D7</term>
            <internal>3D7</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>P. reichenowi (vs. 3D7 only)</term>
            <internal>Preich</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-HB3</term>
            <internal>HB3</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-GHANA1</term>
            <internal>GHANA1</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-V1_S</term>
            <internal>V1_S</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Dd2</term>
            <internal>Dd2</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-7G8</term>
            <internal>7G8</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-RO-33</term>
            <internal>RO-33</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-D10</term>
            <internal>D10</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-K1</term>
            <internal>K1</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-D6</term>
            <internal>D6</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCC-2</term>
            <internal>FCC-2</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3404</term>
            <internal>Senegal3404</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-IT</term>
            <internal>IT</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-SantaLucia</term>
            <internal>SantaLucia</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCB</term>
            <internal>FCB</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-FCR3</term>
            <internal>FCR3</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-106_1</term>
            <internal>106_1</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3504</term>
            <internal>Senegal3504</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal3101</term>
            <internal>Senegal3101</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Senegal5102</term>
            <internal>Senegal5102</internal>
          </enumValue>
-         <enumValue includeProjects="PlasmoDB,ApiDB">
+         <enumValue includeProjects="PlasmoDB,EuPathDB">
            <term>Pf-Malayan</term>
            <internal>Malayan</internal>
          </enumValue>
 
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-ME49 (type II)</term>
              <internal>ME49</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB" default="true">
+           <enumValue includeProjects="ToxoDB,EuPathDB" default="true">
              <term>Tg-VEG (type III)</term>
              <internal>VEG</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-GT1 (type I)</term>
              <internal>GT1</internal>
            </enumValue>
-           <enumValue includeProjects="ToxoDB,ApiDB">
+           <enumValue includeProjects="ToxoDB,EuPathDB">
              <term>Tg-RH (type I)</term>
              <internal>RH</internal>
            </enumValue>
@@ -1370,7 +1370,7 @@
          <stringParam name="min_ests_in_assembly"
                       prompt="Number of ESTs >="
                       quote="false"
-                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB,TriTrypDB">
+                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,EuPathDB,PlasmoDB,TriTrypDB">
              <help>
                Enter a minimum number of ESTs that is required per EST assembly.
              </help>           
@@ -1380,7 +1380,7 @@
          <stringParam name="min_lib_ests_in_assembly"
                       prompt="Number of library ESTs >="
                       quote="false"
-                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,ApiDB,PlasmoDB,TriTrypDB">
+                      includeProjects="ToxoDB,CryptoDB,GiardiaDB,EuPathDB,PlasmoDB,TriTrypDB">
              <help>
                Enter a minimum number of ESTs from the selected libraries that is required per EST assembly.
              </help>           
@@ -1424,13 +1424,13 @@
     <!-- History -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <answerParam name="isolateHistoryIdA" includeProjects="PlasmoDB,ApiDB"
+        <answerParam name="isolateHistoryIdA" includeProjects="PlasmoDB,EuPathDB"
                       prompt="Isolate History ID for Set A"
                       recordClassRef="IsolateRecordClasses.IsolateRecordClass">
               <help>The number in the left column of My Query History</help>
         </answerParam>
 
-        <answerParam name="isolateHistoryIdB" includeProjects="PlasmoDB,ApiDB"
+        <answerParam name="isolateHistoryIdB" includeProjects="PlasmoDB,EuPathDB"
                       prompt="Isolate History ID for Set B"
                       recordClassRef="IsolateRecordClasses.IsolateRecordClass">
               <help>The number in the left column of My Query History</help>
@@ -1443,7 +1443,7 @@
   <enumParam name="chromosome_with_organelles"
                      prompt="Genomic Sequence"
                      multiPick="false"
-                     excludeProjects="ApiDB,GiardiaDB,TrichDB,TriTrypDB">
+                     excludeProjects="EuPathDB,GiardiaDB,TrichDB,TriTrypDB">
     <help>
              Results will be sorted ascending or descending orde
     </help>
@@ -1729,7 +1729,7 @@ by the sequence generator.</help>
            <suggest includeProjects="TrichDB"
                     sample="TVAG_386080, TVAG_486660"
                     default="TVAG_386080"/>
-           <suggest includeProjects="ApiDB"
+           <suggest includeProjects="EuPathDB"
                                         sample="PF11_0344, cgd7_230, TGME49_039250"
                     default="cgd7_230"/>
         </stringParam>
@@ -1743,7 +1743,7 @@ by the sequence generator.</help>
  <suggest includeProjects="CryptoDB"
             sample="AAEL01000057, AAEE01000009, BX526834"
             default="AAEE01000006"/>
-        <suggest includeProjects="ApiDB"
+        <suggest includeProjects="EuPathDB"
             sample="AAEL010000057, AAEE01000009, BX526834, Pf3D7_04, MALPY00019, TGME49_chrVIIa, TGGT1_chrX"
             default="AAEL01000057"/>
         <suggest includeProjects="ToxoDB"
@@ -1785,7 +1785,7 @@ by the sequence generator.</help>
             <suggest includeProjects="CryptoDB"
                      sample="AAEL01000259-5-3339-3085, AAEE01000009*, AAEL*"
                      default="AAEL01000259-5-3339-3085"/>
-            <suggest includeProjects="ApiDB"
+            <suggest includeProjects="EuPathDB"
                      sample="AAEL01000259-5-3339-3085, AAEE01000009*, DS984743-6-1410895-1409591, Pf3D7_01-1-105160-105438"
                      default="AAEL01000259-5-3339-3085"/>
         </stringParam>
@@ -1816,7 +1816,7 @@ by the sequence generator.</help>
             </sql>
         </sqlQuery>
 
-  <processQuery name="TrypChromosome" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+  <processQuery name="TrypChromosome" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>
@@ -1848,7 +1848,7 @@ by the sequence generator.</help>
           </sql>
         </sqlQuery>
 
-        <processQuery name="SnpStrainA" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="SnpStrainA" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>
@@ -1880,12 +1880,12 @@ by the sequence generator.</help>
           </sql>
         </sqlQuery>
 
-        <processQuery name="SnpStrainB" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="SnpStrainB" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>
 
-        <sqlQuery name="EstLibraries" excludeProjects="ApiDB" isCacheable="true">
+        <sqlQuery name="EstLibraries" excludeProjects="EuPathDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <column name="parentTerm"/>
@@ -1902,7 +1902,7 @@ where att.PROJECT_ID = '@PROJECT_ID@'
             </sql>
         </sqlQuery>
 
-  <processQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+  <processQuery name="EstLibraries" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
             <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>
@@ -1911,7 +1911,7 @@ where att.PROJECT_ID = '@PROJECT_ID@'
 
 <!--
 This query seems to be unused
- <sqlQuery name="EstLibrariesAssemblies" excludeProjects="ApiDB" isCacheable="true">
+ <sqlQuery name="EstLibrariesAssemblies" excludeProjects="EuPathDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <column name="parentTerm"/>
@@ -1925,7 +1925,7 @@ This query seems to be unused
             </sql>
         </sqlQuery>
 
-  <processQuery name="EstLibrariesAssemblies" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+  <processQuery name="EstLibrariesAssemblies" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
         </processQuery>
@@ -1934,7 +1934,7 @@ This query seems to be unused
 
 
 
-        <sqlQuery name="EstLibrariesGenes" excludeProjects="ApiDB" isCacheable="true">
+        <sqlQuery name="EstLibrariesGenes" excludeProjects="EuPathDB" isCacheable="true">
             <column name="internal"/>
             <column name="term"/>
             <column name="parentTerm"/>
@@ -1954,7 +1954,7 @@ or t.term = ga.species
             </sql>
         </sqlQuery>
 
-        <processQuery name="EstLibrariesGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="ApiDB">
+        <processQuery name="EstLibrariesGenes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
             <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>

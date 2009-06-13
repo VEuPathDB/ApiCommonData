@@ -8,26 +8,26 @@
 
 <wdkModel>
   <modelName includeProjects="PlasmoDB" displayName="PlasmoDB" version="6.0"/>
-  <modelName includeProjects="ApiDB" displayName="ApiDB" version="2.1"/>
+  <modelName includeProjects="EuPathDB" displayName="EuPathDB" version="2.1"/>
   <modelName includeProjects="ToxoDB" displayName="ToxoDB" version="5.2"/>
   <modelName includeProjects="CryptoDB" displayName="CryptoDB" version="4.1"/>
   <modelName includeProjects="GiardiaDB" displayName="GiardiaDB" version="1.2"/>
   <modelName includeProjects="TrichDB" displayName="TrichDB" version="1.1"/>
   <modelName includeProjects="TriTrypDB" displayName="TriTrypDB" version="1.1"/>
   
-  <declaredMacro name="COMMENT_SCHEMA"      usedBy="model" excludeProjects="ApiDB"/>
-  <declaredMacro name="COMMENT_DBLINK"      usedBy="model" excludeProjects="ApiDB"/>
+  <declaredMacro name="COMMENT_SCHEMA"      usedBy="model" excludeProjects="EuPathDB"/>
+  <declaredMacro name="COMMENT_DBLINK"      usedBy="model" excludeProjects="EuPathDB"/>
   <declaredMacro name="MERCATOR_OUTPUT_DIR" usedBy="perl" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB" />
   <declaredMacro name="CNDSRC_BIN"          usedBy="perl" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB" />
   <declaredMacro name="PUBLICATIONS_URL"    usedBy="model"       includeProjects="PlasmoDB"/>
   <declaredMacro name="TOXO_COMMENT_SCHEMA" usedBy="model"       includeProjects="ToxoDB"/>
-  <declaredMacro name="API_BLAST_PATH"      usedBy="model"       includeProjects="ApiDB"/>
-  <declaredMacro name="CRYPTO_BLAST_PATH"   usedBy="model"       includeProjects="ApiDB, CryptoDB"/>
-  <declaredMacro name="GIARDIA_BLAST_PATH"  usedBy="model"       includeProjects="ApiDB, GiardiaDB"/>
-  <declaredMacro name="PLASMO_BLAST_PATH"   usedBy="model"       includeProjects="ApiDB, PlasmoDB"/>
-  <declaredMacro name="TOXO_BLAST_PATH"     usedBy="model"       includeProjects="ApiDB, ToxoDB"/>
-  <declaredMacro name="TRICH_BLAST_PATH"    usedBy="model"       includeProjects="ApiDB, TrichDB"/>
-  <declaredMacro name="TRYP_BLAST_PATH"    usedBy="model"       includeProjects="ApiDB, TriTrypDB"/>
+  <declaredMacro name="API_BLAST_PATH"      usedBy="model"       includeProjects="EuPathDB"/>
+  <declaredMacro name="CRYPTO_BLAST_PATH"   usedBy="model"       includeProjects="EuPathDB, CryptoDB"/>
+  <declaredMacro name="GIARDIA_BLAST_PATH"  usedBy="model"       includeProjects="EuPathDB, GiardiaDB"/>
+  <declaredMacro name="PLASMO_BLAST_PATH"   usedBy="model"       includeProjects="EuPathDB, PlasmoDB"/>
+  <declaredMacro name="TOXO_BLAST_PATH"     usedBy="model"       includeProjects="EuPathDB, ToxoDB"/>
+  <declaredMacro name="TRICH_BLAST_PATH"    usedBy="model"       includeProjects="EuPathDB, TrichDB"/>
+  <declaredMacro name="TRYP_BLAST_PATH"    usedBy="model"       includeProjects="EuPathDB, TriTrypDB"/>
 
   <defaultPropertyList includeProjects="PlasmoDB" name="organisms">
     <value>P. falciparum</value>
@@ -56,7 +56,7 @@
     <value>G. lamblia</value>
   </defaultPropertyList>
 
-  <defaultPropertyList includeProjects="ApiDB" name="organisms">
+  <defaultPropertyList includeProjects="EuPathDB" name="organisms">
     <value>P. falciparum</value>
     <value>P. vivax</value>
     <value>P. yoelii</value>
@@ -77,30 +77,30 @@
   </defaultPropertyList>
 
   <defaultPropertyList name="specificAttribution">
-     <value includeProjects="PlasmoDB,ApiDB">P.falciparum_chromosomes</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.falciparum_plastid</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.falciparum_mitochondrial</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.vivax_contigsGB</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.vivax_mitochondrial</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.knowlesi_chromosomes</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.yoelii_Annotation</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.berghei_Annotation</value>
-     <value includeProjects="PlasmoDB,ApiDB">P.chabaudi_Annotation</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_plastid</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_mitochondrial</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.vivax_contigsGB</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.vivax_mitochondrial</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.knowlesi_chromosomes</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.yoelii_Annotation</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.berghei_Annotation</value>
+     <value includeProjects="PlasmoDB,EuPathDB">P.chabaudi_Annotation</value>
 
-     <value includeProjects="ToxoDB,ApiDB">T.gondiiGT1_contigsGB</value>
-     <value includeProjects="ToxoDB,ApiDB">T.gondiiME49_contigsGB</value>
-     <value includeProjects="ToxoDB,ApiDB">T.gondiiVEG_contigsGB</value>
-     <value includeProjects="ToxoDB,ApiDB">NeosporaChromosomesSanger</value>
-     <value includeProjects="ToxoDB,ApiDB">TgondiiApicoplast</value>
+     <value includeProjects="ToxoDB,EuPathDB">T.gondiiGT1_contigsGB</value>
+     <value includeProjects="ToxoDB,EuPathDB">T.gondiiME49_contigsGB</value>
+     <value includeProjects="ToxoDB,EuPathDB">T.gondiiVEG_contigsGB</value>
+     <value includeProjects="ToxoDB,EuPathDB">NeosporaChromosomesSanger</value>
+     <value includeProjects="ToxoDB,EuPathDB">TgondiiApicoplast</value>
 
-     <value includeProjects="CryptoDB,ApiDB">C.parvum_scaffoldsGB</value>
-     <value includeProjects="CryptoDB,ApiDB">C.parvumChr6_scaffoldsGB</value>
-     <value includeProjects="CryptoDB,ApiDB">C.hominis_scaffoldsGB</value>
-     <value includeProjects="CryptoDB,ApiDB">C.muris_scaffoldsGB</value>
+     <value includeProjects="CryptoDB,EuPathDB">C.parvum_scaffoldsGB</value>
+     <value includeProjects="CryptoDB,EuPathDB">C.parvumChr6_scaffoldsGB</value>
+     <value includeProjects="CryptoDB,EuPathDB">C.hominis_scaffoldsGB</value>
+     <value includeProjects="CryptoDB,EuPathDB">C.muris_scaffoldsGB</value>
 
-     <value includeProjects="GiardiaDB,ApiDB">G.lamblia_contigsGB</value>
+     <value includeProjects="GiardiaDB,EuPathDB">G.lamblia_contigsGB</value>
 
-     <value includeProjects="TrichDB,ApiDB">T.vaginalis_Annotation</value>
+     <value includeProjects="TrichDB,EuPathDB">T.vaginalis_Annotation</value>
 
      <!-- TODO:  defaultPropertyList for TriTrypDB -->
   </defaultPropertyList>

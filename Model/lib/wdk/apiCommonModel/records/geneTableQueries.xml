@@ -142,7 +142,7 @@
        <!-- ToxoDB Expand Strains Microarray Expression Mini Graphs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="ToxoExpandStrainsMicroarray" isCacheable="false" includeProjects="ToxoDB,ApiDB">
+     <sqlQuery name="ToxoExpandStrainsMicroarray" isCacheable="false" includeProjects="ToxoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="me49_source_id"/>
@@ -166,7 +166,7 @@
        <!-- ToxoDB Table for Expression Percentiles                      -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="ToxoStrainsMicroarrayPercentile" isCacheable="false" includeProjects="ToxoDB,ApiDB">
+    <sqlQuery name="ToxoStrainsMicroarrayPercentile" isCacheable="false" includeProjects="ToxoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="strain"/>
@@ -195,7 +195,7 @@
        <!-- Aliases -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+       <sqlQuery name="Aliases" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="alias"/>
@@ -212,7 +212,7 @@
        <!-- Phenotype -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="PhenotypeTable" isCacheable="false" includeProjects="TriTrypDB,ApiDB">
+       <sqlQuery name="PhenotypeTable" isCacheable="false" includeProjects="TriTrypDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="phenotype"/>
@@ -232,7 +232,7 @@
        <!-- SNPs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB,ApiDB"
+        <sqlQuery name="SNPs" includeProjects="PlasmoDB,ToxoDB,CryptoDB,EuPathDB"
                isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
@@ -253,7 +253,7 @@
             <column name="cds_snp_density"/>
             <column name="num_total"/>
 
-            <sql includeProjects="PlasmoDB,ApiDB">
+            <sql includeProjects="PlasmoDB,EuPathDB">
             <![CDATA[
               SELECT source_id, '@PROJECT_ID@' AS project_id,
               source_id as gene_source_id,
@@ -644,7 +644,7 @@
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="comment_string"/>
-            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,ApiDB">
+            <sql includeProjects="PlasmoDB,ToxoDB,TrichDB,GiardiaDB,EuPathDB">
             <![CDATA[
             SELECT nfc.comment_string, 
             nf.source_id, '@PROJECT_ID@' as project_id
@@ -863,7 +863,7 @@
             <column name="source"/>
             <column name="ec_description"/>
             <column name="expasy_url" excludeProjects="CryptoDB"/>
-            <sql includeProjects="CryptoDB,ApiDB">
+            <sql includeProjects="CryptoDB,EuPathDB">
             <![CDATA[
             SELECT distinct 
                    CASE 
@@ -920,7 +920,7 @@
         </sqlQuery>
 
 <!--
-  <sqlQuery name="EcNumber" includeProjects="ApiDB" 
+  <sqlQuery name="EcNumber" includeProjects="EuPathDB" 
                isCacheable="false">
             <column name="ec_number" />
             <column name="source"/>
@@ -978,7 +978,7 @@
        <!-- Pathways -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB,ApiDB"
+       <sqlQuery name="MetabolicPathways" includeProjects="ToxoDB,PlasmoDB,EuPathDB"
                    isCacheable="false">
              <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGME49_078740</paramValue>
@@ -990,7 +990,7 @@
             <column name="pathway_name"/>
             <column name="activity"/>
 
-            <sql includeProjects="PlasmoDB,ApiDB">
+            <sql includeProjects="PlasmoDB,EuPathDB">
             <![CDATA[
             SELECT DISTINCT dr.primary_identifier AS pathway_id,
                             TRIM(REPLACE(decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier, dr.lowercase_secondary_identifier), CHR(191),'')) AS pathway_name,
@@ -1280,7 +1280,7 @@
        <!-- Isolate Overlap  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
+       <sqlQuery name="IsolateOverlap" includeProjects="CryptoDB,EuPathDB"
                   isCacheable="false">
 
             <testParamValues includeProjects="CryptoDB">
@@ -1304,7 +1304,7 @@
        <!-- Mass spec -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="MassSpec" includeProjects="PlasmoDB,ApiDB"
+       <sqlQuery name="MassSpec" includeProjects="PlasmoDB,EuPathDB"
                   isCacheable="false">
 
             <column name="source_id"/>
@@ -1392,7 +1392,7 @@
        <!--Gene Location -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <sqlQuery name="Genbank" isCacheable="false" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,ApiDB">
+     <sqlQuery name="Genbank" isCacheable="false" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="sequence_source_id"/>
@@ -1406,7 +1406,7 @@
             <sqlParamValue name="top_level" includeProjects="TriTrypDB">
               Decode(fl.is_top_level,0, 'Contig', 1, 'Chromosome')
             </sqlParamValue>
-            <sqlParamValue name="top_level" includeProjects="GiardiaDB,ApiDB">
+            <sqlParamValue name="top_level" includeProjects="GiardiaDB,EuPathDB">
               Decode(fl.is_top_level,0, 'Contig', 1, 'Scaffold')
             </sqlParamValue>
             <sqlParamValue name="top_level" includeProjects="ToxoDB">
@@ -1440,7 +1440,7 @@
        <!-- Sage Tags -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB,ApiDB">
+       <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB,EuPathDB">
             <column name="tag_source_id"/>
             <column name="library"/>
             <column name="sequence"/>
@@ -1550,7 +1550,7 @@
         <sqlParamValue name="brcName" includeProjects="PlasmoDB">ApiDB_PlasmoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="CryptoDB">ApiDB_CryptoDB</sqlParamValue>
         <sqlParamValue name="brcName" includeProjects="ToxoDB">ApiDB_ToxoDB</sqlParamValue>
-        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB,ApiDB,TriTrypDB">ApiDB</sqlParamValue>
+        <sqlParamValue name="brcName" includeProjects="GiardiaDB,TrichDB,EuPathDB,TriTrypDB">ApiDB</sqlParamValue>
         <sql>
           <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id,
@@ -1870,7 +1870,7 @@
        <!-- Y2H interactions -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Y2hInteractions" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+       <sqlQuery name="Y2hInteractions" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
 
          <testParamValues includeProjects="PlasmoDB">
                <paramValue name="source_id">PFL0275w</paramValue>
@@ -1915,7 +1915,7 @@
        <!-- Array elements -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ArrayElements" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+       <sqlQuery name="ArrayElements" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="array_source_id"/>
@@ -1947,7 +1947,7 @@
        <!-- Protein expression -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="ProteinExpression" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+       <sqlQuery name="ProteinExpression" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
 
         <testParamValues includeProjects="PlasmoDB">
                <paramValue name="source_id">PB000172.01.0</paramValue>
@@ -1981,7 +1981,7 @@
        <!-- MR4 reagents -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Mr4Reagents" isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+       <sqlQuery name="Mr4Reagents" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="atcc_number"/>
@@ -2087,7 +2087,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="gene_dbrefs" 
-                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+                  isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="dataset"/>
@@ -2226,7 +2226,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="ProteinDatabase" 
-                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+                  isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="accession"/>
@@ -2327,7 +2327,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="3dPreds"
-                  isCacheable="false" includeProjects="PlasmoDB,ApiDB">
+                  isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="search_term"/>
@@ -2355,7 +2355,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="PdbSimilarities"
-                  isCacheable="false" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,ApiDB">
+                  isCacheable="false" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,EuPathDB">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="pdb_chain"/>
@@ -2383,7 +2383,7 @@
        <!-- two channel diff expr -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB,ApiDB">
+      <sqlQuery name="TwoChannelDifferentialExpression" isCacheable='false' includeProjects="PlasmoDB,EuPathDB">
 
        <testParamValues includeProjects="PlasmoDB">
                <paramValue name="source_id">PB000296.02.0</paramValue>
@@ -2443,7 +2443,7 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="TaskComments" 
-                  isCacheable="false" includeProjects="ToxoDB,ApiDB">
+                  isCacheable="false" includeProjects="ToxoDB,EuPathDB">
 
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGME49_033070</paramValue>

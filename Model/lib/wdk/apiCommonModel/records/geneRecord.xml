@@ -103,12 +103,12 @@
               summary="formatted_gene_id,location_text,product"
               sorting="location_text asc"
          />
-          <attributesList includeProjects="ApiDB"
+          <attributesList includeProjects="EuPathDB"
               summary="organism,location_text,product"
               sorting="project asc,organism asc,location_text asc"
          />
 
-         <attributesList excludeProjects="ApiDB,ToxoDB"
+         <attributesList excludeProjects="EuPathDB,ToxoDB"
               summary="location_text,product"
               sorting="location_text asc"
          />
@@ -223,8 +223,8 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.AllResults"
-                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,ApiDB,CryptoDB,PlasmoDB">
-                  <instance name="all_results" default="true" includeProjects="ApiDB,ToxoDB,TriTrypDB,CryptoDB,PlasmoDB">
+                          includeProjects="ToxoDB,GiardiaDB,TriTrypDB,EuPathDB,CryptoDB,PlasmoDB">
+                  <instance name="all_results" default="true" includeProjects="EuPathDB,ToxoDB,TriTrypDB,CryptoDB,PlasmoDB">
                     <displayName><![CDATA[All Results]]></displayName>
                     <description>
                         <![CDATA[
@@ -243,7 +243,7 @@
             </answerFilter>
 
 <answerFilter queryRef="GeneSummaries.ApiGenes"
-                          includeProjects="ApiDB">
+                          includeProjects="EuPathDB">
                 
                 <instance name="ch_genes">
                     <displayName><![CDATA[<i>Ch</i> Genes]]></displayName>
@@ -345,7 +345,7 @@
 
 
   <answerFilter queryRef="GeneSummaries.ApiGiardiaGenes"
-                          includeProjects="ApiDB">
+                          includeProjects="EuPathDB">
                 
                 <instance name="gl_genes">
                     <displayName><![CDATA[Genes]]></displayName>
@@ -590,7 +590,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
-                          includeProjects="ToxoDB,ApiDB">
+                          includeProjects="ToxoDB,EuPathDB">
                 
                 <instance name="toxo_genes">
                     <displayName><![CDATA[<i>Toxo</i> Genes]]></displayName>
@@ -605,7 +605,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.CryptoDistinctGenes"
-                          includeProjects="CryptoDB,ApiDB">
+                          includeProjects="CryptoDB,EuPathDB">
                 
                 <instance name="crypto_distinct_genes">
                     <displayName><![CDATA[Ortholog Groups]]></displayName>
@@ -620,7 +620,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.TCruziDistinctGenes"
-                          includeProjects="TriTrypDB,ApiDB">
+                          includeProjects="TriTrypDB,EuPathDB">
                 
                 <instance name="tc_distinct_genes">
                     <displayName><![CDATA[<i>T.cruzi</i> Distinct Genes]]></displayName>
@@ -636,7 +636,7 @@
 
 
             <answerFilter queryRef="GeneSummaries.TriTrypDistinctGenes"
-                          includeProjects="TriTrypDB,ApiDB">
+                          includeProjects="TriTrypDB,EuPathDB">
                 
                 <instance name="tritryp_distinct_genes">
                     <displayName><![CDATA[Ortholog Groups]]></displayName>
@@ -650,7 +650,7 @@
             </answerFilter>
 
               <answerFilter queryRef="GeneSummaries.PlasmoOrthologGroups"
-                          includeProjects="PlasmoDB,ApiDB">
+                          includeProjects="PlasmoDB,EuPathDB">
                 
                 <instance name="plasmo_ortholog_groups">
                     <displayName><![CDATA[Ortholog Groups]]></displayName>
@@ -679,7 +679,7 @@
             </answerFilter>
 
             <answerFilter queryRef="GeneSummaries.NeosporaGenes"
-                          includeProjects="ToxoDB,ApiDB">
+                          includeProjects="ToxoDB,EuPathDB">
                 
                 <instance name="neospora_genes">
                     <displayName><![CDATA[<i>Neospora</i> Genes]]></displayName>
@@ -973,7 +973,7 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <attributeQueryRef ref="GeneAttributes.Bfmv">
-            <columnAttribute name="formatted_gene_id" displayName="Gene Group" includeProjects="ToxoDB,ApiDB" />
+            <columnAttribute name="formatted_gene_id" displayName="Gene Group" includeProjects="ToxoDB,EuPathDB" />
             <columnAttribute displayName="Data Source" name="external_db_name"/>
             <columnAttribute displayName="Genomic Sequence ID" name="sequence_id"/>
             <columnAttribute displayName="Chromosome" name="chromosome"/> 
@@ -1134,9 +1134,9 @@
             <columnAttribute name="cyc_gene_id" displayName="GiardiaCYC Gene ID" 
                  internal="true" inReportMaker="false" includeProjects="GiardiaDB"/>
             <columnAttribute name="cyc_db" displayName="PlasmoCYC DB Name" internal="true" 
-                 inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
+                 inReportMaker="false" includeProjects="PlasmoDB,EuPathDB"/>
             <columnAttribute name="cyc_gene_id" displayName="PlasmoCYC Gene ID" 
-                 internal="true" inReportMaker="false" includeProjects="PlasmoDB,ApiDB"/>
+                 internal="true" inReportMaker="false" includeProjects="PlasmoDB,EuPathDB"/>
             <columnAttribute name="cyc_db" displayName="ToxoCYC DB Name" internal="true" 
                  inReportMaker="false" includeProjects="ToxoDB"/>
             <columnAttribute name="cyc_gene_id" displayName="ToxoCYC Gene ID" internal="true" 
@@ -1370,7 +1370,7 @@
           <!-- SNPs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SNPs" includeProjects="ToxoDB,PlasmoDB,CryptoDB,ApiDB"
+         <table name="SNPs" includeProjects="ToxoDB,PlasmoDB,CryptoDB,EuPathDB"
                  displayName="SNPs Summary"
                  queryRef="GeneTables.SNPs">
             <columnAttribute internal="true" name="strain_a_query"/>
@@ -1557,7 +1557,7 @@
           <!-- Gene Location table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Genbank" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,ApiDB"
+          <table name="Genbank" includeProjects="TriTrypDB,ToxoDB,GiardiaDB,CryptoDB,EuPathDB"
                  displayName="Gene Location"
                  queryRef="GeneTables.Genbank">
             <columnAttribute displayName= "Sequence Level" name="is_top_level" internal="false"/>
@@ -1736,7 +1736,7 @@
           <!-- Sage Tags table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-         <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB,ApiDB"
+         <table name="SageTags" includeProjects="PlasmoDB,GiardiaDB,EuPathDB"
                  displayName="Sage Tags"
                  queryRef="GeneTables.SageTags">
             <columnAttribute name="tag_source_id" internal="true" displayName="External ID"/>
@@ -1879,7 +1879,7 @@
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
           <table name="MassSpec" displayName="Mass Spec.-based Expression Evidence"
-                 queryRef="GeneTables.MassSpec" includeProjects="PlasmoDB,ApiDB">
+                 queryRef="GeneTables.MassSpec" includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="developmental_stage" displayName="Lifecycle Stage"/>
             <columnAttribute name="algorithm" displayName="Algorithm"/>
             <columnAttribute name="seq_coverage" displayName="Coverage"/>
@@ -1940,7 +1940,7 @@
 
           <table name="Aliases"
                  displayName="Aliases"
-                 queryRef="GeneTables.Aliases" includeProjects="PlasmoDB,ApiDB">
+                 queryRef="GeneTables.Aliases" includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute displayName="Alias" name="alias"/>
           </table>
 
@@ -1950,7 +1950,7 @@
 
           <table name="Phenotype"
                  displayName="Phenotype"
-                 queryRef="GeneTables.PhenotypeTable" includeProjects="TriTrypDB,ApiDB">
+                 queryRef="GeneTables.PhenotypeTable" includeProjects="TriTrypDB,EuPathDB">
             <columnAttribute displayName="Phenotype" name="phenotype"/>
             <columnAttribute displayName="Evidence" name="evidence"/>
             <columnAttribute name="pubmed_id" internal="true" displayName="PubMed"/>
@@ -1974,7 +1974,7 @@
 
           <table name="Y2hInteractions"
                  displayName="Y2H Interactions"
-                 queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,ApiDB">
+                 queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,EuPathDB">
               <columnAttribute name="source_id" internal="true" displayName="Gene"/>
               <linkAttribute name="geneLink" displayName="Gene" inReportMaker="false">
                  <displayText>
@@ -2037,7 +2037,7 @@
           <!-- Pathways table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB,ApiDB"
+          <table name="MetabolicPathways" includeProjects="PlasmoDB,ToxoDB,EuPathDB"
                  displayName="Metabolic Pathways"
                  queryRef="GeneTables.MetabolicPathways">
             <columnAttribute name="pathway_id" internal="true"/>
@@ -2048,7 +2048,7 @@
                     $$pathway_name$$
                     ]]>
                  </displayText>
-                 <url includeProjects="PlasmoDB,ApiDB">
+                 <url includeProjects="PlasmoDB,EuPathDB">
                     <![CDATA[http://sites.huji.ac.il/malaria/maps/$$pathway_id$$.html]]>
                  </url>
                  <url includeProjects="ToxoDB">
@@ -2094,7 +2094,7 @@
           <table name="TaskComments"
                  displayName="Toxoplasma Genome Sequencing Project Annotation"
                  queryRef="GeneTables.TaskComments"
-                 includeProjects="ToxoDB,ApiDB">
+                 includeProjects="ToxoDB,EuPathDB">
             <columnAttribute name="comment_string" displayName="TASK Annotation"/>
           </table>
 
@@ -2105,7 +2105,7 @@
           <table name="ArrayElements"
                  displayName="Mapped Array Elements"
                  queryRef="GeneTables.ArrayElements"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="array_source_id" internal="true" displayName="Array Element"/>
             <columnAttribute name="array_provider" displayName="Provider"
                              internal="false"/>
@@ -2128,7 +2128,7 @@
           <table name="TwoChannelDiffExpr"
                  displayName="P.Berghei Differential Expression - DOZI KO vs. WT"
                  queryRef="GeneTables.TwoChannelDifferentialExpression"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="studyName" displayName="Study"/>
             <columnAttribute name="fold_change" displayName="Fold change"/>
             <columnAttribute name="confidence" displayName="Confidence"/>
@@ -2141,7 +2141,7 @@
           <table name="ProteinExpression"
                  displayName="P.Berghei Protein Expression"
                  queryRef="GeneTables.ProteinExpression"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="profile_element" displayName="Life Cycle Stage"/>
             <columnAttribute name="element_value" displayName="Observed?"/>
           </table>
@@ -2153,7 +2153,7 @@
           <table name="Mr4Reagents"
                  displayName="MR4 Reagents"
                  queryRef="GeneTables.Mr4Reagents"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="atcc_number" internal="true" displayName="ATTC Number"/>
             <linkAttribute name="atcc_link" displayName="ATCC Number" inReportMaker="false">
                  <displayText>
@@ -2201,7 +2201,7 @@
           <table name="ProteinDatabase"
                  displayName="Protein Linkouts"
                  queryRef="GeneTables.ProteinDatabase"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="dataset" displayName="Database"/>
             <columnAttribute name="accession" internal="true" displayName="Accession"/>
             <columnAttribute name="gi" internal="true"/>
@@ -2240,7 +2240,7 @@
           <table name="GeneLinkouts"
                  displayName="External Links"
                  queryRef="GeneTables.gene_dbrefs"
-                 includeProjects="PlasmoDB,TriTrypDB,ApiDB,ToxoDB">
+                 includeProjects="PlasmoDB,TriTrypDB,EuPathDB,ToxoDB">
             <columnAttribute name="dataset" displayName="Database" internal="true"/>
             <columnAttribute name="source_id" internal="true"/>
             <columnAttribute name="link_url" internal="true"/>
@@ -2262,7 +2262,7 @@
           <table name="3dPreds"
                  displayName="3D Structure Predictions"
                  queryRef="GeneTables.3dPreds"
-                 includeProjects="PlasmoDB,ApiDB">
+                 includeProjects="PlasmoDB,EuPathDB">
             <columnAttribute name="search_term" internal="true" displayName="ICGEB"/>
             <columnAttribute name="pdb_template" internal="true" displayName="PDB Template"/>
             <linkAttribute name="icgeb_link" displayName="3D Structure Predictions From ICGEB" inReportMaker="false">
@@ -2292,7 +2292,7 @@
           <table name="PdbSimilarities"
                  displayName="Similarities to Protein Data Bank (PDB) Chains"
                  queryRef="GeneTables.PdbSimilarities"
-                 includeProjects="CryptoDB,TriTrypDB,PlasmoDB,ApiDB">
+                 includeProjects="CryptoDB,TriTrypDB,PlasmoDB,EuPathDB">
             <columnAttribute name="pdb_chain" internal="true" displayName="PDB Structure"/>
             <columnAttribute name="pdb_id" internal="true"/>
             <columnAttribute name="pvalue_mant" internal="true"/>
@@ -2365,7 +2365,7 @@
           <!-- Isolate Overlap Table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="IsolateOverlap" includeProjects="CryptoDB,ApiDB"
+          <table name="IsolateOverlap" includeProjects="CryptoDB,EuPathDB"
                  displayName="Isolates"
                  queryRef="GeneTables.IsolateOverlap">
             <columnAttribute name="source_id" displayName="Gene Name"/>
@@ -2552,7 +2552,7 @@
                 <columnAttribute name="chromosomemappingtext" displayName="Chromosome" internal="false" />
           </attributeQueryRef>
 
-          <textAttribute name="overview" displayName="Overview" excludeProjects="ApiDB"
+          <textAttribute name="overview" displayName="Overview" excludeProjects="EuPathDB"
                          internal="true" inReportMaker="false">
 
              <text excludeProjects="CryptoDB,TriTrypDB">

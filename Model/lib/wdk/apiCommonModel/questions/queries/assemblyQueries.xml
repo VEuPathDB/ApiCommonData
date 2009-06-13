@@ -23,7 +23,7 @@
        </sql>
     </sqlQuery>
 
- <processQuery name="ByEstAccession" includeProjects="ApiDB"
+ <processQuery name="ByEstAccession" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="estParams.est_id"/>
         <paramRef ref="sharedParams.signature" quote="false"/>
@@ -63,7 +63,7 @@
     </sqlQuery>
 
 
- <processQuery name="ByLibrary" includeProjects="ApiDB"
+ <processQuery name="ByLibrary" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="sharedParams.libraryIdAssemblies"/>
         <paramRef ref="sharedParams.min_ests_in_assembly"/>
@@ -209,7 +209,7 @@
     </sqlQuery>
 
    
- <processQuery name="ByLocation" includeProjects="ApiDB"
+ <processQuery name="ByLocation" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
 
          <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenesGFF"/>
@@ -346,7 +346,7 @@
     </sqlQuery>
 
 
- <processQuery name="withGeneOverlap" includeProjects="ApiDB"
+ <processQuery name="withGeneOverlap" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
        <paramRef ref="organismParams.organismWithAssemblies" quote="false"/>
        <paramRef ref="sharedParams.bp_overlap_gte"/>
@@ -427,7 +427,7 @@
 
 
 
- <processQuery name="ByGeneIDs" includeProjects="ApiDB"
+ <processQuery name="ByGeneIDs" includeProjects="EuPathDB"
               isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="assemblyParams.single_gene_id" quote="false"/>
       <paramRef ref="sharedParams.bp_overlap_gte"/>
