@@ -5,7 +5,7 @@ create table apidb.Workflow (
   state                 varchar(30),
   process_id            number(10),
   undo_step_id          number(10),
-  metaconfig            clob,
+  test_mode             number(1),
   xml_file_digest    	varchar(100),
   test_mode             number(1)
 );
@@ -36,12 +36,14 @@ create table apidb.WorkflowStep (
   process_id          number(10),
   state               varchar(30),
   state_handled       number(1),
+  last_handled_time   date,
   off_line            number(1),
   stop_after          number(1),
   undo_state          varchar(30),
   undo_state_handled  number(1),
   undo_off_line       number(1),
   undo_stop_after     number(1),
+  undo_last_handled_time date,
   start_time          date,
   end_time            date,
   step_class          varchar(200),
