@@ -1416,7 +1416,7 @@ tablespace indx
     <sql>
       <![CDATA[
 update apidb.GENEATTRIBUTES&1 ga
-set ga.orthomcl_name = (select distinct gb.orthomcl_name from apidb.GENEATTRIBUTES gb
+set ga.orthomcl_name = (select distinct gb.orthomcl_name from GENEATTRIBUTES&1 gb
                      where gb.gene_id = ga.GENE_ID
                      and gb.orthomcl_name is not null
                      and gb.source_id != gb.orthomcl_name)
