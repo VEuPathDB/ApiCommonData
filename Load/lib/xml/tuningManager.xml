@@ -2437,7 +2437,9 @@ SELECT f.na_feature_id   as na_feature_id,
        ELSE 'unknown' 
        END as strain,
        CASE 
-          WHEN a.name like '%H3K9%' then 'H3K9ac'
+          WHEN a.name like '%H3K9%' AND a.name not like 'Cen%' then 'H3K9ac'
+          WHEN a.name like 'CenH3_H3K9me2%' then 'CenH3_H3K9me2'
+          WHEN a.name like 'CenH3 -%' then 'CenH3'
           WHEN a.name like '%H3K4%' then 'H3K4me3'
           WHEN a.name like '%K5,K8,K12,K16%' then 'H4(K5-K8-K12-K16)ac'
        ELSE 'unknown' 
