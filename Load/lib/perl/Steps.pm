@@ -5997,7 +5997,7 @@ sub insertTaxonRow {
   my $args = "--name $name --nameClass $nameClass --rank $rank --parentNcbiTaxId $parentTaxId --parentRank $parentRank";
 
    $mgr->runPlugin("${name}TaxonInserted",
-                  "ApiCommonData::Load::Plugin::InsertTaxonAndTaxonName",
+                  "GUS::Supported::Plugin::InsertTaxonAndTaxonName",
                   $args, "Inserting taxon and taxonname rows for $name");
 }
 
