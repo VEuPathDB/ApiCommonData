@@ -2251,8 +2251,7 @@ EOF
 
   my $names = join(",", @termNames);
 
-  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,
-            sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names)" if $termName;
+  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names))" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2318,7 +2317,7 @@ EOF
 
   my $names = join(",", @termNames); 
 
-  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names)" if $termName;
+  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names))" if $termName;
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
@@ -2483,7 +2482,6 @@ sub makeMixedGenomicDownloadFile {
                ns.sequence
            FROM dots.nasequence ns,
                 apidb.sequenceattributes sa,
-                sres.sequenceontology so
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
 
@@ -2495,7 +2493,7 @@ EOF
 
   my $names = join(",", @termNames);
 
-  $sql .= " AND so.term_name in ($names) AND so.so_id = sa.so_id" if $termName;
+  $sql .= " AND sa.so_id in (select distinct so.so_id from sres.sequenceontology so where so.term_name in ($names))" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
