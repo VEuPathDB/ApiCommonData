@@ -232,8 +232,8 @@
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
     <sqlQuery name="IsolateByRFLPGenotype" includeProjects="ToxoDB" isCacheable="true">
-        <paramRef ref="isolateParams.rflp_protein_SAG1" quote="false"/>
-        <paramRef ref="isolateParams.rflp_protein_SAG3" quote="false"/>
+        <paramRef ref="isolateParams.rflp_protein_SAG1" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
@@ -242,13 +242,13 @@
           SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
           FROM   dots.isolatefeature f, dots.nasequence s
           WHERE  f.na_sequence_id = s.na_sequence_id 
-             AND f.product = 'SAG1' and f.gene_type in ($$rflp_protein_SAG1$$) 
+             AND f.product = 'SAG1' and ($$rflp_protein_SAG1$$ = 'all' OR f.gene_type = $$rflp_protein_SAG1$$) 
              AND f.name = 'RFLP' 
           INTERSECT
           SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
           FROM   dots.isolatefeature f, dots.nasequence s
           WHERE  f.na_sequence_id = s.na_sequence_id 
-             AND f.product = 'SAG3' and f.gene_type in ($$rflp_protein_SAG3$$) 
+             AND f.product = 'SAG3' and ($$rflp_protein_SAG3$$ = 'all' OR f.gene_type = $$rflp_protein_SAG3$$) 
              AND f.name = 'RFLP' 
           ]]>
          </sql>

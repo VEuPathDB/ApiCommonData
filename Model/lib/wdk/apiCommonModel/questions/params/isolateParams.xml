@@ -382,10 +382,10 @@ order by v.prediction_number
     <column name="term"/>
     <sql>
     <![CDATA[
-select 'Don''t Care' as term, '''I'','|| '''II'',' || '''II or III'',' || '''III'','|| '''IIorIII'',' || '''nd'',' || '''u-1'',' || '''u-2'',' || '''u-3''' as internal
+select 'Don''t Care' as term, 'all' as internal
 from dual 
 union
-select distinct v.gene_type as term, '''' || v.gene_type || '''' as internal
+select distinct v.gene_type as term, v.gene_type as internal
 from dots.isolatefeature v 
 where v.name = 'RFLP'
     ]]>
