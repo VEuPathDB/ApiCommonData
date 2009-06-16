@@ -328,6 +328,11 @@
         <columnAttribute name="geographic_location" internal="true"/>
      </table>
 
+     <attributeQueryRef ref="IsolateAttributes.LinkOut" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+       <columnAttribute inReportMaker="false" name="linkout" internal="true" />
+     </attributeQueryRef>
+
+
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
      <!-- Isolates Barcode SNP table -->
      <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -363,7 +368,7 @@
            <table width="100%">
              <tr>
               <td width="20%" nowrap>Isolate Identifier</td>
-              <td><a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&id=$$source_id$$" target=_blank><font size="-1">$$source_id$$</font></a></td>
+              <td><font size="-1">$$source_id$$</font></td>
              </tr>
              <tr>
               <td nowrap>Organism:</td>
@@ -400,6 +405,10 @@
              <tr>
               <td nowrap>Geographic Location:</td>
               <td>$$country$$</td>
+             </tr>
+             <tr>
+              <td nowrap>Linkout:</td>
+              <td>$$linkout$$</td>
              </tr>
            </table>
           ]]>

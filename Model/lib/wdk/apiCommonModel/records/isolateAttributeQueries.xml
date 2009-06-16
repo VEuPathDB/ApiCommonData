@@ -56,6 +56,23 @@
            </sql>
       </sqlQuery>
 
+        <sqlQuery name="LinkOut">
+            <column name="source_id" />
+            <column name="project_id" />
+            <column name="linkout" />
+            <sql>
+            <![CDATA[
+            SELECT source_id, '@PROJECT_ID@' as project_id,
+            CASE 
+             WHEN data_type='Genbank' THEN 
+               '<a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nuccore&' || 'id=' || source_id || '" target=_blank>NCBI</a>'
+             ELSE ''
+            END as linkout
+            FROM   ApiDB.IsolateAttributes
+            ]]>
+            </sql>
+        </sqlQuery>
+
       <sqlQuery name="ProteinSequenceCount" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
             <column name="project_id"/>
             <column name="source_id"/> 
