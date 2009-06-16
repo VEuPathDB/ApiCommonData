@@ -162,17 +162,6 @@
         <useTermOnly value="true" includeProjects="EuPathDB"/> 
        </flatVocabParam>
 
-       <flatVocabParam name="rflp_strain_type" includeProjects="ToxoDB,EuPathDB"
-            queryRef="typeVQ.rflp_strain"
-            prompt="RFLP Isolate strain"
-            multiPick="false"
-            quote="true"> 
-        <help>
-          Choose the strain type you want to query
-            </help>
-        <useTermOnly value="true" includeProjects="EuPathDB"/> 
-       </flatVocabParam>
-
        <flatVocabParam name="submitter" includeProjects="PlasmoDB,EuPathDB"
             queryRef="submitterVQ.withIsolates"
             prompt="Submitter"
@@ -508,20 +497,6 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       FROM   ApiDB.IsolateAttributes src
              where src.data_type != 'Genbank'
       ORDER BY src.data_type
-      ]]>
-      </sql>
-    </sqlQuery>
-
-    <sqlQuery name="rflp_strain" includeProjects="ToxoDB,EuPathDB">
-      <column name="internal"/>
-      <column name="term"/>
-      <sql>
-      <![CDATA[
-      SELECT distinct src.gene_type AS term,
-             src.gene_type AS internal
-      FROM   DoTS.IsolateFeature src
-             where src.name = 'RFLP'
-      ORDER BY src.gene_type
       ]]>
       </sql>
     </sqlQuery>
