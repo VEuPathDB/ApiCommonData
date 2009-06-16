@@ -27,8 +27,6 @@
                      default="AF527841"/>
          </datasetParam>
 
-
-
         <stringParam name="gene_id" prompt="Gene Name">
             <help>Enter an Gene Name.  Wildcards (*) are allowed.</help>
             <suggest includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB"
@@ -84,10 +82,18 @@
             <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
-        <flatVocabParam name="genotype_protein" includeProjects="ToxoDB,EuPathDB"
-            queryRef="genotypeProteinVQ.withIsolates"
-            prompt="RFLP Genotype"
-            multiPick="true"
+        <flatVocabParam name="rflp_protein_SAG1" includeProjects="ToxoDB,EuPathDB"
+            queryRef="rflpGenotypeVQ.withIsolates"
+            prompt="Protein SAG1"
+            multiPick="false"
+            quote="false">
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
+        </flatVocabParam>
+
+        <flatVocabParam name="rflp_protein_SAG3" includeProjects="ToxoDB,EuPathDB"
+            queryRef="rflpGenotypeVQ.withIsolates"
+            prompt="Protein SAG3"
+            multiPick="false"
             quote="false">
             <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
@@ -159,7 +165,7 @@
        <flatVocabParam name="rflp_strain_type" includeProjects="ToxoDB,EuPathDB"
             queryRef="typeVQ.rflp_strain"
             prompt="RFLP Isolate strain"
-            multiPick="true"
+            multiPick="false"
             quote="true"> 
         <help>
           Choose the strain type you want to query
@@ -370,19 +376,18 @@ order by v.prediction_number
 
   </querySet>
 
-  <querySet name="genotypeProteinVQ" queryType="vocab">
+  <querySet name="rflpGenotypeVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="ToxoDB">
-    <column name="display"/>
     <column name="internal"/>
     <column name="term"/>
-    <column name="parentTerm"/>
     <sql>
     <![CDATA[
-select distinct v.product as display, 
-      v.product as term, v.product as internal, '' as parentTerm
+select 'Don''t Care' as term, '''I'','|| '''II'',' || '''II or III'',' || '''III'','|| '''IIorIII'',' || '''nd'',' || '''u-1'',' || '''u-2'',' || '''u-3''' as internal
+from dual 
+union
+select distinct v.gene_type as term, '''' || v.gene_type || '''' as internal
 from dots.isolatefeature v 
-where name = 'RFLP'
-order by v.product
+where v.name = 'RFLP'
     ]]>
     </sql>
     </sqlQuery>
