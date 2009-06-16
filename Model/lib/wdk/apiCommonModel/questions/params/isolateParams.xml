@@ -84,6 +84,14 @@
             <useTermOnly value="true" includeProjects="EuPathDB"/>
         </flatVocabParam>
 
+        <flatVocabParam name="genotype_protein" includeProjects="ToxoDB,EuPathDB"
+            queryRef="genotypeProteinVQ.withIsolates"
+            prompt="RFLP Genotype"
+            multiPick="true"
+            quote="false">
+            <useTermOnly value="true" includeProjects="EuPathDB"/>
+        </flatVocabParam>
+
         <flatVocabParam name="study" includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB"
             queryRef="studyVQ.withIsolates"
             prompt="Study Name"
@@ -144,6 +152,17 @@
             quote="true"> 
         <help>
           Choose the isolate type you want to query
+            </help>
+        <useTermOnly value="true" includeProjects="EuPathDB"/> 
+       </flatVocabParam>
+
+       <flatVocabParam name="rflp_strain_type" includeProjects="ToxoDB,EuPathDB"
+            queryRef="typeVQ.rflp_strain"
+            prompt="RFLP Isolate strain"
+            multiPick="true"
+            quote="true"> 
+        <help>
+          Choose the strain type you want to query
             </help>
         <useTermOnly value="true" includeProjects="EuPathDB"/> 
        </flatVocabParam>
@@ -349,7 +368,31 @@ order by v.prediction_number
       <wsColumn name="term" width="100" wsName="term"/>
     </processQuery>
 
-   </querySet> 
+  </querySet>
+
+  <querySet name="genotypeProteinVQ" queryType="vocab">
+    <sqlQuery name="withIsolates" includeProjects="ToxoDB">
+    <column name="display"/>
+    <column name="internal"/>
+    <column name="term"/>
+    <column name="parentTerm"/>
+    <sql>
+    <![CDATA[
+select distinct v.product as display, 
+      v.product as term, v.product as internal, '' as parentTerm
+from dots.isolatefeature v 
+where name = 'RFLP'
+order by v.product
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <processQuery name="withIsolates" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+      <wsColumn name="internal" width="100" wsName="internal"/>
+      <wsColumn name="term" width="100" wsName="term"/>
+    </processQuery>
+
+  </querySet> 
 
   <querySet name="studyVQ" queryType="vocab">
     <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
@@ -460,6 +503,20 @@ select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
       FROM   ApiDB.IsolateAttributes src
              where src.data_type != 'Genbank'
       ORDER BY src.data_type
+      ]]>
+      </sql>
+    </sqlQuery>
+
+    <sqlQuery name="rflp_strain" includeProjects="ToxoDB,EuPathDB">
+      <column name="internal"/>
+      <column name="term"/>
+      <sql>
+      <![CDATA[
+      SELECT distinct src.gene_type AS term,
+             src.gene_type AS internal
+      FROM   DoTS.IsolateFeature src
+             where src.name = 'RFLP'
+      ORDER BY src.gene_type
       ]]>
       </sql>
     </sqlQuery>

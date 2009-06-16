@@ -221,8 +221,38 @@
          </sql>
     </sqlQuery>
 
-    <processQuery name="IsolateByGenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
-      <paramRef ref="isolateParams.genotype" queryRef="productVQ.withIsolates"/>
+    <processQuery name="IsolateByGenotypeNumber" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+      <paramRef ref="isolateParams.genotype" queryRef="genotypeVQ.withIsolates"/>
+      <wsColumn name="source_id" width="32" wsName="source_id"/>
+      <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </processQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Isolate by RFLP Genotype Number -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="IsolateByRFLPGenotypeNumber" includeProjects="ToxoDB" isCacheable="true">
+        <paramRef ref="isolateParams.genotype_protein" queryRef="genotypeProteinVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.rflp_strain_type" quote="true"/>
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="data_type"/>
+        <sql >
+          <![CDATA[
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   apidb.isolateattributes s, 
+                 dots.isolatefeature if 
+          WHERE  s.na_sequence_id = if.na_sequence_id 
+             AND if.product in ($$genotype_protein$$) 
+             AND s.data_type = 'RFLP' 
+             AND if.gene_type in ($$rflp_strain_type$$)
+          ORDER BY source_id
+          ]]>
+         </sql>
+    </sqlQuery>
+
+    <processQuery name="IsolateByRFLPGenotypeNumber" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+      <paramRef ref="isolateParams.genotypeProtein" queryRef="genotypeProteinVQ.withIsolates"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
