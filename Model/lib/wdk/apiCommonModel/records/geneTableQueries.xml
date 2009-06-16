@@ -2048,8 +2048,11 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Antibody" isCacheable="false" includeProjects="ToxoDB,CryptoDB">
-            <testParamValues>
+            <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGGT1_043200</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="source_id">cgd6_5430</paramValue>
             </testParamValues>
 
             <column name="source_id"/>
