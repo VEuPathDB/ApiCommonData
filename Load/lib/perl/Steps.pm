@@ -2481,7 +2481,7 @@ sub makeMixedGenomicDownloadFile {
                as defline,
                ns.sequence
            FROM dots.nasequence ns,
-                apidb.sequenceattributes sa,
+                apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
 
