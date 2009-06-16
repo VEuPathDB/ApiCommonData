@@ -1785,6 +1785,9 @@ SELECT distinct CASE
 FROM dots.Miscellaneous m, dots.TranslatedAaFeature taaf,
      dots.TranslatedAaSequence tas, sres.Taxon, sres.TaxonName tn,
      sres.SequenceOntology so, apidb.FeatureLocation nl,
+     -- subquery for sequence. Can't just use apidb.GenomicSequence,
+     -- which only contains records eligible to be the result of a sequence search.
+     -- ORFs can be on other sequences, such as ESTs in cryptodb.
      (  select gs.na_sequence_id, gs.source_id, gs.chromosome, gs.chromosome_order_num, gs.taxon_id
         from apidb.GenomicSequence gs
       union
