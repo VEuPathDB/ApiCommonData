@@ -335,7 +335,7 @@
         </sqlQuery>
 
         <!-- AjaxTables.BlastIsolateOrganismTermList -->
-        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="EuPathDB,CryptoDB,PlasmoDB">
+        <sqlQuery name="BlastIsolateOrganismTermList" isCacheable='true' includeProjects="EuPathDB,CryptoDB,PlasmoDB,ToxoDB">
             <paramRef ref="recordParams.source_id"/>
             <paramRef ref="recordParams.project_id"/>
             <column name="source_id" />
@@ -363,7 +363,12 @@
                      'All Plasmodium Barcodes' as internal 
               FROM DUAL 
             </sql>
- 
+            <sql includeProjects="ToxoDB">
+              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                     'All Toxoplasma Isolates' as term,
+                     'All Toxoplasma Isolates' as internal
+              FROM DUAL
+            </sql> 
             <sql includeProjects="EuPathDB">
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
@@ -374,6 +379,11 @@
               UNION
               SELECT 'All Plasmodium Barcodes' as term, 
                      'All Plasmodium Barcodes' as internal 
+              FROM DUAL
+              UNION
+              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                     'All Toxoplasma Isolates' as term,
+                     'All Toxoplasma Isolates' as internal
               FROM DUAL  
                  ) t
             </sql>

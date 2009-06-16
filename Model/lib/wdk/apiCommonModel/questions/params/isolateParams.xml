@@ -41,7 +41,7 @@
             <suggest includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB" sample="Xiao" default="Xiao"/> 
         </stringParam>
 
-        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,PlasmoDB,EuPathDB"
+        <flatVocabParam name="isolate_organism" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
              queryRef="organismIQ.withIsolates"
             prompt="Organism"
             multiPick="true"
@@ -232,7 +232,7 @@
     </paramSet>
 
     <querySet name="organismIQ" queryType="vocab">
-      <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB">
+      <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
       <column name="internal"/>
       <column name="term"/>
       <sql>
