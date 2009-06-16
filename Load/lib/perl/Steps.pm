@@ -4739,7 +4739,7 @@ sub fixMercatorOffsetsInGFF {
 
 }
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFileDeprecated, $organism) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile, $organism) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntenySpans";
@@ -4751,6 +4751,10 @@ sub insertMercatorSyntenySpans {
   my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec' --organism '$organism'";
 
   my $formatCmd = "formatPxSyntenyFile --inputFile $file --outputFile $out";
+
+  if($agpFile){
+      $formatCmd .= " --agpFile $agpFile";
+  }
 
   $mgr->runCmd($formatCmd);
   $mgr->runPlugin($signal,
@@ -4820,20 +4824,32 @@ sub runPairwiseMercatorMavid {
       @nonDrafts = map { "$_" } split(',', $nonDraftString);
   }
 
-  foreach my $draft (@drafts) {
-    my $dirName = "$mercatorDir/$draft-$referenceGenome";
+ foreach my $nonDraft (@nonDrafts) { 
+     foreach my $draft (@drafts) {
+	 my $dirName = "$mercatorDir/$draft-$nonDraft";
 
-    my $command = "runMercator  -t '($draft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $referenceGenome  2>$logFile";
-    $mgr->runCmd($command);
+	 my $command = "runMercator  -t '($draft:0.1,$nonDraft:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $nonDraft  2>$logFile";
+	 $mgr->runCmd($command);
+     }
+ }
+
+  for(my $i=0;$i < scalar(@nonDrafts) - 1;$i++){
+      for(my $j=1; $j < scalar(@nonDrafts); $j++){
+	  my $dirName = "$mercatorDir/$nonDrafts[$j]-$nonDrafts[$i]";
+
+	  my $command = "runMercator  -t '($nonDrafts[$j]:0.1,$nonDrafts[$i]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDrafts[$j] -n $nonDrafts[$i] 2>$logFile";
+	  $mgr->runCmd($command);
+      }
   }
 
-  foreach my $nonDraft (@nonDrafts) {
-    my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
+  for(my $i=0;$i < scalar(@drafts) - 1;$i++){
+      for(my $j=1; $j < scalar(@drafts); $j++){
+	  my $dirName = "$mercatorDir/$drafts[$j]-$drafts[$i]";
 
-    my $command = "runMercator  -t '($nonDraft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft -n $referenceGenome 2>$logFile";
-    $mgr->runCmd($command);
+	  my $command = "runMercator  -t '($drafts[$j]:0.1,$drafts[$i]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d $drafts[$j] -d $drafts[$i] 2>$logFile";
+	  $mgr->runCmd($command);
+      }
   }
-
 
 
   $mgr->endStep($signal);
