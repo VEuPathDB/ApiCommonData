@@ -34,7 +34,7 @@ if($subCommand eq 'report') {
   my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlReader->new($gusConfigFile, $type);
   my $sqlTerms = $sqlReader->extract();
 
-  my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($xmlTerms, $sqlTerms);
+  my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $sqlTerms, $type);
   $reporter->report();
 }
 
