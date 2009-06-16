@@ -56,11 +56,16 @@
           <paramValue name="sequenceId">Pf3D7_04</paramValue>
         </testParamValues>
 
+        <testParamValues includeProjects="TriTrypDB">
+          <paramValue name="sequenceId">Lbr.chr22</paramValue>
+        </testParamValues>
+
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrV</paramValue>
         </testParamValues>
 
- <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,CryptoDB,TriTrypDB"/>
+ <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="ToxoDB,CryptoDB"/>
+ <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" includeProjects="TriTrypDB" default="Leishmania major"/>
  <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomesORFs" multiPick="false" default="Plasmodium knowlesi" includeProjects="PlasmoDB"/>
 <!--
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="PlasmoDB,ToxoDB,CryptoDB"/>

@@ -88,6 +88,11 @@
 
        <testParamValues includeProjects="PlasmoDB">
           <paramValue name="sequenceId">Pf3D7_04</paramValue>
+          <paramValue name="chromosomeOptional">chromosome 2</paramValue>
+        </testParamValues>
+
+       <testParamValues includeProjects="TriTrypDB">
+          <paramValue name="sequenceId">Tb927_02_v4</paramValue>
           <paramValue name="chromosomeOptional">chromosome 4</paramValue>
         </testParamValues>
 
@@ -99,9 +104,9 @@
        <paramRef ref="organismParams.organismWithAssemblies" includeProjects="PlasmoDB"/>
         <paramRef ref="organismParams.sequence_organism_text" includeProjects="ToxoDB"/>
 -->
-        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="ToxoDB,CryptoDB,TriTrypDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="ToxoDB,CryptoDB"/>
+        <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" includeProjects="TriTrypDB" default="Leishmania major"/>
         <paramRef ref="organismParams.organism"  queryRef="organismVQ.withChromosomesAssems" multiPick="false" default="Plasmodium yoelii" includeProjects="PlasmoDB"/>
-
         <paramRef ref="sharedParams.chromosomeOptional" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB"/>
         <paramRef ref="sharedParams.sequenceId"/>
         <paramRef ref="sharedParams.start_point"/>

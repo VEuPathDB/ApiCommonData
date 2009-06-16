@@ -924,6 +924,13 @@ group by gb.source_id
           <paramValue name="organism">Giardia lamblia</paramValue>
         </testParamValues>
 
+        <testParamValues includeProjects="TriTrypDB">
+          <paramValue name="profile_pattern">%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%</paramValue>
+          <paramValue name="included_species">fru</paramValue>
+          <paramValue name="excluded_species">Fungi</paramValue>
+          <paramValue name="organism">Leishmania major</paramValue>
+        </testParamValues>
+
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="included_species">fru</paramValue>
           <paramValue name="excluded_species">Fungi</paramValue>
@@ -1147,6 +1154,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByMassSpec" excludeProjects="EuPathDB,TrichDB" 
             isCacheable='true'>
 
+        <testParamValues includeProjects="TriTrypDB">
+          <paramValue name="ms_assay">Tcruzi Proteomics-Epimastigote</paramValue>
+        </testParamValues>
         <testParamValues includeProjects="PlasmoDB">
           <paramValue name="ms_assay">Merozoite</paramValue>
         </testParamValues>
@@ -1592,7 +1602,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <testParamValues includeProjects="ToxoDB">
           <paramValue name="sequenceId">TGME49_chrII</paramValue>
         </testParamValues>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB,TriTrypDB" />
+
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="TriTrypDB" default="Trypanosoma brucei"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB" />
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="PlasmoDB" default="Plasmodium vivax"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="CryptoDB" quote="true" />
 
@@ -2022,7 +2034,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
            <paramValue name="libraryIdGenes">TgME49 3 day invitro bradyzoite</paramValue>
         </testParamValues>
         <testParamValues includeProjects="TriTrypDB">
-           <paramValue name="libraryIdGenes">TcAM</paramValue>
+           <paramValue name="libraryIdGenes">TcAM (amastigote-like)</paramValue>
         </testParamValues>
 
        <paramRef ref="sharedParams.libraryIdGenes"/>
