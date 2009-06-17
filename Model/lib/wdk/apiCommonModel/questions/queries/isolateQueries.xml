@@ -85,7 +85,7 @@
         <paramRef ref="isolateParams.type" includeProjects="PlasmoDB,ToxoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
-        <column name="data_type" includeProjects="PlasmoDB"/>
+        <column name="data_type" includeProjects="PlasmoDB,ToxoDB"/>
         <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
         <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
@@ -124,8 +124,17 @@
 
 
         <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
+        <paramRef ref="isolateParams.type" includeProjects="ToxoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
+        <column name="data_type" includeProjects="PlasmoDB,ToxoDB"/>
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB,PlasmoDB">
+        </sqlParamValue>
+        <sqlParamValue name="dataTypeOptional" includeProjects="ToxoDB">
+            <![CDATA[
+             AND  i.data_type in ($$type$$) 
+            ]]>
+        </sqlParamValue>
         <sql >
           <![CDATA[
            select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
@@ -134,6 +143,7 @@
             where i.short = v.term
             and v.term in ($$specific_host$$)
             and v.type = 'specific_host'
+            &&dataTypeOptional&&
             ORDER BY i.source_id
             ]]>
          </sql>
