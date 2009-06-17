@@ -181,6 +181,24 @@
 
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- RFLP data -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <sqlQuery name="RFLPdata" includeProjects="ToxoDB">
+            <column name="project_id"/>
+            <column name="source_id"/> 
+            <column name="locus"/>
+            <column name="type"/> 
+            <sql>
+            <![CDATA[
+select s.source_id,'@PROJECT_ID@' as project_id,f.product as locus,f.gene_type as type
+from dots.nasequence s, dots.ISOLATEFEATURE f
+where f.na_sequence_id = s.na_sequence_id
+            ]]>
+            </sql>
+        </sqlQuery>
+
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- GeneOverlap -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
