@@ -255,10 +255,14 @@
     </sqlQuery>
 
     <processQuery name="IsolateByRFLPGenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
-      <paramRef ref="isolateParams.rflp_genotype" queryRef="rflpGenotypeVQ.withIsolates"/>
+   <!--   <paramRef ref="isolateParams.rflp_genotype" queryRef="rflpGenotypeVQ.withIsolates"/> -->
+  <paramRef ref="isolateParams.rflp_protein_SAG1" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="data_type"  width="32"/>
     </processQuery>
+
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Study -->
