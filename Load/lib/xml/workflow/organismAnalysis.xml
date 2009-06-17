@@ -23,6 +23,7 @@
   <param name="pdbFile"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>  
+  <param name="isolateSeqFile"/>  
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="nrdbExtDbRlsSpec"/>  
@@ -32,7 +33,8 @@
   <param name="skipProteomeAnalysis"/>
   <param name="mapEpitope"/>
   <param name="makeAndBlockAssemblySeqs"/>
-
+  <param  name="mapIsolate"/>
+  <param name="isolateExtDbRlsSpecList"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
@@ -64,6 +66,8 @@
     <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
+    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
@@ -72,6 +76,7 @@
     <paramValue name="genomeSize">$$genomeSize$$</paramValue>
     <paramValue name="runtRNAScan">$$runtRNAScan$$</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">$$makeAndBlockAssemblySeqs$$</paramValue>
+    <paramValue name="mapIsolate">true</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
 
