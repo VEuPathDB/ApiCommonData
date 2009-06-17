@@ -537,7 +537,7 @@ sub loadAnticodons {
 
 
 sub parsedbEST {
-  my ($mgr,$ncbiTaxId,$soVer,$restart) = @_;
+  my ($mgr,$ncbiTaxId,$soVer,$restart,$taxonName) = @_;
 
   my @taxArr = split (/,/,$ncbiTaxId);
 
@@ -551,7 +551,7 @@ sub parsedbEST {
 
   my $restart = $restart ? "--restart_number $restart" : "";
 
-  my $taxonId = &getTaxonId($mgr,$ncbiTaxId); #get taxon_id with taxId
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName); #get taxon_id with taxId or taxon name
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,1); #get entire taxon_id tree
 
@@ -1204,7 +1204,7 @@ sub createEpitopeMapFiles {
 
 
 sub extractNaSeq {
-  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy,$taxonName) = @_;
 
   my $type = ucfirst($seqType);
 
@@ -1238,7 +1238,7 @@ sub extractNaSeq {
               AND dr.version in ($dbVer)
 EOF
 
-  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName) if $ncbiTaxId;
 
   $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
 
@@ -1315,9 +1315,9 @@ EOF
 
 
 sub makeESTDownloadFile {
-  my ($mgr, $species, $name, $ncbiTaxId, $dbName, $dbVer, $taxonHierarchy,$project) = @_;
+  my ($mgr, $species, $name, $ncbiTaxId, $dbName, $dbVer, $taxonHierarchy,$project,$taxonName) = @_;
 
-  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -1411,7 +1411,7 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1449,9 +1449,7 @@ sub makeTranscriptDownloadFileTransformed {
            FROM apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                apidb.featurelocation fl,
-                apidb.sequenceattributes sa,
-                sres.sequenceontology so
+                apidb.featurelocation fl
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -1462,13 +1460,7 @@ sub makeTranscriptDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-  $sql .= " AND organism = '$organism'" if $organism;
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
+$sql .= " AND organism = '$organism'" if $organism;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 }
@@ -1537,7 +1529,7 @@ EOF
 }
 
 sub makeInterproDownloadFile {
-  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB,$termName) = @_;
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB) = @_;
 
   my $signal = "${species}${name}DownloadFile";
 
@@ -1588,9 +1580,7 @@ sub makeInterproDownloadFile {
     dots.genefeature gf,
     dots.transcript t, 
     dots.translatedaafeature taf,
-    dots.translatedaasequence tas,
-    apidb.sequenceattributes sa,
-    sres.sequenceontology so
+    dots.translatedaasequence tas 
   WHERE
    gf.external_database_release_id = xdr2.external_database_release_id 
      AND xdr2.version = '$genomeExtDbVer' 
@@ -1610,12 +1600,6 @@ sub makeInterproDownloadFile {
      AND xdr3.external_database_id = xd3.external_database_id 
      AND xd3.name = '$interproExtDb'
 EOF
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND gf.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
   my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
@@ -1725,7 +1709,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1766,9 +1750,7 @@ sub makeDerivedCdsDownloadFileTransformed {
                 apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
-                dots.translatedaafeature taaf,
-                apidb.sequenceattributes sa,
-                sres.sequenceontology so
+                dots.translatedaafeature taaf
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -1780,12 +1762,6 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -1964,7 +1940,7 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2004,9 +1980,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,
-                dots.translatedaasequence taas,
-                apidb.sequenceattributes sa,
-                sres.sequenceontology so
+                dots.translatedaasequence taas
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND gf.na_feature_id = fl.na_feature_id
@@ -2018,13 +1992,6 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND fl.na_sequence_id = sa.na_sequence_id AND sa.so_id = so.so_id AND so.term_name in ($names)" if $termName;
-
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2086,9 +2053,9 @@ EOF
 }
 
 sub makeOrfProteinDownloadFile {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB,$ncbiTaxId,$taxonHierarchy) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length, $projectDB,$ncbiTaxId,$taxonHierarchy,$taxonName) = @_;
 
-  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -2131,9 +2098,9 @@ EOF
 }
 
 sub makeOrfDownloadFileWithAbrevDefline {
-  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project, $ncbiTaxId, $taxonHierarchy) = @_;
+  my ($mgr, $species, $name, $extDb, $extDbVer, $length,$project, $ncbiTaxId, $taxonHierarchy,$taxonName) = @_;
 
-  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
 
@@ -2193,7 +2160,7 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2227,7 +2194,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
-            sres.sequenceontology so1,
+            sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
@@ -2239,19 +2206,13 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND enas.na_sequence_id = fl.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so1.sequence_ontology_id
-        AND so1.term_name = 'ORF'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names))" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2259,7 +2220,7 @@ EOF
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2293,7 +2254,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             dots.translatedaafeature taaf,
             dots.translatedaasequence taas,
             sres.taxonname tn,
-            sres.sequenceontology so1,
+            sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
             apidb.featurelocation fl,
@@ -2305,19 +2266,14 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND enas.na_sequence_id = fl.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so1.sequence_ontology_id
-        AND so1.term_name = 'ORF'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
 
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames); 
-
-  $sql .= " AND fl.na_sequence_id in (select distinct sa.na_sequence_id from apidb.sequenceattributes sa,sres.sequenceontology so2 where sa.so_id = so2.so_id AND so2.term_name in ($names))" if $termName;
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
@@ -2356,15 +2312,14 @@ sub makeOrfNaDownloadFileWithAbrevDefline {
         AND enas.na_sequence_id = m.na_sequence_id 
         AND enas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
-        AND m.sequence_ontology_id = so1.sequence_ontology_id
-        AND so1.term_name = 'ORF'
+        AND m.sequence_ontology_id = so.sequence_ontology_id
+        AND so.term_name = 'ORF'
         AND taas.length >= $length
         AND m.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
         AND ed.name = '$extDb' AND edr.version = '$extDbVer'
 EOF
   makeDownloadFile($mgr, $species, $name, $sql,$project);
-
 
 }
 
@@ -2454,7 +2409,7 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels,$termName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -2488,12 +2443,6 @@ sub makeMixedGenomicDownloadFile {
 EOF
 
   $sql .= $allLevels ? " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
-
-  my @termNames = map{"'$_'"} split (/,/,$termName);
-
-  my $names = join(",", @termNames);
-
-  $sql .= " AND sa.so_id in (select distinct so.so_id from sres.sequenceontology so where so.term_name in ($names))" if $termName;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
@@ -2717,7 +2666,7 @@ sub extractAnnotatedTranscriptSeq {
 }
 
 sub extractESTs {
-  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database, $source) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$genus,$species,$date,$ncbiTaxId,$taxonHierarchy,$database, $source,$taxonName) = @_;
 
   my $signal = "extract${genus}${species}${dbName}ESTs";
 
@@ -2725,11 +2674,11 @@ sub extractESTs {
 
   $signal =~ s/\//_/g;
 
-  return if $mgr->startStep("Extracting $genus $species $dbName ESTs from GUS", $signal);
+  return if $mgr->startStep("Extracting $genus $species $dbName ESTs from GUS", $signal,$taxonName);
 
    my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
-  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -2758,9 +2707,9 @@ sub extractESTs {
 
 
 sub makeESTDownloadFileFromAllSources {
-  my ($mgr,$species,$ncbiTaxId,$taxonHierarchy,$project) = @_;
+  my ($mgr,$species,$ncbiTaxId,$taxonHierarchy,$project,$taxonName) = @_;
 
-  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId);
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -2922,7 +2871,7 @@ sub loadSplignResults {
 }
 
 sub extractGenomeNaSequences {
-  my ($mgr, $species, $table, $sequenceOntology,$taxId) = @_;
+  my ($mgr, $species, $table, $sequenceOntology,$taxId,$taxonName) = @_;
   my $propertySet = $mgr->{propertySet};
 
   $table = "Dots." . $table;
@@ -2931,7 +2880,7 @@ sub extractGenomeNaSequences {
 
   return if $mgr->startStep("Extracting $species genome na sequences from GUS", $signal);
 
-  my $taxonId =  &getTaxonId($mgr,$taxId);
+  my $taxonId =  &getTaxonId($mgr,$taxId,$taxonName);
 
   foreach my $genome (@{$mgr->{genomeNaSequences}->{$species}}) {
     my $dbName =  $genome->{name};
@@ -4013,7 +3962,7 @@ sub startGenomeAlignOnComputeCluster {
 }
 
 sub startRepeatMaskOnComputeCluster {
-  my ($mgr, $queryFile, $queue, $repeatMaskSubdir,$ppn) = @_;
+  my ($mgr, $queryFile, $queue, $repeatMaskSubdir, $ppn) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "startRepeatMask$queryFile";
@@ -4739,7 +4688,7 @@ sub fixMercatorOffsetsInGFF {
 
 }
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile, $organism) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFileDeprecated, $organism) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntenySpans";
@@ -4751,10 +4700,6 @@ sub insertMercatorSyntenySpans {
   my $args = "--inputFile $out --seqTableA '$seqTableA' --seqTableB '$seqTableB' --extDbRlsSpecA '$specA' --extDbRlsSpecB '$specB' --syntenyDbRlsSpec '$syntenySpec' --organism '$organism'";
 
   my $formatCmd = "formatPxSyntenyFile --inputFile $file --outputFile $out";
-
-  if($agpFile){
-      $formatCmd .= " --agpFile $agpFile";
-  }
 
   $mgr->runCmd($formatCmd);
   $mgr->runPlugin($signal,
@@ -4824,32 +4769,20 @@ sub runPairwiseMercatorMavid {
       @nonDrafts = map { "$_" } split(',', $nonDraftString);
   }
 
- foreach my $nonDraft (@nonDrafts) { 
-     foreach my $draft (@drafts) {
-	 my $dirName = "$mercatorDir/$draft-$nonDraft";
+  foreach my $draft (@drafts) {
+    my $dirName = "$mercatorDir/$draft-$referenceGenome";
 
-	 my $command = "runMercator  -t '($draft:0.1,$nonDraft:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $nonDraft  2>$logFile";
-	 $mgr->runCmd($command);
-     }
- }
-
-  for(my $i=0;$i < scalar(@nonDrafts) - 1;$i++){
-      for(my $j=1; $j < scalar(@nonDrafts); $j++){
-	  my $dirName = "$mercatorDir/$nonDrafts[$j]-$nonDrafts[$i]";
-
-	  my $command = "runMercator  -t '($nonDrafts[$j]:0.1,$nonDrafts[$i]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDrafts[$j] -n $nonDrafts[$i] 2>$logFile";
-	  $mgr->runCmd($command);
-      }
+    my $command = "runMercator  -t '($draft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $referenceGenome  2>$logFile";
+    $mgr->runCmd($command);
   }
 
-  for(my $i=0;$i < scalar(@drafts) - 1;$i++){
-      for(my $j=1; $j < scalar(@drafts); $j++){
-	  my $dirName = "$mercatorDir/$drafts[$j]-$drafts[$i]";
+  foreach my $nonDraft (@nonDrafts) {
+    my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
 
-	  my $command = "runMercator  -t '($drafts[$j]:0.1,$drafts[$i]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d $drafts[$j] -d $drafts[$i] 2>$logFile";
-	  $mgr->runCmd($command);
-      }
+    my $command = "runMercator  -t '($nonDraft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft -n $referenceGenome 2>$logFile";
+    $mgr->runCmd($command);
   }
+
 
 
   $mgr->endStep($signal);
@@ -4906,7 +4839,7 @@ sub makeCodonUsage {
 
 
 sub extractAnnotatedProteinsBySpecies {
-  my ($mgr, $species,$dbName,$dbRlsVer, $ncbiTaxId) = @_;
+  my ($mgr, $species,$dbName,$dbRlsVer, $ncbiTaxId,$taxonName) = @_;
 
   my $fname = "${species}AnnotatedProteins";
 
@@ -4916,7 +4849,7 @@ sub extractAnnotatedProteinsBySpecies {
 
   return if $mgr->startStep("Extracting $fname protein sequences from GUS", $signal);
 
-  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;  
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
 
@@ -5009,14 +4942,14 @@ sub loadLowComplexitySequences {
 
 
 sub makeTranscriptSeqs {
-  my ($mgr, $name, $taxId,$taxonHierarchy, $sql) = @_;
+  my ($mgr, $name, $taxId,$taxonHierarchy, $sql,$taxonName) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $file = $propertySet->getProp('vectorFile');
 
   my $phrapDir = $propertySet->getProp('phrapDir');
 
-  my $taxonId =  &getTaxonId($mgr,$taxId);
+  my $taxonId =  &getTaxonId($mgr,$taxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -5031,9 +4964,9 @@ sub makeTranscriptSeqs {
 
 
 sub extractTranscriptSeqs {
-  my ($mgr,$name,$taxId,$taxonHierarchy,$sql) = @_;
+  my ($mgr,$name,$taxId,$taxonHierarchy,$sql,$taxonName) = @_;
 
-  my $taxonId = &getTaxonId($mgr,$taxId);
+  my $taxonId = &getTaxonId($mgr,$taxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -5049,13 +4982,13 @@ sub extractTranscriptSeqs {
 }
 
 sub extractAssemblies {
-  my ($mgr, $species, $name, $ncbiTaxId) = @_;
+  my ($mgr, $species, $name, $ncbiTaxId,$taxonName) = @_;
   my $propertySet = $mgr->{propertySet};
   my $signal = "${species}${name}Extract";
 
   return if $mgr->startStep("Extracting ${species} $name assemblies from GUS", $signal);
 
-  my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
+  my $taxonId = &getTaxonId($mgr, $ncbiTaxId,$taxonName);
   my $seqFile = "$mgr->{dataDir}/seqfiles/${species}$name.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${species}${name}Extract.log";
 
@@ -5110,7 +5043,7 @@ sub documentBLATAlignment {
 }
 
 sub loadContigAlignments {
-  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop,$queryNcbiTaxId) = @_;
+  my ($mgr, $ncbiTaxId, $queryName, $targetName,$qDbName,$qDbRlsVer,$tDbName,$tDbRlsVer,$targetTable,$regex,$action, $table,$querySeqFile,$percentTop,$queryNcbiTaxId,$taxonName,,$queryTaxonName) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -5124,9 +5057,9 @@ sub loadContigAlignments {
 
   my $queryDbRlsId = &getDbRlsId($mgr,$qDbName,$qDbRlsVer) if ($qDbName && $qDbRlsVer);
 
-  my $taxonId = &getTaxonId($mgr, $ncbiTaxId);
+  my $taxonId = &getTaxonId($mgr, $ncbiTaxId,$taxonName);
 
-  my $queryTaxonId = $queryNcbiTaxId ? &getTaxonId($mgr, $queryNcbiTaxId) : $taxonId;
+  my $queryTaxonId = ($queryNcbiTaxId || ,$queryTaxonName)? &getTaxonId($mgr, $queryNcbiTaxId,$queryTaxonName) : $taxonId;
 
   my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
 
@@ -5175,7 +5108,7 @@ sub loadContigAlignments {
 
 
 sub clusterByContigAlign {
-    my ($mgr, $species, $name, $extDbName, $extDbRlsVer,$ncbiTaxId) = @_;
+    my ($mgr, $species, $name, $extDbName, $extDbRlsVer,$ncbiTaxId,$taxonName) = @_;
     my $propertySet = $mgr->{propertySet};
 
     my $dataDir = $mgr->{'dataDir'};
@@ -5185,7 +5118,7 @@ sub clusterByContigAlign {
 
     return if $mgr->startStep("Begin $signal", $signal);
     
-    my $taxonId = &getTaxonId($mgr,$ncbiTaxId);
+    my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName);
  
     $mgr->{contigDbRlsId} =  &getDbRlsId($mgr,$extDbName,$extDbRlsVer) unless $mgr->{contigDbRlsId};
     my $extDbRelId = $mgr->{contigDbRlsId};
@@ -5249,7 +5182,7 @@ sub documentRepeatMasker {
 
 ### subroutine used when the aligned transcripts are from multiple sources with different external_database_release_ids
 sub clusterMultiEstSourcesByAlign { 
-    my ($mgr, $name, $species, $tExtDbName, $tExtDbRlsVer,$taxId, $targetTable,$distance) = @_;
+    my ($mgr, $name, $species, $tExtDbName, $tExtDbRlsVer,$taxId, $targetTable,$distance,$taxonName) = @_;
     my $propertySet = $mgr->{propertySet};
 
     my $dataDir = $mgr->{'dataDir'};
@@ -5260,7 +5193,7 @@ sub clusterMultiEstSourcesByAlign {
  
     my $tDbRlsId=  &getDbRlsId($mgr,$tExtDbName,$tExtDbRlsVer);
 
-    my $taxonId = &getTaxonId($mgr,$taxId);
+    my $taxonId = &getTaxonId($mgr,$taxId,$taxonName);
 
     my $outputFile = "$dataDir/cluster/$species$name/cluster.out";
 
@@ -5859,14 +5792,14 @@ sub assembleTranscripts {
 }
 
 sub reassembleTranscripts {
-  my ($mgr, $species, $name, $taxId) = @_;
+  my ($mgr, $species, $name, $taxId,$taxonName) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${species}${name}Reassemble";
 
   return if $mgr->startStep("Reassemble ${species}${name}", $signal);
 
-  my $taxonId = &getTaxonId($mgr,$taxId);
+  my $taxonId = &getTaxonId($mgr,$taxId,$taxonName);
 
   my $sql = "select na_sequence_id from dots.assembly where taxon_id = $taxonId  and (assembly_consistency < 90 or length < 50 or length is null or description = 'ERROR: Needs to be reassembled')";
 
@@ -5896,10 +5829,10 @@ sub reassembleTranscripts {
 }
 
 sub runAssemblePlugin {
-  my ($file, $suffix, $species, $name, $assembleOld, $reassemble, $taxId, $mgr) = @_;
+  my ($file, $suffix, $species, $name, $assembleOld, $reassemble, $taxId, $mgr,$taxonName) = @_;
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId = &getTaxonId($mgr,$taxId);
+  my $taxonId = &getTaxonId($mgr,$taxId,$taxonName);
   my $cap4Dir = $propertySet->getProp('cap4Dir');
   my $reass = $reassemble eq "yes"? "--reassemble" : "";
   my $args = "--clusterfile $file.$suffix $assembleOld $reass --taxon_id $taxonId --cap4Dir $cap4Dir";
@@ -5916,12 +5849,13 @@ sub runAssemblePlugin {
   $mgr->runCmdInBackground($cmd);
 }
 
+
 sub updateAssemblySourceId {
-  my ($mgr,$species,$ncbiTaxId) = @_;
+  my ($mgr,$species,$ncbiTaxId,$taxonName) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;  
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName) if $ncbiTaxId;  
 
   my $signal = "${species}UpdateAssSourceId";
 
@@ -5939,8 +5873,8 @@ sub updateAssemblySourceId {
 }
 
 sub deleteAssembliesWithNoTranscripts {
-  my ($mgr, $species, $name, $ncbiTaxId) = @_;
-  my $taxonId = &getTaxonId($mgr,$ncbiTaxId) if $ncbiTaxId;
+  my ($mgr, $species, $name, $ncbiTaxId,$taxonName) = @_;
+  my $taxonId = &getTaxonId($mgr,$ncbiTaxId,$taxonName) if $ncbiTaxId;
   my $args = "--taxon_id $taxonId";
 
   $mgr->runPlugin("${species}${name}deleteAssembliesWithNoAssSeq", 
@@ -6013,7 +5947,7 @@ sub insertTaxonRow {
   my $args = "--name $name --nameClass $nameClass --rank $rank --parentNcbiTaxId $parentTaxId --parentRank $parentRank";
 
    $mgr->runPlugin("${name}TaxonInserted",
-                  "GUS::Supported::Plugin::InsertTaxonAndTaxonName",
+                  "ApiCommonData::Load::Plugin::InsertTaxonAndTaxonName",
                   $args, "Inserting taxon and taxonname rows for $name");
 }
 
@@ -6036,9 +5970,9 @@ sub getTaxonIdFromTaxId {
 }
 
 sub getTaxonId {
-  my ($mgr,$taxId) = @_;
+  my ($mgr,$taxId,$taxonName) = @_;
 
-  my $sql = "select taxon_id from sres.taxon where ncbi_tax_id = $taxId";
+  my $sql = $taxId ? "select taxon_id from sres.taxon where ncbi_tax_id = $taxId" : "select taxon_id from sres.taxonname where name = '${taxonName}' and name_class = 'scientific name';
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
 
@@ -6516,7 +6450,7 @@ sub loadOrthoMCLResultsForOrthomclDB {
    my ($mgr, $extDbName, $extDbRlsVer, $orthoFile, $addedArgs) = @_;
 
 
-   my $orthoFileFullPath = "$mgr->{dataDir}/orthomclEng/master/mainresult/$orthoFile";
+   my $orthoFileFullPath = "$mgr->{dataDir}/mcl/$orthoFile";
 
    my $signal = "loadOrthoMCLResult";
    return if $mgr->startStep("Starting Data Load $signal", $signal);
@@ -6678,7 +6612,7 @@ sub blastSimOutput2ApidbSimSequences {
 
 
 sub getNotAlignedEstAndAddOneCluster {
-  my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir) = @_;
+  my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir,$taxonName) = @_;
 
   my $dataDir = $mgr->{dataDir};
 
@@ -6694,9 +6628,9 @@ sub getNotAlignedEstAndAddOneCluster {
  
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId =  &getTaxonId($mgr,$taxId);
+  my $taxonId =  &getTaxonId($mgr,$taxId,$taxonName);
 
-  my $targetTaxonId =  &getTaxonId($mgr,$targetTaxId);
+  my $targetTaxonId =  &getTaxonId($mgr,$targetTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
@@ -6718,7 +6652,7 @@ sub getNotAlignedEstAndAddOneCluster {
 
 
 sub getNotAlignedEstAndAddOneCluster_new{
-  my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir) = @_;
+  my ($mgr,$species,$taxId,$taxonHierarchy, $targetTaxId, $blockDir, $clusterDir,$taxonName) = @_;
 
   my $dataDir = $mgr->{dataDir};
 
@@ -6734,9 +6668,9 @@ sub getNotAlignedEstAndAddOneCluster_new{
  
   my $propertySet = $mgr->{propertySet};
 
-  my $taxonId =  &getTaxonId($mgr,$taxId);
+  my $taxonId =  &getTaxonId($mgr,$taxId,$taxonName);
 
-  my $targetTaxonId =  &getTaxonId($mgr,$targetTaxId);
+  my $targetTaxonId =  &getTaxonId($mgr,$targetTaxId,$taxonName);
 
   my $taxonIdList = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy);
 
