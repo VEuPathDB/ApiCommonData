@@ -236,6 +236,13 @@
         <paramRef ref="isolateParams.rflp_protein_53_SAG2" quote="true"/>
         <paramRef ref="isolateParams.rflp_protein_alt_SAG2" quote="true"/>
         <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_BTUB" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_GRA6" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_c22-8" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_c29-2" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_L358" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_PK1" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_Apico" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type"/>
@@ -262,6 +269,48 @@
           SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
           FROM   dots.isolatefeature f, dots.nasequence s
           WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'Apico' and ($$rflp_protein_Apico$$ = 'all' OR f.gene_type = $$rflp_protein_Apico$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'BTUB' and ($$rflp_protein_BTUB$$ = 'all' OR f.gene_type = $$rflp_protein_BTUB$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'GRA6' and ($$rflp_protein_GRA6$$ = 'all' OR f.gene_type = $$rflp_protein_GRA6$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'c22-8' and ($$rflp_protein_c22-8$$ = 'all' OR f.gene_type = $$rflp_protein_c22-8$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'c29-2' and ($$rflp_protein_c29-2$$ = 'all' OR f.gene_type = $$rflp_protein_c29-2$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'L358' and ($$rflp_protein_L358$$ = 'all' OR f.gene_type = $$rflp_protein_L358$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'PK1' and ($$rflp_protein_PK1$$ = 'all' OR f.gene_type = $$rflp_protein_PK1$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
              AND f.product = 'SAG3' and ($$rflp_protein_SAG3$$ = 'all' OR f.gene_type = $$rflp_protein_SAG3$$) 
              AND f.name = 'RFLP' 
           ]]>
@@ -273,6 +322,13 @@
       <paramRef ref="isolateParams.rflp_protein_53_SAG2" quote="true"/>
       <paramRef ref="isolateParams.rflp_protein_alt_SAG2" quote="true"/>
       <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_BTUB" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_GRA6" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_c22-8" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_c29-2" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_L358" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_PK1" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_Apico" quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="data_type"  width="32"/>
