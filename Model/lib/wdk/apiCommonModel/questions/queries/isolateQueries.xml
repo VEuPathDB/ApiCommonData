@@ -233,6 +233,8 @@
 
     <sqlQuery name="IsolateByRFLPGenotype" includeProjects="ToxoDB" isCacheable="true">
         <paramRef ref="isolateParams.rflp_protein_SAG1" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_53_SAG2" quote="true"/>
+        <paramRef ref="isolateParams.rflp_protein_alt_SAG2" quote="true"/>
         <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
         <column name="source_id"/>
         <column name="project_id"/>
@@ -248,6 +250,18 @@
           SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
           FROM   dots.isolatefeature f, dots.nasequence s
           WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = '5''+3'' SAG2' and ($$rflp_protein_53_SAG2$$ = 'all' OR f.gene_type = $$rflp_protein_53_SAG2$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
+             AND f.product = 'alt. SAG2' and ($$rflp_protein_alt_SAG2$$ = 'all' OR f.gene_type = $$rflp_protein_alt_SAG2$$) 
+             AND f.name = 'RFLP' 
+          INTERSECT
+          SELECT distinct s.source_id, '@PROJECT_ID@' as project_id, 'Genotype' as data_type 
+          FROM   dots.isolatefeature f, dots.nasequence s
+          WHERE  f.na_sequence_id = s.na_sequence_id 
              AND f.product = 'SAG3' and ($$rflp_protein_SAG3$$ = 'all' OR f.gene_type = $$rflp_protein_SAG3$$) 
              AND f.name = 'RFLP' 
           ]]>
@@ -255,9 +269,10 @@
     </sqlQuery>
 
     <processQuery name="IsolateByRFLPGenotype" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
-   <!--   <paramRef ref="isolateParams.rflp_genotype" queryRef="rflpGenotypeVQ.withIsolates"/> -->
-  <paramRef ref="isolateParams.rflp_protein_SAG1" quote="true"/>
-        <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_SAG1" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_53_SAG2" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_alt_SAG2" quote="true"/>
+      <paramRef ref="isolateParams.rflp_protein_SAG3" quote="true"/>
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
        <wsColumn name="data_type"  width="32"/>
