@@ -82,12 +82,12 @@
     <sqlQuery name="IsolateByTaxon" includeProjects="CryptoDB,PlasmoDB,ToxoDB" isCacheable="true">
      <!--  <paramRef ref="isolateParams.isolate_organism" queryRef="organismIQ.withIsolates" quote="true" includeProjects="CryptoDB"/> -->
         <paramRef ref="isolateParams.strain" queryRef="strainVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB"/>
+        <paramRef ref="isolateParams.type" includeProjects="PlasmoDB,ToxoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type" includeProjects="PlasmoDB"/>
-        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB,ToxoDB">        </sqlParamValue>
-        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB">
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">        </sqlParamValue>
+        <sqlParamValue name="dataTypeOptional" includeProjects="PlasmoDB,ToxoDB">
             <![CDATA[
              AND  i.data_type in ($$type$$) 
             ]]>
