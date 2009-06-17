@@ -15,7 +15,18 @@ sub run {
   my $separateFastaFiles = $self->getParamValue('separateFastaFiles');
   my $outputDirForSeparateFiles = $self->getParamValue('outputDirForSeparateFiles');
 
-  my $dbRlsId = $self->getExtDbRlsId($test, $extDbRlsSpec);
+
+  my @extDbRlsSpecList = split(/,/, $extDbRlsSpec);
+
+  my $dbRlsIds;
+
+  foreach my $db (@extDbRlsSpecList){
+        
+     $dbRlsIds .= $self->getExtDbRlsId($test, $db).",";
+
+  }
+
+
 
   my $deflineSelect = $alternateDefline?
     $alternateDefline :
@@ -23,7 +34,7 @@ sub run {
 
   my $sql = "SELECT $deflineSelect, sequence
              FROM dots.$table
-             WHERE external_database_release_id = $dbRlsId";
+             WHERE external_database_release_id in ($dbRlsIds)";
 
   my $localDataDir = $self->getLocalDataDir();
 
