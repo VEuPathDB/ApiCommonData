@@ -5059,7 +5059,7 @@ sub loadContigAlignments {
 
   my $taxonId = &getTaxonId($mgr, $ncbiTaxId,$taxonName);
 
-  my $queryTaxonId = ($queryNcbiTaxId || ,$queryTaxonName)? &getTaxonId($mgr, $queryNcbiTaxId,$queryTaxonName) : $taxonId;
+  my $queryTaxonId = ($queryNcbiTaxId || $queryTaxonName)? &getTaxonId($mgr, $queryNcbiTaxId,$queryTaxonName) : $taxonId;
 
   my $pslFile = "$dataDir/genome/${queryName}-${targetName}/master/mainresult/out.psl";
 
@@ -5972,7 +5972,7 @@ sub getTaxonIdFromTaxId {
 sub getTaxonId {
   my ($mgr,$taxId,$taxonName) = @_;
 
-  my $sql = $taxId ? "select taxon_id from sres.taxon where ncbi_tax_id = $taxId" : "select taxon_id from sres.taxonname where name = '${taxonName}' and name_class = 'scientific name';
+  my $sql = $taxId ? "select taxon_id from sres.taxon where ncbi_tax_id = $taxId" : "select taxon_id from sres.taxonname where name = '${taxonName}' and name_class = 'scientific name'";
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
 
