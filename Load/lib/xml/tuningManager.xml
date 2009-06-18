@@ -1427,7 +1427,7 @@ and ga.ORTHOMCL_NAME is null
     <sql>
       <![CDATA[
         update apidb.GENEATTRIBUTES&1
-        set orthomcl_name = source_id 
+        set orthomcl_name = 'ORTH_' || gene_id || '.tmp'
         where orthomcl_name is null
       ]]>
     </sql>
