@@ -2670,7 +2670,7 @@ Advanced parameters can be modified for a more specific search (please go to the
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByCentromereProximity" includeProjects="PlasmoDB, EuPathDB"
+    <question name="GenesByCentromereProximity" includeProjects="PlasmoDB,ToxoDB,EuPathDB"
               displayName="Proximity to Centromeres"
               shortDisplayName="Centromeric"
               category="Genomic Position"
@@ -2692,7 +2692,8 @@ Advanced parameters can be modified for a more specific search (please go to the
         </description>
 
         <propertyList name="organism">
-           <value>P. falciparum</value>
+           <value includeProjects='PlasmoDB'>P. falciparum</value>
+           <value includeProjects='ToxoDB'>Toxoplasma gondii ME49</value>
         </propertyList>
 
         <dynamicAttributes>
@@ -2700,7 +2701,8 @@ Advanced parameters can be modified for a more specific search (please go to the
         </dynamicAttributes>
 
        <propertyList name="specificAttribution">
-         <value includeProjects="PlasmoDB,EuPathDB">P.falciparum_chromosomes</value>
+         <value includeProjects="PlasmoDB">P.falciparum_chromosomes</value>
+         <value includeProjects="ToxoDB">Einstein_Centromeres</value>
        </propertyList>
     </question>
 
