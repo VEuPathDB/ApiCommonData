@@ -738,7 +738,7 @@
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.GeneFeature gf
-              WHERE u.email = c.email
+              WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = gf.source_id
                     AND c.review_status_id != 'rejected'
@@ -755,7 +755,7 @@
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    @COMMENT_SCHEMA@commentStableId@COMMENT_DBLINK@ d,
                    dots.GeneFeature gf
-              WHERE u.email = c.email
+              WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'gene'
                     AND c.comment_id = d.comment_id
                     AND d.stable_id = gf.source_id
@@ -823,7 +823,7 @@
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    apidb.trackoldannotation toa
-              WHERE u.email = c.email
+              WHERE lower(u.email) = lower(c.email)
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = toa.old_source_id
                     AND c.review_status_id != 'rejected'
@@ -1087,7 +1087,7 @@
                (SELECT count(*) as comment_count
                 FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                      @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
-                WHERE u.email = c.email
+                WHERE lower(u.email) = lower(c.email)
                   AND c.comment_target_id = 'gene'
                   AND c.stable_id = gf.source_id
                   AND c.review_status_id != 'rejected'
@@ -1136,7 +1136,7 @@
                (SELECT count(*) as comment_count
                 FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                      @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
-                WHERE u.email = c.email
+                WHERE lower(u.email) = lower(c.email)
                   AND c.comment_target_id = 'gene'
                   AND c.stable_id = gf.source_id
                   AND c.review_status_id != 'rejected'
