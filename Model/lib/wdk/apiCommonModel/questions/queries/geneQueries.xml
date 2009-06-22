@@ -406,7 +406,6 @@
         <paramRef ref="geneParams.geneType"/>
         <paramRef ref="geneParams.includePseudogenes"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
-        <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.toxoForTreeTest" displayType="treeBox"/ -->
         <column name="project_id"/>
         <column name="source_id" />
         <column name="is_pseudo" />
@@ -3428,7 +3427,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByCentromereProximity" includeProjects="PlasmoDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.max_centromere_distance"/>
-        <paramRef ref="sharedParams.chromosome"/>
+        <paramRef ref="sharedParams.centromere_chromosome"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="dist_centromere"/>
@@ -3439,7 +3438,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 FROM apidb.GeneCentromereDistance gcd, apidb.GeneAttributes ga
                 WHERE gcd.gene = ga.source_id
                   AND gcd.centromere_distance <= $$max_centromere_distance$$
-                  AND gcd.genomic_sequence in ($$chromosome$$)
+                  AND gcd.genomic_sequence in ($$centromere_chromosome$$)
                 ORDER BY gcd.genomic_sequence, ga.start_min
            ]]>
        </sql>
