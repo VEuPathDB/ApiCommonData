@@ -240,7 +240,8 @@
             FROM (
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
-                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual
+                SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
+                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual
                  ) t
             </sql>
             <sql includeProjects="GiardiaDB">
@@ -311,6 +312,7 @@
                 SELECT 'Cryptosporidium hominis' as term, 'Cryptosporidium hominis' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION 
+                SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                 SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
@@ -714,8 +716,12 @@
       </sql>
 
       <sql includeProjects="CryptoDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal, 8 as idx from dual
+     SELECT t.term, t.internal,
+            $$source_id$$ AS source_id, $$project_id$$ AS project_id
+     FROM (
+          SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+          SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual 
+          ) t
       </sql>
 
       <sql includeProjects="ToxoDB">
@@ -732,6 +738,7 @@
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
+                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                  SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal from dual UNION
                  SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
                  SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal from dual UNION
