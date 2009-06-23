@@ -405,7 +405,12 @@ Sample prop file:
 sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
-  if (!$configFile) {
+  # default to component tuning manager
+  $configFile = "tuningManager.xml" if !$configFile;
+
+  # if a full path is not given for a config file, get it from Subversion
+  # (that is, check out if there's no slash in $configFile)
+  if (!($configFile =~ m/\//)) {
     $configDir = "/tmp/tMan." . $$ . "." . time . "/";
     my $subversionUrl = $tuningRegistry->getSubversionUrl();
     my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
@@ -414,7 +419,7 @@ sub getConfigFileName {
     system(@cmdLine) == 0
       or die "system @cmdLine failed: $?";
 
-    $configFile = $configDir . "/tuningManager.xml";
+    $configFile = $configDir . '/' . $configFile;
   }
 
   return $configFile;
