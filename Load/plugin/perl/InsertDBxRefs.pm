@@ -12,6 +12,7 @@
 package ApiCommonData::Load::Plugin::InsertDBxRefs;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
+
 use strict 'vars';
 
 use GUS::PluginMgr::Plugin;
