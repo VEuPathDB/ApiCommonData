@@ -80,7 +80,7 @@ create index dots.ExonOrder_ix
 create table apidb.EndExons as
 select parent_id, min(order_number) as min_order_number,
        max(order_number) as max_order_number
-from dots.ExonFeature
+from dots.ExonFeature where coding_start is not null
 group by parent_id;
 
 create index apidb.endexon_ix on apidb.EndExons(parent_id);
