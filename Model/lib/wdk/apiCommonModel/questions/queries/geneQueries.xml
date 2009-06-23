@@ -529,7 +529,7 @@
   <!-- old Text Search -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByTextSearch" excludeProjects="EuPathDB,CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB"
+    <processQuery name="GenesByTextSearch" excludeProjects="EuPathDB,CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB,TrichDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="sharedParams.text_expression"/>
        <paramRef ref="geneParams.whole_words" groupRef="paramGroups.advancedParams"/>
@@ -558,7 +558,7 @@
   <!-- text search (based on Oracle Text) -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <processQuery name="GenesByTextSearch" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB"
+    <processQuery name="GenesByTextSearch" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB,TrichDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.KeywordSearchPlugin"
           isCacheable="false">
        <paramRef ref="organismParams.text_search_organism"/>
