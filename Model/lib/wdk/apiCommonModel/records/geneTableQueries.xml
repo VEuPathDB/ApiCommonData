@@ -1084,7 +1084,7 @@
                   AND b_na_sequence_id = gattr.na_sequence_id 
                   AND b_end > gattr.start_min
                   AND b_start < gattr.end_max) is_syntenic,
-               (SELECT count(*) as comment_count
+               (SELECT case when (count(*) > 0) then 'yes' else 'no' end as comment_count
                 FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                      @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
                 WHERE lower(u.email) = lower(c.email)
@@ -1122,18 +1122,16 @@
                   AND b_na_sequence_id = gattr.na_sequence_id 
                   AND b_end > gattr.start_min
                   AND b_start < gattr.end_max) is_syntenic,
-               (SELECT count(*)
+               (SELECT case when (count(*) > 0) then 'yes' else 'no' end
                 FROM dots.GeneFeature f, dots.DbRefNaFeature drnf, sres.DbRef dr, 
                      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
                 WHERE f.na_feature_id = drnf.na_feature_id
                   AND drnf.db_ref_id = dr.db_ref_id
                   AND dr.external_database_release_id = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name in ('NRDB_gb_dbXRefBySeqIdentity',
-                                  'NRDB_ref_dbXRefBySeqIdentity',
-                                  'NRDB_sp_dbXRefBySeqIdentity') 
+                  AND ed.name ='Phenotype DBRefs'
                   AND f.source_id = gf.source_id) as phenotype_count,
-               (SELECT count(*) as comment_count
+               (SELECT case when (count(*) > 0) then 'yes' else 'no' end as comment_count
                 FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                      @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
                 WHERE lower(u.email) = lower(c.email)
@@ -2105,7 +2103,7 @@
                 and ed.name like 'PASA%'
                 UNION
                 SELECT gf.source_id, '@PROJECT_ID@' AS project_id,
-                       DECODE(ed.name,'Phenotype DBRefs','Genetically Modified Rodent Malaria Parasite database') as dataset,
+                       DECODE(ed.name,'Phenotype DBRefs','Phenotypes from Genetically Modified Rodent Malaria Parasite database') as dataset,
                        r.primary_identifier as link_url
                 FROM   sres.dbref r, sres.externaldatabaserelease rel, 
                        dots.dbrefnafeature rf,
