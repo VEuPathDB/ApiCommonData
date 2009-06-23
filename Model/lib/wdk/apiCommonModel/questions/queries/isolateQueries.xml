@@ -193,13 +193,20 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-           select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
-            from apidb.isolatevocabulary v, 
-                 (select source_id, data_type, regexp_replace(product, ':.*') as short from apidb.isolateattributes) i
-            where i.short = v.term
-            and v.term in ($$product$$)
-            and v.type = 'product'
-            ORDER BY i.source_id
+            select distinct nas.source_id, '@PROJECT_ID@' as project_id, 
+              decode(ed.name, 'Broad 75K genotyping chip', 'HD_Array', 
+                'Broad 3K genotyping chip', '3kChip',
+                'Toxoplasma RFLPs from Chunlei Su', 'RFLP',
+                'Toxoplasma isolates From Genbank', 'Genbank',
+                'Toxoplasma isolates From David Sibley', 'Genbank',
+                'Isolate barcode data from Broad','Barcode','Genbank') as data_type
+            from dots.isolatefeature i, dots.nasequence nas,
+                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+            where i.na_sequence_id = nas.na_sequence_id
+            and i.product in ($$product$$)
+            and nas.external_database_release_id = edr.external_database_release_id
+            and edr.external_database_id = ed.external_database_id
+            ORDER BY nas.source_id
             ]]>
          </sql>
     </sqlQuery>
