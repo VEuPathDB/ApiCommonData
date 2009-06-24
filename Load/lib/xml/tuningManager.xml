@@ -1443,15 +1443,21 @@ and ga.ORTHOMCL_NAME is null
     <sql>
       <![CDATA[
        update apidb.GENEATTRIBUTES&1 gaup
-       set paralog_number = (select count(*)
-                             from apidb.GENEATTRIBUTES&1 g1
-                             where g1.orthomcl_name = gaup.orthomcl_name
-                             and g1.organism = gaup.organism
-                             and gaup.source_id != g1.source_id),
-           ortholog_number = (select count(*)
-                             from apidb.GENEATTRIBUTES&1 g1
-                             where g1.orthomcl_name = gaup.orthomcl_name
-                             and g1.organism != gaup.organism)
+       set paralog_number = (CASE WHEN gaup.gene_type='protein coding'
+                             THEN (select count(*)
+                               from apidb.GENEATTRIBUTES&1 g1
+                               where g1.orthomcl_name = gaup.orthomcl_name
+                               and g1.organism = gaup.organism
+                               and gaup.source_id != g1.source_id)
+                             ELSE 0
+                             END ),
+           ortholog_number = (CASE WHEN gaup.gene_type='protein coding'
+                             THEN (select count(*)
+                               from apidb.GENEATTRIBUTES&1 g1
+                               where g1.orthomcl_name = gaup.orthomcl_name
+                               and g1.organism != gaup.organism)
+                             ELSE 0
+                             END )
       ]]>
     </sql>
   </tuningTable>
