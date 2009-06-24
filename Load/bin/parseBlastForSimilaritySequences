@@ -92,6 +92,8 @@ TRAILING NULLCOLS
     evalue_exp,
     percent_identity,
     percent_match
+    query_match_length
+    subject_match_length
 )
 BEGINDATA
 HEADER
@@ -139,12 +141,14 @@ while(<IN>){
 
     my $perIdent = sprintf("%.0f", (($arr[10]/$arr[9])*100));
     my $perMatch = sprintf("%.0f", $arr[16]);
+    my $queryMatchLength = $arr[13];
+    my $subjectMatchLength = $arr[14];
 
-    my $str = "$queryId $arr[1] $taxons{$queryId} $taxons{$arr[1]} $mant $exp $perIdent $perMatch\n";
+    my $str = "$queryId $arr[1] $taxons{$queryId} $taxons{$arr[1]} $mant $exp $perIdent $perMatch $queryMatchLength $subjectMatchLength\n";
 
     my @arr = split(/\s/,$str);
 
-    print STDERR "Missing attributes in $str" if (@arr != 8);
+    print STDERR "Missing attributes in $str" if (@arr != 10);
 
     push(@lines,$str);
   }
