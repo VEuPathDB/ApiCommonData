@@ -1154,6 +1154,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
     <sqlQuery name="GenesByMassSpec" excludeProjects="EuPathDB,TrichDB" 
             isCacheable='true'>
 
+        <testParamValues includeProjects="ToxoDB">
+          <paramValue name="ms_assay">Wastling 1-D SDS PAGE</paramValue>
+        </testParamValues>
         <testParamValues includeProjects="TriTrypDB">
           <paramValue name="ms_assay">Tcruzi Proteomics-Epimastigote</paramValue>
         </testParamValues>
@@ -1604,7 +1607,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         </testParamValues>
 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="TriTrypDB" default="Trypanosoma brucei"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB" />
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="ToxoDB" default="Toxoplasma gondii"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="PlasmoDB" default="Plasmodium vivax"/>
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withChromosomes" multiPick="false" includeProjects="CryptoDB" quote="true" />
 
