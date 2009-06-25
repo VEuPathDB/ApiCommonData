@@ -1,0 +1,296 @@
+<tuningConfig>
+
+  <tuningTable name="apidb.AssemblyAttributes">
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.EstAttributes">
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+    <externalDependency name="dots.ExternalNaSequence"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select *
+            from apidb.EstAttributes@AMITO.PITAYA.RCC.UGA.EDU
+            where project_id = 'TrichDB' 
+          ]]> 
+        </query>
+      </source>
+
+      <source>
+        <query> 
+          <![CDATA[           
+            select cast('ApiDB' as varchar2(47)) as project_id,
+                   cast(enas.source_id as varchar2(255)) as source_id,
+                   enas.a_count, enas.c_count, enas.g_count, enas.t_count,
+                   enas.other_count, enas.length,
+                   cast('Ncbi dbEST' as varchar2(120)) as dbest_name,
+                   cast('Other Apicomplexan (no Cmp,Pbfvy,Tg)' as varchar2(40)) as organism,
+                   cast(5794 as number(10)) as ncbi_tax_id,
+                   cast('Other Apicomplexan ESTs' as varchar2(80)) as external_db_name,
+                   cast(9999 as number(5)) as library_idx
+            from dots.ExternalNaSequence enas 
+            where enas.taxon_id = (select taxon_id from sres.TaxonName where name = 'Apicomplexa')
+        ]]> 
+      </query>
+    </source>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.GeneAttributes">
+    <unionization>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>  
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>  
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>  
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select *
+            from apidb.GeneAttributes@AMITO.PITAYA.RCC.UGA.EDU
+            where project_id = 'TrichDB' 
+          ]]> 
+        </query>
+      </source>
+
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.GeneId">
+    <unionization>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>  
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>  
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>  
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select gi.id,gi.gene  
+            from apidb.GeneId@AMITO.PITAYA.RCC.UGA.EDU gi,
+                 apidb.GeneAttributes@AMITO.PITAYA.RCC.UGA.EDU ga 
+            where gi.gene = ga.source_id 
+              and ga.project_id = 'TrichDB'
+          ]]> 
+        </query>
+      </source>
+
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.IsolateAttributes">
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.OrfAttributes">
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select *
+            from apidb.OrfAttributes@AMITO.PITAYA.RCC.UGA.EDU
+            where project_id = 'TrichDB' 
+          ]]> 
+        </query>
+      </source>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.SageTagAttributes">
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.SequenceAttributes">
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+    <externalDependency name="dots.ExternalNaSequence"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select * from apidb.SequenceAttributes@AMITO.PITAYA.RCC.UGA.EDU where project_id = 'TrichDB' 
+          ]]> 
+        </query>
+      </source>
+
+      <source>
+        <query> 
+          <![CDATA[          
+            select cast('ApiDB' as varchar2(47)) as project_id, 
+                   cast(enas.source_id as varchar2(50)) as source_id,
+                   enas.length,
+                   cast('Theileria parva strain Muguga' as varchar2(40)) as organism,
+                   cast(333668 as number(10)) as ncbi_tax_id,
+                   cast(enas.description as varchar2(400)) as sequence_description,
+                   cast(enas.source_id as varchar2(20)) as genbank_accession
+            from dots.ExternalNaSequence enas
+            where enas.taxon_id = (select taxon_id from sres.Taxon where ncbi_tax_id = 333668)
+          ]]> 
+        </query>
+      </source>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select cast('ApiDB' as varchar2(47)) as project_id, 
+                   cast(enas.source_id as varchar2(50)) as source_id,
+                   enas.length,
+                   cast('Theileria annulata strain Ankara' as varchar2(40)) as organism,
+                   cast(353154 as number(10)) as ncbi_tax_id,
+                   cast(enas.description as varchar2(400)) as sequence_description,
+                   cast(enas.source_id as varchar2(20)) as genbank_accession
+            from dots.ExternalNaSequence enas
+            where enas.taxon_id = (select taxon_id from sres.Taxon where ncbi_tax_id = 353154)
+          ]]> 
+        </query>
+      </source>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.SequenceId">
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select gi.id,gi.sequence  
+            from apidb.sequenceid@AMITO.PITAYA.RCC.UGA.EDU gi,
+                 apidb.sequenceattributes@AMITO.PITAYA.RCC.UGA.EDU ga 
+            where gi.sequence = ga.source_id 
+              and ga.project_id = 'TrichDB'
+          ]]> 
+        </query>
+      </source>
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.SnpAttributes">
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="AMITO.PITAYA.RCC.UGA.EDU"/>
+
+    <unionization>
+      <source dblink="CRYPTO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="GIARDIA.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="PLASMO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TOXO.PITAYA.RCC.UGA.EDU"/>
+      <source dblink="TRITRYP.PITAYA.RCC.UGA.EDU"/>
+
+      <source>
+        <query> 
+          <![CDATA[ 
+            select *
+            from apidb.SnpAttributes@AMITO.PITAYA.RCC.UGA.EDU
+            where project_id = 'TrichDB' 
+          ]]> 
+        </query>
+      </source>
+    </unionization>
+  </tuningTable>
+
+</tuningConfig>
+
+
