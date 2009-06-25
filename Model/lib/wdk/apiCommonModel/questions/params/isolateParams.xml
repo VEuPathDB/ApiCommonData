@@ -83,7 +83,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_SAG1" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.SAG1"
             prompt="Protein SAG1"
             multiPick="false"
             quote="false">
@@ -91,7 +91,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_53_SAG2" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III-nd"
             prompt="5'+3' SAG2"
             multiPick="false"
             quote="false">
@@ -99,7 +99,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_alt_SAG2" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III-nd"
             prompt="alt. SAG2"
             multiPick="false"
             quote="false">
@@ -107,7 +107,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_SAG3" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III"
             prompt="SAG3"
             multiPick="false"
             quote="false">
@@ -115,7 +115,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_BTUB" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III"
             prompt="BTUB"
             multiPick="false"
             quote="false">
@@ -123,7 +123,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_GRA6" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III"
             prompt="GRA6"
             multiPick="false"
             quote="false">
@@ -131,7 +131,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_c22-8" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.c22-8"
             prompt="c22-8"
             multiPick="false"
             quote="false">
@@ -139,7 +139,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_c29-2" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.c29-2"
             prompt="c29-2"
             multiPick="false"
             quote="false">
@@ -147,7 +147,7 @@
         </flatVocabParam>
 
         <flatVocabParam name="rflp_protein_L358" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III"
             prompt="L358"
             multiPick="false"
             quote="false">
@@ -155,7 +155,7 @@
         </flatVocabParam> 
 
         <flatVocabParam name="rflp_protein_PK1" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.PK1"
             prompt="PK1"
             multiPick="false"
             quote="false">
@@ -163,7 +163,7 @@
         </flatVocabParam> 
 
         <flatVocabParam name="rflp_protein_Apico" includeProjects="ToxoDB,EuPathDB"
-            queryRef="rflpGenotypeVQ.withIsolates"
+            queryRef="rflpGenotypeVQ.I-II-III-nd"
             prompt="Apico"
             multiPick="false"
             quote="false">
@@ -440,7 +440,8 @@ order by v.prediction_number
   </querySet>
 
   <querySet name="rflpGenotypeVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="ToxoDB">
+
+    <sqlQuery name="I-II-III" includeProjects="ToxoDB">
     <column name="internal"/>
     <column name="term"/>
     <sql>
@@ -451,6 +452,87 @@ union
 select distinct v.gene_type as term, v.gene_type as internal
 from dots.isolatefeature v 
 where v.name = 'RFLP'
+and v.product = 'BTUB'
+    ]]>
+    </sql>
+    </sqlQuery>
+		
+    <sqlQuery name="I-II-III-nd" includeProjects="ToxoDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+select 'Don''t Care' as term, 'all' as internal
+from dual 
+union
+select distinct v.gene_type as term, v.gene_type as internal
+from dots.isolatefeature v 
+where v.name = 'RFLP'
+and v.product = 'Apico'
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <sqlQuery name="c29-2" includeProjects="ToxoDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+select 'Don''t Care' as term, 'all' as internal
+from dual 
+union
+select distinct v.gene_type as term, v.gene_type as internal
+from dots.isolatefeature v 
+where v.name = 'RFLP'
+and v.product = 'c29-2'
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <sqlQuery name="c22-8" includeProjects="ToxoDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+select 'Don''t Care' as term, 'all' as internal
+from dual 
+union
+select distinct v.gene_type as term, v.gene_type as internal
+from dots.isolatefeature v 
+where v.name = 'RFLP'
+and v.product = 'c22-8'
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <sqlQuery name="PK1" includeProjects="ToxoDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+select 'Don''t Care' as term, 'all' as internal
+from dual 
+union
+select distinct v.gene_type as term, v.gene_type as internal
+from dots.isolatefeature v 
+where v.name = 'RFLP'
+and v.product = 'PK1'
+    ]]>
+    </sql>
+    </sqlQuery>
+
+    <sqlQuery name="SAG1" includeProjects="ToxoDB">
+    <column name="internal"/>
+    <column name="term"/>
+    <sql>
+    <![CDATA[
+select 'Don''t Care' as term, 'all' as internal
+from dual 
+union
+select distinct v.gene_type as term, v.gene_type as internal
+from dots.isolatefeature v 
+where v.name = 'RFLP'
+and v.product = 'SAG1'
     ]]>
     </sql>
     </sqlQuery>
