@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.gusdb.wdk.model.AnswerValue;
 import org.gusdb.wdk.model.Field;
@@ -60,13 +59,10 @@ public class FullRecordFileCreator extends BaseCLI {
         FullRecordFileCreator writer = new FullRecordFileCreator(cmdName,
                 "Create the Dump File from dump table");
         try {
-            writer.parseCommandLine(args);
-        } catch (ParseException ex) {
-            writer.printUsage();
-            System.exit(-1);
+            writer.invoke(args);
+        } finally {
+            System.exit(0);
         }
-        writer.invoke();
-        System.exit(0);
     }
 
     private WdkModel wdkModel;
@@ -111,7 +107,7 @@ public class FullRecordFileCreator extends BaseCLI {
      * @see org.gusdb.wsf.util.BaseCLI#invoke()
      */
     @Override
-    public void invoke() throws Exception {
+    public void execute() throws Exception {
         long start = System.currentTimeMillis();
 
         String projectId = (String) getOptionValue(ARG_PROJECT_ID);

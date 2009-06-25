@@ -5,7 +5,6 @@ package org.apidb.apicommon.model.report;
 
 import java.io.IOException;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.gusdb.wdk.model.RecordClass;
 import org.gusdb.wdk.model.WdkModel;
@@ -29,6 +28,8 @@ public class GffCacheCreator extends DumpCreator {
     private static final String COLUMN_FIELD_TITLE = "field_title";
     private static final String COLUMN_CONTENT = "content";
     private static final String COLUMN_ROW_COUNT = "row_count";
+    
+    //private static final String TABLE_
 
     private static final String FUNCTION_CHAR_CLOB_AGG = "char_clob_agg";
     private static final String FUNCTION_CLOB_CLOB_AGG = "clob_clob_agg";
@@ -45,13 +46,10 @@ public class GffCacheCreator extends DumpCreator {
         FullRecordCacheCreator creator = new FullRecordCacheCreator(cmdName,
                 "Create the Dump Table");
         try {
-            creator.parseCommandLine(args);
-        } catch (ParseException ex) {
-            creator.printUsage();
-            System.exit(-1);
+            creator.invoke(args);
+        } finally {
+            System.exit(0);
         }
-        creator.invoke();
-        System.exit(0);
     }
 
     private WdkModel wdkModel;
@@ -90,8 +88,14 @@ public class GffCacheCreator extends DumpCreator {
         
     }
     
-    private void dumpAliases(String idSql, SqlQuery query) {
+    private void dumpAliases(String idSql, SqlQuery query, String[] pkColumns) {
+        StringBuffer sql = new StringBuffer("SELECT ");
+        for(String pkColumn : pkColumns) { 
+            sql.append(pkColumn).append(", ");
+        }
+        sql.append("apidb.tab_to_string(CAST(COLLECT(trim(to_char(");
         
+        sql.append("))) AS apidb.varchartab), ', ')");
     }
     
     private void dumpEcNumbers(String idSql, SqlQuery query) {

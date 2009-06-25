@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.gusdb.wdk.model.AttributeField;
 import org.gusdb.wdk.model.ColumnAttributeField;
@@ -63,13 +62,10 @@ public class FullRecordCacheCreator extends BaseCLI {
         FullRecordCacheCreator creator = new FullRecordCacheCreator(cmdName,
                 "Create the Dump Table");
         try {
-            creator.parseCommandLine(args);
-        } catch (ParseException ex) {
-            creator.printUsage();
-            System.exit(-1);
+            creator.invoke(args);
+        } finally {
+            System.exit(0);
         }
-        creator.invoke();
-        System.exit(0);
     }
 
     private WdkModel wdkModel;
@@ -108,7 +104,7 @@ public class FullRecordCacheCreator extends BaseCLI {
      * @see org.gusdb.wsf.util.BaseCLI#invoke()
      */
     @Override
-    public void invoke() throws Exception {
+    public void execute() throws Exception {
         long start = System.currentTimeMillis();
 
         String projectId = (String) getOptionValue(ARG_PROJECT_ID);
@@ -135,7 +131,8 @@ public class FullRecordCacheCreator extends BaseCLI {
             }
         } else { // no table specified, dump all tables
             for (TableField table : tables.values()) {
-                dumpTable(table, idSql);
+                System.out.println(table.getName());
+                // dumpTable(table, idSql);
             }
         }
 
