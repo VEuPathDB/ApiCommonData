@@ -1591,7 +1591,8 @@
                    </url>
                    <url includeProjects="GiardiaDB">
                     <![CDATA[
-                      /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
+                    <!--/cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=DeprecatedGene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$-->
+                      /cgi-bin/gbrowse/giardiadb/?name=$$sequence_source_id$$%3A$$start_context$$-$$end_context$$;width=550;label=Contigs;label=Gene;label=SAGEtags;label=EST;label=BLASTX;h_feat=$$feature_source_id$$
                         ]]>
                    </url>
                    <url includeProjects="CryptoDB">
@@ -2593,18 +2594,26 @@
          <textAttribute name="dnaContextFalciparum" displayName="Genomic Context"  includeProjects="PlasmoDB"
                internal="true" inReportMaker="false">
             <text>
-                <![CDATA[
+            <!--Alternate Gene Models are taking time are hence being currently avoided in the record page
+            <![CDATA[ 
                 /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+Version5Genes+EviganGeneModels+CombinedSNPs+2;options=Version5Genes+EviganGeneModels+CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]>- -->
+           <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs+2;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                 ]]>
+
             </text>
          </textAttribute>
 
          <textAttribute name="dnaContextYoelii" displayName="Genomic Context"  includeProjects="PlasmoDB"
                internal="true" inReportMaker="false">
             <text>
+            <!--Alternate Gene Models are taking time are hence being currently avoided in the record page
                 <![CDATA[
                 /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+KappeGeneModels+;options=KappeGeneModels;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
-
+               ]]> -->
+               <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                ]]>
             </text>
          </textAttribute>
@@ -2635,8 +2644,12 @@
          <textAttribute name="dnaAlternateContext" displayName="Genomic Context"  includeProjects="ToxoDB"
                internal="true" inReportMaker="false">
             <text>
+            <!--Alternate Gene Models are taking time are hence being currently avoided in the record page
                 <![CDATA[
                 /cgi-bin/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions;options=AnnoatedGenes+GLEANGeneModels+TwinScan/EimeriaPredictions+TwinScanPredictions+GlimmerHMMPredictions+TigrScanPredictions+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]> -->
+                <![CDATA[
+                /cgi-bin/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;options=AnnoatedGenes+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                 ]]>
             </text>
          </textAttribute>
