@@ -88,9 +88,13 @@
             <sqlParamValue includeProjects="CryptoDB" name="datasets">
                 'Widmer SNPs', 'Widmer_SNPs'
             </sqlParamValue>
+            <sqlParamValue  name="dataset_display_names">
+                 'PlasmoDB combined SNPs', 'NIH, Broad, and Sanger SNPs'
+            </sqlParamValue>
             <sql>
             <![CDATA[
-           SELECT bfmv.source_id, bfmv.project_id, bfmv.dataset,bfmv.chromosome_order_num,
+           SELECT bfmv.source_id, bfmv.project_id, bfmv.chromosome_order_num,
+                  DECODE(bfmv.dataset, &&dataset_display_names&&, bfmv.dataset) AS dataset,
                   DECODE(bfmv.dataset, &&datasets&&, bfmv.dataset) AS dataset_hidden,
                   bfmv.seq_source_id, bfmv.start_min, 
                   CASE
