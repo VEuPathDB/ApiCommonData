@@ -2577,13 +2577,8 @@
 
          </textAttribute>
 
-         <textAttribute name="dnaContext" displayName="Genomic Context"  includeProjects="ToxoDB,PlasmoDB"
+         <textAttribute name="dnaContext" displayName="Genomic Context"  includeProjects="ToxoDB"
                internal="true" inReportMaker="false">
-            <text includeProjects="PlasmoDB">
-                <![CDATA[
-                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
-                ]]>
-            </text>
             <text includeProjects="ToxoDB">
                 <![CDATA[
                 /cgi-bin/gbrowse_img/toxodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;h_feat=$$primary_key$$@thistle;width=700;hmap=dnaContextMap;base=/cgi-bin/gbrowse
@@ -2599,9 +2594,8 @@
                 /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+Version5Genes+EviganGeneModels+CombinedSNPs+2;options=Version5Genes+EviganGeneModels+CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                 ]]>- -->
            <![CDATA[
-                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+CombinedSNPs+2;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC+CombinedSNPs+2;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                 ]]>
-
             </text>
          </textAttribute>
 
@@ -2613,11 +2607,46 @@
                 /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+KappeGeneModels+;options=KappeGeneModels;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                ]]> -->
                <![CDATA[
-                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
                ]]>
             </text>
          </textAttribute>
 
+         <textAttribute name="dnaContextChabaudi" displayName="Genomic Context"  includeProjects="PlasmoDB"
+               internal="true" inReportMaker="false">
+            <text>
+                <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
+
+         <textAttribute name="dnaContextBerghei" displayName="Genomic Context"  includeProjects="PlasmoDB"
+               internal="true" inReportMaker="false">
+            <text>
+                <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
+
+         <textAttribute name="dnaContextKnowlesi" displayName="Genomic Context"  includeProjects="PlasmoDB"
+               internal="true" inReportMaker="false">
+            <text>
+                <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansVivaxMC+SyntenyGenesVivaxMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
+
+         <textAttribute name="dnaContextVivax" displayName="Genomic Context"  includeProjects="PlasmoDB"
+               internal="true" inReportMaker="false">
+            <text>
+                <![CDATA[
+                /cgi-bin/gbrowse_img/plasmodb/?name=$$sequence_id$$%3A$$context_start$$-$$context_end$$;embed=1;type=AnnotatedGenes+SyntenySpansFalciparumMC+SyntenyGenesFalciparumMC+SyntenySpansKnowlesiMC+SyntenyGenesKnowlesiMC+SyntenySpansYoeliiMC+SyntenyGenesYoeliiMC+SyntenySpansBergheiMC+SyntenyGenesBergheiMC+SyntenySpansChabaudiMC+SyntenyGenesChabaudiMC;options=CombinedSNPs+2;h_feat=$$primary_key$$@thistle;width=600;hmap=dnaContextMap;base=/cgi-bin/gbrowse
+                ]]>
+            </text>
+         </textAttribute>
 
          <textAttribute name="gbrowseLink" internal="true" inReportMaker="false" includeProjects="PlasmoDB,ToxoDB">
             <text includeProjects="PlasmoDB">
