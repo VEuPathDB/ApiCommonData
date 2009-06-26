@@ -279,26 +279,19 @@
                       || '-' || trim(to_char(target_end,'999,999,999'))
                       || '(' || decode(is_reversed,0,'+',1,'-',null) || ')')
                     AS apidb.varchartab), ', ') END AS est_locations,
-                  CASE WHEN count(distinct gene) > 20 THEN count(distinct gene)||' genes' 
+                  CASE WHEN count(distinct gene) > 20 THEN count(distinct gene)||' genes'
                        ELSE apidb.tab_to_string(CAST(COLLECT(gene) AS apidb.varchartab), ', ') END as genes
 	    FROM (
                 SELECT accession,gene ,target_start,target_end, is_reversed, target_sequence_source_id
-                FROM apidb.ESTALIGNMENTGENESUMMARY
-                WHERE is_consistent in ($$high_confidence_only$$)
-                AND is_best_alignment in ($$best_alignment_only$$)
-                AND percent_identity >= $$min_percent_identity$$
-                AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryIdGenes$$)
-             $$overlapOrNot$$                    
-               SELECT i.accession,i.gene ,i.target_start,i.target_end, i.is_reversed, i.target_sequence_source_id
-                FROM apidb.ESTALIGNMENTGENESUMMARY i
-                WHERE i.est_gene_overlap_length >= $$bp_overlap_gte$$
-                AND is_consistent in ($$high_confidence_only$$)
-                AND is_best_alignment in ($$best_alignment_only$$)
-                AND percent_identity >= $$min_percent_identity$$
-                AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
-                AND library_id in ($$libraryIdGenes$$)
-            )          
+                FROM apidb.EstAlignmentGeneSummary
+                WHERE ('overlap' != $$overlapOrNot$$ OR est_gene_overlap_length >= $$bp_overlap_gte$$)
+                  AND ('not overlap' != $$overlapOrNot$$ OR (est_gene_overlap_length < $$bp_overlap_gte$$ OR est_gene_overlap_length is null))
+                  AND is_consistent in ($$high_confidence_only$$)
+                  AND is_best_alignment in ($$best_alignment_only$$)
+                  AND percent_identity >= $$min_percent_identity$$
+                  AND percent_est_bases_aligned >= $$min_percent_est_aligned$$
+                  AND library_id in ($$libraryIdGenes$$)
+            )
             GROUP BY accession
             )
            ]]>
