@@ -1640,6 +1640,11 @@ CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (sou
        WHEN ed.name = 'Sanger falciparum SNPs' THEN 'sangerItGhanaSnps'
        WHEN ed.name = 'Sanger reichenowi SNPs' THEN 'sangerReichenowiSnps'
        WHEN ed.name = 'PlasmoDB combined SNPs' THEN 'plasmoDbCombinedSnps'
+       WHEN ed.name = 'Winzeler Array - Plasmodium Genetic Variation' THEN 'WinzelerGeneticVariationArray'
+       WHEN ed.name = 'Genomic Sequence SNPs' THEN 'AmitAlignmentSnps'
+       WHEN ed.name = 'Genetic Markers - David Sibley' THEN 'GeneticMarkers_Sibley'
+       WHEN ed.name = 'John Boothroyd lab at Stanford' THEN 'ME49_SNPs'
+       WHEN ed.name = 'Lindstrom 454 SNPs' THEN 'Lindstrom454Snps'
        END AS dataset_hidden,
        sequence.na_sequence_id,
        sequence.source_id AS seq_source_id,
