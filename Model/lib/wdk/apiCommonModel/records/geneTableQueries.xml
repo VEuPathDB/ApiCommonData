@@ -1050,7 +1050,6 @@
             <column name="product"/>
             <column name="is_syntenic" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
             <column name="comment_count" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
-            <column name="phenotype_count" includeProjects="PlasmoDB"/>
             <sql excludeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
@@ -1073,7 +1072,7 @@
             ]]>
             </sql>
 
-            <sql includeProjects="ToxoDB,CryptoDB,TriTrypDB">
+            <sql includeProjects="ToxoDB,CryptoDB,TriTrypDB,PlasmoDB">
             <![CDATA[
             SELECT DISTINCT gf.source_id AS ortho_source_id, tn.name as species, 
                gf.product, ga1.source_id,
@@ -1099,53 +1098,6 @@
                  dots.NaSequence ens, core.TableInfo ti,
                  sres.TaxonName tn, apidb.geneattributes ga1
               WHERE ga1.na_feature_id = ssg1.sequence_id 
-              AND ssg1.source_table_id = ti.table_id
-              AND ssg1.sequence_group_id = ssg2.sequence_group_id
-              AND ssg2.source_table_id = ti.table_id
-              AND ssg2.sequence_id = gf.na_feature_id
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND ens.taxon_id = tn.taxon_id
-              AND tn.name_class = 'scientific name'
-              AND ti.name = 'GeneFeature'
-              AND gf.source_id != ga1.source_id
-            ORDER BY tn.name, ga1.source_id
-            ]]>
-            </sql>
-           <sql includeProjects="PlasmoDB">
-            <![CDATA[
-            SELECT DISTINCT gf.source_id AS ortho_source_id, tn.name as species, 
-               gf.product, ga1.source_id,
-               (SELECT case when (count(*) > 0) then 'yes' else 'no' end
-                FROM apidb.synteny s, apidb.geneattributes gattr
-                WHERE a_na_sequence_id = ga1.na_sequence_id
-                  AND gattr.source_id = gf.source_id
-                  AND b_na_sequence_id = gattr.na_sequence_id 
-                  AND b_end > gattr.start_min
-                  AND b_start < gattr.end_max) is_syntenic,
-               (SELECT case when (count(*) > 0) then 'yes' else 'no' end
-                FROM dots.GeneFeature f, dots.DbRefNaFeature drnf, sres.DbRef dr, 
-                     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-                WHERE f.na_feature_id = drnf.na_feature_id
-                  AND drnf.db_ref_id = dr.db_ref_id
-                  AND dr.external_database_release_id = edr.external_database_release_id
-                  AND edr.external_database_id = ed.external_database_id
-                  AND ed.name ='Phenotype DBRefs'
-                  AND f.source_id = gf.source_id) as phenotype_count,
-               (SELECT case when (count(*) > 0) then 'yes' else 'no' end as comment_count
-                FROM @USER_SCHEMA@users@USER_DBLINK@ u,
-                     @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
-                WHERE lower(u.email) = lower(c.email)
-                  AND c.comment_target_id = 'gene'
-                  AND c.stable_id = gf.source_id
-                  AND c.review_status_id != 'rejected'
-                  AND c.is_visible = 1 
-                  AND gff.source_id = gf.source_id) as comment_count,
-             '@PROJECT_ID@' as project_id 
-            FROM dots.SequenceSequenceGroup ssg1,
-                 dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf,
-                 dots.NaSequence ens, core.TableInfo ti,
-                 sres.TaxonName tn, apidb.geneattributes ga1
-              WHERE ga1.na_feature_id = ssg1.sequence_id
               AND ssg1.source_table_id = ti.table_id
               AND ssg1.sequence_group_id = ssg2.sequence_group_id
               AND ssg2.source_table_id = ti.table_id
