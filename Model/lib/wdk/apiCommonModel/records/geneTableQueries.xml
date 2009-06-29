@@ -1757,6 +1757,7 @@
             </testParamValues>
 
         <column name="source_id"/>
+        <column name="other_source_id"/>
         <column name="project_id"/>
         <column name="bait_start"/>
         <column name="bait_end"/>
@@ -1771,7 +1772,7 @@
             <![CDATA[
                SELECT bf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, NULL AS prey_number_of_baits,
-                       bait_number_of_preys, 'bait' as bait_or_prey, '@PROJECT_ID@' as project_id
+                       bait_number_of_preys, 'bait' as bait_or_prey, '@PROJECT_ID@' as project_id, pf.source_id as other_source_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens, apidb.GeneInteraction gi
                 WHERE bf.na_feature_id = gi.bait_gene_feature_id
@@ -1780,7 +1781,7 @@
                 UNION
                 SELECT pf.source_id, bait_start, bait_end, prey_start, prey_end,
                        times_observed, number_of_searches, prey_number_of_baits,
-                       NULL AS bait_number_of_preys, 'prey' as bait_or_prey, '@PROJECT_ID@' as project_id
+                       NULL AS bait_number_of_preys, 'prey' as bait_or_prey, '@PROJECT_ID@' as project_id, bf.source_id as other_source_id
                 FROM dots.GeneFeature bf, dots.GeneFeature pf,
                      dots.NaSequence ens,  apidb.GeneInteraction gi
                 WHERE bf.na_feature_id = gi.bait_gene_feature_id

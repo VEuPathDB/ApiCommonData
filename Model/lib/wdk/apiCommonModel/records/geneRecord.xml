@@ -1981,6 +1981,7 @@
                  displayName="Y2H Interactions"
                  queryRef="GeneTables.Y2hInteractions" includeProjects="PlasmoDB,EuPathDB">
               <columnAttribute name="source_id" internal="true" displayName="Gene"/>
+              <columnAttribute name="other_source_id" internal="true" displayName="Interacts With"/>
               <linkAttribute name="geneLink" displayName="Gene" inReportMaker="false">
                  <displayText>
                     <![CDATA[
@@ -1989,6 +1990,18 @@
                  </displayText>
                    <url>
                       <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$source_id$$]]>
+                   </url>
+              </linkAttribute>
+              <columnAttribute name="bait_or_prey" internal="false"
+                               displayName="Gene Was"/>
+              <linkAttribute name="otherGeneLink" displayName="Interacts With" inReportMaker="false">
+                 <displayText>
+                    <![CDATA[
+                    $$other_source_id$$
+                    ]]>
+                 </displayText>
+                   <url>
+                      <![CDATA[showRecord.do?name=GeneRecordClasses.GeneRecordClass&project_id=@PROJECT_ID@&primary_key=$$other_source_id$$]]>
                    </url>
               </linkAttribute>
               <columnAttribute name="bait_start" displayName="Bait Start"
@@ -2007,8 +2020,7 @@
                                displayName="Baits Interacting with Found Gene"/>
               <columnAttribute name="bait_number_of_preys" internal="false"
                                displayName="Prey Interacting with Found Gene"/>
-              <columnAttribute name="bait_or_prey" internal="false"
-                               displayName="Query Gene Was:"/>
+
           </table>
 
 
