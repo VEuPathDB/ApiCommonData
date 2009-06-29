@@ -902,7 +902,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
     <enumParam name="epitope_confidence"
                         prompt="Confidence"
-                        multiPick="true">
+                        multiPick="true" quote="false">
       <help>
              Epitopes are mapped to genes in @PROJECT_ID@ using high quality BLAST similarities (percent identity >= 97%) between the GenBank proteins listed on IEDB and the proteins found in @PROJECT_ID@, and exact string matching.  Confidence levels are assigned to each set of epitopes based on the quality of this mapping.  A high confidence is assigned to a set where all of the epitopes are found on a given BLAST hit.  A medium confidence is assigned to a set where either some, but not all, of the epitopes in a set are found on a given BLAST hit, or where all of the epitopes in a set are found in a given protein, but the protein was not identified as a match by BLAST.  A low confidence is assigned to sets where some, but not all, of the epitopes are found in a given protein, but the protein was not identified by BLAST.  Choose one or more assigned confidence levels to search for epitopes in.
       </help>
@@ -910,15 +910,15 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       <enumList>
        <enumValue default="true">
          <term>High</term>
-         <internal>Full Set On Blast Hit</internal>
+         <internal>'Full Set On Blast Hit'</internal>
        </enumValue>
        <enumValue default="true">
          <term>Medium</term>
-         <internal>Full Set Not on Blast Hit','Not Full Set On Blast Hit</internal>
+         <internal>'Full Set Not on Blast Hit','Not Full Set On Blast Hit'</internal>
        </enumValue>
        <enumValue>
          <term>Low</term>
-         <internal>Not Full Set Not on Blast Hit</internal>
+         <internal>'Not Full Set Not on Blast Hit'</internal>
        </enumValue>
       </enumList>
     </enumParam>
