@@ -4,9 +4,10 @@
   <!-- Gene Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   
-    <categories recordClassRef="GeneRecordClasses.GeneRecordClass">
+    <category name="GeneRecordClasses.GeneRecordClass" displayName="Search for Genes" />
     
-    	<category name="other_attributes" displayName="Text, IDs, Species">
+    	<category name="other_attributes" displayName="Text, IDs, Species"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByTextSearch</questionRef>
 <!--            <questionRef>GeneQuestions.GeneBySingleLocusTag</questionRef> -->
             <questionRef>GeneQuestions.GeneByLocusTag</questionRef>
@@ -14,21 +15,24 @@
             <questionRef>GeneQuestions.GenesByMr4Reagents</questionRef> 
         </category>
 
-        <category name="genomic_position" displayName="Genomic Position">
+        <category name="genomic_position" displayName="Genomic Position"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByLocation</questionRef>
             <questionRef>GeneQuestions.GenesByNonnuclearLocation</questionRef> 
             <questionRef>GeneQuestions.GenesByCentromereProximity</questionRef>
             <questionRef>GeneQuestions.GenesByTelomereProximity</questionRef>
         </category>
 
-        <category name="gene_attributes" displayName="Gene Attributes">
+        <category name="gene_attributes" displayName="Gene Attributes"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByGeneType</questionRef>
             <questionRef>GeneQuestions.GenesByExonCount</questionRef>
             <questionRef includeProjects="PlasmoDB">GeneQuestions.GenesByOldAnnotation</questionRef>
             <questionRef includeProjects="TriTrypDB">GeneQuestions.GenesWithUpdatedAnnotation</questionRef>
         </category>
 
-        <category name="protein_attributes" displayName="Protein Attributes">
+        <category name="protein_attributes" displayName="Protein Attributes"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByMolecularWeight</questionRef>
             <questionRef>GeneQuestions.GenesByIsoelectricPoint</questionRef>
             <questionRef>GeneQuestions.GenesBySecondaryStructure</questionRef>   
@@ -36,19 +40,22 @@
 <!--            <questionRef>GeneQuestions.GenesWithStructurePrediction</questionRef>    -->
         </category>
         
-        <category name="protein_features" displayName="Protein Features">
+        <category name="protein_features" displayName="Protein Features"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
             <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
             <questionRef>GeneQuestions.GenesWithEpitopes</questionRef>
         </category>
         
-        <category name="similarity_pattern" displayName="Similarity/Pattern">
+        <category name="similarity_pattern" displayName="Similarity/Pattern"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByMotifSearch</questionRef>
             <questionRef>GeneQuestions.GenesByInterproDomain</questionRef>
             <questionRef>GeneQuestions.GenesBySimilarity</questionRef>
         </category>
         
-        <category name="transcript_expression" displayName="Transcript Expression">
+        <category name="transcript_expression" displayName="Transcript Expression"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByESTOverlap</questionRef>
             <questionRef>GeneQuestions.GenesBySageTag</questionRef> 
             <questionRef>GeneQuestions.GenesBySageTagRStat</questionRef>
@@ -71,7 +78,8 @@
             <questionRef includeProjects="ToxoDB">GeneQuestions.GenesByChIPchip</questionRef>
         </category>
         
-        <category name="protein_expression" displayName="Protein Expression">
+        <category name="protein_expression" displayName="Protein Expression"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <!-- questionRef>InternalQuestions.GenesByMassSpecEvidence</questionRef -->
 <!--            <questionRef>GeneQuestions.GenesByMassSpecPf</questionRef>  -->
 <!--            <questionRef>GeneQuestions.GenesByMassSpec4</questionRef>   -->
@@ -79,14 +87,16 @@
             <questionRef>GeneQuestions.GenesByProteomicsProfile</questionRef> 
         </category>
 
-        <category name="cellular_location" displayName="Cellular Location">
+        <category name="cellular_location" displayName="Cellular Location"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesWithSignalPeptide</questionRef>
             <questionRef>GeneQuestions.GenesByTransmembraneDomains</questionRef>
             <questionRef>GeneQuestions.GenesBySubcellularLocalization</questionRef>
             <questionRef>GeneQuestions.GenesByExportPrediction</questionRef>  
         </category>
         
-        <category name="putative_function" displayName="Putative Function">
+        <category name="putative_function" displayName="Putative Function"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesByGoTerm</questionRef>
             <questionRef>GeneQuestions.GenesByEcNumber</questionRef>
             <questionRef>GeneQuestions.GenesByMetabolicPathway</questionRef>
@@ -95,18 +105,18 @@
             <questionRef>GeneQuestions.GenesByPhenotype</questionRef>
         </category>
         
-        <category name="evolution" displayName="Evolution">
+        <category name="evolution" displayName="Evolution"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesOrthologousToAGivenGene</questionRef>
             <questionRef>GeneQuestions.GenesByOrthologPattern</questionRef>
             <questionRef>GeneQuestions.GenesByPhyleticProfile</questionRef>
             <questionRef>GeneQuestions.GenesByPhylogeneticTree</questionRef>  
         </category>
         
-        <category name="population_biology" displayName="Population Biology">
+        <category name="population_biology" displayName="Population Biology"
+    	          parentRef="GeneRecordClasses.GeneRecordClass">
             <questionRef>GeneQuestions.GenesBySnps</questionRef>  
         </category>
-
-     </categories>
      
      
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -114,10 +124,11 @@
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
      
    
-      <categories recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-      excludeProjects="TriTrypDB,GiardiaDB,TrichDB">
+      <category name="IsolateRecordClasses.IsolateRecordClass"
+      excludeProjects="TriTrypDB,GiardiaDB,TrichDB" displayName="Search for Isolates" />
      
-     	<category name="isolates" displayName="Isolates">
+     	<category name="isolates" displayName="Isolates"
+    	          parentRef="IsolateRecordClasses.IsolateRecordClass">
             <questionRef>IsolateQuestions.IsolateByIsolateId</questionRef>
             <questionRef>IsolateQuestions.IsolateByTaxon</questionRef>
             <questionRef>IsolateQuestions.IsolateByHost</questionRef>
@@ -132,23 +143,20 @@
             <questionRef>IsolateQuestions.IsolateBySubmitter</questionRef>
             <questionRef>IsolateInternalQuestions.IsolatesByClustering</questionRef>
         </category>
-        
-     </categories>
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Genomic Sequence Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
      
-     <categories recordClassRef="SequenceRecordClasses.SequenceRecordClass">
+     <category name="SequenceRecordClasses.SequenceRecordClass" displayName="Search for Sequences" />
      
-     	<category name="genomic" displayName="Genomic Sequences">
+     	<category name="genomic" displayName="Genomic Sequences"
+    	          parentRef="SequenceRecordClasses.SequenceRecordClass">
      		<questionRef>GenomicSequenceQuestions.SequenceBySourceId</questionRef>
             <questionRef>GenomicSequenceQuestions.SequencesByTaxon</questionRef>
             <questionRef>GenomicSequenceQuestions.SequencesBySimilarity</questionRef>
         </category>
-     
-     </categories>
      
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- SNP Questions  -->
@@ -156,10 +164,11 @@
   
 
 
-     <categories recordClassRef="SnpRecordClasses.SnpRecordClass"
-     excludeProjects="GiardiaDB,TrichDB,TriTrypDB">
+     <category name="SnpRecordClasses.SnpRecordClass"
+     excludeProjects="GiardiaDB,TrichDB,TriTrypDB" displayName="Search for SNPs" />
      
-     	<category name="snp" displayName="SNP">
+     	<category name="snp" displayName="SNP"
+    	          parentRef="SnpRecordClasses.SnpRecordClass">
             <questionRef>SnpQuestions.SnpBySourceId</questionRef>
             <questionRef>SnpQuestions.SnpsByGeneId</questionRef>
             <questionRef>SnpQuestions.SnpsByAlleleFrequency</questionRef>
@@ -167,8 +176,6 @@
             <questionRef>SnpQuestions.SnpsByIsolatePattern</questionRef>
             <questionRef>SnpQuestions.SnpsByIsolateType</questionRef>
         </category>
-        
-     </categories>
 
      
 
@@ -177,25 +184,26 @@
   <!-- EST Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   
-     <categories recordClassRef="EstRecordClasses.EstRecordClass">
+     <category name="EstRecordClasses.EstRecordClass" displayName="Search for ESTs" />
      
-     	<category name="est" displayName="EST">
+     	<category name="est" displayName="EST"
+    	          parentRef="EstRecordClasses.EstRecordClass">
             <questionRef>EstQuestions.EstBySourceId</questionRef>
             <questionRef>EstQuestions.EstsBySimilarity</questionRef>
             <questionRef>EstQuestions.EstsByLocation</questionRef>
             <questionRef>EstQuestions.EstsWithGeneOverlap</questionRef>
             <questionRef>EstQuestions.EstsByLibrary</questionRef>
         </category>
-        
-     </categories>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Assembly Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   
-     <categories recordClassRef="AssemblyRecordClasses.AssemblyRecordClass" excludeProjects="TrichDB">
+     <category name="AssemblyRecordClasses.AssemblyRecordClass" 
+               excludeProjects="TrichDB" displayName="Search for Assemblies" />
      
-     	<category name="assembly" displayName="Assembly">
+     	<category name="assembly" displayName="Assembly"
+    	          parentRef="AssemblyRecordClasses.AssemblyRecordClass">
             <questionRef>AssemblyQuestions.AssembliesByEstAccession</questionRef>
             <questionRef>AssemblyQuestions.AssembliesByLibrary</questionRef>
             <questionRef>AssemblyQuestions.AssembliesByLocation</questionRef>
@@ -203,33 +211,31 @@
             <questionRef>AssemblyQuestions.AssembliesByGeneIDs</questionRef>
             <questionRef>AssemblyQuestions.AssembliesBySimilarity</questionRef>
         </category>
-        
-     </categories>   
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ORF Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
      
-     <categories recordClassRef="OrfRecordClasses.OrfRecordClass">
+     <category name="OrfRecordClasses.OrfRecordClass" displayName="Search for ORFs" />
      
-     	<category name="orf" displayName="ORF">
+     	<category name="orf" displayName="ORF"
+    	          parentRef="OrfRecordClasses.OrfRecordClass">
             <questionRef>OrfQuestions.OrfByOrfId</questionRef>
             <questionRef>OrfQuestions.OrfsByMassSpec</questionRef>  
             <questionRef>OrfQuestions.OrfsByMotifSearch</questionRef>
             <questionRef>OrfQuestions.OrfsBySimilarity</questionRef>
             <questionRef>OrfQuestions.OrfsByLocation</questionRef>
         </category>
-        
-     </categories>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- SAGE TAG Questions  -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
      
-     <categories recordClassRef="SageTagRecordClasses.SageTagRecordClass"
-                 excludeProjects="TriTrypDB,TrichDB,CryptoDB">
+     <category name="SageTagRecordClasses.SageTagRecordClass"
+                 excludeProjects="TriTrypDB,TrichDB,CryptoDB" displayName="Search for Sage Tags" />
      
-     	<category name="sageTag" displayName="SAGE Tag Alignments">
+     	<category name="sageTag" displayName="SAGE Tag Alignments"
+    	          parentRef="SageTagRecordClasses.SageTagRecordClass">
             <questionRef>SageTagQuestions.SageTagByRadSourceId</questionRef>
             <questionRef>SageTagQuestions.SageTagByGeneSourceId</questionRef>
             <questionRef>SageTagQuestions.SageTagByLocation</questionRef>
@@ -237,7 +243,5 @@
             <questionRef>SageTagQuestions.SageTagByExpressionLevel</questionRef>
             <questionRef>SageTagQuestions.SageTagByRStat</questionRef>
         </category>
-        
-     </categories>
      
 </wdkModel>
