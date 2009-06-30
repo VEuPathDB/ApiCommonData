@@ -200,13 +200,12 @@
                 'Toxoplasma isolates From Genbank', 'Genbank',
                 'Toxoplasma isolates From David Sibley', 'Genbank',
                 'Isolate barcode data from Broad','Barcode','Genbank') as data_type
-            from dots.isolatefeature i, dots.nasequence nas,
-                 sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+            from dots.nasequence nas, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+                 (select na_sequence_id,  regexp_replace(product, ':.*') as term from dots.isolatefeature) i
             where i.na_sequence_id = nas.na_sequence_id
-            and i.product in ($$product$$)
+            and i.term in ($$product$$)
             and nas.external_database_release_id = edr.external_database_release_id
             and edr.external_database_id = ed.external_database_id
-            ORDER BY nas.source_id
             ]]>
          </sql>
     </sqlQuery>

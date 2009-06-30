@@ -393,17 +393,28 @@ order by term asc
     <column name="internal"/>
     <column name="term"/>
     <column name="parentTerm"/>
-    <sql>
+    <sql includeProjects="ToxoDB">
     <![CDATA[
 select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal, v.parent as parentTerm
 from apidb.isolatevocabulary v, 
-     (select distinct product term from dots.isolatefeature) c
+     (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
 where v.term = c.term
 and v.type = 'product'
 union
 select 'others' as display, 'others' as term, 'others' as internal, '' as parentterm from dual
 union
 select 'RFLP' as display, 'RFLP' as term, 'RFLP' as internal, '' as parentterm from dual
+    ]]>
+    </sql>
+    <sql includeProjects="CryptoDB,PlasmoDB">
+    <![CDATA[
+select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal, v.parent as parentTerm
+from apidb.isolatevocabulary v, 
+     (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
+where v.term = c.term
+and v.type = 'product'
+union
+select 'others' as display, 'others' as term, 'others' as internal, '' as parentterm from dual
     ]]>
     </sql>
     </sqlQuery>
