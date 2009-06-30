@@ -9,24 +9,17 @@ use Bio::Tools::GFF;
 use Getopt::Long qw(GetOptions);
 
 my $verbose = 0;
-my $newFormat = 0;
 my $inputFile;
 my $outputFile;
-my $inputAntigenFile;
 
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s"     => \$inputFile,
-           "inputAntigenFile=s"     => \$inputAntigenFile,
            "outputFile=s"    => \$outputFile,
-	   "newFormat!"        => \$newFormat,
           );
 
 unless (-e $inputFile) {
-  die "Must supply a valid input file!\nUsage: extractFromExcel --inputFile <FILE> [--inputAntigenFile <FILE>] --outputFile <FILE> [--verbose][--newFormat] ";
+  die "Must supply a valid input file!\nUsage: extractFromExcel --inputFile <FILE> --outputFile <FILE> [--verbose]";
 }
-
-my $antigens;
-$antigens = &parseInputAntigenFile($inputAntigenFile) if $inputAntigenFile;
 
 my $spreadSheet = Spreadsheet::BasicRead->new(fileName => $inputFile,
                   skipHeadings  => 1,
@@ -37,58 +30,19 @@ open(OUT, ">> $outputFile");
 print OUT "Accession\tIEDB ID\tStrain\tSequence\tEpitope Name\n";
 
 while(my $data = $spreadSheet->getNextRow()){
+  next unless $data;
 
-    my ($iedbId,$epiName,$seq,$accession,$strain);
-    next unless $data;
-    if ($newFormat){
-	$iedbId = $$data[0];
-	$epiName = $$data[2];
-	$seq = $$data[1];
-	$seq =~ s/(\S+?)\.*/$1/g;
-	$seq ="" if $seq =~ /\d/ ;
-	$strain = $$data[3];
-	if ($inputAntigenFile){
-	    foreach my $accession (keys %{$antigens}){
-		if (lc($antigens->{$accession}) eq lc($epiName)){
-		    print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
-		}
-	    }
-	}else{
-	    $accession = $$data[0];
-	    print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
-	}
+  my $iedbId = $$data[1];
+  my $epiName = $$data[2];
+  my $seq = $$data[4];
+  my $accession = $$data[10];
+  my $strain = $$data[7];
 
-
-    }else{
-	$iedbId = $$data[1];
-	$epiName = $$data[2];
-	$seq = $$data[4];
-	$accession = $$data[10];
-	$strain = $$data[7];
-	print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
-    }
-
+  print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
 }
 
 close (OUT);
 
-
-sub parseInputAntigenFile{
-
-  my($inputAntigenFile) = @_;
-
-  my %antigens;
-
-  my $spreadSheetAntigen = Spreadsheet::BasicRead->new(fileName => $inputAntigenFile,
-			   skipHeadings  => 1,
-                           skipBlankRows => 1) || die "Could not open '$inputAntigenFile':$!";
-
-  while(my $data = $spreadSheetAntigen->getNextRow()){
-      $antigens{$$data[0]}=$$data[1];
-  }
-  return \%antigens;
-
-}
 
 ###TODO####
 # Generalize plugin by making columns to take and order to print in
