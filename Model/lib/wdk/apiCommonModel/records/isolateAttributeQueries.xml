@@ -36,6 +36,8 @@
             <column name="collected_by"/> 
             <column name="is_reference"/> 
             <column name="length"/> 
+            <column name="external_db_name"/> 
+            <column name="external_db_version"/> 
             <sql>
                SELECT iso.source_id, 
                       iso.project_id, 
@@ -51,7 +53,9 @@
                       iso.product,
                       iso.length, 
                       decode(iso.is_reference, 0, 'No', 1, 'Yes', 'No') is_reference,
-                      iso.data_type
+                      iso.data_type,
+                      iso.external_db_name,
+                      iso.external_db_version
                 FROM   ApiDB.IsolateAttributes iso
            </sql>
       </sqlQuery>
