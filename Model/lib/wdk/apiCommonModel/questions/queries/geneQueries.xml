@@ -762,7 +762,7 @@ group by gb.source_id
               spf.maxs_conclusion + spf.means_conclusion ) as sigp_sum_score,
               to_char((spf.means_score + maxy_score) / 2 , '0.99') as nn_d_score,
               to_char(spf.signal_probability, '0.99') as hmm_signal_probability
-            FROM dots.NaSequence ens, dots.GeneFeature gf, 
+            FROM dots.NaSequence ens, apidb.geneattributes gf, 
                  dots.Transcript t,
                  dots.TranslatedAaFeature taf, dots.SignalPeptideFeature spf
             WHERE ens.taxon_id in ($$organism$$) 
