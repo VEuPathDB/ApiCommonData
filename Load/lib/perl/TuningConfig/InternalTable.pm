@@ -130,6 +130,10 @@ sub getState {
   } elsif ($self->{dbDef} ne $self->getDefString()) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name}");
     $needUpdate = 1;
+    ApiCommonData::Load::TuningConfig::Log::addLog("stored:\n-------\n" . $self->{dbDef} . "\n-------")
+	if $self->{debug};
+    ApiCommonData::Load::TuningConfig::Log::addLog("current:\n-------\n" . $self->getDefString() . "\n-------")
+	if $self->{debug};
   }
 
   # check internal dependencies
@@ -229,7 +233,7 @@ sub update {
 
     my $sqlReturn = $dbh->do($sqlCopy);
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"$dbh->errstr\"")
+    ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"" . $dbh->errstr . "\"")
 	if $self->{debug};
     if (!defined $sqlReturn) {
       $updateError = 1;
@@ -295,8 +299,10 @@ sub getDefString {
 
   return $self->{defString} if $self->{defString};
 
+  my $defString;
+
   my $sqls = $self->getSqls();
-  my $defString = join(" ", @{$sqls}) if $sqls;
+  $defString = join(" ", @{$sqls}) if $sqls;
 
   my $perls = $self->getPerls();
   $defString .= join(" ", @{$perls}) if $perls;
