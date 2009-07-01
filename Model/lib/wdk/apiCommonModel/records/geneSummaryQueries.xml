@@ -119,6 +119,10 @@
             </sql>
         </sqlQuery>
 
+
+
+
+
         <sqlQuery name="PlasmoGenes" isCacheable="false" includeProjects="PlasmoDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -133,6 +137,60 @@
                 ]]>
             </sql>
         </sqlQuery>
+
+
+
+<!-- These are the organism names in apidb.geneattributes -->
+<!-- This cannot be used until all component sites have the orthomcl group info in apidb.geneattributes -->
+<!-- I think grouping by project_id works for a component site but does not work for the portal -->
+
+ <sqlQuery name="PortalDistinctGenes" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
+                            DECODE(ga.organism, 
+                                                'Cryptosporidium parvum Iowa II', 1, 
+                                                'Cryptosporidium hominis', 2,
+                                                'Cryptosporidium muris', 3,
+                                                'Cryptosporidium parvum', 4
+         
+                                                'Giardia lamblia ATCC 50803', 5, 
+
+                                                'Plasmodium falciparum 3D7', 10, 
+                                                'Plasmodium berghei strain ANKA', 11, 
+                                                'Plasmodium chabaudi chabaudi', 12,
+                                                'Plasmodium knowlesi strain H', 13,
+                                                'Plasmodium vivax SaI-1', 14,  
+                                                'Plasmodium yoelii yoelii str. 17XNL', 15, 
+
+
+                                                'Toxoplasma gondii GT1', 20, 
+                                                'Toxoplasma gondii RH', 21, 
+                                                'Toxoplasma gondii ME49', 22, 
+                                                'Toxoplasma gondii VEG', 23, 
+                                                'Neospora caninum', 24, 
+
+                                                'Trichomonas vaginalis G3', 25, 
+
+                                                'Trypanosoma brucei TREU927', 30, 
+                                                'Leishmania braziliensis', 31,
+                                                'Leishmania infantum', 33,
+                                                'Leishmania major', 34,
+                                                'Trypanosoma cruzi strain CL Brener', 35
+                                  )
+                                                    ) AS source_id,
+                      ga.project_id
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      WHERE ga.source_id = ca.source_id
+                      GROUP BY ga.orthomcl_name,ga.project_id
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
 
         <sqlQuery name="CryptoDistinctGenes" isCacheable="false" includeProjects="EuPathDB,CryptoDB">
             <paramRef ref="recordParams.organism"/>

@@ -526,9 +526,10 @@
     </processQuery>
                                                     
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-  <!-- old Text Search -->
+  <!-- old Text Search    NOT IN USE ANYMORE     -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+<!--
     <processQuery name="GenesByTextSearch" excludeProjects="EuPathDB,CryptoDB,TriTrypDB,PlasmoDB,GiardiaDB,ToxoDB,TrichDB"
           processName="org.apidb.apicomplexa.wsfplugin.textsearch.TextSearchPlugin">
        <paramRef ref="sharedParams.text_expression"/>
@@ -552,7 +553,7 @@
             <wsColumn name="source_id" width="32" wsName="source_id"/>
        <wsColumn name="text_fields" width="64"/>
     </processQuery>
-
+-->
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- text search (based on Oracle Text) -->
@@ -571,6 +572,21 @@
        <wsColumn name="project_id" width="32" wsName="ProjectId"/>
        <wsColumn name="max_score" width="10" wsName="MaxScore" columnType="float"/>
        <wsColumn name="fields_matched" width="64" wsName="Datasets"/>
+    </processQuery>
+
+ <processQuery name="GenesByTextSearch" includeProjects="EuPathDB"
+          processName="org.apidb.apicomplexa.wsfplugin.textsearch.ApiFedPlugin"
+          isCacheable="false">
+       <paramRef ref="organismParams.text_search_organism"/>
+       <paramRef ref="sharedParams.text_expression"  quote="false"/>
+       <paramRef ref="geneParams.text_fields"  quote="false"/>
+       <paramRef ref="geneParams.whole_words"   quote="false" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="geneParams.max_pvalue"   quote="false" groupRef="paramGroups.advancedParams"/>
+       <paramRef ref="sharedParams.timestamp"  quote="false"/>
+       <wsColumn name="source_id" width="32" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+       <wsColumn name="max_score" width="10" columnType="float"/>
+       <wsColumn name="fields_matched" width="64"/>
     </processQuery>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
