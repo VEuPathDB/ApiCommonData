@@ -357,12 +357,11 @@
         <column name="source_id"/>
         <sql>
             <![CDATA[
-            SELECT gf.source_id, '@PROJECT_ID@' as project_id
-            from dots.genefeature gf, dots.nasequence nas, apidb.geneattributes ga
+            SELECT ga.source_id, '@PROJECT_ID@' as project_id
+            from dots.nasequence nas, apidb.geneattributes ga
             where ga.tm_count >= $$min_tm$$ 
             AND ga.tm_count <= $$max_tm$$
-            AND ga.na_feature_id  = gf.na_feature_id
-            AND nas.na_sequence_id = gf.na_sequence_id
+            AND nas.na_sequence_id = ga.na_sequence_id
             AND nas.taxon_id IN ($$organism$$)
            ]]>
         </sql>
@@ -846,7 +845,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <sql>
             <![CDATA[
             SELECT DISTINCT asa.isoelectric_point, '@PROJECT_ID@' as project_id, gf.source_id
-            FROM dots.GeneFeature gf, dots.Transcript t,
+            FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf,
                  apidb.AaSequenceAttribute asa,
                  dots.NaSequence ns
@@ -887,9 +886,9 @@ sns2.external_database_release_id=extr.external_database_release_id
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.Transcript t,
+            FROM apidb.geneattributes gf, dots.Transcript t,
                  dots.TranslatedAaFeature taf, apidb.AaSequenceAttribute asa,
-                 dots.NaSequence ns, apidb.GeneAttributes ga
+                 dots.NaSequence ns
             WHERE asa.min_molecular_weight <= $$max_molecular_weight$$
               AND asa.max_molecular_weight >= $$min_molecular_weight$$
               AND gf.na_feature_id = t.parent_id
@@ -897,7 +896,6 @@ sns2.external_database_release_id=extr.external_database_release_id
               AND taf.aa_sequence_id = asa.aa_sequence_id
               AND gf.na_sequence_id = ns.na_sequence_id
               AND ns.taxon_id in ($$organism$$)
-              AND ga.source_id = gf.source_id
            ]]>
        </sql>
     </sqlQuery>
@@ -1000,7 +998,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <sql excludeProjects="ToxoDB">
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
-            FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
+            FROM apidb.PhylogeneticProfile pp, apidb.geneattributes gf, dots.NaSequence ns
             WHERE pp.profile_string LIKE $$profile_pattern$$
               AND pp.source_id = gf.source_id
               AND gf.na_sequence_id = ns.na_sequence_id
@@ -1011,7 +1009,7 @@ sns2.external_database_release_id=extr.external_database_release_id
         <sql includeProjects="ToxoDB">
             <![CDATA[
             SELECT source_id, project_id, taxon_id FROM (SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, ns.taxon_id
-            FROM apidb.PhylogeneticProfile pp, dots.GeneFeature gf, dots.NaSequence ns
+            FROM apidb.PhylogeneticProfile pp, apidb.geneattributes gf, dots.NaSequence ns
             WHERE pp.profile_string LIKE $$profile_pattern$$
               AND pp.source_id = gf.source_id
               AND gf.na_sequence_id = ns.na_sequence_id
@@ -1059,7 +1057,7 @@ sns2.external_database_release_id=extr.external_database_release_id
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
 apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
-            FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
+            FROM apidb.geneattributes gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
               (SELECT idrnf.na_feature_id
                FROM dots.DbRefNaFeature idrnf, sres.DbRef idr
                WHERE idr.primary_identifier = $$metabolic_pathway$$
@@ -1078,7 +1076,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               SELECT gf.source_id, '@PROJECT_ID@' as project_id,
               apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifier, null, dr.primary_identifier,
                            dr.lowercase_secondary_identifier)) AS apidb.varchartab), ', ') as met_pathways
-              FROM dots.GeneFeature gf, dots.Transcript t,
+              FROM apidb.geneattributes gf, dots.Transcript t,
                    dots.DbRefaaFeature draf, sres.DbRef dr,
                    dots.TranslatedAaFeature taf,
                (SELECT idraf.aa_feature_id
@@ -1118,13 +1116,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
                 SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-                FROM DoTS.GeneFeature gf, apidb.GeneAttributes ga
-                WHERE gf.na_sequence_id IN
-                      (SELECT ens.na_sequence_id
-                       FROM dots.NaSequence ens
-                       WHERE ens.taxon_id in ($$organism$$))
-                  AND gf.source_id IS NOT NULL
-                  AND ga.source_id = gf.source_id
+                FROM apidb.geneattributes gf, dots.nasequence ens
+                WHERE gf.na_sequence_id = ens.na_sequence_id
+                   and ens.taxon_id in ($$organism$$)
                 ORDER BY gf.source_id
            ]]>
        </sql>
@@ -1166,7 +1160,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                4, 'unknown epitope type') AS confidence
         FROM dots.TranslatedAaSequence tas, dots.EpitopeFeature ef,
              dots.AaLocation al, sres.ExternalDatabaseRelease edr,
-             sres.ExternalDatabase ed, dots.GeneFeature gf,
+             sres.ExternalDatabase ed, apidb.geneattributes gf,
              dots.TranslatedAaFeature taf, dots.Transcript t,
              dots.MotifAaSequence mas, dots.NaSequence ens
         WHERE tas.aa_sequence_id = ef.aa_sequence_id
@@ -1569,8 +1563,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql includeProjects="PlasmoDB,CryptoDB,TriTrypDB">
             <![CDATA[
                 SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
-                FROM dots.GeneFeature gf1, dots.SequenceSequenceGroup ssg1,
-                     dots.SequenceSequenceGroup ssg2, dots.GeneFeature gf2,
+                FROM apidb.geneattributes gf1, dots.SequenceSequenceGroup ssg1,
+                     dots.SequenceSequenceGroup ssg2, apidb.geneattributes gf2,
                      core.TableInfo ti,apidb.GeneId gi, dots.NaSequence ns
                 WHERE gi.id = lower($$single_gene_id$$)
                   AND gf1.source_id = gi.gene 
@@ -1853,7 +1847,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, c.percentage as percent_coil,
                 e.percentage as percent_strand, h.percentage as percent_helix
             FROM dots.SecondaryStructure ss, dots.SecondaryStructureCall c, dots.SecondaryStructureCall e,
-                 dots.SecondaryStructureCall h,dots.genefeature gf,dots.transcript t, 
+                 dots.SecondaryStructureCall h, apidb.geneattributes gf,dots.transcript t, 
                  dots.translatedaafeature tf,dots.nasequence s
             WHERE s.na_sequence_id = gf.na_sequence_id
               AND gf.na_feature_id = t.parent_id
@@ -1920,7 +1914,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
             SELECT gf.source_id, '@PROJECT_ID@' as project_id, to_char(avg(df.e_value),'9.9EEEE') as e_value
             FROM dots.DomainFeature df,dots.translatedaasequence tas,
-                 dots.genefeature gf, dots.transcript t, dots.TranslatedAAFeature taf,
+                 apidb.geneattributes gf, dots.transcript t, dots.TranslatedAAFeature taf,
                  dots.DbRefAaFeature draf, sres.DbRef dr
             WHERE tas.aa_sequence_id = df.aa_sequence_id
               AND df.aa_feature_id = draf.aa_feature_id
@@ -2207,12 +2201,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
                 SELECT gf.source_id AS source_id,
                        '@PROJECT_ID@' as project_id
-                FROM DoTS.GeneFeature gf, 
+                FROM apidb.geneattributes gf, 
                      dots.NaSequence ns, 
                      apidb.GeneAttributes ga
                 WHERE gf.na_sequence_id = ns.na_sequence_id
                   AND ns.taxon_id IN ($$gff_organism$$)
-                  AND gf.source_id IS NOT NULL
                   AND gf.source_id = ga.source_id
                   AND ga.project_id = '@PROJECT_ID@'
             ]]>
@@ -2275,7 +2268,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                          from apidb.geneinteraction igi
                          where igi.bait_gene_feature_id = pf.na_feature_id) AS prey_number_of_baits,
                        bait_number_of_preys, 'bait' as bait_or_prey
-                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                FROM apidb.GeneId ga, apidb.geneattributes bf, apidb.geneattributes pf,
                      dots.ExternalNaSequence ens, apidb.GeneInteraction gi
                 WHERE lower($$single_gene_id$$) = ga.id
                   AND ga.gene = bf.source_id
@@ -2290,7 +2283,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                        (select distinct bait_number_of_preys
                          from apidb.geneinteraction igi
                          where igi.prey_gene_feature_id = bf.na_feature_id) AS bait_number_of_preys, 'prey' as bait_or_prey
-                FROM apidb.GeneId ga, dots.GeneFeature bf, dots.GeneFeature pf,
+                FROM apidb.GeneId ga, apidb.geneattributes bf, apidb.geneattributes pf,
                      dots.ExternalNaSequence ens,  apidb.GeneInteraction gi
                 WHERE lower($$single_gene_id$$) = ga.id
                   AND ga.gene = pf.source_id
@@ -2517,9 +2510,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 SELECT gf2.source_id, '@PROJECT_ID@' as project_id, count(*) as num_queries,
                     apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids,
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
-                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                FROM apidb.geneattributes gf1, dots.PhylogeneticProfile pp1,
                      dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
-                     dots.GeneFeature gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
+                     apidb.geneattributes gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
                 WHERE $$include_only_queries$$ = 'no'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
@@ -2538,9 +2531,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 SELECT gf2.source_id, '@PROJECT_ID@' as project_id, count(*) as num_queries,
                     apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                     apidb.tab_to_string(CAST(COLLECT(to_char(mis.mutual_information_score/10000)) AS apidb.varchartab), ', ') AS mutual_information_scores
-                FROM dots.GeneFeature gf1, dots.PhylogeneticProfile pp1,
+                FROM apidb.geneattributes gf1, dots.PhylogeneticProfile pp1,
                      dots.MutualInformationScore mis, dots.PhylogeneticProfile pp2,
-                     dots.GeneFeature gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
+                     apidb.geneattributes gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
                 WHERE $$include_only_queries$$ = 'yes'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
@@ -2599,8 +2592,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                   apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
                   count(*) as queries_matched
-                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
-                     dots.GeneFeature gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
+                FROM apidb.geneattributes gf1, apidb.RelatedNaFeature rnf,
+                     apidb.geneattributes gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
                 WHERE $$include_only_queries$$ = 'no'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
@@ -2615,8 +2608,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                   apidb.tab_to_string(CAST(COLLECT(gf1.source_id) AS apidb.varchartab), ', ') AS query_ids, 
                   apidb.tab_to_string(CAST(COLLECT(to_char(rnf.value)) AS apidb.varchartab), ', ') AS likelihood_scores,
                   count(*) as queries_matched
-                FROM dots.GeneFeature gf1, apidb.RelatedNaFeature rnf,
-                     dots.GeneFeature gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
+                FROM apidb.geneattributes gf1, apidb.RelatedNaFeature rnf,
+                     apidb.geneattributes gf2,@WDK_ENGINE_SCHEMA@dataset_values@USER_DBLINK@ ds, apidb.GeneId gi
                 WHERE $$include_only_queries$$ = 'yes'
                   AND gf1.source_id = gi.gene
                   AND gi.id = lower(ds.dataset_value)
@@ -2767,7 +2760,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    max(round(de.fold_change, 2)) as fold_change,
                    max(round(de.confidence, 2)) as confidence
             from rad.DIFFERENTIALEXPRESSION de, Core.TABLEINFO ti, 
-                 rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, dots.GENEFEATURE g
+                 rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, apidb.geneattributes g
             where ti.name = 'ShortOligoFamily'
               and de.table_id = ti.table_id
               and de.row_id = cs.composite_element_id
@@ -3119,7 +3112,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
             <![CDATA[
           SELECT g.source_id, '@PROJECT_ID@' as project_id,
 	      to_char(de.fold_change, '999.99') as fold_change
-            FROM Rad.DifferentialExpression de, Core.TableInfo t, Dots.GeneFeature g
+            FROM Rad.DifferentialExpression de, Core.TableInfo t, apidb.geneattributes g
             WHERE t.table_id = de.table_id
              AND g.na_feature_id = de.row_id
              AND t.name = 'GeneFeature'
@@ -3409,7 +3402,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
                SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-               FROM dots.GeneFeature gf,
+               FROM apidb.geneattributes gf,
                 dots.DbRefAaFeature df,
                 sres.DbRef dbr, sres.ExternalDatabaseRelease edr,
                 sres.ExternalDatabase ed, dots.TranslatedAAFeature taf,
@@ -3455,7 +3448,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                 SELECT gf.source_id, '@PROJECT_ID@' as project_id, 
                   max(df.score) as exportpred_score
                 FROM dots.aasequence aa,dots.DomainFeature df, dots.translatedaafeature tf,
-                     dots.transcript t,dots.genefeature gf
+                     dots.transcript t, apidb.geneattributes gf
                 WHERE  aa.taxon_id in ($$organism$$)
                    AND aa.aa_sequence_id = df.aa_sequence_id
                    AND df.algorithm_name = 'exportpred'
@@ -3562,9 +3555,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
             SELECT distinct gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.GeneFeature gf, dots.naLocation nl, dots.NaSequence ens
-            WHERE nl.na_feature_id = gf.na_feature_id
-              AND ens.source_id IN ($$nonnuclearSequence$$)
+            FROM apidb.geneattributes gf, dots.NaSequence ens
+            WHERE ens.source_id IN ($$nonnuclearSequence$$)
               AND gf.na_sequence_id = ens.na_sequence_id
               AND end_max >= REGEXP_REPLACE('$$start_point$$', ',| ','') 
               AND (start_min <= REGEXP_REPLACE('$$end_point$$', ',| ','') OR REGEXP_REPLACE('$$end_point$$', ',| ','') = 0)
@@ -3594,7 +3586,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-            FROM dots.aafeature aaf, dots.GeneFeature gf, dots.transcript t,
+            FROM dots.aafeature aaf, apidb.geneattributes gf, dots.transcript t,
                  dots.DbRefaaFeature drnf,  sres.DbRef dr,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
             WHERE gf.na_feature_id = t.parent_id
@@ -3638,7 +3630,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                  core.TableInfo tas_ti, dots.Similarity s,
                  core.TableInfo eas_ti, dots.ExternalAaSequence eas,
                  sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-                 dots.GeneFeature gf, dots.ExternalNaSequence ens,
+                 apidb.geneattributes gf, dots.ExternalNaSequence ens,
                  dots.Transcript t
             WHERE taf.aa_sequence_id = tas.aa_sequence_id
               AND tas_ti.name = 'TranslatedAASequence'
@@ -3690,7 +3682,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
             SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id
-             FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+             FROM apidb.geneattributes gf, dots.DbRefNaFeature drnf,
                   sres.DbRef dr, sres.ExternalDatabaseRelease edr,
                   sres.ExternalDatabase ed, dots.ExternalNaSequence ens
              WHERE (dr.primary_identifier = $$accession$$
@@ -3734,7 +3726,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <sql>
             <![CDATA[
 	    select gf.source_id, '@PROJECT_ID@' as project_id
-	    from Dots.LowComplexityAAFeature lc, Dots.GeneFeature gf,
+	    from Dots.LowComplexityAAFeature lc, apidb.geneattributes gf,
 	         Dots.ExternalNASequence ens, Dots.AALocation al, 
                  Dots.AASequence s, Dots.Transcript t, Dots.TranslatedAAFeature taf
             where ens.source_id in ($$chromosome$$)
