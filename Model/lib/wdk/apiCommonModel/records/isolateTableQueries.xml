@@ -247,6 +247,110 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+       <!-- User Comments -->  
+       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+       <sqlQuery name="UserComments"
+                 isCacheable="false">
+
+            <testParamValues includeProjects="CryptoDB">
+               <paramValue name="source_id">cgd5_780</paramValue>
+            </testParamValues>
+            <testParamValues minRows="0" includeProjects="TrichDB"/>
+            <testParamValues includeProjects="GiardiaDB">
+               <paramValue name="source_id">GL50803_39483</paramValue>
+            </testParamValues>
+            <testParamValues includeProjects="ToxoDB">
+               <paramValue name="source_id">TGME49_102050</paramValue>
+            </testParamValues>
+           <!--Revisit to add an actual source_id.. the user comments table is currently empty-->
+           <!-- <testParamValues includeProjects="TriTrypDB">
+               <paramValue name="source_id"></paramValue>
+            </testParamValues>-->
+            <testParamValues minRows="0" includeProjects="TriTrypDB"/>
+
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="comment_id"/>
+            <column name="pmids"/>
+            <column name="genecount"/>
+            <column name="filecount"/>
+            <column name="stable_id"/>
+            <column name="headline"/>
+            <column name="user_name_org"/>
+            <column name="comment_date"/>
+            <sql>
+            <![CDATA[
+              SELECT a.source_id, a.project_id, a.comment_id,
+                     a.stable_id, a.headline, 
+                     a.user_name || ', ' || a.organization as user_name_org,
+                     a.comment_date, b.pmids, 
+                     d.genecount, e.filecount
+              FROM (
+              SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
+                     c.comment_id, c.stable_id,
+                     NVL(c.headline, '<i>none</i>') AS headline,
+                     (u.first_name || ' ' || u.last_name) AS user_name,
+                     u.organization,
+                     c.comment_date, c.project_version
+              FROM @USER_SCHEMA@users@USER_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   apidb.IsolateAttributes gf
+              WHERE lower(u.email) = lower(c.email)
+                    AND c.comment_target_id = 'isolate'
+                    AND c.stable_id = gf.source_id
+                    AND c.review_status_id != 'rejected'
+                    AND c.review_status_id != 'task'
+                    AND c.is_visible = 1
+              UNION
+              SELECT DISTINCT gf.source_id, '@PROJECT_ID@' as project_id, 
+                     c.comment_id, d.stable_id,
+                     NVL(c.headline, '<i>none</i>') AS headline,
+                     (u.first_name || ' ' || u.last_name) AS user_name,
+                     u.organization,
+                     c.comment_date, c.project_version
+              FROM @USER_SCHEMA@users@USER_DBLINK@ u,
+                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                   @COMMENT_SCHEMA@commentStableId@COMMENT_DBLINK@ d,
+                   apidb.IsolateAttributes gf
+              WHERE lower(u.email) = lower(c.email)
+                    AND c.comment_target_id = 'isolate'
+                    AND c.comment_id = d.comment_id
+                    AND d.stable_id = gf.source_id
+                    AND c.review_status_id != 'rejected'
+                    AND c.review_status_id != 'task'
+                    AND c.is_visible = 1
+              ) a,
+              (SELECT d.comment_id,
+                      apidb.tab_to_string(cast(collect(cf.source_id) as apidb.varchartab),',') as pmids
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ d,
+                      @COMMENT_SCHEMA@CommentReference@COMMENT_DBLINK@ cf
+               WHERE  d.comment_id=cf.comment_id 
+                  AND cf.database_name='pubmed' 
+               GROUP BY d.comment_id
+              ) b, 
+              (SELECT d1.comment_id, count(d1.stable_id) as genecount
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ d1,
+                      @COMMENT_SCHEMA@CommentStableId@COMMENT_DBLINK@ d2
+               WHERE  d1.comment_id=d2.comment_id 
+               GROUP BY d1.comment_id
+              ) d,
+              (SELECT e1.comment_id, count(e2.file_id) as filecount
+               FROM   @COMMENT_SCHEMA@Comments@COMMENT_DBLINK@ e1,
+                      @COMMENT_SCHEMA@CommentFile@COMMENT_DBLINK@ e2
+               WHERE  e1.comment_id=e2.comment_id 
+               GROUP BY e1.comment_id
+              ) e 
+              WHERE a.comment_id = b.comment_id(+) 
+                AND a.comment_id = d.comment_id(+)
+                AND a.comment_id = e.comment_id(+)
+              ORDER BY comment_date DESC
+            ]]>
+            </sql>
+        </sqlQuery>
+
+
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Attributes as tables (to feed text search)  -->  
@@ -387,7 +491,6 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-
       <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
             <column name="project_id"/>
             <column name="source_id"/> 
@@ -405,7 +508,7 @@ where f.na_sequence_id = s.na_sequence_id
                    case when title is null then 'N/A'
                         when title = 'Direct Submission' then 'N/A'
                    else '<a href="showSummary.do?questionFullName=IsolateQuestions.IsolateByStudy&' || 'myProp(study)=' || apidb.alphanumeric_str(title)
-		   || '">view</a>' end as studyLink
+       || '">view</a>' end as studyLink
             FROM   DoTS.NASequence etn,
                    DoTS.NASequenceRef nasr,
                    SRES.Reference ref,
