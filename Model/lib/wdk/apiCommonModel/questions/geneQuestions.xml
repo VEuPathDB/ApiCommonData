@@ -4168,6 +4168,31 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
 
     </question>
 
+     <question name="GenesBySyntenicOrthologs" includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB"
+         displayName="Syntenic Orthologs of Genes in the Previous Step"
+         shortDisplayName="Syn Orthologs"
+              queryRef="GeneId.GenesBySyntenicOrthologs"
+              recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList 
+              summary="organism,location_text, product,orthologs"
+              sorting="location_text asc"
+        />
+
+        <description>
+           <![CDATA[
+Find the @PROJECT_ID@ genes that are syntenic orthologs (or paralogs) of the genes in a Query History result.
+The typical use of this query is to begin by having an interesting result in My Query History.  Then, use this query to find orthologs of those genes in a species that may not be annotated with the data from your query.  In general, use this query to transform sets of genes from one species to others. <br><br>
+Ortholog groups were generated from more than 100 species using OrthoMCL as described in   Li L, Stoeckert CJ Jr, Roos DS. OrthoMCL: identification of ortholog groups for eukaryotic genomes. <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=12952885">Genome Res. 2003 13:2178-89</a>.   The OrthoMCL DB site is described in Chen F. Mackey AJ. Stoeckert CJ Jr. Roos DS. OrthoMCL-DB: querying a comprehensive multi-species collection of ortholog groups. <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=16381887">NAR. 34(Database issue):D363-8</a>.
+          ]]>
+        </description>
+
+         <dynamicAttributes>
+             <columnAttribute name="orthologs" displayName="Input Ortholog(s)" 
+                              align="center" inReportMaker="true"/>
+         </dynamicAttributes>
+
+    </question>
+
      <question name="GenesByExpandResult" includeProjects="ToxoDB"
               displayName="Expand"
               shortDisplayName="Expand"
