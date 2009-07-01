@@ -930,7 +930,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                      prompt="Non-synonymous / synonymous SNP ratio &lt;= "
                      quote="false">
             <help>Upper Bound on the ratio of non-synonymous to synonymous coding snps</help>
-            <suggest default="100"/>
+            <suggest default="10"/>
         </stringParam>
 
       <stringParam name="dn_ds_ratio_lower"
@@ -962,11 +962,18 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <suggest default="0"/>
         </stringParam>
 
-      <stringParam name="snp_density"
+      <stringParam name="snp_density_lower"
                      prompt="SNPs per KB (CDS) >= "
                      quote="false">
-            <help>Find genes containing a density of coding snps > this parameter. Density is expressed in number of snps / KB of coding sequence</help>
+            <help>Find genes containing a density of coding snps greater than this parameter. Density is expressed in number of snps / KB of coding sequence</help>
             <suggest default="0"/>
+        </stringParam>
+
+      <stringParam name="snp_density_upper"
+                     prompt="SNPs per KB (CDS) &lt;= "
+                     quote="false">
+            <help>Find genes containing a density of coding snps less than this parameter. Density is expressed in number of snps / KB of coding sequence</help>
+            <suggest default="10"/>
         </stringParam>
 
 

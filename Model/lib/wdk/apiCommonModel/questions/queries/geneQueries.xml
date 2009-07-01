@@ -1770,7 +1770,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.occurrences_upper" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.dn_ds_ratio_lower" groupRef="paramGroups.advancedParams"/>
         <paramRef ref="geneParams.dn_ds_ratio_upper" groupRef="paramGroups.advancedParams"/>
-        <paramRef ref="geneParams.snp_density" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.snp_density_lower" groupRef="paramGroups.advancedParams"/>
+        <paramRef ref="geneParams.snp_density_upper" groupRef="paramGroups.advancedParams"/>
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="cds_snp_density"/>
@@ -1801,7 +1802,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 				  ELSE synonymous end <= $$dn_ds_ratio_upper$$
               AND $$snp_stat$$ >= $$occurrences_lower$$
 	      AND $$snp_stat$$ <= $$occurrences_upper$$
-              AND (non_synonymous + synonymous) / cds_length * 1000 >= $$snp_density$$
+              AND (non_synonymous + synonymous) / cds_length * 1000 >= $$snp_density_lower$$
+              AND (non_synonymous + synonymous) / cds_length * 1000 <= $$snp_density_upper$$
            ]]>
        </sql>
     </sqlQuery>
