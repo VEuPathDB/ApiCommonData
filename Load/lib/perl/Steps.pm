@@ -2457,7 +2457,7 @@ sub makeIsolateDownloadFile {
         ||' | organism='|| 
         replace(tn.name, ' ', '_')
         ||' | description='||
-        enas.description
+        decode (enas.description,null,'$extDb')
         ||' | length='||
         enas.length
         as defline,
