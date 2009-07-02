@@ -158,6 +158,7 @@ sub run {
     my $origin = $metaHash{Origin}->[$i];
     my $source = $metaHash{Source}->[$i];
     my $note = $metaHash{Note}->[$i];
+    my $identifier = $metaHash{Identifier}->[$i];
 
     my $objArgs = {
                     strain                       => $strain,
@@ -167,6 +168,7 @@ sub run {
                     collected_by                 => $source,
                     external_database_release_id => $extDbRlsId,
                     note                         => $note,
+                    source_id                    => $identifier,
                   };
 
     my $isolateSource = GUS::Model::DoTS::IsolateSource->new($objArgs);
@@ -209,6 +211,7 @@ sub run {
     }
 
     my $extNASeq = $self->buildSequence($barcode, $extDbRlsId);
+    $extNASeq->setSourceId($identifier);
 
     $extNASeq->addChild($isolateSource);
 
