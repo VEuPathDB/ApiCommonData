@@ -92,16 +92,16 @@ FROM
       &&providers&& 
       AND sf.na_feature_id = isva.parent_id                               
       AND sf.na_feature_id = isvb.parent_id                               
-      AND isva.strain = $$snp_strain_a$$                               
-      AND isvb.strain in ($$snp_strain_m$$)
+      AND lower(isva.strain) = $$snp_strain_a$$                               
+      AND lower(isvb.strain) in ($$snp_strain_m$$)
       AND isva.allele != isvb.allele ) hits
   WHERE hits.na_sequence_id = nas.na_sequence_id
     AND hits.gene_na_feature_id = gene_loc.na_feature_id
     AND hits.snp_na_feature_id = l.na_feature_id
     AND hits.snp_na_feature_id = sva.parent_id 
     AND hits.snp_na_feature_id = svb.parent_id 
-    AND sva.strain = $$snp_strain_a$$                               
-    AND svb.strain in ($$snp_strain_a$$,$$snp_strain_m$$)                             
+    AND lower(sva.strain) = $$snp_strain_a$$                               
+    AND lower(svb.strain) in ($$snp_strain_a$$,$$snp_strain_m$$)                             
     ) snpq                              
 GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref_product
 )
@@ -187,7 +187,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
            AND ed.name in ('Sanger reichenowi SNPs','PlasmoDB combined SNPs')
         </sqlParamValue>
         <sqlParamValue name="providers" includeProjects="ToxoDB">
-          AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford')
+          AND ed.name in ('Genomic Sequence SNPs','Genetic Markers - David Sibley','John Boothroyd lab at Stanford','Lindstrom 454 SNPs')
         </sqlParamValue>
         <sqlParamValue name="providers" includeProjects="CryptoDB"></sqlParamValue>
 
@@ -225,9 +225,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                  AND p.external_database_release_id = edr.external_database_release_id
                  AND edr.external_database_id = ed.external_database_id
                  AND seq.chromosome = $$chromosomeOptional$$
-                 AND p.strain_a = $$snp_strain_a$$ -- ref
-                 AND p.strain_b in ($$snp_strain_m$$) -- comp
-                 AND $$snp_strain_a$$ < p.strain_b
+                 AND lower(p.strain_a) = $$snp_strain_a$$ -- ref
+                 AND lower(p.strain_b) in ($$snp_strain_m$$) -- comp
+                 AND $$snp_strain_a$$ < lower(p.strain_b)
                  AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
                  AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    &&providers&&
@@ -251,9 +251,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                  AND p.external_database_release_id = edr.external_database_release_id
                  AND edr.external_database_id = ed.external_database_id
                  AND seq.chromosome = $$chromosomeOptional$$
-                 AND p.strain_b = $$snp_strain_a$$ -- ref
-                 AND p.strain_a in ($$snp_strain_m$$) -- comp
-                 AND p.strain_a < $$snp_strain_a$$
+                 AND lower(p.strain_b) = $$snp_strain_a$$ -- ref
+                 AND lower(p.strain_a) in ($$snp_strain_m$$) -- comp
+                 AND lower(p.strain_a) < $$snp_strain_a$$
                  AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
                  AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                  &&providers&&) snpq
@@ -297,9 +297,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.chromosome = $$chromosomeOptional$$
-                   AND p.strain_a = $$snp_strain_a$$ -- ref
-                   AND p.strain_b in ($$snp_strain_m$$) -- comp
-                   AND $$snp_strain_a$$ < p.strain_b
+                   AND lower(p.strain_a) = $$snp_strain_a$$ -- ref
+                   AND lower(p.strain_b) in ($$snp_strain_m$$) -- comp
+                   AND $$snp_strain_a$$ < lower(p.strain_b)
                    AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
                    AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    AND p.na_feature_id_b = comp.na_feature_id
@@ -331,9 +331,9 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
                    AND edr.external_database_id = ed.external_database_id
                    AND p.snp_na_feature_id = snp.na_feature_id
                    AND seq.chromosome = $$chromosomeOptional$$
-                   AND p.strain_b = $$snp_strain_a$$ -- ref
-                   AND p.strain_a in ($$snp_strain_m$$) -- comp
-                   AND p.strain_a < $$snp_strain_a$$
+                   AND lower(p.strain_b) = $$snp_strain_a$$ -- ref
+                   AND lower(p.strain_a) in ($$snp_strain_m$$) -- comp
+                   AND lower(p.strain_a) < $$snp_strain_a$$
                    AND p.start_min >=  REGEXP_REPLACE('$$start_point$$', ',| ','')
                    AND (REGEXP_REPLACE('$$end_point$$', ',| ','') = 0 OR p.start_min < REGEXP_REPLACE('$$end_point$$', ',| ',''))
                    AND p.na_feature_id_a = comp.na_feature_id

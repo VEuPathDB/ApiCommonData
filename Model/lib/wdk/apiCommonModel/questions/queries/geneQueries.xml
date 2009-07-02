@@ -1786,8 +1786,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               cds_length,round(((non_synonymous + synonymous) / cds_length * 1000),2) as cds_snp_density,
               total as total_snps
 	      FROM apidb.snpsummary
-	      WHERE ((strain_a = $$snp_strain_a$$ and strain_b = $$snp_strain_m$$ )
-                    or  (strain_a = $$snp_strain_m$$ and strain_b = $$snp_strain_a$$))
+	      WHERE ((lower(strain_a) = $$snp_strain_a$$ and lower(strain_b) = $$snp_strain_m$$ )
+                    or  (lower(strain_a) = $$snp_strain_m$$ and lower(strain_b) = $$snp_strain_a$$))
 	      AND non_synonymous / CASE synonymous
 	                          WHEN 0 THEN 1
 				  ELSE synonymous end >= $$dn_ds_ratio_lower$$
