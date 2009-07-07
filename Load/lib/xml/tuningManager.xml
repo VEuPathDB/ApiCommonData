@@ -3332,12 +3332,18 @@ tablespace indx
     <sql>
       <![CDATA[
 create table apidb.IsolateSNPs&1 NOLOGGING as
-select atr.na_sequence_id as is_na_sequence_id,atr.source_id as is_source_id,
-isof.allele,sa.source_id as snp_source_id,sa.dataset as snp_db_name,sa.na_sequence_id as snp_na_sequence_id,sa.start_min as snp_start_min
-from dots.ISOLATEFEATURE isof,  dots.NALOCATION isol, apidb.SNPATTRIBUTES sa, apidb.ISOLATEATTRIBUTES atr
+select atr.na_sequence_id as is_na_sequence_id,
+       atr.source_id as is_source_id,
+       isof.allele,
+       sa.source_id as snp_source_id,
+       sa.dataset as snp_db_name,
+       sa.na_sequence_id as snp_na_sequence_id,
+       sa.start_min as snp_start_min
+from dots.ISOLATEFEATURE isof,  apidb.featurelocation isol, 
+     apidb.SNPATTRIBUTES sa, apidb.ISOLATEATTRIBUTES atr
 where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
-and sa.na_sequence_id = isof.na_sequence_id
+and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
 and sa.dataset in ('PlasmoDB combined SNPs','Broad SNPs')
       ]]>
