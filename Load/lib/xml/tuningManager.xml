@@ -2295,7 +2295,6 @@ tablespace indx
     <internalDependency name="apidb.FeatureLocation"/>
     <externalDependency name="dots.SnpFeature"/>
     <externalDependency name="dots.SeqVariation"/>
-    <externalDependency name="dots.NaLocation"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
@@ -2315,7 +2314,7 @@ CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
          snp.parent_id as gene_na_feature_id,
          nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id
   FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
-       apidb.FeatureLocation fl, dots.NaLocation nl, dots.GeneFeature gf
+       apidb.FeatureLocation fl, apidb.featurelocation nl, dots.GeneFeature gf
   WHERE sa.strain < sb.strain
     AND sa.allele != sb.allele
     AND sa.parent_id = sb.parent_id
