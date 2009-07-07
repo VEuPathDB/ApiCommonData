@@ -73,19 +73,27 @@ apidb.tab_to_string (p_varchar2_tab  IN  apidb.varchartab,
 RETURN VARCHAR2 IS
 l_string     VARCHAR2(32767);
 BEGIN
+
   IF p_varchar2_tab.FIRST IS NULL THEN
     RETURN null;
   END IF;
+
   FOR i IN p_varchar2_tab.FIRST .. p_varchar2_tab.LAST LOOP
-    IF i != p_varchar2_tab.FIRST THEN
+    IF i != p_varchar2_tab.FIRST AND length(l_string) < 4000 THEN
       l_string := l_string || p_delimiter;
     END IF;
-    l_string := l_string || p_varchar2_tab(i);
+
+    IF length(l_string) >= 3997 THEN
+      l_string := SUBSTR(l_string, 1, 3997) ||  '...' ;
+    ELSIF (length(l_string) + length(p_varchar2_tab(i))) > 4000 THEN
+      l_string := l_string || SUBSTR(p_varchar2_tab(i), 1, 3997 - length(l_string)) || '...' ;
+    ELSE
+      l_string := l_string || p_varchar2_tab(i);
+    END IF;
   END LOOP;
-  IF length(l_string) > 4000 THEN
-    l_string := substr(l_string, 1, 3997) || '...';
-  END IF;
+
   RETURN l_string;
+
 END tab_to_string;
 /
 
