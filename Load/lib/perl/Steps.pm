@@ -2764,6 +2764,33 @@ sub extractIndividualNaSeq {
   $mgr->endStep($signal);
 }
 
+sub extractOrthoGroupFastaFiles {
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier) = @_;
+
+  my $type = ucfirst($seqType);
+
+  my $signal = "extract${name}$type";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Extracting individual $name $seqType sequences from GUS", $signal);
+
+  my $dbRlsId = &getDbRlsId($mgr,$dbName,$dbRlsVer);
+
+  my $ouputDir = "$mgr->{dataDir}/seqfiles/${name}$type";
+
+  $mgr->runCmd("mkdir -p $ouputDir");
+
+  my $sql = "select og.name, x.source_id,
+             x.sequence
+             from apidb.orthologgroup og, apidb.orthologgroupaasequence oga, dots.externalaasequence x
+             where og.ortholog_group_id = oga.ortholog_group_id and oga.aa_sequence_id = x.aa_sequence_id group by og.name, x.source_id, x.sequence";
+
+  $mgr->runCmd("gusExtractIndividualSequences --outputDir $ouputDir --idSQL \"$sql\" --verbose 2>> $logFile");
+
+  $mgr->endStep($signal);
+}
+
 
 sub extractNaSeqAltDefLine {
   my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$defLine) = @_;
@@ -6469,29 +6496,33 @@ EOF
          "Loading OrthoMCL output");
 }
 
-# update ortholog group fields, and load MSA results
-sub updateOrthoMCLGroups {
-  my ($mgr, $seqTable,$gusConfigFile) = @_;
+# update ortholog group fields
+sub updateOrthologGroups {
+
+  my ($mgr) = @_;
+
+  my $signal = "updateOrthologGroups";
+
+  my $args = "";
+
+  return if $mgr->startStep("Updating the statistical fields of each OrthologGroup and OrthologGroupAASequence", $signal);
+
+  $mgr->runPlugin($signal, 
+         "OrthoMCLData::Load::Plugin::UpdateOrthologGroup",
+         $args,
+         "Updating  OrthoGroup and OrthologGroupAASequence");
+
+}
+
+sub runMuscleForMSAFile {
+  my ($mgr, $) = @_;
 
   my $propertySet = $mgr->{propertySet};
-  my $signal = "updateOrthoMCLGroups";
+  my $signal = "runMuscle";
 
-  return if $mgr->startStep("Updating the statistical fields of each group", $signal);
+  return if $mgr->startStep("Run muscle program to generate a clustalw formatted file", $signal);
 
-  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
-
-  my $cmd = <<"EOF";
-     orthoPlugin \\
-     \"$gusConfigFile\" \\
-     \"org.apidb.orthomcl.load.plugin.UpdateOrthologGroupPlugin\" \\
-     \"$seqTable\" \\
-     >> $logFile
-EOF
-
-  print STDERR "$cmd\n";
-  $mgr->runCmd($cmd);
-  $mgr->endStep($signal);
-}
+  muscle -in <inputfile> -out <outputfile> -clw -log
 
 # update ortholog group fields, and load MSA results
 sub loadMsaResult {
