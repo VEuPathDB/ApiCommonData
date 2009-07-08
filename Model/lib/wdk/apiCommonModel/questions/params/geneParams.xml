@@ -671,6 +671,24 @@
       </enumList>
     </enumParam>
 
+    <enumParam name="isSyntenic"
+                     prompt="Syntenic Orthologs Only?"
+                     multiPick="false"
+                     quote="false">
+      <help>Only Return Orthologs which also are syntenic</help>
+ <useTermOnly value="true" includeProjects="EuPathDB"/>
+      <enumList>
+        <enumValue default="true">
+          <term>yes</term>
+          <internal>intersect</internal>
+        </enumValue>
+        <enumValue>
+          <term>no</term>
+          <internal>union</internal>
+        </enumValue>  
+      </enumList>
+    </enumParam>
+
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
