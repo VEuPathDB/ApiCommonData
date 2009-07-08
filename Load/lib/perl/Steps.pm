@@ -6513,18 +6513,22 @@ sub updateOrthologGroups {
          "Updating  OrthoGroup and OrthologGroupAASequence");
 
 }
-
+###not finished
 sub runMuscleForMSAFile {
-  my ($mgr, $) = @_;
+  my ($mgr) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "runMuscle";
 
   return if $mgr->startStep("Run muscle program to generate a clustalw formatted file", $signal);
 
-  muscle -in <inputfile> -out <outputfile> -clw -log
+  #muscle -in <inputfile> -out <outputfile> -clw -log
 
 # update ortholog group fields, and load MSA results
+
+}
+
+
 sub loadMsaResult {
   my ($mgr, $msaName) = @_;
 
