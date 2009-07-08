@@ -604,91 +604,11 @@
                   default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
                   allowEmpty="true"/>
         <paramRef ref="organismParams.localorganism" includeProjects="EuPathDB"/>
+        <paramRef ref="geneParams.isSyntenic" excludeProjects="EuPathDB"/>
         <column name="source_id" />
         <column name="project_id" />
         <column name="orthologs"/>
 
-        <sql includeProjects="TriTrypDB,CryptoDB,PlasmoDB">
-            <![CDATA[
-            SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
-            FROM $$gene_result$$ qr, apidb.GENEATTRIBUTES gf1,
-                 apidb.GENEATTRIBUTES gf2, dots.NaSequence ens
-            WHERE qr.source_id = gf1.source_id
-              AND gf1.orthomcl_name = gf2.ORTHOMCL_NAME
-              AND gf2.gene_type = 'protein coding' /* this because non protein coding have orthmcl_name for counting distinct "ortholog" results */
-              AND gf2.na_sequence_id = ens.na_sequence_id
-              AND ens.taxon_id in ($$organism$$)
-            GROUP BY gf2.source_id
-            ORDER BY gf2.source_id
-           ]]>
-       </sql>
-
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            select gb.source_id,'@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as
- orthologs 
-              from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,
-                   $$gene_result$$ gr
-             where ga.source_id = gr.source_id 
-               and gb.orthomcl_name = ga.orthomcl_name
-               and gb.ncbi_tax_id in ($$organism$$)
-             group by gb.source_id
-            ]]>
-       </sql>
-
-       <sql includeProjects="EuPathDB">
-            <![CDATA[
-SELECT DISTINCT subq.source_id, subq.project_id,
-       apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
-apidb.varchartab),',') as orthologs
-FROM (SELECT distinct sns2.source_id, ext.name as project_id,
-            qr.source_id AS ortholog_id
-     FROM $$gene_result$$ qr,
-           dots.splicednasequence sns1,
-           dots.sequencesequencegroup ssg1,
-           dots.splicednasequence sns2,
-           dots.sequencesequencegroup ssg2,
-           core.tableinfo ti ,   
-           sres.ExternalDatabaseRelease extr,
-           sres.ExternalDatabase ext
-     WHERE qr.source_id = sns1.source_id
-     AND sns1.na_sequence_id = ssg1.sequence_id
-     AND ssg1.source_table_id = ti.table_id
-     AND ssg1.sequence_group_id = ssg2.sequence_group_id
-     AND ssg2.source_table_id = ti.table_id
-     AND ssg2.sequence_id = sns2.na_sequence_id
-     AND sns2.taxon_id IN
-            (select taxon_id from sres.taxon
-            connect by parent_id = prior taxon_id
-            start with taxon_id in ($$localorganism$$))
-     AND ti.name = 'SplicedNASequence'
-     AND
-sns2.external_database_release_id=extr.external_database_release_id
-     AND extr.external_database_id=ext.external_database_id) subq
-     group by subq.source_id, subq.project_id
-     order by project_id, subq.source_id 
-           ]]>
-       </sql>
-       
-    </sqlQuery>
-
-    <sqlQuery name="GenesBySyntenicOrthologs" doNotTest="true" 
-              includeProjects="CryptoDB,PlasmoDB,ToxoDB,TriTrypDB" isCacheable="true">
-        <paramRef ref="geneParams.gene_result"/>
-        <paramRef ref="organismParams.organism" 
-                  queryRef="organismVQ.withGenes" 
-                  includeProjects="CryptoDB,PlasmoDB,TriTrypDB"/>
-        <paramRef ref="organismParams.organism" 
-                  queryRef="organismVQ.withStrains"
-                  includeProjects="ToxoDB"
-                  default="Toxoplasma gondii ME49,Toxoplasma gondii GT1,Toxoplasma gondii VEG"
-                  allowEmpty="true"/>
-        <paramRef ref="geneParams.isSyntenic"/>
-        <column name="source_id" />
-        <column name="project_id" />
-        <column name="orthologs"/>
         <sql includeProjects="CryptoDB,PlasmoDB,TriTrypDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
@@ -747,9 +667,42 @@ sns2.external_database_release_id=extr.external_database_release_id
              group by gb.source_id
             ]]>
        </sql>
+
+       <sql includeProjects="EuPathDB">
+            <![CDATA[
+SELECT DISTINCT subq.source_id, subq.project_id,
+       apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
+apidb.varchartab),',') as orthologs
+FROM (SELECT distinct sns2.source_id, ext.name as project_id,
+            qr.source_id AS ortholog_id
+     FROM $$gene_result$$ qr,
+           dots.splicednasequence sns1,
+           dots.sequencesequencegroup ssg1,
+           dots.splicednasequence sns2,
+           dots.sequencesequencegroup ssg2,
+           core.tableinfo ti ,   
+           sres.ExternalDatabaseRelease extr,
+           sres.ExternalDatabase ext
+     WHERE qr.source_id = sns1.source_id
+     AND sns1.na_sequence_id = ssg1.sequence_id
+     AND ssg1.source_table_id = ti.table_id
+     AND ssg1.sequence_group_id = ssg2.sequence_group_id
+     AND ssg2.source_table_id = ti.table_id
+     AND ssg2.sequence_id = sns2.na_sequence_id
+     AND sns2.taxon_id IN
+            (select taxon_id from sres.taxon
+            connect by parent_id = prior taxon_id
+            start with taxon_id in ($$localorganism$$))
+     AND ti.name = 'SplicedNASequence'
+     AND
+sns2.external_database_release_id=extr.external_database_release_id
+     AND extr.external_database_id=ext.external_database_id) subq
+     group by subq.source_id, subq.project_id
+     order by project_id, subq.source_id 
+           ]]>
+       </sql>
+       
     </sqlQuery>
-
-
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Go Term -->
