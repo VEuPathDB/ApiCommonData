@@ -183,6 +183,7 @@ SQL
 
     if ($objectType eq "mview" || $objectType eq "synonym") {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("unsupported object type $objectType for " . $self->{name});
+      return;
     }
 
     # if this is a view, find the underlying table
