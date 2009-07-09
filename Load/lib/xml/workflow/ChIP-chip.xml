@@ -1,0 +1,30 @@
+<workflowGraph name="ChIP-chip">
+
+    <param name="parentDataDir"/>
+    <param name="chipNickName"/>
+    <param name="genomicSeqsFile"/>
+    <param name="tagFile"/>
+    <param name="tagToSeqOutputFile"/>
+    <param name="chipExtDbRlsSpec"/>
+
+    <constant name="dataDir">$$parentDataDir$$/$$chipNickName$$</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="mapChIPSeqsToNaSequences" stepClass="ApiCommonData::Load::WorkflowSteps::MapSageTagsToNaSequences">
+      <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
+      <paramValue name="sageTagFile">$$tagFile$$</paramValue>
+      <paramValue name="outputFile">$$dataDir$$/mapChIPSeqsToNaSequences.out</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="loadExpressionFeature" stepClass="ApiCommonData::Load::WorkflowSteps::LoadExpressionFeature" stepLoadTypes="plugin">
+      <paramValue name="inputFile">$$dataDir$$/mapChIPSeqsToNaSequences.out</paramValue>
+      <paramValue name="extDbRlsSpec">$$chipExtDbRlsSpec$$</paramValue>
+      <paramValue name="featureType">ArrayElementFeature</paramValue>
+      <depends name="mapChIPSeqsToNaSequences"/>
+    </step>
+
+</workflowGraph>
