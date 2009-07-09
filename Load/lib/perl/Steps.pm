@@ -6531,19 +6531,33 @@ sub extractFilesForMsa {
 }
 
 
-###not finished
+
 sub runMuscleForMSAFile {
   my ($mgr) = @_;
 
   my $propertySet = $mgr->{propertySet};
+
+  my $muscle = $propertySet->getProp('musclePath');
+
   my $signal = "runMuscle";
+
+  my $fileDir = "$mgr->{dataDir}/seqfiles/groups";
+
+  $mgr->runCmd("mkdir -p $mgr->{dataDir}/msa");
 
   return if $mgr->startStep("Run muscle program to generate a clustalw formatted file", $signal);
 
-  #muscle -in <inputfile> -out <outputfile> -clw -log
+  opendir(DIR, $fileDir) || die "Can't open directory '$fileDir'";
 
-# update ortholog group fields, and load MSA results
+  while (defined (my $file = readdir (DIR))) {
+    next if ($file eq "." || $file eq "..");
 
+    $mgr->runCmd("$muscle/muscle -in $fileDir/$file -out $mgr->{dataDir}/msa/${file}.msa -clw -log $mgr->{myPipelineDir}/logs/${signal}.log");
+  }
+
+  closedir(DIR);
+
+  $mgr->endStep($signal);
 }
 
 
