@@ -118,6 +118,16 @@
       <!--   Filters -->  
       <!-- =============================================================== -->
 
+  <answerFilterLayout name="eupath_species" visible="true"
+                            displayName="Filter results by species" includeProjects="EuPathDB">
+
+            <instanceRef ref="all_results" />
+            <instanceRef ref="parvum_genes" />
+            <instanceRef ref="parvum_chr6_genes" />
+            <instanceRef ref="hominis_genes" />
+            <instanceRef ref="muris_genes" />
+        </answerFilterLayout>
+
         <answerFilterLayout name="plasmo_species" visible="true"
                             displayName="Filter results by species" includeProjects="PlasmoDB">
 
@@ -456,7 +466,7 @@
 
 
   <answerFilter queryRef="GeneSummaries.CryptoGenes"
-                          includeProjects="CryptoDB">
+                          includeProjects="CryptoDB,EuPathDB">
                 
                 <instance name="all_genes"> 
                     <displayName><![CDATA[<i>Cryptosporidium</i> Genes]]></displayName>
@@ -469,7 +479,8 @@
                 </instance>
 
                 <instance name="parvum_genes"> 
-                    <displayName> <![CDATA[<i>C. parvum</i> Genes]]></displayName>
+                    <displayName includeProjects="EuPathDB"> <![CDATA[Cp]]></displayName>
+                    <displayName  includeProjects="CryptoDB"> <![CDATA[<i>C. parvum</i> Genes]]></displayName>
                     <description>
                      <![CDATA[
                        All <i>C. parvum</i> results

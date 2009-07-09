@@ -39,6 +39,7 @@
             </sql>
         </sqlQuery>
 
+<!--    deprecated....now using a subset of filters provided in comp sites for easier maintenance
  <sqlQuery name="ApiGenes" isCacheable="false" includeProjects="EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -70,7 +71,7 @@
                 ]]>
             </sql>
         </sqlQuery>
-
+-->
 
         <sqlQuery name="BooleanExpansion" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.gene_answer"/>
@@ -86,7 +87,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="CryptoGenes" isCacheable="false" includeProjects="CryptoDB">
+        <sqlQuery name="CryptoGenes" isCacheable="false" includeProjects="CryptoDB,EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -102,7 +103,7 @@
         </sqlQuery>
 
 
-        <sqlQuery name="TriTrypGenes" isCacheable="false" includeProjects="TriTrypDB">
+        <sqlQuery name="TriTrypGenes" isCacheable="false" includeProjects="TriTrypDB,EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <paramRef ref="recordParams.sequenceId"/>
@@ -123,7 +124,7 @@
 
 
 
-        <sqlQuery name="PlasmoGenes" isCacheable="false" includeProjects="PlasmoDB">
+        <sqlQuery name="PlasmoGenes" isCacheable="false" includeProjects="PlasmoDB,EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
@@ -311,7 +312,7 @@
             </sql>
         </sqlQuery>
 
-        <sqlQuery name="AllTgResults" isCacheable="false" includeProjects="ToxoDB">
+        <sqlQuery name="AllTgResults" isCacheable="false" includeProjects="ToxoDB,EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
             <column name="source_id"/>
