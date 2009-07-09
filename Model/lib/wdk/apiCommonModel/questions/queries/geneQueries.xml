@@ -666,10 +666,9 @@
              FROM $$gene_result$$ gr
              ) so
              GROUP BY so.source_id
-             $$isSnytenic$$
-            select gb.source_id,'@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as
- orthologs 
+             $$isSyntenic$$
+            select gb.source_id,'@PROJECT_ID@' as project_id
+                   --,apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as orthologs 
               from apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,
                    $$gene_result$$ gr
              where ga.source_id = gr.source_id 
