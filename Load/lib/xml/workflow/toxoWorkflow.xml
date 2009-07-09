@@ -19,6 +19,8 @@
   <param name="TgondiiVEGExtDbRlsSpec"/>
   <param name="TgondiiVEGGenomeSource"/>
   <param name="TgondiiVEGVirtualSeqsExtDbRlsSpec"/>
+  <param name="TgondiiTgCkUg2ExtDbRlsSpec"/>
+  <param name="TgondiiTgCkUg2GenomeSource"/>
   <param name="TgondiiApicoplastExtDbRlsSpec"/>
   <param name="TgondiiApicoplastGenomeSource"/>
   <param name="NcaninumExtDbRlsSpec"/>
@@ -28,6 +30,17 @@
   <param name="sibleySnpExtDbRlsSpec"/>
   <param name="nucmerSnpExtDbRlsSpec"/>
   <param name="TgondiiME49SageTagExtDbRlsSpec"/>
+  <param name="einsteinChipTagFile"/>
+  <param name="einsteinChipExtDbRlsSpec"/>
+  <param name="einsteinChipPeaksTagFile"/>
+  <param name="einsteinChipPeaksExtDbRlsSpec"/>
+  <param name="hakimiChipTagFile"/>
+  <param name="hakimiChipExtDbRlsSpec"/>
+  <param name="hakimiChipPeaksTagFile"/>
+  <param name="hakimiChipPeaksExtDbRlsSpec"/>
+  <param name="einsteinChipRadAnalysisWorkingDir"/>
+  <param name="hakimiChipRadAnalysisWorkingDir"/>
+  <param name="einsteinCentromereRadAnalysisWorkingDir"/>
 
   <constant name="pdbFile">common/pdb.fsa</constant>
   <constant name="nrdbFile">common/nrdb.fsa</constant>
@@ -82,6 +95,7 @@
     <paramValue name="skipProteomeAnalysis">false</paramValue>
     <paramValue name="mapEpitope">true</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
+    <paramValue name="makeAssemblySeqs">true</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
@@ -123,6 +137,7 @@
     <paramValue name="skipProteomeAnalysis">false</paramValue>
     <paramValue name="mapEpitope">true</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
+    <paramValue name="makeAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">false</paramValue>
     <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
@@ -164,6 +179,49 @@
     <paramValue name="skipProteomeAnalysis">false</paramValue>
     <paramValue name="mapEpitope">true</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
+    <paramValue name="makeAssemblies">false</paramValue>
+    <paramValue name="makeAssemblySeqs">false</paramValue>
+    <paramValue name="mapIsolate">true</paramValue>
+    <depends name="common"/>
+  </subgraph>
+
+  <subgraph name="TgondiiTgCkUg2Analysis" xmlFile="organismAnalysis.xml">
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">TgondiiTgCkUg2</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii TgCkUg2</paramValue>
+    <paramValue name="organismTwoLetterAbbrev">CK</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiTgCkUg2ExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="genomeSource">$$TgondiiTgCkUg2GenomeSource$$</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>
+    <paramValue name="soVersion">$$soVersion$$</paramValue>
+    <paramValue name="goVersion">$$goVersion$$</paramValue>
+    <paramValue name="dbESTVersion">$$dbESTVersion$$</paramValue>
+    <paramValue name="ncbiTaxonVersion">$$ncbiTaxonVersion$$</paramValue>
+    <paramValue name="ncbiTaxonId"></paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="usePredictedTranscripts">false</paramValue>
+    <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>
+    <paramValue name="runtRNAScan">false</paramValue>
+    <paramValue name="runExportPred">false</paramValue>
+    <paramValue name="pdbFile">$$pdbFile$$</paramValue>
+    <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
+    <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
+    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
+    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
+    <paramValue name="maxIntronSize">16000</paramValue>
+    <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Toxoplasma</paramValue>
+    <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Toxoplasma</paramValue>
+    <paramValue name="pdbExtDbRlsSpec">$$pdbExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeSize">65349464</paramValue>
+    <paramValue name="skipProteomeAnalysis">true</paramValue>
+    <paramValue name="mapEpitope">true</paramValue>
+    <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
+    <paramValue name="makeAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">false</paramValue>
     <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
@@ -251,20 +309,27 @@
     <depends name="common"/>
   </subgraph>
 
-  <subgraph name="TgondiiME49SpecificAnalysis" xmlFile="pfalciparumSpecificAnalysis.xml">
+  <subgraph name="TgondiiME49SpecificAnalysis" xmlFile="tgondiiME49SpecificAnalysis.xml">
     <paramValue name="parentDataDir"></paramValue>
-    <paramValue name="organismName">Pfalciparum</paramValue>
-    <paramValue name="organismFullName">Plasmodium falciparum</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$PfalciparumExtDbRlsSpec$$</paramValue>
-    <paramValue name="suSnpExtDbRlsSpec">$$suSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="broadSnpExtDbRlsSpec">$$broadSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="winzelerSnpExtDbRlsSpec">$$winzelerSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="sangerItGhanaSnpExtDbRlsSpec">$$sangerItGhanaSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="sangerReichenowiSnpExtDbRlsSpec">$$sangerReichenowiSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="combinedSnpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="sageTagExtDbRlsSpec">$$pfalciparumSageTagExtDbRlsSpec$$</paramValue>
-    <paramValue name="oligoExtDbRlsSpec">$$pfalciparumDeRisiOligosExtDbRlsSpec$$</paramValue>
-    <depends name="PfalciparumAnalysis"/>
+    <paramValue name="organismName">TgondiiME49</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii ME49</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiME49ExtDbRlsSpec$$</paramValue>
+    <paramValue name="stanfordSnpExtDbRlsSpec">$$stanfordSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="sibleySnpExtDbRlsSpec">$$sibleySnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="nucmerSnpExtDbRlsSpec">$$nucmerSnpExtDbRlsSpec$$</paramValue>
+    <paramValue name="sageTagExtDbRlsSpec">$$TgondiiME49SageTagExtDbRlsSpec$$</paramValue>
+    <paramValue name="einsteinChipTagFile">$$einsteinChipTagFile$$</paramValue>
+    <paramValue name="einsteinChipExtDbRlsSpec">$$einsteinChipExtDbRlsSpec$$</paramValue>
+    <paramValue name="einsteinChipPeaksTagFile">$$einsteinChipPeaksTagFile$$</paramValue>
+    <paramValue name="einsteinChipPeaksExtDbRlsSpec">$$einsteinChipPeaksExtDbRlsSpec$$</paramValue>
+    <paramValue name="hakimiChipTagFile">$$hakimiChipTagFile$$</paramValue>
+    <paramValue name="hakimiChipExtDbRlsSpec">$$hakimiChipExtDbRlsSpec$$</paramValue>
+    <paramValue name="hakimiChipPeaksTagFile">$$hakimiChipPeaksTagFile$$</paramValue>
+    <paramValue name="hakimiChipPeaksExtDbRlsSpec">$$hakimiChipPeaksExtDbRlsSpec$$</paramValue>
+    <paramValue name="einsteinChipRadAnalysisWorkingDir">$$einsteinChipRadAnalysisWorkingDir$$</paramValue>
+    <paramValue name="hakimiChipRadAnalysisWorkingDir">$$hakimiChipRadAnalysisWorkingDir$$</paramValue>
+    <paramValue name="einsteinCentromereRadAnalysisWorkingDir">$$einsteinCentomereRadAnalysisWorkingDir$$</paramValue>
+    <depends name="TgondiiME49Analysis"/>
   </subgraph>
 
 </workflowGraph>

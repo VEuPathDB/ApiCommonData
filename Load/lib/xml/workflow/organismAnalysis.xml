@@ -33,9 +33,10 @@
   <param name="skipProteomeAnalysis"/>
   <param name="mapEpitope"/>
   <param name="makeAndBlockAssemblySeqs"/>
-  <param  name="mapIsolate"/>
+  <param name="mapIsolate"/>
   <param name="isolateExtDbRlsSpecList"/>
   <param name="makeAssemblies"/>
+  <param name="makeAssemblySeqs"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
@@ -78,8 +79,8 @@
     <paramValue name="runtRNAScan">$$runtRNAScan$$</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">$$makeAndBlockAssemblySeqs$$</paramValue>
     <paramValue name="makeAssemblies">$$makeAssemblies$$</paramValue>
-
-    <paramValue name="mapIsolate">true</paramValue>
+    <paramValue name="makeAssemblySeqs">$$makeAssemblySeqs$$</paramValue>
+    <paramValue name="mapIsolate">$$mapIsolate$$</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
 

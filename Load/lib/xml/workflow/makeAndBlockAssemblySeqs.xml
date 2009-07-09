@@ -7,12 +7,13 @@
     <param name="predictedTranscriptsExtDbRlsSpec"/>
     <param name="dataDir"/>
     <param name="repeatMaskSpecies"/>
+    <param name="makeAssemblySeqs"/>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="makeAssemblySeqs" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs">
+    <step name="makeAssemblySeqs" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAssemblySeqs" includeIf="$$makeAssemblySeqs$$">
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="predictedTranscriptsExtDbRlsSpec"></paramValue>

@@ -24,8 +24,10 @@
       <depends name="extractSageTags"/>
     </step>
 
-    <step name="loadSageTagMap" stepClass="ApiCommonData::Load::WorkflowSteps::LoadSageTagMap" stepLoadTypes="plugin">
+    <step name="loadSageTagMap" stepClass="ApiCommonData::Load::WorkflowSteps::LoadExpressionFeature" stepLoadTypes="plugin">
       <paramValue name="inputFile">$$dataDir$$/mapSageTagsToNaSequences.out</paramValue>
+      <paramValue name="extDbRlsSpec">RAD.SAGETag|continuous</paramValue>
+      <paramValue name="featureType">SAGETagFeature</paramValue>
       <depends name="mapSageTagsToNaSequences"/>
     </step>
 
