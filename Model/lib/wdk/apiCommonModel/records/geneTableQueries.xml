@@ -738,7 +738,7 @@
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.GeneFeature gf
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = gf.source_id
                     AND c.review_status_id != 'rejected'
@@ -755,7 +755,7 @@
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    @COMMENT_SCHEMA@commentStableId@COMMENT_DBLINK@ d,
                    dots.GeneFeature gf
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'gene'
                     AND c.comment_id = d.comment_id
                     AND d.stable_id = gf.source_id
@@ -823,7 +823,7 @@
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    apidb.trackoldannotation toa
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'gene'
                     AND c.stable_id = toa.old_source_id
                     AND c.review_status_id != 'rejected'
@@ -1086,7 +1086,7 @@
                (SELECT case when (count(*) > 0) then 'yes' else 'no' end as comment_count
                 FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                      @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, dots.GeneFeature gff
-                WHERE lower(u.email) = lower(c.email)
+                WHERE u.user_id = c.user_id
                   AND c.comment_target_id = 'gene'
                   AND c.stable_id = gf.source_id
                   AND c.review_status_id != 'rejected'
