@@ -35,6 +35,7 @@
   <param name="makeAndBlockAssemblySeqs"/>
   <param  name="mapIsolate"/>
   <param name="isolateExtDbRlsSpecList"/>
+  <param name="makeAssemblies"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$</constant>
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
@@ -76,6 +77,8 @@
     <paramValue name="genomeSize">$$genomeSize$$</paramValue>
     <paramValue name="runtRNAScan">$$runtRNAScan$$</paramValue>
     <paramValue name="makeAndBlockAssemblySeqs">$$makeAndBlockAssemblySeqs$$</paramValue>
+    <paramValue name="makeAssemblies">$$makeAssemblies$$</paramValue>
+
     <paramValue name="mapIsolate">true</paramValue>
     <depends name="mirrorToCluster"/>
   </subgraph>
@@ -83,7 +86,6 @@
 
   <subgraph name="proteomeAnalysis" xmlFile="proteomeAnalysis.xml" excludeIf="$$skipProteomeAnalysis$$">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
     <paramValue name="iedbVersion">$$iedbVersion$$</paramValue>

@@ -8,12 +8,13 @@
     <param name="dataDir"/>
     <param name="assemblySeqsDataDir"/>
     <param name="repeatMaskSpecies"/>
+    <param name="makeAssemblies"/>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
     </step>
 
-    <step name="clusterTranscriptsByGenomeAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment">
+    <step name="clusterTranscriptsByGenomeAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::ClusterTranscriptsByGenomeAlignment" includeIf="$$makeAssemblies$$">
       <paramValue name="outputFile">$$dataDir$$/alignedClusters.out</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -22,7 +23,7 @@
     </step>
 
    <step name="putUnalignedTranscriptsIntoOneCluster"
-          stepClass="ApiCommonData::Load::WorkflowSteps::PutUnalignedTranscriptsIntoOneCluster">
+          stepClass="ApiCommonData::Load::WorkflowSteps::PutUnalignedTranscriptsIntoOneCluster" includeIf="$$makeAssemblies$$">
       <paramValue name="alignedClustersFile">$$dataDir$$/alignedClusters.out</paramValue>
       <paramValue name="allClustersOutputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="repeatMaskErrFile">$$assemblySeqsDataDir$$/master/mainresult/blocked.err</paramValue>
@@ -34,7 +35,7 @@
 
 
    <step name="splitClusterFile"
-          stepClass="ApiCommonData::Load::WorkflowSteps::SplitClusterFile">
+          stepClass="ApiCommonData::Load::WorkflowSteps::SplitClusterFile" includeIf="$$makeAssemblies$$">
       <paramValue name="inputFile">$$dataDir$$/allClusters.out</paramValue>
       <paramValue name="outputSmallFile">$$dataDir$$/smallClusters.out</paramValue>
       <paramValue name="outputBigFile">$$dataDir$$/bigClusters.out</paramValue>
@@ -42,7 +43,7 @@
     </step>
 
    <step name="makeAndLoadAssembliesFromSmallClusters"
-          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin">
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin" includeIf="$$makeAssemblies$$">
       <paramValue name="inputFile">$$dataDir$$/smallClusters.out</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
@@ -50,7 +51,7 @@
     </step>
 
    <step name="makeAndLoadAssembliesFromBigClusters"
-          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin">
+          stepClass="ApiCommonData::Load::WorkflowSteps::MakeAndLoadAssemblies" stepLoadTypes="plugin" includeIf="$$makeAssemblies$$">
       <paramValue name="inputFile">$$dataDir$$/bigClusters.out</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="reassemble"></paramValue>
@@ -78,7 +79,6 @@
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="makeClusterTaskInputDir"/>
-      <depends name="extractAssemblies"/>
     </step>
 
     <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask" stepLoadTypes="cluster">
