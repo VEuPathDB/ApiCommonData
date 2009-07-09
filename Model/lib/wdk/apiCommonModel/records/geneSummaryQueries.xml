@@ -40,6 +40,8 @@
         </sqlQuery>
 
 <!--    deprecated....now using a subset of filters provided in comp sites for easier maintenance
+        ....  still needed for those componet sites that do not hvave filters       -->
+
  <sqlQuery name="ApiGenes" isCacheable="false" includeProjects="EuPathDB">
             <paramRef ref="recordParams.organism"/>
             <paramRef ref="recordParams.gene_answer"/>
@@ -71,7 +73,7 @@
                 ]]>
             </sql>
         </sqlQuery>
--->
+
 
         <sqlQuery name="BooleanExpansion" isCacheable="false" includeProjects="ToxoDB">
             <paramRef ref="recordParams.gene_answer"/>
