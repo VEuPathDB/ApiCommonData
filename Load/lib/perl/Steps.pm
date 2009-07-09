@@ -6513,6 +6513,24 @@ sub updateOrthologGroups {
          "Updating  OrthoGroup and OrthologGroupAASequence");
 
 }
+
+sub extractFilesForMsa {
+  my ($mgr) = @_;
+
+  my $signal = "extractGroupsFiles";
+
+  return if $mgr->startStep("extracting groups files for msa", $signal);
+
+  my $dir = "$mgr->{dataDir}/seqfiles/groups";
+
+  $mgr->runCmd("mkdir -p $dir");
+
+  $mgr->runCmd("extractGroupFastaFiles --outputDir $dir");
+
+  $mgr->endStep($signal);
+}
+
+
 ###not finished
 sub runMuscleForMSAFile {
   my ($mgr) = @_;
