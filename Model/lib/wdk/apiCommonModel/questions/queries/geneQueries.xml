@@ -607,12 +607,14 @@
         <paramRef ref="geneParams.isSyntenic" excludeProjects="EuPathDB"/>
         <column name="source_id" />
         <column name="project_id" />
-        <column name="orthologs"/>
+<!--        <column name="orthologs"/> -->
 
         <sql includeProjects="CryptoDB,PlasmoDB,TriTrypDB">
             <![CDATA[
-            SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
+            SELECT so.source_id, '@PROJECT_ID@' as project_id
+                  --, apidb.tab_to_string(CAST(COLLECT(distinct(so.input)) AS apidb.varchartab),', ') as orthologs 
+            FROM (
+            SELECT gf2.source_id, gf1.source_id as input
             FROM $$gene_result$$ qr, apidb.GENEATTRIBUTES gf1,
                  apidb.GENEATTRIBUTES gf2, dots.NaSequence ens, apidb.synteny s
             WHERE qr.source_id = gf1.source_id
@@ -624,10 +626,14 @@
               AND s.b_na_sequence_id = gf1.na_sequence_id
               AND b_end > gf1.start_min
               AND b_start < gf1.end_max
-            GROUP BY gf2.source_id
+            UNION
+            SELECT qr.source_id, qr.source_id as input
+            FROM $$gene_result$$ qr
+            ) so
+            GROUP BY so.source_id
             $$isSyntenic$$
-            SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
+            SELECT gf2.source_id, '@PROJECT_ID@' as project_id
+                   --,apidb.tab_to_string(CAST(COLLECT(distinct(gf1.source_id)) AS apidb.varchartab),', ') as orthologs 
             FROM $$gene_result$$ qr, apidb.GENEATTRIBUTES gf1,
                  apidb.GENEATTRIBUTES gf2, dots.NaSequence ens
             WHERE qr.source_id = gf1.source_id
@@ -642,9 +648,10 @@
 
         <sql includeProjects="ToxoDB">
             <![CDATA[
-            SELECT gb.source_id,'@PROJECT_ID@' as project_id,
-                   apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as
- orthologs 
+            SELECT so.source_id,'@PROJECT_ID@' as project_id
+                  --,apidb.tab_to_string(CAST(COLLECT(distinct(so.input)) AS apidb.varchartab),', ') as orthologs 
+            FROM (
+              SELECT gb.source_id, ga.source_id as input
               FROM apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,
                    $$gene_result$$ gr, apidb.synteny s
              WHERE ga.source_id = gr.source_id 
@@ -654,7 +661,11 @@
                AND s.b_na_sequence_id = gb.na_sequence_id
                AND b_end > gb.start_min
                AND b_start < gb.end_max
-             GROUP BY gb.source_id
+             UNION
+             SELECT gr.source_id, gr.source_id as input 
+             FROM $$gene_result$$ gr
+             ) so
+             GROUP BY so.source_id
              $$isSnytenic$$
             select gb.source_id,'@PROJECT_ID@' as project_id,
                    apidb.tab_to_string(CAST(COLLECT(distinct(gr.source_id)) AS apidb.varchartab),', ') as
@@ -670,9 +681,8 @@
 
        <sql includeProjects="EuPathDB">
             <![CDATA[
-SELECT DISTINCT subq.source_id, subq.project_id,
-       apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS
-apidb.varchartab),',') as orthologs
+SELECT DISTINCT subq.source_id, subq.project_id
+      --, apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS apidb.varchartab),',') as orthologs
 FROM (SELECT distinct sns2.source_id, ext.name as project_id,
             qr.source_id AS ortholog_id
      FROM $$gene_result$$ qr,
@@ -698,7 +708,6 @@ FROM (SELECT distinct sns2.source_id, ext.name as project_id,
 sns2.external_database_release_id=extr.external_database_release_id
      AND extr.external_database_id=ext.external_database_id) subq
      group by subq.source_id, subq.project_id
-     order by project_id, subq.source_id 
            ]]>
        </sql>
        

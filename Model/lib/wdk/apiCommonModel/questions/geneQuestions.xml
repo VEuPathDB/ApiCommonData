@@ -4151,8 +4151,8 @@ There are two timecourses: HP and HPE.  HP is High Producer (as in gametocytes) 
               queryRef="GeneId.GenesByOrthologs"
               recordClassRef="GeneRecordClasses.GeneRecordClass">
         <attributesList 
-              summary="organism,location_text, product,orthologs"
-              sorting="location_text asc"
+              summary="organism,location_text, product,orthomcl_name,paralog_number,ortholog_number"
+              sorting="orthomcl_name asc"
         />
 
         <description>
@@ -4163,11 +4163,12 @@ Ortholog groups were generated from more than 100 species using OrthoMCL as desc
           ]]>
         </description>
 
+<!--
          <dynamicAttributes>
              <columnAttribute name="orthologs" displayName="Input Ortholog(s)" 
                               align="center" inReportMaker="true"/>
          </dynamicAttributes>
-
+-->
     </question>
 
 
