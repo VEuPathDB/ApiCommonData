@@ -58,6 +58,24 @@
         </sqlQuery>
 
 
+       <sqlQuery name="ApiProjectGenes" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.project_id = $$Project$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
+
+
  <sqlQuery name="ApiGiardiaGenes" isCacheable="false" includeProjects="EuPathDB">
             <paramRef ref="recordParams.deprecated_genes"/>
             <paramRef ref="recordParams.gene_answer"/>
