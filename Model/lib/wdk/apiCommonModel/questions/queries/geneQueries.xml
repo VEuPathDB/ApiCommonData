@@ -574,9 +574,9 @@
     </processQuery>
 
  <processQuery name="GenesByTextSearch" includeProjects="EuPathDB"
-          processName="org.apidb.apicomplexa.wsfplugin.textsearch.ApiFedPlugin"
+          processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin"
           isCacheable="false">
-       <paramRef ref="organismParams.text_search_organism"/>
+       <paramRef ref="organismParams.text_search_organism"  quote="false"/>
        <paramRef ref="sharedParams.text_expression"  quote="false"/>
        <paramRef ref="geneParams.text_fields"  quote="false"/>
        <paramRef ref="geneParams.whole_words"   quote="false" groupRef="paramGroups.advancedParams"/>

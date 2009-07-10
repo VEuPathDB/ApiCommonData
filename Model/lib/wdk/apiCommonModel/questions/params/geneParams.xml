@@ -5560,6 +5560,9 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!-- text fields -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+
+<!-- not sure why this was left 
+
     <enumParam name="text_fields" excludeProjects="CryptoDB,TriTrypDB,PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
                      prompt="Fields"
                      multiPick="true">
@@ -5607,8 +5610,10 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </enumValue>
       </enumList>
     </enumParam>
+-->
 
-    <enumParam name="text_fields" includeProjects="CryptoDB,TriTrypDB,PlasmoDB,ToxoDB,GiardiaDB,TrichDB"
+
+    <enumParam name="text_fields" 
                      prompt="Fields"
                      multiPick="true">
       <help>
@@ -5620,11 +5625,11 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           <term>Gene product</term>
           <internal>Product</internal>
         </enumValue>
-        <enumValue includeProjects="PlasmoDB">
+        <enumValue includeProjects="PlasmoDB,EuPathDB">
           <term>Release 5.5 Genes</term>
           <internal>PlasmoVer5Genes</internal>
         </enumValue>
-        <enumValue includeProjects="TriTrypDB">
+        <enumValue includeProjects="TriTrypDB,EuPathDB">
           <term>Phenotype</term>
           <internal>Phenotype</internal>
         </enumValue>
@@ -5652,7 +5657,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
           <term>EC descriptions</term>
           <internal>EcNumber</internal>
         </enumValue>
-        <enumValue excludeProjects="CryptoDB,GiardiaDB,TrichDB">
+        <enumValue excludeProjects="CryptoDB,GiardiaDB,TrichDB,TriTrypDB">
           <term>Metabolic pathway names and descriptions</term>
           <internal>MetabolicPathways</internal>
         </enumValue>
