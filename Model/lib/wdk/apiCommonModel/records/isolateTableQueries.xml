@@ -297,7 +297,7 @@ where f.na_sequence_id = s.na_sequence_id
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    apidb.IsolateAttributes gf
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'isolate'
                     AND c.stable_id = gf.source_id
                     AND c.review_status_id != 'rejected'
@@ -314,7 +314,7 @@ where f.na_sequence_id = s.na_sequence_id
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    @COMMENT_SCHEMA@commentStableId@COMMENT_DBLINK@ d,
                    apidb.IsolateAttributes gf
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'isolate'
                     AND c.comment_id = d.comment_id
                     AND d.stable_id = gf.source_id

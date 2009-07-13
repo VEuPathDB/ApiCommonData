@@ -137,7 +137,7 @@
               FROM @USER_SCHEMA@users@USER_DBLINK@ u,
                    @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
                    dots.NaSequence ens
-              WHERE lower(u.email) = lower(c.email)
+              WHERE u.user_id = c.user_id
                     AND c.comment_target_id = 'genome'
                     AND c.stable_id = ens.source_id
             ]]>

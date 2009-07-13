@@ -6,7 +6,7 @@ begin
     select c.headline || '|' || c.content || '|' || 
            u.first_name || ' ' || u.last_name || '(' || u.organization || ')' into smooshed
     from comments2.comments c, userlogins3.users u
-    where c.email = u.email(+)
+    where c.user_id = u.user_id(+)
       and c.comment_id = p_comment_id;
     return smooshed;
 end;
