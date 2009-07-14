@@ -20,11 +20,10 @@
   <param name="organismFullName"/>
   <param name="genomeSize"/>
   <param name="runtRNAScan"/>
-  <param name="makeAndBlockAssemblySeqs"/>
-  <param name="makeAssemblies"/>
-  <param name="mapIsolate"/>
-  <param name="isolateExtDbRlsSpecList"/>
   <param name="makeAssemblySeqs"/>
+  <param name="makeAssemblies"/>
+  <param name="mapAssemblySeqsAndAssemblies"/>
+
 
   <constant name="dataDir">$$parentDataDir$$/genome</constant>
   <constant name="genomicSeqsFile">$$dataDir$$/genomicSeqs.fsa</constant>
@@ -71,28 +70,6 @@
       <paramValue name="loadOptions"></paramValue>
       <depends name="mirrorToCluster"/>
     </subgraph>
-
-    <subgraph name="blastnIsolateSeqGenomicSeqs" xmlFile="blastWorkflow.xml" includeIf="$$mapIsolate$$">
-      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="nickName">blastnIsolate</paramValue>
-      <paramValue name="queryFile">$$isolateSeqFile$$</paramValue>
-      <paramValue name="queryTable">DoTS::ExternalNASequence</paramValue>
-      <paramValue name="queryExtDbRlsSpec">$$isolateExtDbRlsSpecList$$</paramValue>
-      <paramValue name="subjectFile">$$genomicSeqsFile$$</paramValue>
-      <paramValue name="subjectTable">DoTS::ExternalNASequence</paramValue>
-      <paramValue name="subjectExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-      <paramValue name="blastArgs">V=1 B=1 hspsepQmax=50000 hspsepSmax=50000 -span1 -topcomboN=1 E=0.1 -wordmask=seg</paramValue>
-      <paramValue name="idRegex">(\\S+)</paramValue>
-      <paramValue name="blastType">blastn</paramValue>
-      <paramValue name="vendor">wu</paramValue>
-      <paramValue name="loadSubjectSubset">false</paramValue>
-      <paramValue name="filterByTaxon">false</paramValue>
-      <paramValue name="taxonHierarchyForFilter"></paramValue>
-      <paramValue name="loadOptions"></paramValue>
-      <depends name="mirrorToCluster"/>
-    </subgraph>
-
-
 
     <subgraph name="tRNAScan" xmlFile="trnaScanWorkflow.xml" includeIf="$$runtRNAScan$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
@@ -158,7 +135,7 @@
       <depends name="runLowComplexityFilter"/>
     </step>
 
-    <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
+    <subgraph name="makeAndBlockAssemblySeqs" xmlFile="makeAndBlockAssemblySeqs.xml" includeIf="$$mapAssemblySeqsAndAssembly$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
@@ -170,7 +147,7 @@
       <depends name="extractGenomicSeqs"/>
     </subgraph>
 
-    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
+    <subgraph name="mapAssemblySeqsToGenome" xmlFile="mapAssemblySeqsToGenome.xml" includeIf="$$mapAssemblySeqsAndAssemblies$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -182,7 +159,7 @@
       <depends name="makeAndBlockAssemblySeqs"/>
     </subgraph>
 
-    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
+    <subgraph name="makeAndBlockAssemblies" xmlFile="makeAndBlockAssemblies.xml" includeIf="$$mapAssemblySeqsAndAssemblies$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -195,7 +172,7 @@
       <depends name="mapAssemblySeqsToGenome"/>
     </subgraph>
 
-    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml" includeIf="$$makeAndBlockAssemblySeqs$$">
+    <subgraph name="mapAssembliesToGenome" xmlFile="mapAssembliesToGenome.xml" includeIf="$$mapAssemblySeqsAndAssemblies$$">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
@@ -208,3 +185,5 @@
     </subgraph>
 
 </workflowGraph>
+
+
