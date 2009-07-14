@@ -37,7 +37,22 @@
                     and ga.organism like $$organism$$
                 ]]>
             </sql>
-        </sqlQuery>
+</sqlQuery>
+
+<sqlQuery name="ApiProjectSequences" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.genomic_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$genomic_answer$$ c, apidb.sequenceattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.project_id = $$Project$$
+                ]]>
+            </sql>
+</sqlQuery>
 
 
  </querySet>
