@@ -1,27 +1,10 @@
-<workflowGraph name="tgondiiME49SpecificAnalysis">
+<workflowGraph name="tgondiiGT1SpecificAnalysis">
   <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="organismFullName"/>
   <param name="genomeExtDbRlsSpec"/>
-  <param name="stanfordSnpExtDbRlsSpec"/>
-  <param name="sibleySnpExtDbRlsSpec"/>
-  <param name="nucmerSnpExtDbRlsSpec"/>
-  <param name="sageTagExtDbRlsSpec"/>
-  <param name="einsteinChipTagFile"/>
-  <param name="einsteinChipExtDbRlsSpec"/>
-  <param name="einsteinChipPeaksTagFile"/>
-  <param name="einsteinChipPeaksExtDbRlsSpec"/>
-  <param name="hakimiChipTagFile"/>
-  <param name="hakimiChipExtDbRlsSpec"/>
-  <param name="hakimiChipPeaksTagFile"/>
-  <param name="hakimiChipPeaksExtDbRlsSpec"/>
-  <param name="einsteinChipRadAnalysisWorkingDir"/>
-  <param name="hakimiChipRadAnalysisWorkingDir"/>
-  <param name="einsteinCentromereRadAnalysisWorkingDir"/>
   <param name="genbankIsolateExtDbRlsSpec"/>
   <param name="sibleyIsolateExtDbRlsSpec"/>
-  <param name="maxIntronSize"/>
-  <param name="ncbiTaxonId"/>
   <param name="BACEndsExtDbRlsSpec"/>
   <param name="cosmidEndsExtDbRlsSpec"/>
 
@@ -148,97 +131,6 @@
       <depends name="mirrorToCluster"/>
     </subgraph>
 
-  <subgraph name="stanfordSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="snpExtDbRlsSpec">$$stanfordSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="snpNickName">Stanford_SNPs</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-  <subgraph name="sibleySnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="snpExtDbRlsSpec">$$sibleySnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="snpNickName">Sibley_SNPs</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-  <subgraph name="nucmerSnps_Mummer" xmlFile="runMummer.xml">
-    <paramValue name="snpExtDbRlsSpec">$$nucmerSnpExtDbRlsSpec$$</paramValue>
-    <paramValue name="snpNickName">nucmerSnps</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-  <subgraph name="mapSageTags" xmlFile="mapSageTags.xml">
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="sageTagExtDbRlsSpec">$$sageTagExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-
-  <subgraph name="einsteinChIP" xmlFile="ChIP-chip.xml">
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="chipNickName">einsteinChIP-chip</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="tagFile">$$einsteinChipTagFile$$</paramValue>
-    <paramValue name="chipExtDbRlsSpec">$$einsteinChipExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-
-  <subgraph name="einsteinChIPPeaks" xmlFile="ChIP-chip.xml">
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="chipNickName">einsteinChIP-chipdPeaks</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="tagFile">$$einsteinChipPeaksTagFile$$</paramValue>
-    <paramValue name="chipExtDbRlsSpec">$$einsteinChipPeaksExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-
-  <subgraph name="hakimiChIP" xmlFile="ChIP-chip.xml">
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="chipNickName">hakimiChIP-chip</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="tagFile">$$hakimiChipTagFile$$</paramValue>
-    <paramValue name="chipExtDbRlsSpec">$$hakimiChipExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-  <subgraph name="hakimiChIPPeaks" xmlFile="ChIP-chip.xml">
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="chipNickName">hakimiChIP-chipPeaks</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="tagFile">$$hakimiChipPeaksTagFile$$</paramValue>
-    <paramValue name="chipExtDbRlsSpec">$$hakimiChipPeaksExtDbRlsSpec$$</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
-  <step name="einsteinChipInsertSimpleRadAnalysisFromConfig" stepClass="ApiCommonData::Load::WorkflowSteps::InsertSimpleRadAnalysisFromConfig">
-     <paramValue name="analysisWorkingDir">$$einsteinChipRadAnalysisWorkingDir$$</paramValue>
-    <depends name="einsteinChIP"/>
-    <depends name="einsteinChIPPeaks"/>
-  </step>
-
-  <step name="hakimiChIPInsertSimpleRadAnalysisFromConfig" stepClass="ApiCommonData::Load::WorkflowSteps::InsertSimpleRadAnalysisFromConfig">
-     <paramValue name="analysisWorkingDir">$$hakimiChipRadAnalysisWorkingDir$$</paramValue>
-    <depends name="hakimiChIP"/>
-    <depends name="hakimiChIPPeaks"/>
-  </step>
-
-  <step name="einsteinCentromereInsertSimpleRadAnalysisFromConfig" stepClass="ApiCommonData::Load::WorkflowSteps::InsertSimpleRadAnalysisFromConfig">
-     <paramValue name="analysisWorkingDir">$$einsteinCentromereRadAnalysisWorkingDir$$</paramValue>
-  </step>
 </workflowGraph>
 
 

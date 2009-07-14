@@ -1,0 +1,76 @@
+<workflowGraph name="mapSeqsToGenome">
+
+    <param name="parentDataDir"/>
+    <param name="nickName"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="ncbiTaxonId"/>
+    <param name="maxIntronSize"/>
+    <param name="genomicSeqsDir"/>
+    <param name="assembliesDataDir"/>
+    <param name="genomicSeqsDir"/>
+
+    <constant name ="dataDir">$$parentDataDir$$/$$nickName$$</constant>
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeGfClientTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="queryFile">$$assembliesDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <paramValue name="targetDir">$$genomicSeqsDir$$</paramValue>
+      <depends name="makeDataDir"/>
+    </step>
+
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="makeClusterTaskInputDir"/>
+    </step>
+
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask" stepLoadTypes="cluster">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="numNodes">1</paramValue>
+      <paramValue name="processorsPerNode">1</paramValue>
+      <depends name="mirrorToCluster"/>
+    </step>
+
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$/master</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
+      <paramValue name="outputFiles">out.psl</paramValue>
+      <depends name="runClusterTask"/>
+    </step>
+
+    <step name="insertBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="plugin">
+
+      <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="targetTable">ExternalNASequence</paramValue>
+      <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec"></paramValue>
+      <paramValue name="queryTable">ExternalNASequence</paramValue>
+      <paramValue name="regex">>(\\d+)</paramValue>
+      <paramValue name="action">load</paramValue>
+      <paramValue name="percentTop"></paramValue>
+      <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$assembliesDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <depends name="mirrorFromCluster"/>
+    </step>
+
+    <step name="setBestBlatAlignment" stepClass="ApiCommonData::Load::WorkflowSteps::InsertBlatAlignment" stepLoadTypes="plugin">
+
+      <paramValue name="targetNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="queryExtDbRlsSpec"></paramValue>
+      <paramValue name="targetTable">ExternalNASequence</paramValue>
+      <paramValue name="queryTable">ExternalNASequence</paramValue>
+      <paramValue name="regex">>(\\d+)</paramValue>
+      <paramValue name="action">setbest</paramValue>
+      <paramValue name="percentTop">100</paramValue>
+      <paramValue name="blatFile">$$dataDir$$/master/mainresult/out.psl</paramValue>
+      <paramValue name="queryFile">$$assembliesDataDir$$/master/mainresult/blocked.seq</paramValue>
+      <depends name="insertBlatAlignment"/>
+    </step>
+</workflowGraph>
