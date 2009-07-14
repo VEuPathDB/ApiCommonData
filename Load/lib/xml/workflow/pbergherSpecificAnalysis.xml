@@ -1,9 +1,8 @@
-<workflowGraph name="pyoeliiSpecificAnalysis">
+<workflowGraph name="pbergherSpecificAnalysis">
   <param name="parentDataDir"/>
   <param name="organismName"/>
   <param name="organismFullName"/>
   <param name="genomeExtDbRlsSpec"/>
-  <param name="oligoExtDbRlsSpec"/>
   <param name="genbankIsolateExtDbRlsSpec"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
@@ -30,16 +29,6 @@
       <depends name="extractGenbankIsolateSeqs"/>
     </step>
 
-  <subgraph name="mapOligos" xmlFile="mapOligos.xml">
-    <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-    <paramValue name="oligoExtDbRlsSpec">$$oligoExtDbRlsSpec$$</paramValue>
-    <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
-    <paramValue name="genomicSeqsFile">$$genomicSeqsFile$$</paramValue>
-    <paramValue name="idRegex">(\\S+)</paramValue>
-    <paramValue name="loadOptions">--hspMatchLength 59 --noHsps --hspPctIdent 95 --hspsLimit 1</paramValue>
-    <depends name="makeDataDir"/>
-  </subgraph>
-
     <subgraph name="blastnIsolateSeqGenomicSeqs" xmlFile="blastWorkflow.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
       <paramValue name="nickName">blastnGenbankIsolates</paramValue>
@@ -58,6 +47,5 @@
       <paramValue name="taxonHierarchyForFilter"></paramValue>
       <paramValue name="loadOptions"></paramValue>
       <depends name="mirrorToCluster"/>
-    </subgraph>
- 
+    </subgraph> 
 </workflowGraph>

@@ -9,7 +9,7 @@
   <param name="projectName"/>
   <param name="projectVersion"/>
   <param name="pdbExtDbRlsSpec"/>
-  <param name="isolateExtDbRlsSpecList"/>
+  <param name="isolateExtDbRlsSpec"/>
   <param name="PfalciparumExtDbRlsSpec"/>
   <param name="PfalciparumGenomeSource"/>
   <param name="PfalciparumPredictedTranscriptsExtDbRlsSpec"/>
@@ -43,7 +43,6 @@
 
   <constant name="pdbFile">common/pdb.fsa</constant>
   <constant name="nrdbFile">common/nrdb.fsa</constant>
-  <constant name="isolateSeqFile">common/isolateSeqs.fsa</constant>
   <constant name="nrdbShortDeflineFile">common/nrdb-short-defline.fsa</constant>
   <constant name="mercatorDir">common/mercator/</constant>
 
@@ -54,8 +53,6 @@
     <paramValue name="pdbOutputFile">$$pdbFile$$</paramValue>
     <paramValue name="projectName">$$projectName$$</paramValue>
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
   </subgraph>
 
   <subgraph name="PfalciparumAnalysis" xmlFile="organismAnalysis.xml">
@@ -83,8 +80,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -96,7 +91,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">false</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -125,8 +119,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -138,7 +130,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -167,8 +158,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -180,7 +169,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -210,8 +198,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -223,7 +209,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -252,8 +237,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -265,7 +248,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -294,8 +276,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -307,7 +287,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">true</paramValue>
     <paramValue name="makeAssemblies">true</paramValue>
     <paramValue name="makeAssemblySeqs">true</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -336,8 +315,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -349,7 +326,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">false</paramValue>
     <paramValue name="makeAssemblySeqs">false</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -378,8 +354,6 @@
     <paramValue name="pdbFile">$$pdbFile$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">20000</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">NRDB|$$nrdbVersion$$</paramValue>
@@ -391,7 +365,6 @@
     <paramValue name="makeAndBlockAssemblySeqs">false</paramValue>
     <paramValue name="makeAssemblies">false</paramValue>
     <paramValue name="makeAssemblySeqs">false</paramValue>
-    <paramValue name="mapIsolate">true</paramValue>
     <depends name="common"/>
   </subgraph>
 
@@ -408,6 +381,7 @@
     <paramValue name="combinedSnpExtDbRlsSpec">$$combinedSnpExtDbRlsSpec$$</paramValue>
     <paramValue name="sageTagExtDbRlsSpec">$$pfalciparumSageTagExtDbRlsSpec$$</paramValue>
     <paramValue name="oligoExtDbRlsSpec">$$pfalciparumDeRisiOligosExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
     <depends name="PfalciparumAnalysis"/>
   </subgraph>
 
@@ -417,7 +391,62 @@
     <paramValue name="organismFullName">Plasmodium yoelii</paramValue>
     <paramValue name="genomeExtDbRlsSpec">$$PyoeliiExtDbRlsSpec$$</paramValue>
     <paramValue name="oligoExtDbRlsSpec">$$pyoeliiVaidyaBergmanOligosExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
     <depends name="PyoeliiAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PreichenowiSpecificAnalysis" xmlFile="preichenowiSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Preichenowi</paramValue>
+    <paramValue name="organismFullName">Plasmodium reichenowi</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PreichenowiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PreichenowiAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PvivaxSpecificAnalysis" xmlFile="pvivaxSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pvivax</paramValue>
+    <paramValue name="organismFullName">Plasmodium vivax</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PvivaxExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PvivaxAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PknowlesiSpecificAnalysis" xmlFile="pknowlesiSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pknowlesi</paramValue>
+    <paramValue name="organismFullName">Plasmodium knowlesi</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PknowlesiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PknowlesiAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PgallinaceumSpecificAnalysis" xmlFile="pgallinaceumSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pgallinaceum</paramValue>
+    <paramValue name="organismFullName">Plasmodium gallinaceum</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PgallinaceumExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PgallinaceumAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PchabaudiSpecificAnalysis" xmlFile="pchabaudiSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pchabaudi</paramValue>
+    <paramValue name="organismFullName">Plasmodium chabaudi</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PchabaudiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PchabaudiAnalysis"/>
+  </subgraph>
+
+  <subgraph name="PbergherSpecificAnalysis" xmlFile="pbergherSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Pbergher</paramValue>
+    <paramValue name="organismFullName">Plasmodium bergher</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PbergherExtDbRlsSpec$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="PbergherAnalysis"/>
   </subgraph>
 
 </workflowGraph>
