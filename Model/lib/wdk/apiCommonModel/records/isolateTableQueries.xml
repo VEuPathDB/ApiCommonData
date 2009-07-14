@@ -236,8 +236,8 @@ where f.na_sequence_id = s.na_sequence_id
                   and s.subject_id = g.na_sequence_id
                   and t.table_id = s.subject_table_id
                   and t.table_id = s.query_table_id
-                  and s.min_subject_start >= g.start_min
-                  and s.max_subject_end <= g.end_max
+                  and s.min_subject_start <=  g.end_max
+                  and s.max_subject_end >= g.start_min
                   and t.name = 'ExternalNASequence'
                   ) gene
                   on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id)
