@@ -2399,10 +2399,8 @@ FROM (
         src.collected_by,
         decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
         'Broad 3K genotyping chip', '3kChip',
-        'Toxoplasma RFLPs from Chunlei Su', 'RFLP',
-        'Toxoplasma isolates From Genbank', 'Genbank',
-        'Toxoplasma isolates From David Sibley', 'Genbank',
-        'Isolate barcode data from Broad','Barcode','Genbank') as data_type,
+        'Toxoplasma RFLPs from Chunlei Su', 'RFLP Typed',
+        'Isolate barcode data from Broad','Barcode','Sequencing Typed') as data_type,
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
              WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
              WHEN lower(pinfo.name) like 'toxo%' THEN 'ToxoDB'
