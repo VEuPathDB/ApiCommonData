@@ -110,40 +110,6 @@
            </sql>
         </sqlQuery>
 
-        <sqlQuery name="SequenceComments"  excludeProjects="EuPathDB"
-               isCacheable="false">
-
-            <testParamValues minRows="0" includeProjects="GiardiaDB,TrichDB,ToxoDB,CryptoDB,TriTrypDB"/>
-            <testParamValues includeProjects="PlasmoDB">
-              <paramValue name="source_id">Pf3D7_09</paramValue>
-            </testParamValues>
-
-            <column name="source_id" />
-            <column name="project_id" />
-            <column name="comment_id"/>
-            <column name="stable_id"/>
-            <column name="headline"/>
-            <column name="user_name"/>
-            <column name="organization"/>
-            <column name="comment_date"/>
-            <sql>
-            <![CDATA[
-              SELECT DISTINCT ens.source_id as source_id, '@PROJECT_ID@' AS project_id,
-                     c.comment_id, c.stable_id,
-                     NVL(c.headline, '<i>none</i>') AS headline,
-                     (u.first_name || ' ' || u.last_name) AS user_name,
-					 u.organization,
-                     c.comment_date
-              FROM @USER_SCHEMA@users@USER_DBLINK@ u,
-                   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
-                   dots.NaSequence ens
-              WHERE u.user_id = c.user_id
-                    AND c.comment_target_id = 'genome'
-                    AND c.stable_id = ens.source_id
-            ]]>
-            </sql>
-        </sqlQuery>
-
     <sqlQuery name="SequenceGffDbxrefs"  excludeProjects="EuPathDB" 
             isCacheable="false">
             <testParamValues includeProjects="ToxoDB">
