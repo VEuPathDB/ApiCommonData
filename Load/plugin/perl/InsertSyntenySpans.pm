@@ -414,6 +414,7 @@ sub findOrthologGroups {
 
 my $sql;
 
+=pod
   if ($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' ){
     $sql = "select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
     from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
@@ -421,7 +422,10 @@ my $sql;
     and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
     ";
-  }elsif($self->getArg('organism') eq 'Toxoplasma'){
+  }els
+=cut
+
+if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'){
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
     from apidb.geneattributes ga, dots.genefeature gf
