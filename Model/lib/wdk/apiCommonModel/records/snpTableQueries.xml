@@ -1,5 +1,5 @@
 <wdkModel>
-    <querySet name="SnpTables" queryType="table" includeProjects="ToxoDB,PlasmoDB,CryptoDB">
+    <querySet name="SnpTables" queryType="table" includeProjects="ToxoDB,PlasmoDB,CryptoDB,EuPathDB">
 
 
       <defaultTestParamValues includeProjects="PlasmoDB">
@@ -160,6 +160,32 @@
             ]]>
            </sql>
         </sqlQuery>
+
+      <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.snps_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$snps_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+      <sqlQuery name="ApiProjectSnps" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.snps_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$snps_answer$$ c, apidb.snpattributes sa
+                    where sa.source_id = c.source_id
+                    and sa.project_id = $$Project$$
+                ]]>
+            </sql>
+     </sqlQuery>
 
 
     </querySet>
