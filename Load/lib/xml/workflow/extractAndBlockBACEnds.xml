@@ -1,0 +1,57 @@
+<workflowGraph name="extractAndBlockBACEnds">
+
+    <param name="dataDir"/>
+    <param name="genomeExtDbRlsSpec"/>
+    <param name="BACEndsExtDbRlsSpec"/>
+    <param name="maxIntronSize"/>
+    <param name="repeatMaskSpecies"/>
+
+  <constant name="BACEndsSeqFile">$$dataDir$$/BACEndsSeqs.fsa</constant>
+
+
+    <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+      <paramValue name="dataDir">$$dataDir$$</paramValue>
+    </step>
+
+  <step name="extractBACEndsSeqs"
+          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
+      <paramValue name="extDbRlsSpec">$$BACEndsExtDbRlsSpec$$</paramValue>
+      <paramValue name="table">ExternalNASequence</paramValue>
+      <paramValue name="alternateDefline"></paramValue>
+      <paramValue name="outputFile">$$BACEndsSeqFile$$</paramValue>
+      <paramValue name="separateFastaFiles">false</paramValue>
+      <paramValue name="outputDirForSeparateFiles"></paramValue>
+      <depends name="makeDataDir"/> 
+    </step>
+
+
+    <step name="makeClusterTaskInputDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeRepeatMaskTaskInputDir">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="seqsFile">$$BACEndsSeqFile$$</paramValue>
+      <paramValue name="dangleMax">30</paramValue>
+      <paramValue name="options">$$repeatMaskSpecies$$</paramValue>
+
+      <depends name="makeDataDir"/>
+      <depends name="extractBACEndsSeqs"/>
+    </step>
+
+    <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <depends name="makeClusterTaskInputDir"/>
+    </step>
+
+    <step name="runClusterTask" stepClass="ApiCommonData::Load::WorkflowSteps::RunAndMonitorClusterTask" stepLoadTypes="cluster">
+      <paramValue name="taskInputDir">$$dataDir$$/input</paramValue>
+      <paramValue name="numNodes">1</paramValue>
+      <paramValue name="processorsPerNode">1</paramValue>
+      <depends name="mirrorToCluster"/>
+    </step>
+
+    <step name="mirrorFromCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorFromComputeCluster" stepLoadTypes="cluster">
+      <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
+      <paramValue name="outputDir">$$dataDir$$/master/mainresult</paramValue>
+      <paramValue name="outputFiles">blocked.seq</paramValue>
+      <depends name="runClusterTask"/>
+    </step>
+
+</workflowGraph>
