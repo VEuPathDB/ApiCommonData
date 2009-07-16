@@ -415,5 +415,31 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
+      <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.isolate_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$isolate_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+      <sqlQuery name="ApiProjectIsolates" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.isolate_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$isolate_answer$$ c, apidb.isolateattributes ia
+                    where ia.source_id = c.source_id
+                    and ia.project_id = $$Project$$
+                ]]>
+            </sql>
+     </sqlQuery>
+
    </querySet>
 </wdkModel>
