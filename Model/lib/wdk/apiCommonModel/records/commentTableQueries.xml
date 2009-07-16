@@ -180,24 +180,13 @@
             </sql>
         </sqlQuery> 
 
-       <sqlQuery name="GenomeComments"
+       <sqlQuery name="GenomeComments" excludeProjects="EuPathDB"
                  isCacheable="false">
 
-            <testParamValues includeProjects="CryptoDB">
-               <paramValue name="source_id">cgd5_780</paramValue>
+            <testParamValues minRows="0" includeProjects="GiardiaDB,TrichDB,ToxoDB,CryptoDB,TriTrypDB"/>
+            <testParamValues includeProjects="PlasmoDB">
+              <paramValue name="source_id">Pf3D7_09</paramValue>
             </testParamValues>
-            <testParamValues minRows="0" includeProjects="TrichDB"/>
-            <testParamValues includeProjects="GiardiaDB">
-               <paramValue name="source_id">GL50803_39483</paramValue>
-            </testParamValues>
-            <testParamValues includeProjects="ToxoDB">
-               <paramValue name="source_id">TGME49_102050</paramValue>
-            </testParamValues>
-           <!--Revisit to add an actual source_id.. the user comments table is currently empty-->
-           <!-- <testParamValues includeProjects="TriTrypDB">
-               <paramValue name="source_id"></paramValue>
-            </testParamValues>-->
-            <testParamValues minRows="0" includeProjects="TriTrypDB"/>
 
             <column name="source_id"/>
             <column name="project_id"/>
@@ -250,7 +239,6 @@
             ]]>
             </sql>
         </sqlQuery> 
-
 
    </querySet>
 
