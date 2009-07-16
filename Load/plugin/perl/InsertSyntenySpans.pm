@@ -423,17 +423,9 @@ my $sql;
     ";
   }elsif($self->getArg('organism') eq 'Toxoplasma'){
     $sql = "
-    select g.na_feature_id as sequence_id, to_char(gi.gene_id) as sequence_group_id, g.external_database_release_id
-    from dots.GENEINSTANCE gi, Dots.GENEFEATURE g
-    where g.na_feature_id = gi.na_feature_id
-    UNION
-    select gb.na_feature_id as sequence_id, to_char(ssg.sequence_group_id) as sequence_group_id, g.external_database_release_id
-    from dots.SequenceSequenceGroup ssg, apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb, dots.genefeature g, core.TableInfo t
-    where t.name = 'GeneFeature'
-    and t.table_id = ssg.source_table_id
-    and ga.na_feature_id = ssg.sequence_id
-    and gb.gene_id = ga.GENE_ID
-    and g.na_feature_id = gb.na_feature_id
+    select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
+    from apidb.geneattributes ga, dots.genefeature gf
+    where ga.na_feature_id = gf.na_feature_id
     ";
   }elsif($self->getArg('organism') eq 'Cryptosporidium'){
     $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
@@ -536,8 +528,27 @@ sub findOrthologPairs {
   my @sortedPairs = sort { $a->{refStart} <=> $b->{refStart} || 
                              $a->{synStart} <=> $b->{synEnd} } @genePairs;
 
+  my @sortedPairsFiltered;
 
-  return \@sortedPairs;
+  my $prevRefStart = 0;
+  my $prevRefEnd = 0;
+
+
+  foreach my $sortedPair (@sortedPairs){
+      if($sortedPair->{refStart} > $prevRefEnd){
+	  push(@sortedPairsFiltered,$sortedPair);
+	  $prevRefStart = $sortedPair->{refStart};
+	  $prevRefEnd = $sortedPair->{refEnd};
+	  
+      }else{
+	  print STDERR "This gene pair has been removed because of overlap with another gene :";
+	  print STDERR Dumper $sortedPair;
+      }
+
+  }
+
+  return \@sortedPairsFiltered;
+
 }
 
 #--------------------------------------------------------------------------------
@@ -583,6 +594,11 @@ sub addAnchor {
 sub addAnchorToGusObj {
   my ($self, $anchor, $syntenyObj) = @_;
 
+  if($anchor->{prev_ref_loc} > $anchor->{ref_loc} || $anchor->{ref_loc} > $anchor->{next_ref_loc}){
+      print STDERR "Error in synteny object: ";
+      print STDERR Dumper $syntenyObj->toString();
+      $self->error("Anchor locations: prev_ref_loc = $anchor->{prev_ref_loc}, ref_loc = $anchor->{ref_loc}, next_ref_loc = $anchor->{next_ref_loc}");
+  }
   my $anchorObj = GUS::Model::ApiDB::SyntenyAnchor->new($anchor);
   $syntenyObj->addChild($anchorObj);
   $self->countAnchor();
