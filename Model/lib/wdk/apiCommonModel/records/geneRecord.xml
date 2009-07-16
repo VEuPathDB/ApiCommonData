@@ -1981,20 +1981,20 @@
           <table name="UserComments"
                  displayName="User Comments"
                  queryRef="CommentTables.GeneComments">
-        <columnAttribute name="comment_id" displayName="Comment ID"/>
-        <columnAttribute name="stable_id" internal="true"/>
-        <columnAttribute name="headline" internal="true" displayName="Headline"/>
-        <linkAttribute name="headline_link" inReportMaker="false"
-              displayName="Headline">
+        <columnAttribute name="comment_id" internal="true" displayName="Comment ID"/>
+        <linkAttribute name="comment_id_link" inReportMaker="false"
+              displayName="Comment ID">
                  <displayText>
                     <![CDATA[
-                    $$headline$$
+                    $$comment_id$$
                     ]]>
                  </displayText>
           <url>
             <![CDATA[showComment.do?projectId=@PROJECT_ID@&stableId=$$stable_id$$#$$comment_id$$]]>
           </url>
         </linkAttribute>
+        <columnAttribute name="stable_id" internal="true"/>
+        <columnAttribute name="headline" displayName="Headline"/>
         <columnAttribute name="pmids" internal="true" displayName="PubMed ID(s)"/>
         <linkAttribute name="pmids_link" inReportMaker="false"
               displayName="PubMed ID(s)">
