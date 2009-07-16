@@ -24,13 +24,15 @@
   <param name="ncbiTaxonId"/>
   <param name="BACEndsExtDbRlsSpec"/>
   <param name="cosmidEndsExtDbRlsSpec"/>
+  <param name="repeatMaskSpecies"/>
 
   <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
   <constant name="genomicSeqsFile">$$parentDataDir$$/$$organismName$$/genome/genomicSeqs.fsa</constant>
   <constant name="genbankIsolateSeqFile">$$dataDir$$/genbankIsolatesSeqs.fsa</constant>
   <constant name="sibleyIsolateSeqFile">$$dataDir$$/sibleyIsolatesSeqs.fsa</constant>
-  <constant name="BACEndsSeqFile">$$dataDir$$/BACEndsSeqs.fsa</constant>
-  <constant name="cosmidEndsSeqFile">$$dataDir$$/cosmidEndsSeqs.fsa</constant>
+  <constant name="BACEndsDir">$$dataDir$$/makeBACEnds</constant>
+  <constant name="cosmidEndsDir">$$dataDir$$/makeBACEnds</constant>
+
 
   <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
     <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -58,34 +60,30 @@
       <depends name="makeDataDir"/> 
     </step>
 
-  <step name="extractBACEndsSeqs"
-          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
-      <paramValue name="extDbRlsSpec">$$BACEndsExtDbRlsSpec$$</paramValue>
-      <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="alternateDefline"></paramValue>
-      <paramValue name="outputFile">$$BACEndsSeqFile$$</paramValue>
-      <paramValue name="separateFastaFiles">false</paramValue>
-      <paramValue name="outputDirForSeparateFiles"></paramValue>
-      <depends name="makeDataDir"/> 
-    </step>
+    <subgraph name="extractAndBlockBACEnds" xmlFile="extractAndBlockBACEnds.xml">
+      <paramValue name="dataDir">$$BACEndsDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="BACEndsExtDbRlsSpec">$$BACEndsExtDbRlsSpec$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <depends name="makeDataDir"/>
+    </subgraph>
 
-  <step name="extractCosmidEndsSeqs"
-          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs">
-      <paramValue name="extDbRlsSpec">$$cosmidEndsExtDbRlsSpec$$</paramValue>
-      <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="alternateDefline"></paramValue>
-      <paramValue name="outputFile">$$cosmidEndsSeqFile$$</paramValue>
-      <paramValue name="separateFastaFiles">false</paramValue>
-      <paramValue name="outputDirForSeparateFiles"></paramValue>
-      <depends name="makeDataDir"/> 
-    </step>
+
+    <subgraph name="extractAndBlockCosmidEnds" xmlFile="extractAndBlockBACEnds.xml">
+      <paramValue name="dataDir">$$cosmidEndsDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="BACEndsExtDbRlsSpec">$$cosmidEndsExtDbRlsSpec$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <depends name="makeDataDir"/>
+    </subgraph>
+
 
     <step name="mirrorToCluster" stepClass="ApiCommonData::Load::WorkflowSteps::MirrorToComputeCluster" stepLoadTypes="cluster">
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenbankIsolateSeqs"/>
       <depends name="extractSibleyIsolateSeqs"/>
-      <depends name="extractBACEndsSeqs"/>
-      <depends name="extractCosmidEndsSeqs"/>
     </step>
 
     <subgraph name="blastnGenbankIsolateSeqGenomicSeqs" xmlFile="blastWorkflow.xml">
@@ -139,7 +137,7 @@
       <paramValue name="nickName">BACEnds</paramValue>
       <paramValue name="queryTable">ExternalNASequence</paramValue>
       <paramValue name="updateAssemblySourceId">false</paramValue>
-      <depends name="mirrorToCluster"/>
+      <depends name="extractAndBlockBACEnds"/>
     </subgraph>
 
     <subgraph name="mapCosmidEndsSeqsToGenome" xmlFile="mapAssembliesToGenome.xml">
@@ -153,7 +151,7 @@
       <paramValue name="nickName">cosmidEnds</paramValue>
       <paramValue name="queryTable">ExternalNASequence</paramValue>
       <paramValue name="updateAssemblySourceId">false</paramValue>
-      <depends name="mirrorToCluster"/>
+      <depends name="extractAndBlockCosmidCEnds"/>
     </subgraph>
 
   <subgraph name="stanfordSnps_Mummer" xmlFile="runMummer.xml">

@@ -22,6 +22,12 @@
   <param name="projectName"/>
   <param name="projectVersion"/>
   <param name="pdbExtDbRlsSpec"/>
+  <param name="tcruziBACEndsExtDbRlsSpec"/>
+  <param name="lmajorCosmidEndsExtDbRlsSpec"/>
+  <param name="lmajorFV1EndsExtDbRlsSpec"/>
+  <param name="lmajorPACEndsExtDbRlsSpec"/>
+  <param name="lmajorBACEndsExtDbRlsSpec"/>
+  <param name="tbruceiBACEndsExtDbRlsSpec"/>
 
 
   <constant name="pdbFile">common/pdb.fsa</constant>
@@ -77,6 +83,7 @@
     <depends name="common"/>
   </subgraph>
 
+
   <subgraph name="TbruceiAnalysis" xmlFile="organismAnalysis.xml">
     <paramValue name="projectName">$$projectName$$</paramValue>
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
@@ -115,6 +122,9 @@
     <paramValue name="mapAssemblySeqsAndAssemblies">true</paramValue>
     <depends name="common"/>
   </subgraph>
+
+
+
 
 
   <subgraph name="LinfantumAnalysis" xmlFile="organismAnalysis.xml">
@@ -273,5 +283,43 @@
     <depends name="common"/>
   </subgraph>
 
+  <subgraph name="TcruziSpecificAnalysis" xmlFile="tcruziSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Tcruzi</paramValue>
+    <paramValue name="organismFullName">Trypanosoma cruzi strain CL Brener</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$tcruziExtDbRlsSpec$$</paramValue>
+    <paramValue name="maxIntronSize">100</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+    <paramValue name="BACEndsExtDbRlsSpec">$$tcruziBACEndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Trypanosoma</paramValue>
+    <depends name="TcruziAnalysis"/>
+  </subgraph>
+
+  <subgraph name="TbruceiSpecificAnalysis" xmlFile="tbruceiSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Tbrucei</paramValue>
+    <paramValue name="organismFullName">Trypanosoma brucei TREU927</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$tbruceiExtDbRlsSpec$$</paramValue>
+    <paramValue name="maxIntronSize">100</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+    <paramValue name="BACEndsExtDbRlsSpec">$$tbruceiBACEndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Trypanosoma</paramValue>
+    <depends name="TbruceiAnalysis"/>
+  </subgraph>
+
+  <subgraph name="LmajorSpecificAnalysis" xmlFile="lmajorSpecificAnalysis.xml">
+    <paramValue name="parentDataDir"></paramValue>
+    <paramValue name="organismName">Lmajor</paramValue>
+    <paramValue name="organismFullName">Leishmania major</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$lmajorExtDbRlsSpec$$</paramValue>
+    <paramValue name="maxIntronSize">100</paramValue>
+    <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+    <paramValue name="BACEndsExtDbRlsSpec">$$lmajorBACEndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="CosmidEndsExtDbRlsSpec">$$lmajorCosmidEndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="FV1EndsExtDbRlsSpec">$$lmajorFV1EndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="PACEndsExtDbRlsSpec">$$lmajorPACEndsExtDbRlsSpec$$</paramValue>
+    <paramValue name="repeatMaskSpecies">-species Leishmania</paramValue>
+    <depends name="LmajorAnalysis"/>
+  </subgraph>
 
 </workflowGraph>
