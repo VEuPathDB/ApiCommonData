@@ -1,0 +1,45 @@
+<workflowGraph name="tcruziSpecificAnalysis">
+  <param name="parentDataDir"/>
+  <param name="organismName"/>
+  <param name="organismFullName"/>
+  <param name="genomeExtDbRlsSpec"/>
+  <param name="maxIntronSize"/>
+  <param name="ncbiTaxonId"/>
+  <param name="BACEndsExtDbRlsSpec"/>
+  <param name="repeatMaskSpecies"/>
+
+  <constant name="dataDir">$$parentDataDir$$/$$organismName$$/SpecificAnalysis</constant>
+  <constant name="genomicSeqsFile">$$parentDataDir$$/$$organismName$$/genome/genomicSeqs.fsa</constant>
+  <constant name="BACEndsDir">$$dataDir$$/makeBACEnds</constant>
+
+  <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
+    <paramValue name="dataDir">$$dataDir$$</paramValue>
+  </step>
+
+    <subgraph name="extractAndBlockBACEnds" xmlFile="extractAndBlockBACEnds.xml">
+      <paramValue name="dataDir">$$BACEndsDir$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="BACEndsExtDbRlsSpec">$$BACEndsExtDbRlsSpec$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="repeatMaskSpecies">$$repeatMaskSpecies$$</paramValue>
+      <depends name="makeDataDir"/>
+    </subgraph>
+
+    <subgraph name="mapBACEndsSeqsToGenome" xmlFile="mapAssembliesToGenome.xml">
+      <paramValue name="parentDataDir">$$dataDir$$</paramValue>
+      <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
+      <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
+      <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+      <paramValue name="assembliesDataDir">$$BACEndsDir$$</paramValue>
+      <paramValue name="genomicSeqsDir">$$parentDataDir$$/$$organismName$$/genome/makeAssemblySeqs/genomicSeqs</paramValue>
+      <paramValue name="organismTwoLetterAbbrev"></paramValue>
+      <paramValue name="nickName">mapBACEnds</paramValue>
+      <paramValue name="queryTable">ExternalNASequence</paramValue>
+      <paramValue name="updateAssemblySourceId">false</paramValue>
+      <depends name="extractAndBlockBACEnds"/>
+    </subgraph>
+
+</workflowGraph>
+
+
+
