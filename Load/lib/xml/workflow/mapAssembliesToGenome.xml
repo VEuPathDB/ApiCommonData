@@ -1,15 +1,17 @@
 <workflowGraph name="mapAssembliesToGenome">
 
     <param name="parentDataDir"/>
+    <param name="nickName"/>
     <param name="genomeExtDbRlsSpec"/>
-    <param name="parentNcbiTaxonId"/>
     <param name="ncbiTaxonId"/>
     <param name="maxIntronSize"/>
     <param name="assembliesDataDir"/>
     <param name="genomicSeqsDir"/>
     <param name="organismTwoLetterAbbrev"/>
+    <param name="queryTable"/>
+    <param name="updateAssemblySourceId"/>
 
-    <constant name ="dataDir">$$parentDataDir$$/mapAssemblies</constant>
+    <constant name ="dataDir">$$parentDataDir$$/$$nickName$$</constant>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">$$dataDir$$</paramValue>
@@ -49,7 +51,7 @@
       <paramValue name="targetTable">ExternalNASequence</paramValue>
       <paramValue name="queryNcbiTaxId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
-      <paramValue name="queryTable">Assembly</paramValue>
+      <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">load</paramValue>
       <paramValue name="percentTop"></paramValue>
@@ -65,7 +67,7 @@
       <paramValue name="targetExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="queryExtDbRlsSpec"></paramValue>
       <paramValue name="targetTable">ExternalNASequence</paramValue>
-      <paramValue name="queryTable">Assembly</paramValue>
+      <paramValue name="queryTable">$$queryTable$$</paramValue>
       <paramValue name="regex">>(\\d+)</paramValue>
       <paramValue name="action">setbest</paramValue>
       <paramValue name="percentTop">100</paramValue>
@@ -75,7 +77,7 @@
     </step>
 
    <step name="updateAssemblySourceId"
-          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateAssemblySourceId" stepLoadTypes="plugin">
+          stepClass="ApiCommonData::Load::WorkflowSteps::UpdateAssemblySourceId" stepLoadTypes="plugin" includeIf="$$updateAssemblySourceId$$>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="organismTwoLetterAbbrev">$$organismTwoLetterAbbrev$$</paramValue>
       <depends name="setBestBlatAlignment"/>

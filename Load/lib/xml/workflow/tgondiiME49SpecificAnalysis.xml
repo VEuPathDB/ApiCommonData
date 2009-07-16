@@ -84,6 +84,8 @@
       <paramValue name="fileOrDirToMirror">$$dataDir$$</paramValue>
       <depends name="extractGenbankIsolateSeqs"/>
       <depends name="extractSibleyIsolateSeqs"/>
+      <depends name="extractBACEndsSeqs"/>
+      <depends name="extractCosmidEndsSeqs"/>
     </step>
 
     <subgraph name="blastnGenbankIsolateSeqGenomicSeqs" xmlFile="blastWorkflow.xml">
@@ -126,25 +128,31 @@
       <depends name="mirrorToCluster"/>
     </subgraph>
 
-    <subgraph name="mapBACEndsSeqsToGenome" xmlFile="mapSeqsToGenome.xml">
+    <subgraph name="mapBACEndsSeqsToGenome" xmlFile="mapAssembliesToGenome.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="nickName">BACEnds</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="assembliesDataDir">$$parentDataDir$$/$$organismName$$/genome/makeAssemblies</paramValue>
       <paramValue name="genomicSeqsDir">$$parentDataDir$$/$$organismName$$/genome/makeAssemblySeqs/genomicSeqs</paramValue>
+      <paramValue name="organismTwoLetterAbbrev"></paramValue>
+      <paramValue name="nickName">BACEnds</paramValue>
+      <paramValue name="queryTable">ExternalNASequence</paramValue>
+      <paramValue name="updateAssemblySourceId">false</paramValue>
       <depends name="mirrorToCluster"/>
     </subgraph>
 
-    <subgraph name="mapCosmidEndsSeqsToGenome" xmlFile="mapSeqsToGenome.xml">
+    <subgraph name="mapCosmidEndsSeqsToGenome" xmlFile="mapAssembliesToGenome.xml">
       <paramValue name="parentDataDir">$$dataDir$$</paramValue>
-      <paramValue name="nickName">cosmidEnds</paramValue>
       <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
       <paramValue name="assembliesDataDir">$$parentDataDir$$/$$organismName$$/genome/makeAssemblies</paramValue>
       <paramValue name="genomicSeqsDir">$$parentDataDir$$/$$organismName$$/genome/makeAssemblySeqs/genomicSeqs</paramValue>
+      <paramValue name="organismTwoLetterAbbrev"></paramValue>
+      <paramValue name="nickName">cosmidEnds</paramValue>
+      <paramValue name="queryTable">ExternalNASequence</paramValue>
+      <paramValue name="updateAssemblySourceId">false</paramValue>
       <depends name="mirrorToCluster"/>
     </subgraph>
 
