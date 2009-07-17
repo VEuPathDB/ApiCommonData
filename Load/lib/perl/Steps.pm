@@ -6515,7 +6515,7 @@ sub updateOrthologGroups {
 }
 
 sub extractFilesForMsa {
-  my ($mgr) = @_;
+  my ($mgr, $tarSize) = @_;
 
   my $signal = "extractGroupsFiles";
 
@@ -6525,7 +6525,7 @@ sub extractFilesForMsa {
 
   $mgr->runCmd("mkdir -p $dir");
 
-  $mgr->runCmd("extractGroupFastaFiles --outputDir $dir");
+  $mgr->runCmd("extractGroupFastaFiles --outputDir $dir --tarBall $tarSize");
 
   $mgr->endStep($signal);
 }
