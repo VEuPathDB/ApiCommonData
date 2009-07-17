@@ -133,6 +133,32 @@
 
         </sqlQuery>
 
+      <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.est_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$est_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+      <sqlQuery name="ApiProjectEsts" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.est_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$est_answer$$ c, apidb.estattributes sa
+                    where sa.source_id = c.source_id
+                    and sa.project_id = $$Project$$
+                ]]>
+            </sql>
+     </sqlQuery>
+
 
     </querySet>
 </wdkModel>

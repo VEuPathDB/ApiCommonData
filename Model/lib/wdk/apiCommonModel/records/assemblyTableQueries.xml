@@ -131,5 +131,32 @@
             </sql>
         </sqlQuery>
 
+      <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.assembly_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$assembly_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+       <sqlQuery name="ApiProjectAssemblies" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.assembly_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$assembly_answer$$ c, apidb.assemblyattributes aa
+                    where aa.source_id = c.source_id
+                    and aa.project_id = $$Project$$
+                ]]>
+            </sql>
+     </sqlQuery>
+
     </querySet>
 </wdkModel>
