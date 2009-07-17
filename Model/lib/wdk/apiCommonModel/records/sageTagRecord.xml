@@ -41,6 +41,91 @@
       <reporter name="fullRecord" displayName="Detailed" excludeProjects="EuPathDB" 
                   implementation="org.gusdb.wdk.model.report.FullRecordReporter" />
 
+      <!-- =============================================================== -->
+      <!--   Filters -->
+      <!-- =============================================================== -->
+
+
+     <answerFilterLayout name="eupath_project" visible="true"
+                            displayName="Filter results by component website" includeProjects="EuPathDB">
+            <instanceRef ref="all_results" />
+            <instanceRef ref="crypto_sagetags" />
+            <instanceRef ref="giardia_sagetags" />
+            <instanceRef ref="plasmo_sagetags" />
+            <instanceRef ref="toxo_sagetags" />
+            <instanceRef ref="trich_sagetags" />
+            <instanceRef ref="tritryp_sagetags" />
+      </answerFilterLayout>
+
+
+
+      <answerFilter queryRef="SageTagTables.AllResults"   includeProjects="EuPathDB">
+                  <instance name="all_results" displayName="All Results" default="true">
+                    <description>
+                        <![CDATA[
+                            All results
+                        ]]>
+                    </description>
+                </instance>
+
+      </answerFilter>
+
+
+      <answerFilter queryRef="SageTagTables.ApiProjectSageTags"
+                          includeProjects="EuPathDB">
+
+               <instance name="crypto_sagetags" displayName="CryptoDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in CryptoDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">CryptoDB</paramValue>
+                </instance>
+               <instance name="giardia_sagetags" displayName="GiardiaDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in GiardiaDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">GiardiaDB</paramValue>
+                </instance>
+               <instance name="plasmo_sagetags" displayName="PlasmoDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in PlasmoDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">PlasmoDB</paramValue>
+                </instance>
+               <instance name="toxo_sagetags" displayName="ToxoDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in ToxoDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">ToxoDB</paramValue>
+                </instance>
+               <instance name="trich_sagetags" displayName="TrichDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in TrichDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">TrichDB</paramValue>
+                </instance>
+               <instance name="tritryp_sagetags" displayName="TriTrypDB SAGE Tags" >
+                    <description>
+                        <![CDATA[
+                            Number of SAGE Tags in TriTrypDB.
+                        ]]>
+                    </description>
+                    <paramValue name="Project">TriTrypDB</paramValue>
+                </instance>
+      </answerFilter>
+
+
+
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
       <!-- Sage Tag attributes -->  
       <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->

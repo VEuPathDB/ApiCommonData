@@ -63,6 +63,32 @@
             </sql>
         </sqlQuery>
 
+      <sqlQuery name="AllResults" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.orf_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT source_id, project_id
+                    FROM $$orf_answer$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+       <sqlQuery name="ApiProjectOrfs" isCacheable="false" includeProjects="EuPathDB">
+            <paramRef ref="recordParams.Project"/>
+            <paramRef ref="recordParams.orf_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$orf_answer$$ c, apidb.orfattributes aa
+                    where aa.source_id = c.source_id
+                    and aa.project_id = $$Project$$
+                ]]>
+            </sql>
+     </sqlQuery>
 
  </querySet>
 </wdkModel>
