@@ -8,9 +8,12 @@
        <stringParam name="organismSite" visible="false">
              </stringParam>
 
+<!-- UNUSED, remove in a few rounds
+
  <stringParam name="hiddenOrganismGiardia" visible="false">
        </stringParam>
 
+-->
 
       <flatVocabParam name="organism"
                      queryRef="organismVQ.withGenes"
@@ -55,6 +58,7 @@
           <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
+<!-- UNUSED, remove in a few rounds
 
       <flatVocabParam name="sequence_organism_text" includeProjects="ToxoDB,EuPathDB"
                      queryRef="organismVQ.textSequenceOrganism"
@@ -63,6 +67,8 @@
                      quote="true">
                      <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
+
+-->
 
 
 <!-- cannot reuse "organism" param above because apidb needs to use the internal value in the local ortholog question -->
@@ -568,6 +574,9 @@
     <!-- with chromosomes and Assemblies, used in assembies by location -->  
     <!--===================================================================-->
 
+<!-- using withChromosomesESTs instead;  REMOVE IN A FEW ROUNDS
+
+
     <sqlQuery name="withChromosomesAssems" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB">
       <column name="internal"/>
       <column name="term"/>
@@ -653,7 +662,7 @@
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
-
+-->
 
 
 <!--===================================================================-->
@@ -985,6 +994,78 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+
+<!--===================================================================-->
+    <!-- with genes Plasmo, TriTryp and Crypto,  used in genes by protein PDB similarity,
+        copy from withGenes -->
+    <!--===================================================================-->
+
+ <sqlQuery name="withPlasmoTrypCryptoGenes" excludeProjects="EuPathDB,ToxoDB,GiardiaDB,TrichDB" isCacheable="true">
+      <column name="internal"/>
+      <column name="term"/>
+
+      <sql>
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT CASE 
+                        WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
+                        else tn.name
+                      END as name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
+                 UNION
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                 UNION
+                SELECT 'Toxoplasma gondii' AS name, 6 AS rank FROM dual
+                 UNION
+                SELECT 'Neospora caninum' AS name, 7 AS rank FROM dual
+                 UNION
+                SELECT 'Trypanosoma cruzi' AS name, 8 AS rank FROM dual
+                ) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+    </sqlQuery>
+
+    <processQuery name="withPlasmoTrypCryptoGenes" includeProjects="EuPathDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
+<!--===================================================================-->
+    <!-- with sage tags    -->
+    <!--===================================================================-->
+
+
     <sqlQuery name="withSageTags" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
       <column name="internal"/>
       <column name="term"/>
@@ -1041,6 +1122,9 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+ <!--===================================================================-->
+    <!-- with genes with epitopes    -->
+    <!--===================================================================-->
 
     <sqlQuery name="withEpitopes"  includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,TriTrypDB" isCacheable="true">
       <column name="internal"/>
@@ -1096,6 +1180,19 @@ UNION
       </sql>
     </sqlQuery>
 
+ <processQuery name="withEpitopes" includeProjects="ApiDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+<!--===================================================================-->
+    <!-- with sequencestrains, only used by Toxo
+         Toxo should use organismVQ.withGenomicSeq instead like everybody
+         we do not change to not make incompatible queries     -->
+    <!--===================================================================-->
+
+
     <sqlQuery name="withSequenceStrains" includeProjects="ToxoDB">
       <column name="internal"/>
       <column name="term"/>
@@ -1109,6 +1206,10 @@ UNION
         ]]>
       </sql>
     </sqlQuery>
+
+<!--===================================================================-->
+    <!-- only in TriTrypDB and Portal: genes based on phenotype    -->
+    <!--===================================================================-->
 
     <sqlQuery name="withPhenotype" includeProjects="TriTrypDB">
       <column name="internal"/>
@@ -1129,6 +1230,9 @@ UNION
     </processQuery>
 
 
+
+<!-- UNUSED, remove in a few rounds
+
     <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">
       <column name="internal"/>
       <column name="term"/>
@@ -1147,6 +1251,12 @@ UNION
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
+-->
+
+<!--===================================================================-->
+    <!-- used in other recordtype queries (other than gene) for dumping    -->
+    <!--===================================================================-->
+
 
     <sqlQuery name="withGenesGFF" excludeProjects="EuPathDB">
       <column name="internal"/>
@@ -1205,6 +1315,12 @@ UNION
         ]]>
       </sql>
     </sqlQuery>
+
+
+<!--===================================================================-->
+    <!-- used in gene query for dumping    -->
+    <!--===================================================================-->
+
 
     <sqlQuery name="nameWithGenesGFF" excludeProjects="EuPathDB">
       <column name="internal"/>
@@ -1468,8 +1584,8 @@ UNION
       <sqlParamValue name="organism" includeProjects="ToxoDB">Toxoplasma gondii</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="PlasmoDB">Plasmodium berghei</sqlParamValue>
       <sqlParamValue name="organism" includeProjects="GiardiaDB">Giardia lamblia</sqlParamValue>
-      <sqlParamValue name="organism" includeProjects="TrichDB,TriTrypDB">none at all</sqlParamValue>
-      <sql>
+      <sqlParamValue name="organism" includeProjects="TrichDB">none at all</sqlParamValue>
+      <sql includeProjects="CryptoDB,GiardiaDB,PlasmoDB,ToxoDB,TrichDB">
         <![CDATA[
           SELECT organisms.name  AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
@@ -1487,6 +1603,55 @@ UNION
           ORDER BY organisms.name
         ]]>
       </sql>
+<sql includeProjects="TriTrypDB">
+        <![CDATA[
+          SELECT organisms.name AS term,
+                 (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
+                                             AS apidb.varchartab), ', ')
+                         AS internal
+                  FROM sres.taxon
+                  CONNECT BY prior taxon_id = parent_id
+                  START WITH taxon_id = organisms.internal_taxon) AS internal
+          FROM (SELECT CASE 
+                        WHEN tn.name = 'Giardia intestinalis' THEN 'Giardia lamblia' 
+                        else tn.name
+                      END as name, t.taxon_id AS internal_taxon
+                FROM sres.TaxonName tn, sres.taxon t
+                WHERE tn.name_class='scientific name'
+                  AND t.taxon_id = tn.taxon_id
+                  AND t.rank = 'species'
+                  AND t.taxon_id IN
+                       (SELECT taxon_id
+                        FROM sres.taxon
+                        CONNECT BY taxon_id = prior parent_id
+                        START WITH taxon_id IN
+                             (SELECT ns.taxon_id
+                              FROM dots.NaSequence ns, dots.GeneFeature gf,apidb.geneattributes ga
+                              WHERE gf.na_sequence_id = ns.na_sequence_id
+                              AND ga.source_id = gf.source_id
+                              AND ga.project_id = '@PROJECT_ID@' 
+                              ))) organisms,
+               (SELECT 'Cryptosporidium parvum' AS name, 1 AS rank FROM dual
+                 UNION
+                SELECT 'Cryptosporidium hominis' AS name, 2 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium falciparum' AS name, 3 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium vivax' AS name, 4 AS rank FROM dual
+                 UNION
+                SELECT 'Plasmodium yoelii' AS name, 5 AS rank FROM dual
+                 UNION
+                SELECT 'Toxoplasma gondii' AS name, 6 AS rank FROM dual
+                 UNION
+                SELECT 'Neospora caninum' AS name, 7 AS rank FROM dual
+                 UNION
+                SELECT 'Trypanosoma cruzi' AS name, 8 AS rank FROM dual
+                ) partial_ordering
+          WHERE organisms.name = partial_ordering.name(+)
+          ORDER BY partial_ordering.rank, organisms.name
+        ]]>
+      </sql>
+
     </sqlQuery>
 
     <processQuery name="cp-tg-pb" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
@@ -1642,11 +1807,14 @@ UNION
 
 
 <!--====================================================================-->
-<!-- withPlamsoTrichGiardiaGenes -->
+<!-- withPlamsoTrichGiardiaGenes used in genes by secondary structure   , 
+           now includes crypto  and tritryp
+
+-->
 <!--====================================================================-->
 
 
-<sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB" isCacheable="true">
+<sqlQuery name="withPlasmoTrichGiardiaGenes" includeProjects="PlasmoDB,GiardiaDB,TrichDB,CryptoDB,TriTrypDB" isCacheable="true">
 
       <testParamValues excludeProjects="GiardiaDB,TrichDB,PlasmoDB" minRows="0"/>
 
@@ -1654,7 +1822,7 @@ UNION
       <column name="term"/>
       <sql>
         <![CDATA[
-          SELECT  organisms.name  AS term,
+          SELECT  case when organisms.name = 'Giardia intestinalis' then 'Giardia lamblia' else organisms.name end AS term,
                  (SELECT apidb.tab_to_string(CAST(COLLECT(trim(to_char(taxon_id)))
                                              AS apidb.varchartab), ', ')
                          AS internal
@@ -1701,8 +1869,12 @@ UNION
 
 
 <!--===================================================================-->
-    <!-- tg withPlasmoGenes -->  
+    <!-- tg withPlasmoGenes   was being used in genes by isoelectric point 
+              but it is not needed anymore , now we use withGenes
+-->  
     <!--===================================================================-->
+
+<!--  REMOVE IN A FEW WEEKS 
 
     <sqlQuery name="withPlasmoGenes-tg" excludeProjects="EuPathDB,CryptoDB" isCacheable="true">
 
@@ -1826,8 +1998,12 @@ UNION
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
+-->
+
 <!--===================================================================-->
-    <!-- tg pf gl   for genes by sage tags-->
+    <!-- tg pf gl   for genes by sage tags
+ we should use organismVQ.withSageTags instead but chaning the parameter name makes the query incompatible
+-->
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf-gl" excludeProjects="EuPathDB" isCacheable="true">
@@ -1867,7 +2043,10 @@ UNION
 
 
     <!--===================================================================-->
-    <!-- tg pf -->  
+    <!-- tg pf , used in genes by metabolic pathway and GenesByNonnuclearGenomicRegion, 
+         we should instead generate an organismVQ.withPlasmofToxoGenes 
+         we do not change because we would generate incompatible queries  (only in porta!) 
+-->  
     <!--===================================================================-->
 
     <sqlQuery name="tg-pf" excludeProjects="EuPathDB" isCacheable="true">

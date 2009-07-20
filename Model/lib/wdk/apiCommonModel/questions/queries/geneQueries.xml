@@ -856,7 +856,7 @@ sns2.external_database_release_id=extr.external_database_release_id
                    includeProjects="EuPathDB"
                    isCacheable="true" 
                    processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes-tg" quote="false"/>	  
+                <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" quote="false"/>	  
                 <paramRef ref="geneParams.min_isoelectric_point"/>
 	        <paramRef ref="geneParams.max_isoelectric_point"/>
                 <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -3605,9 +3605,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesByPdbSimilarity" includeProjects="PlasmoDB,TriTrypDB,CryptoDB"
               isCacheable="true">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" includeProjects="CryptoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" />
         <paramRef ref="geneParams.clades"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
         <column name="project_id"/>
@@ -3651,8 +3649,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByPdbSimilarity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoTrypCryptoGenes"/>
         <paramRef ref="geneParams.clades" quote="false"/>
         <paramRef ref="geneParams.pvalue_cutoff"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -3696,6 +3693,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        </sql>
     </sqlQuery>  
 
+
+<!-- I THINK IT I NOT USED 
     <processQuery name="GenesByProteinDbAccession" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="geneParams.accession"/>
@@ -3704,6 +3703,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
+-->
+
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- GenesWithProteinLowComplexity -->
