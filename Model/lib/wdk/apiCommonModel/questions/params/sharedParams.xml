@@ -675,12 +675,15 @@
              <suggest default="choose one"/>
      </stringParam>
 
+ <stringParam name="chromosomeOptional" includeProjects="EuPathDB"
+                      prompt="Chromosome">
+             <suggest default="choose one"/>
+     </stringParam>
 
 
 
 
-
-     <flatVocabParam name="chromosomeOptional" includeProjects="EuPathDB,TriTrypDB"
+     <flatVocabParam name="chromosomeOptional" includeProjects="TriTrypDB"
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
                      multiPick="false">
@@ -704,7 +707,7 @@
                       multiPick="false"
                       default="choose one">
 
-       <enumList includeProjects="PlasmoDB,EuPathDB">   
+       <enumList includeProjects="PlasmoDB">   
          <enumValue>
            <term>choose one</term>
            <internal>choose one</internal>
