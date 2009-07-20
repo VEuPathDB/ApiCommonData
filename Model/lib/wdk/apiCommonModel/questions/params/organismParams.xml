@@ -473,6 +473,10 @@
                 SELECT 'Plasmodium vivax' as term,
                        '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
                 FROM dual
+            UNION
+                SELECT 'Plasmodium chabaudi' as term,
+                       '''' ||'Plasmodium chabaudi chabaudi'|| ''''   as internal 
+                FROM dual
             )
             </sql>
 
@@ -488,10 +492,10 @@
 
 
 <!--===================================================================-->
-    <!-- with chromosomes and ESTs -->  
+    <!-- with chromosomes and ESTs + Assemblies -->  
     <!--===================================================================-->
 
-    <sqlQuery name="withChromosomesESTs" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB">
+    <sqlQuery name="withChromosomesESTsAssems" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB">
       <column name="internal"/>
       <column name="term"/>
 
@@ -563,96 +567,12 @@
 
 
 
-    <processQuery name="withChromosomesESTs" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+    <processQuery name="withChromosomesESTsAssems" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
       <wsColumn name="internal" width="32" wsName="internal"/>
       <wsColumn name="term" width="32" wsName="term"/>
     </processQuery>
 
 
-
-<!--===================================================================-->
-    <!-- with chromosomes and Assemblies, used in assembies by location -->  
-    <!--===================================================================-->
-
-
-
-
-    <sqlQuery name="withChromosomesAssems" includeProjects="CryptoDB,ToxoDB,PlasmoDB,TriTrypDB">
-      <column name="internal"/>
-      <column name="term"/>
-
-    <sql  includeProjects="CryptoDB">
-            SELECT * FROM (
-               SELECT 'Cryptosporidium parvum Iowa II' as term,
-                       '''' ||'Cryptosporidium parvum Iowa II'|| '''' as internal 
-               FROM dual
-            )
-            </sql>       
-
-             <sql  includeProjects="ToxoDB">
-            SELECT * FROM (
-                SELECT 'Toxoplasma gondii ME49' as term,
-                        '''' ||'Toxoplasma gondii ME49'|| '''' as internal 
-                FROM dual 
-             UNION
- SELECT 'Toxoplasma gondii GT1' as term,
-                        '''' ||'Toxoplasma gondii GT1'|| '''' as internal 
-                FROM dual 
-             UNION
- SELECT 'Toxoplasma gondii VEG' as term,
-                        '''' ||'Toxoplasma gondii VEG'|| '''' as internal 
-                FROM dual 
-             UNION
-                SELECT 'Neospora caninum' as term,
-                        '''' ||'Neospora caninum'|| '''' as internal 
-                FROM dual
-            )
-            </sql>
- 
-            <sql  includeProjects="PlasmoDB">
-            SELECT * FROM (
-               SELECT 'Plasmodium falciparum' as term,
-                       '''' ||'Plasmodium falciparum 3D7'|| '''' as internal 
-               FROM dual
-            UNION
-                SELECT 'Plasmodium vivax' as term,
-                       '''' ||'Plasmodium vivax SaI-1'|| ''''   as internal 
-                FROM dual
-            )
-            </sql>
-
-            <sql  includeProjects="TriTrypDB">
-            SELECT * FROM (
-               SELECT 'Leishmania infantum' as term,
-                       '''' ||'Leishmania infantum'|| '''' as internal 
-               FROM dual
-             UNION
-               SELECT 'Leishmania major' as term,
-                       '''' ||'Leishmania major'|| '''' as internal 
-               FROM dual
-             UNION
-               SELECT 'Trypanosoma cruzi' as term,
-                       '''' ||'Trypanosoma cruzi strain CL Brener'|| '''' as internal 
-               FROM dual
-             UNION
-               SELECT 'Trypanosoma brucei' as term,
-                       '''' ||'Trypanosoma brucei TREU927'|| '''' as internal 
-               FROM dual
-             UNION
-               SELECT 'Leishmania braziliensis' as term,
-                       '''' ||'Leishmania braziliensis'|| '''' as internal 
-               FROM dual
-            )
-            </sql>          
-
-        </sqlQuery>
-
-
-
-    <processQuery name="withChromosomesAssems" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
-      <wsColumn name="internal" width="32" wsName="internal"/>
-      <wsColumn name="term" width="32" wsName="term"/>
-    </processQuery>
 
 
 
