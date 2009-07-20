@@ -1122,6 +1122,13 @@ UNION
       </sql>
     </sqlQuery>
 
+ <processQuery name="withPhenotype" includeProjects="EuPathDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+      <wsColumn name="internal" width="32" wsName="internal"/>
+      <wsColumn name="term" width="32" wsName="term"/>
+    </processQuery>
+
+
     <sqlQuery name="textSequenceOrganism" includeProjects="ToxoDB">
       <column name="internal"/>
       <column name="term"/>

@@ -109,6 +109,17 @@
        </sql>
     </sqlQuery>
 
+<processQuery name="GenesByPhenotype" includeProjects="EuPathDB"
+             isCacheable='true'
+             processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+         <paramRef ref="organismParams.organism" queryRef="organismVQ.withPhenotype"/>
+        <paramRef ref="geneParams.phenotype" quote="false"/>
+        <wsColumn name="source_id" width="32" wsName="source_id"/>   
+        <wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="phenotype_loi" width="32"/>
+ </processQuery>
+
+
     <sqlQuery name="GenesWithUpdatedAnnotation" includeProjects="TriTrypDB"
               isCacheable="true">
         <column name="source_id"/>
