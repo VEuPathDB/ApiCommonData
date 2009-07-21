@@ -3455,8 +3455,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByExportPrediction" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB"/>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withPlasmoGenes" includeProjects="PlasmoDB,EuPathDB"/>
+        <!--<paramRef ref="organismParams.organism" queryRef="organismVQ.withTriTrypGenes" includeProjects="TriTrypDB,EuPathDB"/> -->
         <paramRef ref="geneParams.min_exportpred_score"/>	
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
