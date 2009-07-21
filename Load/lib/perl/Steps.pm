@@ -6523,9 +6523,11 @@ sub extractFilesForMsa {
 
   my $dir = "$mgr->{dataDir}/seqfiles/groups";
 
+  my $logfile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
   $mgr->runCmd("mkdir -p $dir");
 
-  $mgr->runCmd("extractGroupFastaFiles --outputDir $dir --tarBall $tarSize");
+  $mgr->runCmd("extractGroupFastaFiles --outputDir $dir --tarBall $tarSize 2>> $logfile");
 
   $mgr->endStep($signal);
 }
