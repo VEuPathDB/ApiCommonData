@@ -1829,14 +1829,18 @@ Find genes that are predicted to encode a signal peptide.
   <!-- phylogenetic tree -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-     <question name="GenesByPhylogeneticTree" includeProjects="GiardiaDB"
+     <question name="GenesByPhylogeneticTree" includeProjects="GiardiaDB,EuPathDB"
          category="Evolution"
          displayName="Phylogenetic Tree"
          shortDisplayName="Phylo Tree"
          queryRef="GeneId.GenesByPhylogeneticTree"
          recordClassRef="GeneRecordClasses.GeneRecordClass">
-        <attributesList
+        <attributesList includeProjects="GiardiaDB"
               summary="location_text,product,tree_applet_link"
+              sorting="location_text asc"
+        /> 
+        <attributesList includeProjects="EuPathDB" 
+              summary="location_text,product"
               sorting="location_text asc"
         /> 
         <summary>
