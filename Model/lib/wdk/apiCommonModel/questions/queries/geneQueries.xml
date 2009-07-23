@@ -1184,7 +1184,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesWithEpitopes" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB"
            isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.withEpitopes" quote="false"/>
         <paramRef ref="geneParams.epitope_confidence" quote="false"/>
         <wsColumn name="source_id" />
         <wsColumn name="project_id"/>
