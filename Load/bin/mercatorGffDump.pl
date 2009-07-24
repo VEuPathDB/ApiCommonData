@@ -28,6 +28,10 @@ my $dbh = DBI->connect($dsn, $u, $pw) ||  die "Couldn't connect to database: " .
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
+
+my ($species,$GFFFile,$GFFString);
+
+
 #------------------------------
 
 
@@ -36,22 +40,29 @@ my %SpeciesHash = &GetTaxonID(\$dbh,$TaxonQuery);
 
 foreach my  $Taxon_ID (keys (%SpeciesHash)) {
 
-  my $Organism = $SpeciesHash{$Taxon_ID};
-  $Organism =~ s/ /_/g;
+  $species = $SpeciesHash{$Taxon_ID};
+  $species =~ s/ /_/g;
 
-  print("Preparing to export exons for $Organism...\n");
+  $GFFFile = "$species.gff";
+
+
+  $GFFString = new  Bio::Tools::GFF(-file => ">$GFFFile",  -gff_version => 3);
+
+  print("Preparing to export exons for $species...\n");
   my $ExonQuery = &GetExonQuery($Taxon_ID);
   
-  &ExportToGFF(\$dbh,$ExonQuery,$Organism);
+  &ExportToGFF(\$dbh,$ExonQuery);
 
-  print("Finished exporting exons for $Organism...preparing to export CDS for $Organism\n");
+  print("Finished exporting exons for $species...preparing to export CDS for $species\n");
   my $CDSQuery = &GetCDSQuery($Taxon_ID);
   
-  &ExportToGFF(\$dbh,$CDSQuery,$Organism);
-  print("Finsihed exporting CDS for $Organism..\n");
+  &ExportToGFF(\$dbh,$CDSQuery);
+  print("Finsihed exporting CDS for $species..\n");
+  close($GFFFile);
 }
 
 $dbh->disconnect;
+
 
 
 #----------SUBROUTINES------------------#
@@ -86,7 +97,7 @@ sub GetTaxonID {
 #----Execute Query  and send results to GFF-----#
 sub ExportToGFF {
 
-  my ($handle,$query,$species) = @_;
+  my ($handle,$query) = @_;
   my $rowcount = 0;
 
   my $sth = $$handle->prepare($query) || die "Couldn't prepare the SQL statement: " . $$handle->errstr;
@@ -103,11 +114,9 @@ sub ExportToGFF {
 #---------Write information in GFF format-------
 sub WriteGFF {
 
-  my ($StatementHandle,$species) = @_;
-  my $GFFFile = "$species.gff";
-  my $rowcount = 0;
+  my ($StatementHandle) = @_;
 
-  my $GFFString = new  Bio::Tools::GFF(-file => ">>$GFFFile",  -gff_version => 3);
+  my $rowcount = 0;
 
   while (my  @Recordrow = $$StatementHandle->fetchrow_array) {
 
@@ -128,7 +137,7 @@ sub WriteGFF {
   }
    
   $$StatementHandle->finish;
-  close ($GFFFile);
+
 
   return($rowcount);
 }
@@ -148,6 +157,7 @@ sub GetTaxonQuery {
 sub GetExonQuery {
 
   my ($TaxonID) = @_;
+  print "$TaxonID\n";
   return ("SELECT ns.source_id as gff_seqname,
                   'ApiDB' as gff_source,
                   'exon' as gff_feature,
