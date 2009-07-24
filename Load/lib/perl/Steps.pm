@@ -4715,7 +4715,7 @@ sub fixMercatorOffsetsInGFF {
 
 }
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile $organism) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile, $organism) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntenySpans";
