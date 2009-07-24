@@ -4715,7 +4715,7 @@ sub fixMercatorOffsetsInGFF {
 
 }
 sub insertMercatorSyntenySpans {
-  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFileDeprecated, $organism) = @_;
+  my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile $organism) = @_;
 
   my ($signal) = $syntenySpec =~ /([\da-zA-Z-_]+)/;
   $signal .= "SyntenySpans";
@@ -4728,6 +4728,11 @@ sub insertMercatorSyntenySpans {
 
   my $formatCmd = "formatPxSyntenyFile --inputFile $file --outputFile $out";
 
+
+  if($agpFile){
+
+      $formatCmd .= " --agpFile $agpFile";
+  }
   $mgr->runCmd($formatCmd);
   $mgr->runPlugin($signal,
 		  "ApiCommonData::Load::Plugin::InsertSyntenySpans", $args,
