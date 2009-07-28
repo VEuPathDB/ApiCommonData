@@ -35,7 +35,7 @@
 	Find ESTs by ID
 	</summary>
 
-        <description includeProjects="CryptoDB,GiardiaDB,PlasmoDB,ToxoDB,TrichDB,TriTrypDB">
+        <description>
            <![CDATA[
            Find ESTs by a list of IDs. Either enter the ID list manually, or upload a file that contains
            the list. IDs can be delimited by a comma, a semi colon, or any white spaces. <br /><br />EST's have been clustered/assembled into "DoTS Assemblies" which represent consensus sequences of overlapping EST's and mRNA's.  NOTE:  You can query for DoTS Assemblies directly by using the <a href="showQuestion.do?questionFullName=AssemblyQuestions.AssembliesByEstAccession">Assemblies by EST Accession Query</a>.
@@ -157,11 +157,10 @@
               summary="formatted_organism,dbest_name,est_location"
               sorting="formatted_organism asc, est_location asc"
         /> 
-<attributesList includeProjects="EuPathDB"
+        <attributesList includeProjects="EuPathDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc, est_location asc"
         />
-
 
         <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
               summary="formatted_organism,dbest_name,est_location,assembly_link,assembly_est_count"
@@ -328,11 +327,10 @@ Find ESTs by Library Name.  <br /><br />EST's have been clustered/assembled into
            summary="formatted_organism,dbest_name,est_locations,genes"
            sorting="formatted_organism asc,est_locations asc"
         /> 
-<attributesList includeProjects="EuPathDB"
+        <attributesList includeProjects="EuPathDB"
               summary="formatted_organism,dbest_name"
               sorting="formatted_organism asc"
         />
-
         <attributesList includeProjects="ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
            summary="formatted_organism,dbest_name,est_locations,genes,assembly_link,assembly_est_count"
            sorting="formatted_organism asc,est_locations asc"
