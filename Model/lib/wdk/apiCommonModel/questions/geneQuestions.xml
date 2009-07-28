@@ -589,12 +589,8 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
 	     <br><br>
             ]]>
         </description>
-        <description includeProjects="EuPathDB">
-            <![CDATA[
-	Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc. Note that if you don't care about one of the parameters, don't change the defaults on that parameter and you will get all genes irrespective of that parameter.  
-            ]]>
-        </description>
-        <description includeProjects="ToxoDB">
+
+        <description includeProjects="EuPathDB,ToxoDB">
             <![CDATA[
 	     Search for genes by SNP density, the number of SNPs of different classes, ratio of non-synonymous to synonymous, etc. 
              Note that if you don't care about one of the parameters, don't change the defaults
@@ -1587,7 +1583,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
 
-    <question name="GenesByMetabolicPathway" excludeProjects="TrichDB,GiardiaDB,CryptoDB,TriTrypDB"
+    <question name="GenesByMetabolicPathway" includeProjects="ToxoDB,PlasmoDB,EuPathDB"
          displayName="Metabolic Pathway"
          shortDisplayName="Metabol Path"
          category="Putative Function"
@@ -1597,11 +1593,11 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
          summary="formatted_gene_id,location_text,product,met_pathways"
          sorting="formatted_gene_id asc,location_text asc"
         /> 
-        <attributesList excludeProjects="EuPathDB,ToxoDB"
+        <attributesList includeProjects="PlasmoDB"
          summary="location_text,product,met_pathways"
          sorting="location_text asc"
         /> 
- <attributesList includeProjects="EuPathDB"
+        <attributesList includeProjects="EuPathDB"
          summary="organism,location_text,product,met_pathways"
          sorting="project asc,organism asc,location_text asc"
         /> 
@@ -1609,14 +1605,14 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
         Find genes involved in a specific metabolic pathway.
         </summary>
        
- <description includeProjects="EuPathDB">
+        <description includeProjects="EuPathDB">
             <![CDATA[
                 Find genes involved in a specific metabolic pathway. 
           <br><br>
 
-        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
+         Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
             <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .<br>
- Metabolic Pathway Reconstruction  for <i> T. gondii</i> is
+         Metabolic Pathway Reconstruction  for <i> T. gondii</i> is
             available on the KEGG Pathway site
             <a href="http://roos-compbio2.bio.upenn.edu/~fengchen/pathway/">here</a>.
            ]]>
@@ -1627,7 +1623,7 @@ Find genes by Gene Ontology (GO) term for molecular function, biological process
                 Find genes involved in a specific metabolic pathway. 
           <br><br>
 
-        Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
+         Maps of Metabolic Pathways were constructed as described on the Malaria Parasite Metabolic Pathways website
             <a href="http://sites.huji.ac.il/malaria/FramIntroduction.html">here</a> .
            ]]>
         </description>
@@ -1718,10 +1714,9 @@ Transmembrane domains were predicted using <a href='http://www.ncbi.nlm.nih.gov/
         </summary>
         <description>
            <![CDATA[
-Find genes that are predicted to encode a signal peptide.
+          Find genes that are predicted to encode a signal peptide.
           <br><br>
-
-                                                   The predictions are made with the <a href="http://www.cbs.dtu.dk/services/SignalP/">SignalP</a> program.
+          The predictions are made with the <a href="http://www.cbs.dtu.dk/services/SignalP/">SignalP</a> program.
           ]]>
         </description>
         <dynamicAttributes>
