@@ -545,7 +545,7 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
     <processQuery name="SnpsByIsolateType" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-        <paramRef ref="isolateParams.type" quote="false"/>
+        <paramRef ref="isolateParams.snp_assay_type"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
         <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
