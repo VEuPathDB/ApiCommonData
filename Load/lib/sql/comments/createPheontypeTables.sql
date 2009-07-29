@@ -1,3 +1,5 @@
+DROP TABLE comments2.PhenotypeMutantMarker;
+DROP TABLE comments2.MutantMarker;
 DROP TABLE comments2.Phenotype;
 
 DROP SEQUENCE comments2.phenotype_pkseq; 
@@ -126,12 +128,69 @@ CREATE TABLE comments2.MutantMarker
 GRANT insert, update, delete on comments2.MutantMarker to GUS_W;
 GRANT select on comments2.MutantMarker to GUS_R;
 
-INSERT INTO comments2.MutantMarker VALUES(1, 'BLE');
-INSERT INTO comments2.MutantMarker VALUES(2, 'DHFR');
-INSERT INTO comments2.MutantMarker VALUES(3, 'PHLEO');
-INSERT INTO comments2.MutantMarker VALUES(4, 'HXGPRT');
-INSERT INTO comments2.MutantMarker VALUES(5, 'CAT');
-INSERT INTO comments2.MutantMarker VALUES(6, 'GFP');
-INSERT INTO comments2.MutantMarker VALUES(7, 'RFP');
-INSERT INTO comments2.MutantMarker VALUES(8, 'Other');
+INSERT INTO comments2.MutantMarker VALUES(1, 'ble');
+INSERT INTO comments2.MutantMarker VALUES(2, 'dhfr');
+INSERT INTO comments2.MutantMarker VALUES(3, 'hxgprt');
+INSERT INTO comments2.MutantMarker VALUES(4, 'cat');
+INSERT INTO comments2.MutantMarker VALUES(5, 'neo');
+INSERT INTO comments2.MutantMarker VALUES(6, 'bsd');
+INSERT INTO comments2.MutantMarker VALUES(7, 'hph');
+INSERT INTO comments2.MutantMarker VALUES(8, 'pac');
+INSERT INTO comments2.MutantMarker VALUES(9, 'other');
+
+CREATE TABLE comments2.PhenotypeMutantMarker
+(
+  comment_mutant_marker_id NUMBER(10) NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+  mutant_marker_id NUMBER(10) NOT NULL,
+  CONSTRAINT comment_mutant_marker_key PRIMARY KEY (comment_mutant_marker_id),
+  CONSTRAINT comment_id_mutant_marker_fkey FOREIGN KEY (comment_id)
+     REFERENCES comments2.comments (comment_id),
+  CONSTRAINT comment_mutant_marker_fkey FOREIGN KEY (mutant_marker_id)
+     REFERENCES comments2.MutantMarker (mutant_marker_id)
+);
+
+GRANT insert, update, delete on comments2.PhenotypeMutantMarker to GUS_W;
+GRANT select on comments2.PhenotypeMutantMarker to GUS_R;
+
+CREATE SEQUENCE comments2.commentMutantMarker_pkseq START WITH 1 INCREMENT BY 1;
+
+GRANT select on comments2.commentMutantMarker_pkseq to GUS_W;
+GRANT select on comments2.commentMutantMarker_pkseq to GUS_R;
+
+CREATE TABLE comments2.MutantReporter
+(
+  mutant_reporter_id NUMBER(2) NOT NULL,
+  mutant_reporter VARCHAR2(50) NOT NULL,
+  CONSTRAINT mutant_reporter_id_key PRIMARY KEY (mutant_reporter_id)
+);
+
+GRANT insert, update, delete on comments2.MutantReporter to GUS_W;
+GRANT select on comments2.MutantReporter to GUS_R;
+
+INSERT INTO comments2.MutantReporter VALUES(1, 'Luciferase');
+INSERT INTO comments2.MutantReporter VALUES(2, 'Fluorescent Protein (GFP, RFP, etc)');
+INSERT INTO comments2.MutantReporter VALUES(3, 'CAT');
+INSERT INTO comments2.MutantReporter VALUES(4, 'beta-galactosidase');
+INSERT INTO comments2.MutantReporter VALUES(5, 'Other');
+
+CREATE TABLE comments2.PhenotypeMutantReporter
+(
+  comment_mutant_reporter_id NUMBER(10) NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+  mutant_reporter_id NUMBER(10) NOT NULL,
+  CONSTRAINT comment_mutant_reporter_key PRIMARY KEY (comment_mutant_reporter_id),
+  CONSTRAINT comment_id_reporter_fkey FOREIGN KEY (comment_id)
+     REFERENCES comments2.comments (comment_id),
+  CONSTRAINT comment_reporter_fkey FOREIGN KEY (mutant_reporter_id)
+     REFERENCES comments2.MutantReporter (mutant_reporter_id)
+);
+
+GRANT insert, update, delete on comments2.PhenotypeMutantReporter to GUS_W;
+GRANT select on comments2.PhenotypeMutantReporter to GUS_R;
+
+CREATE SEQUENCE comments2.commentMutantReporter_pkseq START WITH 1 INCREMENT BY 1;
+
+GRANT select on comments2.commentMutantReporter_pkseq to GUS_W;
+GRANT select on comments2.commentMutantReporter_pkseq to GUS_R;
 
