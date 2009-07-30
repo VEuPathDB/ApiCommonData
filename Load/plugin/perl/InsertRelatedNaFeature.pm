@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::InsertRelatedNaFeature;
+package ApiCommonData::Load::Plugin::InsertRelatedNaFeature;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
