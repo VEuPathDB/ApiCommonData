@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::CreatePlasmoMappFile;
+package ApiCommonData::Load::Plugin::CreatePlasmoMappFile;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
