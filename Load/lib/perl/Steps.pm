@@ -4280,7 +4280,7 @@ sub fixGeneAliases {
   my $signal = "correctGeneAliases";
 
   $mgr->runPlugin($signal,
-                  "PlasmoDBData::Load::Plugin::CorrectGeneAliases", $args,
+                  "ApiCommonData::Load::Plugin::CorrectGeneAliases", $args,
                   "Correct gene aliases in GUS");
 }
 
