@@ -10,7 +10,7 @@
 ## created August 10, 2005  by Jennifer Dommer
 #############################################################################
 
-package PlasmoDBData::Load::Plugin::InsertGenBankDbRef;
+package ApiCommonData::Load::Plugin::InsertGenBankDbRef;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 
