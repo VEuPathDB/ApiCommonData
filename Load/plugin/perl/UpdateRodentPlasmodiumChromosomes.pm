@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::UpdateRodentPlasmodiumChromosomes;
+package ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
