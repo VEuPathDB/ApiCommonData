@@ -398,8 +398,8 @@ GROUP BY snpq.source_id,snpq.snp_location,snpq.prot_pos,snpq.ref_allele,snpq.ref
 
     <processQuery name="SnpsByAlleleFrequency" includeProjects="EuPathDB"
              isCacheable="true" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
-         <paramRef ref="snpParams.min_strain_count" quote="false"/>
+        <paramRef ref="organismParams.organism" default="Plasmodium falciparum" visible="false" />
+        <paramRef ref="snpParams.min_strain_count" quote="false"/>
         <paramRef ref="snpParams.minor_allele_min"  quote="false"/>
         <paramRef ref="snpParams.minor_allele_max"  quote="false"/>
         <wsColumn name="source_id" width="32" wsName="source_id"/>
