@@ -1,0 +1,84 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $gffFile = $ARGV[0];
+
+if (!$gffFile) {
+  print STDERR "usage: sangerGff2TranscriptGff gff_file\n";
+  exit(1);
+}
+
+my $first = 1;
+
+open(FILE, $gffFile) || die "couldn't open gff file '$gffFile'\n";
+
+my @featureLines;
+while (<>) {
+  next if /^#/;
+  next unless /.+\t.+\tCDS/;
+
+  # start of next feature record
+  if (/temporary_systematic_id/) {
+    &handleFeature(\@featureLines) unless $first;
+    $first = 0;
+    @featureLines = ($_);
+  } else {
+    push(@featureLines, $_);
+  }
+}
+&handleFeature(\@featureLines);
+
+sub handleFeature {
+  my ($featureLines) = @_; 
+
+  my $exons = "";
+  my $minStart = 100000;
+  my $maxEnd = 0;
+  my $order = 0;
+  my $first = 1;
+  
+  my ($seqname, $source, $feature, $start, $end, $score, $strand,
+      $frame, $attributes, $product, $systematicId, $codonStart);
+
+  foreach my $line (@featureLines) {
+
+    ($seqname, $source, $feature, $start, $end, $score, $strand,
+     $frame, $attributes) = split(/\t/, $line);
+
+    next unless $feature eq 'CDS';
+
+    if ($first) { 
+      # 
+      $attributes =~ /temporary_systematic_id: ([^\"]+)\"/ 
+	|| die "can't find systematic id in '$_'\n";
+      $systematicId = $1;
+      if ($attributes =~ /product \"([^\"]+)\"/) {
+	$product = $1;
+      } else {$product = "[unspecified]";}
+
+      if ($attributes =~ /codon_start (\d+)/) {
+	$codonStart = $1 - 1;
+      } else {$codonStart = 0;}
+      $first = 0;
+    }
+
+    my ($codingStart, $codingEnd) =
+      ($strand eq '-')? ($end-$codonStart, $start) : ($start+$codonStart, $end);
+
+    $order++;
+    $minStart = $start if $start < $minStart;
+    $maxEnd = $end if $end > $maxEnd;
+    $exons .= join("\t", ($seqname, $source, 'exon', $start, $end, 
+			  $score, $strand, $frame,
+			  "GenePrediction \"$systematicId\" ; OrderNumber $order ; CodingStart $codingStart ; CodingEnd $codingEnd ")) . "\n";
+  }
+
+  print join("\t", ($seqname, $source, 'transcript', $minStart, 
+		    $maxEnd, $score, $strand, $frame,
+		    "GenePrediction \"$systematicId\" ; Note \"$product\""));
+
+  print "\n";
+  print $exons;
+  print "\n";
+}
