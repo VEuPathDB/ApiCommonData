@@ -1,4 +1,4 @@
-package PlasmoDBData::Load::Plugin::InsertYeastTwoHybrid;
+package ApiCommonData::Load::Plugin::InsertYeastTwoHybrid;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
