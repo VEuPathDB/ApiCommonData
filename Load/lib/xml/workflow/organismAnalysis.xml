@@ -23,7 +23,6 @@
   <param name="pdbFile"/>
   <param name="nrdbFile"/>
   <param name="nrdbShortDeflineFile"/>  
-  <param name="isolateSeqFile"/>  
   <param name="maxIntronSize"/>
   <param name="taxonHierarchyForBlastxFilter"/>
   <param name="nrdbExtDbRlsSpec"/>  
@@ -33,8 +32,6 @@
   <param name="skipProteomeAnalysis"/>
   <param name="mapEpitope"/>
   <param name="makeAndBlockAssemblySeqs"/>
-  <param name="mapIsolate"/>
-  <param name="isolateExtDbRlsSpecList"/>
   <param name="makeAssemblySeqs"/>
   <param name="makeAssemblies"/>
   <param name="mapAssemblySeqsAndAssemblies"/>
@@ -57,7 +54,7 @@
     <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
-  <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml">
+  <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml" exclueIf="$$skipGenomeAnalysis$$">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
@@ -70,8 +67,6 @@
     <paramValue name="predictedTranscriptsExtDbRlsSpec">$$predictedTranscriptsExtDbRlsSpec$$</paramValue>
     <paramValue name="nrdbFile">$$nrdbFile$$</paramValue>
     <paramValue name="nrdbShortDeflineFile">$$nrdbShortDeflineFile$$</paramValue>
-    <paramValue name="isolateSeqFile">$$isolateSeqFile$$</paramValue>
-    <paramValue name="isolateExtDbRlsSpecList">$$isolateExtDbRlsSpecList$$</paramValue>
     <paramValue name="maxIntronSize">$$maxIntronSize$$</paramValue>
     <paramValue name="taxonHierarchyForBlastxFilter">$$taxonHierarchyForBlastxFilter$$</paramValue>
     <paramValue name="nrdbExtDbRlsSpec">$$nrdbExtDbRlsSpec$$</paramValue>
