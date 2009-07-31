@@ -6166,7 +6166,7 @@ sub transformSimilarityCoordinates {
 
   my $args = "--extDbRlsSpec '$extDbRlsSpec' --virtExtDbRlsSpec '$virtExtDbRlsSpec' --sequenceRole $seqRole";
 
-  $mgr->runPlugin($signal, "ToxoDBData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from '$extDbRlsSpec' to '$virtExtDbRlsSpec'");
+  $mgr->runPlugin($signal, "ApiCommonData::Load::Plugin::TransformSimilarityCoordinates", $args, "Transforming Similarity coordinates from '$extDbRlsSpec' to '$virtExtDbRlsSpec'");
 
 }
 
