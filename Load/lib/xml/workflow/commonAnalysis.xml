@@ -5,12 +5,8 @@
       <param name="pdbOutputFile"/>
       <param name="projectName"/>
       <param name="projectVersion"/>
-      <param name="isolateExtDbRlsSpecList"/>
-      <param name="mapIsolate"/>
-    
 
     <constant name="dataDir">common</constant>
-    <constant name="isolateSeqsFile">$$dataDir$$/isolateSeqs.fsa</constant>
 
     <step name="makeDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDataDir">
       <paramValue name="dataDir">common</paramValue>
@@ -51,17 +47,6 @@
       <paramValue name="resourcesFile">NRDB/nr</paramValue>
       <paramValue name="toFile">$$nrdbOutputFile$$</paramValue>
       <depends name="makeDataDir"/>
-    </step>
-
-  <step name="extractIsolateSeqs"
-          stepClass="ApiCommonData::Load::WorkflowSteps::ExtractNaSeqs" includeIf="$$mapIsolate$$">
-      <paramValue name="extDbRlsSpec">$$isolateExtDbRlsSpecList$$</paramValue>
-      <paramValue name="table">ExternalNASequence</paramValue>
-      <paramValue name="alternateDefline"></paramValue>
-      <paramValue name="outputFile">$$isolateSeqsFile$$</paramValue>
-      <paramValue name="separateFastaFiles">false</paramValue>
-      <paramValue name="outputDirForSeparateFiles"></paramValue>
-      <depends name="makeDataDir"/> 
     </step>
 
     <step name="shortenNrdbDefline" stepClass="ApiCommonData::Load::WorkflowSteps::ShortenDefline">

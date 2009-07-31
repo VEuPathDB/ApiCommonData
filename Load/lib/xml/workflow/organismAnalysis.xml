@@ -30,7 +30,6 @@
   <param name="genomeSize"/>
   <param name="skipProteomeAnalysis"/>
   <param name="mapEpitope"/>
-  <param name="makeAndBlockAssemblySeqs"/>
   <param name="makeAssemblySeqs"/>
   <param name="makeAssemblies"/>
   <param name="mapAssemblySeqsAndAssemblies"/>
@@ -53,7 +52,7 @@
     <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
   </step>
 
-  <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml" exclueIf="$$skipGenomeAnalysis$$">
+  <subgraph name="genomeAnalysis" xmlFile="genomeAnalysis.xml" excludeIf="$$skipGenomeAnalysis$$">
     <paramValue name="parentDataDir">$$dataDir$$</paramValue>
     <paramValue name="organismName">$$organismName$$</paramValue>
     <paramValue name="organismFullName">$$organismFullName$$</paramValue>
