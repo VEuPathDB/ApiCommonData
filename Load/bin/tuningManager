@@ -42,6 +42,9 @@ GetOptions("configFile=s" => \$configFile,
            "comment=s" => \$comment,
 	  );
 
+ApiCommonData::Load::TuningConfig::Log::setDebugFlag()
+  if $debug;
+
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"propFile\" or \"password\" must be specified")
   unless ($propFile || $password);
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")

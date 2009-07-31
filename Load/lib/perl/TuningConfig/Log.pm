@@ -13,6 +13,7 @@ BEGIN {
   my $updatePerformedFlag;
   my $errorsEncounteredFlag;
   my $partialUpdateFlag;
+  my $debugFlag;
   my $indentString;
 
   sub addLog {
@@ -47,6 +48,14 @@ BEGIN {
 
   sub decreaseIndent {
     $indentString = substr($indentString, 0, -4);
+  }
+
+  sub setDebugFlag {
+    $debugFlag = 1;
+  }
+
+  sub getDebugFlag {
+    return $debugFlag;
   }
 
   sub setUpdateNeededFlag {

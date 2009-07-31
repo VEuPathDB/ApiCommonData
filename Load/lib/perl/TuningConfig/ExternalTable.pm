@@ -8,6 +8,8 @@ use strict;
 use Data::Dumper;
 use ApiCommonData::Load::TuningConfig::Log;
 
+my $currentDate;
+
 sub new {
     my ($class,
 	$name,      # name of database table
@@ -91,11 +93,14 @@ SQL
     my ($stored_max_mod_date, $stored_row_count, $timestamp) = $stmt->fetchrow_array();
     $stmt->finish();
 
+    my $debug = ApiCommonData::Load::TuningConfig::Log::getDebugFlag();
+
     # compare stored and calculated table stats
     if ($max_mod_date eq $stored_max_mod_date && $row_count == $stored_row_count) {
       # stored stats still valid
       $self->{timestamp} = $timestamp;
-      ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) still valid for $self->{name}");
+      ApiCommonData::Load::TuningConfig::Log::addLog("    Stored timestamp ($timestamp) still valid for $self->{name}")
+	  if $debug;
     } else {
       # table has changed; tell the world, set timestamp high, and update TuningMgrExternalDependency
       if (!defined $stored_row_count) {
@@ -107,7 +112,7 @@ SQL
       } else {
 	ApiCommonData::Load::TuningConfig::Log::addErrorLog("checking state of external dependency $self->{name}");
       }
-      $self->{timestamp} = '9999-12-12 23:59:59';
+      $self->{timestamp} = $self->getCurrentDate();
 
       if ($timestamp) {
 	# ExternalDependency record exists; update it
@@ -243,6 +248,27 @@ SQL
     }
     }
 
+}
+
+sub getCurrentDate {
+    my ($self) = @_;
+
+    return $self->{currentDate}
+      if $self->{currentDate};
+
+    my $dbh = $self->{dbh};
+
+
+    my $stmt = $dbh->prepare(<<SQL);
+ select to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') from dual
+SQL
+
+    $stmt->execute()
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    ($self->{currentDate}) = $stmt->fetchrow_array();
+    $stmt->finish();
+
+    return $self->{currentDate};
 }
 
 1;

@@ -38,7 +38,7 @@ SQL
 
     if (!defined $timestamp) {
       $self->{exists} = 0;
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("No TuningTable record for $self->{name}" . "\@$dblink");
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("No TuningTable record for " . $self->getName());
     } else {
       $self->{exists} = 1;
     };
@@ -56,7 +56,7 @@ sub getTimestamp {
 sub getName {
   my ($self) = @_;
 
-  return $self->{name};
+  return $self->{name} . $self->{dblink};
 }
 
 sub exists {

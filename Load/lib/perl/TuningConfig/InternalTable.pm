@@ -125,10 +125,10 @@ sub getState {
 
   # check if the definition is different (or none is stored)
   if (!$self->{dbDef}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningTable record exists in database for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningTable record exists in database for $self->{name} -- update needed.");
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name} -- update needed.");
     $needUpdate = 1;
     ApiCommonData::Load::TuningConfig::Log::addLog("stored:\n-------\n" . $self->{dbDef} . "\n-------")
 	if $self->{debug};
@@ -147,9 +147,10 @@ sub getState {
 
     if ($childState eq "neededUpdate" || $dependency->getTimestamp() gt $self->getTimestamp()) {
       $needUpdate = 1;
+      ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} needs update because it depends on " . $dependency->getName() . ", which was found to be out of date.");
     } elsif ($childState eq "broken") {
-      ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
       $broken = 1;
+      ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} is broken because it depends on " . $dependency->getName() . ", which is broken.");
     }
   }
 
@@ -158,6 +159,7 @@ sub getState {
     ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external table " . $dependency->getName());
     if ($dependency->getTimestamp() gt $self->{timestamp}) {
       $needUpdate = 1;
+      ApiCommonData::Load::TuningConfig::Log::addLog("    creation timestamp of $self->{name} ($self->{timestamp}) is older than observation timestamp of " . $dependency->getName() . " (" . $dependency->getTimestamp() . ") -- update needed.");
     }
   }
 
@@ -166,8 +168,8 @@ sub getState {
     foreach my $dependency (@{$self->getExternalTuningTableDependencies()}) {
       ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external tuning table table " . $dependency->getName());
       if ($dependency->getTimestamp() gt $self->{timestamp}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("    . . . which is newer.");
 	$needUpdate = 1;
+	ApiCommonData::Load::TuningConfig::Log::addLog("    creation timestamp of $self->{name} ($self->{timestamp}) is older than creation timestamp of " . $dependency->getName() . " (" . $dependency->getTimestamp() . ") -- update needed.");
       }
     }
   }
