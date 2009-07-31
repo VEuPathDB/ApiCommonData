@@ -304,7 +304,7 @@
    
     <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,GiardiaDB" 
               isCacheable='true'>
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
+        <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/ -->
         <paramRef ref="orfParams.orf_ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
@@ -392,21 +392,20 @@
             and mss.aa_sequence_id = seq.aa_sequence_id
             and mss.aa_sequence_id = spec.aa_sequence_id
             and misc.na_sequence_id = nas.na_sequence_id
-            and nas.taxon_id in ($$organism$$)
            ]]>
        </sql>
     </sqlQuery>   
 
     <processQuery name="OrfsByMassSpec" includeProjects="EuPathDB"
              isCacheable='true' processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/>
-        <paramRef ref="orfParams.orf_ms_assay"/>
+        <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/ -->
+        <paramRef ref="orfParams.orf_ms_assay" quote="false"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
-        <wsColumn name="source_id" width="50" wsName="source_id"/>
-        <wsColumn name="project_id" width="32" wsName="project_id"/> 
-        <wsColumn name="sum_sequence_count" width="32" wsName="sum_sequence_count" />
-        <wsColumn name="sum_spectrum_count" width="32" wsName="sum_spectrum_count" />
+        <wsColumn name="source_id" />
+        <wsColumn name="project_id" /> 
+        <wsColumn name="sum_sequence_count" />
+        <wsColumn name="sum_spectrum_count" />
     </processQuery>
 
   </querySet>

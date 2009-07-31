@@ -82,151 +82,246 @@
     <!-- mass spec assay -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
     <enumParam name="orf_ms_assay" includeProjects="EuPathDB,CryptoDB,ToxoDB,GiardiaDB"
-             prompt="Assay Type"
+             prompt="Experiments"
              multiPick="true"
+             quote="true"
+             displayType="treeBox"
+             default="false"
              visible="true">
+
       <useTermOnly value="true" includeProjects="EuPathDB"/>
       <enumList>
+         <enumValue includeProjects="EuPathDB,CryptoDB">
+           <display><![CDATA[<i>Cryptosporidium parvum</i>]]></display>
+           <term>Cparvum</term>
+           <internal>Cparvum</internal>
+           <parentTerm></parentTerm>
+         </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel LC-MS/MS <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec 1D Gel LC-MS/MS</term>
             <internal>Wastling MassSpec 1D Gel LC-MS/MS</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[2D Gel LC-MS/MS <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec 2D Gel LC-MS/MS</term>
             <internal>Wastling MassSpec 2D Gel LC-MS/MS</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[MudPit Soluble fractions <sup>1</sup> (C.p.)]]></display>
             <term>Wastling MassSpec MudPit Soluble</term>
             <internal>Wastling MassSpec MudPit Soluble</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[MudPit Insoluble fractions <sup>1</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Wastling MassSpec MudPit Insoluble</term>
             <internal>Wastling MassSpec MudPit Insoluble</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Insoluble Excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Insoluble Non-excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)]]></display>
             <term>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</term>
             <internal>Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Soluble Excysted and Non-excysted Fraction LC-MS/MS <sup>2</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</term>
             <internal>Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
 
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 14Aug2006 <sup>3</sup> (C.p.)]]></display>
             <term>Fiser_Proteomics_14Aug2006_1D_gel</term>
             <internal>Fiser_Proteomics_14Aug2006_1D_gel</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 16May2006 <sup>3</sup> (C.p.)]]></display>
             <term>Fiser_Proteomics_16May2006_1D_gel</term>
             <internal>Fiser_Proteomics_16May2006_1D_gel</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[1D Gel 24Jun2006 <sup>3</sup> (C.p.)<br>-------------------------------------]]></display>
             <term>Fiser_Proteomics_24Jun2006_1D_gel</term>
             <internal>Fiser_Proteomics_24Jun2006_1D_gel</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
 
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Oocyst walls <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_Oocyst_walls</term>
             <internal>Ferrari_Proteomics_LTQ_Oocyst_walls</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Intact Oocysts <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_intact_oocysts_merged</term>
             <internal>Ferrari_Proteomics_LTQ_intact_oocysts_merged</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,CryptoDB">
             <display><![CDATA[Sporozoites <sup>4</sup> (C.p.)]]></display>
             <term>Ferrari_Proteomics_LTQ_Sporozoites merged</term>
             <internal>Ferrari_Proteomics_LTQ_Sporozoites_merged</internal>
+            <parentTerm>Cparvum</parentTerm>
           </enumValue>
 
-        
-  <enumValue includeProjects="EuPathDB,GiardiaDB">
-           <display><![CDATA[DTA-Select Filter (G.l.)]]></display>
-           <term>DTASelect-filter_032108_Proteomics</term>
-           <internal>DTASelect-filter_032108_Proteomics</internal>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+          <display><![CDATA[<i>Giardia lamblia</i>]]></display>
+          <term>Glamblia</term>
+          <internal>Glamblia</internal>
+          <parentTerm></parentTerm>
+        </enumValue>
+         <enumValue includeProjects="EuPathDB,GiardiaDB">
+            <display><![CDATA[DTA-Select Filter]]></display>
+            <term>DTASelect-filter_032108_Proteomics</term>
+            <internal>DTASelect-filter_032108_Proteomics</internal>
+            <parentTerm>Glamblia</parentTerm>
           </enumValue>
 
-  <enumValue includeProjects="EuPathDB,ToxoDB">
+
+         <enumValue includeProjects="EuPathDB,ToxoDB">
+           <display><![CDATA[<i>Toxoplasma gondii</i>]]></display>
+           <term>Tgondii</term>
+           <internal>Tgondii</internal>
+           <parentTerm></parentTerm>
+         </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE</term>
             <internal>Wastling 1-D SDS PAGE</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE Soluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE Soluble</term>
             <internal>Wastling 1-D SDS PAGE Soluble</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[1-D SDS PAGE Insoluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling 1-D SDS PAGE Insoluble</term>
             <internal>Wastling 1-D SDS PAGE Insoluble</internal>
-          </enumValue>
-          <enumValue includeProjects="EuPathDB,ToxoDB">
-            <display><![CDATA[MudPIT Insoluble Fraction<sup>1</sup> (T.g)]]></display>
-            <term>Wastling MudPIT Insoluble</term>
-            <internal>Wastling MudPIT Insoluble</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[MudPIT Soluble Fraction<sup>1</sup> (T.g)]]></display>
             <term>Wastling MudPIT Soluble</term>
             <internal>Wastling MudPIT Soluble</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MudPIT Insoluble Fraction<sup>1</sup> (T.g)]]></display>
+            <term>Wastling MudPIT Insoluble</term>
+            <internal>Wastling MudPIT Insoluble</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Rhoptry Fraction<sup>1*</sup> (T.g)]]></display>
             <term>Wastling Rhoptry</term>
             <internal>Wastling Rhoptry</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Conoid-enriched Fraction<sup>2</sup> (T.g)]]></display>
-            <term>Murray Conoid-enriched Fraction</term>
+            <term>Wastling Murray Conoid-enriched Fraction</term>
             <internal>Murray Conoid-enriched Fraction</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
           <enumValue includeProjects="EuPathDB,ToxoDB">
             <display><![CDATA[Conoid-depleted Fraction<sup>2</sup> (T.g)]]></display>
-            <term>Murray Conoid-depleted Fraction</term>
+            <term>Wastling Murray Conoid-depleted Fraction</term>
             <internal>Murray Conoid-depleted Fraction</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 12-2006<sup>3</sup> (T.g)]]></display>
+            <term>1D Gel Tachyzoite Membrane fraction 12-2006</term>
+            <internal>1D Gel Tachyzoite Membrane fraction 12-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[1D Gel Tachyzoite Cytosolic fraction 03-2006<sup>3</sup> (T.g)]]></display>
+            <term>1D Gel Tachyzoite Cytosolic fraction 03-2006</term>
+            <internal>1D Gel Tachyzoite Cytosolic fraction 03-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[1D Gel Tachyzoite Membrane fraction 10-2006<sup>3</sup> (T.g)]]></display>
+            <term>1D Gel Tachyzoite Membrane fraction 10-2006</term>
+            <internal>1D Gel Tachyzoite Membrane fraction 10-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MS Tachyzoite Membrane fraction 05-02-2006<sup>3</sup> (T.g)]]></display>
+            <term>MS Tachyzoite Membrane fraction 05-02-2006</term>
+            <internal>MS Tachyzoite Membrane fraction 05-02-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MS Tachyzoite Membrane fraction 06-2006<sup>3</sup> (T.g)]]></display>
+            <term>MS Tachyzoite Membrane fraction 06-2006</term>
+            <internal>MS Tachyzoite Membrane fraction 06-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MS Tachyzoite Membrane fraction 10-2006<sup>3</sup> (T.g)]]></display>
+            <term>MS Tachyzoite Membrane fraction 10-2006</term>
+            <internal>MS Tachyzoite Membrane fraction 10-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MS Tachyzoite Membrane fraction 05-10-2006<sup>3</sup> (T.g)]]></display>
+            <term>MS Tachyzoite Membrane fraction 05-10-2006</term>
+            <internal>MS Tachyzoite Membrane fraction 05-10-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[MS Tachyzoite Membrane fraction 02-03-2006<sup>3</sup> (T.g)]]></display>
+            <term>MS Tachyzoite Membrane fraction 02-03-2006</term>
+            <internal>MS Tachyzoite Membrane fraction 02-03-2006</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
 
          <enumValue includeProjects="EuPathDB,ToxoDB">
-            <display><![CDATA[MS RH Secretome fraction 2destinct peptides<sup>3</sup> (T.g)]]></display>
+            <display><![CDATA[MS RH Secretome fraction 2destinct peptides<sup>4</sup> (T.g)]]></display>
             <term>MS Carruthers 2destinct peptides</term>
             <internal>MS Carruthers 2destinct peptides</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
 
          <enumValue includeProjects="EuPathDB,ToxoDB">
-            <display><![CDATA[MS RH Secretome fraction MudPIT Twinscan hits<sup>3</sup> (T.g)]]></display>
+            <display><![CDATA[MS RH Secretome fraction MudPIT Twinscan hits<sup>4</sup> (T.g)]]></display>
             <term>MS Carruthers MudPIT Twinscan hits</term>
             <internal>MS Carruthers MudPIT Twinscan hits</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
 
           <enumValue includeProjects="EuPathDB,ToxoDB">
-            <display><![CDATA[RH Mass Spec Data (sample A)<sup>4</sup> (T.g)]]></display>
+            <display><![CDATA[RH Mass Spec Data (sample A)<sup>5</sup> (T.g)]]></display>
             <term>RH Mass Spec Data (sample A)</term>
             <internal>Moreno DTASelect filter sample A</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
 
-          <enumValue includeProjects="EuPathDB,ToxoDB">
-            <display><![CDATA[RH Mass Spec Data (sample G)<sup>4</sup> (T.g)]]></display>
+         <enumValue includeProjects="EuPathDB,ToxoDB">
+            <display><![CDATA[RH Mass Spec Data (sample G)<sup>5</sup> (T.g)]]></display>
             <term>RH Mass Spec Data (sample G)</term>
             <internal>Moreno DTASelect filter sample G</internal>
+            <parentTerm>Tgondii</parentTerm>
           </enumValue>
-         
 
       </enumList>
     </enumParam>
