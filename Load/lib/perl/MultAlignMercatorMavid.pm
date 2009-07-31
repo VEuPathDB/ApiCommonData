@@ -1,4 +1,4 @@
-package ToxoDBData::Load::MultAlignMercatorMavid;
+package ApiCommonData::Load::MultAlignMercatorMavid;
 
 use strict;
 
