@@ -1,3 +1,4 @@
+
 package ApiCommonData::Load::Utility::GOAnnotater;
 
 use strict;
@@ -58,7 +59,7 @@ sub getEvidenceCode {
   my ($self, $evidenceCode) = @_;
     
   my $evidenceId = $self->{evidenceIds}->{$evidenceCode};
-       $evidenceId || $self->userError("Evidence code '$evidenceCode' not found in db.");
+       $evidenceId || die ("Evidence code '$evidenceCode' not found in db.");
 
   return $evidenceId;
 }
