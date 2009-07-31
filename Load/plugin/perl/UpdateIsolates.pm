@@ -1,4 +1,4 @@
-package ToxoDBData::Load::Plugin::UpdateIsolates;
+package ApiCommonData::Load::Plugin::UpdateIsolates;
 
 use strict;
 use base qw(GUS::PluginMgr::Plugin);
