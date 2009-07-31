@@ -1,0 +1,555 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = shift(@ARGV);
+my $optionalArgs = \@ARGV;
+
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initGiardiaAnalysis($propertiesFile, $optionalArgs);
+
+&copyPipelineDirToComputeCluster($mgr);
+
+##############################################################################
+########   The Pipeline                                               ########
+##############################################################################
+
+$mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
+
+
+#================================================================================
+# Array data added by John B
+#================================================================================
+
+##### Load Normalized array data  #####
+
+#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
+
+#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData/arrayData.xml", "load_Spycher_arrayData","");
+
+##### Map ArrayElements to Transcript Sequences #####
+
+#&extractArrayElements($mgr,"Glamblia", 'G_lamblia_1' , 1);
+
+#&extractAnnotatedTranscriptSeq($mgr,"G. lamblia contigs from Genbank", "2007-09-24", 'G_lamblia_Transcripts',"annotatedTranscripts","Transcript","SplicedNASequence","na_sequence_id");
+
+#&mapArrayElementsToNaSequences($mgr,"Glamblia", 'G_lamblia_Transcripts',"annotatedTranscripts", 'G_lamblia_1', 90, 65, 1);
+
+#&InsertCompositeElementNaSequences($mgr, 'G_lamblia_1', 0, 'G_lamblia_Transcripts');
+
+##### Expression Profiles #####
+
+#InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites (Spycher Lab)', 1, 'G_lamblia_1', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
+
+#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profileavg.config");
+
+##### PaGE Analyses #####
+
+#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
+
+#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis/page.xml", "load_GLambliaTrophozoites_pageData", "pagePath");
+
+&extractArrayElements($mgr,"Glamblia", 'G_lamblia_2' , 1);
+
+&extractAnnotatedTranscriptSeq($mgr,"G. lamblia contigs from Genbank", "2007-09-24", 'G_lamblia_Transcripts',"annotatedTranscripts","Transcript","SplicedNASequence","na_sequence_id");
+
+&mapArrayElementsToNaSequences($mgr,"Glamblia", 'G_lamblia_Transcripts',"annotatedTranscripts", 'G_lamblia_2', 90, 65, 1);
+
+&InsertCompositeElementNaSequences($mgr, 'G_lamblia_2', 0, 'G_lamblia_Transcripts');
+
+##### Load Normalized array data  #####
+
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData_2/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
+
+&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData_2/arrayData.xml", "load_Spycher_arrayData_2","");
+
+##### Expression Profiles #####
+
+InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time', 1, 'G_lamblia_2', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
+
+#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/profileavg.config");
+
+#================================================================================
+
+##### BLASTX #####
+
+my $blastParams = "-cpus=2 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1";
+
+&documentBlast($mgr, 'BLASTX', "Genomic sequence", "NRDB", $blastParams);
+
+#regex for nr >gi|2829894|gb|AAC00602.1| Unknown protein [Arabidopsis thaliana]
+&createSimilarityDir($mgr,"GlambliaContigs","nr","gi\\|(\\d+)\\|","$blastParams Y=11192216","blastx"); 
+
+&copyFilesToComputeCluster($mgr,"GlambliaContigs-nr","similarity");
+
+&moveDownloadFile($mgr,"NRDB/nr.gz","seqfiles");
+
+&shortenDefLine($mgr,"nr","seqfiles");
+
+&extractNaSeq($mgr,"G. lamblia contigs from Genbank","2007-09-24",'Glamblia',"contigs","ExternalNASequence","source_id"); 
+
+&copyFilesToComputeCluster($mgr,"GlambliaContigs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"nr.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"GlambliaContigs","nr","apidb",4);
+
+##### BLASTP #####
+
+$blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000";
+
+&documentBlast($mgr, 'BLASTP', "Protein sequences", "NRDB", $blastParams);
+
+&createSimilarityDir($mgr,"GlambliaAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&copyFilesToComputeCluster($mgr,"GlambliaAnnotatedProteins-nr","similarity");
+
+&extractAnnotatedProteinsBySpecies($mgr, "Glamblia","G. lamblia contigs from Genbank","2007-09-24");
+
+&copyFilesToComputeCluster($mgr,"GlambliaAnnotatedProteins.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"GlambliaAnnotatedProteins","nr","apidb", 4);
+
+##### Calculate Protein Wt and Isoelectric point #####
+
+&calculateProteinMolWt($mgr,"Glamblia","G. lamblia contigs from Genbank","2007-09-24","DoTS.TranslatedAASequence");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","G. lamblia contigs from Genbank","2007-09-24");
+
+&documentAAip($mgr);
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","G. lamblia contigs from Genbank","2007-09-24");
+
+&calculateTranslatedProteinSequence($mgr,"orfs to deprecated genes","1","1.147");
+
+&calculateProteinMolWt($mgr,"GlambliaDeprecatedGene","orfs to deprecated genes","1","DoTS.TranslatedAASequence");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","orfs to deprecated genes","1");
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","orfs to deprecated genes","1");
+
+####### TMHMM steps #######
+&createTmhmmDir($mgr);
+
+&documentTMHMM($mgr,"2.0");
+
+&runTMHmm($mgr,"Glamblia");
+
+&loadTMHmmData($mgr,"Glamblia","G. lamblia contigs from Genbank","2007-09-24");
+
+####### signalP steps #######
+&createSignalPDir($mgr);
+
+my $signalPParams = "-t euk -f short -m nn+hmm -q -trunc 70";    
+
+&documentSignalP($mgr, "3.0", $signalPParams);
+
+&runSignalP($mgr,"Glamblia", $signalPParams);
+
+&loadSignalPData($mgr,"Glamblia","G. lamblia contigs from Genbank","2007-09-24");
+
+##### low complexity steps #####
+&documentLowComplexity($mgr, 'seg', 'Protein', 'x');
+
+&filterSequences($mgr,"GlambliaAnnotatedProteins.fsa","filter","seg","-x");
+
+&documentLowComplexity($mgr, 'dust', 'Genomic', 'N');
+
+&filterSequences($mgr,"GlambliaContigs.fsa","filter","dust");
+
+&loadLowComplexitySequences($mgr,"GlambliaAnnotatedProteins.fsa.seg","G. lamblia contigs from Genbank","2007-09-24","protein","x");
+
+&loadLowComplexitySequences($mgr,"GlambliaContigs.fsa.dust","G. lamblia contigs from Genbank","2007-09-24","dna","N","--LowComplexityName 'dust'");
+
+###### Finish BLASTX #######
+
+$mgr->waitForCluster("GlambliaContigs blast similarity to nr", "waitGlambliaContigs-nr");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaContigs-nr","similarity");
+
+&renameFile($mgr,"nr.fsa","nr_shortDefs.fsa","seqfiles");
+
+&renameFiLe($mgr,"nr","nr.fsa","seqfiles");
+
+&moveDownloadFile($mgr,"taxonomy/gi_taxid_prot.dmp","misc");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/GlambliaContigs-nr/master/mainresult/");
+
+&filterBLASTResults($mgr,"Eukaryota, Hexamitidae, Giardia","gi_taxid_prot.dmp","GlambliaContigs-nr","blastSimilarity.unfilt.out.gz");
+
+&extractIdsFromBlastResult($mgr,"GlambliaContigs-nr","subject");
+
+&loadNRDBSubset($mgr,"GlambliaContigs-nr","blastSimIds.out","NRDB","2008-02-06"); 
+
+&loadProteinBlast($mgr, "GlambliaContigs-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","G. lamblia contigs from Genbank","2007-09-24","NRDB","2008-02-06"); 
+
+##### Load BLASTP Results #####
+
+$mgr->waitForCluster("GlambliaAnnotatedProteins blast similarity to nr", "waitGlambliaAnnotatedProteins-nr");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaAnnotatedProteins-nr","similarity");
+
+&extractIdsFromBlastResult($mgr,"GlambliaAnnotatedProteins-nr","subject");
+
+&loadNRDBSubset($mgr,"GlambliaAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-02-06");
+
+&loadProteinBlast($mgr, "GlambliaAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","G. lamblia contigs from Genbank","2007-09-24","NRDB","2008-02-06","--subjectsLimit 50");
+
+###### ORFs ######
+
+&makeOrfFile($mgr, "GlambliaContigs.fsa", 50);
+
+&loadOrfFile($mgr, "GlambliaContigs_orf50.gff","G. lamblia contigs from Genbank","2007-09-24", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "1.147","ExternalNASequence","Giardia lamblia");
+
+##### tandem repeat steps #####
+
+my $repeatFinderArgs = "2 7 7 80 20 50 500";
+
+&documentTandemRepeatFinder($mgr,"3.21",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"GlambliaContigs.fsa","seqfiles",$repeatFinderArgs);
+
+&loadTandemRepeats($mgr,"GlambliaContigs.fsa",$repeatFinderArgs,"G. lamblia contigs from Genbank","2007-09-24");
+
+######## IEDB Epitopes ######
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Glamblia", "GlambliaAnnotatedProteins", 'G. lamblia contigs from Genbank','2007-09-24',"ExternalNASequence","Glamblia_gb");
+&copyDirectory($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/IEDB_Epitopes_fixed","$projectDir/$release/analysis_pipeline/primary/data/iedb/input","$projectDir/$release/analysis_pipeline/primary/data/iedb");
+
+&formatncbiBlastFile($mgr,"GlambliaAnnotatedProteins_GiardiaDB-1.1.fasta","Glamblia","Glamblia_proteins","T");
+&createEpitopeMapFiles($mgr, "input", "$projectDir/$release/analysis_pipeline/primary/data/blastSite", "$projectDir/$release/analysis_pipeline/primary/data/seqfiles","Gl");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Gl", "Glamblia", "Links to IEDB epitopes|05-28-2009", "G. lamblia contigs from Genbank|2007-09-24", "out"); 
+
+
+######## Psipred ########
+&documentPsipred($mgr,"2.4");
+
+&createPsipredDirWithFormattedDb($mgr,"nr_shortDefs.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"GlambliaAnnotatedProteins.fsa","seqfiles");
+
+&createPsipredSubdir($mgr,"GlambliaAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&copyFilesToComputeCluster($mgr, "psipred");
+
+&copyFilesToComputeCluster($mgr,"GlambliaAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&startPsipredOnComputeCluster($mgr,"GlambliaAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+###### InterPro ######
+
+&documentIPRScan($mgr,"v4.3.1");
+
+&createIprscanDir($mgr, "GlambliaAnnotatedProteins.fsa");
+
+&copyFilesToComputeCluster($mgr,"iprscan");
+
+&startIprScanOnComputeCluster($mgr,"GlambliaAnnotatedProteins.fsa","apidb", 1);
+
+
+##############################################################################################
+
+########################### Analysis Steps for Deprecated Genes ##############################
+
+#############################################################################################
+
+##### BLASTP #####
+
+my $blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000";
+
+&documentBlast($mgr, 'BLASTP', "Protein sequences", "NRDB", $blastParams);
+
+&createSimilarityDir($mgr,"GlambliaAnnotatedProteinsDeprecated","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&copyFilesToComputeCluster($mgr,"GlambliaAnnotatedProteinsDeprecated-nr","similarity");
+
+#&extractAnnotatedProteinsBySpecies($mgr, "Glamblia","orfs to deprecated genes","1");
+
+&copyFilesToComputeCluster($mgr,"GlambliaAnnotatedProteinsDeprecated.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"GlambliaAnnotatedProteinsDeprecated","nr","apidb", 4);
+
+####### TMHMM steps #######
+
+&runTMHmm($mgr,"GlambliaDeprecated");
+
+&loadTMHmmData($mgr,"GlambliaDeprecated","orfs to deprecated genes","1");
+
+# ####### signalP steps #######
+
+# my $signalPParams = "-t euk -f short -m nn+hmm -q -trunc 70";    
+
+# &runSignalP($mgr,"Glamblia", $signalPParams);
+
+&loadSignalPData($mgr,"GlambliaDeprecated","orfs to deprecated genes","1");
+
+# ##### low complexity steps #####
+
+&filterSequences($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa","filter","seg","-x");
+
+&loadLowComplexitySequences($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa.seg","orfs to deprecated genes","1","protein","x");
+
+######## Psipred ########
+
+&fixProteinIdsForPsipred($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa","seqfiles");
+
+&createPsipredSubdir($mgr,"GlambliaDeprecatedAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+#&copyFilesToComputeCluster($mgr, "psipred/GlambliaDeprecatedAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsa");
+
+&copyFilesToComputeCluster($mgr,"GlambliaDeprecatedAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&startPsipredOnComputeCluster($mgr,"GlambliaDeprecatedAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+# ###### InterPro ######
+
+&createIprscanDir($mgr, "GlambliaDeprecatedAnnotatedProteins.fsa");
+
+&copyFilesToComputeCluster($mgr,"iprscan/GlambliaDeprecatedAnnotatedProteins.fsa");
+
+&startIprScanOnComputeCluster($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa","apidb", 1);
+
+
+##### Load BLASTP Results #####
+
+&copyFilesFromComputeCluster($mgr,"GlambliaAnnotatedProteinsDeprecated-nr","similarity");
+
+&extractIdsFromBlastResult($mgr,"GlambliaAnnotatedProteinsDeprecated-nr","subject");
+
+&loadNRDBSubset($mgr,"GlambliaAnnotatedProteinsDeprecated-nr","blastSimIds.out","NRDB","2008-02-06");
+
+&loadProteinBlast($mgr, "GlambliaAnnotatedProteinsDeprecated-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","orfs to deprecated genes","1","NRDB","2008-02-06","--subjectsLimit 50");
+
+######## Finish Psipred ########
+
+
+&copyFilesFromComputeCluster($mgr, "GlambliaDeprecatedAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&fixPsipredFileNames($mgr, "psipred/GlambliaDeprecatedAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+### !!!!NEED TO UPDATE THE START AND END DATES BEFORE WE RUN THIS STEP!!!!! ###
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-10-09","2008-10-10","Secondary Structure prediction for all Glamblia annotated proteins","Glamblia"); 
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-10-09","2008-10-10", "GlambliaDeprecatedAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1);
+
+##### Load InterPro #####
+my $insertInterproConfig = "$projectDir/$release/resources_pipeline/primary/downloads/InterproscanData/iprscan16.2/16.2/iprscan/data/insertInterpro-config.xml";
+
+&copyFilesFromComputeCluster($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa","iprscan");
+
+&loadIprscanResults($mgr,"GlambliaDeprecatedAnnotatedProteins.fsa", "INTERPRO", "16.2", $insertInterproConfig);
+
+#########################################End Deprecated Genes #########################################################################################################################################
+
+##### ESTs #####
+
+&documentBLATAlignment($mgr,"v. 31","-minIntron 500,-minScore 30,-minIdentity 90");
+
+&makeTranscriptSeqs($mgr,"Glambliablia",5741,1);
+
+&extractTranscriptSeqs($mgr,"GlambliaESTSeqs",5741,1);
+
+&extractESTs($mgr,"dbEST","2008-02-05","Giardia","lamblia","2008-02-05",5741,1,"GiardiaDB"); 
+
+&extractIndividualNaSeq ($mgr,"G. lamblia contigs from Genbank","2007-09-24","Glamblia","genome","ExternalNASequence","source_id");
+
+&copyFilesToComputeCluster($mgr,"GlambliaGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"GlambliaESTSeqs.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr,"GlambliaESTSeqs", "GlambliaGenome",500,4,1);
+
+&copyFilesToComputeCluster($mgr,"genome");
+
+&createRepeatMaskDir_new($mgr,"GlambliaESTSeqs",4);
+
+&copyFilesToComputeCluster($mgr,"repeatmask");
+
+&startGenomeAlignOnComputeCluster($mgr,"GlambliaESTSeqs","GlambliaGenome","apidb", 4);
+
+$mgr->waitForCluster("GlambliaESTSeqs BLAT alignment to GlambliaGenome", "waitGlambliaESTSeqs-GlambliaGenome");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaESTSeqs-GlambliaGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaESTSeqs","repeatmask");
+
+&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/config/blatalignmentquality.xml","BlatAlignmentQuality");
+
+&loadContigAlignments($mgr, 184922, "GlambliaESTSeqs","GlambliaGenome","dbEST","2008-02-05","G. lamblia contigs from Genbank","2007-09-24","ExternalNASequence",">(\\d+)","load");
+
+&loadContigAlignments($mgr, 184922, "GlambliaESTSeqs","GlambliaGenome","dbEST","2008-02-05","G. lamblia contigs from Genbank","2007-09-24","ExternalNASequence",">(\\d+)","setbest","","",100);
+
+
+######## DoTS assemblies ########xs
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Glamblia", "G. lamblia contigs from Genbank","2007-09-24", 184922, "ExternalNASequence",20000);
+
+&splitCluster($mgr, "Glamblia", "ESTs");
+
+&assembleTranscripts($mgr, "Glamblia", "", "", "ESTs", 184922);
+
+&extractAssemblies($mgr, "Glamblia", "Assemblies", 184922);
+
+&copyFilesToComputeCluster($mgr, "GlambliaAssemblies.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr, "GlambliaAssemblies","GlambliaGenome",500,4,1);
+
+&copyFilesToComputeCluster($mgr, "GlambliaAssemblies-GlambliaGenome","genome");
+
+&createRepeatMaskDir_new($mgr,"GlambliaAssemblies",4);
+
+&copyFilesToComputeCluster($mgr, "GlambliaAssemblies","repeatmask");
+
+&startGenomeAlignOnComputeCluster($mgr,"GlambliaAssemblies","GlambliaGenome","apidb");
+
+$mgr->waitForCluster("GlambliaAssemblies BLAT alignment to GlambliaGenome", "waitGlambliaAssemblies-GlambliaGenome");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaAssemblies-GlambliaGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaAssemblies","repeatmask");
+
+&loadContigAlignments($mgr,184922 , "GlambliaAssemblies","GlambliaGenome","","","G. lamblia contigs from Genbank","2007-09-24","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 184922, "GlambliaAssemblies","GlambliaGenome","","","G. lamblia contigs from Genbank","2007-09-24","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+#&updateAssemblySourceId($mgr,"Glamblia",184922);
+
+######## Finish Psipred ########
+
+$mgr->waitForCluster("GlambliaAnnotatedProteinsPsipred vs nr_shortDefs.fsaFilt psipred", "GlambliaAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&copyFilesFromComputeCluster($mgr, "GlambliaAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&fixPsipredFileNames($mgr, "psipred/GlambliaAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+### !!!!NEED TO UPDATE THE START AND END DATES BEFORE WE RUN THIS STEP!!!!! ###
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-03-24","2008-03-25","Secondary Structure prediction for all Glamblia annotated proteins","Glamblia"); 
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-03-24","2008-03-25", "GlambliaAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1);
+
+##### SAGE tag steps #####
+
+$mgr->{sageTagArrays} = ({Glamblia => [{ name => "Giardia SAGE Tags", ver => "1.1" }]});
+
+&extractSageTags($mgr,"Glamblia", 'CATG');
+
+$mgr->{genomeNaSequences} = ({Glamblia =>[{name => "G. lamblia contigs from Genbank", ver=> "2007-09-24" }]});
+
+&extractGenomeNaSequences($mgr,"Glamblia", "ExternalNASequence", "contig",184922);
+
+&mapSageTagsToNaSequences($mgr,"Glamblia");
+
+&loadSageTagMap($mgr,"Glamblia");
+
+&createSageTagNormFiles ($mgr,"Characterization of the Giardia intestinalis Transcriptome", 22807);
+
+&insertNormSageTagFreqs ($mgr,"Characterization of the Giardia intestinalis Transcriptome");
+
+##### Load InterPro #####
+my $insertInterproConfig = "$projectDir/$release/resources_pipeline/primary/downloads/InterproscanData/iprscan16.2/16.2/iprscan/data/insertInterpro-config.xml";
+
+$mgr->waitForCluster("Iprscan of GlambliaAnnotatedProteins", "waitGlambliaAnnotatedProteins-iprscan");
+
+&copyFilesFromComputeCluster($mgr,"GlambliaAnnotatedProteins.fsa","iprscan");
+
+&loadIprscanResults($mgr,"GlambliaAnnotatedProteins.fsa", "INTERPRO", "16.2", $insertInterproConfig);
+
+### gives AASequences a taxon id ###
+&updateTaxonIdField($mgr,"gi_taxid_prot.dmp","^(\\d+)","--ncbiTaxIdRegex \'^\\d+\\s(\\d+)\'","select source_id, aa_sequence_id from dots.externalaasequence","NRDB|2008-02-06","DoTS::ExternalAASequence"); 
+
+### This will calc the ACTG content for all seqs in ExternalNASequence ###
+&calculateACGT($mgr);
+
+####### make download files using steps from crypto #######
+&makeESTDownloadFile($mgr,"Glamblia", "EST", 5741, "dbEST", "2008-02-05", 1, "GiardiaDB");
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedCDS","G. lamblia contigs from Genbank","2007-09-24","gb","GiardiaDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedDeprecatedCDS","G. lamblia contigs from Genbank,orfs to deprecated genes","2007-09-24,1","gb","GiardiaDB",1);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedDeprecatedTranscripts", "G. lamblia contigs from Genbank,orfs to deprecated genes","2007-09-24,1","gb","GiardiaDB",1);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedDeprecatedProteins", "G. lamblia contigs from Genbank,orfs to deprecated genes","2007-09-24,1","gb","GiardiaDB",1);
+&makeTranscriptDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedTranscripts", "G. lamblia contigs from Genbank","2007-09-24","gb","GiardiaDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Glamblia", "GlambliaAnnotatedProteins", "G. lamblia contigs from Genbank","2007-09-24","gb","GiardiaDB",0);
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Glamblia", "GlambliaOrfs", "G. lamblia contigs from Genbank","2007-09-24", 50, "GiardiaDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Glamblia", "GlambliaOrfNAs", "G. lamblia contigs from Genbank","2007-09-24", 50, "GiardiaDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Glamblia", "GlambliaGenomic",  "Giardia scaffolds","2008-02-14","gb","GiardiaDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Glamblia", "GlambliaContigs",  "G. lamblia contigs from Genbank","2007-09-24","gb","GiardiaDB","allLevels");
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Glamblia', 'assembly',184922 , 'GiardiaDB');
+
+&makeInterproDownloadFile ($mgr, 'Glamblia', "Interpro", "G. lamblia contigs from Genbank","2007-09-24", "INTERPRO", "16.2", "GiardiaDB");
+
+###### Format BLAST Files ######
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia","GlambliaOrfs_GiardiaDB-1.2.fasta","GlambliaORF","-p -C X -t release-1.2/GlambliaORF");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedTranscripts_GiardiaDB-1.2.fasta","GlambliaTranscripts","-n -t release-1.2/GlambliaTranscripts");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedDeprecatedTranscripts_GiardiaDB-1.2.fasta","GlambliaDeprecatedTranscripts","-n -t release-1.2/GlambliaDeprecatedTranscripts");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaGenomic_GiardiaDB-1.2.fasta","GlambliaGenomics","-n -t release-1.2/GlambliaGenomics");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedCDS_GiardiaDB-1.2.fasta","GlambliaCDS","-n -t release-1.2/GlambliaCDS");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedDeprecatedCDS_GiardiaDB-1.2.fasta","GlambliaDeprecatedCDS","-n -t release-1.2/GlambliaDeprecatedCDS");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedProteins_GiardiaDB-1.2.fasta","GlambliaProteins","-p -C X -t release-1.2/GlambliaProteins");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAnnotatedDeprecatedProteins_GiardiaDB-1.2.fasta","GlambliaDeprecatedProteins","-p -C X -t release-1.2/GlambliaDeprecatedProteins");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaEST_GiardiaDB-1.2.fasta","GlambliaEST","-n -t release-1.2/GlambliaEST");
+
+&xdformatDownloadFileForBlastSite($mgr,"Glamblia", "GlambliaAssembly_GiardiaDB-1.2.fasta","GlambliaAssemblies","-n -t release-1.2/GlambliaAssemblies");
+
+############### Make Brc Download Files ######################################
+
+&makeBrcSeqXmlFile($mgr, "Giardia scaffolds", "2008-02-14", "g_lamblia_atcc_50803.gff", "no", "MBL|MBL|MBL", "g_lamblia_atcc_50803.xml", "giard11p", "Genbank", "","G.lamblia");
+
+&makeBrcGOAssociationFile($mgr, "G. lamblia contigs from Genbank", "2007-09-24", "g_lamblia_atcc_50803.tab","ApiDB_GiardiaDB");
+
+
+######### Make gff files #########
+
+&clearWdkCache($mgr, "GiardiaDB");
+
+&runGffDump($mgr, "Glamblia","GiardiaDB", "Giardia lamblia ATCC 50803");
+
+&runWdkRecordDump($mgr,"Glamblia","GiardiaDB", "Giardia lamblia ATCC 50803","gene,sequence");
+
+#commented out after running for 1.1, uncomment in future runs
+&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Giardia_lamblia/g_lamblia_gene.txt", "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/GlambliaGene_GiardiaDB.txt");
+
+#&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Giardia_lamblia/g_lamblia_sequence.txt", "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/GlambliaSequence_GiardiaDB.txt");
+
+#&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Giardia_lamblia/g_lamblia.gff", "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Glamblia_GiardiaDB.gff");
+
+#&copyDirectory ($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Giardia_lamblia", "/files/cbil/data/cbil/giardiaDB/1.1/analysis_pipeline/primary/data/downloadSite");
+
+#&removeFile($mgr,"","/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/Giardia_lamblia");
+
+&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia/GlambliaOrfs_GiardiaDB-1.1.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/GiardiaDB/release-1.1/motif/GlambliaOrfs_GiardiaDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/GiardiaDB/release-1.1/motif");
+
+&concatFilesGeneral($mgr, "GlambliaAnnotatedProteins_GiardiaDB-1.1.fasta  GlambliaAnnotatedDeprecatedProteins_GiardiaDB-1.1.fasta", "/files/cbil/data/cbil/apiSiteFiles/downloadSite/GiardiaDB/release-1.1/Glamblia", "GlambliaAnnotatedProteins_GiardiaDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/GiardiaDB/release-1.1/motif");
+
+&makeCodonUsage($mgr, "Glamblia", "AnnotatedCDS");
+
+# ##### extract flat files for keyword-search web service comments will be put in comments2 starting with release-1.1#####
+#######comments.txt was not created for 1.1 but there were none so an empty file was touched-see about this for the next build############
+#&extractKeywordSearchFiles($mgr, "", "comments2", '@apidb.login_comment', "GiardiaDB");
+# &copyToDownloadSiteWithSsh ($mgr,"/www/giardiadb.org/data/download/");
+
+#### We need to add a call that runs a step to run sql, in this case to mark the deprecated genes of giardia
+#### For GiardiaDB 1.1, Brian ran this manually 
+#ApiCommonData/Load/lib/sql/giardia_deprecated_genes.sql
+
+$mgr->goodbye("Pipeline complete!\n");
+
