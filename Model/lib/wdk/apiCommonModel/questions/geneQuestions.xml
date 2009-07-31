@@ -687,54 +687,6 @@ Find genes by their Enzyme Commission (EC) number.  Use '-' in place of numbers 
            <value includeProjects="ToxoDB,EuPathDB ">T. gondii</value>
         </propertyList>
 
-        <description includeProjects="PlasmoDB">
-            <![CDATA[
-            Find genes that have evidence for protein expression
-<br><br>
-<p><b><i>P. falciparum </i></b>
-<br><br>
-Find <I>P. falciparum</I> genes that have evidence of
-                expression in a specific lifecycle stage
-                or within a subcellular fraction. 
-                Select the stage or subcellular fraction and the 
-                threshold conditions for tandem mass spectrometry, 
-                MS/MS, evidence and only genes with mass-spec evidence will be
-                returned. A lower value for the minimum percent coverage or number of spans
-                will result in increased sensitivity and lower stringency.
-                If the minimum percent coverage is set to 0%, which is the default,
-                only genes with at least some mass-spec evidence will be returned.
-                Specifying a higher number of spectra will result in the
-                selection of proteins that are more abundant.
-                These values are not strictly quantitative
-                as the detection of proteins in MS/MS analyses is dependent on
-                solubility of the proteins and other factors.
-                <br><br>
-                Selecting "any" will result in returning genes that appear in
-                any of the available datasets.
-                <BR>
-                Please refer to the original papers for more information
-                on the experiments and experimental conditions.
-                <p><sup>1</sup> In this study, the proteomes of merozoite, trophozoite, gametocyte and sporozoite stages of <i>P. falciparum</i> were analyzed using multidimensional protein identification technology (MudPIT). Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368866">here</a> for more information.
-                <p><sup>2</sup> <i>P. falciparum</i> merozoites were purified and collected (NIMR, London, UK) in sufficient quantity to perform high-throughput LC-MSMS.  Over 1000 proteins were identified (most peptides have a MASCOT score >30). (Leiden Malaria Group, unpublished).
-              
-           <p><sup>3</sup> OOCYST (OOC): oocysts (1-2 x 10^4) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 7-8 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). 
-                                                                                                                                OOCYST-DERIVED SPOROZOITES (ODS): oocyst-derived sporozoites (1.4-3.8 x10^7) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 13-14 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). 
-                                                                                                                                SALIVARY GLAND SPOROZOITES (SGS): Salivary gland sporozoites (1.3-2.5 x10^7) were collected from salivary glands of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 18-22 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain).     
-  <p><sup>4</sup> Mass spec data from fractionated parasite-infected erythrocytes. iRBC = infected red blood cell.  PIESPs = parasite-infected erythrocyte surface proteins. Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/15287581">here</a> for more information.
-</p>
-<br>
-<p><b><i>P. berghei</i></b>
-<br><br>
-<sup>5</sup> Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodium berghei</i>, one which specifically expressed green fluorescent protein (GFP) in female gametocytes (PbPFPcon) and another which exclusively expressed GFP in male gametocytes (PbGFPtub). The sex-specific expression of GFP in these clones was exploited to collect highly purified male or female gametocytes by Fluorescent Assisted Cell Sorting (FACS), in sufficient quantity to perform high-throughput liquid chromatography tandem mass spectrometry (LC-MSMS). The male proteome contained 650 proteins of which 36% (i.e. 236) were specific to the male gametocyte. The female proteome contained 541 proteins of which 19% (i.e. 101) were female-specific. However, when only the gametocyte proteome was analyzed (i.e. the 351 proteins which were also expressed in asexual stages were removed) it was observed that only 69 proteins were commonly expressed in male and female gametocytes, emphasizing the diverged features of the sexes. Of all the malaria life-cycle stages analyzed, the male gametocyte has the most distinct proteome, containing many proteins involved in flagella-based motility and rapid genome replication. See <a href="http://www.ncbi.nlm.nih.gov/pubmed/15935755">Khan et al. Cell (2005) <b>121</b>(5):675-87</a> for more details.
-</p>
-<br>
-<p><b><i>P. yoelii</i></b>
-<br><br>
-<sup>6</sup> Mass Spec of <i>Plasmodium yoelii</i> proteins identified in LS-infected hepatocytes isolated 40 and 50 hrs post-infection (LS40 and LS50).             Publication: Tarun et al. A combined transcriptome and proteome survey of malaria parasite liver stages. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18172196">Proc. Natl. Acad. Sci. U.S.A. (2008) vol. 105 (1) pp. 305-10</a>.
-</p>
-           ]]>
-        </description>
-
 
         <propertyList name="specificAttribution">
            <value includeProjects="EuPathDB,CryptoDB">Wastling1DGelLSMassSpec</value>
@@ -819,154 +771,78 @@ Find <I>P. falciparum</I> genes that have evidence of
         <description includeProjects="CryptoDB">
               <![CDATA[
              <p>
-             Find <i>Cryptosporidium</i> genes that have evidence of expression 
-             based on peptides identified by MS/MS analysis.</p>
-
-             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides 
-             that do not correspond to current gene models.
+             Find <i>Cryptosporidium</i> genes that have evidence of expression based on peptides identified by MS/MS analysis.</p>
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
              <hr>
              <sup><b>1</b></sup>
    <!-- description by J. Wastling -->
-<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
-<br>
-Mass spectrometry data were obtained from two-dimensional gel 
-electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
-MudPIT analysis of a sporozoite/oocyst excystation mixture of 
-<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
-hits were obtained resulting in 1,252 non-redundant protein identifications.  
-In addition a further 100 hits were obtained to sequences which matched a 
-predicted open reading frame, but for which no gene model currently exists.  
-In total these protein identifications represent nearly one third of the 
-entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
-that the entire proteome from all life-stages will be expressed at any 
-one time.
+             <i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+             <br>Mass spectrometry data were obtained from two-dimensional gel electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
+             MudPIT analysis of a sporozoite/oocyst excystation mixture of <i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
+             hits were obtained resulting in 1,252 non-redundant protein identifications. In addition a further 100 hits were obtained to sequences 
+             which matched a predicted open reading frame, but for which no gene model currently exists. In total these protein identifications 
+             represent nearly one third of the entire predicted proteome of <i>C. parvum</i>, although it is unlikely that the entire proteome 
+             from all life-stages will be expressed at any one time.
              <br><br>
              <sup><b>2</b></sup> <i>
-             William J. Snelling<sup>1</sup>, Qishan Lin<sup>2</sup>, 
-             John E. Moore<sup>3</sup>, B. Cherie Millar<sup>3</sup>, 
-             Fabio Tosini<sup>4</sup>, Edoardo Pozio<sup>4</sup>, 
-             James S.G. Dooley<sup>1</sup>, and Colm J. Lowery<sup>1</sup><br> 
-             <sup>1</sup>Centre for Molecular Biosciences, School of Biomedical 
-             Sciences, University of Ulster, Cromore Road, Coleraine, County 
-             Londonderry, N. Ireland, BT52 1SA. <sup>2</sup>UAlbany Proteomics 
-             Facility, Centre for Functional Genomics, University of Albany, 
-             One Discovery Drive, Rensselaer, NY 12144. <sup>3</sup>Northern 
-             Ireland Public Health Laboratory, Department of Bacteriology, 
-             Belfast City Hospital, Belfast, N. Ireland, BT9 7AD. 
-             <sup>4</sup>Department of Infectious, Parasitic, and Immunomediated 
+             William J. Snelling<sup>A</sup>, Qishan Lin<sup>B</sup>, John E. Moore<sup>C</sup>, B. Cherie Millar<sup>D</sup>, 
+             Fabio Tosini<sup>D</sup>, Edoardo Pozio<sup>D</sup>, James S.G. Dooley<sup>A</sup>, and Colm J. Lowery<sup>A</sup><br> 
+             <sup>A</sup>Centre for Molecular Biosciences, School of Biomedical Sciences, University of Ulster, Cromore Road, Coleraine, County 
+             Londonderry, N. Ireland, BT52 1SA. <sup>B</sup>UAlbany Proteomics Facility, Centre for Functional Genomics, University of Albany, 
+             One Discovery Drive, Rensselaer, NY 12144. <sup>C</sup>Northern Ireland Public Health Laboratory, Department of Bacteriology, 
+             Belfast City Hospital, Belfast, N. Ireland, BT9 7AD. <sup>D</sup>Department of Infectious, Parasitic, and Immunomediated 
              Diseases, Istituto Superiore di Sanit&#224;, Rome, Italy.<br> 
-             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a>
-</i>
+             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a></i>
              <br><br>
              <sup><b>3</b></sup>
-<!-- description by Andras Fiser -->
-<i>Joseph M. Dybas, Carlos J. Madrid-Aliste, Fa-Yun Che, Edward Nieves, Louis M. Weiss, Kami Kim, Andr&#225;s Fiser and Ruth Hogue Angeletti<br>
-<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a><br>
-Albert Einstein College of Medicine, 1300 Morris Park Avenue, Bronx, NY 10461, USA</i><br>
-<a href="http://www.fiserlab.org/biodefense">Fiser Lab</a><br><br>
-Enriched cytoskeletal and membrane fractions were separated by 1D-SDS-PAGE or 2D gel electrophoresis. The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. 
+   <!-- description by Andras Fiser -->
+             <i>Joseph M. Dybas, Carlos J. Madrid-Aliste, Fa-Yun Che, Edward Nieves, Louis M. Weiss, Kami Kim, Andr&#225;s Fiser and Ruth Hogue Angeletti<br>
+             <a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a><br>
+             Albert Einstein College of Medicine, 1300 Morris Park Avenue, Bronx, NY 10461, USA</i><br>
+             <a href="http://www.fiserlab.org/biodefense">Fiser Lab</a><br><br>
+             Enriched cytoskeletal and membrane fractions were separated by 1D-SDS-PAGE or 2D gel electrophoresis. The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. 
 <br><br>
              <sup><b>4</b></sup>
-<!-- description for Belinda ferrari data -->
-<i>Data provided by Belinda Ferrari and Quach Truong at the Department of Biological Sciences, Macquarie University, Sydney, Australia.</i><br><br>
-Subcellular proteomic analysis of <i>C. parvum</i> oocysts. Proteome analysis was carried out on two components of the oocyst after excystation. (1) the proteins identified in the sporozoites and (2) the proteins identified belonging to residual oocyst wall.  Furthermore, proteome analysis was also carried on the intact oocyst.  Consequently, the aim of this study was to identify proteins unique to each subcellular component, and also to identify proteins shared between fractions
+   <!-- description for Belinda ferrari data -->
+             <i>Data provided by Belinda Ferrari and Quach Truong at the Department of Biological Sciences, Macquarie University, Sydney, Australia.</i><br><br>
+Subcellular proteomic analysis of <i>C. parvum</i> oocysts. Proteome analysis was carried out on two components of the oocyst after excystation. (1) the proteins identified in the sporozoites and (2) the proteins identified belonging to residual oocyst wall.  Furthermore, proteome analysis was also carried on the intact oocyst.  Consequently, the aim of this study was to identify proteins unique to each subcellular component, and also to identify proteins shared between fractions.
              ]]>
-        </description>
-
-
-
-<description includeProjects="EuPathDB">
-            <![CDATA[
-            Find <i>Plasmodium berghei</i>, <i>Cryptosporidium parvum</i> and <i>Toxoplasma gondii</i> genes that have evidence for protein expression.
-             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides 
-             that do not correspond to current gene models.
-<br>
-             <hr>
-             <sup>&#182;</sup>
-   <!-- description by J. Wastling -->
-<i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
-<br>
-Mass spectrometry data were obtained from two-dimensional gel 
-electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
-MudPIT analysis of a sporozoite/oocyst excystation mixture of 
-<i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
-hits were obtained resulting in 1,252 non-redundant protein identifications.  
-In addition a further 100 hits were obtained to sequences which matched a 
-predicted open reading frame, but for which no gene model currently exists.  
-In total these protein identifications represent nearly one third of the 
-entire predicted proteome of <i>C. parvum</i>, although it is unlikely 
-that the entire proteome from all life-stages will be expressed at any 
-one time.
-             <br><br>
-             <sup>&#167;</sup> <i>
-             William J. Snelling<sup>1</sup>, Qishan Lin<sup>2</sup>, 
-             John E. Moore<sup>3</sup>, B. Cherie Millar<sup>3</sup>, 
-             Fabio Tosini<sup>4</sup>, Edoardo Pozio<sup>4</sup>, 
-             James S.G. Dooley<sup>1</sup>, and Colm J. Lowery<sup>1</sup><br> 
-             <sup>1</sup>Centre for Molecular Biosciences, School of Biomedical 
-             Sciences, University of Ulster, Cromore Road, Coleraine, County 
-             Londonderry, N. Ireland, BT52 1SA. <sup>2</sup>UAlbany Proteomics 
-             Facility, Centre for Functional Genomics, University of Albany, 
-             One Discovery Drive, Rensselaer, NY 12144. <sup>3</sup>Northern 
-             Ireland Public Health Laboratory, Department of Bacteriology, 
-             Belfast City Hospital, Belfast, N. Ireland, BT9 7AD. 
-             <sup>4</sup>Department of Infectious, Parasitic, and Immunomediated 
-             Diseases, Istituto Superiore di Sanit&#224;, Rome, Italy.<br> 
-             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a>
-</i>
-             <br><br>
-             <sup>&#165;</sup>
-<!-- description by Andras Fiser -->
-<i>Joseph M. Dybas, Carlos J. Madrid-Aliste, Fa-Yun Che, Edward Nieves, Louis M. Weiss, Kami Kim, Andr&#225;s Fiser and Ruth Hogue Angeletti </a><br>
-<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a><br>
-Albert Einstein College of Medicine, 1300 Morris Park Avenue, Bronx, NY 10461, USA<br>
-<a href="http://www.fiserlab.org/biodefense">Fiser Lab</a><br><br>
-Enriched cytoskeletal and membrane fractions were separated by 1D-SDS-PAGE or 2D gel electrophoresis. The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. 
-             <p>
-             <sup>1</sup> <i>Proteomics data from JM Wastling, SJ Sanderson, D Xia, J Yates, H Prieto.</i> Contact: Jonathan Wastling for details (j.wastling@liv.ac.uk)<br>
-             Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
-             <br>
-             <sup>*</sup><i>Bradley PJ, Ward C, Cheng SJ, Alexander DL, Coller S, Coombs GH, Dunn JD, Ferguson DJ, Sanderson SJ, Wastling JM,Boothroyd JC. 
-             Proteomic analysis of rhoptry organelles reveals many novel constituents for host-parasite interactions in Toxoplasma gondii. 
-             J Biol Chem. 2005 Oct 7;280(<b>40</b>):34245-58</i>
-             <p>
-             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, 
-	     DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
-	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. 
-	     PLoS Pathog <b>2</b>:121-138.</i><br>
-             1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
-             <p><p>
-             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. 
-             With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
-             <br><br>
-             <sup>3</sup>
-<!-- description by Andras Fiser -->
-<i>Joseph Dybas, Dmitry Rykunov, Carlos Madrid, Edward Nieves, Fa-Yun Che, Hui Xiao, Kami Kim, Louis Weiss, Ruth Hogue Angeletti, Andr&#225;s Fiser (<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a>)</i>
-<p>
-Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-SDS-PAGE or 2D gel electrophoresis.  The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. A total of 2604 proteins were identified by mass spectrometry in T. gondii to date. The 2604 predicted proteins cluster into 1534 groups of overlapping gene predictions that were identified by 14455 mass spectrometry peptide hits that gave an average 13.2% sequence coverage.
-<p>
-Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodium berghei</i>, one which specifically expressed green fluorescent protein (GFP) in female gametocytes (PbPFPcon) and another which exclusively expressed GFP in male gametocytes (PbGFPtub). The sex-specific expression of GFP in these clones was exploited to collect highly purified male or female gametocytes by Fluorescent Assisted Cell Sorting (FACS), in sufficient quantity to perform high-throughput liquid chromatography tandem mass spectrometry (LC-MSMS). The male proteome contained 650 proteins of which 36% (i.e. 236) were specific to the male gametocyte. The female proteome contained 541 proteins of which 19% (i.e. 101) were female-specific. However, when only the gametocyte proteome was analyzed (i.e. the 351 proteins which were also expressed in asexual stages were removed) it was observed that only 69 proteins were commonly expressed in male and female gametocytes, emphasizing the diverged features of the sexes. Of all the malaria life-cycle stages analyzed, the male gametocyte has the most distinct proteome, containing many proteins involved in flagella-based motility and rapid genome replication. See Khan et al. Cell (2005) <b>121</b>(5):675-87 for details.
-           ]]>
         </description>
 
 
         <description includeProjects="GiardiaDB">
               <![CDATA[
-             <p>
-             Find <i>Giardia lamblia</i> genes that have evidence of protein expression based on Mass Spec analyses.
-             <p>
-WB (genome project strain) Giardia lamblia grown axenically in TYI-S-33 medium supplemented with bile salts.  Adherent trophozoites were harvested during log-phase growth (60-70% confluent) and proteins extracted in 8M Urea and SDS.  1 mg of extracted protein was digested with sequencing-grade modified trypsin and fractionated via strong cation exchange chromatography into 90 fractions.  Each fraction was run via C-18 reverse phase chromatography and analyzed using an LTQ ProteomeX ion trap mass spectrometer (Thermo Finnigan).  Peptide assignments were made using SEQUEST, and the individual runs were compiled using DTASelect.
-<p>
-<i>Daniel M. Ratner, Michael Lubrano, Martin Steffen, John Samuelson. University of Washington, Department of Bioengineering.</i>
-<p>
-Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mapping as a complementary method to perform genome annotation. <i>Proteomics</i>, <b>2004</b>, 4, 59-7
-
-<p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
-<br>
-
+             <p>Find <i>Giardia lamblia</i> genes that have evidence of protein expression based on Mass Spec analyses.
+             <p>WB (genome project strain) Giardia lamblia grown axenically in TYI-S-33 medium supplemented with bile salts.  Adherent trophozoites were harvested during log-phase growth (60-70% confluent) and proteins extracted in 8M Urea and SDS.  1 mg of extracted protein was digested with sequencing-grade modified trypsin and fractionated via strong cation exchange chromatography into 90 fractions.  Each fraction was run via C-18 reverse phase chromatography and analyzed using an LTQ ProteomeX ion trap mass spectrometer (Thermo Finnigan).  Peptide assignments were made using SEQUEST, and the individual runs were compiled using DTASelect.
+             <p><i>Daniel M. Ratner, Michael Lubrano, Martin Steffen, John Samuelson. University of Washington, Department of Bioengineering.</i>
+             <p>Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mapping as a complementary method to perform genome annotation. <i>Proteomics</i>, <b>2004</b>, 4, 59-7
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.<br>
              ]]>
              </description>
 
+        <description includeProjects="PlasmoDB">
+            <![CDATA[
+            Find genes that have evidence for protein expression<br><br>
+            <p><b><i>P. falciparum </i></b>
+            <br><br>Find <I>P. falciparum</I> genes that have evidence of expression in a specific lifecycle stage or within a subcellular fraction. Select the stage or subcellular fraction and the threshold conditions for tandem mass spectrometry, MS/MS, evidence and only genes with mass-spec evidence will be returned. A lower value for the minimum percent coverage or number of spans will result in increased sensitivity and lower stringency. If the minimum percent coverage is set to 0%, which is the default, only genes with at least some mass-spec evidence will be returned. Specifying a higher number of spectra will result in the selection of proteins that are more abundant. These values are not strictly quantitative as the detection of proteins in MS/MS analyses is dependent on solubility of the proteins and other factors.
+            <br><br>Selecting "any" will result in returning genes that appear in any of the available datasets.
+            <br>Please refer to the original papers for more information on the experiments and experimental conditions.
+            <p><sup>1</sup> In this study, the proteomes of merozoite, trophozoite, gametocyte and sporozoite stages of <i>P. falciparum</i> were analyzed using multidimensional protein identification technology (MudPIT). Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368866">here</a> for more information.
+            <p><sup>2</sup> <i>P. falciparum</i> merozoites were purified and collected (NIMR, London, UK) in sufficient quantity to perform high-throughput LC-MSMS.  Over 1000 proteins were identified (most peptides have a MASCOT score >30). (Leiden Malaria Group, unpublished).              
+            <p><sup>3</sup> OOCYST (OOC): oocysts (1-2 x 10^4) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 7-8 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). OOCYST-DERIVED SPOROZOITES (ODS): oocyst-derived sporozoites (1.4-3.8 x10^7) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 13-14 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). SALIVARY GLAND SPOROZOITES (SGS): Salivary gland sporozoites (1.3-2.5 x10^7) were collected from salivary glands of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 18-22 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain).     
+            <p><sup>4</sup> Mass spec data from fractionated parasite-infected erythrocytes. iRBC = infected red blood cell.  PIESPs = parasite-infected erythrocyte surface proteins. Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/15287581">here</a> for more information.
+            </p><br>
+            <p><b><i>P. berghei</i></b>
+            <br><br>
+            <sup>5</sup> Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodium berghei</i>, one which specifically expressed green fluorescent protein (GFP) in female gametocytes (PbPFPcon) and another which exclusively expressed GFP in male gametocytes (PbGFPtub). The sex-specific expression of GFP in these clones was exploited to collect highly purified male or female gametocytes by Fluorescent Assisted Cell Sorting (FACS), in sufficient quantity to perform high-throughput liquid chromatography tandem mass spectrometry (LC-MSMS). The male proteome contained 650 proteins of which 36% (i.e. 236) were specific to the male gametocyte. The female proteome contained 541 proteins of which 19% (i.e. 101) were female-specific. However, when only the gametocyte proteome was analyzed (i.e. the 351 proteins which were also expressed in asexual stages were removed) it was observed that only 69 proteins were commonly expressed in male and female gametocytes, emphasizing the diverged features of the sexes. Of all the malaria life-cycle stages analyzed, the male gametocyte has the most distinct proteome, containing many proteins involved in flagella-based motility and rapid genome replication. See <a href="http://www.ncbi.nlm.nih.gov/pubmed/15935755">Khan et al. Cell (2005) <b>121</b>(5):675-87</a> for more details.
+</p>
+            <br>
+            <p><b><i>P. yoelii</i></b>
+            <br><br>
+            <sup>6</sup> Mass Spec of <i>Plasmodium yoelii</i> proteins identified in LS-infected hepatocytes isolated 40 and 50 hrs post-infection (LS40 and LS50).             Publication: Tarun et al. A combined transcriptome and proteome survey of malaria parasite liver stages. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18172196">Proc. Natl. Acad. Sci. U.S.A. (2008) vol. 105 (1) pp. 305-10</a>.
+            </p>
+           ]]>
+        </description>
 
         <description includeProjects="ToxoDB">
               <![CDATA[
@@ -978,45 +854,32 @@ Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mappin
 <i>Dong Xia, Sanya J Sanderson, Andrew R Jones, Judith H Prieto, John R Yates III, Elizabeth Bromley, Fiona M Tomley, Kalpana Lal, Robert E Sinden, Brian P Brunk, David S Roos and Jonathan M Wastling. (July 2008) The proteome of Toxoplasma gondii: integration with the genome provides novel insights into gene expression and annotation.</i> <a href="http://genomebiology.com/2008/9/7/R116" target="new">Genome Biology, 2008 <b>9</b>:R116</a>.
 <br>
              Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
-             <br>
-             <sup>*</sup><i>Bradley PJ, Ward C, Cheng SJ, Alexander DL, Coller S, Coombs GH, Dunn JD, Ferguson DJ, Sanderson SJ, Wastling JM,Boothroyd JC. 
+             <br><i>Bradley PJ, Ward C, Cheng SJ, Alexander DL, Coller S, Coombs GH, Dunn JD, Ferguson DJ, Sanderson SJ, Wastling JM,Boothroyd JC. 
              Proteomic analysis of rhoptry organelles reveals many novel constituents for host-parasite interactions in Toxoplasma gondii. 
              J Biol Chem. 2005 Oct 7;280(<b>40</b>):34245-58</i>
              <p>
-             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, 
-	     DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
-	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. 
-	     PLoS Pathog <b>2</b>:121-138.</i><br>
+             <sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
+	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. PLoS Pathog <b>2</b>:121-138.</i><br>
              1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
              <p><p>
-             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. 
-             With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
+             Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
              <br><br>
              <sup>3</sup>
-<!-- description by Andras Fiser -->
-<i>Joseph Dybas, Dmitry Rykunov, Carlos Madrid, Edward Nieves, Fa-Yun Che, Hui Xiao, Kami Kim, Louis Weiss, Ruth Hogue Angeletti, Andr&#225;s Fiser (<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a>)</i>
-<br>
-Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-SDS-PAGE or 2D gel electrophoresis.  The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. A total of 2604 proteins were identified by mass spectrometry in T. gondii to date. The 2604 predicted proteins cluster into 1534 groups of overlapping gene predictions that were identified by 14455 mass spectrometry peptide hits that gave an average 13.2% sequence coverage.
-
+    <!-- description by Andras Fiser -->
+             <i>Joseph Dybas, Dmitry Rykunov, Carlos Madrid, Edward Nieves, Fa-Yun Che, Hui Xiao, Kami Kim, Louis Weiss, Ruth Hogue Angeletti, Andr&#225;s Fiser (<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a>)</i>
+             <br>Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-SDS-PAGE or 2D gel electrophoresis.  The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. A total of 2604 proteins were identified by mass spectrometry in T. gondii to date. The 2604 predicted proteins cluster into 1534 groups of overlapping gene predictions that were identified by 14455 mass spectrometry peptide hits that gave an average 13.2% sequence coverage.
 <br><br>
              <sup>4</sup>
-<!-- description by Andras Fiser -->
-<i> Vern Carruthers </i>
-<br>
-Carruthers lab analyzed a large cohort of freely released Toxoplasma secretory proteins by using two complementary methodologies, two-dimensional electrophoresis/mass spectrometry and liquid chromatography/electrospray ionization-tandem mass spectrometry (MudPIT, shotgun proteomics). <a href="http://www.ncbi.nlm.nih.gov/pubmed/16002397">J Biol Chem. 2005 Oct 7;280(40):34233-44.</a>
-
+   <!-- description by Andras Fiser -->
+             <i> Vern Carruthers </i>
+             <br>Carruthers lab analyzed a large cohort of freely released Toxoplasma secretory proteins by using two complementary methodologies, two-dimensional electrophoresis/mass spectrometry and liquid chromatography/electrospray ionization-tandem mass spectrometry (MudPIT, shotgun proteomics). <a href="http://www.ncbi.nlm.nih.gov/pubmed/16002397">J Biol Chem. 2005 Oct 7;280(40):34233-44.</a>
 <br><br>
              <sup>5</sup>
-<!-- description by Andras Fiser -->
-<i>Silvia Moreno </i>
-<br>
-The samples were prepared by Silvia Moreno's laboratory at the University of Georgia, Athens, GA and analyzed by James Thompson and  John  Yates, III  at The Scripps Research Institute, La Jolla, CA
+   <!-- description by Andras Fiser -->
+             <i>Silvia Moreno </i>
+             <br>The samples were prepared by Silvia Moreno's laboratory at the University of Georgia, Athens, GA and analyzed by James Thompson and  John  Yates, III  at The Scripps Research Institute, La Jolla, CA
              ]]>
              </description>
-	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB,TriTrypDB">
-	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
-	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
-	</dynamicAttributes>
 
         <description includeProjects="TriTrypDB">
            <![CDATA[
@@ -1027,7 +890,109 @@ The samples were prepared by Silvia Moreno's laboratory at the University of Geo
 <sup>4</sup> Evidence of protein expression in <i>L. infantum</i> from <a href="http://www.mcgill.ca/chpi/members/ouellette/" target="_blank">Marc Ouellette's group</a> at the Centre de Recheche en Infectiologie de l'Universit&#233; Laval, Quebec, Canada.  <b>Note: All experiments were performed with <i>L. infantum</i> parasites and an "<sup>*</sup>"  indicates where mass spec results were analyzed against predicted proteins from other <i>Leishmania</i> species as indicated. This does not provide proof that these proteins are expressed in species other than <i>L. infantum</i>.</b> 
           ]]>
              </description>
+<description includeProjects="EuPathDB">
+            <![CDATA[
+            Find genes that have evidence for protein expression.
+             <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides 
+             that do not correspond to current gene models.
+             <br><hr>
+             <p><b><i>C. parvum</i></b>
+             <br><sup><b>1</b></sup>
+   <!-- description by J. Wastling -->
+             <i> S.J. Sanderson, D. Xia, H. Prieto, J. Yates, M. Heiges. J. Kissinger & J.M. Wastling (submitted). <b>Contact: Jonathan Wastling for details (<a href="mailto:j.wastling@liv.ac.uk">j.wastling@liv.ac.uk</a>)</b></i>.
+             <br>Mass spectrometry data were obtained from two-dimensional gel electrophoretic protein separations, one-dimensional gel LC-MS/MS and 
+             MudPIT analysis of a sporozoite/oocyst excystation mixture of <i>Cryptosporidium parvum</i>.  A total of approximately 3,500 protein 
+             hits were obtained resulting in 1,252 non-redundant protein identifications. In addition a further 100 hits were obtained to sequences 
+             which matched a predicted open reading frame, but for which no gene model currently exists. In total these protein identifications 
+             represent nearly one third of the entire predicted proteome of <i>C. parvum</i>, although it is unlikely that the entire proteome 
+             from all life-stages will be expressed at any one time.
+             <br>
+             <sup><b>2</b></sup> <i>
+             William J. Snelling<sup>A</sup>, Qishan Lin<sup>B</sup>, John E. Moore<sup>C</sup>, B. Cherie Millar<sup>D</sup>, 
+             Fabio Tosini<sup>D</sup>, Edoardo Pozio<sup>D</sup>, James S.G. Dooley<sup>A</sup>, and Colm J. Lowery<sup>A</sup><br> 
+             <sup>A</sup>Centre for Molecular Biosciences, School of Biomedical Sciences, University of Ulster, Cromore Road, Coleraine, County 
+             Londonderry, N. Ireland, BT52 1SA. <sup>B</sup>UAlbany Proteomics Facility, Centre for Functional Genomics, University of Albany, 
+             One Discovery Drive, Rensselaer, NY 12144. <sup>C</sup>Northern Ireland Public Health Laboratory, Department of Bacteriology, 
+             Belfast City Hospital, Belfast, N. Ireland, BT9 7AD. <sup>D</sup>Department of Infectious, Parasitic, and Immunomediated 
+             Diseases, Istituto Superiore di Sanit&#224;, Rome, Italy.<br> 
+             <a href="http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=pubmed&dopt=Abstract&list_uids=17124246"> Proteomics analysis and protein expression during sporozoite excystation of Cryptosporidium parvum (Coccidia, Apicomplexa). Mol. Cell Proteomics 2007 Feb;6(2):346-55 </a></i>
+             <br>
+             <sup><b>3</b></sup>
+   <!-- description by Andras Fiser -->
+             <i>Joseph M. Dybas, Carlos J. Madrid-Aliste, Fa-Yun Che, Edward Nieves, Louis M. Weiss, Kami Kim, Andr&#225;s Fiser and Ruth Hogue Angeletti<br>
+             <a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a><br>
+             Albert Einstein College of Medicine, 1300 Morris Park Avenue, Bronx, NY 10461, USA</i><br>
+             <a href="http://www.fiserlab.org/biodefense">Fiser Lab</a><br><br>
+             Enriched cytoskeletal and membrane fractions were separated by 1D-SDS-PAGE or 2D gel electrophoresis. The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. 
+<br>
+             <sup><b>4</b></sup>
+   <!-- description for Belinda ferrari data -->
+             <i>Data provided by Belinda Ferrari and Quach Truong at the Department of Biological Sciences, Macquarie University, Sydney, Australia.</i><br><br>
+Subcellular proteomic analysis of <i>C. parvum</i> oocysts. Proteome analysis was carried out on two components of the oocyst after excystation. (1) the proteins identified in the sporozoites and (2) the proteins identified belonging to residual oocyst wall.  Furthermore, proteome analysis was also carried on the intact oocyst.  Consequently, the aim of this study was to identify proteins unique to each subcellular component, and also to identify proteins shared between fractions.
+            <br><br>
+            <p><b><i>G. lamblia</i></b>
+            <br>WB (genome project strain) Giardia lamblia grown axenically in TYI-S-33 medium supplemented with bile salts.  Adherent trophozoites were harvested during log-phase growth (60-70% confluent) and proteins extracted in 8M Urea and SDS.  1 mg of extracted protein was digested with sequencing-grade modified trypsin and fractionated via strong cation exchange chromatography into 90 fractions.  Each fraction was run via C-18 reverse phase chromatography and analyzed using an LTQ ProteomeX ion trap mass spectrometer (Thermo Finnigan).  Peptide assignments were made using SEQUEST, and the individual runs were compiled using DTASelect.
+             <p><i>Daniel M. Ratner, Michael Lubrano, Martin Steffen, John Samuelson. University of Washington, Department of Bioengineering.</i>
+             <p>Protocol adapted from Jaffe, J.D., Berg, H.C, Church, G. M. Proteogenomic mapping as a complementary method to perform genome annotation. <i>Proteomics</i>, <b>2004</b>, 4, 59-7
+            <p>See the related <a href="showQuestion.do?questionFullName=OrfQuestions.OrfsByMassSpec"><b>ORFs with Mass Spec. Evidence</b></a> query to find genomic open reading frames which have mapped MS/MS peptides that do not correspond to current gene models.
+            <br><br>
+            <p><b><i>P. falciparum </i></b>
+            <br>Find <I>P. falciparum</I> genes that have evidence of expression in a specific lifecycle stage or within a subcellular fraction. Select the stage or subcellular fraction and the threshold conditions for tandem mass spectrometry, MS/MS, evidence and only genes with mass-spec evidence will be returned. A lower value for the minimum percent coverage or number of spans will result in increased sensitivity and lower stringency. If the minimum percent coverage is set to 0%, which is the default, only genes with at least some mass-spec evidence will be returned. Specifying a higher number of spectra will result in the selection of proteins that are more abundant. These values are not strictly quantitative as the detection of proteins in MS/MS analyses is dependent on solubility of the proteins and other factors.
+            <br>Please refer to the original papers for more information on the experiments and experimental conditions.
+            <p><sup>1</sup> In this study, the proteomes of merozoite, trophozoite, gametocyte and sporozoite stages of <i>P. falciparum</i> were analyzed using multidimensional protein identification technology (MudPIT). Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/12368866">here</a> for more information.
+            <p><sup>2</sup> <i>P. falciparum</i> merozoites were purified and collected (NIMR, London, UK) in sufficient quantity to perform high-throughput LC-MSMS.  Over 1000 proteins were identified (most peptides have a MASCOT score >30). (Leiden Malaria Group, unpublished).              
+            <p><sup>3</sup> OOCYST (OOC): oocysts (1-2 x 10^4) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 7-8 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). OOCYST-DERIVED SPOROZOITES (ODS): oocyst-derived sporozoites (1.4-3.8 x10^7) were collected from midguts of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 13-14 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain). SALIVARY GLAND SPOROZOITES (SGS): Salivary gland sporozoites (1.3-2.5 x10^7) were collected from salivary glands of Anopheles stephensi mosquitoes (Sind-Kasur strain, 3-5 days old) 18-22 days after infection with <i>P. falciparum</i> gametocytes (NF54 strain).     
+            <p><sup>4</sup> Mass spec data from fractionated parasite-infected erythrocytes. iRBC = infected red blood cell.  PIESPs = parasite-infected erythrocyte surface proteins. Click <a href="http://www.ncbi.nlm.nih.gov/pubmed/15287581">here</a> for more information.
+            </p>
+            <br><br>
+            <p><b><i>P. berghei</i></b>
+            <br><sup>5</sup> Two transgenic lines were generated of the rodent malaria parasite, <i>Plasmodium berghei</i>, one which specifically expressed green fluorescent protein (GFP) in female gametocytes (PbPFPcon) and another which exclusively expressed GFP in male gametocytes (PbGFPtub). The sex-specific expression of GFP in these clones was exploited to collect highly purified male or female gametocytes by Fluorescent Assisted Cell Sorting (FACS), in sufficient quantity to perform high-throughput liquid chromatography tandem mass spectrometry (LC-MSMS). The male proteome contained 650 proteins of which 36% (i.e. 236) were specific to the male gametocyte. The female proteome contained 541 proteins of which 19% (i.e. 101) were female-specific. However, when only the gametocyte proteome was analyzed (i.e. the 351 proteins which were also expressed in asexual stages were removed) it was observed that only 69 proteins were commonly expressed in male and female gametocytes, emphasizing the diverged features of the sexes. Of all the malaria life-cycle stages analyzed, the male gametocyte has the most distinct proteome, containing many proteins involved in flagella-based motility and rapid genome replication. See <a href="http://www.ncbi.nlm.nih.gov/pubmed/15935755">Khan et al. Cell (2005) <b>121</b>(5):675-87</a> for more details.
+</p>
+            <br><p><b><i>P. yoelii</i></b>
+            <br><sup>6</sup> Mass Spec of <i>Plasmodium yoelii</i> proteins identified in LS-infected hepatocytes isolated 40 and 50 hrs post-infection (LS40 and LS50).             Publication: Tarun et al. A combined transcriptome and proteome survey of malaria parasite liver stages. <a href="http://www.ncbi.nlm.nih.gov/pubmed/18172196">Proc. Natl. Acad. Sci. U.S.A. (2008) vol. 105 (1) pp. 305-10</a>.
+            </p>
 
+            <br><br>
+            <p><b><i>T. gondii</i></b>
+             <br><sup>1</sup> 
+<i>Dong Xia, Sanya J Sanderson, Andrew R Jones, Judith H Prieto, John R Yates III, Elizabeth Bromley, Fiona M Tomley, Kalpana Lal, Robert E Sinden, Brian P Brunk, David S Roos and Jonathan M Wastling. (July 2008) The proteome of Toxoplasma gondii: integration with the genome provides novel insights into gene expression and annotation.</i> <a href="http://genomebiology.com/2008/9/7/R116" target="new">Genome Biology, 2008 <b>9</b>:R116</a>.
+             <br>Mass spectrometry data were obtained from one-dimensional gel LC-MS/MS and MudPIT analysis of Toxoplasma gondii tachyzoites. 6,546 protein hits were obtained resulting in 2217 non-redundant protein identifications. A further 318 hits were obtained to sequences which matched 226 predicted open reading frames for which no gene model currently exists.  Additionally, 163 gene predictions were hit that did not have an overlapping gene model to which at least 50% of the peptides could be mapped.  In total these protein identifications from one stage represent nearly one third of the entire predicted proteome of T. gondii.
+             <br><i>Bradley PJ, Ward C, Cheng SJ, Alexander DL, Coller S, Coombs GH, Dunn JD, Ferguson DJ, Sanderson SJ, Wastling JM,Boothroyd JC. 
+             Proteomic analysis of rhoptry organelles reveals many novel constituents for host-parasite interactions in Toxoplasma gondii. 
+             J Biol Chem. 2005 Oct 7;280(<b>40</b>):34245-58</i>
+             <br><sup>2</sup><i>Hu K, Johnson J, Florens L, Fraunholz M, Suravajjala S, DiLullo C, Yates JR, Roos DS, Murray JM. (2006) 
+	     Cytoskeletal Components of an Invasion Machine - The Apical Complex of Toxoplasma gondii. PLoS Pathog <b>2</b>:121-138.</i><br>
+             1,887 protein hits were obtained resulting in 1,166 non-redundant protein identifications. A further 498 hits were obtained to sequences which matched 446 predicted open reading frames for which no gene model currently exists.  
+             <br>Taken together, these two datasets result in 8,433 protein hits to 2,436 non-redundant Toxoplasma proteins and 816 hits to 634 non-redundant ORFs that contain peptides that couldn't be mapped to annotated proteins. With the additional evidence from the predicted gene models, nearly 40% of the predicted proteome from T. gondii is represented.  The data provide evidence that often corroborates the annotated gene models and in some instances the peptides mapping to ORFs and predicted gene models provide evidence for alternatives to the current annotations.
+             <br><sup>3</sup>
+    <!-- description by Andras Fiser -->
+             <i>Joseph Dybas, Dmitry Rykunov, Carlos Madrid, Edward Nieves, Fa-Yun Che, Hui Xiao, Kami Kim, Louis Weiss, Ruth Hogue Angeletti, Andr&#225;s Fiser (<a href="http://toro.aecom.yu.edu/biodefense/">Einstein Biodefense Proteomics Research Center</a>)</i>
+             <br>Enriched cytoskeletal and membrane fractions of T. gondii were separated by 1D-SDS-PAGE or 2D gel electrophoresis.  The bands/spots were digested with trypsin. The resulting peptides analyzed by nanoLC-MS/MS on a ThermoFinnigan linear ion trap (LTQ) mass spectrometer.  MASCOT was used to search the merged DTA mass spectrometry data file against the appropriate database to obtained unique peptide hits.  In order to extend the dynamic range of the membrane fractions, high pH sodium carbonate was used to remove the peripheral membrane proteins. For a few experiments, the remaining cytosolic fractions were also analyzed. A total of 2604 proteins were identified by mass spectrometry in T. gondii to date. The 2604 predicted proteins cluster into 1534 groups of overlapping gene predictions that were identified by 14455 mass spectrometry peptide hits that gave an average 13.2% sequence coverage.
+             <br><sup>4</sup>
+   <!-- description by Andras Fiser -->
+             <i> Vern Carruthers </i>
+             <br>Carruthers lab analyzed a large cohort of freely released Toxoplasma secretory proteins by using two complementary methodologies, two-dimensional electrophoresis/mass spectrometry and liquid chromatography/electrospray ionization-tandem mass spectrometry (MudPIT, shotgun proteomics). <a href="http://www.ncbi.nlm.nih.gov/pubmed/16002397">J Biol Chem. 2005 Oct 7;280(40):34233-44.</a>
+             <br><sup>5</sup>
+   <!-- description by Andras Fiser -->
+             <i>Silvia Moreno </i>
+             <br>The samples were prepared by Silvia Moreno's laboratory at the University of Georgia, Athens, GA and analyzed by James Thompson and  John  Yates, III  at The Scripps Research Institute, La Jolla, CA
+
+            <br><br>            
+            <p><b><i>T. cruzi</i></b>
+            <br><sup>1</sup> Protein expression evidence from different stages of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/" target="_blank">Rick Tarleton's group</a> at the University of Georgia, Athens, Georgia.
+            <br><sup>2</sup> MS/MS analysis of <i>T. brucei</i> proteins from procyclic form (PF) and a mitochondrial enriched fraction.  This data was provided by Kenneth Stuart and Aswini Panigrahi at the Seattle Biomedical Research Institute, Seattle, Washington. Additional informations regarding this study may be accessed <a href="http://www.ncbi.nlm.nih.gov/pubmed/19105172" target="_blank">here</a>. This data may also be accessed <a href="http://www.trypsproteome.org" target="_blank">here</a>.
+            <br><sup>3</sup> This data represents peptides with post-translational modifications as described by <a href="http://www.ncbi.nlm.nih.gov/pubmed/18398879">Rosenzweig <i>et. al.</i></a>.
+            <br><br>
+            <p><b><i>L. infantum</i></b>
+            <br><sup>4</sup> Evidence of protein expression in <i>L. infantum</i> from <a href="http://www.mcgill.ca/chpi/members/ouellette/" target="_blank">Marc Ouellette's group</a> at the Centre de Recheche en Infectiologie de l'Universit&#233; Laval, Quebec, Canada.  <b>Note: All experiments were performed with <i>L. infantum</i> parasites and an "<sup>*</sup>"  indicates where mass spec results were analyzed against predicted proteins from other <i>Leishmania</i> species as indicated. This does not provide proof that these proteins are expressed in species other than <i>L. infantum</i>.</b> 
+<br>
+           ]]>
+        </description>
+
+	<dynamicAttributes includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB,TriTrypDB">
+	     <columnAttribute name="sum_sequence_count" displayName="Number of Peptide Sequences" align="center"/>
+	     <columnAttribute name="sum_spectrum_count" displayName="Number of Spectra" align="center"/>
+	</dynamicAttributes>
     </question>
 
 
