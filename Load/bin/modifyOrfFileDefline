@@ -40,7 +40,7 @@ sub printSequence{
   if($arr->[8]=~ /translation\s(\S+)$/){$seq = $1;}
   my $len = length($seq);
 
-  my $defline = ">${spAbrev}|${name}|computed|${dbName}|length=$len\n";
+  my $defline = ">${name}|computed|${dbName}|length=$len\n";
 
   print OUT $defline . CBIL::Bio::SequenceUtils::breakSequence($seq,60);
 }
