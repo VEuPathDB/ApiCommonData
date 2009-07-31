@@ -37,7 +37,7 @@ my $config = {'service' => {
                             'validator' => {
                                             'decorProperties' => {
                                                                   'rules' => {
-                                                                              'value' => 'AssayHasContact.pm,AssayHasFactorValue.pm,AssayHasLexAndNoHangingLex.pm,NoHangingBioMaterials.pm,ProtocolHasMgedType.pm,StudyDesignHasMgedType.pm,StudyHasContactAndNameAndDescription.pm,StudyHasDesignsAndFactors.pm'
+                                                                              'value' => 'AssayHasContact.pm,AssayHasFactorValue.pm,AssayHasLexAndNoHangingLex.pm,NoHangingBioMaterials.pm,StudyHasContactAndNameAndDescription.pm,StudyHasDesignsAndFactors.pm'
                                                                              }
                                                                  },
                                             'baseClass' => 'RAD::MR_T::MageImport::Service::Validator'
