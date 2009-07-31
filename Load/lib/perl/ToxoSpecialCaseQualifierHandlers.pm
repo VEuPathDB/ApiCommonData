@@ -1,4 +1,4 @@
-package ToxoDBData::Load::SpecialCaseQualifierHandlers;
+package ApiCommonData::Load::SpecialCaseQualifierHandlers;
 
 use strict;
 use GUS::Supported::SpecialCaseQualifierHandlers;
