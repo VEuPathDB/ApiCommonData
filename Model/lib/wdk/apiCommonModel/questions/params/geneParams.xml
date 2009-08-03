@@ -5703,6 +5703,61 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
  <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
+
+    <enumParam name="gl_exprnsample" includeProjects="EuPathDB,GiardiaDB"
+             prompt="Experiments"
+             quote="true"
+             multiPick="true"
+             displayType="checkBox"
+             default="false"
+             visible="true">
+
+         <help>Choose one or more comparisons.  Choosing more than one will result in the union of results.</help>
+
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
+      <enumList>
+          <enumValue>
+           <display><![CDATA[40 degrees C vs. Control <sup>1</sup>]]></display>
+            <term>PaGE Analysis - 40 degrees C vs. Control</term>
+            <internal>PaGE Analysis - 40 degrees C vs. Control</internal>
+          </enumValue>
+          <enumValue>
+           <display><![CDATA[7.1mM DTT vs. Control (30min) <sup>1</sup>]]></display>
+            <term>PaGE Analysis - 7.1mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 7.1mM DTT vs. Control</internal>
+          </enumValue>
+          <enumValue>
+           <display><![CDATA[14.2mM DTT vs. Control (30min) <sup>1</sup>]]></display>
+            <term>PaGE Analysis - 14.2mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 14.2mM DTT vs. Control</internal>
+          </enumValue>
+          <enumValue>
+           <display><![CDATA[21.3mM DTT vs. Control (30min) <sup>1</sup>]]></display>
+            <term>PaGE Analysis - 21.3mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 21.3mM DTT vs. Control</internal>
+          </enumValue>
+
+
+          <enumValue>
+           <display><![CDATA[30min vs. Control (14.2mM DTT) <sup>2</sup>]]></display>
+            <term>PaGE Analysis - 30min 14.2mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 30min 14.2mM DTT vs. Control</internal>
+          </enumValue>
+          <enumValue>
+           <display><![CDATA[60min vs. Control (14.2mM DTT) <sup>2</sup>]]></display>
+            <term>PaGE Analysis - 60min 14.2mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 60min 14.2mM DTT vs. Control</internal>
+          </enumValue>
+          <enumValue>
+           <display><![CDATA[120min vs. Control (14.2mM DTT) <sup>2</sup>]]></display>
+            <term>PaGE Analysis - 120min 14.2mM DTT vs. Control</term>
+            <internal>PaGE Analysis - 120min 14.2mM DTT vs. Control</internal>
+          </enumValue>
+      </enumList>
+    </enumParam>
+
+
+<!--
       <flatVocabParam name="gl_exprnsample" includeProjects="GiardiaDB,EuPathDB"
                      queryRef="GeneVQ.GiardiaAnalyses"
                      prompt="Comparison"
@@ -5712,6 +5767,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </help>
  <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
+
+-->
 
     <enumParam name="exprnsample"
                prompt="Expression of :"

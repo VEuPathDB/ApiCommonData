@@ -2760,13 +2760,15 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                    max(round(de.fold_change, 2)) as fold_change,
                    max(round(de.confidence, 2)) as confidence
             from rad.DIFFERENTIALEXPRESSION de, Core.TABLEINFO ti, 
-                 rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, apidb.geneattributes g
+                 rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, 
+                 apidb.geneattributes g, rad.analysis a
             where ti.name = 'ShortOligoFamily'
               and de.table_id = ti.table_id
               and de.row_id = cs.composite_element_id
               and cs.na_sequence_id = t.na_sequence_id
               and t.parent_id = g.na_feature_id
-              and de.analysis_id = $$gl_exprnsample$$
+              and de.analysis_id = a.analysis_id
+              and a.name in ($$gl_exprnsample$$)
               AND de.confidence >= $$confidence$$
               AND ($$regulated_dir$$ (de.fold_change) >= $$fold_change$$)
              group by g.source_id
