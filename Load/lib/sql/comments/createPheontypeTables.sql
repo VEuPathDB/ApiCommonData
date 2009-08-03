@@ -104,6 +104,26 @@ INSERT INTO comments2.MutantCategory VALUES(6, 'EGRESS');
 INSERT INTO comments2.MutantCategory VALUES(7, 'Host Response');
 INSERT INTO comments2.MutantCategory VALUES(8, 'Other');
 
+CREATE TABLE comments2.PhenotypeMutantCategory
+(
+  comment_mutant_category_id NUMBER(10) NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+  mutant_category_id NUMBER(10) NOT NULL,
+  CONSTRAINT comment_mutant_category_key PRIMARY KEY (comment_mutant_category_id),
+  CONSTRAINT pmc_category_fkey FOREIGN KEY (comment_id)
+     REFERENCES comments2.comments (comment_id),
+  CONSTRAINT comment_mutant_category_fkey FOREIGN KEY (mutant_category_id)
+     REFERENCES comments2.MutantCategory (mutant_category_id)
+);
+
+GRANT insert, update, delete on comments2.PhenotypeMutantCategory to GUS_W;
+GRANT select on comments2.PhenotypeMutantCategory to GUS_R;
+
+CREATE SEQUENCE comments2.phenotypeMutantCategory_pkseq START WITH 1 INCREMENT BY 1;
+
+GRANT select on comments2.phenotypeMutantCategory_pkseq to GUS_W;
+GRANT select on comments2.phenotypeMutantCategory_pkseq to GUS_R; 
+
 CREATE TABLE comments2.MutantExpression
 (
   mutant_expression_id NUMBER(2) NOT NULL,
