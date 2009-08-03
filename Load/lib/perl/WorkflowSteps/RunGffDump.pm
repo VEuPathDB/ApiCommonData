@@ -47,8 +47,4 @@ sub getConfigDeclaration {
          );
 }
 
- my $cmd = <<"EOF";
-     wdkCache \\
-     -model $model \\
-     -recreate\\
-     2>> $logFile
+

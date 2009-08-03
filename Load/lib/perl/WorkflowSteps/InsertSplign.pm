@@ -7,7 +7,7 @@ use ApiCommonData::Load::WorkflowSteps::WorkflowStep;
 
 
 sub run {
-  my ($self, $test) = @_;
+  my ($self, $test, $undo) = @_;
 
   my $queryExtDbRlsSpec = $self->getParamValue('queryExtDbRlsSpec');
 
@@ -26,7 +26,7 @@ sub run {
     $self->testInputFile('inputFile', "$localDataDir/$inputFile");
   }
 
-  $self -> runPlugin ("ApiCommonData::Load::Plugin::InsertSplignAlignments", $args);
+  $self -> runPlugin ($test, $undo, "ApiCommonData::Load::Plugin::InsertSplignAlignments", $args);
 }
 
 
