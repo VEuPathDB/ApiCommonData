@@ -1,0 +1,1296 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = shift(@ARGV);
+my $optionalArgs = \@ARGV;
+
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initCryptoAnalysis($propertiesFile, $optionalArgs);
+
+my $dataDir = $mgr->{dataDir};
+
+##############################################################################
+########                     The Pipeline                             ########
+##############################################################################
+
+############################
+######   ORFs         ######
+############################
+
+###### extract genome seqs for this and subsequenct steps ######
+
+&extractNaSeq($mgr,'C.muris scaffold from Genbank','2008-08-13','Cmuris','scaffolds',"ExternalNASequence",'source_id',5808);
+
+&extractNaSeq($mgr,'C.hominis scaffold from Genbank',"2008-08-13",'Chominis','scaffolds','ExternalNASequence','source_id',237895);
+
+&extractNaSeq($mgr,'C.parvum scaffold from Genbank','2008-08-13','Cparvum','scaffolds','ExternalNASequence','source_id',353152);
+
+&extractNaSeq($mgr,'C.parvum Chr6 scaffold from Genbank','2008-08-13','CparvumChr6','scaffolds','ExternalNASequence','source_id',5807);
+
+&extractNaSeq ($mgr,"dbEST","2008-10-17","Cmuris","ESTs","ExternalNASequence","source_id",5808,undef,1);
+
+&extractNaSeq ($mgr,"dbEST","2008-10-17","Cparvum","ESTs","ExternalNASequence","source_id",5807,undef,1);
+
+&extractNaSeq ($mgr,"WatanabeCpHNJ-1_ESTs","2006-11-02","CparvumWatanabeCpHNJ","ESTs","ExternalNASequence","source_id",5807,undef,1);
+
+
+###### run OrfFiner that creates a gff file #######
+
+&makeOrfFile($mgr, 'CmurisScaffolds.fsa', 50);
+
+&makeOrfFile($mgr, 'ChominisScaffolds.fsa', 50);
+
+&makeOrfFile($mgr, 'CparvumScaffolds.fsa', 50);
+
+&makeOrfFile($mgr, 'CparvumChr6Scaffolds.fsa', 50);
+
+&makeOrfFile($mgr, 'CmurisESTs.fsa', 50);
+
+&makeOrfFile($mgr, 'CparvumESTs.fsa', 50);
+
+&makeOrfFile($mgr, 'CparvumWatanabeCpHNJESTs.fsa', 50);
+
+###### load ORF results ######
+
+&loadOrfFile($mgr, 'CmurisScaffolds_orf50.gff','C.muris scaffold from Genbank','2008-08-13', "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium muris');
+
+&loadOrfFile($mgr, 'ChominisScaffolds_orf50.gff','C.hominis scaffold from Genbank','2008-08-13', "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium hominis');
+
+&loadOrfFile($mgr, 'CparvumScaffolds_orf50.gff','C.parvum scaffold from Genbank','2008-08-13', "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium parvum');
+
+&loadOrfFile($mgr, 'CparvumChr6Scaffolds_orf50.gff','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium parvum');
+
+&loadOrfFile($mgr, 'CmurisESTs_orf50.gff',"dbEST","2008-10-17","$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium muris');
+
+&loadOrfFile($mgr, 'CparvumESTs_orf50.gff',"dbEST","2008-10-17","$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium parvum');
+
+&loadOrfFile($mgr, 'CparvumWatanabeCpHNJESTs_orf50.gff',"WatanabeCpHNJ-1_ESTs","2006-11-02","$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", '1.176','ExternalNASequence','Cryptosporidium parvum');
+
+
+##############################################
+##########    BLASTX #########################
+##############################################
+
+my $blastParams = "-cpus=2 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1";
+
+&documentBlast($mgr, 'BLASTX', "Genomic sequence", "NRDB", $blastParams);
+
+#regex for nr >gi|2829894|gb|AAC00602.1| Unknown protein [Arabidopsis thaliana]
+
+# ###### create BLASTX dirs and copy to cluster ######
+
+# &createSimilarityDir($mgr,"CmurisScaffolds","nr","gi\\|(\\d+)\\|","$blastParams Y=9210188","blastx");
+
+# &createSimilarityDir($mgr,"ChominisScaffolds","nr","gi\\|(\\d+)\\|","$blastParams Y=8743570","blastx");
+
+# &createSimilarityDir($mgr,"CparvumScaffolds","nr","gi\\|(\\d+)\\|","$blastParams Y=10366182","blastx");
+
+# &createSimilarityDir($mgr,"CparvumChr6Scaffolds","nr","gi\\|(\\d+)\\|","$blastParams Y=2329406","blastx");
+
+# &copyFilesToComputeCluster($mgr,"CmurisScaffolds-nr","similarity");
+
+# &copyFilesToComputeCluster($mgr,"ChominisScaffolds-nr","similarity");
+
+# &copyFilesToComputeCluster($mgr,"CparvumScaffolds-nr","similarity");
+
+# &copyFilesToComputeCluster($mgr,"CparvumChr6Scaffolds-nr","similarity");
+
+# ######  make nr file with shorter deflines and copy to cluster, copy already existing genome files to cluster #####
+
+# &moveDownloadFile($mgr,"NRDB/nr.gz","seqfiles");
+
+# &shortenDefLine($mgr,"nr","seqfiles");
+
+# &copyFilesToComputeCluster($mgr,"CmurisScaffolds.fsa","seqfiles");
+
+# &copyFilesToComputeCluster($mgr,"ChominisScaffolds.fsa","seqfiles");
+
+# &copyFilesToComputeCluster($mgr,"CparvumScaffolds.fsa","seqfiles");
+
+# &copyFilesToComputeCluster($mgr,"CparvumChr6Scaffolds.fsa","seqfiles");
+
+# &copyFilesToComputeCluster($mgr,"nr.fsa","seqfiles");
+
+# ###### start BLASTX on cluster and wait for results
+
+# &startProteinBlastOnComputeCluster($mgr,"CmurisScaffolds","nr","apidb","4");
+
+# &startProteinBlastOnComputeCluster($mgr,"ChominisScaffolds","nr","apidb","4");
+
+# &startProteinBlastOnComputeCluster($mgr,"CparvumScaffolds","nr","apidb","4");
+
+# &startProteinBlastOnComputeCluster($mgr,"CparvumChr6Scaffolds","nr","apidb","4");
+
+# $mgr->waitForCluster("CmurisScaffolds blast similarity to nr", "waitCmurisScaffolds-nr");
+
+# $mgr->waitForCluster("ChominisScaffolds blast similarity to nr", "waitChominisScaffolds-nr");
+
+# $mgr->waitForCluster("CparvumScaffolds blast similarity to nr", "waitCparvumScaffolds-nr");
+
+# $mgr->waitForCluster("CparvumChr6 blast similarity to nr", "waitCparvumChr6-nr");
+
+# ###### copy results from cluster, filter results, load relevant NRDB records not already in db, load BLASTX results ######
+
+# &copyFilesFromComputeCluster($mgr,"CmurisScaffolds-nr","similarity");
+
+# &copyFilesFromComputeCluster($mgr,"ChominisScaffolds-nr","similarity");
+
+# &copyFilesFromComputeCluster($mgr,"CparvumScaffolds-nr","similarity");
+
+# &copyFilesFromComputeCluster($mgr,"CparvumChr6Scaffolds-nr","similarity");
+
+# &renameFile($mgr,"nr.fsa","nr_shortDefs.fsa","seqfiles");
+
+# &renameFile($mgr,"nr","nr.fsa","seqfiles");
+
+# &moveDownloadFile($mgr,"taxonomy/gi_taxid_prot.dmp.gz","misc");
+
+# &renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfiltered.out.gz","similarity/CmurisScaffolds-nr/master/mainresult/");
+
+# &renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfiltered.out.gz","similarity/ChominisScaffolds-nr/master/mainresult/");
+
+# &renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfiltered.out.gz","similarity/CparvumScaffolds-nr/master/mainresult/");
+
+# &renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfiltered.out.gz","similarity/CparvumChr6Scaffolds-nr/master/mainresult/");
+
+# &filterBLASTResults($mgr,"Eukaryota Apicomplexa Cryptosporidium","gi_taxid_prot.dmp","CmurisScaffolds-nr","blastSimilarity.unfiltered.out.gz");
+
+# &filterBLASTResults($mgr,"Eukaryota Apicomplexa Cryptosporidium","gi_taxid_prot.dmp","ChominisScaffolds-nr","blastSimilarity.unfiltered.out.gz");
+
+# &filterBLASTResults($mgr,"Eukaryota Apicomplexa Cryptosporidium","gi_taxid_prot.dmp","CparvumScaffolds-nr","blastSimilarity.unfiltered.out.gz");
+
+# &filterBLASTResults($mgr,"Eukaryota Apicomplexa Cryptosporidium","gi_taxid_prot.dmp","CparvumChr6Scaffolds-nr","blastSimilarity.unfiltered.out.gz");
+
+# &extractIdsFromBlastResult($mgr,"CmurisScaffolds-nr","subject");
+
+# &extractIdsFromBlastResult($mgr,"ChominisScaffolds-nr","subject");
+
+# &extractIdsFromBlastResult($mgr,"CparvumScaffolds-nr","subject");
+
+# &extractIdsFromBlastResult($mgr,"CparvumChr6Scaffolds-nr","subject");
+
+# loadNRDBSubset($mgr,"CmurisScaffolds-nr","blastSimIds.out","NRDB","2008-07-18");
+
+# loadNRDBSubset($mgr,"ChominisScaffolds-nr","blastSimIds.out","NRDB","2008-07-18");
+
+# loadNRDBSubset($mgr,"CparvumScaffolds-nr","blastSimIds.out","NRDB","2008-07-18");
+
+# loadNRDBSubset($mgr,"CparvumChr6Scaffolds-nr","blastSimIds.out","NRDB","2008-07-18");
+
+# &loadProteinBlast($mgr, "CmurisScaffolds-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.muris scaffold from Genbank','2008-08-13',"NRDB","2008-07-18");
+
+# &loadProteinBlast($mgr, "ChominisScaffolds-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.hominis scaffold from Genbank','2008-08-13',"NRDB","2008-07-18");
+
+# &loadProteinBlast($mgr, "CparvumScaffolds-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.parvum scaffold from Genbank','2008-08-13',"NRDB","2008-07-18");
+
+# &loadProteinBlast($mgr, "CparvumChr6Scaffolds-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.parvum  chr6 scaffold from Genbank','2008-08-13',"NRDB","2008-07-18");
+
+
+#####################################
+#####        BLASTP             #####
+#####################################
+
+# $blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1";
+
+# &documentBlast($mgr, 'BLASTP', 'Protein sequences', 'NRDB', $blastParams);
+
+# ###### create BLASTP dirs and copy to cluster ######
+
+# &createSimilarityDir($mgr,'CmurisAnnotatedProteins','nr',"gi\\|(\\d+)\\|", $blastParams, 'blastp');
+
+# &createSimilarityDir($mgr,'ChominisAnnotatedProteins','nr',"gi\\|(\\d+)\\|", $blastParams, 'blastp');
+
+# &createSimilarityDir($mgr,'CparvumAnnotatedProteins','nr',"gi\\|(\\d+)\\|", $blastParams, 'blastp');
+
+# &createSimilarityDir($mgr,'CparvumChr6AnnotatedProteins','nr',"gi\\|(\\d+)\\|", $blastParams, 'blastp');
+
+# &copyFilesToComputeCluster($mgr,'CmurisAnnotatedProteins-nr','similarity');
+
+# &copyFilesToComputeCluster($mgr,'ChominisAnnotatedProteins-nr','similarity');
+
+# &copyFilesToComputeCluster($mgr,'CparvumAnnotatedProteins-nr','similarity');
+
+# &copyFilesToComputeCluster($mgr,'CparvumChr6AnnotatedProteins-nr','similarity');
+
+# ###### extract sequences for BLASTP and copy to cluster ######
+
+# &extractAnnotatedProteinsBySpecies($mgr, 'Cmuris','C.muris scaffold from Genbank','2008-08-13', 5808);
+
+# &extractAnnotatedProteinsBySpecies($mgr, 'Chominis','C.hominis scaffold from Genbank','2008-08-13', 237895);
+
+# &extractAnnotatedProteinsBySpecies($mgr, 'Cparvum','C.parvum scaffold from Genbank','2008-08-13', 353152);
+
+# &extractAnnotatedProteinsBySpecies($mgr, 'CparvumChr6','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', 5807);
+
+# &copyFilesToComputeCluster($mgr,'CmurisAnnotatedProteins.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'ChominisAnnotatedProteins.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'CparvumAnnotatedProteins.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'CparvumChr6AnnotatedProteins.fsa','seqfiles');
+
+# ###### run BLASTP on cluster and wait for results ######
+
+# &startProteinBlastOnComputeCluster($mgr,'CmurisAnnotatedProteins','nr','apidb');
+
+# &startProteinBlastOnComputeCluster($mgr,'ChominisAnnotatedProteins','nr','apidb');
+
+# &startProteinBlastOnComputeCluster($mgr,'CparvumAnnotatedProteins','nr','apidb');
+
+# &startProteinBlastOnComputeCluster($mgr,'CparvumChr6AnnotatedProteins','nr','apidb');
+
+# $mgr->waitForCluster("CmurisAnnotatedProteins blast similarity to nr", "waitCmurisAnnotatedProteins-nr");
+
+# $mgr->waitForCluster("ChominisAnnotatedProteins blast similarity to nr", "waitChominisAnnotatedProteins-nr");
+
+# $mgr->waitForCluster("CparvumAnnotatedProteins blast similarity to nr", "waitCparvumAnnotatedProteins-nr");
+
+# $mgr->waitForCluster("CparvumChr6AnnotatedProteins blast similarity to nr", "waitCparvumChr6AnnotatedProteins-nr");
+
+# ###### Copy back results, load relevant NRDB records not in db, and Load BLASTP Results ######
+
+# &copyFilesFromComputeCluster($mgr,'CmurisAnnotatedProteins-nr','similarity');
+
+# &copyFilesFromComputeCluster($mgr,'ChominisAnnotatedProteins-nr','similarity');
+
+# &copyFilesFromComputeCluster($mgr,'CparvumAnnotatedProteins-nr','similarity');
+
+# &copyFilesFromComputeCluster($mgr,'CparvumChr6AnnotatedProteins-nr','similarity');
+
+# &extractIdsFromBlastResult($mgr,'CmurisAnnotatedProteins-nr','subject');
+
+# &extractIdsFromBlastResult($mgr,'ChominisAnnotatedProteins-nr','subject');
+
+# &extractIdsFromBlastResult($mgr,'CparvumAnnotatedProteins-nr','subject');
+
+# &extractIdsFromBlastResult($mgr,'CparvumChr6AnnotatedProteins-nr','subject');
+
+# &loadNRDBSubset($mgr,'CmurisAnnotatedProteins-nr','blastSimIds.out','NRDB',"2008-07-18");
+
+# &loadNRDBSubset($mgr,'ChominisAnnotatedProteins-nr','blastSimIds.out','NRDB',"2008-07-18");
+
+# &loadNRDBSubset($mgr,'CparvumAnnotatedProteins-nr','blastSimIds.out','NRDB',"2008-07-18");
+
+# &loadNRDBSubset($mgr,'CparvumChr6AnnotatedProteins-nr','blastSimIds.out','NRDB',"2008-07-18");
+
+# &loadProteinBlast($mgr, 'CmurisAnnotatedProteins-nr','DoTS::TranslatedAASequence', 'DoTS::ExternalAASequence','source_id','source_id','C.muris scaffold from Genbank','2008-08-13','NRDB','2008-07-18',"--subjectsLimit 50");
+
+# &loadProteinBlast($mgr, 'ChominisAnnotatedProteins-nr','DoTS::TranslatedAASequence', 'DoTS::ExternalAASequence','source_id','source_id','C.hominis scaffold from Genbank','2008-08-13','NRDB','2008-07-18',"--subjectsLimit 50");
+
+# &loadProteinBlast($mgr, 'CparvumAnnotatedProteins-nr','DoTS::TranslatedAASequence', 'DoTS::ExternalAASequence','source_id','source_id','C.parvum scaffold from Genbank','2008-08-13','NRDB','2008-07-18',"--subjectsLimit 50");
+
+# &loadProteinBlast($mgr, 'CparvumChr6AnnotatedProteins-nr','DoTS::TranslatedAASequence', 'DoTS::ExternalAASequence','source_id','source_id','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13','NRDB','2008-07-18',"--subjectsLimit 50");
+
+
+##########################################################################
+#####    Calculate Protein Wt, MW min/max, and Isoelectric point     #####
+##########################################################################
+
+# &calculateProteinMolWt($mgr,'Cmuris','C.muris scaffold from Genbank','2008-08-13','DoTS.TranslatedAASequence');
+
+# &calculateProteinMolWt($mgr,'Chominis','C.hominis scaffold from Genbank','2008-08-13','DoTS.TranslatedAASequence');
+
+# &calculateProteinMolWt($mgr,'Cparvum','C.parvum scaffold from Genbank','2008-08-13','DoTS.TranslatedAASequence');
+
+# &calculateProteinMolWt($mgr,'CparvumChr6','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13','DoTS.TranslatedAASequence');
+
+# &insertAASeqMWMinMax($mgr,'DoTS.TranslatedAASequence",'C.muris scaffold from Genbank','2008-08-13');
+
+# &insertAASeqMWMinMax($mgr,'DoTS.TranslatedAASequence','C.hominis scaffold from Genbank','2008-08-13');
+
+# &insertAASeqMWMinMax($mgr,'DoTS.TranslatedAASequence','C.parvum scaffold from Genbank','2008-08-13');
+
+# &insertAASeqMWMinMax($mgr,'DoTS.TranslatedAASequence','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13');
+
+#&documentAAip($mgr);
+
+# &insertAAiP($mgr,'DoTS.TranslatedAASequence','C.muris scaffold from Genbank','2008-08-13');
+
+# &insertAAiP($mgr,'DoTS.TranslatedAASequence','C.hominis scaffold from Genbank','2008-08-13');
+
+# &insertAAiP($mgr,'DoTS.TranslatedAASequence','C.parvum scaffold from Genbank','2008-08-13');
+
+# &insertAAiP($mgr,'DoTS.TranslatedAASequence','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13');
+
+####################################
+######     TMHMM steps       #######
+####################################
+
+&createTmhmmDir($mgr);
+
+&documentTMHMM($mgr, '2.0a');
+
+# &runTMHmm($mgr,'Cmuris');
+
+# &runTMHmm($mgr,'Chominis');
+
+# &runTMHmm($mgr,'Cparvum');
+
+# &runTMHmm($mgr,'CparvumChr6x');
+
+# &loadTMHmmData($mgr,'Cmuris','C.muris scaffold from Genbank','2008-08-13');
+
+# &loadTMHmmData($mgr,'Chominis','C.hominis scaffold from Genbank','2008-08-13');
+
+# &loadTMHmmData($mgr,'Cparvum','C.parvum scaffold from Genbank','2008-08-13');
+
+# &loadTMHmmData($mgr,'CparvumChr6','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13');
+
+###################################
+#######    signalP steps    #######
+###################################
+
+&createSignalPDir($mgr);
+
+my $signalPParams = "-t euk -f short -m nn+hmm -q -trunc 70";
+
+# &documentSignalP($mgr, '3.0', $signalPParams);
+
+# &runSignalP($mgr,'Cmuris', $signalPParams);
+
+# &runSignalP($mgr,'Chominis', $signalPParams);
+
+# &runSignalP($mgr,'Cparvum', $signalPParams);
+
+# &runSignalP($mgr,'CparvumChr6', $signalPParams);
+
+# &loadSignalPData($mgr,'Cmuris','C.muris scaffold from Genbank','2008-08-13');
+
+# &loadSignalPData($mgr,'Chominis','C.hominis scaffold from Genbank','2008-08-13');
+
+# &loadSignalPData($mgr,'Cparvum','C.parvum scaffold from Genbank','2008-08-13');
+
+# &loadSignalPData($mgr,'CparvumChr6','C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13');
+
+############################################
+######## Psipred ########
+############################################
+
+&documentPsipred($mgr,'2.4');
+
+&createPsipredDirWithFormattedDb($mgr,'nr.fsa','seqfiles');
+
+############  prep protein files for psipred, create psipred dirs, copy dir and files to cluster ###################
+
+# &fixProteinIdsForPsipred($mgr,'CmurisAnnotatedProteins.fsa','seqfiles');
+
+# &fixProteinIdsForPsipred($mgr,'ChominisAnnotatedProteins.fsa','seqfiles');
+
+# &fixProteinIdsForPsipred($mgr,'CparvumAnnotatedProteins.fsa','seqfiles');
+
+# &fixProteinIdsForPsipred($mgr,'CparvumiowaChr6AnnotatedProteins.fsa','seqfiles');
+
+# &createPsipredSubdir($mgr,'CmurisAnnotatedProteinsPsipred.fsa','nr.fsa');
+
+# &createPsipredSubdir($mgr,'ChominisAnnotatedProteinsPsipred.fsa','nr.fsa');
+
+# &createPsipredSubdir($mgr,'CparvumAnnotatedProteinsPsipred.fsa','nr.fsa');
+
+# &createPsipredSubdir($mgr,'CparvumChr6AnnotatedProteinsPsipred.fsa','nr.fsa');
+
+# &copyFilesToComputeCluster($mgr, "psipred");
+
+# &copyFilesToComputeCluster($mgr,'CmurisAnnotatedProteinsPsipred.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'ChominisAnnotatedProteinsPsipred.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'CparvumAnnotatedProteinsPsipred.fsa','seqfiles');
+
+# &copyFilesToComputeCluster($mgr,'CparvumChr6AnnotatedProteinsPsipred.fsa','seqfiles');
+
+############# start Psipred on cluster and wait for results  #################
+
+# &startPsipredOnComputeCluster($mgr,'CmurisAnnotatedProteinsPsipred.fsa','nr.fsa','apidb');
+
+# &startPsipredOnComputeCluster($mgr,'ChominisAnnotatedProteinsPsipred.fsa','nr.fsa','apidb');
+
+# &startPsipredOnComputeCluster($mgr,'CparvumAnnotatedProteinsPsipred.fsa','nr.fsa','apidb');
+
+# &startPsipredOnComputeCluster($mgr,'CparvumChr6AnnotatedProteinsPsipred.fsa','nr.fsa','apidb');
+
+# $mgr->waitForCluster('CmurisAnnotatedProteinsPsipred vs nr.fsaFilt psipred', 'CmurisAnnotatedProteinsPsipred.fsa-nr.fsaFilt');
+
+# $mgr->waitForCluster('ChominisAnnotatedProteinsPsipred vs nr.fsaFilt psipred', 'ChominisAnnotatedProteinsPsipred.fsa-nr.fsaFilt');
+
+# $mgr->waitForCluster('CparvumAnnotatedProteinsPsipred vs nr.fsaFilt psipred', 'CparvumAnnotatedProteinsPsipred.fsa-nr.fsaFilt');
+
+# $mgr->waitForCluster('CparvumChr6AnnotatedProteinsPsipred vs nr.fsaFilt psipred', 'CparvumiowaChr6AnnotatedProteinsPsipred.fsa-nr.fsaFilt');
+
+######## copy results from cluster and load results   ###########
+
+# &copyFilesFromComputeCluster($mgr, 'CmurisAnnotatedProteinsPsipred.fsa-nr.fsaFilt', 'psipred');
+
+# &copyFilesFromComputeCluster($mgr, 'ChominisAnnotatedProteinsPsipred.fsa-nr.fsaFilt', 'psipred');
+
+# &copyFilesFromComputeCluster($mgr, 'CparvumAnnotatedProteinsPsipred.fsa-nr.fsaFilt', 'psipred');
+
+# &copyFilesFromComputeCluster($mgr, 'CparvumChr6AnnotatedProteinsPsipred.fsa-nr.fsaFilt', 'psipred');
+
+# &fixPsipredFileNames($mgr, "psipred/CmurisAnnotatedProteinsPsipred.fsa-nr.fsaFilt");
+
+# &fixPsipredFileNames($mgr, "psipred/ChominisAnnotatedProteinsPsipred.fsa-nr.fsaFilt");
+
+# &fixPsipredFileNames($mgr, "psipred/CparvumAnnotatedProteinsPsipred.fsa-nr.fsaFilt");
+
+# &fixPsipredFileNames($mgr, "psipred/CparvumChr6AnnotatedProteinsPsipred.fsa-nr.fsaFilt");
+
+####  !!!! before the next two steps are run for each protein set, fill in the start and end dates from the log on the cluster - this should be fixed
+
+# &makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-08-19","2008-08-19","Secondary Structure prediction for all C.muris annotated proteins","Cmuris");
+
+# &loadSecondaryStructures($mgr,"Psipred","2.5","2008-08-19","2008-08-19","CmurisAnnotatedProteinsPsipred.fsa-nr.fsaFilt",1,"Secondary Structure prediction for all C.muris annotated proteins");
+
+# &makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-08-19","2008-08-19","Secondary Structure prediction for all C.hominis annotated proteins","Chominis");
+
+# &loadSecondaryStructures($mgr,"Psipred","2.5","2008-08-19","2008-08-19","ChominisAnnotatedProteinsPsipred.fsa-nr.fsaFilt",1,"Secondary Structure prediction for all C.hominis annotated proteins");
+
+# &makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-08-19","2008-08-19","Secondary Structure prediction for all C.parvum annotated proteins","Cparvum");
+
+# &loadSecondaryStructures($mgr,"Psipred","2.5","2008-08-19","2008-08-19","CparvumAnnotatedProteinsPsipred.fsa-nr.fsaFilt",1,"Secondary Structure prediction for all C.parvum annotated proteins");
+
+# &makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-08-19","2008-08-19","Secondary Structure prediction for all C.parvum  Chr6 annotated proteins","CmurisChr6");
+
+# &loadSecondaryStructures($mgr,"Psipred","2.5","2008-08-19","2008-08-19","CparvumChr6AnnotatedProteinsPsipred.fsa-nr.fsaFilt",1,"Secondary Structure prediction for all C.parvum  Chr6 annotated proteins");
+
+##############################################
+###### InterPro ######
+#############################################
+
+######### create iprscan dir and subdirs and copy to cluster #######
+
+&createIprscanDir($mgr, "CmurisAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "ChominisAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "CparvumAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "CparvumChr6AnnotatedProteins.fsa");
+
+&copyFilesToComputeCluster($mgr,"iprscan");
+
+######### start iprscan and wait for results ########
+
+&startIprScanOnComputeCluster($mgr,"CmurisAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"ChominisAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"CparvumAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"CparvumChr6AnnotatedProteins.fsa","apidb", 1);
+
+$mgr->waitForCluster('CmurisAnnotatedProteinsPsipred interproscan', 'WaitCmurisAnnotatedProteinsIprscan');
+
+$mgr->waitForCluster('ChominisAnnotatedProteinsPsipred interproscan', 'WaitChominisAnnotatedProteinsIprscan');
+
+$mgr->waitForCluster('CparvumAnnotatedProteinsPsipred interproscan', 'WaitCparvumAnnotatedProteinsIprscan');
+
+$mgr->waitForCluster('CparvumChr6AnnotatedProteinsPsipred interproscan', 'WaitCparvumChr6AnnotatedProteinsIprscan');
+
+###### copy results from cluster and load  ########
+
+&copyFilesFromComputeCluster($mgr,"CmurisAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"ChominisAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"CparvumAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"CparvumChr6AnnotatedProteins.fsa","iprscan");
+
+my $insertInterproConfig = "$projectDir/$release/resources_pipeline/primary/downloads/InterproscanData/iprscan17.0/iprscan/data/insertInterpro-config.xml";
+
+my $interpro_version = "17.0";
+
+&loadIprscanResults($mgr,"CmurisAnnotatedProteins.fsa", "INTERPRO", $interpro_version, $insertInterproConfig);
+
+&loadIprscanResults($mgr,"ChominisAnnotatedProteins.fsa", "INTERPRO", $interpro_version, $insertInterproConfig);
+
+&loadIprscanResults($mgr,"CparvumAnnotatedProteins.fsa", "INTERPRO", $interpro_version, $insertInterproConfig);
+
+&loadIprscanResults($mgr,"CparvumChr6AnnotatedProteins.fsa", "INTERPRO", $interpro_version, $insertInterproConfig);
+
+#####################################################
+##### tandem repeat steps #####
+####################################################
+
+my $repeatFinderArgs = "2 7 7 80 20 50 500";
+
+&documentTandemRepeatFinder($mgr,"3.21",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"CmurisScaffolds.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"ChominisScaffolds.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"CparvumScaffolds.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"CparvumChr6Scaffolds.fsa","seqfiles",$repeatFinderArgs);
+
+&loadTandemRepeats($mgr,"CmurisScaffolds.fsa",$repeatFinderArgs,'C.muris scaffold from Genbank','2008-08-13');
+
+&loadTandemRepeats($mgr,"ChominisScaffolds.fsa",$repeatFinderArgs,'C.hominis scaffold from Genbank','2008-08-13');
+
+&loadTandemRepeats($mgr,"CparvumScaffolds.fsa",$repeatFinderArgs,'C.parvum scaffold from Genbank','2008-08-13');
+
+&loadTandemRepeats($mgr,"CparvumChr6Scaffolds.fsa",$repeatFinderArgs,'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13');
+
+####################################################
+##### low complexity steps #####
+#####################################################
+
+&documentLowComplexity($mgr, 'seg', 'Protein', 'x');
+
+&filterSequences($mgr,"CmurisAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"ChominisAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"CparvumAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"CparvumChr6AnnotatedProteins.fsa","filter","seg","-x");
+
+&documentLowComplexity($mgr, 'dust', 'Genomic', 'N');
+
+&filterSequences($mgr,"CmurisScaffolds.fsa","filter","dust");
+
+&filterSequences($mgr,"ChominisScaffolds.fsa","filter","dust");
+
+&filterSequences($mgr,"CparvumScaffolds.fsa","filter","dust");
+
+&filterSequences($mgr,"CparvumChr6Scaffolds.fsa","filter","dust");
+
+&loadLowComplexitySequences($mgr,"CmurisAnnotatedProteins.fsa.seg",'C.muris scaffold from Genbank','2008-08-13',"protein","x");
+
+&loadLowComplexitySequences($mgr,"ChominisAnnotatedProteins.fsa.seg",'C.hominis scaffold from Genbank','2008-08-13',"protein","x");
+
+&loadLowComplexitySequences($mgr,"CparvumAnnotatedProteins.fsa.seg",'C.parvum scaffold from Genbank','2008-08-13',"protein","x");
+
+&loadLowComplexitySequences($mgr,"Cparvumchr6AnnotatedProteins.fsa.seg",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"protein","x");
+
+&loadLowComplexitySequences($mgr,"CmurisScaffolds.fsa.dust",'C.muris scaffold from Genbank','2008-08-13',"dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"ChominisScaffolds.fsa.dust",'C.hominis scaffold from Genbank','2008-08-13',"dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"CparvumScaffolds.fsa.dust",'C.parvum scaffold from Genbank','2008-08-13',"dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"CparvumChr6Scaffolds.fsa.dust",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"dna","N","--LowComplexityName 'dust'");
+
+
+#########################################
+##### ESTs #####
+#########################################
+
+&documentBLATAlignment($mgr,"v. 31","-minIntron 500,-minScore 30,-minIdentity 90");
+
+&makeTranscriptSeqs($mgr,"Cmuris",5808,1);
+
+&makeTranscriptSeqs($mgr,"Cparvum",5807,1);
+
+&makeTranscriptSeqs($mgr,"Cparvum Predicted",5807,1,"select e.na_sequence_id 
+           from dots.ExternalNASequence e, sres.sequenceontology s,
+                sres.externalDatabase d, sres.externalDatabaseRelease r
+           where e.taxon_id in(5807)
+           and e.external_database_release_id = r.external_database_release_id
+           and r.external_database_id = d.external_database_id
+           and r.version = '2006-11-02'
+           and d.name = 'WatanabeCpHNJ-1_PredictedTrancripts'
+           and s.term_name = 'transcript'
+           and e.sequence_ontology_id = s.sequence_ontology_id
+           and e.na_sequence_id not in
+           (select a.na_sequence_id from dots.AssemblySequence a)");
+
+&extractTranscriptSeqs($mgr,"CmurisTranscriptSeqs",5808,1);
+
+&extractTranscriptSeqs($mgr,"CparvumTranscriptSeqs",5807,1);
+
+&copyFilesToComputeCluster($mgr,"CmurisTranscriptSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"CparvumTranscriptSeqs.fsa","seqfiles");
+
+&extractIndividualNaSeq ($mgr,'C.muris scaffold from Genbank','2008-08-13',"Cmuris","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,'C.hominis scaffold from Genbank','2008-08-13',"Chominis","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,'C.parvum scaffold from Genbank','2008-08-13',"Cparvum","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"CparvumChr6","genome","ExternalNASequence","source_id");
+
+&copyFilesToComputeCluster($mgr,"CmurisGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"ChominisGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"CparvumGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"CparvumChr6Genome","seqfiles");
+
+&createGenomeDirForGfClient($mgr,"CmurisTranscriptSeqs", "CmurisGenome", 20000,4,1);
+
+&createGenomeDirForGfClient($mgr,"CparvumTranscriptSeqs", "CparvumGenome", 20000,4,1);
+
+&createGenomeDirForGfClient($mgr,"CparvumTranscriptSeqs", "CparvumChr6Genome", 20000,4,1);
+
+&copyFilesToComputeCluster($mgr,"genome");
+
+&createRepeatMaskDir_new($mgr,"CmurisTranscriptSeqs",4);
+
+&createRepeatMaskDir_new($mgr,"CparvumTranscriptSeqs",4);
+
+&copyFilesToComputeCluster($mgr,"repeatmask");
+
+&startRepeatMaskOnComputeCluster($mgr, 'CmurisTranscriptSeqs', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'CparvumTranscriptSeqs', 'apidb');
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"CmurisTranscriptSeqs","CmurisGenome","apidb",4);
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"CparvumTranscriptSeqs","CparvumGenome","apidb",4);
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"CparvumTranscriptSeqs","CparvumChr6Genome","apidb",4);
+
+$mgr->waitForCluster("CmurisTranscriptSeqs BLAT alignment to CmurisGenome", "waitCmurisTranscriptSeqs-CmurisGenome");
+
+$mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumGenome", "waitCparvumTranscriptSeqs-CparvumGenome");
+
+$mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome", "waitCparvumTranscriptSeqs-CparvumChr6Genome");
+
+&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs-CmurisGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumChr6Genome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs","repeatmask");
+
+##script fills the BlatAlignmentQuality table ###########
+&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/config/blatalignmentquality.xml","BlatAlignmentQuality");
+
+&loadContigAlignments($mgr, 5808, "CmurisTranscriptSeqs","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load");
+
+&loadContigAlignments($mgr, 5808, "CmurisTranscriptSeqs","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","","",100);
+
+&loadContigAlignments($mgr, 353152, "CparvumTranscriptSeqs","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load",5807);
+
+&loadContigAlignments($mgr, 353152, "CparvumTranscriptSeqs","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","","",100,5807);
+
+&loadContigAlignments($mgr, 5807, "CparvumTranscriptSeqs","CparvumChr6Genome","","",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load","","",100);
+
+&loadContigAlignments($mgr, 5807, "CparvumTranscriptSeqs","CparvumChr6Genome","","",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","","",100);
+
+#####################################################
+######## DoTS assemblies ########
+###################################################
+
+&clusterMultiEstSourcesByAlign($mgr, "Transcripts", "Cmuris", 'C.muris scaffold from Genbank','2008-08-13', 5808, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Cmuris",5808,1,5808,"/repeatmask/CmurisTranscriptSeqs/master/mainresult","/cluster/CmurisTranscripts");
+
+&clusterMultiEstSourcesByAlign($mgr, "Transcripts", "Cparvum", 'C.parvum scaffold from Genbank','2008-08-13', 353152, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Cparvum",5807,1,353152,"/repeatmask/CparvumTranscriptSeqs/master/mainresult","/cluster/CparvumTranscripts");
+
+&clusterMultiEstSourcesByAlign($mgr, "Transcripts", "CparvumChr6", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', 5807, "ExternalNASequence",20000);
+
+&splitCluster($mgr, "Cmuris", "Transcripts");
+
+&splitCluster($mgr, "Cparvum", "Transcripts");
+
+&splitCluster($mgr, "CparvumChr6", "Transcripts");
+
+&assembleTranscripts($mgr, "Cmuris", "", "", "Transcripts", 5808);
+
+&assembleTranscripts($mgr, "Cparvum", "", "", "Transcripts", 353152);
+
+&assembleTranscripts($mgr, "CparvumChr6", "", "", "Transcripts", 5807);
+
+&extractAssemblies($mgr, "Cmuris", "Assemblies", 5808);
+
+&extractAssemblies($mgr, "Cparvum", "Assemblies", 353152);
+
+&extractAssemblies($mgr, "CparvumChr6", "Assemblies", 5807);
+
+&copyFilesToComputeCluster($mgr, "CmurisAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "ChominisAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "CparvumAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "CparvumChr6Assemblies.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr,"CmurisAssemblies", "CmurisGenome",20000 ,4,1);
+
+&createGenomeDirForGfClient($mgr,"CparvumAssemblies", "CparvumGenome",20000 ,4,1);
+
+&createGenomeDirForGfClient($mgr,"CparvumChr6Assemblies", "CparvumChr6Genome",20000 ,4,1);
+
+&copyFilesToComputeCluster($mgr, "CmurisAssemblies-CmurisGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "CparvumAssemblies-CparvumGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "CparvumChr6Assemblies-CparvumChr6Genome","genome");
+
+&createRepeatMaskDir_new($mgr,"CmurisAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"CparvumAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"CparvumChr6Assemblies",4);
+
+&copyFilesToComputeCluster($mgr, "CmurisAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "CparvumAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "CparvumChr6Assemblies","repeatmask");
+
+#&startGenomeAlignOnComputeCluster($mgr,"CmurisAssemblies","CmurisGenome","apidb",4);
+
+#&startGenomeAlignOnComputeCluster($mgr,"CparvumAssemblies","CparvumGenome","apidb",4);
+
+#&startGenomeAlignOnComputeCluster($mgr,"CparvumChr6Assemblies","CparvumChr6Genome","apidb",4);
+
+#$mgr->waitForCluster("CmurisAssemblies BLAT alignment to CmurisGenome", "waitCmurisAssemblies-CmurisGenome");
+
+#$mgr->waitForCluster("CparvumAssemblies BLAT alignment to CparvumGenome", "waitCparvumAssemblies-CparvumGenome");
+
+#$mgr->waitForCluster("CparvumChr6Assemblies BLAT alignment to CparvumChr6Genome", "waitCparvumChr6Assemblies-CparvumChr6Genome");
+
+&copyFilesFromComputeCluster($mgr,"CmurisAssemblies-CmurisGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CparvumAssemblies-CparvumGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CparvumChr6Assemblies-CparvumChr6Genome","genome");
+
+&copyFilesFromComputeCluster($mgr,"CmurisAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"CparvumAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"CparvumChr6Assemblies","repeatmask");
+
+&loadContigAlignments($mgr,5808, "CmurisAssemblies","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr,353152, "CparvumAssemblies","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr,5807, "CparvumChr6Assemblies","CparvumChr6Genome","","",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr,5808, "CmurisAssemblies","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr,353152, "CparvumAssemblies","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr,5807, "CparvumChr6Assemblies","CparvumChr6Genome","","",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+##################################### IEDB Epitopes ################################
+### Depends on Epitopes and the protein BLAST files made by the analysis pipeline###
+################################################################################################
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Cparvum", "CparvumAnnotatedProteins", 'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence","Cparvum_gb");
+
+&copyDirectory($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/IEDB_Epitopes_fixed","$projectDir/$release/analysis_pipeline/primary/data/iedb/input","$projectDir/$release/analysis_pipeline/primary/data/iedb");
+
+&formatncbiBlastFile($mgr,"CparvumAnnotatedProteins_cryptoDB-4.1.fasta","Cparvum","Cparvum_proteins","T");
+
+&createEpitopeMapFiles($mgr, "input", "$projectDir/$release/analysis_pipeline/primary/data/blastSite", "$projectDir/$release/analysis_pipeline/primary/data/seqfiles");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Cp", "Cparvum", "Links to IEDB epitopes|05-28-2009", "C.parvum scaffold from Genbank|2008-08-13", "out");
+
+#####################################################
+############# BLAST to NRDB PDB          ############
+#####################################################
+
+&findProteinXRefs($mgr,"CmurisAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"ChominisAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"CparvumAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"CparvumChr6AnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&loadDbXRefs($mgr, "CmurisAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-07-18");
+
+&loadDbXRefs($mgr, "ChominisAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-07-18");
+
+&loadDbXRefs($mgr, "CparvumAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-07-18");
+
+&loadDbXRefs($mgr, "CparvumChr6AnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-07-18");
+
+$blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1";
+
+&createSimilarityDir($mgr,"CmurisAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"ChominisAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"CparvumAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"CparvumChr6AnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&copyFilesToComputeCluster($mgr,"CmurisAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"ChominisAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"CparvumAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"CparvumChr6AnnotatedProteins-pdb","similarity");
+
+&moveDownloadFile($mgr,"PDBProteinSequences/pdb.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"pdb.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"CmurisAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"ChominisAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"CparvumAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"CparvumChr6AnnotatedProteins","pdb","apidb");
+
+$mgr->waitForCluster("CmurisAnnotatedProteins blast similarity to pdb", "waitCmurisAnnotatedProteins-pdb"); 
+
+$mgr->waitForCluster("ChominisAnnotatedProteins blast similarity to pdb", "waitChominisAnnotatedProteins-pdb"); 
+
+$mgr->waitForCluster("CparvumAnnotatedProteins blast similarity to pdb", "waitCparvumAnnotatedProteins-pdb"); 
+
+$mgr->waitForCluster("CparvumChr6AnnotatedProteins blast similarity to pdb", "waitCparvumChr6AnnotatedProteins-pdb"); 
+
+&copyFilesFromComputeCluster($mgr,"CmurisAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"ChominisAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"CparvumAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"CparvumChr6AnnotatedProteins-pdb","similarity");
+
+&loadProteinBlast($mgr, "CmurisAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.muris scaffold from Genbank','2008-08-13',"PDB protein sequences","2008-10-03","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "ChominisAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.hominis scaffold from Genbank','2008-08-13',"PDB protein sequences","2008-10-03","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "CparvumAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.parvum scaffold from Genbank','2008-08-13',"PDB protein sequences","2008-10-03","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "CparvumiowaChr6AnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"PDB protein sequences","2008-10-03","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+####################################################
+########## gives AASequences a taxon id     ########
+########## calc ATGC counts for all narows  ########
+####################################################
+
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/FetchPDBidx/source.idx.processed","$projectDir/$release/analysis_pipeline/primary/data/misc","$projectDir/$release/analysis_pipeline/primary/data/misc");
+
+&updateTaxonIdField($mgr,"source.idx.processed","^(\\w+)","--taxonNameRegex \'^\\w+\\s+(.+)\'","select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence","PDB protein sequences|2008-10-03","DoTS::ExternalAASequence");
+
+&updateTaxonIdField($mgr,"gi_taxid_prot.dmp","^(\\d+)","--ncbiTaxIdRegex \'^\\d+\\s(\\d+)\'","select source_id, aa_sequence_id from dots.externalaasequence","NRDB|2008-07-18","DoTS::ExternalAASequence"); 
+
+#####################################################
+#### calc ACTG content for all NASequence seqs ######
+#####################################################
+
+&calculateACGT($mgr);
+
+################### 
+### SNPs Mummer ###
+###################
+
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/Widmer_SNPs/widmer.gff","$projectDir/$release/analysis_pipeline/primary/data/snp","$projectDir/$release/analysis_pipeline/primary/data/snp");
+
+&snpGffToFasta($mgr,"widmer.gff","iowa_II","gff2");
+
+&runMummer($mgr,"CparvumScaffolds.fsa","widmer");
+
+&snpMummerToGFF($mgr,"CparvumScaffoldss_widmerMummer","widmer.gff","iowa_II","gff2");
+
+&loadMummerSnpResults($mgr,"Widmer SNPs","2007-03",'C.parvum scaffold from Genbank','2008-08-13','C.parvum scaffold from Genbank','2008-08-13',"DoTS::ExternalNASequence","Cryptosporidium parvum","iowa_II","CparvumScaffolds_widmerMummer.gff");
+
+##########################################################
+##############  download files  ##########################
+##########################################################
+
+&makeESTDownloadFileFromAllSources($mgr,"Cmuris", 5808, 1, "CryptoDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Cparvum", 5807, 1, "CryptoDB");
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Cmuris", "CmurisAnnotatedCDS",'C.muris scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Chominis", "ChominisAnnotatedCDS",'C.hominis scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Cparvum", "CparvumAnnotatedCDS",'C.parvum scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "CparvumChr6", "CparvumChr6AnnotatedCDS",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Cmuris", "CmurisAnnotatedTranscripts", 'C.muris scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Chominis", "ChominisAnnotatedTranscripts", 'C.hominis scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Cparvum", "CparvumAnnotatedTranscripts", 'C.parvum scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "CparvumChr6", "CparvumChr6AnnotatedTranscripts", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Cmuris", "CmurisAnnotatedProteins", 'C.muris scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Chominis", "ChominisAnnotatedProteins", 'C.hominis scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Cparvum", "CparvumAnnotatedProteins", 'C.parvum scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "CparvumChr6", "CparvumChr6AnnotatedProteins", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"gb","CryptoDB",0);
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Cmuris", "CmurisOrfs", 'C.muris scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Chominis", "ChominisOrfs", 'C.hominis scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Cparvum", "CparvumOrfs", 'C.parvum scaffold from Genbank, Cparvum contig to chromosome map', '2008-08-13, 2008-10-28', 50, "CryptoDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "CparvumChr6", "Cparvumchr6Orfs", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfDownloadFileWithAbrevDefline($mgr, "Cmuris", "ESTOrfs", "dbEST", "2008-10-17", 50, "CryptoDB",5808,1);
+
+&makeOrfDownloadFileWithAbrevDefline($mgr, "Cparvum", "ESTOrfs", "dbEST,WatanabeCpHNJ-1_ESTs", "2008-10-17,2006-11-02", 50, "CryptoDB",5807,1);
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Cmuris", "CmurisOrfNAs", 'C.muris scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Chominis", "ChominisOrfNAs", 'C.hominis scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Cparvum", "CparvumOrfNAs", 'C.parvum scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "CparvumChr6", "CparvumChr6OrfNAs", 'C.parvumChr6 scaffold from Genbank','2008-08-13', 50, "CryptoDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Cmuris", "CmurisGenomic", 'C.muris scaffold from Genbank','2008-08-13', "gb","CryptoDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Chominis", "ChominisGenomic", 'C.hominis scaffold from Genbank','2008-08-13', "gb","CryptoDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Cparvum", "CparvumGenomic", 'Cparvum contig to chromosome map','2008-10-28', "gb","CryptoDB");
+
+&makeMixedGenomicDownloadFile($mgr, "CparvumIowaChr6", "CparvumIowaChr6Genomic", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', "gb","CryptoDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Cparvum", "CparvumGenomicContigs", 'C.parvum scaffold from Genbank','2008-08-13', "gb","CryptoDB", 1);
+
+&updateAssemblySourceId($mgr,"Cparvum",353152);
+
+&updateAssemblySourceId($mgr,"Cmuris",5808);
+
+&updateAssemblySourceId($mgr,"Cp6",5807);
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Cmuris', 'assembly', 5808, 'CryptoDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Cparvum', 'assembly', 353152, 'CryptoDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'CparvumChr6', 'assembly', 5807, 'CryptoDB');
+
+&makeInterproDownloadFile ($mgr, 'Cmuris', "Interpro", 'C.muris scaffold from Genbank','2008-08-13', "INTERPRO", "17.0", "CryptoDB");
+
+&makeInterproDownloadFile ($mgr, 'Chominis', "Interpro", 'C.hominis scaffold from Genbank','2008-08-13', "INTERPRO", "17.0", "CryptoDB");
+
+&makeInterproDownloadFile ($mgr, 'Cparvum', "Interpro", 'C.parvum scaffold from Genbank','2008-08-13', "INTERPRO", "17.0", "CryptoDB");
+
+&makeInterproDownloadFile ($mgr, 'CparvumChr6', "Interpro", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', "INTERPRO", "17.0", "CryptoDB");
+
+
+######################################################
+## Copy ORF and Protein .fasta files to webServices ##
+######################################################
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Chominis/ChominisOrfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/ChominisOrfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Chominis/ChominisAnnotatedProteins_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/ChominisAnnotatedProteins.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cmuris/CmurisOrfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CmurisOrfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cmuris/CmurisESTOrfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CmurisESTOrfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cmuris/CmurisAnnotatedProteins_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CmurisAnnotatedProteins.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cparvum/CparvumOrfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CparvumOrfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cparvum/CparvumESTOrfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CparvumESTOrfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cparvum/CparvumAnnotatedProteins_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CparvumAnnotatedProteins.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+&copy($mgr,"/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/$release/Cparvum/CparvumChr6Orfs_$release.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif/CparvumChr6Orfs.fasta","/files/cbil/data/cbil/apiSiteFiles/webServices/CryptoDB/$release/motif");
+
+
+######################################################
+####### format files foor BLAST ######################
+#####################################################
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisEST_CryptoDB-4.1.fasta","CmurisEST","-n -t release-4.1/CmurisEST");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumEST_CryptoDB-4.1.fasta","CparvumEST","-n -t release-4.1/CparvumEST");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisAnnotatedCDS_CryptoDB-4.1.fasta","CmurisCDS","-n -t release-4.1/CmurisCDS");
+&xdformatDownloadFileForBlastSite($mgr,"Chominis","ChominisAnnotatedCDS_CryptoDB-4.1.fasta","ChominisCDS","-n -t release-4.1/ChominisCDS");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumAnnotatedCDS_CryptoDB-4.1.fasta","CparvumCDS","-n -t release-4.1/CparvumCDS");
+&xdformatDownloadFileForBlastSite($mgr,"CparvumChr6","CparvumChr6AnnotatedCDS_CryptoDB-4.1.fasta","CparvumChr6CDS","-n -t release-4.1/CparvumChr6CDS");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisAssembly_CryptoDB-4.1.fasta","CmurisAssemblies","-n -t release-4.1/CmurisAssemblies");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumAssembly_CryptoDB-4.1.fasta","CparvumAssemblies","-n -t release-4.1/CparvumAssemblies");
+
+
+&xdformatDownloadFileForBlastSite($mgr, "Cmuris","CmurisOrfs_CryptoDB-4.1.fasta","CmurisORF","-p -t release-4.1/CmurisORF");
+&xdformatDownloadFileForBlastSite($mgr, "Chominis","ChominisOrfs_CryptoDB-4.1.fasta","ChominisORF","-p -t release-4.1/ChominisORF");
+&xdformatDownloadFileForBlastSite($mgr, "Cparvum","CparvumOrfs_CryptoDB-4.1.fasta","CparvumORF","-p -t release-4.1/CparvumORF");
+&xdformatDownloadFileForBlastSite($mgr, "CparvumChr6","CparvumChr6Orfs_CryptoDB-4.1.fasta","CparvumChr6ORF","-p -t release-4.1/CparvumChr6ORF");
+
+
+&xdformatDownloadFileForBlastSite($mgr, "Cparvum","CparvumESTOrfs_CryptoDB-4.1.fasta","CparvumESTORF","-p -t release-4.1/CparvumESTORF");
+&xdformatDownloadFileForBlastSite($mgr, "Cmuris","CmurisESTOrfs_CryptoDB-4.1.fasta","CmurisESTORF","-p -t release-4.1/CmurisESTORF");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisGenomic_CryptoDB-4.1.fasta","CmurisGenomics","-n -t release-4.1/CmurisGenomics");
+&xdformatDownloadFileForBlastSite($mgr,"Chominis","ChominisGenomic_CryptoDB-4.1.fasta","ChominisGenomics","-n -t release-4.1/ChominisGenomics");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumGenomic_CryptoDB-4.1.fasta","CparvumGenomics","-n -t release-4.1/CparvumGenomics");
+&xdformatDownloadFileForBlastSite($mgr,"CparvumChr6","CparvumChr6Genomic_CryptoDB-4.1.fasta","CparvumChr6Genomics","-n -t release-4.1/CparvumChr6Genomics");
+
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisAnnotatedProteins_CryptoDB-4.1.fasta","CmurisProteins","-p -t release-4.1/CmurisProteins");
+&xdformatDownloadFileForBlastSite($mgr,"Chominis","ChominisAnnotatedProteins_CryptoDB-4.1.fasta","ChominisProteins","-p -t release-4.1/ChominisProteins");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumAnnotatedProteins_CryptoDB-4.1.fasta","CparvumProteins","-p -t release-4.1/CparvumProteins");
+&xdformatDownloadFileForBlastSite($mgr,"CparvumChr6","CparvumChr6AnnotatedProteins_CryptoDB-4.1.fasta","CparvumChr6Proteins","-p -t release-4.1/CparvumChr6Proteins");
+
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cmuris","CmurisAnnotatedTranscripts_CryptoDB-4.1.fasta","CmurisTranscripts","-n -t release-4.1/CmurisTranscripts");
+&xdformatDownloadFileForBlastSite($mgr,"Chominis","ChominisAnnotatedTranscripts_CryptoDB-4.1.fasta","ChominisTranscripts","-n -t release-4.1/ChominisTranscripts");
+&xdformatDownloadFileForBlastSite($mgr,"Cparvum","CparvumAnnotatedTranscripts_CryptoDB-4.1.fasta","CparvumTranscripts","-n -t release-4.1/CparvumTranscripts");
+&xdformatDownloadFileForBlastSite($mgr,"CparvumChr6","CparvumChr6AnnotatedTranscripts_CryptoDB-4.1.fasta","CparvumChr6Transcripts","-n -t release-4.1/CparvumChr6Transcripts");
+
+&xdformatDownloadFileForBlastSite($mgr,'','Cryptosporidium_Isolate_CryptoDB-4.1.fasta',"CryptoIsolates","-n -t release-4.1/CryptoIsolates");
+
+&xdformatDownloadFileForBlastSite($mgr,'','CryptoReferenceIsolate_CryptoDB-4.1.fasta',"CryptoReferenceIsolates","-n -t release-4.1/CryptoReferenceIsolates");
+
+&makeCodonUsage($mgr, "Cmuris", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Chominis", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Cparvum", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "CparvumChr6", "AnnotatedCDS");
+
+###############################
+###### Gene Alias File  #######
+###############################
+
+&writeGeneAliasFile($mgr,'C.muris scaffold from Genbank','2008-08-13',"CryptoDB","Cmuris");
+
+&writeGeneAliasFile($mgr,'C.hominis scaffold from Genbank','2008-08-13',"CryptoDB","Chominis");
+
+&writeGeneAliasFile($mgr,'C.parvum scaffold from Genbank','2008-08-13',"CryptoDB","Cparvum");
+
+&writeGeneAliasFile($mgr,'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"CryptoDB","CparvumChr6");
+
+##################################################
+######### dump gff file  and wdk files ###########
+##################################################
+
+### Requires WDK, WSF, ApiCommonWebsite, and CryptoDBWebsite to be updated ###
+##### Make sure you update the CryptoDBData/Model/config                 #####
+######  CryptoDBModel-config.xml and CryptoDBModel.prop files           ######
+
+&clearWdkCache($mgr, "CryptoDB");
+
+&runGffDump($mgr, "Cmuris","CryptoDB", "Cryptosporidium muris");
+
+&runGffDump($mgr, "Chominis","CryptoDB", "Cryptosporidium hominis");
+
+&runGffDump($mgr, "Cparvum","CryptoDB", "Cryptosporidium parvum");
+
+&clearWdkCache($mgr, "CryptoDB");
+
+&runWdkRecordDump($mgr,"Cmuris","CryptoDB", "Cryptosporidium muris","gene,sequence");
+
+&runWdkRecordDump($mgr,"Chominis","CryptoDB", "Cryptosporidium hominis","gene,sequence");
+
+&runWdkRecordDump($mgr,"Cparvum","CryptoDB", "Cryptosporidium parvum","gene,sequence");
+
+
+################################################################
+##########  Map Isolates to Genome  ############################
+################################################################
+
+my $blastParams = "V=1 B=1 hspsepQmax=50000 hspsepSmax=50000 -span1 -topcomboN=1 E=0.1 -wordmask=seg";
+
+&documentBlast($mgr, "BLASTN", "Cryptosporidium Isolates", "Cryptosporidium Scaffolds", $blastParams);
+
+&createSimilarityDir($mgr,"CparvumIsolates", "CparvumScaffolds","(\\S+)", $blastParams, "blastn");
+
+&createSimilarityDir($mgr,"CparvumIsolates", "ChominisScaffolds","(\\S+)", $blastParams, "blastn");
+
+&createSimilarityDir($mgr,"CparvumIsolates", "CmurisScaffolds","(\\S+)", $blastParams, "blastn");
+
+&createSimilarityDir($mgr,"CparvumIsolates", "CparvumChr6Scaffolds","(\\S+)", $blastParams, "blastn");
+
+&makeBlastParamsFile($mgr,"CparvumIsolates-CparvumScaffolds",$blastParams);
+
+&extractNaSeq($mgr,"C. parvum isolate data","2007-12-12",'Cparvum',"isolates","ExternalNASequence","source_id");
+
+&copyFilesToComputeCluster($mgr,"CparvumIsolates.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"CparvumIsolates-CparvumScaffolds","similarity");
+
+&copyFilesToComputeCluster($mgr,"CparvumIsolates-ChominisScaffolds","similarity");
+
+&copyFilesToComputeCluster($mgr,"CparvumIsolates-CmurisScaffolds","similarity");
+
+&copyFilesToComputeCluster($mgr,"CparvumIsolates-CparvumChr6Scaffolds","similarity");
+
+&startProteinBlastOnComputeCluster($mgr,"CparvumIsolates","CparvumScaffolds","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"CparvumIsolates","ChominisScaffolds","apidb");
+
+#&startProteinBlastOnComputeCluster($mgr,"CparvumIsolates","CmurisScaffolds","apidb");
+
+#&startProteinBlastOnComputeCluster($mgr,"CparvumIsolates","CparvumChr6Scaffolds","apidb");
+
+$mgr->waitForCluster("Cparvum Isolates blast similarity to Cparvum scaffolds", "waitCparvumIsolates-CparvumScaffolds");
+
+#$mgr->waitForCluster("Cparvum Isolates blast similarity to Chominis scaffolds", "waitCparvumIsolates-ChominisScaffolds");
+
+#$mgr->waitForCluster("Cparvum Isolates blast similarity to Cmuris scaffolds", "waitCparvumIsolates-CmurisScaffolds");
+
+#$mgr->waitForCluster("Cparvum Isolates blast similarity to CparvumiowaChr6 scaffolds", "waitCparvumIsolates-CparvumChr6Scaffolds");
+
+&copyFilesFromComputeCluster($mgr,"CparvumIsolates-CparvumScaffolds","similarity");
+
+&copyFilesFromComputeCluster($mgr,"CparvumIsolates-ChominisScaffolds","similarity");
+
+&copyFilesFromComputeCluster($mgr,"CparvumIsolates-CmurisScaffolds","similarity");
+
+&copyFilesFromComputeCluster($mgr,"CparvumIsolates-CparvumChr6Scaffolds","similarity");
+
+&loadProteinBlast($mgr, "CparvumIsolates-CparvumScaffolds","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","C. parvum isolate data","2007-12-12",'C.parvum scaffold from Genbank','2008-08-13', " --subjectsLimit 50 --hspsLimit 10 ");
+
+&loadProteinBlast($mgr, "CparvumIsolates-ChominisScaffolds","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","C. parvum isolate data","2007-12-12",'C.hominis scaffold from Genbank','2008-08-13', " --subjectsLimit 50 --hspsLimit 10 ");
+
+&loadProteinBlast($mgr, "CparvumIsolates-CmurisScaffolds","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","C. parvum isolate data","2007-12-12",'C.muris scaffold from Genbank','2008-08-13', " --subjectsLimit 50 --hspsLimit 10 ");
+
+&loadProteinBlast($mgr, "CparvumIsolates-CparvumChr6Scaffolds","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","C. parvum isolate data","2007-12-12",'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', " --subjectsLimit 50 --hspsLimit 10 ");
+
+&makeIsolateDownloadFile($mgr, "", "Cryptosporidium_Isolate", "C. parvum isolate data","2007-12-12", "ExternalNASequence");
+
+&makeIsolateDownloadFile($mgr, "", "CryptoReferenceIsolate", "C. parvum isolate data","2007-12-12", "ExternalNASequence",1);
+
+################################
+##     Isolate Vocabulary     ##
+################################
+
+# Insert Ontology Terms
+&isolateVocabulary($mgr, "$dataDir/isolateVocabulary/isolateVocabulary.txt");
+
+# Create Vocabulary Reports 
+&isolateVocabularyReport($mgr, "isolation_source", "$dataDir/isolateVocabulary/isolationSource.xml", "$dataDir/isolateVocabulary/isolationSource.rpt");
+&isolateVocabularyReport($mgr, "specific_host", "$dataDir/isolateVocabulary/specificHost.xml", "$dataDir/isolateVocabulary/specificHost.rpt");
+&isolateVocabularyReport($mgr, "geographic_location", "$dataDir/isolateVocabulary/geographicLocation.xml", "$dataDir/isolateVocabulary/geographicLocation.rpt");
+&isolateVocabularyReport($mgr, "product", "$dataDir/isolateVocabulary/product.xml", "$dataDir/isolateVocabulary/product.rpt");
+
+$mgr->manualTask("Please review Isolate Vocabulary reports", "waitIsolateVocabulary_report"); 
+
+# Update Database
+&isolateVocabularyUpdate($mgr, "isolation_source", "$dataDir/isolateVocabulary/isolationSource.xml");
+&isolateVocabularyUpdate($mgr, "specific_host", "$dataDir/isolateVocabulary/specificHost.xml");
+&isolateVocabularyUpdate($mgr, "geographic_location", "$dataDir/isolateVocabulary/geographicLocation.xml");
+&isolateVocabularyUpdate($mgr, "product", "$dataDir/isolateVocabulary/product.xml");
+
+
+################################################################################
+# Mercator
+################################################################################
+
+# RepeatMasker steps
+
+
+# NOTES #####################
+# Don't get the fasta from the download site... use dumpSequence.pl
+&dumpNaSequence($mgr,"$dataDir/mercator/Cryptosporidium_species/seqfiles","ChominisGenomic_cryptoDB-3.8","C.hominis scaffold from Genbank","2008-08-13");
+&dumpNaSequence($mgr,"$dataDir/mercator/Cryptosporidium_species/seqfiles","CmurisGenomic_cryptoDB-3.8","C.muris scaffold from Genbank","2008-08-13");
+&dumpNaSequence($mgr,"$dataDir/mercator/Cryptosporidium_species/seqfiles","CparvumGenomic_Chr_cryptoDB-3.8","","","Cparvum contig to chromosome map","2008-10-28");
+&dumpNaSequence($mgr,"$dataDir/mercator/Cryptosporidium_species/seqfiles","CparvumChr6Genomic_Chr_cryptoDB-3.8","C.parvum Iowa Chr6 scaffold from Genbank","2008-08-13");
+
+
+
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&createRepeatMaskDir_new($mgr, 'ChominisGenomic_cryptoDB-3.8', 4,'-xsmall', 150,'mercator/Cryptosporidium_species');
+&createRepeatMaskDir_new($mgr, 'CmurisGenomic_cryptoDB-3.8', 4,'-xsmall', 150,'mercator/Cryptosporidium_species');
+&createRepeatMaskDir_new($mgr, 'CparvumGenomic_Chr_cryptoDB-3.8', 4, '-xsmall', 150,'mercator/Cryptosporidium_species');
+&createRepeatMaskDir_new($mgr, 'CparvumChr6Genomic_Chr_cryptoDB-3.8', 4, '-xsmall', 150,'mercator/Cryptosporidium_species');
+
+
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&copyFilesToComputeCluster($mgr, 'repeatmask','mercator/Cryptosporidium_species');
+
+&startRepeatMaskOnComputeCluster($mgr, 'ChominisGenomic_cryptoDB-3.8', 'apidb','mercator/Cryptosporidium_species');
+&startRepeatMaskOnComputeCluster($mgr, 'CmurisGenomic_cryptoDB-3.8', 'apidb','mercator/Cryptosporidium_species');
+&startRepeatMaskOnComputeCluster($mgr, 'CparvumGenomic_Chr_cryptoDB-3.8', 'apidb','mercator/Cryptosporidium_species');
+&startRepeatMaskOnComputeCluster($mgr, 'CparvumChr6Genomic_Chr_cryptoDB-3.8', 'apidb','mercator/Cryptosporidium_species');
+
+
+
+$mgr->waitForCluster("Repeat Mask ChominisGenomic_cryptoDB-3.8", "ChominisGenomic_cryptoDB-3.8");
+$mgr->waitForCluster("Repeat Mask CmurisGenomic_cryptoDB-3.8", "CmurisGenomic_cryptoDB-3.8");
+$mgr->waitForCluster("Repeat Mask CparvumGenomic_Chr_cryptoDB-3.8", "CparvumGenomic_Chr_cryptoDB-3.8");
+$mgr->waitForCluster("Repeat Mask CparvumChr6Genomic_Chr_cryptoDB-3.8", "CparvumChr6Genomic_Chr_cryptoDB-3.8");
+
+
+&copyFilesFromComputeCluster($mgr, 'CmurisGenomic_cryptoDB-3.8', 'mercator/Cryptosporidium_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'CparvumGenomic_Chr_cryptoDB-3.8', 'mercator/Cryptosporidium_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'ChominisGenomic_cryptoDB-3.8', 'mercator/Cryptosporidium_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'CparvumChr6Genomic_Chr_cryptoDB-3.8', 'mercator/Cryptosporidium_species/repeatmask');
+
+
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/repeatmask/CmurisGenomic_cryptoDB-3.8/master/mainresult/blocked.seq","$dataDir/mercator/Cryptosporidium_species/mercator/fasta/c_muris.fasta.in", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/repeatmask/ChominisGenomic_cryptoDB-3.8/master/mainresult/blocked.seq","$dataDir/mercator/Cryptosporidium_species/mercator/fasta/c_hominis.fasta.in", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/repeatmask/CparvumGenomic_Chr_cryptoDB-3.8/master/mainresult/blocked.seq","$dataDir/mercator/Cryptosporidium_species/mercator/fasta/c_parvum_chr.fasta.in", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/repeatmask/CparvumChr6Genomic_Chr_cryptoDB-3.8/master/mainresult/blocked.seq","$dataDir/mercator/Cryptosporidium_species/mercator/fasta/c_parvum_iowa_chr6.fasta.in", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta");
+
+
+&modifyFile($mgr, "c_hominis.fasta.in", "c_hominis.fasta", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+&modifyFile($mgr, "c_muris.fasta.in", "c_muris.fasta", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+&modifyFile($mgr, "c_parvum_chr.fasta.in", "c_parvum_chr.fasta", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+&modifyFile($mgr, "c_parvum_iowa_chr6.fasta.in", "c_parvum_iowa_chr6.fasta", "$dataDir/mercator/Cryptosporidium_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+
+
+
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/c_hominis.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/c_hominis.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/c_muris.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/c_muris.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/c_parvum_chr.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/c_parvum_chr.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/c_parvum_iowa_chr6.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/c_parvum_iowa_chr6.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+
+
+#&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/CryptosporidiumGhanaianGenomic_Chr_cryptoDB-3.8_chr.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/Cryptosporidium_ghanaian_chr.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+#&copy($mgr,"$dataDir/mercator/Cryptosporidium_species/training_dir/CryptosporidiumITGenomic_Chr_toxoDB-4.4_chr.gff","$dataDir/mercator/Cryptosporidium_species/mercator/gff/Cryptosporidium_it_chr.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+
+
+&grepMercatorGff($mgr, "c_hominis.gff", "c_hominis.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&grepMercatorGff($mgr, "c_muris.gff", "c_muris.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&grepMercatorGff($mgr, "c_parvum_chr.gff", "c_parvum_chr.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&grepMercatorGff($mgr, "c_parvum_iowa_chr6.gff", "c_parvum_iowa_chr6.gff.in", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+
+#&grepMercatorGff($mgr, "Cryptosporidium_ghanaian_chr.gff.in", "Cryptosporidium_ghanaian_chr.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+#&grepMercatorGff($mgr, "Cryptosporidium_it_chr.gff.in", "Cryptosporidium_it_chr.gff", "$dataDir/mercator/Cryptosporidium_species/mercator/gff");
+&fixMercatorOffsetsInGFF($mgr,"c_muris.fasta","c_muris.gff.in","c_muris.gff","$dataDir/mercator/Cryptosporidium_species/mercator/","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"c_hominis.fasta","c_hominis.gff.in","c_hominis.gff","$dataDir/mercator/Cryptosporidium_species/mercator/","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"c_parvum_chr.fasta","c_parvum_chr.gff.in","c_parvum_chr.gff","$dataDir/mercator/Cryptosporidium_species/mercator/","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"c_parvum_iowa_chr6.fasta","c_parvum_iowa_chr6.gff.in","c_parvum_iowa_chr6.gff","$dataDir/mercator/Cryptosporidium_species/mercator/","^>(\S+)","^(\S+)");
+
+
+&runMercatorMavid($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator", "mercatorMavid-5StrainSpeciesGenomes");
+
+
+&createExtDbAndDbRls($mgr, 'Chominis-Cmuris synteny from Mercator', '2008-11-06', '');
+&createExtDbAndDbRls($mgr, 'Cparvum-Cmuris synteny from Mercator', '2008-11-06', '');
+&createExtDbAndDbRls($mgr, 'Chominis-Cparvum synteny from Mercator', '2008-11-06', '');
+&createExtDbAndDbRls($mgr, 'Cmuris-CparvumChr6 synteny from Mercator', '2008-11-06', '');
+&createExtDbAndDbRls($mgr, 'Chominis-CparvumChr6 synteny from Mercator', '2008-11-06', '');
+&createExtDbAndDbRls($mgr, 'Cparvum-CparvumChr6 synteny from Mercator', '2008-11-06', '');
+
+&sqlLoader($mgr, "$projectDir/$release/resources_pipeline/primary/downloads/crypto_chromosome6_orthology/chr6OrthoMapping_load.txt");
+
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_muris-c_hominis.align",  "DoTS.NASequence", "DoTS.NASequence", "C.hominis scaffold from Genbank|2008-08-13",  "C.muris scaffold from Genbank|2008-08-13", "Chominis-Cmuris synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_hominis.agp","Cryptosporidium");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_muris-c_parvum_chr.align",  "DoTS.NASequence", "DoTS.NASequence", "Cparvum contig to chromosome map|2008-10-28",  "C.muris scaffold from Genbank|2008-08-13","Cparvum-Cmuris synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_parvum_chr.agp","Cryptosporidium");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_hominis-c_parvum_chr.align",  "DoTS.NASequence", "DoTS.NASequence", "Cparvum contig to chromosome map|2008-10-28","C.hominis scaffold from Genbank|2008-08-13","Chominis-Cparvum synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_parvum_chr.agp","Cryptosporidium");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_muris-c_parvum_iowa_chr6.align",  "DoTS.NASequence", "DoTS.NASequence", "C.parvum Iowa Chr6 scaffold from Genbank|2008-08-13",  "C.muris scaffold from Genbank|2008-08-13","Cmuris-CparvumChr6 synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_parvum_iowa_chr6.agp","Cryptosporidium");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_hominis-c_parvum_iowa_chr6.align",  "DoTS.NASequence", "DoTS.NASequence", "C.parvum Iowa Chr6 scaffold from Genbank|2008-08-13",  "C.hominis scaffold from Genbank|2008-08-13","Chominis-CparvumChr6 synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_parvum_iowa_chr6.agp","Cryptosporidium");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Cryptosporidium_species/mercator/c_parvum_chr-c_parvum_iowa_chr6.align",  "DoTS.NASequence", "DoTS.NASequence", "C.parvum Iowa Chr6 scaffold from Genbank|2008-08-13","Cparvum contig to chromosome map|2008-10-28","Cparvum-CparvumChr6 synteny from Mercator|2008-11-06","$dataDir/mercator/Cryptosporidium_species/mercator/mercator-output/c_parvum_iowa_chr6.agp","Cryptosporidium");
+
+
+$mgr->goodbye("Pipeline complete!\n");
