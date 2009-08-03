@@ -2878,13 +2878,19 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.GiardiaExpressionGraphs&1 NOLOGGING AS
 SELECT ga.source_id,
-       COUNT(stress) as graph_stress
+       COUNT(stress) as graph_stress,
+       COUNT(stress_ts) as graph_stress_ts
 FROM apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS stress
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Stress Response in Giardia lamblia Trophozoites-Averaged'
-        AND p.profile_set_id = ps.profile_set_id) stress
+        AND p.profile_set_id = ps.profile_set_id) stress,
+     (SELECT p.source_id, 1 AS stress_ts
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'Stress response Dynamics in Trophozoites (time series)-Averaged'
+        AND p.profile_set_id = ps.profile_set_id) stress2
   WHERE ga.source_id = stress.source_id(+)
+  AND ga.source_id = stress2.source_id(+)
 GROUP BY ga.source_id
       ]]>
     </sql>
