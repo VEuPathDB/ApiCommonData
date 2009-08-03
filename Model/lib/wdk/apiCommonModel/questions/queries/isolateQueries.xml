@@ -124,13 +124,13 @@
 
 
         <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
-        <paramRef ref="isolateParams.type" includeProjects="ToxoDB"/>
+        <paramRef ref="isolateParams.type" includeProjects="ToxoDB,PlasmoDB"/>
         <column name="source_id"/>
         <column name="project_id"/>
         <column name="data_type" includeProjects="PlasmoDB,ToxoDB"/>
-        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB,PlasmoDB">
+        <sqlParamValue name="dataTypeOptional" includeProjects="CryptoDB">
         </sqlParamValue>
-        <sqlParamValue name="dataTypeOptional" includeProjects="ToxoDB">
+        <sqlParamValue name="dataTypeOptional" includeProjects="ToxoDB,PlasmoDB">
             <![CDATA[
              AND  i.data_type in ($$type$$) 
             ]]>
