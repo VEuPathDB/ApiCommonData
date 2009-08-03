@@ -16,6 +16,7 @@ CREATE TABLE comments2.Phenotype
   phenotype_description VARCHAR2(4000),
   phenotype_category_id NUMBER(2),
   mutant_expression_id NUMBER(2),
+  phenotype_loc_id NUMBER(2),
   CONSTRAINT phenotype_key PRIMARY KEY (phenotype_id),
   CONSTRAINT comment_id_phenotype_fkey FOREIGN KEY (comment_id)
      REFERENCES comments2.comments (comment_id)
@@ -39,8 +40,8 @@ CREATE TABLE comments2.MutantStatus
 GRANT insert, update, delete on comments2.MutantStatus to GUS_W;
 GRANT select on comments2.MutantStatus to GUS_R;
 
-INSERT INTO comments2.MutantStatus VALUES(1, 'Successful/Available');
-INSERT INTO comments2.MutantStatus VALUES(2, 'Failed/Unavailable');
+INSERT INTO comments2.MutantStatus VALUES(1, 'Successful');
+INSERT INTO comments2.MutantStatus VALUES(2, 'Failed');
 INSERT INTO comments2.MutantStatus VALUES(3, 'In Progress');
 
 CREATE TABLE comments2.MutantType
@@ -62,6 +63,7 @@ INSERT INTO comments2.MutantType VALUES(6, 'Point mutation');
 INSERT INTO comments2.MutantType VALUES(7, 'Transient/Knock down');
 INSERT INTO comments2.MutantType VALUES(8, 'Dominant negative');
 INSERT INTO comments2.MutantType VALUES(9, 'Spontaneous');
+INSERT INTO comments2.MutantType VALUES(10, 'Other');
 
 CREATE TABLE comments2.MutantMethod
 (
@@ -84,6 +86,20 @@ INSERT INTO comments2.MutantMethod VALUES(8, 'Conditional KO');
 INSERT INTO comments2.MutantMethod VALUES(9, 'Destabilization');
 INSERT INTO comments2.MutantMethod VALUES(10, 'Antisense/siRNA');
 INSERT INTO comments2.MutantMethod VALUES(11, 'Other');
+
+CREATE TABLE comments2.PhenotypeLoc
+(
+  phenotype_loc_id NUMBER(2) NOT NULL,
+  phenotype_loc VARCHAR2(50) NOT NULL,
+  CONSTRAINT phenotype_loc_id_key PRIMARY KEY (phenotype_loc_id)
+);
+
+GRANT insert, update, delete on comments2.PhenotypeLoc to GUS_W;
+GRANT select on comments2.PhenotypeLoc to GUS_R;
+
+INSERT INTO comments2.PhenotypeLoc VALUES(1, 'in vitro');
+INSERT INTO comments2.PhenotypeLoc VALUES(2, 'in vivo');
+INSERT INTO comments2.PhenotypeLoc VALUES(3, 'Both');
 
 CREATE TABLE comments2.MutantCategory
 (
