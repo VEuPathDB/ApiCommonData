@@ -96,7 +96,7 @@ sub run {
 
 sub updateTaxonNameClass {
 
-  my ($taxonName,$name_class)   = @_;
+  my ($self,$taxonName,$name_class)   = @_;
 	  
   my $newTaxonName = GUS::Model::SRes::TaxonName->new({name => $taxonName});
 
