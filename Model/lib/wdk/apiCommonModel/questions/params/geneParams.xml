@@ -239,7 +239,7 @@
              <suggest default="2"/>
         </stringParam>
 
-      <flatVocabParam name="sage_tag_library" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
+      <!-- flatVocabParam name="sage_tag_library" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
                      queryRef="GeneVQ.SageTagLibrary"
                      prompt="SAGE Tag Library"
                      multiPick="true">
@@ -247,10 +247,10 @@
            Select the SAGE tag library for this query.
         </help>
 <useTermOnly value="true" includeProjects="EuPathDB"/>
-      </flatVocabParam>
+      </flatVocabParam -->
 
 
-      <flatVocabParam name="sage_tag_library_name" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
+      <!-- flatVocabParam name="sage_tag_library_name" includeProjects="PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
                      queryRef="GeneVQ.SageTagLibraryName"
                      prompt="SAGE Tag Library"
                      multiPick="true">
@@ -258,7 +258,7 @@
            Select the SAGE tag library for this query.
         </help>
 <useTermOnly value="true" includeProjects="EuPathDB"/>
-      </flatVocabParam>
+      </flatVocabParam-->
 
 
 
@@ -5984,6 +5984,296 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       </enumList>
     </enumParam>
 
+    <enumParam name="sage_tag_library" includeProjects="EuPathDB,GiardiaDB,PlasmoDB,ToxoDB"
+             prompt="Sage Tag Library"
+             quote="true"
+             multiPick="true"
+             displayType="treeBox"
+             default="false"
+             visible="true">
+
+         <help>Click the + to select specific experiments or use the tree box to select all for the chosen organism.</help>
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
+      <enumList>
+         <enumValue includeProjects="EuPathDB,GiardiaDB">
+          <display><![CDATA[<i>Giardia lamblia</i>]]></display>
+          <term>Glamblia</term>
+          <internal>0</internal>
+          <parentTerm></parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_4 hour Encystation</term>
+           <internal>1</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_S1 Excystation</term>
+           <internal>2</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_12 hour Encystation</term>
+           <internal>3</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_60 min Excystation</term>
+           <internal>4</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_21 hour Encystation</term>
+           <internal>5</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_42 hour Encystation</term>
+           <internal>6</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_Cyst</term>
+           <internal>7</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_S2 Excystation</term>
+           <internal>8</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_30 min Excystation</term>
+           <internal>9</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Characterization of the Giardia lamblia Transcriptome_Troph1</term>
+           <internal>10</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+          <display><![CDATA[<i>Plasmodium falciparum</i>]]></display>
+          <term>Pfalciparum</term>
+          <internal>0</internal>
+          <parentTerm></parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+          <term>Transcriptional profile of P.falciparum by Serial analysis of gene expression_CQlibrary</term>
+          <internal>1</internal>
+          <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+          <term>Transcriptional profile of P.falciparum by Serial analysis of gene expression_CQcontrol</term>
+          <internal>2</internal>
+          <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+          <term>Transcriptional profile of P.falciparum by Serial analysis of gene expression_SAGE-3D7-library1</term>
+          <internal>3</internal>
+          <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+
+         <enumValue includeProjects="EuPathDB,ToxoDB">
+           <display><![CDATA[<i>Toxoplasma gondii</i>]]></display>
+           <term>Tgondii</term>
+           <internal>0</internal>
+           <parentTerm></parentTerm>
+         </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_sp</term>
+            <internal>121</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_d4</term>
+            <internal>2</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_d6</term>
+            <internal>21</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_d7</term>
+            <internal>81</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_d15</term>
+            <internal>41</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_ph</term>
+            <internal>101</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_msj</term>
+            <internal>1</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_rh</term>
+            <internal>62</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+          <enumValue includeProjects="EuPathDB,ToxoDB">
+            <term>T. gondii 3p SAGE tag frequencies_b7</term>
+            <internal>61</internal>
+            <parentTerm>Tgondii</parentTerm>
+          </enumValue>
+      </enumList>
+    </enumParam>
+
+
+    <enumParam name="sage_tag_library_name" includeProjects="EuPathDB,GiardiaDB,PlasmoDB,ToxoDB"
+             prompt="Sage Tag Library Name"
+             quote="true"
+             multiPick="true"
+             displayType="treeBox"
+             default="false"
+             visible="true">
+
+         <help>Click the + to select specific experiments or use the tree box to select all for the chosen organism.</help>
+      <useTermOnly value="true" includeProjects="EuPathDB"/>
+      <enumList>
+         <enumValue includeProjects="EuPathDB,GiardiaDB">
+          <display><![CDATA[<i>Giardia lamblia</i>]]></display>
+          <term>Glamblia</term>
+          <internal>0</internal>
+          <parentTerm></parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Troph1</term>
+           <internal>Troph1</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>4 hour Encystation</term>
+           <internal>4 hour Encystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>12 hour Encystation</term>
+           <internal>12 hour Encystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>21 hour Encystation</term>
+           <internal>21 hour Encystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>42 hour Encystation</term>
+           <internal>42 hour Encystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>Cyst</term>
+           <internal>Cyst</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>S1 Excystation</term>
+           <internal>S1 Excystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>S2 Excystation</term>
+           <internal>S2 Excystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>30 min Excystation</term>
+           <internal>30 min Excystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,GiardiaDB">
+           <term>60 min Excystation</term>
+           <internal>60 min Excystation</internal>
+           <parentTerm>Glamblia</parentTerm>
+        </enumValue>
+
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+          <display><![CDATA[<i>Plasmodium falciparum</i>]]></display>
+          <term>Pfalciparum</term>
+          <internal>0</internal>
+          <parentTerm></parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+           <term>CQlibrary</term>
+           <internal>CQlibrary</internal>
+           <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+           <term>SAGE-3D7-library1</term>
+           <internal>SAGE-3D7-library1</internal>
+           <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,PlasmoDB">
+           <term>CQcontrol</term>
+           <internal>CQcontrol</internal>
+           <parentTerm>Pfalciparum</parentTerm>
+        </enumValue>
+
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <display><![CDATA[<i>Toxoplasma gondii</i>]]></display>
+           <term>Tgondii</term>
+           <internal>0</internal>
+           <parentTerm></parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>sp</term>
+           <internal>sp</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>d4</term>
+           <internal>d4</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>d6</term>
+           <internal>d6</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>d7</term>
+           <internal>d7</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>d15</term>
+           <internal>d15</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>ph</term>
+           <internal>ph</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>msj</term>
+           <internal>msj</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>rh</term>
+           <internal>rh</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+        <enumValue includeProjects="EuPathDB,ToxoDB">
+           <term>b7</term>
+           <internal>b7</internal>
+            <parentTerm>Tgondii</parentTerm>
+        </enumValue>
+      </enumList>
+    </enumParam>
+
+
   </paramSet>
 
 
@@ -6011,7 +6301,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         </processQuery>
 
 
-        <sqlQuery name="SageTagLibrary" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
+        <!-- sqlQuery name="SageTagLibrary" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -6025,14 +6315,14 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
               order by ll.row_id
             </sql>
-        </sqlQuery>
+        </sqlQuery -->
 
-        <processQuery name="SageTagLibrary" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+        <!-- processQuery name="SageTagLibrary" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
-        </processQuery>
+        </processQuery -->
 
-        <sqlQuery name="SageTagLibraryName" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
+        <!-- sqlQuery name="SageTagLibraryName" includeProjects="PlasmoDB,GiardiaDB,ToxoDB">
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -6046,12 +6336,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
              and ll.row_id = ass.assay_id
              order by ass.assay_id
             </sql>
-        </sqlQuery>
+        </sqlQuery -->
 
-        <processQuery name="SageTagLibraryName" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+        <!-- processQuery name="SageTagLibraryName" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="100"/>
             <wsColumn name="term" width="100"/>
-        </processQuery>
+        </processQuery -->
+
 
         <sqlQuery name="GeneTypes" excludeProjects="EuPathDB">
             <column name="internal"/>

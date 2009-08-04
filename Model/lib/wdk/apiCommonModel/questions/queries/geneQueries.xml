@@ -1953,9 +1953,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <paramRef ref="geneParams.st_min_tag_count"/>
        <paramRef ref="geneParams.st_max_occurrences"/>
        <paramRef ref="geneParams.sense_antisense"/>
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
-                 includeProjects="GiardiaDB,ToxoDB"/> 
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
+       <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
+                 includeProjects="GiardiaDB,ToxoDB"/ --> 
+       <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/ --> 
        <column name="project_id"/> 
        <column name="source_id" />
        <column name="sense_count" />
@@ -1983,7 +1983,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 	 <processQuery name="GenesBySageTag" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-                <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="EuPathDB"/> 
+            <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl" includeProjects="EuPathDB"/ -->
                 <paramRef ref="geneParams.sage_tag_library" quote="false"/>
                 <paramRef ref="geneParams.st_max_five_prime_distance"/>
                 <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -2001,9 +2001,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 	 </processQuery>
 
     <sqlQuery name="GenesBySageTagRStat" doNotTest="true" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" isCacheable="true">
-      <paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
-                 includeProjects="GiardiaDB,ToxoDB"/> 
-       <paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/> 
+      <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.withSageTags"
+                 includeProjects="GiardiaDB,ToxoDB"/ --> 
+       <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.pf" includeProjects="PlasmoDB"/ --> 
        <paramRef ref="geneParams.sage_tag_library_name"/>
        <paramRef ref="geneParams.sage_tag_min_r"/>
        <paramRef ref="geneParams.st_max_five_prime_distance"/>
@@ -2061,8 +2061,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesBySageTagRStat" includeProjects="EuPathDB"
 			processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl"/> 
+        <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf-gl"/ --> 
         <paramRef ref="geneParams.sage_tag_library_name" quote="false"/>
         <paramRef ref="geneParams.sage_tag_min_r"/>
         <paramRef ref="geneParams.st_max_five_prime_distance"/>
