@@ -872,24 +872,25 @@ OrthoMCL data in a phyletic profile format. (The profile, for each Giardia gene,
         <publication pmid="12952885"/>
     </resource>
     
-   <resource resource="IEDB_Epitopes" version="05-28-2009"
+
+   <resource resource="IEDB_Epitopes" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="G. lamblia"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDeliveryDir@/IEDB/05-28-2009" 
+        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Giardia" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/05-28-2009 --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Giardia --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
@@ -898,14 +899,14 @@ OrthoMCL data in a phyletic profile format. (The profile, for each Giardia gene,
     </resource>
     
 
-    <resource resource="IEDB_Epitopes_DBxRefs" version="05-28-2009"
+    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="G. lamblia"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
@@ -922,7 +923,6 @@ OrthoMCL data in a phyletic profile format. (The profile, for each Giardia gene,
           ]]>
         </description>
     </resource>
-
 
      <resource resource="PhylogeneticTrees_Giardia" version="2007-07-19"
         displayName="Phylogenetic Trees for G. lamblia"
