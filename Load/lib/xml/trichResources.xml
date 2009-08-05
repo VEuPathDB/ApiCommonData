@@ -1,0 +1,236 @@
+<resourcesPipeline repository="/files/efr"
+                   downloadDir="@downloadDir@">
+    <cleanups>
+    </cleanups>
+    
+    <resource resource="taxonomy" version="2009-08-05" 
+        displayName="NCBI Taxonomy"
+        publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        category="Ontology"
+        url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        plugin="GUS::Supported::Plugin::LoadTaxon"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+        <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+        <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+        <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+        <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    The NCBI Taxonomy database is a curated set of names and classifications for all of the organisms that are represented in GenBank.
+          ]]>
+        </description>
+        <publication pmid="18940867"/>
+    </resource>
+    
+    <resource resource="SO" version="1.225"
+        displayName="Sequence Ontology"
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.225"
+        plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.225 --soCvsVersion 1.225</pluginArgs>
+        <description>
+            <![CDATA[
+    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+        </description>
+        <publication pmid="15892872"/>
+    </resource>
+    
+    <resource resource="enzymeDB" version="2009_03_31" 
+        displayName="Enzyme nomenclature database"
+        publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
+        category="Ontology"
+        url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
+        plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
+        extDbName="enzymeDB"
+        extDbRlsVer="2009-03-31"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
+        <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="GO_evidence_codes" version="1.2"
+        displayName="Gene Ontology evidence codes"        
+        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
+        category="Ontology"            
+        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+        <description>
+            <![CDATA[
+   Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="GO" version="4.162"
+        displayName="Gene Ontology"
+        publicUrl="http://www.geneontology.org"
+        category="Ontology"
+        url="http://www.geneontology.org/ontology/gene_ontology.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOTermsFromObo"
+        extDbName="Gene Ontology"
+        extDbRlsVer="4.162"
+        extDbRlsDescrip="The Gene Ontology from Jan. 11, 2007"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="NRDB" version="2007-07-15"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="GenBank NRDB"
+        publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        category="Proteome"
+        url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        extDbName="NRDB"
+        extDbRlsVer="2007-07-15"
+        extDbRlsDescrip="The nr file from 2007-07-15"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="dbEST" version="2007-06-07"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        extDbName="dbEST"
+        extDbRlsVer="2007-06-07"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/amitoDB/manualDelivery/dbEST/dummy"
+        />
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId "5740,5721" --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <description>
+            <![CDATA[
+     The Expressed Sequence Tags database (dbEST) contains sequence data and other information on single-pass cDNA sequences and is a division of GenBank.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="InterproscanData" version="14.1"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        category="Proteome"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            fileOrDir = "rsync://loquat.rcc.uga.edu:/home/jkissing/mheiges/iprscan/iprscan/data/"
+            contact = "EBI"
+            email = "interhelp@ebi.ac.uk"
+            institution = "EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/</pluginArgs>
+        <description>
+            <![CDATA[
+	InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>    
+    
+
+ 
+       <resource resource="T.vaginalis_scaffolds" version="2007-01-11"
+           plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        displayName="T. vaginalis scaffold sequence"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/"
+        extDbName="T. vaginalis scaffolds"
+        extDbRlsVer="2007-01-11"
+        extDbRlsDescrip="T. vaginalis scaffold sequence from 2007-01-11"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/empty" 
+            contact="Jane Carlton"
+            email="Jane Carlton"
+            institution="TIGR"
+        />
+         <unpack>rm @downloadDir@/T.vaginalis_scaffolds/empty</unpack>
+        <unpack>getFastaSeqsFromNcbi --file @manualDelivery@/TrichDB/initialDataDump/TIGR_asmbls_2_GB_Acc.table --regex "\w+\s+(\w+)" --outputDir @downloadDir@/T.vaginalis_scaffolds</unpack>
+        <unpack> for f in `ls @downloadDir@/T.vaginalis_scaffolds/`; do cat @downloadDir@/T.vaginalis_scaffolds/$f >> @downloadDir@/T.vaginalis_scaffolds/tv.fasta; done</unpack>
+           <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 412133 --sequenceFile @downloadDir@/T.vaginalis_scaffolds/tv.fasta --soTermName "supercontig" --regexSourceId "gb\|(\S+)\.\d\|" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+           <![CDATA[
+      T. vaginalis sequence from Jane Carlton (NYU,TIGR). PMID: 17218520 
+          ]]>
+        </description>
+           <publication pmid="17218520"/>
+       </resource>
+    
+    <resource resource="T.vaginalis_Annotation" version="2007-01-11"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="T. vaginalis annotation"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/"
+        extDbName="T. vaginalis scaffolds"
+        extDbRlsVer="2007-01-11"
+        extDbRlsDescrip="T. vaginalis annotation from Jane Carlton, 2007-01-11"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/TrichDB/initialDataDump/tvag_manatee_export.gff" 
+            contact="Jane Carlton"
+            email="Jane Carlton"
+            institution="TIGR"
+        />
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/config/TIGRGffFeaturesMod2gus.xml --inputFileOrDir @downloadDir@/T.vaginalis_Annotation/tvag_manatee_export.gff --fileFormat gff2 --gff2GroupTag "GenePrediction" --soCvsVersion @soVer@ --defaultOrganism "Trichomonas vaginalis G3" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id</pluginArgs>
+        <description>
+            <![CDATA[
+      T. vaginalis annotation from Jane Carlton (NYU,TIGR), includes gene models and protein translations. PMID: 17218520 
+          ]]>
+        </description>
+        <publication pmid="17218520"/>     
+    </resource>
+    
+    <resource resource="EC_Num_tvag_genes" version="2007-01-11"
+        displayName="Tvag EC Numbers"
+        organisms="T. vaginalis"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertECMapping"
+        extDbName="enzymeDB"
+        extDbRlsVer="2007-01-09"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/TrichDB/initialDataDump/tva1_ECnum_genes_parsed.txt" 
+            contact="Steven Sullivan"
+            email=""
+            institution="NYU"
+        />
+        <pluginArgs>--ECDbName %EXT_DB_NAME% --ECReleaseNumber  %EXT_DB_RLS_VER% --ECMappingFile  @downloadDir@/EC_Num_tvag_genes/tva1_ECnum_genes_parsed.txt --evidenceCode "Annotation Center"</pluginArgs>
+        <description>
+            <![CDATA[
+   The Enzyme Commission number (EC number) is a numerical classification scheme for enzymes, based on the chemical reactions they catalyze.
+          ]]>
+        </description>
+    </resource>
+
+
+
+</resourcesPipeline>
+
+
