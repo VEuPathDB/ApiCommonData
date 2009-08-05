@@ -2767,7 +2767,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               and cs.na_sequence_id = t.na_sequence_id
               and t.parent_id = g.na_feature_id
               and de.analysis_id = a.analysis_id
-              and a.name in ($$gl_exprnsample$$)
+              and a.name = $$gl_exprnsample$$
               AND de.confidence >= $$confidence$$
               AND ($$regulated_dir$$ (de.fold_change) >= $$fold_change$$)
              group by g.source_id
