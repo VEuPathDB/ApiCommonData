@@ -1,4 +1,4 @@
-package ApiCommonData::Load::SpecialCaseQualifierHandlers;
+package ApiCommonData::Load::PlasmoSpecialCaseQualifierHandlers;
 
 use strict;
 use GUS::Supported::SpecialCaseQualifierHandlers;
