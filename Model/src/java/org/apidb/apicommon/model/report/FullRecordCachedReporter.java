@@ -254,11 +254,7 @@ public class FullRecordCachedReporter extends Reporter {
             }
             writer.flush();
         } finally {
-            try {
-                SqlUtils.closeStatement(ps);
-            } catch (SQLException ex) {
-                throw new WdkModelException(ex);
-            }
+            SqlUtils.closeStatement(ps);
         }
     }
 
