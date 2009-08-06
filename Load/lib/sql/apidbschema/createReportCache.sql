@@ -4,7 +4,8 @@ create table apidb.GeneDetail (
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
-      CONTENT CLOB
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
 );
 
 CREATE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name);
@@ -14,6 +15,14 @@ CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id);
 CREATE INDEX apidb.gene_text_ix on apidb.GeneDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
+
+CREATE TRIGGER apidb.GeneDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.GeneDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
 
 GRANT insert, select, update, delete ON apidb.GeneDetail TO gus_w;
 GRANT select ON apidb.GeneDetail TO gus_r;
@@ -26,7 +35,8 @@ create table apidb.IsolateDetail (
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
-      CONTENT CLOB
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
 );
 
 CREATE INDEX apidb.isolatedtl_idx01 ON apidb.IsolateDetail(source_id, project_id, field_name);
@@ -36,6 +46,14 @@ CREATE INDEX apidb.isolatedtl_idx03 ON apidb.IsolateDetail(row_count, source_id)
 CREATE INDEX apidb.isolate_text_ix on apidb.IsolateDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
+
+CREATE TRIGGER apidb.IsolateDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.IsolateDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
 
 GRANT insert, select, update, delete ON apidb.IsolateDetail TO gus_w;
 GRANT select ON apidb.IsolateDetail TO gus_r;
@@ -48,12 +66,21 @@ create table apidb.SequenceDetail (
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
-      CONTENT CLOB
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
 );
 
 CREATE INDEX apidb.sequencedtl_idx01 ON apidb.SequenceDetail(source_id, project_id, field_name);
 CREATE INDEX apidb.sequencedtl_idx02 ON apidb.SequenceDetail(field_name, source_id);
 CREATE INDEX apidb.sequencedtl_idx03 ON apidb.SequenceDetail(row_count, source_id);
+
+CREATE TRIGGER apidb.SeqDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.SequenceDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
 
 GRANT insert, select, update, delete ON apidb.SequenceDetail TO gus_w;
 GRANT select ON apidb.SequenceDetail TO gus_r;
