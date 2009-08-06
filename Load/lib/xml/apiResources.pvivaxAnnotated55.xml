@@ -1,0 +1,61 @@
+<resourcesPipeline repository="login.pcbi.upenn.edu:/files/efr"
+                   downloadDir="@downloadDir@">
+
+<resource resource="PvivaxCDS" version="plasmodb@plasmoVersion@"
+              displayName="P. vivax CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="PlasmoDB"
+              extDbRlsVer="@plasmoVersion@"
+              extDbRlsDescrip="PV CDS obtained from plasmodb@plasmoVersion@ downloads"
+              url="@plasmoDir@Pvivax/PvivaxAnnotatedCDS_PlasmoDB-@plasmoVersion@.fasta"
+              dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5</wgetArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/PvivaxCDS/PvivaxAnnotatedCDS_PlasmoDB-@plasmoVersion@.fasta --SOTermName CDS --ncbiTaxId 126793 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Pvivax CDS from PlasmoDB@plasmoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="PvivaxTranscripts" version="plasmodb@plasmoVersion@"
+              displayName="P. vivax Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="PlasmoDB"
+              extDbRlsVer="@plasmoVersion@"
+              extDbRlsDescrip="PV Transcripts obtained from plasmodb@plasmoVersion@ downloads"
+              url="@plasmoDir@Pvivax/PvivaxAnnotatedTranscripts_PlasmoDB-@plasmoVersion@.fasta"
+              dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5</wgetArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/PvivaxTranscripts/PvivaxAnnotatedTranscripts_PlasmoDB-@plasmoVersion@.fasta --SOTermName processed_transcript --ncbiTaxId 126793 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Pvivax Transcripts from PlasmoDB@plasmoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="PvivaxProteins" version="plasmodb@plasmoVersion@"
+              displayName="P. vivax proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="PlasmoDB"
+              extDbRlsVer="@plasmoVersion@"
+              extDbRlsDescrip="PV Proteins obtained from plasmodb@plasmoVersion@ downloads"
+              url="@plasmoDir@Pvivax/PvivaxAnnotatedProteins_PlasmoDB-@plasmoVersion@.fasta"
+              dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5</wgetArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/PvivaxProteins/PvivaxAnnotatedProteins_PlasmoDB-@plasmoVersion@.fasta --SOTermName protein 
+ --ncbiTaxId 126793 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>           
+           <![CDATA[
+            Pvivax Proteins from PlasmoDB@plasmoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+</resourcesPipeline>
+
