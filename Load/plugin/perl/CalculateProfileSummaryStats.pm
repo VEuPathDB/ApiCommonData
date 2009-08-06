@@ -98,7 +98,7 @@ sub run {
   my $dbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
   my $percentsHash =
-    $self->makePercentsHash($self->getArg('percentProfileSet'), $dbRlsId);
+    $self->makePercentsHash($self->getArg('percentProfileSet'), $dbRlsId) if $self->getArg('percentProfileSet');
 
   my $profileSetNames = $self->getArg('profileSetNames');
 
@@ -157,8 +157,6 @@ sub processProfileSet {
 
   my $header = $self->getHeader($profileSetName, $dbRlsId);
 
-  my $percentsHeader = $self->getHeader($self->getArg('percentProfileSet'), $dbRlsId);
-
   $self->log("Processing ProfileSet $profileSetName");
 
   my $sql = "
@@ -190,7 +188,7 @@ AND p.profile_set_id = ps.profile_set_id
     my $profileHash = $self->makeProfileHash($sourceId,\@profile, $header);
     my $percentHash = $self->makeProfileHash($sourceId,
 					     $percentsHash->{$sourceId},
-					     $percentsHeader);
+					     $header) if $self->getArg('percentProfileSet');
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
 				   $timePointMap, $sourceId);
@@ -285,7 +283,7 @@ sub calculateSummaryStats {
     my ($self, $profileHashRef, $percentileHashRef, $timePointMappingRef,
        $sourceId) = @_;
     my %profileHash = %{$profileHashRef};
-    my %percentileHash = %{$percentileHashRef};
+    my %percentileHash = %{$percentileHashRef} if $self->getArg('percentProfileSet');
     my %timePointMapping = %{$timePointMappingRef} if $timePointMappingRef;
 
     my %resultHash;
