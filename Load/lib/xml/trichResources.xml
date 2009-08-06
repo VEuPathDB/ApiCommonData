@@ -59,7 +59,7 @@
         </description>
     </resource>
     
-    <resource resource="GO_evidence_codes" version="1.2"
+    <resource resource="GO_evidence_codes" version="2009-03-20"
         displayName="Gene Ontology evidence codes"        
         publicUrl="http://www.geneontology.org/GO.evidence.shtml"
         category="Ontology"            
@@ -75,15 +75,15 @@
         </description>
     </resource>
     
-    <resource resource="GO" version="4.162"
+    <resource resource="GO" version="1.729"
         displayName="Gene Ontology"
         publicUrl="http://www.geneontology.org"
         category="Ontology"
         url="http://www.geneontology.org/ontology/gene_ontology.obo"
         plugin="ApiCommonData::Load::Plugin::InsertGOTermsFromObo"
         extDbName="Gene Ontology"
-        extDbRlsVer="4.162"
-        extDbRlsDescrip="The Gene Ontology from Jan. 11, 2007"
+        extDbRlsVer="1.729"
+        extDbRlsDescrip="The Gene Ontology from Aug. 4, 2009"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
         <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
@@ -94,15 +94,15 @@
         </description>
     </resource>
     
-    <resource resource="NRDB" version="2007-07-15"
+    <resource resource="NRDB" version="2009-08-05"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="GenBank NRDB"
         publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         category="Proteome"
         url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         extDbName="NRDB"
-        extDbRlsVer="2007-07-15"
-        extDbRlsDescrip="The nr file from 2007-07-15"
+        extDbRlsVer="2009-08-05"
+        extDbRlsDescrip="The nr file from 2009-08-05"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
@@ -113,19 +113,19 @@
         </description>
     </resource>
     
-    <resource resource="dbEST" version="2007-06-07"
+    <resource resource="dbEST" version="2009-08-05"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         extDbName="dbEST"
-        extDbRlsVer="2007-06-07"
+        extDbRlsVer="2009-08-05"
         extDbRlsDescrip="ESTs from the mirrored dbEST"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/amitoDB/manualDelivery/dbEST/dummy"
+        <manualGet fileOrDir = "@manualDelivery@/ESTs/dbEST/dummy"
         />
         <unpack>mkdir @pipelineDir@/config/</unpack>
-        <unpack>getSubTaxa --ncbiTaxId "5740,5721" --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>getSubTaxa --ncbiTaxId "199296" --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
         <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
         <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
@@ -135,19 +135,20 @@
         </description>
     </resource>
     
-    <resource resource="InterproscanData" version="14.1"
+    <resource resource="InterproscanData" version="19.0"
         plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
         displayName="InterPro Database"
         publicUrl="http://www.ebi.ac.uk/interpro"
         category="Proteome"
-        dbCommit="@dbcommit@">	
-        <manualGet 
-            fileOrDir = "rsync://loquat.rcc.uga.edu:/home/jkissing/mheiges/iprscan/iprscan/data/"
+        dbCommit="@dbcommit@">
+	<manualGet 
+            fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan19.0/"
             contact = "EBI"
             email = "interhelp@ebi.ac.uk"
             institution = "EBI"
         />
-        <unpack>fixSuperfamily @downloadDir@/InterproscanData/</unpack>
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan19.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
         <pluginArgs>--inPath @downloadDir@/InterproscanData/</pluginArgs>
         <description>
             <![CDATA[
@@ -156,11 +157,9 @@
         </description>
         <publication pmid="15608177"/>
     </resource>    
-    
 
- 
-       <resource resource="T.vaginalis_scaffolds" version="2007-01-11"
-           plugin="GUS::Supported::Plugin::LoadFastaSequences"
+    <resource resource="T.vaginalis_scaffolds" version="2007-01-11"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
         displayName="T. vaginalis scaffold sequence"
         category="Genome"
         publicUrl="http://www.ncbi.nlm.nih.gov/"
@@ -194,7 +193,7 @@
         extDbRlsVer="2007-01-11"
         extDbRlsDescrip="T. vaginalis annotation from Jane Carlton, 2007-01-11"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDelivery@/TrichDB/initialDataDump/tvag_manatee_export.gff" 
+        <manualGet fileOrDir="@manualDelivery@/initialDataDump/tvag_manatee_export.gff" 
             contact="Jane Carlton"
             email="Jane Carlton"
             institution="TIGR"
@@ -206,8 +205,51 @@
           ]]>
         </description>
         <publication pmid="17218520"/>     
+    </resource>    
+
+    <resource resource="OrthoMCL_Phyletic" version="3.0"
+        displayName="OrthoMCL phyletic profiles"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi, P.knowlesi"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/apiSiteFiles/downloadSite/orthomcl/3.0/orthomclGroups.txt.gz"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <unpack>gunzip @downloadDir@/OrthoMCL_Phyletic/orthomclGroups.txt.gz</unpack>
+        <pluginArgs>--groupsFile @downloadDir@/OrthoMCL_Phyletic/orthomclGroups.txt --taxaToLoad "tvag"</pluginArgs>
+        <description>
+            <![CDATA[
+OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+          ]]>
+        </description>
+        <publication pmid="16381887"/>
     </resource>
-    
+
+<resource resource="OrthoMCL" version="3.0"
+        displayName="Orthologous groups generated using OrthoMCL"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi,P.knowlesi"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir=" @downloadDir@/OrthoMCL_Phyletic/orthomclGroups.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "tvag" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+    </resource>
+
     <resource resource="EC_Num_tvag_genes" version="2007-01-11"
         displayName="Tvag EC Numbers"
         organisms="T. vaginalis"
@@ -216,7 +258,7 @@
         extDbName="enzymeDB"
         extDbRlsVer="2007-01-09"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDelivery@/TrichDB/initialDataDump/tva1_ECnum_genes_parsed.txt" 
+        <manualGet fileOrDir="@manualDelivery@/initialDataDump/tva1_ECnum_genes_parsed.txt" 
             contact="Steven Sullivan"
             email=""
             institution="NYU"
