@@ -1,8 +1,20 @@
+DROP TABLE comments2.PhenotypeMutantCategory;
+DROP TABLE comments2.MutantCategory;
+DROP TABLE comments2.PhenotypeMutantReporter;
+DROP TABLE comments2.MutantReporter;
 DROP TABLE comments2.PhenotypeMutantMarker;
 DROP TABLE comments2.MutantMarker;
+DROP TABLE comments2.MutantStatus;
+DROP TABLE comments2.MutantType;
+DROP TABLE comments2.MutantMethod;
+DROP TABLE comments2.PhenotypeLoc; 
+DROP TABLE comments2.MutantExpression; 
 DROP TABLE comments2.Phenotype;
 
 DROP SEQUENCE comments2.phenotype_pkseq; 
+DROP SEQUENCE comments2.phenotypeMutantCategory_pkseq; 
+DROP SEQUENCE comments2.commentMutantMarker_pkseq; 
+DROP SEQUENCE comments2.commentMutantReporter_pkseq; 
 
 CREATE TABLE comments2.Phenotype
 (
