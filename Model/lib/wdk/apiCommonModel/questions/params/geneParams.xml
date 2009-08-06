@@ -5688,10 +5688,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
-        <stringParam name="domain_accession"
-                     prompt="Domain">
+        <typeAheadParam name="domain_accession"
+                     prompt="Domain"
+                     recordClassRef="AjaxRecordClasses.InterproTermClass"
+                     dataTypeRef="domain_database"
+                     isDataTypeParam="true">
             <help>Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed.</help>
-        </stringParam>
+        </typeAheadParam>
 
       <flatVocabParam name="day_and_strain" includeProjects="PlasmoDB,EuPathDB"
                      queryRef="GeneVQ.DayAndStrain"
