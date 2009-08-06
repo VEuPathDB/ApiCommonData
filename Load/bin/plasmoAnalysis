@@ -1441,7 +1441,7 @@ $mgr->waitForCluster("PbergheiESTSeqs BLAT alignment to PbergheiGenome", "waitPb
 &copyFilesFromComputeCluster($mgr,"PbergheiESTSeqs","repeatmask");
 
 #this step has not been tested yet, but needs to be run before loadContigAligns
-&UpdateGusTableWithXml($mgr," $ENV{PROJECT_HOME}/ApiCommonData/Load/config/blatalignmentquality.xml","BlatAlignmentQuality");
+&UpdateGusTableWithXml($mgr," $ENV{PROJECT_HOME}/ApiCommonData/Load/lib/xml/blatalignmentquality.xml","BlatAlignmentQuality");
 
 ##re-examine this, may want to use the taxon_id for query sequences (parent id) and different one for the genome(strain id).
 
