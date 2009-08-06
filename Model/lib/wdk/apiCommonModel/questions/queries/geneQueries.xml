@@ -3498,7 +3498,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <processQuery name="GenesByCentromereProximity" includeProjects="EuPathDB"
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
-        <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
+        <paramRef ref="organismParams.organism" queryRef="organismVQ.tg-pf"/>
         <paramRef ref="geneParams.max_centromere_distance"  quote="false"/>
         <paramRef ref="sharedParams.chromosome" quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
@@ -3536,7 +3536,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
         <paramRef ref="organismParams.organism" queryRef="organismVQ.pf"/>
         <paramRef ref="geneParams.distanceFromTelomere"  quote="false"/>
-        <paramRef ref="sharedParams.chromosome"  quote="false"/>
+        <paramRef ref="sharedParams.chromosome_telomere"  quote="false"/>
 	  <wsColumn name="source_id" width="32" wsName="source_id"/>
 	  <wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="dist_telomere"/>
