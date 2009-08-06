@@ -830,7 +830,7 @@ $mgr->waitForCluster("TbruceiESTSeqs BLAT alignment to TbruceiGenome", "waitTbru
 
 &copyFilesFromComputeCluster($mgr,"LmajorESTSeqs","repeatmask");
 
-&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/config/blatalignmentquality.xml","BlatAlignmentQuality");
+&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/lib/xml/blatalignmentquality.xml","BlatAlignmentQuality");
 
 &loadContigAlignments($mgr, 185431, "TbruceiESTSeqs","TbruceiGenome","","","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","load","","","",5691);
 
