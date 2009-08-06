@@ -12,7 +12,7 @@ CREATE TABLE apidb.OrthologGroup (
  number_of_match_pairs        NUMBER,
  aa_seq_group_experiment_id   NUMBER(12),
  external_database_release_id NUMBER(10) NOT NULL,
- mulple_sequence_alignment    CLOB,
+ multiple_sequence_alignment  CLOB,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
