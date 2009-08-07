@@ -94,6 +94,11 @@ sub sourceIdAndTranscriptSeq {
 
   # first set source id, and propogate it to the transcript and aa seq
   my @tagValues = $bioperlFeature->get_tag_values($tag);
+  
+
+  $tagValues[0] =~ s/^\s+//;
+  $tagValues[0] =~ s/\s+$//;
+
   $geneFeature->setSourceId($tagValues[0]);
   
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
