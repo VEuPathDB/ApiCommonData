@@ -2789,6 +2789,46 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- Generic Expression Percentile Query -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByExpressionPercentileProfile"  includeProjects="GiardiaDB"
+          isCacheable='true'>
+       <paramRef ref="geneParams.expressionPercentileSamples"/>
+       <paramRef ref="geneParams.min_expression_percentile" default="80"/>
+       <paramRef ref="geneParams.max_expression_percentile" default="100"/>
+       <column name="project_id"/>
+       <column name="source_id" />
+       <sql>
+           <!-- use CDATA because query includes angle brackets -->
+            <![CDATA[
+           select distinct source_id, '@PROJECT_ID@' as project_id
+           from apidb.profileset ps, apidb.profileelement pe, apidb.profileelementname pen, apidb.profile p
+           where ps.profile_set_id = pen.profile_set_id
+            and ps.profile_set_id = p.profile_set_id
+            and pe.profile_id = p.profile_id
+            and pe.element_order = pen.element_order
+            and ps.name || '|' || pen.name in ( $$expressionPercentileSamples$$ )
+            and pe.value BETWEEN $$min_expression_percentile$$
+              and $$max_expression_percentile$$
+            ]]>
+          </sql>
+    </sqlQuery>  
+
+    <processQuery name="GenesByExpressionPercentileProfile" includeProjects="EuPathDB"  
+        displayName="By Expression Percentile" 
+        isCacheable='true' 
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">      
+       <paramRef ref="geneParams.expressionPercentileSamples"/>
+       <paramRef ref="geneParams.min_expression_percentile" default="80"/>
+       <paramRef ref="geneParams.max_expression_percentile" default="100"/>
+       <wsColumn name="source_id" width="50" wsName="source_id"/>
+       <wsColumn name="project_id" width="32" wsName="project_id"/>
+    </processQuery>   
+
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- ToxoGenesByExpressionPercentile -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
