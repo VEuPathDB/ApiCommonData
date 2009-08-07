@@ -66,11 +66,11 @@ sub preprocess {
 		for my $tag ($geneFeature->get_all_tags) {    
 
 		    if($tag eq 'pseudo'){
-			$geneFeature->primary_tag('pseudo_gene');
+
 			if ($geneFeature->get_SeqFeatures){
 			    next;
 			}else{
-
+			    $geneFeature->primary_tag("coding_gene");
 			    my $geneLoc = $geneFeature->location();
 			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
 			    my @exonLocs = $geneLoc->each_Location();
@@ -86,6 +86,7 @@ sub preprocess {
 		}       
 		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
 		if($gene){
+
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
 		
@@ -187,9 +188,9 @@ sub traverseSeqFeatures {
 
 	    my $CDSLocation;
 	    if($type eq 'ncRNA'){
-		if($geneFeature->has_tag('ncRNA_class')){
-		    my ($type) = $geneFeature->get_tag_values('ncRNA_class');
-		    $geneFeature->remove_tag('ncRNA_class');
+		if($RNA->has_tag('ncRNA_class')){
+		    ($type) = $RNA->get_tag_values('ncRNA_class');
+		    $RNA->remove_tag('ncRNA_class');
 
 		}
 	    }
