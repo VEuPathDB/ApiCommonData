@@ -294,6 +294,82 @@
     </unionization>
   </tuningTable>
 
+  <tuningTable name="apidb.GeneDetail">
+    <externalDependency name="apidb.GeneDetail" dblink="CRYPTO"/>
+    <externalDependency name="apidb.GeneDetail" dblink="GIARDIA"/>
+    <externalDependency name="apidb.GeneDetail" dblink="PLASMO"/>
+    <externalDependency name="apidb.GeneDetail" dblink="TOXO"/>
+    <externalDependency name="apidb.GeneDetail" dblink="TRITRYP"/>
+    <externalDependency name="apidb.GeneDetail" dblink="AMITO"/>
+    <intermediateTable name="apidb.GeneDetailCrypto"/>
+    <intermediateTable name="apidb.GeneDetailGiardia"/>
+    <intermediateTable name="apidb.GeneDetailPlasmo"/>
+    <intermediateTable name="apidb.GeneDetailToxo"/>
+    <intermediateTable name="apidb.GeneDetailTrich"/>
+    <intermediateTable name="apidb.GeneDetailTriTryp"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailCrypto nologging as
+        select * from apidb.GeneDetail@CRYPTO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailGiardia nologging as
+        select * from apidb.GeneDetail@GIARDIA
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailPlasmo nologging as
+        select * from apidb.GeneDetail@PLASMO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailToxo nologging as
+        select * from apidb.GeneDetail@TOXO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailTrich nologging as
+        select * from apidb.GeneDetail@AMITO where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailTriTryp nologging as
+        select * from apidb.GeneDetail@TRITRYP
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetail&1 nologging as
+        (
+        select * from apidb.GeneDetailCrypto
+        union all
+        select * from apidb.GeneDetailGiardia
+        union all
+        select * from apidb.GeneDetailPlasmo
+        union all
+        select * from apidb.GeneDetailToxo
+        union all
+        select * from apidb.GeneDetailTrich
+        union all
+        select * from apidb.GeneDetailTritryp
+        )
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
 
 
