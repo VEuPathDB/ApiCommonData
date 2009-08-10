@@ -2707,6 +2707,7 @@ SELECT * FROM apidb.AsmAlignmentGene
       <![CDATA[
 CREATE TABLE apidb.PlasmoExpressionGraphs&1 NOLOGGING AS
 SELECT gf.source_id,
+       COUNT(pf_rna_seq) AS graph_pf_rna_seq,
        COUNT(zb_pvivax) AS graph_zb_pvivax,
        COUNT(derisi_winzeler) AS graph_derisi_winzeler,
        COUNT(winzeler) AS graph_winzeler, COUNT(ThreeD7) AS graph_3d7,
@@ -2737,7 +2738,11 @@ FROM dots.GeneFeature gf,
      (SELECT p1.source_id, 1 AS zb_pvivax
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name = 'ZB Pvivax time series normalized_averaged 3') zbpvivax,
+        AND ps1.name = 'ZB Pvivax time series normalized_averaged 3') zbpvivax, 
+     (SELECT p1.source_id, 1 AS pf_rna_seq
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE p1.profile_set_id = ps1.profile_set_id
+        AND ps1.name = 'P.falciparum RNA Sequence Profiles') pfrnaseq, 
      (SELECT p1.source_id, 1 AS winzeler
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
@@ -2831,6 +2836,7 @@ FROM dots.GeneFeature gf,
   AND gf.source_id = kappe.source_id(+)
   AND gf.source_id = daily.source_id(+)
   AND gf.source_id = zbpvivax.source_id(+)
+  AND gf.source_id = pfrnaseq.source_id(+)
   AND gf.source_id = westenberger.source_id(+)
   AND gf.source_id = winzeler_py_mixed.source_id(+)
 GROUP BY gf.source_id
