@@ -723,12 +723,14 @@
             <column name="graph_kappe"/>
             <column name="graph_daily"/>
             <column name="graph_zb_pvivax"/>
+            <column name="graph_pf_rna_seq"/>
             <column name="graph_westenberger"/>
             <column name="graph_winzeler_py_mixed"/>
             <sql>
             <![CDATA[
            SELECT egs.source_id, 'PlasmoDB' as project_id,
                       NVL(MAX(graph_zb_pvivax), 0) AS graph_zb_pvivax,
+                      NVL(MAX(graph_pf_rna_seq), 0) AS graph_pf_rna_seq,
                       NVL(MAX(graph_derisi_winzeler), 0) AS graph_derisi_winzeler,
                       NVL(MAX(graph_winzeler), 0) AS graph_winzeler,
                       NVL(MAX(graph_3d7), 0) AS graph_3d7,
