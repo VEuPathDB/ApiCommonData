@@ -1,0 +1,93 @@
+<workflowGraph name="giardiaMakeAndFormatDownloadFilesWorkflow">
+  <param name="interproVersion"/>
+  <param name="dbESTVersion"/>
+  <param name="projectName"/>
+  <param name="projectVersion"/>
+  <param name="genbankIsolateExtDbRlsSpec"/>
+  <param name="GlambliaExtDbRlsSpec"/>
+  <param name="GlambliaGenomeSource"/>
+  <param name="GlambliaVirtualSeqsExtDbRlsSpec"/>
+  <param name="GlambliaDeprecatedGenesExtDbRlsSpec"/>
+
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
+
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
+
+  <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
+  </step>
+
+    <step name="runTuningManager"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunTuningManager">
+      <paramValue name="configFileRelativeToGusHomeDir">/lib/xml/tuningManager.xml</paramValue>
+    </step>
+
+  <subgraph name="GlambliaMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Glamblia</paramValue>
+    <paramValue name="ncbiTaxonId">184922</paramValue>
+    <paramValue name="parentNcbiTaxonId">5741</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$GlambliaGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$GlambliaExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$GlambliaVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="DeprecatedMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">GlambliaDeprecatedGenes</paramValue>
+    <paramValue name="ncbiTaxonId">184922</paramValue>
+    <paramValue name="parentNcbiTaxonId">5741</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource"></paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$GlambliaDeprecatedGenesExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">true</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="giardiaSpecificMakeAndFormatDownloadFiles" xmlFile="giardiaSpecificMakeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpecc$$</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+</workflowGraph>
+
+
+
+
+
+
+
+
+
+ 
