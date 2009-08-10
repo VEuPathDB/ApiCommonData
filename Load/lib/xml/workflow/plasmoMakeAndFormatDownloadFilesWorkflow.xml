@@ -1,0 +1,229 @@
+<workflowGraph name="plasmoMakeAndFormatDownloadFilesWorkflow">
+  <param name="interproVersion"/>
+  <param name="dbESTVersion"/>
+  <param name="projectName"/>
+  <param name="projectVersion"/>
+  <param name="isolateExtDbRlsSpec"/>
+  <param name="PfalciparumExtDbRlsSpec"/>
+  <param name="PfalciparumGenomeSource"/>
+  <param name="PvivaxExtDbRlsSpec"/>
+  <param name="PvivaxGenomeSource"/>
+  <param name="PvivaxVirtualSeqsExtDbRlsSpec"/>
+  <param name="PchabaudiExtDbRlsSpec"/>
+  <param name="PchabaudiGenomeSource"/>
+  <param name="PknowlesiExtDbRlsSpec"/>
+  <param name="PknowlesiGenomeSource"/>
+  <param name="PbergheiExtDbRlsSpec"/>
+  <param name="PbergheiGenomeSource"/>
+  <param name="PyoeliiExtDbRlsSpec"/>
+  <param name="PyoeliiGenomeSource"/>
+  <param name="PreichenowiExtDbRlsSpec"/>
+  <param name="PreichenowiGenomeSource"/>
+  <param name="PgallinaceumExtDbRlsSpec"/>
+  <param name="PgallinaceumGenomeSource"/>
+
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
+
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
+
+  <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
+  </step>
+
+    <step name="runTuningManager"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunTuningManager">
+      <paramValue name="configFileRelativeToGusHomeDir">/lib/xml/tuningManager.xml</paramValue>
+    </step>
+
+  <subgraph name="PfalciparumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pfalciparum</paramValue>
+    <paramValue name="ncbiTaxonId">36329</paramValue>
+    <paramValue name="parentNcbiTaxonId">5833</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PfalciparumGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PfalciparumExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PvivaxMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pvivax</paramValue>
+    <paramValue name="ncbiTaxonId">126793</paramValue>
+    <paramValue name="parentNcbiTaxonId">5855</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PvivaxGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PvivaxExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$PvivaxVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PchabaudiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pchabaudi</paramValue>
+    <paramValue name="ncbiTaxonId">31271</paramValue>
+    <paramValue name="parentNcbiTaxonId">5825</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PchabaudiGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PchabaudiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">false</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+
+  <subgraph name="PknowlesiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pknowlesi</paramValue>
+    <paramValue name="ncbiTaxonId">5851</paramValue>
+    <paramValue name="parentNcbiTaxonId">5850</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PknowlesiGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PknowlesiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">false</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PbergheiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pberghei</paramValue>
+    <paramValue name="ncbiTaxonId">5823</paramValue>
+    <paramValue name="parentNcbiTaxonId">5821</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PbergheiGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PbergheiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PyoeliiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pyoelii</paramValue>
+    <paramValue name="ncbiTaxonId">352914</paramValue>
+    <paramValue name="parentNcbiTaxonId">5861</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PyoeliiGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PyoeliiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PreichenowiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Preichenowi</paramValue>
+    <paramValue name="ncbiTaxonId">5854</paramValue>
+    <paramValue name="parentNcbiTaxonId">5854</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PreichenowiGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PreichenowiExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">false</paramValue>
+    <paramValue name="makeProteomeDownloadFile">false</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PgallinaceumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Pgallinaceum</paramValue>
+    <paramValue name="ncbiTaxonId">5849</paramValue>
+    <paramValue name="parentNcbiTaxonId">5849</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$PgallinaceumGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$PgallinaceumExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">false</paramValue>
+    <paramValue name="makeProteomeDownloadFile">false</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="PlasmoSpecificMakeAndFormatDownloadFiles" xmlFile="plasmoSpecificMakeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <paramValue name="barcodeIsolateExtDbRlsSpec">$$barcodeIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+</workflowGraph>

@@ -1,5 +1,4 @@
 <workflowGraph name="makeAndFormatDownloadFiles">
-
     <param name="downloadSiteDataDir"/>
     <param name="organismName"/>
     <param name="ncbiTaxonId"/>
@@ -13,8 +12,11 @@
     <param name="dbESTExtDbRlsSpec"/>
     <param name="webServicesDataDir"/>
     <param name="minOrfLength"/>
+    <param name="deprecated"/>
+    <param name="makeESTDownloadFile"/>
+    <param name="makeProteomeDownloadFile"/>
 
-    <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile">
+    <step name="makeESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeESTDownloadFile" includeIf="$$makeESTDownloadFile$$">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
@@ -29,7 +31,7 @@
     </step>
 
 
-    <step name="makeDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile">
+    <step name="makeDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile" includeIf="$$makeESTDownloadFile$$">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Assembly_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
     </step>
@@ -43,12 +45,12 @@
     <depends name="makeDotsAssemblyDownloadFile"/>
     </step>
 
-    <step name="makeAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile">
+    <step name="makeAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedCDSDownloadFile" includeIf="$$makeProteomeDownloadFile$$">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
-      <paramValue name="deprecated">false</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
     </step>
 
     <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -59,12 +61,12 @@
     <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
 
-    <step name="makeAnnotatedTranscriptsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile">
+    <step name="makeAnnotatedTranscriptsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedTranscriptsDownloadFile" includeIf="$$makeProteomeDownloadFile$$>
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedTranscripts_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
-      <paramValue name="deprecated">false</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
     </step>
 
     <step name="formatAnnotatedTranscriptDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -75,10 +77,10 @@
     <depends name="makeAnnotatedCDSDownloadFile"/>
     </step>
 
-    <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile">
+    <step name="makeAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeAnnotatedProteinsDownloadFile" includeIf="$$makeProteomeDownloadFile$$>
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedProteins_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
-      <paramValue name="deprecated">false</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
       <paramValue name="genomeExtDbSpecList">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
     </step>
 
@@ -89,7 +91,6 @@
       <paramValue name="args">-p -C X -t $$projectName$$_$$organismName$$_Proteins</paramValue>
     <depends name="makeAnnotatedProteinsDownloadFile"/>
     </step>
-
 
     <step name="makeMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeMixedGenomicDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
@@ -128,14 +129,14 @@
       <paramValue name="minOrfLength">$$minOrfLength$$</paramValue>
     </step>
 
-    <step name="makeInterproDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile">
+    <step name="makeInterproDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile" includeIf="$$makeProteomeDownloadFile$$>
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$Interpro_$$projectName$$-$$projectVersion$$.txt</paramValue>
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">INTERPRO|$$interproVersion$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
     </step>
 
-    <step name="makeCodonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCodonUsage">
+    <step name="makeCodonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCodonUsage" includeIf="$$makeProteomeDownloadFile$$>
       <paramValue name="inputFile">$$downloadSiteDataDir$$/$$organismName$$AnnotatedCDS_$$projectName$$-$$projectVersion$$.fasta</paramValue>    
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$CondonUsage_$$projectName$$-$$projectVersion$$.txt</paramValue>
     <depends name="makeAnnotatedCDSDownloadFile"/>
