@@ -7,7 +7,7 @@
     <param name="genbankIsolateExtDbRlsSpec"/>
     <param name="barcodeIsolateExtDbRlsSpec"/>
 
-    <step name="makeGenbankIsolateDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeIsolateDownloadFile"">
+    <step name="makeGenbankIsolateDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeIsolateDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/PlasmodiumIsolates_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="isolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
     </step>
@@ -20,7 +20,7 @@
     <depends name="makeGenbankIsolateDownloadFile"/>
     </step>
 
-    <step name="makeBarcodeIsolateDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeIsolateDownloadFile"">
+    <step name="makeBarcodeIsolateDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeIsolateDownloadFile">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/PlasmodiumBarcodeIsolates_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="isolateExtDbRlsSpec">$$barcodeIsolateExtDbRlsSpec$$</paramValue>
     </step>
