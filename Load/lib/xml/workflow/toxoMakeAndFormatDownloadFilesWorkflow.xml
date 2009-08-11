@@ -1,0 +1,192 @@
+<workflowGraph name="toxoMakeAndFormatDownloadFilesWorkflow">
+  <param name="interproVersion"/>
+  <param name="dbESTVersion"/>
+  <param name="projectName"/>
+  <param name="projectVersion"/>
+  <param name="genbankIsolateExtDbRlsSpec"/>
+  <param name="sibleyIsolateExtDbRlsSpec"/>
+  <param name="TgondiiME49ExtDbRlsSpec"/>
+  <param name="TgondiiME49GenomeSource"/>
+  <param name="TgondiiME49VirtualSeqsExtDbRlsSpec"/>
+  <param name="TgondiiGT1ExtDbRlsSpec"/>
+  <param name="TgondiiGT1GenomeSource"/>
+  <param name="TgondiiGT1VirtualSeqsExtDbRlsSpec"/>
+  <param name="TgondiiVEGExtDbRlsSpec"/>
+  <param name="TgondiiVEGGenomeSource"/>
+  <param name="TgondiiVEGVirtualSeqsExtDbRlsSpec"/>
+  <param name="TgondiiTgCkUg2ExtDbRlsSpec"/>
+  <param name="TgondiiTgCkUg2GenomeSource"/>
+  <param name="TgondiiApicoplastExtDbRlsSpec"/>
+  <param name="TgondiiApicoplastGenomeSource"/>
+  <param name="NcaninumExtDbRlsSpec"/>
+  <param name="NcaninumGenomeSource"/>
+
+
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
+
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
+
+  <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
+  </step>
+
+    <step name="runTuningManager"
+          stepClass="ApiCommonData::Load::WorkflowSteps::RunTuningManager">
+      <paramValue name="configFileRelativeToGusHomeDir">/lib/xml/tuningManager.xml</paramValue>
+    </step>
+
+  <subgraph name="TgondiiME49MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">TgondiiME49</paramValue>
+    <paramValue name="ncbiTaxonId">508771</paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$TgondiiME49GenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiME49ExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$TgondiiME49VirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="TgondiiGT1MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">TgondiiGT1</paramValue>
+    <paramValue name="ncbiTaxonId">507601</paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$TgondiiGT1GenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiGT1ExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$TgondiiGT1VirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="TgondiiVEGMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">TgondiiVEG</paramValue>
+    <paramValue name="ncbiTaxonId">432359</paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$TgondiiVEGGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiVEGExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$TgondiiVEGVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="TgondiiTgCkUg2MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">TgondiiTgCkUg2</paramValue>
+    <paramValue name="ncbiTaxonId"></paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$TgondiiTgCkUg2GenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiTgCkUg2ExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$TgondiiTgCkUg2VirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="TgondiiApicoplastMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">TgondiiApicoplast</paramValue>
+    <paramValue name="ncbiTaxonId">383379</paramValue>
+    <paramValue name="parentNcbiTaxonId">5811</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$TgondiiApicoplastGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$TgondiiApicoplastExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$TgondiiApicoplastVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+  <subgraph name="NcaninumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Ncaninum</paramValue>
+    <paramValue name="ncbiTaxonId">29176</paramValue>
+    <paramValue name="parentNcbiTaxonId">29176</paramValue>
+    <paramValue name="interproVersion">$$interproVersion$$</paramValue>
+    <paramValue name="genomeSource">$$NcaninumGenomeSource$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="dbESTExtDbRlsSpec">dbEST:$$dbESTVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genomeExtDbRlsSpec">$$NcaninumExtDbRlsSpec$$</paramValue>
+    <paramValue name="genomeVirtualSeqsExtDbRlsSpec"></paramValue>
+    <paramValue name="minOrfLength">50</paramValue>
+    <paramValue name="deprecated">false</paramValue>
+    <paramValue name="makeESTDownloadFile">true</paramValue>
+    <paramValue name="makeProteomeDownloadFile">true</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+
+  <subgraph name="toxoSpecificMakeAndFormatDownloadFiles" xmlFile="toxoSpecificMakeAndFormatDownloadFiles.xml">
+    <paramValue name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="webServicesDataDir">$$webServicesDataDir$$</paramValue>
+    <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpec$$</paramValue>
+    <paramValue name="sibleyIsolateExtDbRlsSpec">$$sibleyIsolateExtDbRlsSpec$$</paramValue>
+    <depends name="runTuningManager"/>
+    <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+</workflowGraph>
+
+
+
+
+
+ 
