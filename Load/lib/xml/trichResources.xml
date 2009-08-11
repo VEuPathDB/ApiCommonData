@@ -271,6 +271,52 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         </description>
     </resource>
 
+<resource resource="Tachezy_Tvag_hydrogenosomes_MassSpec" version="2009-04-01"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	        displayName="Tvag hydrogenosomes Mass Spec"
+	        category="Proteome"
+                extDbName="Tachezy_Tvag_hydrogenosomes_MassSpec"
+                extDbRlsVer="2009_04_01"
+                extDbRlsDescrip="T. vaginalis hydrogenosomes mass spec data"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/trichDB/manualDelivery/proteomics/Tachezy_hydrogenosomes_Tvag/Tachezy_hydrogenosomes_Tvag.tab"
+                contact="Jan Tachezy"
+                email="tachezy@natur.cuni.cz"
+                institution="Charles University in Prague"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Wastling-Rhoptry/Toxo_Rhoptry_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.gondii ME49 contigs from Genbank|2008-07-23' --testPredictedGeneModels</pluginArgs>
+         <description>
+            <![CDATA[
+            T. vaginalis hydrogenosomes proteomics data provided by the Jan Tachezy laboratory
+
+            Peptides were indentified by nanoLC/MALDI TOF/TOF in T. vaginalis hydrogenosomes 
+            extracted by Tritin X114 to enrich hydrogenosomal membrane proteins.
+
+          ]]>
+         </description>		
+     </resource>  
+
+<resource resource="Hayes_Johnson_Tvag_MassSpec" version="2009-05-27"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	        displayName="Hayes Johnson Tvag Mass Spec"
+	        category="Proteome"
+                extDbName="Tachezy_Tvag_hydrogenosomes_MassSpec"
+                extDbRlsVer="2009_05_27"
+                extDbRlsDescrip="T. vaginalis mass spec data from Richard Hayes in the Patricia Johnson lab"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/trichDB/manualDelivery/proteomics/HayesJohnson/mergedFullPeptideData-PJohnsonLab-June2009-part2_part1.tab"
+                contact="Jan Tachezy"
+                email="johnsonp@ucla.edu"
+                institution="UCLA"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Wastling-Rhoptry/Toxo_Rhoptry_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.gondii ME49 contigs from Genbank|2008-07-23' --testPredictedGeneModels</pluginArgs>
+         <description>
+            <![CDATA[
+            T. vaginalis proteomics data provided by Richard Hayes in the Patricia Johnson laboratory
+
+          ]]>
+         </description>		
+     </resource>  
 
 
 </resourcesPipeline>
