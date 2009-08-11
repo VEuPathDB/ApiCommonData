@@ -16,6 +16,9 @@ sub run {
 
   my $sql = "delete from $cacheTable where source_id in (select distinct source_id from $attributesTable where organism='$organismFullName' and is_deprecated=$deprecated)";
 
+  $sql = "delete from $cacheTable where source_id in (select distinct source_id from $attributesTable where is_deprecated=$deprecated)" if ($organismFullName eq '');
+
+
   my $cmd = "executeIdSQL.pl --idSQL \"$sql\"";
 
 

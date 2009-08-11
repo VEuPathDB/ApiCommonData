@@ -20,7 +20,10 @@ sub run {
   my $apiSiteFilesDir = $self->getGlobalConfig('apiSiteFilesDir');
 
   my $sqlFile="all_PKs.sql";
+
   my $sqlFileString="SELECT DISTINCT project_id, source_id FROM $attributesTable where organism ='$organismFullName' and is_deprecated=$deprecated";
+
+  $sqlFileString="SELECT DISTINCT project_id, source_id FROM $attributesTable where organism ='$organismFullName' and is_deprecated=$deprecated" if ($organismFullName eq '');
   open(F,">$sqlFile");
   print F $sqlFileString;
   close F;

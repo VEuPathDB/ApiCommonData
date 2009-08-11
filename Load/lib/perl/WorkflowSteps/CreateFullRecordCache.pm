@@ -17,7 +17,10 @@ sub run {
   my $deprecated = ($self->getParamValue('deprecated') eq 'true') ? 1 :0;
 
   my $sqlFile="all_PKs.sql";
+
   my $sqlFileString="SELECT DISTINCT project_id, source_id FROM $attributesTable where organism ='$organismFullName' and is_deprecated=$deprecated";
+
+  $sqlFileString="SELECT DISTINCT project_id, source_id FROM $attributesTable where is_deprecated=$deprecated" if ($organismFullName eq '');
   open(F,">$sqlFile");
   print F $sqlFileString;
   close F;
@@ -28,6 +31,8 @@ sub run {
   if ($undo){
 
       my $sql = "delete from $cacheTable where source_id in (select distinct source_id from $attributesTable where organism='$organismFullName' and is_deprecated=$deprecated)";
+
+      $sql = "delete from $cacheTable where source_id in (select distinct source_id from $attributesTable where organism='$organismFullName' and is_deprecated=$deprecated)" if ($organismFullName eq '');
 
       my $undoCmd = "executeIdSQL.pl  --idSQL \"$sql\"";
      
