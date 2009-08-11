@@ -54,7 +54,15 @@ sequence,
 modification,
 query,
 hit,
-ions_score";
+ions_score
+
+Input file must have consistent columns throughout and group all peptides with the source_id hit.
+sample fit snippet:
+TVAG_273260     alpha-amylase, putative 3
+                        FDLLSAIAQTEDGTK
+                        GDLDGITNALDYIK
+                        NQDQFTDAYWNIHK
+";
 
 &usage() if($help);
 &usage("Input tab delimited file is required") unless(-e $inFile);
@@ -63,7 +71,7 @@ ions_score";
 my $expName = basename($inFile, ".txt");
 
 
-open (CONFIG,$configFile) || die "Can't open config file $configFile for reading\n";
+open (CONFIG,$configFile) || die "Can't open config file $configFile for reading\n$configDesc\n";
 
 my %configs;
 
@@ -240,6 +248,8 @@ sub usage {
   print STDERR "ERROR:  $m\n" if($m);
 
   print STDERR "usage: massSpecParser.pl --inFile DATA_FILE --outFile OUTPUT_FILE --configFile comma delimited list of delimiter,regex and column_name,column_position\n";
+
+  print STDERR "file must have consistent columns throughout and group each set of peptides with the appropriate source_id, peptides must have a sequence\n";
 
   exit;
 }
