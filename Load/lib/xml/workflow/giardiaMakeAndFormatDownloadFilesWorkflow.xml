@@ -12,6 +12,10 @@
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
 
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
+
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
   </step>
@@ -41,6 +45,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="DeprecatedMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -63,6 +68,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="giardiaSpecificMakeAndFormatDownloadFiles" xmlFile="giardiaSpecificMakeAndFormatDownloadFiles.xml">
@@ -73,6 +79,7 @@
     <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpecc$$</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>

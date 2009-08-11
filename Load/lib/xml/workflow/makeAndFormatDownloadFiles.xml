@@ -26,6 +26,7 @@
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$/$$organismName$$EST_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="useTaxonHierarchy">true</paramValue>
       <paramValue name="parentNcbiTaxonId">$$parentNcbiTaxonId$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatESTDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -40,6 +41,7 @@
     <step name="makeDotsAssemblyDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeDotsAssemblyDownloadFile" includeIf="$$makeESTDownloadFile$$">
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$/$$organismName$$Assembly_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="ncbiTaxonId">$$ncbiTaxonId$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
 
@@ -57,6 +59,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="deprecated">$$deprecated$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatAnnotatedCDSDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -73,6 +76,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="deprecated">$$deprecated$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatAnnotatedTranscriptDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -88,6 +92,7 @@
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="deprecated">$$deprecated$$</paramValue>
       <paramValue name="genomeExtDbSpecList">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatAnnotatedProteinsDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -102,6 +107,7 @@
       <paramValue name="outputFile">$$downloadSiteDataDir$$/$$organismName$$/$$organismName$$Genomic_$$projectName$$-$$projectVersion$$.fasta</paramValue>
       <paramValue name="organismSource">$$genomeSource$$</paramValue>
       <paramValue name="genomeExtDbSpecList">$$genomeExtDbRlsSpec$$,$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatMixedGenomicDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -118,6 +124,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="minOrfLength">$$minOrfLength$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="formatOrfDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::FormatDownloadFile">
@@ -133,6 +140,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="genomeVirtualSeqsExtDbRlsSpec">$$genomeVirtualSeqsExtDbRlsSpec$$</paramValue>
       <paramValue name="minOrfLength">$$minOrfLength$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="makeInterproDownloadFile" stepClass="ApiCommonData::Load::WorkflowSteps::MakeInterproDownloadFile" includeIf="$$makeProteomeDownloadFile$$>
@@ -140,6 +148,7 @@
       <paramValue name="genomeExtDbRlsSpec">$$genomeExtDbRlsSpec$$</paramValue>
       <paramValue name="interproExtDbRlsSpec">INTERPRO|$$interproVersion$$</paramValue>
       <paramValue name="projectDB">$$projectName$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
     </step>
 
     <step name="makeCodonUsage" stepClass="ApiCommonData::Load::WorkflowSteps::MakeCodonUsage" includeIf="$$makeProteomeDownloadFile$$>
@@ -156,6 +165,7 @@
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="recordType">Gene</paramValue>
     <paramValue name="deprecated">$$deprecated$$</paramValue>
+    <paramValue name="fullDump">false</paramValue>
   </subgraph>
 
    <subgraph name="createFullRecordCacheAndFileForSequence" xmlFile="createFullRecordCacheAndFile.xml">
@@ -166,6 +176,8 @@
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="recordType">Sequence</paramValue>
     <paramValue name="deprecated">$$deprecated$$</paramValue>
+    <paramValue name="fullDump">false</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>

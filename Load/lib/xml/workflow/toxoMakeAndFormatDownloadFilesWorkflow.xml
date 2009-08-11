@@ -25,6 +25,9 @@
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
 
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
 
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
@@ -55,6 +58,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiGT1MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -77,6 +81,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiVEGMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -99,6 +104,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiTgCkUg2MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -121,6 +127,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiApicoplastMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -143,6 +150,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="NcaninumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -165,6 +173,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 
@@ -177,6 +186,7 @@
     <paramValue name="sibleyIsolateExtDbRlsSpec">$$sibleyIsolateExtDbRlsSpec$$</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>

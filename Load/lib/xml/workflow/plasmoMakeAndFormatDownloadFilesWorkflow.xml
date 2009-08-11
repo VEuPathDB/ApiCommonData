@@ -25,6 +25,10 @@
   <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
 
+  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
+    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
+  </step>
+
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
   </step>
@@ -54,6 +58,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PvivaxMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -76,6 +81,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PchabaudiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -98,6 +104,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PknowlesiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -120,6 +127,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PbergheiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -142,6 +150,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PyoeliiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -164,6 +173,7 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PreichenowiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -186,6 +196,7 @@
     <paramValue name="makeProteomeDownloadFile">false</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PgallinaceumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
@@ -208,6 +219,7 @@
     <paramValue name="makeProteomeDownloadFile">false</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="PlasmoSpecificMakeAndFormatDownloadFiles" xmlFile="plasmoSpecificMakeAndFormatDownloadFiles.xml">
@@ -219,6 +231,7 @@
     <paramValue name="barcodeIsolateExtDbRlsSpec">$$barcodeIsolateExtDbRlsSpec$$</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
+    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 </workflowGraph>
 
