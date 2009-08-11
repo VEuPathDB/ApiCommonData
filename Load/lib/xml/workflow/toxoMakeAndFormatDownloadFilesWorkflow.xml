@@ -22,12 +22,9 @@
   <param name="NcaninumGenomeSource"/>
 
 
-  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
 
-  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
-  </step>
 
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
@@ -41,6 +38,7 @@
   <subgraph name="TgondiiME49MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">TgondiiME49</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii ME49</paramValue>
     <paramValue name="ncbiTaxonId">508771</paramValue>
     <paramValue name="parentNcbiTaxonId">5811</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -57,12 +55,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiGT1MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">TgondiiGT1</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii GT1</paramValue>
     <paramValue name="ncbiTaxonId">507601</paramValue>
     <paramValue name="parentNcbiTaxonId">5811</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -79,12 +77,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiVEGMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">TgondiiVEG</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii VEG</paramValue>
     <paramValue name="ncbiTaxonId">432359</paramValue>
     <paramValue name="parentNcbiTaxonId">5811</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -101,12 +99,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiTgCkUg2MakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">TgondiiTgCkUg2</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii TgCkUg2</paramValue>
     <paramValue name="ncbiTaxonId"></paramValue>
     <paramValue name="parentNcbiTaxonId">5811</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -123,12 +121,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="TgondiiApicoplastMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">TgondiiApicoplast</paramValue>
+    <paramValue name="organismFullName">Toxoplasma gondii RH</paramValue>
     <paramValue name="ncbiTaxonId">383379</paramValue>
     <paramValue name="parentNcbiTaxonId">5811</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -145,12 +143,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="NcaninumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Ncaninum</paramValue>
+    <paramValue name="organismFullName">Neospora caninum</paramValue>
     <paramValue name="ncbiTaxonId">29176</paramValue>
     <paramValue name="parentNcbiTaxonId">29176</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -167,7 +165,6 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 
@@ -180,7 +177,6 @@
     <paramValue name="sibleyIsolateExtDbRlsSpec">$$sibleyIsolateExtDbRlsSpec$$</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>

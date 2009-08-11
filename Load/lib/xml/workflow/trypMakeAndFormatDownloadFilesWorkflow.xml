@@ -18,12 +18,8 @@
   <param name="projectVersion"/>
 
 
-  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
-
-  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
-  </step>
 
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
@@ -37,6 +33,7 @@
   <subgraph name="TcruziMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Tcruzi</paramValue>
+    <paramValue name="organismFullName">Trypanosoma cruzi strain CL Brener</paramValue>
     <paramValue name="ncbiTaxonId">353153</paramValue>
     <paramValue name="parentNcbiTaxonId">5693</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -53,13 +50,13 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 
   <subgraph name="TbruceiMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Tbrucei</paramValue>
+    <paramValue name="organismFullName">Trypanosoma brucei TREU927</paramValue>
     <paramValue name="ncbiTaxonId">185431</paramValue>
     <paramValue name="parentNcbiTaxonId">5691</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -76,13 +73,13 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 
   <subgraph name="LinfantumMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Linfantum</paramValue>
+    <paramValue name="organismFullName">Leishmania infantum</paramValue>
     <paramValue name="ncbiTaxonId">5671</paramValue>
     <paramValue name="parentNcbiTaxonId">5671</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -99,12 +96,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="LmajorMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Lmajor</paramValue>
+    <paramValue name="organismFullName">Leishmania major</paramValue>
     <paramValue name="ncbiTaxonId">5664</paramValue>
     <paramValue name="parentNcbiTaxonId">5664</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -121,12 +118,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="LbraziliensisMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Lbraziliensis</paramValue>
+    <paramValue name="organismFullName">Leishmania braziliensis</paramValue>
     <paramValue name="ncbiTaxonId">5660</paramValue>
     <paramValue name="parentNcbiTaxonId">5660</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -143,12 +140,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="LtarentolaeMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Ltarentolae</paramValue>
+    <paramValue name="organismFullName">Leishmania tarentolae</paramValue>
     <paramValue name="ncbiTaxonId">5689</paramValue>
     <paramValue name="parentNcbiTaxonId">5688</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -165,7 +162,6 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>

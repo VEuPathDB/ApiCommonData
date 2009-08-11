@@ -9,12 +9,8 @@
   <param name="GlambliaVirtualSeqsExtDbRlsSpec"/>
   <param name="GlambliaDeprecatedGenesExtDbRlsSpec"/>
 
-  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$/$$organismName$$</constant>
+  <constant name="downloadSiteDataDir">downloadSite/$$projectName$$/$$projectVersion$$</constant>
   <constant name="webServicesDataDir">webServices/$$projectName$$/$$projectVersion$$</constant>
-
-  <step name="makeDownloadSiteDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
-    <paramValue name="apiSiteFilesDir">$$downloadSiteDataDir$$</paramValue>
-  </step>
 
   <step name="makeWebServicesDataDir" stepClass="ApiCommonData::Load::WorkflowSteps::MakeApiSiteFilesDir">
     <paramValue name="apiSiteFilesDir">$$webServicesDataDir$$</paramValue>
@@ -28,6 +24,7 @@
   <subgraph name="GlambliaMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">Glamblia</paramValue>
+    <paramValue name="organismFullName">Giardia lamblia ATCC 50803</paramValue>
     <paramValue name="ncbiTaxonId">184922</paramValue>
     <paramValue name="parentNcbiTaxonId">5741</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -44,12 +41,12 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="DeprecatedMakeAndFormatDownloadFiles" xmlFile="makeAndFormatDownloadFiles.xml">
     <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
     <paramValue name="organismName">GlambliaDeprecatedGenes</paramValue>
+    <paramValue name="organismFullName">Giardia lamblia ATCC 50803</paramValue>
     <paramValue name="ncbiTaxonId">184922</paramValue>
     <paramValue name="parentNcbiTaxonId">5741</paramValue>
     <paramValue name="interproVersion">$$interproVersion$$</paramValue>
@@ -66,7 +63,6 @@
     <paramValue name="makeProteomeDownloadFile">true</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
   <subgraph name="giardiaSpecificMakeAndFormatDownloadFiles" xmlFile="giardiaSpecificMakeAndFormatDownloadFiles.xml">
@@ -77,7 +73,6 @@
     <paramValue name="genbankIsolateExtDbRlsSpec">$$genbankIsolateExtDbRlsSpecc$$</paramValue>
     <depends name="runTuningManager"/>
     <depends name="makeWebServicesDataDir"/>
-    <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 
 </workflowGraph>
