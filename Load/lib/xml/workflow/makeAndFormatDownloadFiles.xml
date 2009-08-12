@@ -165,7 +165,6 @@
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="recordType">Gene</paramValue>
     <paramValue name="deprecated">$$deprecated$$</paramValue>
-    <paramValue name="fullDump">false</paramValue>
   </subgraph>
 
    <subgraph name="createFullRecordCacheAndFileForSequence" xmlFile="createFullRecordCacheAndFile.xml">
@@ -176,7 +175,16 @@
     <paramValue name="projectVersion">$$projectVersion$$</paramValue>
     <paramValue name="recordType">Sequence</paramValue>
     <paramValue name="deprecated">$$deprecated$$</paramValue>
-    <paramValue name="fullDump">false</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
+  </subgraph>
+
+   <subgraph name="createGffCacheAndFile" xmlFile="createGffCacheAndFile.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$/$$organismName$$</paramValue>
+    <paramValue name="organismName">$$organismName$$</paramValue>
+    <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="deprecated">$$deprecated$$</paramValue>
     <depends name="makeDownloadSiteDataDir"/>
   </subgraph>
 

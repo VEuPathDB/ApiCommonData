@@ -1,0 +1,28 @@
+<workflowGraph name="createGffCacheAndFile">
+    <param name="downloadSiteDataDir"/>
+    <param name="organismName"/>
+    <param name="organismFullName"/>
+    <param name="projectName"/>
+    <param name="projectVersion"/>
+    <param name="deprecated"/>
+
+    <step name="clearWdkCache" stepClass="ApiCommonData::Load::WorkflowSteps::ClearWdkCache">
+      <paramValue name="model">$$projectName$$</paramValue>
+    </step>
+
+    <step name="clearCacheTable" stepClass="ApiCommonData::Load::WorkflowSteps::ClearCacheTable">
+      <paramValue name="cacheTable">ApiDB.GENETABLE</paramValue>
+      <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+      <paramValue name="attributesTable">ApiDB.GENEATTRIBUTES</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
+    </step>
+
+    <step name="createGffCacheAndFile" stepClass="ApiCommonData::Load::WorkflowSteps::CreateGffCacheAndFile">
+      <paramValue name="organismFullName">$$organismFullName$$</paramValue>
+      <paramValue name="model">$$projectName$$</paramValue>
+      <paramValue name="deprecated">$$deprecated$$</paramValue>
+      <depends name="clearWdkCache"/>
+      <depends name="clearCacheTable"/>
+    </step>
+
+</workflowGraph>
