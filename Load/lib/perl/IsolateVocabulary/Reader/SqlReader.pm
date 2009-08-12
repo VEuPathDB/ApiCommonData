@@ -55,31 +55,31 @@ sub extract {
 
   my $table = $type eq 'product' ? 'IsolateFeature' : 'IsolateSource';
 
+  # Find all  terms that are in a dots table but NOT in Apidb.IsolateVocabulary
   my $sql = <<SQL;
-select distinct i.original
-from (select $queryField as original, regexp_replace($queryField, ':.*\$', '') as term from dots.$table) i 
+select distinct i.term
+from (select $queryField as term  from dots.$table) i 
  left join apidb.isolatevocabulary v
- on i.term = v.term and  v.type = '$type'
+ on i.term = v.original_term and  v.type = '$type'
 where i.term is not null 
  and v.term is null
- order by i.original
 SQL
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  my @existingTerms;
-  while(my ($value) = $sh->fetchrow_array()) {
+  my @sqlTerms;
+  while(my ($original) = $sh->fetchrow_array()) {
     my $table = undef;
-    my $field = $type;
 
-    my $term = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($value, $table, $field);
-    push @existingTerms, $term;
+
+    my $term = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($original, $table, $queryField, $type, '');
+    push @sqlTerms, $term;
   }
   $sh->finish();
   $self->disconnect();
 
-  return \@existingTerms;
+  return \@sqlTerms;
 }
 
 

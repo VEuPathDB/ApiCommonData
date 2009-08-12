@@ -5,10 +5,12 @@ use Carp;
 use Data::Dumper;
 
 sub new {
-  my ($class, $value, $table, $field) = @_;
+  my ($class, $original, $table, $field, $type, $value) = @_;
 
   my $self = bless {}, $class; 
 
+  $self->setOriginal($original);
+  $self->setType($type);
   $self->setValue($value);
   $self->setTable($table);
   $self->setField($field);
@@ -19,34 +21,35 @@ sub new {
 sub getTable {$_[0]->{_table}}
 sub setTable {$_[0]->{_table} = $_[1]}
 
+sub getOriginal {$_[0]->{_original}}
+sub setOriginal {$_[0]->{_original} = $_[1]}
+
 sub getField {$_[0]->{_field}}
 sub setField {$_[0]->{_field} = $_[1]}
 
 sub getValue {$_[0]->{_value}}
 sub setValue {$_[0]->{_value} = $_[1]}
 
-sub getMaps {$_[0]->{_maps}}
-
-sub addMaps {
-  my $self = shift;
-
-  push(@{$self->{_maps}}, @_);
-}
+sub getType {$_[0]->{_type}}
+sub setType {$_[0]->{_type} = $_[1]}
 
 sub isValid {
-  my ($self, $isRoot) = @_;
+  my ($self) = @_;
 
   my @validTables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
   my @validFields = ('product', 'country', 'specific_host', 'isolation_source', 'source_id');
+  my @validTypes = ('product', 'geographic_location', 'specific_host', 'isolation_source');
 
   my $value = $self->getValue();
   my $field = $self->getField();
   my $table = $self->getTable();
+  my $type = $self->getType();
+  my $original = $self->getOriginal();
 
   my $errors;
 
-  unless($value) {
-    print STDERR "Error.  No Value Provided for Node:  ";
+  unless($original) {
+    print STDERR "Error.  No Original Provided for Node:  ";
     print STDERR $self->toString();
     $errors = 1;
   }
@@ -63,25 +66,11 @@ sub isValid {
     $errors = 1;
   }
 
-  my $maps = $self->getMaps();
-  if($isRoot && ref($maps) ne 'ARRAY') {
-    print STDERR "Error.  No Map found for Root Node: ";
+  unless($self->included(\@validTypes, $type)) {
+    print STDERR "Error.  Type $type is not valid for Node:  ";
     print STDERR $self->toString();
     $errors = 1;
   }
-  elsif($isRoot) {
-    foreach(@$maps) {
-      unless($_->isValid()) {
-        $errors = 1;
-      }
-    }
-  }
-  elsif(!$isRoot && $maps) {
-    print STDERR "Error.  Maps specified for non root node:  ";
-    print STDERR $self->toString();
-    $errors = 1;
-  }
-  else {}
 
   if($errors) {
     return 0;
@@ -92,35 +81,37 @@ sub isValid {
 
 sub toString { Dumper $_[0]}
 
-sub toXml {
-  my ($self) = @_;
 
-  my $value = $self->getValue();
-  my $field = $self->getField();
-  my $table = $self->getTable();
+# TODO:  Fix for new representation
+#sub toXml {
+#  my ($self) = @_;
 
-  my $maps = $self->getMaps();
+#  my $value = $self->getValue();
+#  my $field = $self->getField();
+#  my $table = $self->getTable();
 
-  my @rows;
-  foreach my $row (@$maps) {
-    my $mapValue = $row->getValue();
-    my $mapTable = $row->getTable();
-    my $mapField = $row->getField();
+#  my $maps = $self->getMaps();
 
-    push @rows, "      <row table=\"$table\" field=\"$field\" value=\"$value\" />";
-  }
+#  my @rows;
+#  foreach my $row (@$maps) {
+#    my $mapValue = $row->getValue();
+#    my $mapTable = $row->getTable();
+#    my $mapField = $row->getField();
 
-  my $rows = join("\n", @rows);
+#    push @rows, "      <row table=\"$table\" field=\"$field\" value=\"$value\" />";
+#  }
 
-  my $xml = <<XML;
-  <initial table="$table" field="$field" value="$value">
-    <maps>
-$rows
-    </maps>
-  </initial>
-XML
+#  my $rows = join("\n", @rows);
 
-}
+#  my $xml = <<XML;
+#  <initial table="$table" field="$field" value="$value">
+#    <maps>
+#$rows
+#    </maps>
+#  </initial>
+#XML
+
+#}
 
 
 sub included {

@@ -6,6 +6,7 @@ use Carp;
 use ApiCommonData::Load::IsolateVocabulary::Utils;
 
 sub getNewTerms {$_[0]->{_new_terms}}
+
 sub getExistingTerms {$_[0]->{_existing_terms}}
 sub setExistingTerms {$_[0]->{_existing_terms} = $_[1]}
 
@@ -39,39 +40,39 @@ sub new {
 }
 
 sub report {
-  my ($self, $type) = @_;
-  $type = $_[0]->{_type};
+  my ($self) = @_;
+
+  my $type = $_[0]->{_type};
+
+  my $hadErrors;
 
   my $dbh = $self->getDbh();
 
+  my $existingTerms = $self->getExistingTerms();
+
+  # Check Existing terms have all needed attributes
+  foreach my $existingTerm (@$existingTerms) {
+    unless($existingTerm->isValid()) {
+      print STDERR "had error\n";
+      $hadErrors = 1;
+    }
+  }
+
   # ensure the (assignment) terms in the mapping file are present in ontology
   my $check = $self->checkOntology();
-
 
   # make hash lookup for existing terms
   my $existingTermsHash = $self->makeHashFromTerms();
 
   my $newTerms = $self->getNewTerms();
 
-  my $hadErrors;
-
-  my $existingTerms = $self->getExistingTerms();
-
-  # Check Existing terms have all needed attributes
-  foreach my $existingTerm (@$existingTerms) {
-    unless($existingTerm->isValid(1)) {
-      print STDERR "had error\n";
-      $hadErrors = 1;
-    }
-  }
-
   # Check all new terms are handled
   foreach my $vocabTerm (@{$newTerms}) {
-    my $value = $vocabTerm->getValue();
+    my $original = $vocabTerm->getOriginal();
 
-    unless($existingTermsHash->{$value}) {
-      print STDERR "No Mapping Info for Vocab Term:  $value\n";
-      $self->getXml($value, $type);
+    unless($existingTermsHash->{$original}) {
+      print STDERR "No Mapping Info for Vocab Term:  $original\n";
+      $self->getXml($original, $type);
       $hadErrors = 1;
     }
   }
@@ -93,8 +94,8 @@ sub makeHashFromTerms {
   my %hash;
 
   foreach my $vocabTerm (@{$existingTerms}) {
-    my $value = $vocabTerm->getValue();
-    $hash{$value} = $vocabTerm;
+    my $original = $vocabTerm->getOriginal();
+    $hash{$original} = 1;
   }
 
   return \%hash;
@@ -104,9 +105,9 @@ sub makeHashFromTerms {
 sub getXml {
   my ($self, $value, $type) = @_;
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$type\" value=\"$value\">
+  <initial table=\"IsolateSource\" field=\"$type\" original=\"$value\">
     <maps>
-      <row table=\"IsolateSource\" field=\"$type\" value=\"\" \/>
+      <row type=\"$type\" value=\"\" \/>
     <\/maps>
   <\/initial>
 END
@@ -132,18 +133,18 @@ sub getAllOntologies {
   my ($self)  = @_;
 
   my $dbh = $self->getDbh();
-  my $sql = "select term, type from apidb.isolatevocabulary";
+  my $sql = "select term, type from apidb.isolatevocabulary where source = 'isolate vocabulary'";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
-  my %res;
+  my $res = {};
   while(my ($term, $type) = $sh->fetchrow_array()) {
-    $type = 'country' if($type eq 'geographic_location');
-    push @{$res{$term}}, $type;
+#    $type = 'country' if($type eq 'geographic_location');
+    $res->{$term}->{$type} = 1;
   }
   $sh->finish();
 
-  return \%res;
+  return $res;
 }
 
 sub checkOntology {
@@ -153,33 +154,26 @@ sub checkOntology {
   my @missing;
 
   foreach my $term (@{$self->getExistingTerms}) {
-    my $maps = $term->getMaps();
-    my $value = $term->getValue();
+    my $original = $term->getOriginal();
 
-    unless($term->isValid(1)) {
-      print STDERR Dumper $term;
-      croak "Term [$value] is NOT valid";
-    }
-    foreach my $map (sort @$maps) {
-      my $mapField = $map->getField();
-      my $mapValue = $map->getValue();
+    my $mapValue = $term->getValue();
+    my $mapType = $term->getType();
 
-      my ($ontologyTerm, $extra) = split(':', $mapValue);
-
-      if (!($self->isIncluded($existingOntology->{$ontologyTerm}, $mapField))){
-	push @missing, $ontologyTerm;
-	my %hMissing   = map { $_, 1 } @missing;
-	@missing = keys %hMissing; 
-      }
+    unless($existingOntology->{$mapValue}->{$mapType}) {
+      push @missing, $mapValue;
     }
   }
-  if ($#missing > 0) {
+
+  if (scalar @missing > 0) {
     print STDOUT "Add these $#missing+1 terms Isolate Vocabulary:\n";
     foreach my $term (sort @missing) {
       print STDOUT "$term\t\tproduct\n";
     }
   }
-  return $#missing+1;
+
+
+
+  return scalar(@missing);
 }
 
 1;

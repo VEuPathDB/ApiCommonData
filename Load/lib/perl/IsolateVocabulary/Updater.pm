@@ -170,7 +170,7 @@ sub checkOntology {
     my $maps = $term->getMaps();
     my $value = $term->getValue();
 
-    unless($term->isValid(1)) {
+    unless($term->isValid()) {
       print STDERR Dumper $term;
       croak "Term [$value] is NOT valid";
     }

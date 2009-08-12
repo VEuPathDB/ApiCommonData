@@ -42,22 +42,19 @@ sub extract {
   my @vocabularyTerms;
 
   foreach my $node (@{$root->{initial}}) {
-    my $value = $node->{value};
+    my $original = $node->{original};
     my $table = $node->{table};
     my $field = $node->{field};
 
-    my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($value, $table, $field);
-
     foreach my $map (@{$node->{maps}->[0]->{row}}) {
-      my $mapValue = $map->{value};
-      my $mapTable = $map->{table};
-      my $mapField = $map->{field};
+      my $type = $map->{type};
+      my $value = $map->{value};
 
-      my $mapTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($mapValue, $mapTable, $mapField);
-      $vocabTerm->addMaps($mapTerm);
+
+      my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($original, $table, $field, $type, $value);
+
+      push @vocabularyTerms, $vocabTerm;
     }
-
-    push @vocabularyTerms, $vocabTerm;
   }
 
   return \@vocabularyTerms;
