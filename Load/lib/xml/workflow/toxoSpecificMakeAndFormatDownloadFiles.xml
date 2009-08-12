@@ -34,5 +34,14 @@
       <depends name="concatenateIsolateDownloadFiles"/>
     </step>
 
+   <subgraph name="createFullRecordCacheAndFileForIsolate" xmlFile="createFullRecordCacheAndFile.xml">
+    <paramValue name="downloadSiteDataDir">$$downloadSiteDataDir$$</paramValue>
+    <paramValue name="organismName">Toxo</paramValue>
+    <paramValue name="organismFullName"></paramValue>
+    <paramValue name="projectName">$$projectName$$</paramValue>
+    <paramValue name="projectVersion">$$projectVersion$$</paramValue>
+    <paramValue name="recordType">Isolate</paramValue>
+    <paramValue name="deprecated">$$deprecated$$</paramValue>
+    <depends name="makeDownloadSiteDataDir"/>
 
 </workflowGraph>
