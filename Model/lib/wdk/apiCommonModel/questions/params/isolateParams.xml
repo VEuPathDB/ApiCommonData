@@ -335,7 +335,8 @@
       (select distinct regexp_replace(specific_host, ':.*') term from apidb.isolateattributes) c
  where v.term = c.term
  and v.type = 'specific_host'
- union
+ and v.source = 'isolate vocabulary' 
+union
  select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
  union
  select 'Mammals - non human' as term, 'Mammals - non human' as internal, '' as parentterm from dual

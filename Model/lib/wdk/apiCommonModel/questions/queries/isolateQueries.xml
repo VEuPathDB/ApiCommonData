@@ -143,6 +143,7 @@
             where i.short = v.term
             and v.term in ($$specific_host$$)
             and v.type = 'specific_host'
+            and v.source = 'isolate vocabulary'
             &&dataTypeOptional&&
             ORDER BY i.source_id
             ]]>
@@ -173,6 +174,7 @@
             where i.short = v.term
             and v.term in ($$isolation_source$$)
             and v.type = 'isolation_source'
+            and v.source = 'isolate vocabulary'
             ORDER BY i.source_id
             ]]>
          </sql>
