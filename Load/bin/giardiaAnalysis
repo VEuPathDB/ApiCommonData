@@ -28,31 +28,23 @@ $mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
 
 ##### Load Normalized array data  #####
 
-#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
 
-#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData/arrayData.xml", "load_Spycher_arrayData","");
+&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData/arrayData.xml", "load_Spycher_arrayData","");
+
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData_2/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
+
+&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData_2/arrayData.xml", "load_Spycher_arrayData_2","");
 
 ##### Map ArrayElements to Transcript Sequences #####
 
-#&extractArrayElements($mgr,"Glamblia", 'G_lamblia_1' , 1);
+&extractArrayElements($mgr,"Glamblia", 'G_lamblia_1' , 1);
 
-#&extractAnnotatedTranscriptSeq($mgr,"G. lamblia contigs from Genbank", "2007-09-24", 'G_lamblia_Transcripts',"annotatedTranscripts","Transcript","SplicedNASequence","na_sequence_id");
+&extractAnnotatedTranscriptSeq($mgr,"G. lamblia contigs from Genbank", "2007-09-24", 'G_lamblia_Transcripts',"annotatedTranscripts","Transcript","SplicedNASequence","na_sequence_id");
 
-#&mapArrayElementsToNaSequences($mgr,"Glamblia", 'G_lamblia_Transcripts',"annotatedTranscripts", 'G_lamblia_1', 90, 65, 1);
+&mapArrayElementsToNaSequences($mgr,"Glamblia", 'G_lamblia_Transcripts',"annotatedTranscripts", 'G_lamblia_1', 90, 65, 1);
 
-#&InsertCompositeElementNaSequences($mgr, 'G_lamblia_1', 0, 'G_lamblia_Transcripts');
-
-##### Expression Profiles #####
-
-#InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites (Spycher Lab)', 1, 'G_lamblia_1', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
-
-#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profileavg.config");
-
-##### PaGE Analyses #####
-
-#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
-
-#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis/page.xml", "load_GLambliaTrophozoites_pageData", "pagePath");
+&InsertCompositeElementNaSequences($mgr, 'G_lamblia_1', 0, 'G_lamblia_Transcripts');
 
 &extractArrayElements($mgr,"Glamblia", 'G_lamblia_2' , 1);
 
@@ -62,17 +54,25 @@ $mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
 
 &InsertCompositeElementNaSequences($mgr, 'G_lamblia_2', 0, 'G_lamblia_Transcripts');
 
-##### Load Normalized array data  #####
-
-&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_arrayData_2/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
-
-&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/GL_Spycher_arrayData_2/arrayData.xml", "load_Spycher_arrayData_2","");
-
 ##### Expression Profiles #####
 
-InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time', 1, 'G_lamblia_2', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
+#InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites (Spycher Lab)', 1, 'G_lamblia_1', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
 
-#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/profileavg.config");
+#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profileavg.config");
+
+&InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time', 1, 'G_lamblia_2', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
+
+&InsertAveragedExpressionProfile($mgr,"Stress response Dynamics in Trophozoites (time series)","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/profileavg.config");
+
+##### PaGE Analyses #####
+
+#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
+
+#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis/page.xml", "load_GLambliaTrophozoites_pageData", "pagePath");
+
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis_2/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
+
+&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis_2/page.xml", "load_GLambliaTrophozoites_pageData_2", "pagePath");
 
 #================================================================================
 
@@ -550,6 +550,27 @@ $mgr->waitForCluster("Iprscan of GlambliaAnnotatedProteins", "waitGlambliaAnnota
 #### We need to add a call that runs a step to run sql, in this case to mark the deprecated genes of giardia
 #### For GiardiaDB 1.1, Brian ran this manually 
 #ApiCommonData/Load/lib/sql/giardia_deprecated_genes.sql
+
+
+################################################################
+##########  Map Isolates to Genome  ############################
+################################################################
+
+my $blastParams = "V=1 B=1 hspsepQmax=50000 hspsepSmax=50000 -span1 -topcomboN=1 E=0.1 -wordmask=seg";
+
+&createSimilarityDir($mgr,"GiardiaGenbankIsolates", "GlambliaContigs","(\\S+)", $blastParams, "blastn");
+
+&extractNaSeq($mgr,"G. lamblia isolates From Genbank","2009-07-21",'GiardiaGenbank',"Isolates","ExternalNASequence","source_id");
+
+&copyFilesToComputeCluster($mgr,"GiardiaGenbankIsolates.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"GiardiaGenbankIsolates-GlambliaContigs","similarity");
+
+&startProteinBlastOnComputeCluster($mgr,"GiardiaGenbankIsolates","GlambliaContigs","apidb");
+
+&copyFilesFromComputeCluster($mgr,"GiardiaGenbankIsolates-GlambliaContigs","similarity");
+
+&loadProteinBlast($mgr, "GiardiaGenbankIsolates-GlambliaContigs","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","G. lamblia isolates From Genbank","2009-07-21",'G. lamblia contigs from Genbank','2007-09-24', " --subjectsLimit 50 --hspsLimit 10 ");
 
 $mgr->goodbye("Pipeline complete!\n");
 
