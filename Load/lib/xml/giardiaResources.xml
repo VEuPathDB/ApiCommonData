@@ -4,321 +4,7 @@
     </cleanups>
 
 
-   <resource resource="BibRefType" 
-              version="1"
-              plugin="GUS::Supported::Plugin::LoadGusXml"
-	      displayName="Bibliographic Reference Types"
-              category="Ontology"
-              publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
-	      dbCommit="@dbcommit@"
-            >
-       <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BibliographicReferenceType/ncbiPublicationTypes.xml" 
-                contact="John Brestelli"
-                email="jbrestel@pcbi.upenn.edu"
-                institution="University of Pennsylvania"/>	
-    <pluginArgs>--filename @downloadDir@/BibRefType/ncbiPublicationTypes.xml</pluginArgs>
-    </resource>  
-
-
-    <resource resource="Mged_Ontology_Term_Types" 
-              version="1.3"
-              plugin="GUS::Supported::Plugin::InsertOntologyTermType"
-	      displayName="MGED Ontology Term Types"
-              category="Ontology"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
-                contact="Trish Whetzel"
-                email="whetzel@pcbi.upenn.edu"
-                institution="University of Pennsylvania"/>
-        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
-    </resource>    
-
-
-    <resource resource="Mged_Ontology_Relationship_Types" 
-              version="1.3"
-              plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
-	      displayName="MGED Ontology Relationship Types"
-              category="Ontology"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
-                contact="Trish Whetzel"
-                email="whetzel@pcbi.upenn.edu"
-                institution="University of Pennsylvania"/>
-        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
-    </resource>    
-
-    <resource resource="MGED_Ontology" 
-              version="1.3"
-              plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
-	      displayName="The MGED Ontology"
-              category="Ontology"
-              publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
-              url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
-              extDbName="MGED_Ontology"
-              extDbRlsVer="1.3"
-              extDbRlsDescrip="MGED Ontology"
-	      dbCommit="@dbcommit@"
-            >	
-    <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
-    <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
-    <description>
-       <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
-        </description>		
-    </resource>  
-
-    <resource resource="Mged_Ontology_Entry" 
-              version="1.3"
-              plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
-	      displayName="MGED Ontology Entry"
-              category="Ontology"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
-                contact=""
-                email=""
-                institution=""/>
-        <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
-    </resource>      
-
-    <resource resource="Giardia_Lamblia_Array_1" 
-              version="1"
-              plugin="GUS::Supported::Plugin::LoadArrayDesign"
-	      displayName="Giardia lamblia Oligo Array"
-              category="Transcriptome"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrays/Giardia_lamblia_1" 
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/columnTranslator.xml --data_in @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/array.tab  --data_out @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.data --log  @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/log</unpack>
-          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'University of Zurich' --commit @dbcommit@</unpack>
-          <pluginArgs>--cfg_file @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.config --data_file @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'University of Zurich'</pluginArgs>
-    </resource>    
-
-
-    <resource resource="Giardia_Lamblia_Array_2" 
-              version="1"
-              plugin="GUS::Supported::Plugin::LoadArrayDesign"
-	      displayName="Giardia lamblia Oligo Array 2"
-              category="Transcriptome"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrays/Giardia_lamblia_2" 
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/columnTranslator.xml --data_in @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/array.tab  --data_out @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.data --log  @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/log</unpack>
-          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'University of Zurich' --commit @dbcommit@</unpack>
-          <pluginArgs>--cfg_file @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.config --data_file @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'University of Zurich'</pluginArgs>
-
-        <description>
-            <![CDATA[
-Giardia lamblia microarray version 2 (provided by J. Craig Venter Institute free of charge). They are aminosilane surface coated glass slides with ss-oligo (70 mers) printed with a Genetix arraying machine. The array contains 19230 elements and covers the whole Giardia lamblia WB strain genome.
-          ]]>
-        </description>
-
-    </resource>  
-
-       <resource resource="RAD" version="2008-02-06"
-        displayName="RNA Abundance Database - Mage To RAD Importer"
-        publicUrl="http://sourceforge.net/projects/tab2mage/"
-        category="Ontology"
-        url="http://downloads.sourceforge.net/tab2mage/mage2tab-v0.9.tar.gz"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        dbCommit="@dbcommit@">
-        <wgetArgs>--tries=5 --output-document=mage2tab-v0.9.tar.gz</wgetArgs>
-        <unpack>gunzip @downloadDir@/RAD/mage2tab-v0.9.tar.gz</unpack>
-        <unpack>tar -xf @downloadDir@/RAD/mage2tab-v0.9.tar -C @downloadDir@/RAD/</unpack>
-        <unpack>rm -f @downloadDir@/RAD/mage2tab-v0.9.tar</unpack>
-        <description>
-         <![CDATA[
-          ]]>
-     </description>
-    </resource>
-
-
-    <resource resource="GL_Spycher_metaData" 
-              version="1"
-              plugin="GUS::Community::Plugin::LoadMageDoc"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - by temperature or varying DTT concentrations"
-              category="Transcriptome"
-              extDbName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab)"
-              extDbRlsVer="1"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/spycher.xls" 
-              contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-        <unpack>makeMageTabConfig.pl @downloadDir@/GL_Spycher_metaData/spycher.xls >@downloadDir@/GL_Spycher_metaData/loadMageDoc.config</unpack>
-
-          <pluginArgs>--configfile @downloadDir@/GL_Spycher_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
-        <description>
-         <![CDATA[
-Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). 
-
-          ]]>
-     </description>
-    </resource>    
-
-
-    <resource resource="GL_Spycher_arrayData" 
-              version="1"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - array data"
-              category="ignore"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/arrayData.xml" 
-              contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <pluginArgs></pluginArgs>
-        <description>
-         <![CDATA[
-Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). 
-
-          ]]>
-     </description>
-    </resource>    
-
-    <resource resource="GL_Spycher_radAnalysis" 
-              version="1"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Expression Analysis"
-              category="ignore"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/analysis/page.xml"
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <pluginArgs></pluginArgs>
-        <description>
-         <![CDATA[
-Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). This data was provided by the Hehl lab (C. Spycher, L. Morf) and the Functional Genomics Center Zurich (C. Aquino Fournier, H. Rehrauer, J. Sobek).
-          ]]>
-     </description>
-    </resource>    
-
-<resource resource = "GL_Spycher_Percentile_Profiles" 
-            version="1.0"
-            displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Percentile Profiles"
-            organisms="G. lamblia"
-            category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Percentile profile of the Stress Response by temp or DTT concentrations"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Percentile profile of the Stress Response by temperature or varying DTT concentrations in Giardia lamblia Trophozoite"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profiles"
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-      />
-<pluginArgs>--inputDir @downloadDir@/GL_Spycher_Percentile_Profiles/profiles/ --configFile @downloadDir@/GL_Spycher_Percentile_Profiles/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
-Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
-          ]]>
-    </description>
-  </resource>
-
-      <resource resource="GL_Spycher_metaData_2" 
-              version="1"
-              plugin="GUS::Community::Plugin::LoadMageDoc"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - by varying DTT incubation time"
-              category="Transcriptome"
-              extDbName="Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time"
-              extDbRlsVer="1"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/spycher2.xls" 
-              contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-        <unpack>makeMageTabConfig.pl @downloadDir@/GL_Spycher_metaData_2/spycher2.xls >@downloadDir@/GL_Spycher_metaData_2/loadMageDoc.config</unpack>
-
-          <pluginArgs>--configfile @downloadDir@/GL_Spycher_metaData_2/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
-        <description>
-         <![CDATA[
-Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes, 60 minutes or 120  minutes to final concentrations of 14.2 mM.  In the control cultures an equivalent amount of water was used.
-
-          ]]>
-     </description>
-    </resource>    
-
-    <resource resource="GL_Spycher_arrayData_2" 
-              version="1"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - array data"
-              category="ignore"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/arrayData.xml" 
-              contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <pluginArgs></pluginArgs>
-        <description>
-         <![CDATA[
-
-          ]]>
-     </description>
-    </resource>    
-
-    <resource resource="GL_Spycher_radAnalysis_2" 
-              version="1"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Expression Analysis"
-              category="ignore"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/analysis/page.xml"
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-        />
-          <pluginArgs></pluginArgs>
-        <description>
-         <![CDATA[
-          ]]>
-     </description>
-    </resource>    
-<resource resource = "GL_Spycher_Percentile_Profiles_2" 
-            version="1.0"
-            displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Percentile Profiles"
-            organisms="G. lamblia"
-            category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Percentile profile of the Stress Response by varying DTT incubation time"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Percentile profile of the Stress Response by varying DTT incubation time in Giardia lamblia Trophozoite"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/normalization"
-                contact="Adrian Hehl"
-                email="Adrian.Hehl@access.unizh.ch"
-                institution="University of Zurich"
-      />
-<pluginArgs>--inputDir @downloadDir@/GL_Spycher_Percentile_Profiles_2/normalization/ --configFile @downloadDir@/GL_Spycher_Percentile_Profiles_2/normalization/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
-Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
-          ]]>
-    </description>
-  </resource>
-
-    <resource resource="taxonomy" version="2008-02-15" 
+    <resource resource="taxonomy" version="2009-08-04" 
         displayName="NCBI Taxonomy"
         publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
         category="Ontology"
@@ -357,15 +43,15 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
         </description>
     </resource>
 
-    <resource resource="SO" version="1.147"
+     <resource resource="SO" version="1.225"
         displayName="Sequence Ontology"
         publicUrl="http://song.sourceforge.net"
         category="Ontology"
-        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.147"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.225"
         plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
-        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.147 --soCvsVersion 1.147</pluginArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.225 --soCvsVersion 1.225</pluginArgs>
         <description>
             <![CDATA[
     The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
@@ -373,14 +59,14 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
         </description>
     </resource>
     
-    <resource resource="enzymeDB" version="2008_02_06" 
+    <resource resource="enzymeDB" version="2009_08_04" 
         displayName="Enzyme nomenclature database"
         publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
         category="Ontology"
         url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
         plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
         extDbName="enzymeDB"
-        extDbRlsVer="2008-02-06"
+        extDbRlsVer="2009-08-04"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
         <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
@@ -390,8 +76,8 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
           ]]>
         </description>
     </resource>
-    
-    <resource resource="GO_evidence_codes" version="1.14"
+
+    <resource resource="GO_evidence_codes" version="1.2"
         displayName="Gene Ontology evidence codes"        
         publicUrl="http://www.geneontology.org/GO.evidence.shtml"
         category="Ontology"            
@@ -407,15 +93,15 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
         </description>
     </resource>
     
-    <resource resource="GO" version="5.695"
+    <resource resource="GO" version="1.726"
         displayName="Gene Ontology"
         publicUrl="http://www.geneontology.org"
         category="Ontology"
         url="http://www.geneontology.org/ontology/gene_ontology.obo"
         plugin="GUS::Supported::Plugin::InsertGeneOntology"
         extDbName="Gene Ontology"
-        extDbRlsVer="5.695"
-        extDbRlsDescrip="The Gene Ontology from Feb. 14, 2008"
+        extDbRlsVer="1.726"
+        extDbRlsDescrip="The Gene Ontology from Aug. 4, 2009"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
         <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
@@ -425,16 +111,16 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
           ]]>
         </description>
     </resource>
-    
-    <resource resource="NRDB" version="2008-02-15"
+
+    <resource resource="NRDB" version="2009-08-04"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="GenBank NRDB"
         publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         category="Proteome"
         url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         extDbName="NRDB"
-        extDbRlsVer="2008-02-06"
-        extDbRlsDescrip="The nr file from 2008-02-15"
+        extDbRlsVer="2009-08-04"
+        extDbRlsDescrip="The nr file from 2009-08-04"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
@@ -444,7 +130,141 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
           ]]>
         </description>
     </resource>
+
+     <resource resource="InterproscanData" version="22.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        category="Proteome"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            email="interhelp@ebi.ac.uk"
+            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan22.0"
+            contact="EBI"
+            institution="EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan22.0/iprscan/data</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan22.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan22.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/</pluginArgs>
+        <description>
+            <![CDATA[
+        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>
+
+    <resource resource="G.lamblia_contigsGB" version="2007-09-24"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="G. lamblia contig sequence and annotation from Genbank"
+        category="Genome"
+        extDbName="G. lamblia contigs from Genbank"
+        extDbRlsVer="2007-09-24"
+        extDbRlsDescrip="G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL).
+
+            Genomic minimalism in the early diverging intestinal parasite Giardia lamblia.
+            cd Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, 
+            Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, 
+            Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Michael E. Holder, Susan M. Huse, Ulandt U. Kim, 
+            Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, 
+            Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, 
+            Staffan G. Svard, and Mitchell L. Sogin
+            Science 28 September 2007, Volume 317, pp. 1921-1926."
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/GenBankDump/GiardiaFromGB.gb"
+        />
+        <unpack>mkdir @downloadDir@/G.lamblia_contigsGB_fixed/</unpack>
+        <unpack>cat @downloadDir@/G.lamblia_contigsGB/GiardiaFromGB.gb | perl -pe 'if( /\/protein_id=\"/ ){if( !(/\:/) ){ s/\/protein_id=\"/\/protein_id=\"gb\:/;}}'> @downloadDir@/G.lamblia_contigsGB_fixed/GiardiaFromGB.gb </unpack>
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/GiardiaDB/GlambliaFeatures2gus.xml --inputFileOrDir @downloadDir@/G.lamblia_contigsGB_fixed/GiardiaFromGB.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Giardia lamblia ATCC 50803" --handlerExternalDbs "enzyme:enzymeDB:2009-08-04" --seqSoTerm "contig" --validationLog @pipelineDir@/logs/Glamblia.validation.log --bioperlTreeOutput @pipelineDir@/logs/Glamblia.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+            G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL).
+
+            Genomic minimalism in the early diverging intestinal parasite Giardia lamblia.
+            cd Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, 
+            Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, 
+            Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Michael E. Holder, Susan M. Huse, Ulandt U. Kim, 
+            Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, 
+            Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, 
+            Staffan G. Svard, and Mitchell L. Sogin
+            Science 28 September 2007, Volume 317, pp. 1921-1926.
+		]]>
+        </description>
+       </resource>
+
+    <resource resource="G.intestinalisAssemblageB_contigsGB" version="2009-08-07"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="G. intestinalis assemblage B contig sequence and annotation from Genbank"
+        category="Genome"
+        extDbName="G. intestinalis assemblage B contigs from Genbank"
+        extDbRlsVer="2009-08-07"
+        extDbRlsDescrip="Draft genome sequencing of Giardia assemblage B isolate GS/M-H7.
+        Franzen,O., Jerlstrom-Hultqvist,J., Sherwood,E., Castro,E.,
+        Ankarklev,J., Reiner,D., Palm,D., Andersson,J.O., Andersson,B. and
+        Svard,S.G.
+        Unpublished"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/GiardiaIntestinalisAssemblageB/giardiaassemblageB.gb"
+        />
+        <unpack>mkdir @downloadDir@/G.intestinalisAssemblageB_contigsGB_fixed/</unpack>
+        <unpack>cat @downloadDir@/G.intestinalisAssemblageB_contigsGB/giardiaassemblageB.gb | perl -pe 'if( /\/protein_id=\"/ ){if( !(/\:/) ){ s/\/protein_id=\"/\/protein_id=\"gb\:/;}}'> @downloadDir@/G.intestinalisAssemblageB_contigsGB_fixed/giardiaassemblageB.gb </unpack>
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/GiardiaDB/GlambliaFeatures2gus.xml --inputFileOrDir @downloadDir@/G.intestinalisAssemblageB_contigsGB_fixed/giardiaassemblageB.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Giardia intestinalis ATCC 50581" --handlerExternalDbs "enzyme:enzymeDB:2009-08-04" --seqSoTerm "contig" --validationLog @pipelineDir@/logs/assemblageB.validation.log --bioperlTreeOutput @pipelineDir@/logs/assemblageB.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+        Draft genome sequencing of Giardia assemblage B isolate GS/M-H7. 
+        Franzen,O., Jerlstrom-Hultqvist,J., Sherwood,E., Castro,E., 
+        Ankarklev,J., Reiner,D., Palm,D., Andersson,J.O., Andersson,B. and 
+        Svard,S.G. 
+        Unpublished
+		]]>
+        </description>
+       </resource>
+
+
+    <resource resource="G.intestinalisAssemblageE_contigsGB" version="2009-08-07"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="G. intestinalis assemblage E contig sequence and annotation from Genbank"
+        category="Genome"
+        extDbName="G. intestinalis assemblage E contigs from Genbank"
+        extDbRlsVer="2009-08-07"
+        extDbRlsDescrip="Sequence and annotation of the genotype E isolate P15 of Giardia
+        Svard,S.G.
+        Unpublished"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/GiardiaIntestinalisAssemblageE/giardiaP15.gb"
+        />
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/GiardiaDB/GlambliaFeatures2gus.xml --inputFileOrDir @downloadDir@/G.intestinalisAssemblageE_contigsGB/giardiaP15.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Giardia lamblia P15" --handlerExternalDbs "enzyme:enzymeDB:2009-08-04" --seqSoTerm "contig" --validationLog @pipelineDir@/logs/assemblageE.validation.log --bioperlTreeOutput @pipelineDir@/logs/assemblageE.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+
+        Sequence and annotation of the genotype E isolate P15 of Giardia
+        Svard,S.G. 
+        Unpublished
+
+		]]>
+        </description>
+       </resource>
+
+
     
+
+
+
+
+
+
+
+
+
+
+
+
     <resource resource="dbEST" version="2008-02-05"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
@@ -467,57 +287,6 @@ Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
         </description>
     </resource>
     
-    <resource resource="InterproscanData" version="16.2"
-        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
-        displayName="InterPro Database"
-        category="Proteome"
-        publicUrl="http://www.ebi.ac.uk/interpro"
-        dbCommit="@dbcommit@">	
-        <manualGet 
-            email="interhelp@ebi.ac.uk"
-            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan16.2"
-            contact="EBI"
-            institution="EBI"
-        />
-        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan16.2/iprscan/data</unpack>
-        <unpack>cp @downloadDir@/InterproscanData/iprscan16.2/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan16.2/iprscan/data/</unpack>
-        <pluginArgs>--inPath @downloadDir@/InterproscanData/</pluginArgs>
-        <description>
-            <![CDATA[
-        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
-		]]>
-        </description>
-        <publication pmid="15608177"/>
-    </resource>
-
-    <resource resource="G.lamblia_contigsGB" version="2007-09-24"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        displayName="G. lamblia contig sequence and annotation from Genbank"
-        category="Genome"
-        extDbName="G. lamblia contigs from Genbank"
-        extDbRlsVer="2007-09-24"
-        extDbRlsDescrip="G. lamblia contig sequence and annotation from Genbank on 2007-09-24"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/GenBankDump/GiardiaFromGB.gb"
-        />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/genbankFeatures2gus.xml --inputFileOrDir @downloadDir@/G.lamblia_contigsGB/GiardiaFromGB.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Giardia lamblia ATCC 50803" --handlerExternalDbs "enzyme:enzymeDB:2008-02-06" --seqSoTerm "contig"</pluginArgs>
-        <description>
-            <![CDATA[
-            G. lamblia sequence, assembly, annotation from Mitchell Sogin(MBL).
-
-            Genomic minimalism in the early diverging intestinal parasite Giardia lamblia.
-            cd Hilary G. Morrison, Andrew G. McArthur, Frances D. Gillin, Stephen B. Aley, Rodney D. Adam, 
-            Gary J. Olsen, Aaron A. Best, W. Zacheus Cande, Feng Chen, Michael J. Cipriano, Barbara J. Davids, 
-            Scott C. Dawson, Heidi G. Elmendorf, Adrian B. Hehl, Michael E. Holder, Susan M. Huse, Ulandt U. Kim, 
-            Erica Lasek-Nesselquist, Gerard Manning, Anuranjini Nigam, Julie E. J. Nixon, Daniel Palm, 
-            Nora E. Passamaneck, Anjali Prabhu, Claudia I. Reich, David S. Reiner, John Samuelson, 
-            Staffan G. Svard, and Mitchell L. Sogin
-            Science 28 September 2007, Volume 317, pp. 1921-1926.
-		]]>
-        </description>
-       </resource>
-
 
      <resource resource="GiardiaScaffolds" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
@@ -947,9 +716,7 @@ OrthoMCL data in a phyletic profile format. (The profile, for each Giardia gene,
         </description>
     </resource>
 
-  <!-- =================================================================== -->
-  <!--  Mini-pipeline for loading Mass Spec. Data  ++++++++-->
-  <!-- =================================================================== -->
+
 <resource resource="DTASelect-filter_032108_Proteomics" 
               version="1"
               plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
@@ -1047,5 +814,323 @@ G. intestinalis mitosome enriched fraction -- nanoLC/MALDI TOF/TOF
         </description>
     </resource>
 
+
+  <!-- =================================================================== -->
+  <!--  Mini-pipeline for loading Microarray Data  ++++++++-->
+  <!-- =================================================================== -->
+
+   <resource resource="BibRefType" 
+              version="1"
+              plugin="GUS::Supported::Plugin::LoadGusXml"
+	      displayName="Bibliographic Reference Types"
+              category="Ontology"
+              publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
+	      dbCommit="@dbcommit@"
+            >
+       <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BibliographicReferenceType/ncbiPublicationTypes.xml" 
+                contact="John Brestelli"
+                email="jbrestel@pcbi.upenn.edu"
+                institution="University of Pennsylvania"/>	
+    <pluginArgs>--filename @downloadDir@/BibRefType/ncbiPublicationTypes.xml</pluginArgs>
+    </resource>  
+
+
+    <resource resource="Mged_Ontology_Term_Types" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyTermType"
+	      displayName="MGED Ontology Term Types"
+              category="Ontology"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
+                contact="Trish Whetzel"
+                email="whetzel@pcbi.upenn.edu"
+                institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
+    </resource>    
+
+
+    <resource resource="Mged_Ontology_Relationship_Types" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
+	      displayName="MGED Ontology Relationship Types"
+              category="Ontology"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
+                contact="Trish Whetzel"
+                email="whetzel@pcbi.upenn.edu"
+                institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
+    </resource>    
+
+    <resource resource="MGED_Ontology" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
+	      displayName="The MGED Ontology"
+              category="Ontology"
+              publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
+              url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
+              extDbName="MGED_Ontology"
+              extDbRlsVer="1.3"
+              extDbRlsDescrip="MGED Ontology"
+	      dbCommit="@dbcommit@"
+            >	
+    <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
+    <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+    <description>
+       <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
+        </description>		
+    </resource>  
+
+    <resource resource="Mged_Ontology_Entry" 
+              version="1.3"
+              plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
+	      displayName="MGED Ontology Entry"
+              category="Ontology"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+                contact=""
+                email=""
+                institution=""/>
+        <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
+    </resource>      
+
+    <resource resource="Giardia_Lamblia_Array_1" 
+              version="1"
+              plugin="GUS::Supported::Plugin::LoadArrayDesign"
+	      displayName="Giardia lamblia Oligo Array"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrays/Giardia_lamblia_1" 
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/columnTranslator.xml --data_in @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/array.tab  --data_out @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.data --log  @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/log</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'University of Zurich' --commit @dbcommit@</unpack>
+          <pluginArgs>--cfg_file @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.config --data_file @downloadDir@/Giardia_Lamblia_Array_1/Giardia_lamblia_1/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'University of Zurich'</pluginArgs>
+    </resource>    
+
+
+    <resource resource="Giardia_Lamblia_Array_2" 
+              version="1"
+              plugin="GUS::Supported::Plugin::LoadArrayDesign"
+	      displayName="Giardia lamblia Oligo Array 2"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrays/Giardia_lamblia_2" 
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/columnTranslator.xml --data_in @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/array.tab  --data_out @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.data --log  @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/log</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'University of Zurich' --commit @dbcommit@</unpack>
+          <pluginArgs>--cfg_file @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.config --data_file @downloadDir@/Giardia_Lamblia_Array_2/Giardia_lamblia_2/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'University of Zurich'</pluginArgs>
+
+        <description>
+            <![CDATA[
+Giardia lamblia microarray version 2 (provided by J. Craig Venter Institute free of charge). They are aminosilane surface coated glass slides with ss-oligo (70 mers) printed with a Genetix arraying machine. The array contains 19230 elements and covers the whole Giardia lamblia WB strain genome.
+          ]]>
+        </description>
+
+    </resource>  
+
+       <resource resource="RAD" version="2008-02-06"
+        displayName="RNA Abundance Database - Mage To RAD Importer"
+        publicUrl="http://sourceforge.net/projects/tab2mage/"
+        category="Ontology"
+        url="http://downloads.sourceforge.net/tab2mage/mage2tab-v0.9.tar.gz"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=mage2tab-v0.9.tar.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/RAD/mage2tab-v0.9.tar.gz</unpack>
+        <unpack>tar -xf @downloadDir@/RAD/mage2tab-v0.9.tar -C @downloadDir@/RAD/</unpack>
+        <unpack>rm -f @downloadDir@/RAD/mage2tab-v0.9.tar</unpack>
+        <description>
+         <![CDATA[
+          ]]>
+     </description>
+    </resource>
+
+
+    <resource resource="GL_Spycher_metaData" 
+              version="1"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - by temperature or varying DTT concentrations"
+              category="Transcriptome"
+              extDbName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab)"
+              extDbRlsVer="1"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/spycher.xls" 
+              contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/GL_Spycher_metaData/spycher.xls >@downloadDir@/GL_Spycher_metaData/loadMageDoc.config</unpack>
+
+          <pluginArgs>--configfile @downloadDir@/GL_Spycher_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+         <![CDATA[
+Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). 
+
+          ]]>
+     </description>
+    </resource>    
+
+
+    <resource resource="GL_Spycher_arrayData" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - array data"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/arrayData.xml" 
+              contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <pluginArgs></pluginArgs>
+        <description>
+         <![CDATA[
+Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). 
+
+          ]]>
+     </description>
+    </resource>    
+
+    <resource resource="GL_Spycher_radAnalysis" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Expression Analysis"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/analysis/page.xml"
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <pluginArgs></pluginArgs>
+        <description>
+         <![CDATA[
+Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes to final concentrations of 7.1 mM, 14.2 mM or 21.3 mM.  In the control cultures an equivalent amount of water was used. Temperature stress (40 degrees C) was induced by incubating parasites for 30 minutes at 40 degrees C (control 37 degrees C). This data was provided by the Hehl lab (C. Spycher, L. Morf) and the Functional Genomics Center Zurich (C. Aquino Fournier, H. Rehrauer, J. Sobek).
+          ]]>
+     </description>
+    </resource>    
+
+<resource resource = "GL_Spycher_Percentile_Profiles" 
+            version="1.0"
+            displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Percentile Profiles"
+            organisms="G. lamblia"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Percentile profile of the Stress Response by temp or DTT concentrations"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Percentile profile of the Stress Response by temperature or varying DTT concentrations in Giardia lamblia Trophozoite"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profiles"
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+      />
+<pluginArgs>--inputDir @downloadDir@/GL_Spycher_Percentile_Profiles/profiles/ --configFile @downloadDir@/GL_Spycher_Percentile_Profiles/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
+          ]]>
+    </description>
+  </resource>
+
+      <resource resource="GL_Spycher_metaData_2" 
+              version="1"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - by varying DTT incubation time"
+              category="Transcriptome"
+              extDbName="Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time"
+              extDbRlsVer="1"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/spycher2.xls" 
+              contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/GL_Spycher_metaData_2/spycher2.xls >@downloadDir@/GL_Spycher_metaData_2/loadMageDoc.config</unpack>
+
+          <pluginArgs>--configfile @downloadDir@/GL_Spycher_metaData_2/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+         <![CDATA[
+Giardia lamblia strain WBC6 (ATCC catalog No. 50803) trophozoites were grown in 11 ml TYI-S-33 medium supplemented with 10% fetal bovine serum and bovine bile.Parasites were grown to confluency at 37 degrees C, and medium was replaced prior to stress induction. Redox stress was induced by addition of Dithiothreitol (DTT, Fluka 43817) for 30 minutes, 60 minutes or 120  minutes to final concentrations of 14.2 mM.  In the control cultures an equivalent amount of water was used.
+
+          ]]>
+     </description>
+    </resource>    
+
+    <resource resource="GL_Spycher_arrayData_2" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - array data"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/arrayData.xml" 
+              contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <pluginArgs></pluginArgs>
+        <description>
+         <![CDATA[
+
+          ]]>
+     </description>
+    </resource>    
+
+    <resource resource="GL_Spycher_radAnalysis_2" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Expression Analysis"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/analysis/page.xml"
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+        />
+          <pluginArgs></pluginArgs>
+        <description>
+         <![CDATA[
+          ]]>
+     </description>
+    </resource>    
+<resource resource = "GL_Spycher_Percentile_Profiles_2" 
+            version="1.0"
+            displayName="Stress Response in Giardia lamblia Trophozoites (Hehl Lab) - Percentile Profiles"
+            organisms="G. lamblia"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Percentile profile of the Stress Response by varying DTT incubation time"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Percentile profile of the Stress Response by varying DTT incubation time in Giardia lamblia Trophozoite"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response_2/working_dir/normalization"
+                contact="Adrian Hehl"
+                email="Adrian.Hehl@access.unizh.ch"
+                institution="University of Zurich"
+      />
+<pluginArgs>--inputDir @downloadDir@/GL_Spycher_Percentile_Profiles_2/normalization/ --configFile @downloadDir@/GL_Spycher_Percentile_Profiles_2/normalization/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Percentile profile of the Stress Response in Giardia lamblia Trophozoites.
+          ]]>
+    </description>
+  </resource>
 
 </resourcesPipeline>
