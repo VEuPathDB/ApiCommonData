@@ -377,6 +377,7 @@ from apidb.isolatevocabulary v,
      (select distinct regexp_replace(isolation_source, ':.*') term from apidb.isolateattributes) c
 where v.term = c.term
 and v.type = 'isolation_source'
+and v.source = 'isolate vocabulary'
 order by term asc
     ]]>
     </sql>
@@ -402,6 +403,7 @@ from apidb.isolatevocabulary v,
      (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
 where v.term = c.term
 and v.type = 'product'
+and v.source = 'isolate vocabulary'
 union
 select 'others' as display, 'others' as term, 'others' as internal, '' as parentterm from dual
 union
@@ -415,6 +417,7 @@ from apidb.isolatevocabulary v,
      (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
 where v.term = c.term
 and v.type = 'product'
+and v.source = 'isolate vocabulary'
 union
 select 'others' as display, 'others' as term, 'others' as internal, '' as parentterm from dual
     ]]>
