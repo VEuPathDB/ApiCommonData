@@ -2035,9 +2035,10 @@
           <!-- Comment category link -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <attributeQueryRef ref="GeneAttributes.CommentCategoryLink" excludeProjects="EuPathDB">
-            <columnAttribute name="category_link" internal="true" inReportMaker="false"/>
-          </attributeQueryRef>   
+          <table name="CategoryLink" displayName="Category Link"
+                queryRef="CommentTables.CommentCategoryLink" inReportMaker="false">
+            <columnAttribute displayName="Category Link" name="category_link" internal="true"/>
+          </table>  
 
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
           <!-- Old ToxoDB Comments table -->  
