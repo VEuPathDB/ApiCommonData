@@ -471,8 +471,8 @@
             <sql>
             <![CDATA[SELECT ga.source_id,'@PROJECT_ID@' as project_id,
                             CASE WHEN ga.chromosome IS NOT NULL
-			    THEN '( ' || ga.chromosome || ' )'
-			    ELSE '' END AS chromosomemappingtext
+                                 THEN '( ' || ga.chromosome || ' )'
+                                 ELSE '' END AS chromosomemappingtext
                      FROM apidb.geneAttributes ga
             ]]>
             </sql>
@@ -807,6 +807,28 @@
             ]]>
             </sql>
         </sqlQuery>
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- Comment category link -->
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="CommentCategoryLink">
+        <column name="source_id"/>
+        <column name="project_id"/>
+        <column name="category_link"/>
+        <sql>
+          <![CDATA[
+            SELECT c.stable_id AS source_id, '@PROJECT_ID@' as project_id,
+                   lower(t.category) || '_comment:' || count(t.category) as category_link
+            FROM   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, 
+                   @COMMENT_SCHEMA@TargetCategory@COMMENT_DBLINK@ t,
+                   @COMMENT_SCHEMA@CommentTargetCategory@COMMENT_DBLINK@ tc 
+            WHERE  c.comment_id = tc.comment_id
+               AND t.target_category_id = tc.target_category_id
+            GROUP BY c.stable_id, t.category
+          ]]>
+        </sql>
+      </sqlQuery>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- GFF sequence -->
