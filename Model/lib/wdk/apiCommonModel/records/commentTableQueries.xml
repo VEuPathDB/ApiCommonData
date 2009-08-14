@@ -65,13 +65,15 @@
             <column name="headline"/>
             <column name="user_name_org"/>
             <column name="comment_date"/>
+            <column name="comment_target_id"/>
             <sql>
             <![CDATA[
-              SELECT ga.source_id, ga.project_id, apicomm.comment_id,
+              SELECT ga.source_id, ga.project_id, apicomm.comment_id, apicomm.comment_target_id,
                      apicomm.stable_id, apicomm.comment_date, apicomm.geneCount,
                      apicomm.filecount, apicomm.pmids, apicomm.headline, apicomm.user_name_org
               FROM apidb.GeneAttributes ga,
-                   (SELECT c.project_name as project_id, csi.comment_id, csi.stable_id, c.comment_date, c.headline,
+                   (SELECT c.comment_target_id, c.project_name as project_id, csi.comment_id, 
+                           csi.stable_id, c.comment_date, c.headline,
                            files.filecount, references.pmids, gene_counts.geneCount,
                            u.first_name || ' ' || u.last_name || ', ' || u.organization as user_name_org
                     FROM @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c, @USER_SCHEMA@users@USER_DBLINK@ u,
@@ -162,6 +164,28 @@
               ORDER BY apicomm.comment_id desc
             ]]>
             </sql>
+        </sqlQuery> 
+
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <!-- Comment category link -->
+        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+                     
+        <sqlQuery name="CommentCategoryLink" excludeProjects="EuPathDB">
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <column name="category_link"/>
+            <sql>
+            <![CDATA[
+              SELECT c.stable_id AS source_id, '@PROJECT_ID@' as project_id,
+                     lower(t.category) || ':' || count(t.category) as category_link
+              FROM   @COMMENT_SCHEMA@comments@COMMENT_DBLINK@ c,
+                     @COMMENT_SCHEMA@TargetCategory@COMMENT_DBLINK@ t,
+                     @COMMENT_SCHEMA@CommentTargetCategory@COMMENT_DBLINK@ tc
+              WHERE  c.comment_id = tc.comment_id
+                 AND t.target_category_id = tc.target_category_id
+              GROUP BY c.stable_id, t.category
+            ]]>
+          </sql>
         </sqlQuery> 
 
        <sqlQuery name="GenomeComments" excludeProjects="EuPathDB"
