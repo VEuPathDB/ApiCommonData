@@ -332,11 +332,11 @@
     <![CDATA[
  select v.term, v.term as internal, v.parent as parentTerm
  from apidb.isolatevocabulary v, 
-      (select distinct regexp_replace(specific_host, ':.*') term from apidb.isolateattributes) c
- where v.term = c.term
+      (select distinct trim(specific_host) as specific_host from apidb.isolateattributes) c
+ where trim(v.term) = c.specific_host
  and v.type = 'specific_host'
  and v.source = 'isolate vocabulary' 
-union
+ union
  select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
  union
  select 'Mammals - non human' as term, 'Mammals - non human' as internal, '' as parentterm from dual
@@ -622,8 +622,8 @@ and v.product = 'SAG1'
       <![CDATA[
 select v.term, v.term as internal, initcap(v.parent) as parentTerm
 from apidb.isolatevocabulary v, 
-     (select distinct regexp_replace(country, ':.*') term from apidb.isolateattributes) c
-where v.term = c.term
+     (select distinct trim(country) as country from apidb.isolateattributes) c
+where trim(v.term) = c.country
 and v.type = 'geographic_location'
 and v.source = 'isolate vocabulary'
 union 
@@ -632,6 +632,10 @@ from apidb.isolatevocabulary where type = 'geographic_location' and parent is no
 and source = 'isolate vocabulary'
 union 
 select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
+union
+select 'Mexico' as term, 'Mexico' as internal, 'S. America' as parentterm from dual
+union
+select 'Zimbabwe' as term, 'Zimbabwe' as internal, 'Africa' as parentterm from dual
       ]]>
       </sql>
     </sqlQuery>
