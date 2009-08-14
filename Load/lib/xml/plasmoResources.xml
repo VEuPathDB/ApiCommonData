@@ -2230,20 +2230,20 @@ IsolatesByCountry
         </description>
     </resource>
 
- <resource resource="Pubmed_DBRefs" version="2009-04-29"
+ <resource resource="Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Pubmed DBRefs"
-        extDbRlsVer="2009-04-29"
+        extDbRlsVer="2009-08-14"
         extDbRlsDescrip="Pubmed links"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed.tab"
+        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Pubmed_DBRefs/gene2pubmed.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Pubmed_DBRefs/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez pubmed links.
@@ -2364,19 +2364,19 @@ IsolatesByCountry
 		<publication pmid="19094208"/>
     </resource> 
 
-<resource resource="Phenotype_DBRefs" version="2009-04-20"
+<resource resource="Phenotype_DBRefs" version="2009-08-14"
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Phenotype DBRefs"
-        extDbRlsVer="2009-04-20"
+        extDbRlsVer="2009-08-14"
         extDbRlsDescrip="DBRefs for Phenotype db links"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list.txt"
+        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_08-14-09.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             Phenotype links from Genetically Modified Rodent Malaria Parasites: 
@@ -2394,7 +2394,6 @@ IsolatesByCountry
             ]]>
         </description>
     </resource>
-
 
 <!--array design-->
 
