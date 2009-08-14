@@ -405,13 +405,12 @@
         </sqlParamValue>
         <sql>
           <![CDATA[
-           select i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+           select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
             from apidb.isolatevocabulary v, 
-                 (select source_id, data_type, regexp_replace(country, ':.*') as short from apidb.isolateattributes) i
-            where i.short = v.term
+                 (select source_id, data_type, trim(country) as country from apidb.isolateattributes) i
+            where i.country = trim(v.original_term)
             and v.term in ($$country$$)
             and v.type = 'geographic_location'
-            and v.source = 'isolate vocabulary'
             &&dataTypeOptional&&
             ]]>
          </sql>
