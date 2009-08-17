@@ -1,6 +1,6 @@
 <wdkModel>
 
-  <questionSet name="IsolateQuestions" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB"
+  <questionSet name="IsolateQuestions" includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,EuPathDB"
                displayName="Search Isolates">
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -13,7 +13,7 @@
               shortDisplayName="Isolate IDs"
               queryRef="IsolateIds.IsolateByIsolateId" 
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlasmoDB,GiardiaDB,ToxoDB">
 
              <attributesList includeProjects="CryptoDB"
                summary="organism, strain, product, specific_host"/>
@@ -21,6 +21,9 @@
                  summary="organism, strain, country, specific_host, data_type" /> 
               <attributesList includeProjects="ToxoDB"
                  summary="organism, strain, product, country, specific_host" />
+              <attributesList includeProjects="GiardiaDB"
+                summary="organism, strain, product, specific_host"/>
+ 
              <summary>
                Find Isolates by ID.
              </summary>
@@ -53,6 +56,9 @@
     <propertyList name="specificAttribution" includeProjects="ToxoDB">
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
+   </propertyList>
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
    </propertyList>
 
    </question>
@@ -126,8 +132,8 @@
               queryRef="IsolateIds.IsolateByTaxon"
               displayName="Taxon/Strain"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
-              <attributesList includeProjects="CryptoDB,ToxoDB"
+              includeProjects="CryptoDB,PlasmoDB,GiardiaDB,ToxoDB,EuPathDB">
+              <attributesList includeProjects="CryptoDB,ToxoDB,GiardiaDB"
                  summary="organism, strain, product, specific_host" /> 
               <attributesList includeProjects="PlasmoDB"
                  summary="organism, strain, country, specific_host, data_type" />
@@ -156,7 +162,9 @@
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
     </propertyList>
- 
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
+   </propertyList> 
     </question>
 
 
@@ -170,7 +178,7 @@
               shortDisplayName="Host Name"
               queryRef="IsolateIds.IsolateByHost"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ToxoDB,PlasmoDB,EuPathDB">
+              includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,EuPathDB">
           <attributesList
               summary="organism, strain, product, specific_host"
           /> 
@@ -196,7 +204,9 @@
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
     </propertyList>
-
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
+   </propertyList>
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -209,7 +219,7 @@
               shortDisplayName="Isolate Src."
               queryRef="IsolateIds.IsolateByIsolationSource"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,ToxoDB,PlasmoDB,EuPathDB">
+              includeProjects="CryptoDB,ToxoDB,PlasmoDB,GiardiaDB,EuPathDB">
          <attributesList
               summary="organism, strain, product, specific_host, isolation_source"
          /> 
@@ -235,7 +245,9 @@
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
     </propertyList>
-
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
+   </propertyList>
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -272,7 +284,9 @@
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
     </propertyList>
-
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
+   </propertyList>
      </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -337,7 +351,7 @@
               shortDisplayName="Study Name"
               queryRef="IsolateIds.IsolateByStudy"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,EuPathDB,PlasmoDB,ToxoDB">
+              includeProjects="CryptoDB,EuPathDB,PlasmoDB,GiardiaDB,ToxoDB">
             <attributesList summary="organism, strain, country, specific_host, data_type" /> 
       <summary> 
         Find isolates by study name.
@@ -364,8 +378,8 @@
               shortDisplayName="Geograph Loc"
               queryRef="IsolateIds.IsolateByCountry"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB">
-         <attributesList includeProjects="CryptoDB,ToxoDB"
+              includeProjects="CryptoDB,PlasmoDB,EuPathDB,ToxoDB,GiardiaDB">
+         <attributesList includeProjects="CryptoDB,ToxoDB,GiardiaDB"
               summary="organism, strain, product, specific_host, country" /> 
          <attributesList includeProjects="PlasmoDB"
                  summary="organism, strain, country, specific_host, data_type" /> 
@@ -374,7 +388,7 @@
       <summary> 
       Find isolates by country and/or continent.
     </summary> 
-    <description includeProjects="CryptoDB,PlasmoDB,ToxoDB">
+    <description includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB">
       <![CDATA[ 
       <b>Finding isolates based on geographic location can be accomplished by:<br>
 &nbsp;&nbsp;1.Check the desired boxes above (note: clicking on "+" sign expands the continents to countries with available isolates).
@@ -384,7 +398,7 @@
       The above interactive map displays pins in geographic locations for which we have isolate data.  Clicking on a pin will display a popup with additional information and a link to the isolate results from that country or continent. 
     ]]> 
     </description> 
-    <description excludeProjects="CryptoDB,PlasmoDB,ToxoDB">
+    <description excludeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB">
       <![CDATA[ 
       To identify isolates by geographic location, select either continent and/or country and isolate assay type (Sequencing Typed, RFLP Typed, HD Array, 3k chip and/or Barcode).  Note that results are always the union of all selected countries and/or continents.  Multiple countries may be selected by clicking while holding down the shift or ctrl/command keys. 
     ]]> 
@@ -403,7 +417,9 @@
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
     </propertyList>
-
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>
+    </propertyList>
     </question>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -416,7 +432,7 @@
               shortDisplayName="Author"
               queryRef="IsolateIds.IsolateByAuthor"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlsmoDB,ToxoDB">
+              noSummaryOnSingleRecord="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB">
        <attributesList summary="organism, strain, product, specific_host" /> 
        <summary>Find Isolates by author.</summary> 
        <description>
@@ -504,7 +520,7 @@
               category="Similarity/Pattern"
               queryRef="IsolateIds.IsolatesBySimilarity"
               recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-              fullAnswer="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+              fullAnswer="true" includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,EuPathDB">
 
         <attributesList summary="Header,TabularRow,Alignment,Footer" 
                         sorting="Counter asc"
@@ -519,7 +535,7 @@
             ]]> 
          </description> 
          
-        <description includeProjects="CryptoDB,ToxoDB,EuPathDB">
+        <description includeProjects="CryptoDB,ToxoDB,GiardiaDB,EuPathDB">
             <![CDATA[ 
             Find Isolates that have BLAST similarity to your input query sequence.  <p>The search uses <a href="http://blast.wustl.edu/" target="_blank">WU BLAST</a>.  
             ]]> 
@@ -551,7 +567,7 @@
          category="Other Attributes"
          queryRef="IsolateIds.IsolatesByTextSearch"
          recordClassRef="IsolateRecordClasses.IsolateRecordClass"
-         includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+         includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,EuPathDB">
         <attributesList 
            summary="organism, strain, country, collected_by, data_type, fields_matched, max_score"
          sorting="max_score desc,strain asc"
@@ -586,6 +602,9 @@
     <propertyList name="specificAttribution" includeProjects="ToxoDB">
        <value>ToxoIsolatesFromGenbank</value>
        <value>SibleyToxoIsolateSequences</value>
+    </propertyList>
+    <propertyList name="specificAttribution" includeProjects="GiardiaDB">
+       <value>GiardiaIsolatesFromGenbank</value>    
     </propertyList>
     </question>
 

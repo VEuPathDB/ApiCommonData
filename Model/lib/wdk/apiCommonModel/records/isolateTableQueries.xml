@@ -8,7 +8,7 @@
 
 --> 
 
-  <querySet name="IsolateTables" queryType="table" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+  <querySet name="IsolateTables" queryType="table" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB,GiardiaDB">
     
       <defaultTestParamValues includeProjects="PlasmoDB">
          <paramValue name="source_id">FJ490884</paramValue>
@@ -24,6 +24,12 @@
          <paramValue name="source_id">EF639858</paramValue>
          <paramValue name="project_id">ToxoDB</paramValue>
       </defaultTestParamValues>
+
+      <defaultTestParamValues includeProjects="GiardiaDB">
+         <paramValue name="source_id">AF176672</paramValue>
+         <paramValue name="project_id">GiardiaDB</paramValue>
+      </defaultTestParamValues>
+
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- Isolate Publication -->  
@@ -202,7 +208,7 @@ where f.na_sequence_id = s.na_sequence_id
        <!-- GeneOverlap -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="gene"/>
@@ -251,7 +257,7 @@ where f.na_sequence_id = s.na_sequence_id
        <!-- Attributes as tables (to feed text search)  -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="organism" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="organism"/>
@@ -263,7 +269,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="description" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="description"/>
@@ -275,7 +281,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="product" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="product"/>
@@ -287,7 +293,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="strain" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="strain"/>
@@ -299,7 +305,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="host" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="host"/>
@@ -311,7 +317,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="note" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="note"/>
@@ -323,7 +329,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="isolation_source" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="isolation_source"/>
@@ -335,7 +341,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="geographic_location" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="geographic_location"/>
@@ -352,16 +358,19 @@ where f.na_sequence_id = s.na_sequence_id
        <!-- ProteinSequence -->
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB" doNotTest="true">
+      <sqlQuery name="ProteinSequence" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB,GiardiaDB" doNotTest="true">
          <testParamValues includeProjects="CryptoDB">
             <paramValue name="source_id">AB089288</paramValue>
          </testParamValues>
          <testParamValues includeProjects="PlasmoDB">
             <paramValue name="source_id">AF063138</paramValue>
          </testParamValues>
-      <testParamValues includeProjects="ToxoDB">
-         <paramValue name="source_id">EF639858</paramValue>
-      </testParamValues>
+         <testParamValues includeProjects="ToxoDB">
+            <paramValue name="source_id">EF639858</paramValue>
+         </testParamValues>
+         <testParamValues includeProjects="GiardiaDB">
+            <paramValue name="source_id">AF176672</paramValue>
+         </testParamValues>
 
             <column name="project_id"/>
             <column name="source_id"/> 
@@ -386,7 +395,7 @@ where f.na_sequence_id = s.na_sequence_id
            </sql>
       </sqlQuery>
 
-      <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB">
+      <sqlQuery name="Reference" includeProjects="CryptoDB,PlasmoDB,ToxoDB,EuPathDB,GiardiaDB">
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="title"/>
