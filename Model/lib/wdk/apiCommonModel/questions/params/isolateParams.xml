@@ -333,12 +333,12 @@
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
- select v.term, v.term as internal, v.parent as parentTerm
- from apidb.isolatevocabulary v, 
+ select v.term, v.term as internal, p.parent as parentTerm
+ from (select term as term, original_term as original_term from apidb.isolatevocabulary where source = 'mapping file' and type = 'specific_host') v,
+      (select term as term, parent as parent from apidb.isolatevocabulary where source = 'isolate vocabulary' and type = 'specific_host') p, 
       (select distinct trim(specific_host) as specific_host from apidb.isolateattributes) c
- where trim(v.term) = c.specific_host
- and v.type = 'specific_host'
- and v.source = 'isolate vocabulary' 
+ where v.term = p.term
+ and trim(v.original_term) = c.specific_host
  union
  select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
  union
@@ -377,8 +377,8 @@
     <![CDATA[
 select initcap(v.term) as term, v.term as internal
 from apidb.isolatevocabulary v, 
-     (select distinct regexp_replace(isolation_source, ':.*') term from apidb.isolateattributes) c
-where v.term = c.term
+     (select distinct trim(isolation_source) term from apidb.isolateattributes) c
+where v.original_term = c.term
 and v.type = 'isolation_source'
 and v.source = 'isolate vocabulary'
 order by term asc
@@ -623,13 +623,13 @@ and v.product = 'SAG1'
 
       <sql>
       <![CDATA[
-select v.term, v.term as internal, initcap(v.parent) as parentTerm
-from apidb.isolatevocabulary v, 
-     (select distinct trim(country) as country from apidb.isolateattributes) c
-where trim(v.term) = c.country
-and v.type = 'geographic_location'
-and v.source = 'isolate vocabulary'
-union 
+ select v.term, v.term as internal, initcap(p.parent) as parentTerm
+ from (select trim(term) as term, trim(original_term) as original_term from apidb.isolatevocabulary where  type = 'geographic_location') v,
+      (select trim(term) as term, parent as parent from apidb.isolatevocabulary where source = 'isolate vocabulary' and type = 'geographic_location') p, 
+      (select distinct trim(country) as country from apidb.isolateattributes) c
+ where v.term = p.term
+ and v.original_term = c.country
+union
 select distinct initcap(parent) as term, initcap(parent) as internal, '' as parentterm 
 from apidb.isolatevocabulary where type = 'geographic_location' and parent is not null
 and source = 'isolate vocabulary'
