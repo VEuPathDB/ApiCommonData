@@ -55,6 +55,23 @@ sub makeRMDir {
     &runCmd("chmod -R g+w $localDataDir/repeatmask/$datasetName");
 }
 
+sub makeMsaDir {
+  my ($localDataDir, $clusterDataDir, $taskSize, $musclePath, $nodeClass,$nodePath );
+  my $inputDir = "$localDataDir/msa/input";
+  my $serverBase = "$clusterDataDir/msa";
+  my $numNodes ||= 10;
+  &_createDir("$localDataDir/msa");
+
+  &makeControllerPropFile($inputDir, $serverBase, $numNodes, $taskSize,
+			    $nodePath,
+			    "DJob::DistribJobTasks::MsaTask",
+			    $nodeClass);
+  my $groupsPath = "$clusterDataDir/seqfiles/groups";
+
+  &makeMsaTaskPropFile($inputDir, $musclePath, $groupsPath);
+
+}
+
 sub makeGenomeDir {
     my ($queryName, $targetName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $gaOptions, $gaBinPath, $genomeFile, $nodeClass) = @_;
@@ -318,6 +335,19 @@ maxIntron=$maxIntron
 ";
     close(F);
 }
+
+sub makeMsaTaskPropFile {
+  my ($inputDir, $musclePath, $groupsPath) = @_;
+
+  open(F, ">$inputDir/task.prop")
+	|| die "Can't open $inputDir/task.prop for writing";
+    print F
+"muscleBinDir=$musclePath
+inputFileDir=$groupsPath
+";
+    close(F);
+}
+
 
 sub makeGenomeTargetListFile {
     my ($targetListFile, @targetFiles) = @_;
