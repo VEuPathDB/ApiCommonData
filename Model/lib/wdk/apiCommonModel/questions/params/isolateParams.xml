@@ -334,7 +334,7 @@
     <sql>
     <![CDATA[
  select v.term, v.term as internal, p.parent as parentTerm
- from (select term as term, original_term as original_term from apidb.isolatevocabulary where source = 'mapping file' and type = 'specific_host') v,
+ from (select term as term, original_term as original_term from apidb.isolatevocabulary where type = 'specific_host') v,
       (select term as term, parent as parent from apidb.isolatevocabulary where source = 'isolate vocabulary' and type = 'specific_host') p, 
       (select distinct trim(specific_host) as specific_host from apidb.isolateattributes) c
  where v.term = p.term
