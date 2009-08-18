@@ -380,7 +380,7 @@ from apidb.isolatevocabulary v,
      (select distinct trim(isolation_source) term from apidb.isolateattributes) c
 where v.original_term = c.term
 and v.type = 'isolation_source'
-and v.source = 'isolate vocabulary'
+and v.source = 'mapping file'
 order by term asc
     ]]>
     </sql>
