@@ -298,7 +298,6 @@ sub readConfigFile {
       || $self->userError("Config file has invalid line: '$_'");
 
     my $configFile=$vals[0]."\t".$vals[1];
-    print STDERR "configFile=$configFile";
     push(@{$self->{configFile}}, $configFile);
   }
 }
