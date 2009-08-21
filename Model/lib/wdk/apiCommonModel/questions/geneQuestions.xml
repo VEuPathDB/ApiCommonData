@@ -3392,6 +3392,45 @@ Institute, USA and is described in further detail in Sivam et al.
     </question>
 
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- RNA Seq Expression Timing -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <question name="GenesByRNASeqExpressionTiming" includeProjects="PlasmoDB,EuPathDB"
+         displayName="RNA Seq Expression Timing"
+         shortDisplayName="RNASq ExpTime"
+         category="Transcript Expression"
+         queryRef="GeneId.GenesByRNASeqExpressionTiming"
+         recordClassRef="GeneRecordClasses.GeneRecordClass">
+        <attributesList 
+              summary="organism,product,max_fc,num_replicates" 
+              sorting="max_fc desc"
+        /> 
+        <summary>
+           <![CDATA[
+          Find <i>P. falciparum</i> genes having RNA expression peaks or troughs occuring within specified times .
+          ]]>
+        </summary>
+
+        <propertyList name="organism">
+           <value>P. falciparum</value>
+        </propertyList>
+
+        <description>
+           <![CDATA[
+           Find <i>P. falciparum</i> genes having RNA expression peaks or troughs occuring within specified times.             
+         ]]>
+        </description>
+        <dynamicAttributes>
+           <columnAttribute name="max_fc" displayName="Max Fold Induction" align="center"/>
+           <columnAttribute name="num_replicates" displayName="# Replicates" align="center"/>
+        </dynamicAttributes>
+       <propertyList name="specificAttribution">
+         <value>Pfalciparum_RNA_Seq</value>
+       </propertyList>
+    </question>
+
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Profile Similarity -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 

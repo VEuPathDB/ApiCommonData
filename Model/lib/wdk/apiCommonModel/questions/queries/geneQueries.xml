@@ -2446,6 +2446,53 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <wsColumn name="num_replicates" width="32" wsName="max_fc"/>
     </processQuery>
 
+
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+  <!-- RNA Seq Expression Timing -->
+  <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <sqlQuery name="GenesByRNASeqExpressionTiming" includeProjects="PlasmoDB" 
+              isCacheable="true">
+        <paramRef ref="geneParams.minOrMax"/>
+        <paramRef ref="geneParams.exprHourRNASeq"/>
+        <paramRef ref="geneParams.inductionFold"/> 
+        <column name="project_id"/>
+        <column name="source_id"/>
+        <column name="max_fc"/>
+        <column name="num_replicates"/> 
+        <sql>
+          <![CDATA[
+          SELECT iq.source_id, to_char(max(iq.max_fc), '99999.99') as max_fc,
+                 count(*) as num_replicates, '@PROJECT_ID@' as project_id
+          from (
+          SELECT gf.source_id, prs.name, max(pr.ind_ratio) as max_fc
+          FROM apidb.profile pr, apidb.profileset prs,
+               dots.nafeature gf
+          WHERE ($$minOrMax$$ = 'min'
+                 OR pr.time_of_max_expr in ($$exprHourRNASeq$$))
+          AND ($$minOrMax$$ = 'max'
+                 OR pr.time_of_min_expr in ($$exprHourRNASeq$$))
+          AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.source_id = gf.source_id
+          AND pr.profile_set_id = prs.profile_set_id
+          AND prs.name = 'P.falciparum RNA Sequence Profiles'
+          group BY gf.source_id,prs.name) iq
+          group by iq.source_id
+          ]]>
+      </sql>
+    </sqlQuery>
+
+    <processQuery name="GenesByRNASeqExpressionTiming" includeProjects="EuPathDB"
+        processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin">
+        <paramRef ref="geneParams.minOrMax" quote="false"/>
+        <paramRef ref="geneParams.exprHourRNASeq"/>
+        <paramRef ref="geneParams.inductionFold"/>
+	<wsColumn name="source_id" width="32" wsName="source_id"/>
+	<wsColumn name="project_id" width="32" wsName="project_id"/>
+        <wsColumn name="max_fc" width="32" wsName="max_fc"/>
+        <wsColumn name="num_replicates" width="32" wsName="max_fc"/>
+    </processQuery>
+
              
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
   <!-- Expression profile similarity -->
