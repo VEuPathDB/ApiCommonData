@@ -3702,6 +3702,144 @@ where sim.query_id = extq.na_sequence_id
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.TranscriptSequence">
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="dots.SplicedNaSequence"/>
+    <externalDependency name="sres.TaxonName"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <sql>
+      <![CDATA[
+create table apidb.TranscriptSequence&1 nologging as
+select gf.source_id,
+       CASE
+         WHEN tn.name like 'Crypto%'
+           THEN 'CryptoDB'
+         WHEN tn.name like 'Plasmo%'
+           THEN 'PlasmoDB'
+         WHEN tn.name like 'Toxo%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Neospora%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Leishmania%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trypanosoma%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trich%'
+           THEN 'TrichDB'
+         WHEN tn.name like 'Giardia%'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in tuningManager'
+       END as project_id, sns.sequence
+from apidb.GeneAttributes gf, dots.Transcript t, dots.SplicedNaSequence sns, sres.TaxonName tn
+where t.parent_id = gf.na_feature_id
+  and sns.na_sequence_id = t.na_sequence_id
+  and sns.taxon_id = tn.taxon_id
+  and tn.name_class = 'scientific name'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.XScriptSeq_ix&1 on apidb.TranscriptSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.CodingSequence">
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="dots.SplicedNaSequence"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="sres.TaxonName"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.CodingSequence&1 NOLOGGING AS
+SELECT gf.source_id,
+       CASE
+         WHEN tn.name like 'Crypto%'
+           THEN 'CryptoDB'
+         WHEN tn.name like 'Plasmo%'
+           THEN 'PlasmoDB'
+         WHEN tn.name like 'Toxo%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Neospora%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Leishmania%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trypanosoma%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trich%'
+           THEN 'TrichDB'
+         WHEN tn.name like 'Giardia%'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in tuningManager'
+       END as project_id,
+       SUBSTR(sns.sequence, tf.translation_start,                            
+              tf.translation_stop - tf.translation_start + 1) as sequence
+FROM apidb.GeneAttributes gf, dots.Transcript t, dots.SplicedNaSequence sns,
+     dots.TranslatedAaFeature tf, sres.TaxonName tn
+WHERE t.parent_id = gf.na_feature_id
+  AND sns.na_sequence_id = t.na_sequence_id
+  AND t.na_feature_id = tf.na_feature_id(+)
+  AND sns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.CodSeq_ix&1 on apidb.CodingSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.ProteinSequence">
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="dots.TranslatedAaSequence"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="sres.TaxonName"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.ProteinSequence&1 NOLOGGING AS
+SELECT ga.source_id,
+       CASE
+         WHEN tn.name like 'Crypto%'
+           THEN 'CryptoDB'
+         WHEN tn.name like 'Plasmo%'
+           THEN 'PlasmoDB'
+         WHEN tn.name like 'Toxo%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Neospora%'
+           THEN 'ToxoDB'
+         WHEN tn.name like 'Leishmania%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trypanosoma%'
+           THEN 'TriTrypDB'
+         WHEN tn.name like 'Trich%'
+           THEN 'TrichDB'
+         WHEN tn.name like 'Giardia%'
+           THEN 'GiardiaDB'
+         ELSE 'ERROR: setting project in tuningManager'
+       END as project_id,
+       tas.sequence
+FROM apidb.GeneAttributes ga, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, sres.TaxonName tn
+WHERE t.parent_id = ga.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id(+)
+  AND taf.aa_sequence_id = tas.aa_sequence_id(+)
+  AND tas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.ProtSeq_ix&1 on apidb.ProteinSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
