@@ -1253,7 +1253,8 @@
 
     
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-       <!-- Product -->  
+       <!-- single-row attribute "tables" to put values in GeneDetail    -->
+       <!-- where text search can find them                              -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="Product" isCacheable="false">
@@ -1263,6 +1264,19 @@
             <sql>
             <![CDATA[
                SELECT source_id, product,
+                      '@PROJECT_ID@' as project_id
+               FROM dots.GeneFeature
+            ]]>
+            </sql>
+        </sqlQuery>
+
+       <sqlQuery name="GeneId" isCacheable="false">
+            <column name="gene_id"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+            <![CDATA[
+               SELECT source_id, source_id as gene_id,
                       '@PROJECT_ID@' as project_id
                FROM dots.GeneFeature
             ]]>
