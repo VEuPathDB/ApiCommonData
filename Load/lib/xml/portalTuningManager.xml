@@ -370,6 +370,258 @@
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.TranscriptSequence">
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="CRYPTO"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="GIARDIA"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="PLASMO"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="TOXO"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="TRITRYP"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="AMITO"/>
+    <intermediateTable name="apidb.TranscriptSequenceCrypto"/>
+    <intermediateTable name="apidb.TranscriptSequenceGiardia"/>
+    <intermediateTable name="apidb.TranscriptSequencePlasmo"/>
+    <intermediateTable name="apidb.TranscriptSequenceToxo"/>
+    <intermediateTable name="apidb.TranscriptSequenceTrich"/>
+    <intermediateTable name="apidb.TranscriptSequenceTriTryp"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceCrypto nologging as
+        select * from apidb.TranscriptSequence@CRYPTO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceGiardia nologging as
+        select * from apidb.TranscriptSequence@GIARDIA
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequencePlasmo nologging as
+        select * from apidb.TranscriptSequence@PLASMO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceToxo nologging as
+        select * from apidb.TranscriptSequence@TOXO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceTrich nologging as
+        select * from apidb.TranscriptSequence@AMITO where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceTriTryp nologging as
+        select * from apidb.TranscriptSequence@TRITRYP
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequence&1 nologging as
+        (
+        select * from apidb.TranscriptSequenceCrypto
+        union all
+        select * from apidb.TranscriptSequenceGiardia
+        union all
+        select * from apidb.TranscriptSequencePlasmo
+        union all
+        select * from apidb.TranscriptSequenceToxo
+        union all
+        select * from apidb.TranscriptSequenceTrich
+        union all
+        select * from apidb.TranscriptSequenceTritryp
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.XScriptSeq_ix&1 on apidb.TranscriptSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.CodingSequence">
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="CRYPTO"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="GIARDIA"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="PLASMO"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="TOXO"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="TRITRYP"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="AMITO"/>
+    <intermediateTable name="apidb.CodingSequenceCrypto"/>
+    <intermediateTable name="apidb.CodingSequenceGiardia"/>
+    <intermediateTable name="apidb.CodingSequencePlasmo"/>
+    <intermediateTable name="apidb.CodingSequenceToxo"/>
+    <intermediateTable name="apidb.CodingSequenceTrich"/>
+    <intermediateTable name="apidb.CodingSequenceTriTryp"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceCrypto nologging as
+        select * from apidb.CodingSequence@CRYPTO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceGiardia nologging as
+        select * from apidb.CodingSequence@GIARDIA
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequencePlasmo nologging as
+        select * from apidb.CodingSequence@PLASMO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceToxo nologging as
+        select * from apidb.CodingSequence@TOXO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceTrich nologging as
+        select * from apidb.CodingSequence@AMITO where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceTriTryp nologging as
+        select * from apidb.CodingSequence@TRITRYP
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequence&1 nologging as
+        (
+        select * from apidb.CodingSequenceCrypto
+        union all
+        select * from apidb.CodingSequenceGiardia
+        union all
+        select * from apidb.CodingSequencePlasmo
+        union all
+        select * from apidb.CodingSequenceToxo
+        union all
+        select * from apidb.CodingSequenceTrich
+        union all
+        select * from apidb.CodingSequenceTritryp
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.cds_ix&1 on apidb.CodingSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.ProteinSequence">
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="CRYPTO"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="GIARDIA"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="PLASMO"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="TOXO"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="TRITRYP"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="AMITO"/>
+    <intermediateTable name="apidb.ProteinSequenceCrypto"/>
+    <intermediateTable name="apidb.ProteinSequenceGiardia"/>
+    <intermediateTable name="apidb.ProteinSequencePlasmo"/>
+    <intermediateTable name="apidb.ProteinSequenceToxo"/>
+    <intermediateTable name="apidb.ProteinSequenceTrich"/>
+    <intermediateTable name="apidb.ProteinSequenceTriTryp"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceCrypto nologging as
+        select * from apidb.ProteinSequence@CRYPTO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceGiardia nologging as
+        select * from apidb.ProteinSequence@GIARDIA
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequencePlasmo nologging as
+        select * from apidb.ProteinSequence@PLASMO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceToxo nologging as
+        select * from apidb.ProteinSequence@TOXO
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceTrich nologging as
+        select * from apidb.ProteinSequence@AMITO where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceTriTryp nologging as
+        select * from apidb.ProteinSequence@TRITRYP
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequence&1 nologging as
+        (
+        select * from apidb.ProteinSequenceCrypto
+        union all
+        select * from apidb.ProteinSequenceGiardia
+        union all
+        select * from apidb.ProteinSequencePlasmo
+        union all
+        select * from apidb.ProteinSequenceToxo
+        union all
+        select * from apidb.ProteinSequenceTrich
+        union all
+        select * from apidb.ProteinSequenceTritryp
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.ProtSeq_ix&1 on apidb.ProteinSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
 </tuningConfig>
 
 
