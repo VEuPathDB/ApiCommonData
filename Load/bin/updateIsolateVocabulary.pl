@@ -39,7 +39,7 @@ open(FILE, $fn) or die "Cannot open file $fn for reading:$!";
 
 $dbh->do("delete apidb.isolatevocabulary");
 
-my $sql = "insert into apidb.isolatevocabulary (term, original_term, parent, type, source) values (?,?,?,?,?)";
+my $sql = "insert into apidb.isolatevocabulary (isolate_vocabulary_id, term, parent, type) values (ApiDB.IsolateVocabulary_sq.nextval,?,?,?)";
 my $sh = $dbh->prepare($sql);
 
 while(<FILE>) {
@@ -48,9 +48,7 @@ while(<FILE>) {
   next unless $_;
   my ($term, $parent, $type) = split(/\t/, $_);
 
-  my $source = 'isolate vocabulary';
-
-  $sh->execute($term, $term, $parent, $type, $source);
+  $sh->execute($term, $parent, $type);
 }
 
 close FILE;
