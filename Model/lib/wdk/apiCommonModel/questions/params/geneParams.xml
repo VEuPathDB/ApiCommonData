@@ -5868,13 +5868,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <useTermOnly value="true" includeProjects="EuPathDB"/>
       </flatVocabParam>
 
-        <typeAheadParam name="domain_accession"
+        <flatVocabParam name="domain_accession"
+                     queryRef="GeneVQ.DomainAccession"
                      prompt="Domain"
-                     recordClassRef="AjaxRecordClasses.InterproTermClass"
-                     dataTypeRef="domain_database"
-                     isDataTypeParam="true">
+                     displayType="typeAhead"
+                     dependedParam="domain_database">
             <help>Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed.</help>
-        </typeAheadParam>
+        </flatVocabParam>
 
       <flatVocabParam name="day_and_strain" includeProjects="PlasmoDB,EuPathDB"
                      queryRef="GeneVQ.DayAndStrain"
@@ -6465,6 +6465,31 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!--===========================================================================-->
 
     <querySet name="GeneVQ" queryType="vocab">
+
+        <sqlQuery name="DomainAccession" excludeProjects="EuPathDB"> 
+            <column name="parentTerm" />
+            <column name="term" />
+            <column name="display"/>
+            <column name="name"/>
+            <column name="description"/>
+
+            <sql>
+                SELECT DISTINCT ed.name AS parentTerm,
+                                dr.primary_identifier AS internal,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier AS term,
+                                dr.primary_identifier || ':' ||
+                                dr.secondary_identifier || ' ' || dr.remark
+                                AS display
+                FROM dots.DbRefAaFeature draf, sres.DbRef dr,
+                     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+                WHERE draf.db_ref_id = dr.db_ref_id
+                  AND dr.external_database_release_id
+                      = edr.external_database_release_id
+                  AND edr.external_database_id = ed.external_database_id
+            </sql>
+
+        </sqlQuery>
 
         <sqlQuery name="GiardiaAnalyses" includeProjects="GiardiaDB">
             <column name="internal"/>
