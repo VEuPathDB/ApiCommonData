@@ -6468,10 +6468,9 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
         <sqlQuery name="DomainAccession" excludeProjects="EuPathDB"> 
             <column name="parentTerm" />
+            <column name="internal" />
             <column name="term" />
             <column name="display"/>
-            <column name="name"/>
-            <column name="description"/>
 
             <sql>
                 SELECT DISTINCT ed.name AS parentTerm,
@@ -6490,6 +6489,13 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             </sql>
 
         </sqlQuery>
+
+        <processQuery name="DomainAccession" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+            <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>
+            <wsColumn name="internal" width="100" wsName="internal"/>
+            <wsColumn name="term" width="100" wsName="term"/>
+            <wsColumn name="display" width="100" wsName="display"/>
+        </processQuery>
 
         <sqlQuery name="GiardiaAnalyses" includeProjects="GiardiaDB">
             <column name="internal"/>
