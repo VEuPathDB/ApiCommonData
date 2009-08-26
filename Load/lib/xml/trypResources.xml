@@ -5,7 +5,8 @@
  
     </cleanups>
 
-     <resource resource="taxonomy" version="2008-10-07" 
+
+    <resource resource="taxonomy" version="2009-08-12" 
         displayName="NCBI Taxonomy"
         publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
         category="Ontology"
@@ -19,38 +20,39 @@
         <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
         <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
         <description>
-        <![CDATA[
+            <![CDATA[
     The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
           ]]>
         </description>
     </resource>
-   
+    
 
-     <resource resource="SO" version="2.3"
-        displayName="Sequence Ontology"        
+
+
+    <resource resource="SO" version="1.226"
+        displayName="Sequence Ontology"
         publicUrl="http://song.sourceforge.net"
-        category="Ontology"      
-	url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=2.3"
+        category="Ontology"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.226"
         plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
-        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
-            <description>
-         <![CDATA[
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.226 --soCvsVersion 1.226</pluginArgs>
+        <description>
+            <![CDATA[
     The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
           ]]>
-     </description>
+        </description>
     </resource>
-
- <resource resource="enzymeDB" version="2008-09-23" 
+    
+    <resource resource="enzymeDB" version="2009_08_12" 
         displayName="Enzyme nomenclature database"
         publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
         category="Ontology"
         url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
         plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
         extDbName="enzymeDB"
-        extDbRlsVer="2008-09-23"
-        extDbRlsDescrip="EnzymeDB updated Sep. 23, 2008"
+        extDbRlsVer="2009-08-12"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
         <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
@@ -60,59 +62,84 @@
           ]]>
         </description>
     </resource>
- <resource resource="GO_evidence_codes" version="1.17"
+    
+    <resource resource="GO_evidence_codes" version="1.2"
         displayName="Gene Ontology evidence codes"        
-        publicUrl="http://song.sourceforge.net"
-        category="Ontology"   
-	url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
+        category="Ontology"            
+        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
         plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
         <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
         <description>
             <![CDATA[
-   Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support. 
+   Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
           ]]>
         </description>
     </resource>
-
-<resource resource="GO" version="4.490"
+    
+    <resource resource="GO" version="1.748"
         displayName="Gene Ontology"
-        publicUrl="http://www.geneontology.org/ontology/gene_ontology.obo"
+        publicUrl="http://www.geneontology.org"
         category="Ontology"
         url="http://www.geneontology.org/ontology/gene_ontology.obo"
         plugin="GUS::Supported::Plugin::InsertGeneOntology"
         extDbName="Gene Ontology"
-        extDbRlsVer="4.490"
-        extDbRlsDescrip="The Gene Ontology from Oct. 10, 2008"
+        extDbRlsVer="1.748"
+        extDbRlsDescrip="The Gene Ontology from Aug. 12, 2009"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
-        <pluginArgs> --oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
         <description>
             <![CDATA[
-   The Gene Ontology project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
           ]]>
         </description>
     </resource>
-
-<resource resource="NRDB" version="2008-10-08"
+    
+    <resource resource="NRDB" version="2009-08-04"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="GenBank NRDB"
         publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
         url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         extDbName="NRDB"
-        extDbRlsVer="2008-10-08"
-        extDbRlsDescrip="The nr file from 2008-10-08"
+        extDbRlsVer="2009-08-04"
+        extDbRlsDescrip="The nr file from 2009-08-04"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
-   The non-redundant (nr) database file of protein sequences in FASTA format from GenBank.
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
           ]]>
         </description>
     </resource>
+
+
+
+    <resource resource="InterproscanData" version="22.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        category="Proteome"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            email="interhelp@ebi.ac.uk"
+            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan22.0"
+            contact="EBI"
+            institution="EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan22.0/iprscan/data</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan22.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan22.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan22.0/iprscan/data/</pluginArgs>
+        <description>
+            <![CDATA[
+        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		]]>
+        </description>
+        <publication pmid="15608177"/>
 
  <resource resource="dbEST" version="2008-10-15"
         plugin="GUS::Supported::Plugin::dbEST"
@@ -134,29 +161,6 @@
         </description>
     </resource>
 
-
-<resource resource="InterproscanData" version="18.0"
-        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
-        displayName="InterPro Database"
-        publicUrl="http://www.ebi.ac.uk/interpro"
-        category="Proteome"
-        dbCommit="@dbcommit@">
-        <manualGet
-            email="interhelp@ebi.ac.uk"
-            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan18.0/"
-            contact="EBI"
-            institution="EBI"
-         />	
-        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan18.0/iprscan/data</unpack>
-        <unpack>cp @downloadDir@/InterproscanData/iprscan18.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan18.0/iprscan/data/</unpack>
-        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan18.0/iprscan/data/</pluginArgs>
-        <description>
-            <![CDATA[
-                InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
-		    ]]>
-        </description>
-        <publication pmid="15608177"/>
-    </resource>
 
     <resource resource="PDBProteinSequences" version="2008-10-31"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
