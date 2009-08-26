@@ -272,6 +272,23 @@ Protein sequences from PDB used for mapping Plasmodium protein sequences to crys
         </description>
     </resource>
 
+    <resource resource="FetchPDBidx" version="2009-08-20"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
+        organisms="Diverse"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
+        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
+        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\\w+)' --taxonNameRegex '^\\w+\\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-08-20'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <description>
+         <![CDATA[
+PDB Identifiers       
+          ]]>
+        </description>
+    </resource>
+
+
     <resource resource="dbEST" version="2008-02-05"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
