@@ -407,18 +407,6 @@ SQL
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
 
-  # update synonym
-  my $sql = <<SQL;
-    create or replace synonym $self->{name} for $self->{name}$suffix
-SQL
-  my $synonymRtn = $dbh->do($sql);
-
-  if (!defined $synonymRtn) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-
-    return $synonymRtn;
-  }
-
   # store definition
   $self->storeDefinition($dbh);
 
@@ -452,6 +440,16 @@ SQL
     $stmt->execute("$schema", "$table")
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
+  }
+
+  # update synonym
+  my $sql = <<SQL;
+    create or replace synonym $self->{name} for $self->{name}$suffix
+SQL
+  my $synonymRtn = $dbh->do($sql);
+
+  if (!defined $synonymRtn) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
   # drop obsolete table, if we're doing that (and it exists)
