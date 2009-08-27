@@ -425,10 +425,11 @@
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
 
+<!-- This query is now redundant and the option to query isolates by Submitter is covered by Text search question -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolate by Submitter -->
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
+<!--
     <sqlQuery name="IsolateBySubmitter" includeProjects="PlasmoDB" isCacheable="true">
         <paramRef ref="isolateParams.submitter" queryRef="submitterVQ.withIsolates" quote="true"/>
         <column name="source_id"/>
@@ -450,7 +451,7 @@
       <wsColumn name="source_id" width="32" wsName="source_id"/>
       <wsColumn name="project_id" width="32" wsName="project_id"/>
     </processQuery>
-
+-->
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!-- Isolates with Gene Overlap  -->
