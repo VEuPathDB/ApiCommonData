@@ -883,9 +883,7 @@ isolates from people with AIDS. J Infect Dis 178: 834-840.<br>
         </description>
     </resource>
 
-    
-    
-    <resource resource="PDBProteinSequences" version="2008-10-03"
+        <resource resource="PDBProteinSequences" version="2008-10-31"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
         displayName="Protein Sequences from the Protein Data Bank"
         organisms="Diverse"
@@ -893,21 +891,21 @@ isolates from people with AIDS. J Infect Dis 178: 834-840.<br>
         publicUrl="http://www.rcsb.org/pdb/home/home.do"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="PDB protein sequences" 
-        extDbRlsVer="2008-03-08"
+        extDbRlsVer="2008-10-31"
         extDbRlsDescrip="PDB protein sequences"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
         <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
         <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'protein'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
         <description>
          <![CDATA[
-Protein sequences from the Protein Data Bank (PDB) used for mapping <i>Cryptosporidium</i> protein sequences to crystal structures in PDB.        
+         Protein sequences from the Protein Data Bank (PDB) used for mapping Kinetoplastida protein sequences in TriTrypDB to crystal structures in PDB.        
           ]]>
         </description>
     </resource>
     
-    <resource resource="FetchPDBidx" version="2008-10-03"
+    <resource resource="FetchPDBidx" version="2008-10-31"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
         organisms="Diverse"
         category="ignore"
@@ -923,6 +921,7 @@ PDB Identifiers
         </description>
     </resource>
     
+
 <resource resource="dbEST" version="2008-10-17"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
