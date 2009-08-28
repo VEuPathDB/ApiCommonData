@@ -3928,22 +3928,26 @@ sub extractNRDB {
 }
 
 sub extractProteinSeqs {
-  my ($mgr,$name,$sql,$minLength,$maxStopCodonPercent) = @_;
+  my ($mgr,$name,$sql,$minLength,$maxStopCodonPercent, $noSeq) = @_;
   my $propertySet = $mgr->{propertySet};
 
   my $signal = "${name}Extract";
 
   return if $mgr->startStep("Extracting $name protein sequences from GUS", $signal);
 
-  my $seqFile = "$mgr->{dataDir}/seqfiles/${name}.fsa";
+  my $seqFile = $noSeq ? "$mgr->{dataDir}/seqfiles/${name}" : "$mgr->{dataDir}/seqfiles/${name}.fsa";
   my $logFile = "$mgr->{myPipelineDir}/logs/${name}Extract.log";
 
   my $cmd = "gusExtractSequences --outputFile $seqFile --idSQL \"$sql\" --verbose";
+
+  $cmd .= " --noSequence" if $noSeq;
 
   $cmd .= " --minLength $minLength " if $minLength;
   $cmd .= " --maxStopCodonPercent $maxStopCodonPercent " if $maxStopCodonPercent;
 
   $cmd .= " 2>> $logFile";
+
+  print STDERR "$cmd\n";
 
   $mgr->runCmd($cmd);
 
