@@ -138,6 +138,18 @@
         <sql >
           <![CDATA[
            select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+           from   apidb.isolatevocabulary v,
+                  apidb.isolatemapping m,
+                  apidb.isolateattributes i
+           where  v.type = 'specific_host'
+           and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
+           and    i.na_sequence_id = m.na_sequence_id 
+           and    trim(v.term) in ($$specific_host$$)
+           &&dataTypeOptional&&
+           ORDER BY i.source_id
+           ]]>
+<!--
+           select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
             from apidb.isolatevocabulary v, 
                  (select source_id, data_type, trim(specific_host) as specific_host from apidb.isolateattributes) i
             where i.specific_host = trim(v.original_term)
@@ -146,6 +158,7 @@
             &&dataTypeOptional&&
             ORDER BY i.source_id
             ]]>
+-->
          </sql>
     </sqlQuery>
 
@@ -167,13 +180,14 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-            select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
-            from apidb.isolatevocabulary v, 
-            ( select source_id, data_type,trim(country) as country, trim(specific_host) as specific_host, trim(isolation_source) as isolation_source from apidb.isolateattributes) i
-              where (i.isolation_source = trim(v.original_term) or i.specific_host = trim(v.original_term) or i.country = trim(v.original_term))
-            and trim(v.term) in ($$isolation_source$$)
-            and v.type = 'isolation_source' 
-            ORDER BY i.source_id
+           select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
+           from   apidb.isolatevocabulary v,
+                  apidb.isolatemapping m,
+                  apidb.isolateattributes i
+           where  v.isolate_vocabulary_id = m.isolate_vocabulary_id
+           and    i.na_sequence_id = m.na_sequence_id 
+           and    trim(v.term) in ($$isolation_source$$) 
+           ORDER BY i.source_id
             ]]>
          </sql>
     </sqlQuery>
@@ -407,12 +421,15 @@
         <sql>
           <![CDATA[
            select distinct i.source_id, '@PROJECT_ID@' as project_id, i.data_type
-            from apidb.isolatevocabulary v, 
-                 (select source_id, data_type, trim(country) as country from apidb.isolateattributes) i
-            where i.country = trim(v.original_term)
-            and trim(v.term) in ($$country$$)
-            and v.type = 'geographic_location'
-            &&dataTypeOptional&&
+           from   apidb.isolatevocabulary v,
+                  apidb.isolatemapping m,
+                  apidb.isolateattributes i
+           where  v.type = 'geographic_location'
+           and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
+           and    i.na_sequence_id = m.na_sequence_id 
+           and    trim(v.term) in ($$country$$)
+           &&dataTypeOptional&&
+           ORDER BY i.source_id
             ]]>
          </sql>
     </sqlQuery>
