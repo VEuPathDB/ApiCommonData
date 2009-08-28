@@ -6685,7 +6685,7 @@ EOF
 
 # update ortholog group fields, and load MSA results
 sub createBiolayoutData {
-  my ($mgr, $rbhFile, $svgTemplate) = @_;
+  my ($mgr, $svgTemplate) = @_;
 
   my $signal = "createBiolayoutData";
   return if $mgr->startStep("Generating Biolayout files and images for each group", $signal);
@@ -6703,7 +6703,6 @@ sub createBiolayoutData {
      orthoPlugin \\
      \"$gusConfigFile\" \\
      \"org.apidb.orthomcl.load.plugin.GenerateBioLayoutPlugin\" \\
-     \"$rbhFile\" \\
      \"$svgTemplate\" \\
      \"$signalFile\" \\
      >> $logFile
