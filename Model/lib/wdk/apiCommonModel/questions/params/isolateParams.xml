@@ -647,11 +647,12 @@ and v.product = 'SAG1'
  select distinct v.term, v.term as internal, initcap(v.parent) as parentTerm
  from   apidb.isolatevocabulary v
  where  v.type = 'geographic_location'
+and parent is not null
 union
 select distinct initcap(parent) as term, initcap(parent) as internal, '' as parentterm 
 from apidb.isolatevocabulary where type = 'geographic_location' and parent is not null
-union 
-select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
+union
+select 'Unknown' as term, 'Unknown' as internal, '' as parentTerm from dual
       ]]>
       </sql>
     </sqlQuery>
