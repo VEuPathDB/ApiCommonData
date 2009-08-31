@@ -6,7 +6,7 @@ CREATE TABLE ApiDB.IsolateVocabulary (
  PRIMARY KEY (isolate_vocabulary_id)
 );
 
-CREATE SEQUENCE IsolateVocabulary_sq;
+CREATE SEQUENCE ApiDB.IsolateVocabulary_sq;
 
 
 GRANT insert, select, update, delete ON ApiDB.IsolateVocabulary TO gus_w;
