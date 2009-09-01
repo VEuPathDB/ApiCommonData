@@ -757,8 +757,8 @@ sns2.external_database_release_id=extr.external_database_release_id
               AND ti.name = 'TranslatedAASequence'
               AND ga.go_term_id = gr.child_term_id
               AND gr.parent_term_id = gp.go_term_id
-              AND (gp.go_id = $$go_term$$
-                   OR gp.name LIKE REPLACE($$go_term$$, '*', '%'))
+              AND (gp.go_id = substr($$go_term$$, 1, instr($$go_term$$||' : ', ' : ')-1)
+                   OR gp.name LIKE REPLACE(substr($$go_term$$, instr($$go_term$$||' : ', ' : ')+3), '*', '%'))
               AND gr.go_relationship_type_id = grt.go_relationship_type_id
               AND grt.name = 'closure'
             ORDER BY gf.source_id

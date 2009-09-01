@@ -884,12 +884,12 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!-- Go Term Parameter -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <stringParam name="go_term"
-                     prompt="GO Term or GO ID">
+        <flatVocabParam name="go_term"
+                     queryRef="GeneVQ.GoTermList"
+                     prompt="GO Term or GO ID"
+                     displayType="typeAhead">
             <help>Enter a GO ID (e.g. "GO:0003824") or GO Term (e.g. "catalytic activity").  Asterisks can be used as wildcard characters in a GO Term (e.g. "*kinase*")</help>
-            <suggest default="catalytic activity"
-                     />
-        </stringParam>
+        </flatVocabParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
@@ -6465,33 +6465,51 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!--===========================================================================-->
 
     <querySet name="GeneVQ" queryType="vocab">
-
-        <sqlQuery name="DomainAccession" excludeProjects="EuPathDB"> 
-            <column name="parentTerm" />
+        <sqlQuery name="GoTermList" excludeProjects="EuPathDB">
             <column name="internal" />
             <column name="term" />
             <column name="display"/>
 
             <sql>
-                SELECT DISTINCT ed.name AS parentTerm,
-                                dr.primary_identifier AS internal,
-                                dr.primary_identifier || ':' ||
+               SELECT DISTINCT gp.go_id AS internal,
+                               gp.go_id || ' : ' || gp.name AS term,
+                               gp.go_id || ' : ' || gp.name AS display
+               FROM sres.GoTerm gp
+            </sql>
+        </sqlQuery>
+
+        <processQuery name="GoTermList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+            <wsColumn name="internal" width="100" wsName="internal"/>
+            <wsColumn name="term" width="100" wsName="term"/>
+            <wsColumn name="display" width="100" wsName="display"/>
+        </processQuery>
+
+
+        <sqlQuery name="DomainAccession" excludeProjects="EuPathDB">
+            <paramRef ref="sharedParams.depended_value"/> 
+            <column name="internal" />
+            <column name="term" />
+            <column name="display"/>
+
+            <sql>
+                SELECT DISTINCT dr.primary_identifier AS internal,
+                                dr.primary_identifier || ' : ' ||
                                 dr.secondary_identifier AS term,
-                                dr.primary_identifier || ':' ||
-                                dr.secondary_identifier || ' ' || dr.remark
-                                AS display
+                                dr.primary_identifier || ' : ' ||
+                                dr.secondary_identifier AS display
                 FROM dots.DbRefAaFeature draf, sres.DbRef dr,
                      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
                 WHERE draf.db_ref_id = dr.db_ref_id
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
+                  AND ed.name = $$depended_value$$
             </sql>
 
         </sqlQuery>
 
         <processQuery name="DomainAccession" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
-            <wsColumn name="parentTerm" width="100" wsName="parentTerm"/>
+            <paramRef ref="sharedParams.depended_value"/> 
             <wsColumn name="internal" width="100" wsName="internal"/>
             <wsColumn name="term" width="100" wsName="term"/>
             <wsColumn name="display" width="100" wsName="display"/>
