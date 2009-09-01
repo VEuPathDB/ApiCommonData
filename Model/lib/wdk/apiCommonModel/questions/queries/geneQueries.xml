@@ -2803,7 +2803,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
        <sql>
             <![CDATA[
             select g.source_id,  '@PROJECT_ID@' as project_id, 
-                   max(round(de.fold_change, 2)) as fold_change,
+                   avg(round(de.fold_change, 2)) as fold_change,
                    max(round(de.confidence, 2)) as confidence
             from rad.DIFFERENTIALEXPRESSION de, Core.TABLEINFO ti, 
                  rad.COMPOSITEELEMENTNASEQUENCE cs, dots.TRANSCRIPT t, 
