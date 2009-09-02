@@ -209,7 +209,7 @@ public class FullRecordCacheCreator extends BaseCLI {
                 ',');
         sql.append(FUNCTION_CLOB_CLOB_AGG).append('(').append(COLUMN_CONTENT);
         sql.append(") AS ").append(COLUMN_CONTENT);
-        sql.append(" FROM ").append(cacheName);
+        sql.append(" ,sysdate FROM ").append(cacheName);
         sql.append(" GROUP BY ").append(pkColumns);
 
         logger.debug("++++++ insert-from-cache: \n" + sql);
@@ -247,7 +247,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         StringBuffer sql = new StringBuffer("INSERT /*+ append */ INTO ");
         sql.append(cacheTable).append(getSelectSql(table, pkColumns));
         sql.append(',').append(FUNCTION_CHAR_CLOB_AGG).append('(');
-        sql.append(content).append(") AS ").append(COLUMN_CONTENT);
+        sql.append(content).append(") AS ").append(COLUMN_CONTENT).append(" ,sysdate ");
         sql.append(getJoinedSql(table, idSql, idqName, tqName));
         sql.append(" GROUP BY ").append(pkColumns);
 
