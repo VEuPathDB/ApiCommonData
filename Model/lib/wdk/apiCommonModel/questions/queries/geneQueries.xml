@@ -2455,7 +2455,8 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               isCacheable="true">
         <paramRef ref="geneParams.minOrMax"/>
         <paramRef ref="geneParams.exprHourRNASeq"/>
-        <paramRef ref="geneParams.inductionFold"/> 
+        <paramRef ref="geneParams.inductionFold"/>
+        <paramRef ref="geneParams.expressionPct"/> 
         <column name="project_id"/>
         <column name="source_id"/>
         <column name="max_fc"/>
@@ -2473,6 +2474,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
           AND ($$minOrMax$$ = 'max'
                  OR pr.time_of_min_expr in ($$exprHourRNASeq$$))
           AND pr.ind_ratio >= $$inductionFold$$
+          AND pr.max_percentile >= $$expressionPct$$
           AND pr.source_id = gf.source_id
           AND pr.profile_set_id = prs.profile_set_id
           AND prs.name = 'P.falciparum RNA Sequence Profiles'
@@ -2487,6 +2489,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
         <paramRef ref="geneParams.minOrMax" quote="false"/>
         <paramRef ref="geneParams.exprHourRNASeq"/>
         <paramRef ref="geneParams.inductionFold"/>
+        <paramRef ref="geneParams.expressionPct"/>
 	<wsColumn name="source_id" width="32" wsName="source_id"/>
 	<wsColumn name="project_id" width="32" wsName="project_id"/>
         <wsColumn name="max_fc" width="32" wsName="max_fc"/>
