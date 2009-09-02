@@ -132,7 +132,7 @@ public class FullRecordCacheCreator extends BaseCLI {
         } else { // no table specified, dump all tables
             for (TableField table : tables.values()) {
                 System.out.println(table.getName());
-                // dumpTable(table, idSql);
+                dumpTable(table, idSql);
             }
         }
 
