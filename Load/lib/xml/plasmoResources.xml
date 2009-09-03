@@ -3719,4 +3719,49 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
           ]]>
     </description>
   </resource>
+
+<resource resource="P.falciparum_Clinical_Proteomics" version="2009-08-11" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P. falciparum proteomics data from clinical samples (Tatu)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="P.falciparum Clinical Proteomics"
+        extDbRlsVer="2009-08-1"
+        extDbRlsDescrip="P. falciparum proteomics data from clinical samples"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Tatu_clinical/working_dir/P.falciparum_Clinical_Proteomics.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/P.falciparum_Clinical_Proteomics/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19'</pluginArgs>
+        <description>
+            <![CDATA[
+             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. falciparum</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
+          ]]>
+        </description>	
+    </resource> 
+
+<resource resource="P.vivax_Clinical_Proteomics" version="2009-08-11" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.vivax proteomics data from clinical samples (Tatu)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="P.vivax Clinical Proteomics"
+        extDbRlsVer="2009-08-1"
+        extDbRlsDescrip="P.vivax proteomics data from clinical samples"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Tatu_clinical/working_dir/P.vivax_Clinical_Proteomics.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/P.vivax_Clinical_Proteomics/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.vivax contigs from Genbank|2007-06-13'</pluginArgs>
+        <description>
+            <![CDATA[
+             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. vivax</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
+          ]]>
+        </description>	
+    </resource> 
+
  </resourcesPipeline>
