@@ -5,10 +5,10 @@ use Carp;
 
 use ApiCommonData::Load::IsolateVocabulary::Utils;
 
-sub getNewTerms {$_[0]->{_new_terms}}
+sub getSqlTerms {$_[0]->{_sql_terms}}
 
-sub getExistingTerms {$_[0]->{_existing_terms}}
-sub setExistingTerms {$_[0]->{_existing_terms} = $_[1]}
+sub getXmlMapTerms {$_[0]->{_xml_map_terms}}
+sub setXmlMapTerms {$_[0]->{_xml_map_terms} = $_[1]}
 
 sub getGusConfigFile {$_[0]->{gusConfigFile}}
 sub setGusConfigFile {$_[0]->{gusConfigFile} = $_[1]}
@@ -19,11 +19,11 @@ sub getDbh {$_[0]->{dbh}}
 sub setDbh {$_[0]->{dbh} = $_[1]}
 
 sub new {
-  my ($class, $gusConfigFile, $existingTerms, $newTerms, $type) = @_;
+  my ($class, $gusConfigFile, $xmlMapTerms, $sqlTerms, $type) = @_;
 
 
-  my $args = {_new_terms => $newTerms,
-              _existing_terms => $existingTerms,
+  my $args = {_sql_terms => $sqlTerms,
+              _xml_map_terms => $xmlMapTerms,
               _type => $type
              };
 
@@ -34,7 +34,7 @@ sub new {
   my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
 
   $self->setDbh($dbh);
-  $self->setExistingTerms($existingTerms);
+  $self->setXmlMapTerms($xmlMapTerms);
 
   return $self;
 }
@@ -48,31 +48,33 @@ sub report {
 
   my $dbh = $self->getDbh();
 
-  my $existingTerms = $self->getExistingTerms();
+  my $xmlMapTerms = $self->getXmlMapTerms();
 
-  # Check Existing terms have all needed attributes
-  foreach my $existingTerm (@$existingTerms) {
-    unless($existingTerm->isValid()) {
+  # Check XML terms have all needed attributes
+  foreach my $xmlTerm (@$xmlMapTerms) {
+    unless($xmlTerm->isValid()) {
       print STDERR "had error\n";
       $hadErrors = 1;
     }
   }
 
   # ensure the (assignment) terms in the mapping file are present in ontology
-  my $check = $self->checkOntology();
+  my $check = $self->checkOntology($dbh);
 
-  # make hash lookup for existing terms
-  my $existingTermsHash = $self->makeHashFromTerms();
+  # make hash lookup for xml terms
+  my $xmlTermsHash = $self->makeHashFromTerms();
 
-  my $newTerms = $self->getNewTerms();
+  my $sqlTerms = $self->getSqlTerms();
 
-  # Check all new terms are handled
-  foreach my $vocabTerm (@{$newTerms}) {
-    my $original = $vocabTerm->getOriginal();
+  # Check all Sql terms are handled
+  foreach my $vocabTerm (@{$sqlTerms}) {
+    next if($vocabTerm->getAlreadyMaps());
 
-    unless($existingTermsHash->{$original}) {
-      print STDERR "No Mapping Info for Vocab Term:  $original\n";
-      $self->getXml($original, $type);
+    my $term = $vocabTerm->getTerm();
+
+    unless($xmlTermsHash->{$term}) {
+      print STDERR "No Mapping Info for Vocab Term:  $term\n";
+      $self->getXml($term, $type);
       $hadErrors = 1;
     }
   }
@@ -89,13 +91,13 @@ sub report {
 sub makeHashFromTerms {
   my ($self) = @_;
 
-  my $existingTerms = $self->getExistingTerms();
+  my $xmlTerms = $self->getXmlMapTerms();
 
   my %hash;
 
-  foreach my $vocabTerm (@{$existingTerms}) {
-    my $original = $vocabTerm->getOriginal();
-    $hash{$original} = 1;
+  foreach my $vocabTerm (@{$xmlTerms}) {
+    my $term = $vocabTerm->getTerm();
+    $hash{$term} = 1;
   }
 
   return \%hash;
@@ -129,38 +131,18 @@ sub isIncluded {
   return 0;
 }
 
-sub getAllOntologies {
-  my ($self)  = @_;
-
-  my $dbh = $self->getDbh();
-  my $sql = "select term, type from apidb.isolatevocabulary where source = 'isolate vocabulary'";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  my $res = {};
-  while(my ($term, $type) = $sh->fetchrow_array()) {
-#    $type = 'country' if($type eq 'geographic_location');
-    $res->{$term}->{$type} = 1;
-  }
-  $sh->finish();
-
-  return $res;
-}
-
 sub checkOntology {
-  my ($self) = @_;
+  my ($self, $dbh) = @_;
 
-  my $existingOntology = $self->getAllOntologies();
+  my $allOntology = ApiCommonData::Load::IsolateVocabulary::Utils::getAllOntologies($dbh);
   my @missing;
 
-  foreach my $term (@{$self->getExistingTerms}) {
-    my $original = $term->getOriginal();
-
-    my $mapValue = $term->getValue();
+  foreach my $term (@{$self->getXmlMapTerms}) {
+    my $mapTerm = $term->getMapTerm();
     my $mapType = $term->getType();
 
-    unless($existingOntology->{$mapValue}->{$mapType}) {
-      push @missing, $mapValue;
+    unless($allOntology->{$mapTerm}->{$mapType}) {
+      push @missing, $mapTerm;
     }
   }
 
@@ -170,8 +152,6 @@ sub checkOntology {
       print STDOUT "$term\t\tproduct\n";
     }
   }
-
-
 
   return scalar(@missing);
 }

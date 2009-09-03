@@ -5,33 +5,37 @@ use Carp;
 use Data::Dumper;
 
 sub new {
-  my ($class, $original, $table, $field, $type, $value) = @_;
+  my ($class, $term, $mapTerm, $table, $field, $type, $alreadyMaps) = @_;
 
   my $self = bless {}, $class; 
 
-  $self->setOriginal($original);
   $self->setType($type);
-  $self->setValue($value);
+  $self->setTerm($term);
+  $self->setMapTerm($mapTerm);
   $self->setTable($table);
   $self->setField($field);
+  $self->setAlreadyMaps($alreadyMaps);
 
   return $self;
 }
 
+sub getMapTerm {$_[0]->{_map_term}}
+sub setMapTerm {$_[0]->{_map_term} = $_[1]}
+
 sub getTable {$_[0]->{_table}}
 sub setTable {$_[0]->{_table} = $_[1]}
-
-sub getOriginal {$_[0]->{_original}}
-sub setOriginal {$_[0]->{_original} = $_[1]}
 
 sub getField {$_[0]->{_field}}
 sub setField {$_[0]->{_field} = $_[1]}
 
-sub getValue {$_[0]->{_value}}
-sub setValue {$_[0]->{_value} = $_[1]}
+sub getTerm {$_[0]->{_term}}
+sub setTerm {$_[0]->{_term} = $_[1]}
 
 sub getType {$_[0]->{_type}}
 sub setType {$_[0]->{_type} = $_[1]}
+
+sub getAlreadyMaps {$_[0]->{_already_maps}}
+sub setAlreadyMaps {$_[0]->{_already_maps} = $_[1]}
 
 sub isValid {
   my ($self) = @_;
@@ -40,16 +44,15 @@ sub isValid {
   my @validFields = ('product', 'country', 'specific_host', 'isolation_source', 'source_id');
   my @validTypes = ('product', 'geographic_location', 'specific_host', 'isolation_source');
 
-  my $value = $self->getValue();
+  my $term = $self->getTerm();
   my $field = $self->getField();
   my $table = $self->getTable();
   my $type = $self->getType();
-  my $original = $self->getOriginal();
 
   my $errors;
 
-  unless($original) {
-    print STDERR "Error.  No Original Provided for Node:  ";
+  unless($term) {
+    print STDERR "Error.  No Term Provided for Node:  ";
     print STDERR $self->toString();
     $errors = 1;
   }
@@ -86,7 +89,7 @@ sub toString { Dumper $_[0]}
 #sub toXml {
 #  my ($self) = @_;
 
-#  my $value = $self->getValue();
+#  my $term = $self->getTerm();
 #  my $field = $self->getField();
 #  my $table = $self->getTable();
 
@@ -94,17 +97,17 @@ sub toString { Dumper $_[0]}
 
 #  my @rows;
 #  foreach my $row (@$maps) {
-#    my $mapValue = $row->getValue();
+#    my $mapTerm = $row->getTerm();
 #    my $mapTable = $row->getTable();
 #    my $mapField = $row->getField();
 
-#    push @rows, "      <row table=\"$table\" field=\"$field\" value=\"$value\" />";
+#    push @rows, "      <row table=\"$table\" field=\"$field\" term=\"$term\" />";
 #  }
 
 #  my $rows = join("\n", @rows);
 
 #  my $xml = <<XML;
-#  <initial table="$table" field="$field" value="$value">
+#  <initial table="$table" field="$field" term="$term">
 #    <maps>
 #$rows
 #    </maps>

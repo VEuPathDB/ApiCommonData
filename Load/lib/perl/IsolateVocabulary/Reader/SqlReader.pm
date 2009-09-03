@@ -55,25 +55,22 @@ sub extract {
 
   my $table = $type eq 'product' ? 'IsolateFeature' : 'IsolateSource';
 
-  # Find all  terms that are in a dots table but NOT in Apidb.IsolateVocabulary
   my $sql = <<SQL;
-select distinct i.term
+select distinct i.term, v.term as preexists
 from (select $queryField as term  from dots.$table) i 
  left join apidb.isolatevocabulary v
- on i.term = v.original_term and  v.type = '$type'
+ on i.term = v.term and  v.type = '$type'
 where i.term is not null 
- and v.term is null
 SQL
 
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
   my @sqlTerms;
-  while(my ($original) = $sh->fetchrow_array()) {
-    my $table = undef;
+  while(my ($term, $preexists) = $sh->fetchrow_array()) {
+    $preexists = $preexists ? 1 : 0;
 
-
-    my $term = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($original, $table, $queryField, $type, '');
+    my $term = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($term, '', $table, $queryField, $type, $preexists);
     push @sqlTerms, $term;
   }
   $sh->finish();

@@ -7,8 +7,11 @@ use Data::Dumper;
 
 use ApiCommonData::Load::IsolateVocabulary::Utils;
 
-sub getTerms {$_[0]->{terms}}
-sub setTerms {$_[0]->{terms} = $_[1]}
+sub getSqlTerms {$_[0]->{_sql_terms}}
+sub setSqlTerms {$_[0]->{_sql_terms} = $_[1]}
+
+sub getXmlMapTerms {$_[0]->{_xml_map_terms}}
+sub setXmlMapTerms {$_[0]->{_xml_map_terms} = $_[1]}
 
 sub getGusConfigFile {$_[0]->{gusConfigFile}}
 sub setGusConfigFile {$_[0]->{gusConfigFile} = $_[1]}
@@ -32,7 +35,7 @@ sub setType {
 
 
 sub new {
-  my ($class, $gusConfigFile, $type, $terms) = @_;
+  my ($class, $gusConfigFile, $type, $xmlTerms, $sqlTerms) = @_;
 
   my $args = {};
 
@@ -44,7 +47,8 @@ sub new {
 
   $self->setDbh($dbh);
   $self->setType($type);
-  $self->setTerms($terms);
+  $self->setXmlMapTerms($xmlTerms);
+  $self->setSqlTerms($sqlTerms);
 
   return $self;
 }
@@ -56,115 +60,135 @@ sub insert {
 
   my $dbh = $self->getDbh();
 
-  # ensure the terms in the mapping file are valid
-  $self->checkOntology();
+  # create a data structure for all isolates in Dots Tables
+  #    @naSequenceIds = @{$hash{$table}->{$field}->{$original}}
+  my $dotsIsolatesNaSequences = $self->queryDotsIsolates();
 
-  my $currentVocabulary = $self->queryForVocabulary();
+  #    $isolateVocabularyId = $hash->{$type}->{$term}
+  my $isolateVocabularyIds =  ApiCommonData::Load::IsolateVocabulary::Utils::getAllOntologies($dbh);
 
-  my $insertSql = "insert into apidb.isolatevocabulary (term, original_term, type, source) values (?,?,?,?)";
+  my $insertSql = "insert into apidb.isolatemapping (na_sequence_id, isolate_vocabulary_id) values (?,?)";
   my $insert = $dbh->prepare($insertSql);
 
-  my $source = 'mapping file';
 
-  foreach my $term (@{$self->getTerms()}) {
-    my $original = $term->getOriginal();
-    my $value = $term->getValue();
-    my $type = $term->getType();
+  $self->insertAutomaticTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
+  $self->insertManuallyMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
 
-    if($currentVocabulary->{$original} && $currentVocabulary->{$original}->{type} eq $type) {
-      my $mappedValue = $currentVocabulary->{$original}->{term};
-      print STDERR "SKIPPING:  Original Term [$original] for type [$type] already mapped to value: $mappedValue\n";
-      next;
-    }
 
-    $insert->execute($value, $original, $type, $source);
-
-    $insertCounts = $insertCounts + $insert->rows();
-  }
 
   $self->disconnect();
   print STDERR "Inserted $insertCounts rows into apidb.isolatevocabulary\n";
 }
 
 
-sub queryForVocabulary {
-   my ($self) = @_;
+sub insertManuallyMappedTerms {
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
 
-   my $dbh = $self->getDbh();
+  my $count;
 
-   my $sql = "select original_term, type, source, term from apidb.isolatevocabulary";
+  foreach my $xmlTerm (@{$self->getXmlMapTerms()}) {
 
-   my $sh = $dbh->prepare($sql);
-   $sh->execute();
+    my $term = $xmlTerm->getTerm();
+    my $mapTerm = $xmlTerm->getMapTerm();
+    my $table = $xmlTerm->getTable();
+    my $field = $xmlTerm->getField();
+    my $type = $xmlTerm->getType();
 
-   my $rv = {};
+    # Get na_sequence_id for the orig, BUT isolate vocabulary id for the mapTerm
+    my $isolateVocabularyId = $isolateVocabularyIds->{$mapTerm}->{$type};
+    my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
 
-   while(my ($original, $type, $source, $term) = $sh->fetchrow_array()) {
-     $rv->{$original} = {type => $type, source => $source, term => $term};
-   }
-   $sh->finish();
-
-   return $rv;
+    $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+  }
+  return $count;
 }
 
-sub checkOntology {
+
+sub insertAutomaticTerms {
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
+
+  my $count;
+
+  foreach my $sqlTerm (@{$self->getSqlTerms()}) {
+    next unless($sqlTerm->getAlreadyMaps());
+
+    my $term = $sqlTerm->getTerm();
+    my $table = $sqlTerm->getTable();
+    my $field = $sqlTerm->getField();
+    my $type = $sqlTerm->getType();
+
+    # Get na_sequence_id for the orig, AND isolate vocabulary id for the mapTerm
+    my $isolateVocabularyId = $isolateVocabularyIds->{$term}->{$type};
+    my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
+
+    $count = $count + $self->doMappingInsert($sqlTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+  }
+  return $count;
+}
+
+sub doMappingInsert {
+  my ($self, $term, $isolateVocabularyId, $naSequenceIds, $insert) = @_;
+
+  my $count;
+
+  unless($naSequenceIds) {
+    die "ERROR:  No NA_SEQUENCE_ID for Term " . $term->toString();
+  }
+
+  unless($isolateVocabularyId) {
+    die "ERROR:  No ISOLATE_VOCABULARY_ID for Term " . $term->toString();
+  }
+
+  foreach my $naSequenceId (@$naSequenceIds) {
+    $insert->execute($naSequenceId, $isolateVocabularyId);
+    $count++;
+  }
+
+  return $count;
+}
+
+
+sub queryDotsIsolates {
   my ($self) = @_;
 
-  my $existingOntology = $self->getAllOntologies();
+  my $data = {};
 
-  foreach my $term (@{$self->getTerms}) {
-    my $value = $term->getValue();
-    my $original = $term->getOriginal();
-    my $type = $term->getType();
+  my %all_sql = ('IsolateFeature' => <<Sql,
+select distinct na_sequence_id, source_id, product from dots.isolatefeature
+Sql
+             'IsolateSource' => <<Sql,
+select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
+Sql
+             'ExternalNaSequence' => <<Sql,
+select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
+Sql
+            );
 
-    unless($term->isValid()) {
-      print STDERR Dumper $term;
-      croak "Term [$original] is NOT valid";
-    }
-
-    unless($value) {
-      croak "Value not defined for term [$original]";
-    }
-
-    unless($self->isIncluded($existingOntology->{$value}, $type)) {
-      croak "No valid ontology for term [$value] of type [$type]";
-    }
-  }
-}
-
-
-sub isIncluded {
-  my ($self, $a, $v) = @_;
-
-  unless($a) {
-    return 0;
-  }
-
-  foreach(@$a) {
-    return 1 if $v eq $_;
-  }
-  return 0;
-}
-
-
-sub getAllOntologies {
-  my ($self)  = @_;
+  my @tables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
 
   my $dbh = $self->getDbh();
 
-  my $sql = "select distinct term, type from apidb.isolatevocabulary where source = 'isolate vocabulary'";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
+  foreach my $table (@tables) {
+    my $sql = $all_sql{$table};
+    my $sh = $dbh->prepare($sql);
+    $sh->execute();
 
-  my %res;
+    while(my $row = $sh->fetchrow_hashref) {
+#      my $identifier = $table eq 'IsolateFeature' ? $row->{NA_FEATURE_ID} : $row->{NA_SEQUENCE_ID};
+      my $identifier = $row->{NA_SEQUENCE_ID};
 
-  while(my ($term, $type) = $sh->fetchrow_array()) {
-#    $type = 'country' if($type eq 'geographic_location');
-    push @{$res{$term}}, $type;
+      foreach my $field (keys %$row) {
+        my $rowValue = $row->{$field};
+
+        unless($field eq 'NA_SEQUENCE_ID' || $field eq 'NA_FEATURE_ID') {
+          push @{$data->{$table}->{$field}->{$rowValue}}, $identifier;
+        }
+      }
+    }
+    $sh->finish();
   }
-  $sh->finish();
-
-  return \%res;
+  return $data;
 }
+
 
 1;

@@ -50,8 +50,7 @@ sub extract {
       my $type = $map->{type};
       my $value = $map->{value};
 
-
-      my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($original, $table, $field, $type, $value);
+      my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($original, $value, $table, $field, $type, 0);
 
       push @vocabularyTerms, $vocabTerm;
     }
