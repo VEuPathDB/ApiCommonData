@@ -9,6 +9,7 @@ use ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader;
 
 use ApiCommonData::Load::IsolateVocabulary::Reporter;
 use ApiCommonData::Load::IsolateVocabulary::Updater;
+use ApiCommonData::Load::IsolateVocabulary::InsertMappedValues;
 
 my $subCommand = $ARGV[0];
 
@@ -21,7 +22,7 @@ my ($help, $gusConfigFile, $type, $xmlFile);
             );
 
 &usage if($help);
-&usage unless($subCommand eq 'report' || $subCommand eq 'update');
+&usage unless($subCommand eq 'report' || $subCommand eq 'insert');
 
 if(!$gusConfigFile || !$type || !$xmlFile) {
   &usage("Error: Required Argument omitted");
@@ -30,18 +31,24 @@ if(!$gusConfigFile || !$type || !$xmlFile) {
 my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader->new($xmlFile);
 my $xmlTerms = $xmlReader->extract();
 
-if($subCommand eq 'report') {
-  my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlReader->new($gusConfigFile, $type);
-  my $sqlTerms = $sqlReader->extract();
+my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlReader->new($gusConfigFile, $type);
+my $sqlTerms = $sqlReader->extract();
 
+if($subCommand eq 'report') {
   my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $sqlTerms, $type);
   $reporter->report();
 }
 
-if($subCommand eq 'update') {
-  my $updater = ApiCommonData::Load::IsolateVocabulary::Updater->new($gusConfigFile, $type, $xmlTerms);
-  $updater->update();
+#if($subCommand eq 'update') {
+#  my $updater = ApiCommonData::Load::IsolateVocabulary::Updater->new($gusConfigFile, $type, $xmlTerms);
+#  $updater->update();
+#}
+
+if($subCommand eq 'insert') {
+  my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($gusConfigFile, $type, $xmlTerms, $sqlTerms);
+  $inserter->insert();
 }
+
 
 sub usage {
   my ($m) = @_;
