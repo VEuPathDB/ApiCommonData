@@ -172,6 +172,8 @@ sub insertAutomaticTerms {
     my $field = $sqlTerm->getField();
     my $type = $sqlTerm->getType();
 
+    next if($type eq 'product');
+
     # Get na_sequence_id for the orig, AND isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $isolateVocabularyIds->{$term}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
