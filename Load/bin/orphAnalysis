@@ -1,0 +1,32 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = shift(@ARGV);
+my $optionalArgs = \@ARGV;
+
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initOrphAnalysis($propertiesFile, $optionalArgs);    # add this method to steps
+
+my $dataDir = $mgr->{dataDir};
+
+##############################################################################
+########   The Pipeline                                               ########
+##############################################################################
+
+
+
+&makeGenomicDownloadFile($mgr, "Tannulata", "TannulataGenomic", "TannulataGenome", "2005", "ExternalNASequence","psu","","eupathDB");
+
+&makeGenomicDownloadFile($mgr, "Tparva", "TparvaGenomic", "TparvaGenome", "2005", "ExternalNASequence","psu","","eupathDB");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tparva","TparvaGenomic_eupathDB-1.0.fasta","TparvaGenomics","-n -t release-1.0/TparvaGenomics","eupathDB");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tannulata","TannulataGenomic_eupathDB-1.0.fasta","TannulataGenomics","-n -t release-1.0/TannulataGenomics","eupathDB");
+
+$mgr->goodbye("Pipeline complete!\n");
