@@ -152,6 +152,20 @@ sub initTrypAnalysis{
 
   return ($mgr, $projectDir, $release, $allSpecies);
 }
+
+sub initOrphAnalysis{
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Tannulata,Tparva';
+
+  my $taxId = ["Tannulata:353154","Tparva:333668"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
 sub UpdateGusTableWithXml {
   my ($mgr,$file,$table) = @_;
   my $signal = "Load${table}WithXml";
@@ -1600,6 +1614,44 @@ sub makeInterproDownloadFile {
      AND xdr3.external_database_id = xd3.external_database_id 
      AND xd3.name = '$interproExtDb'
 EOF
+
+   if ($projectDB =~ /ortho/i) {
+
+     $outFile = "$dlDir/iprscan_$projectDB-${release}.txt";xs
+
+     $sql = <<"EOF";
+     SELECT xas.source_id
+           || chr(9) ||
+         xd.name
+           || chr(9) ||
+         dr.primary_identifier
+           || chr(9) ||
+         dr.secondary_identifier
+           || chr(9) ||
+         al.start_min
+           || chr(9) ||
+         al.end_min
+           || chr(9) ||
+         to_char(df.e_value,'9.9EEEE')
+  FROM
+    dots.aalocation al,
+    sres.externaldatabaserelease xdr,
+    sres.externaldatabase xd,
+    sres.dbref dr,
+    dots.DbRefAAFeature draf,
+    dots.domainfeature df,
+    dots.externalaasequence xas
+  WHERE
+     xas.aa_sequence_id = df.aa_sequence_id
+     AND df.aa_feature_id = al.aa_feature_id
+     AND df.aa_feature_id = draf.aa_feature_id
+     AND draf.db_ref_id = dr.db_ref_id
+     AND df.external_database_release_id = xdr.external_database_release_id
+     AND xdr.external_database_id = xd.external_database_id
+     AND xdr.version = '$interproExtDbVer'
+     AND xd.name = '$interproExtDb'
+EOF
+   }
 
   my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
@@ -3373,6 +3425,37 @@ evalueExponentCutoff=-5
 
 }
 
+sub makePairsDownloadFile{
+  my ($mgr, $projectDB) = @_;
+
+  my $signal = "pairsDownloadFiles";
+
+  return if $mgr->startStep("Dumping pairs files into download site", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $config = $propertySet->getProp('orthoMclPairsConfig');
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $release = $propertySet->getProp('projectRelease');
+
+  my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/";
+
+  $mgr->runCmd("mkdir -p $dlDir");
+
+  chdir "$dlDir" || die "Can't chdir to $dlDir";
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $cmd = "orthomclDumpPairsFiles $config 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
 sub makeOrthoAbcFile {
   my ($mgr) = @_;
 
@@ -4409,7 +4492,7 @@ sub formatBlastFile {
 }
 
 sub xdformatDownloadFileForBlastSite {
-  my ($mgr, $species, $inputFile, $formattedFile, $type) = @_;
+  my ($mgr, $species, $inputFile, $formattedFile, $type, $project) = @_;
 
   my $signal = "${formattedFile}XDFormat";
 
@@ -4417,7 +4500,7 @@ sub xdformatDownloadFileForBlastSite {
 
   my $propertySet = $mgr->{propertySet};
   my $release = $propertySet->getProp('projectRelease');
-  my $projectDB = $propertySet->getProp('projectDB');
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
   my $siteFileDir = $propertySet->getProp('siteFileDir');
   my $blastPath = $propertySet->getProp('wuBlastPath');
 
