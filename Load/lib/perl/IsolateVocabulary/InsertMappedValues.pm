@@ -6,6 +6,7 @@ use Carp;
 use Data::Dumper;
 
 use ApiCommonData::Load::IsolateVocabulary::Utils;
+use ApiCommonData::Load::IsolateVocabulary::VocabularyTerm;
 
 sub getSqlTerms {$_[0]->{_sql_terms}}
 sub setSqlTerms {$_[0]->{_sql_terms} = $_[1]}
@@ -56,8 +57,6 @@ sub new {
 sub insert {
   my ($self) = @_;
 
-  my $insertCounts;
-
   my $dbh = $self->getDbh();
 
   # create a data structure for all isolates in Dots Tables
@@ -70,15 +69,72 @@ sub insert {
   my $insertSql = "insert into apidb.isolatemapping (na_sequence_id, isolate_vocabulary_id) values (?,?)";
   my $insert = $dbh->prepare($insertSql);
 
+  # insert mapping for terms which don't require manual mapping (ie. the value in the dots table == value in apidb table)
+  my $automaticCounts = $self->insertAutomaticTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
 
-  $self->insertAutomaticTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
-  $self->insertManuallyMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
+  # insert mapping for manual terms (from xml mapping file)
+  my $manualCounts = $self->insertManuallyMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
 
+  # insert mapping for null/unknown terms
+  my $nullCounts = $self->insertNullMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
 
+  $insert->finish();
 
   $self->disconnect();
-  print STDERR "Inserted $insertCounts rows into apidb.isolatevocabulary\n";
+
+  my $mappingTotalCount = $automaticCounts + $manualCounts + $nullCounts;
+
+  print STDERR "Inserted $mappingTotalCount  rows into apidb.isolateMapping\n";
 }
+
+sub insertNullMappedTerms {
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
+
+  my $count;
+
+  my $type = $self->getType();
+  my $term = 'Unknown';
+
+  my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($term, '', '', $type, $type, 1);
+
+  my $isolateVocabularyId = $isolateVocabularyIds->{$term}->{$type};
+
+  my $naSequenceIds = $self->queryForNullNaSequences($type);
+
+  $count = $count + $self->doMappingInsert($vocabTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+
+  return $count;
+}
+
+
+sub queryForNullNaSequences {
+  my ($self, $type) = @_;
+
+  my @naSequenceIds;
+
+  my $sql = "select s.na_sequence_id
+from dots.isolatesource s 
+  left join (select im.*
+             from apidb.isolatevocabulary v, apidb.isolatemapping im
+             where v.isolate_vocabulary_id = im.isolate_vocabulary_id
+             and v.type = ?
+             ) im
+  on s.na_sequence_id = im.na_sequence_id
+where im.na_sequence_id is null";
+
+  my $dbh = $self->getDbh();
+  my $sh = $dbh->prepare($sql);
+  $sh->execute($type);
+
+  while(my ($naSequenceId) = $sh->fetchrow_array()) {
+    push @naSequenceIds, $naSequenceId;
+  }
+  $sh->finish();
+
+  return \@naSequenceIds;
+}
+
+
 
 
 sub insertManuallyMappedTerms {
@@ -102,7 +158,6 @@ sub insertManuallyMappedTerms {
   }
   return $count;
 }
-
 
 sub insertAutomaticTerms {
   my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
