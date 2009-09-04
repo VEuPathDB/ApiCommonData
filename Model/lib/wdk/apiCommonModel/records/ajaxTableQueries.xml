@@ -367,6 +367,12 @@
                     FROM dual
                     ) t
             </sql>
+            <sql includeProjects="GiardiaDB">
+              SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
+                     'All Giardia Isolates' as term,
+                     'All Giardia Isolates' as internal
+              FROM DUAL
+            </sql>
             <sql includeProjects="PlasmoDB">
                 SELECT t.term, t.internal,
                      $$source_id$$ AS source_id, $$project_id$$ AS project_id
@@ -397,6 +403,10 @@
               SELECT 'Cryptosporidium Reference Isolates' as term,
                      'Cryptosporidium Reference Isolates' as internal
               FROM dual
+              UNION
+              SELECT 'All Giardia Isolates' as term,
+                     'All Giardia Isolates' as internal
+              FROM DUAL
               UNION
               SELECT 'Plasmodium Barcode Isolates' as term,
                      'Plasmodium Barcode Isolates' as internal
