@@ -1921,7 +1921,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
               AND draf.db_ref_id = dr.db_ref_id
               AND dr.external_database_release_id = $$domain_database$$
               AND dr.primary_identifier
-                  = substr($$domain_accession$$, 1, instr($$domain_accession$$||':', ':')-1)
+                  = substr($$domain_accession$$, 1, instr($$domain_accession$$||' :', ' :')-1)
               AND tas.taxon_id IN ($$organism$$)
               AND tas.aa_sequence_id = taf.aa_sequence_id
               AND taf.na_feature_id = t.na_feature_id
