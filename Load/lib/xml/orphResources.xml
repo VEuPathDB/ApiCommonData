@@ -2,7 +2,7 @@
                    downloadDir="@downloadDir@">
 
     <resource resource="taxonomy" version="2009_09_03" 
-              displayName="NCBxsI Taxonomy"
+              displayName="NCBI Taxonomy"
               publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
               category="Ontology"
               url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
@@ -37,6 +37,44 @@
      </description>
     </resource>
  
+<resource resource="TparvaGenomics" version="2005"
+              displayName="T. parva genomics WGS"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TparvaGenome"
+              extDbRlsVer="2005"
+              extDbRlsDescrip="Tparva Genomics WGS obtained from NCBI/TIGR"
+              dbCommit="@dbcommit@">
+              <manualGet 
+                fileOrDir="@manualDeliveryDir@/genomes/TparvaGenome/TheileriaParvaGenomics.fasta"
+              />
+            <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TparvaGenomics/TheileriaParvaGenomics.fasta --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){6}(.*)' --SOTermName supercontig --ncbiTaxId 333668   --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Theileria parva strain Muguga Genomics WGS from NCBI/TIGR.
+            ]]>
+        </description>
+    </resource>
+
+
+<resource resource="TannulataGenomics" version="2005"
+              displayName="T. annulata genomics WGS"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TannulataGenome"
+              extDbRlsVer="2005"
+              extDbRlsDescrip="Tannulata Genomics WGS obtained from WTSI"
+              dbCommit="@dbcommit@">
+              <manualGet fileOrDir="@manualDeliveryDir@/genomes/TannulataGenome/TheileriaAnnulataGenomics.fasta"
+              />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TannulataGenomics/TheileriaAnnulataGenomics.fasta --SOTermName supercontig --ncbiTaxId 353154 --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){3}(.*)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Theileria annulata strain Ankara Genomics, WGS  from WTSI.
+            ]]>
+        </description>
+    </resource>
+
     <resource resource="dbEST" version="2009-08-24"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
@@ -48,77 +86,16 @@
         dbCommit="@dbcommit@">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
         />
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId 5820 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
         <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --ncbiTaxId "333668,353154"   --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:unknown" </pluginArgs>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
         <description>
             <![CDATA[
-                  ESTs from dbEST.
+                  Plasmodium ESTs from dbEST.
           ]]>
         </description>
     </resource>
 
-
-<resource resource="TparvaGenomics" version="apidb@apiVersion@"
-              displayName="T. parva genomics WGS"
-              category="Genome"
-              plugin="GUS::Supported::Plugin::LoadFastaSequences"
-              extDbName="TparvaGenome"
-              extDbRlsVer="@apiVersion@"
-              extDbRlsDescrip="Tparva Genomics WGS obtained from apidb@apiVersion@ downloads"
-              dbCommit="@dbcommit@">
-              <manualGet fileOrDir="@manualDeliveryDir@/orphanOrgs/genomes/TparvaxGenome/T-parva-genome
-              />
-        <wgetArgs>--tries=5</wgetArgs>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TparvaGenomics/T-parva-genome --SOTermName supercontig --ncbiTaxId 333668  --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){6}(.*)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
-        <description>
-            <![CDATA[
-            Theileria parva strain Muguga Genomics WGS from ApiDB@apiVersion@ downloads.
-            ]]>
-        </description>
-    </resource>
-
-
-<resource resource="TannulataGenomics" version="apidb@apiVersion@"
-              displayName="T. annulata genomics WGS"
-              category="Genome"
-              plugin="GUS::Supported::Plugin::LoadFastaSequences"
-              extDbName="TannulataGenome"
-              extDbRlsVer="@apiVersion@"
-              extDbRlsDescrip="Tannulata Genomics WGS obtained from apidb@apiVersion@ downloads"
-              dbCommit="@dbcommit@">
-              <manualGet fileOrDir="@manualDeliveryDir@/orphanOrgs/genomes/TannulataGenome/T-annulata-genome
-              />
-        <wgetArgs>--tries=5</wgetArgs>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TannulataGenomics/T-annulata-genome --SOTermName supercontig --ncbiTaxId 353154 --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){3}(.*)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
-        <description>
-            <![CDATA[
-            Theileria annulata strain Ankara Genomics, WGS  from ApiDB@apiVersion@ downloads.
-            ]]>
-        </description>
-    </resource>
-
-
-<resource resource="OrthoMCL" version="3.0"
-        displayName="Orthologous groups generated using OrthoMCL"
-        organisms="C.hominis, C.muris, C.parvum, G.lamblia, P.berghei, P.chabaudi, P.knowlesi, P.falciparum, P.vivax, P.yoelii, T.gondii, N.caninum, T.vaginalis,T.cruzi, T.brucei, L.braziliensis, L.infantum, L.major, T.annulata,T.parva"
-        category="Proteome"
-        publicUrl="http://orthomcl.cbil.upenn.edu"
-        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDeliveryDir@/orthoMCL-v3.0/orthomclGroups.txt"
-            email="pinney@pcbi.upenn.edu"
-            contact="Deborah Pinney"
-            institution="PCBI"
-        />
-        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Pred
-ictions'  --taxaToLoad "chom,cmur,cpar,gla, pber,pchi,pkno,pfal,pviv,pyoe,tgon,ncan,tvag,tbru,tcru,lbra,linf,lmaj,tpar,tann" --ElementResultTable "DoTS::SplicedNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
-          ]]>
-        </description>
-        <publication pmid="12952885"/>
-    </resource>
 
 </resourcesPipeline>
-
