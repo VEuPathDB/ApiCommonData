@@ -337,7 +337,8 @@
  select distinct v.term, v.term as internal, v.parent as parentTerm
  from   apidb.isolatevocabulary v
  where  v.type = 'specific_host'
- union
+ and parent is not null 
+union
  select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
  union
  select 'Mammals - non human' as term, 'Mammals - non human' as internal, '' as parentterm from dual
