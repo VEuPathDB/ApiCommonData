@@ -416,7 +416,7 @@ order by term asc
     </querySet>
 
   <querySet name="productVQ" queryType="vocab">
-    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB,ToxoDB">
+    <sqlQuery name="withIsolates" includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB">
     <column name="display"/>
     <column name="internal"/>
     <column name="term"/>
@@ -424,7 +424,7 @@ order by term asc
     <![CDATA[
 select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal
 from apidb.isolatevocabulary v, 
-     (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
+     (select distinct product AS term from dots.isolatefeature) c
 where v.term = c.term
 and v.type = 'product'
 order by term
