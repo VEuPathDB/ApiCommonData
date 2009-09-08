@@ -427,6 +427,7 @@ from apidb.isolatevocabulary v,
      (select distinct regexp_replace(product, ':.*') term from dots.isolatefeature) c
 where v.term = c.term
 and v.type = 'product'
+order by term
     ]]>
     </sql>
     </sqlQuery>
