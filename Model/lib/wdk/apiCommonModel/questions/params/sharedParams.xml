@@ -771,7 +771,8 @@
      <flatVocabParam name="chromosomeOptional" includeProjects="TriTrypDB"
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
-                     multiPick="false">
+                     multiPick="false"
+                     dependedParam="organism">
              <help>
                 <![CDATA[
                 Select chromosome.  <B>NOTE:</B> Not all organisms have the same number of chromosomes.  
@@ -2185,6 +2186,7 @@ by the sequence generator.</help>
   <querySet name="SharedVQ" queryType="vocab">
 
         <sqlQuery name="TrypChromosome" includeProjects="TriTrypDB" isCacheable="true">
+            <paramRef ref="sharedParams.depended_value"/> 
             <column name="internal"/>
             <column name="term"/>
             <sql>
