@@ -427,7 +427,7 @@
            where  v.type = 'geographic_location'
            and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
            and    i.na_sequence_id = m.na_sequence_id 
-           and    trim(v.term) in ($$country$$)
+           and    v.term in ($$country$$)
            &&dataTypeOptional&&
            ORDER BY i.source_id
             ]]>

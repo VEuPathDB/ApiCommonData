@@ -334,29 +334,19 @@
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
- select distinct v.term, v.term as internal, v.parent as parentTerm
- from   apidb.isolatevocabulary v
+ select distinct v.term, v.term as internal, initcap(v.parent) as parentTerm
+ from   apidb.isolatevocabulary v, apidb.isolatemapping m
  where  v.type = 'specific_host'
- and parent is not null 
-union
- select 'Reptiles' as term, 'Reptiles' as internal, '' as parentterm from dual
+ and   v.isolate_vocabulary_id = m.isolate_vocabulary_id
  union
- select 'Mammals - non human' as term, 'Mammals - non human' as internal, '' as parentterm from dual
+ select distinct initcap(v.parent) as term, initcap(v.parent) as internal, ''  as parentterm 
+ from   apidb.isolatevocabulary v, apidb.isolatemapping m
+ where  v.type = 'specific_host' 
+ and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
+ and v.parent is not null 
  union
- select 'Mammals - human' as term, 'Mammals - human' as internal, '' as parentterm from dual
- union
- select 'Amphibians' as term, 'Amphibians' as internal, '' as parentterm from dual
- union
- select 'Mollusks' as term, 'Mollusks' as internal, '' as parentterm from dual
- union
- select 'Birds' as term, 'Birds' as internal, '' as parentterm from dual
- union
- select 'marsupial' as term, 'marsupial' as internal, 'Mammals - non human' as parentterm from dual
- union
- select 'rodent' as term, 'rodent' as internal, 'Mammals - non human' as parentterm from dual
- union
- select 'Unknown' as term, 'Unknown' as internal, '' as parentterm from dual
- ]]>
+ select 'Unknown' as term, 'Unknown' as internal, '' as parentTerm from dual
+]]>
  <!--
 select v.term, v.term as internal, p.parent as parentTerm
  from (select term as term, original_term as original_term from apidb.isolatevocabulary where type = 'specific_host') v,
@@ -402,9 +392,10 @@ select v.term, v.term as internal, p.parent as parentTerm
     <sql>
     <![CDATA[
 select distinct initcap(v.term) as term, v.term as internal
-from apidb.isolatevocabulary v 
+from apidb.isolatevocabulary v, apidb.isolatemapping m 
 where v.type = 'isolation_source'
-order by term asc
+and   v.isolate_vocabulary_id = m.isolate_vocabulary_id
+order by v.term asc
     ]]>
     </sql>
     </sqlQuery>
@@ -424,10 +415,11 @@ order by term asc
     <sql>
     <![CDATA[
 select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal
-from apidb.isolatevocabulary v, 
-     (select distinct product AS term from dots.isolatefeature) c
-where v.term = c.term
-and v.type = 'product'
+from   apidb.isolatevocabulary v, apidb.isolatemapping m,
+       (select distinct product AS term from dots.isolatefeature) c
+where  v.term = c.term
+and    v.type = 'product'
+and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
 order by term
     ]]>
     </sql>
@@ -630,14 +622,18 @@ and v.product = 'SAG1'
       <sql>
       <![CDATA[
  select distinct v.term, v.term as internal, initcap(v.parent) as parentTerm
- from   apidb.isolatevocabulary v
+ from   apidb.isolatevocabulary v, apidb.isolatemapping m
  where  v.type = 'geographic_location'
-and parent is not null
-union
-select distinct initcap(parent) as term, initcap(parent) as internal, '' as parentterm 
-from apidb.isolatevocabulary where type = 'geographic_location' and parent is not null
-union
-select 'Unknown' as term, 'Unknown' as internal, '' as parentTerm from dual
+ and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
+ and    v.parent is not null
+ union
+ select distinct initcap(v.parent) as term, initcap(v.parent) as internal, '' as parentterm 
+ from   apidb.isolatevocabulary v, apidb.isolatemapping m
+ where  v.type = 'geographic_location' 
+ and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
+ and    parent is not null
+ union
+ select 'Unknown' as term, 'Unknown' as internal, '' as parentTerm from dual
       ]]>
       </sql>
     </sqlQuery>
