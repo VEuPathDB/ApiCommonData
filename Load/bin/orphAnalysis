@@ -21,12 +21,16 @@ my $dataDir = $mgr->{dataDir};
 
 
 
-&makeGenomicDownloadFile($mgr, "Tannulata", "TannulataGenomic", "TannulataGenome", "2005", "ExternalNASequence","psu","","eupathDB");
+&makeGenomicDownloadFile($mgr, "Tannulata", "TannulataGenomic", "TannulataGenome", "2005", "ExternalNASequence","psu","","EuPathDB");
 
-&makeGenomicDownloadFile($mgr, "Tparva", "TparvaGenomic", "TparvaGenome", "2005", "ExternalNASequence","psu","","eupathDB");
+&makeGenomicDownloadFile($mgr, "Tparva", "TparvaGenomic", "TparvaGenome", "2005", "ExternalNASequence","psu","","EuPathDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tparva","TparvaGenomic_eupathDB-1.0.fasta","TparvaGenomics","-n -t release-1.0/TparvaGenomics","eupathDB");
+&xdformatDownloadFileForBlastSite($mgr,"Tparva","TparvaGenomic_EuPathDB-2.1.fasta","TparvaGenomics","-n -t release-2.1/TparvaGenomics","EuPathDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tannulata","TannulataGenomic_eupathDB-1.0.fasta","TannulataGenomics","-n -t release-1.0/TannulataGenomics","eupathDB");
+&xdformatDownloadFileForBlastSite($mgr,"Tannulata","TannulataGenomic_EuPathDB-2.1.fasta","TannulataGenomics","-n -t release-2.1/TannulataGenomics","EuPathDB");
+
+&makeAllESTDownloadFile($mgr, "", "EST", "EuPathDB"); # may want to switch to using makeESTDownloadFile, especially if separating Apicomplexa and Kinetoplastid
+
+&xdformatDownloadFileForBlastSite($mgr,"","EST_EuPathDB-2.1.fasta","OtherESTs","-n -t release-2.1/OtherESTs","EuPathDB"); 
 
 $mgr->goodbye("Pipeline complete!\n");
