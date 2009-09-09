@@ -1366,6 +1366,35 @@ EOF
 
 }
 
+sub makeAllESTDownloadFile {
+  my ($mgr, $species, $name, $project) = @_;
+
+  my $sql = <<"EOF";
+    SELECT x.source_id
+           ||' | organism='||
+           replace(tn.name, ' ', '_')
+           ||' | length='||
+           x.length as defline,
+           x.sequence
+           FROM dots.externalnasequence x,
+                sres.taxonname tn,
+                sres.taxon t,
+                sres.sequenceontology so
+           WHERE t.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND t.taxon_id = x.taxon_id
+            AND x.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = '$name'
+EOF
+
+    my $fileName = $species . ucfirst($name);
+
+    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
+
+}
+
+
+
 sub makeTranscriptDownloadFile {
     my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource,$genomeExtDb, $genomeExtDbVer,$project) = @_;
 
