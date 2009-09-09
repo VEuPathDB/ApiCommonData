@@ -891,7 +891,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
         <flatVocabParam name="go_term"
                      queryRef="GeneVQ.GoTermList"
                      prompt="GO Term or GO ID"
-                     displayType="typeAhead">
+                     displayType="typeAhead"
+                     skipValidation="true">
             <help>Enter a GO ID (e.g. "GO:0003824") or GO Term (e.g. "catalytic activity").  Asterisks can be used as wildcard characters in a GO Term (e.g. "*kinase*")</help>
         </flatVocabParam>
 
@@ -6493,7 +6494,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
 
             <sql>
                SELECT DISTINCT gp.go_id AS internal,
-                               gp.go_id || ' : ' || gp.name AS term,
+                               gp.go_id AS term,
                                gp.go_id || ' : ' || gp.name AS display
                FROM sres.GoTerm gp
             </sql>
@@ -6517,7 +6518,8 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                                 dr.primary_identifier || ' : ' ||
                                 dr.secondary_identifier AS term,
                                 dr.primary_identifier || ' : ' ||
-                                dr.secondary_identifier AS display
+                                dr.secondary_identifier || ' ' ||
+                                dr.remark AS display
                 FROM dots.DbRefAaFeature draf, sres.DbRef dr,
                      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
                 WHERE draf.db_ref_id = dr.db_ref_id
