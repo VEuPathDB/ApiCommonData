@@ -202,11 +202,10 @@
                                                 'Leishmania major', 34,
                                                 'Trypanosoma cruzi strain CL Brener', 35
                                   )
-                                                    ) AS source_id,
-                      ga.project_id
+                                                    ) AS source_id 
                       FROM $$gene_answer$$ ca, apidb.geneattributes ga
                       WHERE ga.source_id = ca.source_id
-                      GROUP BY ga.orthomcl_name,ga.project_id
+                      GROUP BY ga.orthomcl_name
                 ]]>
             </sql>
         </sqlQuery>
