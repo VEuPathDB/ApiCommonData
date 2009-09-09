@@ -99,11 +99,8 @@
             <column name="sequence" />
             <sql>
                 <![CDATA[
-                SELECT ens.source_id, ens.sequence,
-                       '@PROJECT_ID@' as project_id
-                FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
-                WHERE so.term_name = 'EST'
-                  AND so.sequence_ontology_id = ens.sequence_ontology_id
+                  SELECT source_id, '@PROJECT_ID@' as project_id, sequence
+                  FROM   apidb.estSequence
                 ]]>
            </sql>
         </sqlQuery>

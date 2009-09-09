@@ -73,13 +73,8 @@
             <column name="project_id"/>
             <column name="sequence"/>
             <sql excludeProjects="EuPathDB">
-               SELECT nf.source_id,ts.sequence, '@PROJECT_ID@' as project_id
-               FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
-                    dots.NaFeature nf, sres.SequenceOntology so
-               WHERE nf.na_feature_id = tf.na_feature_id
-                 AND ts.aa_sequence_id = tf.aa_sequence_id
-                 AND so.term_name = 'ORF'
-                 AND nf.sequence_ontology_id = so.sequence_ontology_id
+               SELECT source_id, '@PROJECT_ID@' as project_id, sequence
+               FROM   apidb.orfSequence
            </sql>
 
 

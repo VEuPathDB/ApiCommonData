@@ -86,9 +86,8 @@
         <column name="sequence"/>
      <sql>
       <![CDATA[ 
-        select a.source_id, '@PROJECT_ID@' as project_id, 
-               a.sequence 
-        from dots.assembly a 
+         SELECT source_id, '@PROJECT_ID@' as project_id, sequence
+         FROM   apidb.assemblySequence
      ]]>
     </sql>
  <sql includeProjects="EuPathDB">
