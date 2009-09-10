@@ -171,41 +171,45 @@
             <column name="project_id"/>
             <sql>
                 <![CDATA[
+              SELECT orthoreps.source_id,ga2.project_id 
+              FROM (
                     SELECT  MAX(ga.source_id) KEEP (DENSE_RANK FIRST ORDER BY 
                             DECODE(ga.organism, 
-                                                'Cryptosporidium parvum Iowa II', 1, 
-                                                'Cryptosporidium hominis', 2,
-                                                'Cryptosporidium muris', 3,
-                                                'Cryptosporidium parvum', 4,
-         
-                                                'Giardia lamblia ATCC 50803', 5, 
+                                                'Plasmodium falciparum 3D7',           1, 
+                                                'Plasmodium berghei strain ANKA',      2, 
+                                                'Plasmodium chabaudi chabaudi',        3,
+                                                'Plasmodium knowlesi strain H',        4,
+                                                'Plasmodium vivax SaI-1',              5,  
+                                                'Plasmodium yoelii yoelii str. 17XNL', 6, 
 
-                                                'Plasmodium falciparum 3D7', 10, 
-                                                'Plasmodium berghei strain ANKA', 11, 
-                                                'Plasmodium chabaudi chabaudi', 12,
-                                                'Plasmodium knowlesi strain H', 13,
-                                                'Plasmodium vivax SaI-1', 14,  
-                                                'Plasmodium yoelii yoelii str. 17XNL', 15, 
+                                                'Trypanosoma brucei TREU927',         11, 
+                                                'Leishmania braziliensis',            12,
+                                                'Leishmania infantum',                13,
+                                                'Leishmania major',                   14,
+                                                'Trypanosoma cruzi strain CL Brener', 15,
 
+                                                'Cryptosporidium parvum Iowa II', 21, 
+                                                'Cryptosporidium hominis',        22,
+                                                'Cryptosporidium muris',          23,
+                                                'Cryptosporidium parvum',         24,
 
-                                                'Toxoplasma gondii GT1', 20, 
-                                                'Toxoplasma gondii RH', 21, 
-                                                'Toxoplasma gondii ME49', 22, 
-                                                'Toxoplasma gondii VEG', 23, 
-                                                'Neospora caninum', 24, 
+                                                'Toxoplasma gondii GT1',  31, 
+                                                'Toxoplasma gondii RH',   32, 
+                                                'Toxoplasma gondii ME49', 33, 
+                                                'Toxoplasma gondii VEG',  34, 
+                                                'Neospora caninum',       35, 
 
-                                                'Trichomonas vaginalis G3', 25, 
+                                                'Giardia lamblia ATCC 50803', 41, 
 
-                                                'Trypanosoma brucei TREU927', 30, 
-                                                'Leishmania braziliensis', 31,
-                                                'Leishmania infantum', 33,
-                                                'Leishmania major', 34,
-                                                'Trypanosoma cruzi strain CL Brener', 35
+                                                'Trichomonas vaginalis G3',   51
                                   )
                                                     ) AS source_id 
-                      FROM $$gene_answer$$ ca, apidb.geneattributes ga
+                      FROM $$gene_answer$$ ca, apidb.geneattributes ga 
                       WHERE ga.source_id = ca.source_id
-                      GROUP BY ga.orthomcl_name
+                      GROUP BY ga.orthomcl_name  ) orthoreps, apidb.geneattributes ga2
+
+               WHERE orthoreps.source_id = ga2.source_id
+
                 ]]>
             </sql>
         </sqlQuery>
