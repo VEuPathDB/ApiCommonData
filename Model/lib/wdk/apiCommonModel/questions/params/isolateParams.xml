@@ -334,7 +334,7 @@
     <column name="parentTerm"/>
     <sql>
     <![CDATA[
- select distinct v.term, v.term as internal, initcap(v.parent) as parentTerm
+ select distinct initcap(v.term) as term, initcap(v.term) as internal, initcap(v.parent) as parentTerm
  from   apidb.isolatevocabulary v, apidb.isolatemapping m
  where  v.type = 'specific_host'
  and   v.isolate_vocabulary_id = m.isolate_vocabulary_id
@@ -622,11 +622,10 @@ and v.product = 'SAG1'
 
       <sql>
       <![CDATA[
- select distinct v.term, v.term as internal, initcap(v.parent) as parentTerm
+ select distinct initcap(v.term) as term, initcap(v.term) as internal, initcap(v.parent) as parentTerm
  from   apidb.isolatevocabulary v, apidb.isolatemapping m
  where  v.type = 'geographic_location'
  and    v.isolate_vocabulary_id = m.isolate_vocabulary_id
- and    v.parent is not null
  union
  select distinct initcap(v.parent) as term, initcap(v.parent) as internal, '' as parentterm 
  from   apidb.isolatevocabulary v, apidb.isolatemapping m
