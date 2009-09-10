@@ -414,7 +414,8 @@ order by v.term asc
     <column name="term"/>
     <sql>
     <![CDATA[
-select v.term as display, apidb.alphanumeric_str(v.term) as term, v.term as internal
+select CASE WHEN v.parent='RFLP' THEN v.parent || ' - ' || v.term ELSE v.term END AS display, 
+       apidb.alphanumeric_str(v.term) as term, v.term as internal
 from   apidb.isolatevocabulary v, apidb.isolatemapping m,
        (select distinct product AS term from dots.isolatefeature) c
 where  v.term = c.term
