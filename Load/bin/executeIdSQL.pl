@@ -33,7 +33,8 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
 
-my $stmt = $dbh->prepareAndExecute($idSQL);
+my $stmt = $dbh->prepare($idSQL);
+$stmt ->execute();
 $stmt->finish();
 $dbh->commit;
 print "Deleted rows from table.\n";
