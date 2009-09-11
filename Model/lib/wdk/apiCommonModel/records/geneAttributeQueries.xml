@@ -707,6 +707,7 @@
             <column name="graph_mexp128"/>
             <column name="graph_kappe"/>
             <column name="graph_daily"/>
+            <column name="graph_newbold"/>
             <column name="graph_zb_pvivax"/>
             <column name="graph_pf_rna_seq"/>
             <column name="graph_westenberger"/>
@@ -728,6 +729,7 @@
                       NVL(MAX(graph_kappe), 0) AS graph_kappe,
                       NVL(MAX(graph_westenberger), 0) AS graph_westenberger,
                       NVL(MAX(graph_winzeler_py_mixed), 0) AS graph_winzeler_py_mixed,
+                      NVL(MAX(graph_newbold), 0) AS graph_newbold,
                       NVL(MAX(graph_daily), 0) AS graph_daily
                FROM apidb.PlasmoExpressionGraphs egs, apidb.geneattributes ga
                 where ga.source_id = egs.source_id (+)
