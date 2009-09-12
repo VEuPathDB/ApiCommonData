@@ -950,8 +950,7 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Ortholog pattern -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologPattern" includeProjects="PlasmoDB,ToxoDB,CryptoDB,GiardiaDB,TriTrypDB"
-              isCacheable="true">
+    <sqlQuery name="GenesByOrthologPattern" isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
           <paramValue name="profile_pattern">%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%</paramValue>
@@ -985,6 +984,12 @@ sns2.external_database_release_id=extr.external_database_release_id
           <paramValue name="included_species">fru</paramValue>
           <paramValue name="excluded_species">Fungi</paramValue>
           <paramValue name="organism">Toxoplasma gondii</paramValue>
+        </testParamValues>
+
+        <testParamValues includeProjects="TrichDB">
+          <paramValue name="included_species">fru</paramValue>
+          <paramValue name="excluded_species">Fungi</paramValue>
+          <paramValue name="organism">Trichomonas vaginalis</paramValue>
         </testParamValues>
 
         <paramRef ref="geneParams.profile_pattern"/>
