@@ -1834,6 +1834,12 @@ CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_i
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.OrfAttr_location_idx&1 ON apidb.OrfAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.EstAttributes">
