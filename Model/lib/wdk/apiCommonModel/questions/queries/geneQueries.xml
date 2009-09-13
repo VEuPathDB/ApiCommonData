@@ -950,7 +950,8 @@ sns2.external_database_release_id=extr.external_database_release_id
   <!-- Ortholog pattern -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologPattern" isCacheable="true">
+    <sqlQuery name="GenesByOrthologPattern" excludeProjects="EuPathDB"
+          isCacheable="true">
 
         <testParamValues includeProjects="CryptoDB">
           <paramValue name="profile_pattern">%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%</paramValue>
