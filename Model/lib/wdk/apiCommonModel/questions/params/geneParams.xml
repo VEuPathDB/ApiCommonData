@@ -5882,6 +5882,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
       <flatVocabParam name="domain_database"
                      queryRef="GeneVQ.DomainDatabase"
                      prompt="Domain Database"
+                     quote="false"
                      multiPick="false">
         <help>
              Choose one of the constituent databases of InterPro.
@@ -5893,7 +5894,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                      queryRef="GeneVQ.DomainAccession"
                      prompt="Domain"
                      displayType="typeAhead"
-                     dependedParam="domain_database">
+                     dependedParamRef="geneParams.domain_database">
             <help>Start typing and then choose a domain from the list of domains that come up. As you type the list gets narrowed to match only those entries that match what you have typed.</help>
         </flatVocabParam>
 
@@ -6527,7 +6528,7 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
                   AND dr.external_database_release_id
                       = edr.external_database_release_id
                   AND edr.external_database_id = ed.external_database_id
-                  AND ed.name IN ($$depended_value$$)
+                  AND edr.external_database_release_id IN ($$depended_value$$)
             </sql>
 
         </sqlQuery>

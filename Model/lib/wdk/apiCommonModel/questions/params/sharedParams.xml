@@ -64,6 +64,7 @@
                   Used to pass the value of a depended param into the query
                   for a dependent flat vocab param.
              </help>
+         <suggest allowEmpty="true" />
        </stringParam>
 
    <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -772,7 +773,7 @@
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
                      multiPick="false"
-                     dependedParam="organism">
+                     dependedParamRef="organismParams.organism">
              <help>
                 <![CDATA[
                 Select chromosome.  <B>NOTE:</B> Not all organisms have the same number of chromosomes.  
@@ -791,7 +792,7 @@
      <enumParam name="chromosomeOptional" excludeProjects="EuPathDB,GiardiaDB,TrichDB,TriTrypDB"
                       prompt="Chromosome"
                       multiPick="false"
-                      dependedParam="organism"
+                      dependedParamRef="organismParams.organism"
                       default="choose one">
 
        <enumList includeProjects="PlasmoDB">   
