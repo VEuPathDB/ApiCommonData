@@ -767,8 +767,6 @@
      </stringParam>
 
 
-
-
      <flatVocabParam name="chromosomeOptional" includeProjects="TriTrypDB"
                      prompt="Chromosome"
                      queryRef="SharedVQ.TrypChromosome"
@@ -787,6 +785,8 @@
                 ]]>
               </help>
      </flatVocabParam>
+
+
 
 
      <enumParam name="chromosomeOptional" excludeProjects="EuPathDB,GiardiaDB,TrichDB,TriTrypDB"
@@ -2187,7 +2187,28 @@ by the sequence generator.</help>
   <querySet name="SharedVQ" queryType="vocab">
 
         <sqlQuery name="TrypChromosome" includeProjects="TriTrypDB" isCacheable="true">
-            <paramRef ref="sharedParams.depended_value"/> 
+            <paramRef ref="sharedParams.depended_value" quote="false"/> 
+            <column name="internal"/>
+            <column name="term"/>
+            <sql>
+              select * from (
+              select distinct chromosome as term, chromosome_order_num as internal
+              from apidb.SEQUENCEATTRIBUTES sa,sres.taxon tn
+              where sa.ncbi_tax_id = tn.ncbi_tax_id
+              and tn.taxon_id in ($$depended_value$$)
+              and chromosome is not null
+              union 
+              select 'Choose chromosome' as term,0 as internal from dual)
+              order by internal asc
+            </sql>
+        </sqlQuery>
+
+        <processQuery name="TrypChromosome" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+            <wsColumn name="internal" width="32" wsName="internal"/>
+            <wsColumn name="term" width="32" wsName="term"/>
+        </processQuery>
+
+        <sqlQuery name="TrypChromosomePortal" includeProjects="TriTrypDB" isCacheable="true"> 
             <column name="internal"/>
             <column name="term"/>
             <sql>
@@ -2202,10 +2223,11 @@ by the sequence generator.</help>
             </sql>
         </sqlQuery>
 
-  <processQuery name="TrypChromosome" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+         <processQuery name="TrypChromosomePortal" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
             <wsColumn name="internal" width="32" wsName="internal"/>
             <wsColumn name="term" width="32" wsName="term"/>
         </processQuery>
+
 
         <sqlQuery name="SnpStrainA" includeProjects="PlasmoDB,ToxoDB">
           <column name="internal"/>
