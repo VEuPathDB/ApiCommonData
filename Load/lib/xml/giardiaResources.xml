@@ -617,6 +617,31 @@ Frequencies of SAGE tags that were observed in studies using RNA from Giardia la
         </description>
     </resource>
 
+
+<resource resource = "Giardia_SageTag_Count_percentages" 
+ version="1.0"
+            displayName="Giardia lamblia SAGE Tags counts percentages"
+            organisms="G. lamblia"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Giardia lamblia SAGE Tags counts percentages"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Giardia lamblia SAGE Tags counts percentages"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/sage/freq/expression_profile"
+            contact = "Andrew G. McArthur"
+            email = "amcarthur@mac.com"
+            institution = "Andrew McArthur Consulting"
+      />
+<pluginArgs>--inputDir @downloadDir@/Giardia_SageTag_Count_percentages/expression_profile/ --configFile @downloadDir@/Giardia_SageTag_Count_percentages/expression_profile/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Percentage profile of the Giardia lamblia SAGE Tags counts.
+          ]]>
+    </description>
+  </resource>
+
+
   <resource resource="CorrectGeneAliases" 
         version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
