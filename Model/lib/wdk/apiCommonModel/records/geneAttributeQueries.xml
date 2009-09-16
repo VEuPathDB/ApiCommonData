@@ -507,7 +507,7 @@
 
 
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" excludeProjects="EuPathDB">
+        <sqlQuery name="ProteinSequence" displayName="Protein Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
@@ -518,26 +518,6 @@
             ]]>
             </sql>
         </sqlQuery>
-
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence" includeProjects="EuPathDB">
-            <column name="source_id"/>
-            <column name="project_id"/>
-            <column name="protein_sequence"/>
-            <sql>
-            <![CDATA[
-                  SELECT g.source_id, '@PROJECT_ID@' as project_id, g.sequence as protein_sequence 
-                  FROM dots.TranslatedAASequence g, 
-                       sres.SequenceOntology s, 
-                       sres.ExternalDatabaseRelease extr, 
-                       sres.ExternalDatabase ext
-                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
-                    AND g.external_database_release_id=extr.external_database_release_id
-                    AND s.term_name = 'protein'
-                    AND extr.external_database_id=ext.external_database_id
-            ]]>
-            </sql>
-        </sqlQuery>
-
 
         <sqlQuery name="NaSequenceDatabaseName">
             <column name="source_id"/>
@@ -592,8 +572,7 @@
             </sql>
         </sqlQuery>
 -->
-        <sqlQuery name="TranscriptSequence"  excludeProjects="EuPathDB" 
-                       displayName="RNA Sequence">
+        <sqlQuery name="TranscriptSequence" displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="transcript_sequence"/>
@@ -603,25 +582,6 @@
              FROM   apidb.transcriptSequence
             ]]>
             </sql>
-        </sqlQuery>
-
-        <sqlQuery name="TranscriptSequence"  includeProjects="EuPathDB">
-            <column name="source_id"/>
-            <column name="project_id"/>
-            <column name="transcript_sequence"/>
-            <sql>
-                 (SELECT g.source_id, ext.name as project_id, g.sequence as transcript_sequence 
-                  from dots.SplicedNaSequence g, 
-                       sres.SequenceOntology s, 
-                       sres.ExternalDatabaseRelease extr, 
-                       sres.ExternalDatabase ext
-                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
-                    AND s.term_name = 'processed_transcript'
-                    AND g.external_database_release_id=extr.external_database_release_id 
-                    AND extr.external_database_id=ext.external_database_id
-                 )
- 
-           </sql>
         </sqlQuery>
 
 
@@ -656,8 +616,7 @@
 -->
 
 
-        <sqlQuery name="CDS" excludeProjects="EuPathDB" 
-                       displayName="RNA Sequence">
+        <sqlQuery name="CDS" displayName="RNA Sequence">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="cds"/>
@@ -669,25 +628,6 @@
             </sql>
         </sqlQuery>
 
-
-        <sqlQuery name="CDS"  includeProjects="EuPathDB">
-            <column name="source_id"/>
-            <column name="project_id"/>
-            <column name="cds"/>
-            <sql>
-                 (SELECT g.source_id, ext.name as project_id, g.sequence as cds
-                  from dots.SplicedNaSequence g, 
-                       sres.SequenceOntology s, 
-                       sres.ExternalDatabaseRelease extr, 
-                       sres.ExternalDatabase ext
-                  WHERE g.sequence_ontology_id = s.sequence_ontology_id
-                    AND s.term_name = 'CDS'
-                    AND g.external_database_release_id=extr.external_database_release_id 
-                    AND extr.external_database_id=ext.external_database_id
-                 )
- 
-           </sql>
-        </sqlQuery>
 
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
        <!-- plasmo expression graphs -->  
