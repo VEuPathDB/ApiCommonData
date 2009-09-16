@@ -1505,90 +1505,28 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
         <paramRef ref="organismParams.organism" queryRef="organismVQ.withGenes" excludeProjects="EuPathDB"/>
         <paramRef ref="organismParams.localorganism"  includeProjects="EuPathDB"/>
-        <paramRef ref="geneParams.single_gene_id" excludeProjects="ToxoDB"/>
-        <paramRef ref="geneParams.single_gene_id" includeProjects="ToxoDB" default="TGME49_053730" />
+        <paramRef ref="geneParams.single_gene_id"/>
         <column name="project_id"/>
         <column name="source_id"/>
-        <sql includeProjects="ToxoDB">
-            <![CDATA[
-            SELECT gf.source_id,'@PROJECT_ID@' AS project_id FROM
-            (select gb.SOURCE_ID
-            from apidb.GeneAttributes ga, apidb.GeneAttributes gb, apidb.GeneId gi, sres.taxon tn
-            where gi.id = lower($$single_gene_id$$)
-            AND ga.source_id = gi.gene
-            AND ga.gene_id = gb.gene_id
-            AND ga.organism != gb.organism
-            AND gb.ncbi_tax_id = tn.ncbi_tax_id
-            AND tn.taxon_id IN ($$organism$$)
 
-            UNION
-             SELECT
-             gf.source_id
-             FROM 
-             apidb.GeneAttributes ga,
-             apidb.GeneAttributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             apidb.GeneId gi,
-             dots.NaSequence ns
-             WHERE gi.id = lower($$single_gene_id$$) 
-             AND ga.source_id = gi.gene
-             AND  ga.gene_id = gb.gene_id
-             AND  ssg.sequence_id = gb.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND ossg.sequence_id != ssg.sequence_id
-             AND  gf.na_feature_id = ossg.sequence_id
-             AND gf.na_sequence_id = ns.na_sequence_id
-             AND ns.taxon_id IN ($$organism$$)
-             UNION
-             SELECT
-             gb.source_id
-             FROM 
-             apidb.geneattributes ga,
-             apidb.geneattributes gb,
-             dots.SequenceSequenceGroup ssg,
-             dots.SequenceSequenceGroup ossg,
-             dots.GeneFeature gf,
-             apidb.GeneId gi,
-             sres.taxon tn
-             WHERE gi.id = lower($$single_gene_id$$)  
-             AND gf.source_id = gi.gene
-             AND  ssg.sequence_id = gf.na_feature_id
-             AND  ossg.sequence_group_id = ssg.sequence_group_id
-             AND  ossg.sequence_id != ssg.sequence_id
-             AND  ga.na_feature_id = ossg.sequence_id
-             AND  gb.gene_id = ga.gene_id
-             AND gb.ncbi_tax_id = tn.ncbi_tax_id
-             AND tn.taxon_id IN ($$organism$$)) gf
-             ORDER BY gf.source_id
+        <sql excludeProjects="EuPathDB">
+            <![CDATA[
+                SELECT gattr.source_id, project_id
+                FROM apidb.geneattributes gattr, dots.nasequence nas
+                WHERE orthomcl_name in (
+                  SELECT orthomcl_name 
+                  FROM   apidb.geneAttributes ga, apidb.geneid gi 
+                  WHERE  gi.id = lower($$single_gene_id$$)
+                  AND    ga.source_id = gi.gene  ) 
+                AND gattr.na_sequence_id = nas.na_sequence_id
+                AND nas.taxon_id IN ($$organism$$)
+                ORDER BY project_id, source_id
            ]]>
        </sql>
 
-<!-- TODO: Check TriTrypDB for this query -->
-        <sql includeProjects="PlasmoDB,CryptoDB,TriTrypDB">
-            <![CDATA[
-                SELECT DISTINCT gf2.source_id, '@PROJECT_ID@' as project_id
-                FROM apidb.geneattributes gf1, dots.SequenceSequenceGroup ssg1,
-                     dots.SequenceSequenceGroup ssg2, apidb.geneattributes gf2,
-                     core.TableInfo ti,apidb.GeneId gi, dots.NaSequence ns
-                WHERE gi.id = lower($$single_gene_id$$)
-                  AND gf1.source_id = gi.gene 
-                  AND gf1.na_feature_id = ssg1.sequence_id
-                  AND ssg1.source_table_id = ti.table_id
-                  AND ssg1.sequence_group_id = ssg2.sequence_group_id
-                  AND ssg2.source_table_id = ti.table_id
-                  AND ssg2.sequence_id = gf2.na_feature_id
-                  AND ti.name = 'GeneFeature'
-                  AND gf2.source_id != gf1.source_id
-                  AND gf2.na_sequence_id = ns.na_sequence_id
-                  AND ns.taxon_id IN ($$organism$$)
-                ORDER BY gf2.source_id
-           ]]>
-       </sql>
-<sql includeProjects="EuPathDB">
+       <sql includeProjects="EuPathDB">
+       <![CDATA[
 
-<![CDATA[
                 SELECT DISTINCT snas2.source_id, ext.name as project_id 
                 FROM dots.splicednasequence snas1, dots.SequenceSequenceGroup ssg1,
                      dots.SequenceSequenceGroup ssg2, dots.splicednasequence snas2,
@@ -1610,30 +1548,6 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
                  ORDER by project_id,snas2.source_id
 
            ]]>
-
-
-<!--
-            <![CDATA[
-                SELECT DISTINCT snas2.source_id, ext.name as project_id 
-                FROM dots.splicednasequence snas1, dots.SequenceSequenceGroup ssg1,
-                     dots.SequenceSequenceGroup ssg2, dots.splicednasequence snas2,
-                     core.TableInfo ti,
-                       sres.ExternalDatabaseRelease extr, 
-                       sres.ExternalDatabase ext
-                WHERE snas1.source_id = $$single_gene_id$$ 
-                  AND snas1.na_sequence_id = ssg1.sequence_id
-                  AND ssg1.source_table_id = ti.table_id
-                  AND ssg1.sequence_group_id = ssg2.sequence_group_id
-                  AND ssg2.source_table_id = ti.table_id
-                  AND ssg2.sequence_id = snas2.na_sequence_id
-                  AND ti.name = 'SplicedNASequence'
-                  AND snas2.source_id != snas1.source_id
-                    AND snas2.external_database_release_id=extr.external_database_release_id
-                    AND extr.external_database_id=ext.external_database_id
-                 order by project_id,snas2.source_id
-
-           ]]>
--->
        </sql>
     </sqlQuery>
 
