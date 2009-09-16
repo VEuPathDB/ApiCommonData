@@ -3792,7 +3792,7 @@ FROM apidb.GeneAttributes gf, dots.Transcript t, dots.SplicedNaSequence sns,
      dots.TranslatedAaFeature tf, sres.TaxonName tn
 WHERE t.parent_id = gf.na_feature_id
   AND sns.na_sequence_id = t.na_sequence_id
-  AND t.na_feature_id = tf.na_feature_id(+)
+  AND t.na_feature_id = tf.na_feature_id
   AND sns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
       ]]>
@@ -3838,8 +3838,8 @@ SELECT ga.source_id,
 FROM apidb.GeneAttributes ga, dots.Transcript t, dots.TranslatedAaFeature taf,
      dots.TranslatedAaSequence tas, sres.TaxonName tn
 WHERE t.parent_id = ga.na_feature_id
-  AND t.na_feature_id = taf.na_feature_id(+)
-  AND taf.aa_sequence_id = tas.aa_sequence_id(+)
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
   AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
       ]]>
