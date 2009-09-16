@@ -507,13 +507,13 @@
 
 
 
-        <sqlQuery name="ProteinSequence" displayName="Protein Sequence">
+        <sqlQuery name="ProteinSequence">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT source_id, '@PROJECT_ID@' as project_id, sequence AS protein_sequence
+            SELECT source_id, project_id, sequence AS protein_sequence
             FROM   apidb.proteinSequence
             ]]>
             </sql>
@@ -572,13 +572,13 @@
             </sql>
         </sqlQuery>
 -->
-        <sqlQuery name="TranscriptSequence" displayName="RNA Sequence">
+        <sqlQuery name="TranscriptSequence">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="transcript_sequence"/>
             <sql>
             <![CDATA[
-             SELECT source_id, '@PROJECT_ID@' as project_id, sequence AS transcript_sequence
+             SELECT source_id, project_id, sequence AS transcript_sequence
              FROM   apidb.transcriptSequence
             ]]>
             </sql>
@@ -616,13 +616,13 @@
 -->
 
 
-        <sqlQuery name="CDS" displayName="RNA Sequence">
+        <sqlQuery name="CDS">
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="cds"/>
             <sql>
             <![CDATA[
-              SELECT source_id, '@PROJECT_ID@' as project_id, sequence AS cds
+              SELECT source_id, project_id, sequence AS cds
               FROM   apidb.codingSequence
             ]]>
             </sql>
