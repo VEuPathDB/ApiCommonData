@@ -1040,7 +1040,7 @@ sub copy {
   $mgr->runCmd("mkdir -p $dir") if $dir;
   unless (-e $from) { die "$from doesn't exist\n";};
 
-  $mgr->runCmd("cp -a  $from $to");
+  $mgr->runCmd("cp -ar  $from $to");
   $mgr->endStep($signal);
 }
 
@@ -3585,6 +3585,31 @@ dbPassword=$password
 
 }
 
+sub mapOldIdsToNewIds {
+  my ($mgr,$oldSeqFile,$abbrevMap,$dbVersion) = @_;
+
+  my $signal = "mapVersion${dbVersion}IdsToNew";
+
+  my $args = " --oldIdsFastaFile $oldSeqFile --taxonMapFile $abbrevMap --dbVersion $dbVersion";
+
+  $mgr->runPlugin($signal,
+                  "OrthoMCLData::Load::Plugin::InsertOrthomclOldIdsMap", $args,
+		  "Mapping source ids orthoMCL version $dbVersion to this version of OrthoMCL");
+}
+
+sub mapOldGroupsToNewIds {
+  my ($mgr,$oldGroupsFile,$abbrevMap,$dbVersion) = @_;
+
+  my $signal = "mapVersion${dbVersion}GroupsToNewIds";
+
+  my $args = " --oldGroupsFile $oldGroupsFile --taxonMapFile $abbrevMap --dbVersion $dbVersion";
+
+  $mgr->runPlugin($signal,
+                  "OrthoMCLData::Load::Plugin::InsertOrthomclOldGroupsMap", $args,
+		  "Mapping  groups from  orthoMCL version $dbVersion to this version of OrthoMCL");
+}
+
+
 sub  loadAveragedProfiles {
   my ($mgr,$dbSpec,$setName,$loadProfileElement) = @_;
 
@@ -4520,6 +4545,31 @@ sub formatBlastFile {
   $mgr->endStep($signal);
 }
 
+sub formatBlastFileForOrtho {
+  my ($mgr,$file,$fileDir,$link,$arg) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $projRel = $propertySet->getProp('release');
+
+  my $signal = "format$file";
+
+  $signal =~ s/-$projRel//g;
+
+  return if $mgr->startStep("Formatting $file for blast", $signal);
+
+  my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
+
+  my $outputFile1  = "$$fileDir/$file";
+
+  my $fastalink1 = "$mgr->{dataDir}/blastSite/$link";
+
+  $mgr->runCmd("ln -s $outputFile1 $fastalink1");
+  $mgr->runCmd("$blastBinDir/formatdb -i $fastalink1 -p $arg");
+  $mgr->runCmd("rm -rf $fastalink1");
+
+  $mgr->endStep($signal);
+}
 sub xdformatDownloadFileForBlastSite {
   my ($mgr, $species, $inputFile, $formattedFile, $type, $project) = @_;
 
@@ -5859,6 +5909,25 @@ sub copyFilesToComputeCluster {
   my $fileDir = "$mgr->{dataDir}/$dir";
 
   $mgr->{cluster}->copyTo($fileDir, $file, "$mgr->{clusterDataDir}/$dir");
+
+  $mgr->endStep($signal);
+}
+
+sub copyFilesToComputeClusterForOrtho {
+  my ($mgr,$fileDir,$file,$clusterDir) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $clusterServer = $propertySet->getProp('clusterServer');
+
+  my $sig = $file;
+
+  $sig =~ s/\//_/g; 
+
+  my $signal = "${sig}${file}CopiedToCluster";
+
+  return if $mgr->startStep("Copying $file to $clusterDir on $clusterServer", $signal);
+
+  $mgr->{cluster}->copyTo($fileDir, $file, "$clusterDir");
 
   $mgr->endStep($signal);
 }
