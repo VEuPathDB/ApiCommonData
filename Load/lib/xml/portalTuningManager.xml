@@ -24,9 +24,6 @@
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="tritryp"/>
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="amito"/>
 
-<!-- comment out until DoTS tables exist 
-   <externalDependency name="dots.ExternalNaSequence"/>
-  -->
     <unionization>
       <source dblink="crypto"/>
       <source dblink="giardia"/>
@@ -44,6 +41,8 @@
         </query>
       </source>
 
+<!--
+   to be replaced by orphan DB
       <source>
         <query> 
           <![CDATA[           
@@ -61,6 +60,8 @@
         ]]> 
       </query>
     </source>
+ -->
+
     </unionization>
   </tuningTable>
 
@@ -187,10 +188,6 @@
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="tritryp"/>
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="amito"/>
 
-<!-- comment out until DoTS tables exist 
-    <externalDependency name="dots.ExternalNaSequence"/>
-  -->
-
     <unionization>
       <source dblink="crypto"/>
       <source dblink="giardia"/>
@@ -206,6 +203,8 @@
         </query>
       </source>
 
+<!--
+  to be replaced by dblink to orphan DB
       <source>
         <query> 
           <![CDATA[          
@@ -237,6 +236,8 @@
           ]]> 
         </query>
       </source>
+ -->
+
     </unionization>
   </tuningTable>
 
@@ -703,7 +704,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.NoSeq_ix&1 on apidb.NoSequence&1 (source_id, project_id)
+create index apidb.NaSeq_ix&1 on apidb.NaSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1041,6 +1042,124 @@ tablespace indx
       <![CDATA[
 create index apidb.IsolateSeq_ix&1 on apidb.IsolateSequence&1 (source_id, project_id)
 tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.Statistics">
+    <internalDependency name="apidb.AssemblyAttributes" />
+    <internalDependency name="apidb.AssemblySequence" />
+    <internalDependency name="apidb.CodingSequence" />
+    <internalDependency name="apidb.EstAttributes" />
+    <internalDependency name="apidb.EstSequence" />
+    <internalDependency name="apidb.GeneAttributes" />
+    <internalDependency name="apidb.NaSequence" />
+    <internalDependency name="apidb.OrfAttributes" />
+    <internalDependency name="apidb.OrfSequence" />
+    <internalDependency name="apidb.ProteinSequence" />
+    <internalDependency name="apidb.SequenceAttributes" />
+    <internalDependency name="apidb.TranscriptSequence" />
+
+    <sql>
+      <![CDATA[
+create table apidb.Statistics&1 nologging as
+select taxa.project_id, taxa.organism, genes.gene_count,
+       transcripts.transcript_count, cdss.cds_count, proteins.protein_count,
+       sequences.sequence_count, sequences.total_sequence_length,
+       orfs.orf_count, ests.est_count, assemblies.assembly_count
+from (select project_id, organism from apidb.GeneAttributes
+     union
+        select project_id, organism from apidb.SequenceAttributes
+     union
+        select project_id, organism from apidb.EstAttributes
+     union
+        select project_id, organism from apidb.OrfAttributes
+     union
+        select project_id, organism from apidb.AssemblyAttributes
+     union
+        select project_id, organism from apidb.OrfAttributes) taxa,
+     (select project_id, organism, count(*) gene_count
+      from apidb.GeneAttributes
+      group by project_id, organism) genes,
+     (select ga.project_id, ga.organism, count(*) transcript_count
+      from apidb.GeneAttributes ga, apidb.TranscriptSequence ts
+      where ga.source_id = ts.source_id
+        and ga.project_id = ts.project_id
+        and ts.sequence is not null
+      group by ga.project_id, ga.organism) transcripts,
+     (select ga.project_id, ga.organism, count(*) cds_count
+      from apidb.GeneAttributes ga, apidb.CodingSequence seq
+      where ga.source_id = seq.source_id
+        and ga.project_id = seq.project_id
+        and seq.sequence is not null
+      group by ga.project_id, ga.organism) cdss,
+     (select ga.project_id, ga.organism, count(*) protein_count
+      from apidb.GeneAttributes ga, apidb.ProteinSequence seq
+      where ga.source_id = seq.source_id
+        and ga.project_id = seq.project_id
+        and seq.sequence is not null
+      group by ga.project_id, ga.organism) proteins,
+     (select sa.project_id, sa.organism, count(*) sequence_count, sum(length(seq.sequence)) total_sequence_length
+      from apidb.SequenceAttributes sa, apidb.NaSequence seq
+      where sa.source_id = seq.source_id
+        and sa.project_id = seq.project_id
+        and seq.sequence is not null
+      group by sa.project_id, sa.organism) sequences,
+     (select attrs.project_id, attrs.organism, count(*) orf_count
+      from apidb.OrfAttributes attrs, apidb.OrfSequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) orfs,
+     (select attrs.project_id, attrs.organism, count(*) est_count
+      from apidb.EstAttributes attrs, apidb.EstSequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) ests,
+     (select attrs.project_id, attrs.organism, count(*) assembly_count
+      from apidb.AssemblyAttributes attrs, apidb.AssemblySequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) assemblies
+where taxa.project_id = genes.project_id(+)
+  and taxa.organism = genes.organism(+)
+  and taxa.project_id = transcripts.project_id(+)
+  and taxa.organism = transcripts.organism(+)
+  and taxa.project_id = cdss.project_id(+)
+  and taxa.organism = cdss.organism(+)
+  and taxa.project_id = proteins.project_id(+)
+  and taxa.organism = proteins.organism(+)
+  and taxa.project_id = sequences.project_id(+)
+  and taxa.organism = sequences.organism(+)
+  and taxa.project_id = orfs.project_id(+)
+  and taxa.organism = orfs.organism(+)
+  and taxa.project_id = ests.project_id(+)
+  and taxa.organism = ests.organism(+)
+  and taxa.project_id = assemblies.project_id(+)
+  and taxa.organism = assemblies.organism(+)
+order by taxa.project_id, taxa.organism
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.IsolateStatistics">
+    <internalDependency name="apidb.IsolateAttributes" />
+    <internalDependency name="apidb.IsolateSequence" />
+
+    <sql>
+      <![CDATA[
+create table apidb.IsolateStatistics&1 nologging as
+select project_id, genus, count(*) isolate_count
+from (select ia.project_id, substr(ia.organism, 1, instr(ia.organism||' ', ' ') - 1) genus
+      from apidb.IsolateAttributes ia, apidb.IsolateSequence iseq
+      where ia.source_id = iseq.source_id
+        and ia.project_id = iseq.project_id)
+group by project_id, genus
+order by project_id, genus
       ]]>
     </sql>
 
