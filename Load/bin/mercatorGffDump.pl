@@ -5,10 +5,17 @@ use DBI;
 use Bio::Tools::GFF;
 use Bio::SeqFeature::Gene::Exon;
 use CBIL::Util::PropertySet;
+use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($gusConfigFile);
+my ($verbose,$gusConfigFile,$outputDir);
+
+&GetOptions("verbose!" => \$verbose,
+            "outputDir=s" => \$outputDir,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
 unless(-e $gusConfigFile) {
@@ -43,7 +50,7 @@ foreach my  $Taxon_ID (keys (%SpeciesHash)) {
   $species = $SpeciesHash{$Taxon_ID};
   $species =~ s/ /_/g;
 
-  $GFFFile = "$species.gff";
+  $GFFFile = "$outputDir/$species.gff";
 
 
   $GFFString = new  Bio::Tools::GFF(-file => ">$GFFFile",  -gff_version => 3);
