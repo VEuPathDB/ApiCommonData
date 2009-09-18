@@ -136,7 +136,7 @@ sub WriteGFF {
                                                            -source_tag   => $Recordrow[1],
                                                            -display_name => $Recordrow[8],
                                                            -score        => $Recordrow[5],
-                                                           -tag          => {ID => $Recordrow[8]}
+                                                           -tag          => {ID => $Recordrow[8], parent => $Recordrow[8]}
                                                           );
 
     $GFFString->write_feature($SequenceFeature);
