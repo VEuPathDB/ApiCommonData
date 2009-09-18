@@ -699,33 +699,13 @@
 
        <sql includeProjects="EuPathDB">
             <![CDATA[
-SELECT DISTINCT subq.source_id, subq.project_id
-      --, apidb.tab_to_string(CAST(COLLECT(subq.ortholog_id) AS apidb.varchartab),',') as orthologs
-FROM (SELECT distinct sns2.source_id, ext.name as project_id,
-            qr.source_id AS ortholog_id
-     FROM $$gene_result$$ qr,
-           dots.splicednasequence sns1,
-           dots.sequencesequencegroup ssg1,
-           dots.splicednasequence sns2,
-           dots.sequencesequencegroup ssg2,
-           core.tableinfo ti ,   
-           sres.ExternalDatabaseRelease extr,
-           sres.ExternalDatabase ext
-     WHERE qr.source_id = sns1.source_id
-     AND sns1.na_sequence_id = ssg1.sequence_id
-     AND ssg1.source_table_id = ti.table_id
-     AND ssg1.sequence_group_id = ssg2.sequence_group_id
-     AND ssg2.source_table_id = ti.table_id
-     AND ssg2.sequence_id = sns2.na_sequence_id
-     AND sns2.taxon_id IN
-            (select taxon_id from sres.taxon
-            connect by parent_id = prior taxon_id
-            start with taxon_id in ($$localorganism$$))
-     AND ti.name = 'SplicedNASequence'
-     AND
-sns2.external_database_release_id=extr.external_database_release_id
-     AND extr.external_database_id=ext.external_database_id) subq
-     group by subq.source_id, subq.project_id
+            SELECT gb.source_id, gb.project_id as project_id
+              FROM apidb.GENEATTRIBUTES ga, apidb.GENEATTRIBUTES gb,
+                   $$gene_result$$ gr
+             WHERE ga.source_id = gr.source_id 
+               AND gb.orthomcl_name = ga.orthomcl_name
+               AND gb.organism IN ($$localorganism$$)
+             GROUP BY gb.project_id,gb.source_id
            ]]>
        </sql>
        
