@@ -5687,10 +5687,12 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
             <column name="display"/>
 
             <sql>
-               SELECT DISTINCT gp.go_id AS internal,
-                               gp.go_id AS term,
-                               gp.go_id || ' : ' || gp.name AS display
-               FROM sres.GoTerm gp
+               SELECT DISTINCT gt.go_id AS internal,
+                               gt.go_id AS term,
+                               gt.go_id || ' : ' || gt.name AS display
+               FROM   sres.GoTerm gt, sres.gorelationship gr, dots.goassociation ga
+               WHERE  gt.go_term_id = gr.parent_term_id
+               AND    ga.go_term_id = gr.child_term_id
             </sql>
         </sqlQuery>
 
