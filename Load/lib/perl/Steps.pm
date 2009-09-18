@@ -4885,7 +4885,7 @@ sub fixMercatorOffsetsInGFF {
 sub dumpMercatorGff {
     my($mgr, $outputDir) = @_;
     
-    my $signal = "generate gff file for mercator use only.";
+    my $signal = "mercatorGffDump";
     return if $mgr->startStep("$signal", $signal);
     $mgr->runCmd("mkdir -p $mgr->{dataDir}/$outputDir");
     $mgr->runCmd("mercatorGffDump.pl --outputDir $mgr->{dataDir}/$outputDir");
