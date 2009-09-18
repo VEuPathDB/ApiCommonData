@@ -185,11 +185,12 @@ sub dumpNaSequence {
 
   return if $mgr->startStep("Dumping NASequence [$shortName]..", $signal);
   unless(-e $mercatorDir) {
-    $mgr->runCmd("mkdir -p $mercatorDir");
-    $mgr->runCmd("chmod -R g+w $mercatorDir");
+    $mgr->runCmd("mkdir -p $mgr->{dataDir}/$mercatorDir");
+    $mgr->runCmd("chmod -R g+w $mgr->{dataDir}/$mercatorDir");
   }
 
-  my $outputFile = "$mercatorDir/$shortName.fsa";
+
+  my $outputFile = "$mgr->{dataDir}/$mercatorDir/$shortName.fsa";
 
   unless(defined $virtualExtDbName) {
       $virtualExtDbName = '';
@@ -4880,6 +4881,17 @@ sub fixMercatorOffsetsInGFF {
 
 
 }
+
+sub dumpMercatorGff {
+    my($mgr, $outputDir) = @_;
+    
+    my $signal = "generate gff file for mercator use only.";
+    return if $mgr->startStep("$signal", $signal);
+    $mgr->runCmd("mkdir -p $mgr->{dataDir}/$outputDir");
+    $mgr->runCmd("mercatorGffDump.pl --outputDir $mgr->{dataDir}/$outputDir");
+    $mgr->endStep($signal);
+}
+
 sub insertMercatorSyntenySpans {
   my ($mgr, $file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile, $organism) = @_;
 
