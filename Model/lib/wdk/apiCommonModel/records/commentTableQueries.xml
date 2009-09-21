@@ -28,7 +28,7 @@
       </defaultTestParamValues>
 
       <defaultTestParamValues includeProjects="TriTrypDB">
-          <paramValue name="source_id">Tb927.7.4060</paramValue>
+          <paramValue name="source_id">Tb927.8.4640</paramValue>
           <paramValue name="project_id">TriTrypDB</paramValue>
       </defaultTestParamValues>
 
@@ -49,11 +49,9 @@
             <testParamValues includeProjects="ToxoDB">
                <paramValue name="source_id">TGME49_102050</paramValue>
             </testParamValues>
-           <!--Revisit to add an actual source_id.. the user comments table is currently empty-->
-           <!-- <testParamValues includeProjects="TriTrypDB">
-               <paramValue name="source_id"></paramValue>
-            </testParamValues>-->
-            <testParamValues minRows="0" includeProjects="TriTrypDB"/>
+            <testParamValues includeProjects="TriTrypDB">
+               <paramValue name="source_id">Tb927.8.4640</paramValue>
+            </testParamValues>
 
             <column name="source_id"/>
             <column name="project_id"/>
@@ -112,7 +110,7 @@
         </sqlQuery>
 
        <sqlQuery name="IsolateComments" excludeProjects="TrichDB"
-                 isCacheable="false">
+                 isCacheable="false" doNotTest="true">
 
             <column name="source_id"/>
             <column name="project_id"/>
@@ -173,7 +171,9 @@
         <!-- Comment category link -->
         <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
                      
-        <sqlQuery name="CommentCategoryLink" excludeProjects="EuPathDB">
+        <sqlQuery name="CommentCategoryLink" excludeProjects="EuPathDB" 
+                  doNotTest="true">
+
             <column name="source_id"/>
             <column name="project_id"/>
             <column name="category_link"/>
