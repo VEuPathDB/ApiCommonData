@@ -59,7 +59,7 @@ my $argsDeclaration =
               constraintFunc=> undef,
               reqd  => 1,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp,Giardia",
              }),
 
   ];
@@ -416,7 +416,7 @@ my $sql;
 
 
 
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'){
+if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia'){
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
     from apidb.geneattributes ga, dots.genefeature gf
