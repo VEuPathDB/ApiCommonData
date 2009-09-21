@@ -447,13 +447,13 @@
     <!-- EC Number -->  
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-        <stringParam name="ec_number_pattern"
+        <flatVocabParam name="ec_number_pattern"
+                     queryRef="GeneVQ.EcNumberList"
                      prompt="EC Number"
-                     substitute="yes">
+                     displayType="typeAhead"
+                     skipValidation="true">
             <help>Enzyme Commission numbers describe enzymes hierarchically by the class of rections they catalize.  Use '-' as a wildcard in place of numbers to denote partial EC Numbers.</help>
-            <suggest sample="2.7.7.6, 3.5.1.31"
-                     default="2.7.7.-"/>
-        </stringParam>
+        </flatVocabParam>
 
     <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--  -->  
@@ -5680,7 +5680,30 @@ extraordinarily homogenous, with a ~2.5% average polymorphism.
     <!-- Vocab queries  -->
     <!--===========================================================================-->
 
+
     <querySet name="GeneVQ" queryType="vocab">
+        <sqlQuery name="EcNumberList" excludeProjects="EuPathDB">
+            <column name="internal" />
+            <column name="term" />
+            <column name="display"/>
+
+            <sql>
+               SELECT ec.ec_number AS internal,
+                      ec.ec_number AS term,
+                      ec.ec_number || ' (' || ec.description || ')' AS display
+               FROM   dots.aaSequenceEnzymeClass asec, sres.enzymeClass ec
+               WHERE  ec.enzyme_class_id = asec.enzyme_class_id 
+               --    order by ec_number
+            </sql>
+        </sqlQuery>
+
+        <processQuery name="EcNumberList" processName="org.apidb.apicomplexa.wsfplugin.apifed.ApiFedPlugin" includeProjects="EuPathDB">
+            <wsColumn name="internal" width="100" wsName="internal"/>
+            <wsColumn name="term" width="100" wsName="term"/>
+            <wsColumn name="display" width="100" wsName="display"/>
+        </processQuery>
+
+
         <sqlQuery name="GoTermList" excludeProjects="EuPathDB">
             <column name="internal" />
             <column name="term" />
