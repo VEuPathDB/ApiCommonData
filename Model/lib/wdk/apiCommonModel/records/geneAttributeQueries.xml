@@ -513,8 +513,9 @@
             <column name="protein_sequence"/>
             <sql>
             <![CDATA[
-            SELECT source_id, project_id, sequence AS protein_sequence
-            FROM   apidb.proteinSequence
+            SELECT ga.source_id, ga.project_id, ps.sequence AS protein_sequence
+            FROM   apidb.proteinSequence ps, apidb.geneattributes ga
+            WHERE ga.source_id = ps.source_id (+)
             ]]>
             </sql>
         </sqlQuery>
@@ -622,8 +623,9 @@
             <column name="cds"/>
             <sql>
             <![CDATA[
-              SELECT source_id, project_id, sequence AS cds
-              FROM   apidb.codingSequence
+              SELECT ga.source_id, ga.project_id, cs.sequence AS cds
+              FROM   apidb.codingSequence cs, apidb.geneattributes ga
+              WHERE ga.source_id = cs.source_id (+)
             ]]>
             </sql>
         </sqlQuery>
