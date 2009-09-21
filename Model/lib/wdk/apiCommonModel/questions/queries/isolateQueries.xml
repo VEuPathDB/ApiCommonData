@@ -118,10 +118,9 @@
     <sqlQuery name="IsolateByHost" includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB"
               isCacheable="true">
 
-        <testParamValues includeProjects="CryptoDB">
-            <paramValue name="specific_host">Mammals - human</paramValue>
+        <testParamValues includeProjects="CryptoDB,PlasmoDB">
+            <paramValue name="specific_host">Mammals - Human</paramValue>
         </testParamValues>     
-
 
         <paramRef ref="isolateParams.specific_host" queryRef="hostVQ.withIsolates" quote="true"/>
         <paramRef ref="isolateParams.type" includeProjects="ToxoDB,PlasmoDB"/>

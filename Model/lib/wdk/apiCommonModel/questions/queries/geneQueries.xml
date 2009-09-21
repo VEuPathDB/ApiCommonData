@@ -1835,6 +1835,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
     <sqlQuery name="GenesBySageTag" includeProjects="PlasmoDB,ToxoDB,GiardiaDB" 
               isCacheable="true">
+        <testParamValues includeProjects="PlasmoDB">
+           <paramValue name="sage_tag_library">Transcriptional profile of P.falciparum by Serial analysis of gene expression_CQlibrary</paramValue>
+        </testParamValues>
        <paramRef ref="geneParams.sage_tag_library"/>
        <paramRef ref="geneParams.st_max_five_prime_distance"/>
        <paramRef ref="geneParams.st_max_three_prime_distance"/>
@@ -3156,7 +3159,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
              AND ap.protocol_param_id = pp.protocol_param_id
              AND a.analysis_id = ap.analysis_id
              AND de.confidence >= $$confidence$$
-             AND ( $$regulated_dir$$ de.fold_change) >= $$fold_change$$
+             AND $$regulated_dir$$ (de.fold_change) >= $$fold_change$$
              GROUP BY ga.gene
              ORDER BY ga.gene
         ]]>
