@@ -2186,7 +2186,9 @@ by the sequence generator.</help>
 
   <querySet name="SharedVQ" queryType="vocab">
 
-        <sqlQuery name="TrypChromosome" includeProjects="TriTrypDB" isCacheable="true">
+ <!-- TODO:  wdkSanityTest needs to handle dependent params -->
+
+        <sqlQuery name="TrypChromosome" includeProjects="TriTrypDB" isCacheable="true" doNotTest="true">
             <paramRef ref="sharedParams.depended_value" quote="false"/> 
             <column name="internal"/>
             <column name="term"/>

@@ -955,7 +955,6 @@
         </testParamValues>
 
         <testParamValues includeProjects="TriTrypDB">
-          <paramValue name="profile_pattern">%aae:N%atu:N%ban:N%cho:Y%cpa:Y%cpn:N%cte:N%det:N%dra:N%eco:N%gsu:N%mtu:N%pbe:Y%pch:Y%pfa:Y%pkn:Y%pvi:Y%pyo:Y%rba:N%rso:N%syn:N%tgo:Y%the:Y%tma:N%tpa:N%wsu:N%</paramValue>
           <paramValue name="included_species">fru</paramValue>
           <paramValue name="excluded_species">Fungi</paramValue>
           <paramValue name="organism">Leishmania major</paramValue>
@@ -1524,8 +1523,9 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Location -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+ <!-- TODO:  wdkSanityTest needs to handle dependent params -->
     <sqlQuery name="GenesByLocation" excludeProjects="EuPathDB"
-              isCacheable="true">
+              isCacheable="true" doNotTest="true">
 
         <testParamValues includeProjects="PlasmoDB">
           <paramValue name="sequenceId">Pf3D7_05</paramValue>
@@ -1779,8 +1779,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Interpro -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
- <!-- TODO:  Cannot test queries that use dependent params -->
-
+ <!-- TODO:  wdkSanityTest needs to handle dependent params -->
     <sqlQuery name="GenesByInterproDomain" excludeProjects="EuPathDB"  
 			isCacheable="true" doNotTest="true">
 
