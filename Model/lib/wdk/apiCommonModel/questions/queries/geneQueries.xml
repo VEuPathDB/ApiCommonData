@@ -1779,8 +1779,10 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
   <!-- Interpro -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
+ <!-- TODO:  Cannot test queries that use dependent params -->
+
     <sqlQuery name="GenesByInterproDomain" excludeProjects="EuPathDB"  
-			isCacheable="true">
+			isCacheable="true" doNotTest="true">
 
         <testParamValues includeProjects="CryptoDB,PlasmoDB,ToxoDB,GiardiaDB,TrichDB">
            <paramValue name="domain_database">PRODOM</paramValue>
