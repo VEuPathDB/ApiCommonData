@@ -306,6 +306,12 @@
     <sqlQuery name="OrfsByMassSpec" includeProjects="CryptoDB,ToxoDB,GiardiaDB" 
               isCacheable='true'>
         <!-- paramRef ref="organismParams.organism" queryRef="organismVQ.cp-tg"/ -->
+
+        <testParamValues includeProjects="ToxoDB">
+            <paramValue name="orf_ms_assay">Wastling 1-D SDS PAGE</paramValue>
+        </testParamValues>
+
+
         <paramRef ref="orfParams.orf_ms_assay"/>
         <paramRef ref="sharedParams.min_sequence_count"/>
         <paramRef ref="sharedParams.min_spectrum_count"/>
