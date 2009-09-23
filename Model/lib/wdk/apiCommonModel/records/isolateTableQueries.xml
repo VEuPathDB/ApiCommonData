@@ -235,15 +235,17 @@ where f.na_sequence_id = s.na_sequence_id
                    and tn.taxon_id = nas.taxon_id
                    and tn.name_class = 'scientific name'
                  ) sim left join
-                (select i.source_id, g.sequence_id, g.source_id as gene, g.product as gene_product
+                (select i.source_id, seq.source_id as sequence_id, g.source_id as gene, g.product as gene_product
                  from  dots.similarity s, apidb.isolateattributes i,
-                       apidb.geneattributes g, core.tableinfo t
+                       dots.genefeature g, core.tableinfo t, dots.nalocation l, dots.nasequence seq
                  where s.query_id = i.na_sequence_id
                   and s.subject_id = g.na_sequence_id
                   and t.table_id = s.subject_table_id
                   and t.table_id = s.query_table_id
-                  and s.min_subject_start <=  g.end_max
-                  and s.max_subject_end >= g.start_min
+                  and s.min_subject_start <=  l.end_max
+                  and s.max_subject_end >= l.start_min
+                  and l.na_feature_id = g.na_feature_id
+                  and g.na_sequence_id = seq.na_sequence_id
                   and t.name = 'ExternalNASequence'
                   ) gene
                   on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id)
