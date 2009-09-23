@@ -288,14 +288,13 @@ PDB Identifiers
         </description>
     </resource>
 
-
-    <resource resource="dbEST" version="2008-02-05"
+    <resource resource="dbEST" version="2009-08-27"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         extDbName="dbEST"
-        extDbRlsVer="2008-02-05"
+        extDbRlsVer="2009-08-27"
         extDbRlsDescrip="ESTs from the mirrored dbEST"
         dbCommit="@dbcommit@">
         <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/dbEST/dummy"
@@ -303,14 +302,14 @@ PDB Identifiers
         <unpack>mkdir @pipelineDir@/config/</unpack>
         <unpack>getSubTaxa --ncbiTaxId "5740" --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
         <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLog
+inFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs>
         <description>
             <![CDATA[
        The Expressed Sequence Tags database (dbEST) contains sequence data and other information on single-pass cDNA sequences and is a division of GenBank.
           ]]>
         </description>
     </resource>
-    
 
      <resource resource="GiardiaScaffolds" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
