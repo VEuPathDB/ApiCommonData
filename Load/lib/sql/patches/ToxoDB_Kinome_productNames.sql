@@ -6,6 +6,8 @@ update dots.genefeature set label = product, product = 'Rhoptry kinase family pr
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP37 (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGVEG_013410';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP4 / ROP7 (incomplete catalytic triad) ***WARNING: GENE MODEL INACCURATE ***', modification_date = sysdate where source_id = 'TGME49_095110';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP4 / ROP7 (incomplete catalytic triad) ***WARNING: GENE MODEL INACCURATE ***', modification_date = sysdate where source_id = 'TGGT1_075470';
+update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP4 / ROP7 (incomplete catalytic triad) ***WARNING: GENE MODEL INACCURATE ***', modification_date = sysdate where source_id = 'TGVEG_050030';
+update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP4 / ROP7 (incomplete catalytic triad) ***WARNING: GENE MODEL INACCURATE ***', modification_date = sysdate where source_id = 'TGVEG_050040';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family', modification_date = sysdate where source_id = 'TGME49_095760';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family', modification_date = sysdate where source_id = 'TGGT1_054260';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family', modification_date = sysdate where source_id = 'TGVEG_050200';
@@ -140,6 +142,8 @@ update dots.genefeature set label = product, product = 'Casein kinase one (CK1) 
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP38', modification_date = sysdate where source_id = 'TGME49_042110';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP38', modification_date = sysdate where source_id = 'TGGT1_048210';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP29', modification_date = sysdate where source_id = 'TGME49_042230';
+update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP19', modification_date = sysdate where source_id = 'TGME49_042240';
+update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP19', modification_date = sysdate where source_id = 'TGME49_042250';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP19', modification_date = sysdate where source_id = 'TGGT1_047790';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family', modification_date = sysdate where source_id = 'TGME49_042400';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family', modification_date = sysdate where source_id = 'TGGT1_047420';
@@ -303,6 +307,8 @@ update dots.genefeature set label = product, product = 'NEK kinase', modificatio
 update dots.genefeature set label = product, product = 'NEK kinase', modification_date = sysdate where source_id = 'TGGT1_034950';
 update dots.genefeature set label = product, product = 'NEK kinase', modification_date = sysdate where source_id = 'TGVEG_082200';
 update dots.genefeature set label = product, product = 'FIK kinase (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGME49_089050';
+update dots.genefeature set label = product, product = 'FIK kinase (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGGT1_034200';
+update dots.genefeature set label = product, product = 'FIK kinase (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGGT1_034210';
 update dots.genefeature set label = product, product = 'FIK kinase (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGVEG_082930';
 update dots.genefeature set label = product, product = 'Casein kinase one (CK1) TgCK1b', modification_date = sysdate where source_id = 'TGME49_089320';
 update dots.genefeature set label = product, product = 'Casein kinase one (CK1) TgCK1b', modification_date = sysdate where source_id = 'TGGT1_033900';
@@ -423,6 +429,8 @@ update dots.genefeature set label = product, product = 'Rhoptry kinase family pr
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP5 (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGGT1_042710';
 update dots.genefeature set label = product, product = 'Rhoptry kinase family protein ROP5 (incomplete catalytic triad)', modification_date = sysdate where source_id = 'TGVEG_069980';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family ', modification_date = sysdate where source_id = 'TGME49_018720';
+update dots.genefeature set label = product, product = 'CAM kinase, CDPK family ', modification_date = sysdate where source_id = 'TGGT1_029570';
+update dots.genefeature set label = product, product = 'CAM kinase, CDPK family ', modification_date = sysdate where source_id = 'TGGT1_029680';
 update dots.genefeature set label = product, product = 'CAM kinase, CDPK family ', modification_date = sysdate where source_id = 'TGVEG_071120';
 update dots.genefeature set label = product, product = 'PIK3R4 kinase-related protein ', modification_date = sysdate where source_id = 'TGME49_018550';
 update dots.genefeature set label = product, product = 'PIK3R4 kinase-related protein ', modification_date = sysdate where source_id = 'TGGT1_029380';
@@ -454,5 +462,3 @@ update dots.genefeature set label = product, product = 'protein kinase, BUD32 ho
 update dots.genefeature set label = product, product = 'protein kinase, BUD32 homolog', modification_date = sysdate where source_id = 'TGGT1_103460';
 update dots.genefeature set label = product, product = 'protein kinase, BUD32 homolog', modification_date = sysdate where source_id = 'TGVEG_029520';
 commit;
-quit;
-
