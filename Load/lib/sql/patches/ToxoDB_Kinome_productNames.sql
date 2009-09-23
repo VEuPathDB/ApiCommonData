@@ -462,3 +462,4 @@ update dots.genefeature set label = product, product = 'protein kinase, BUD32 ho
 update dots.genefeature set label = product, product = 'protein kinase, BUD32 homolog', modification_date = sysdate where source_id = 'TGGT1_103460';
 update dots.genefeature set label = product, product = 'protein kinase, BUD32 homolog', modification_date = sysdate where source_id = 'TGVEG_029520';
 commit;
+quit;
