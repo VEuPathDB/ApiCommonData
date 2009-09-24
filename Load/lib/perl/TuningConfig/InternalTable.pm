@@ -16,7 +16,7 @@ sub new {
         $externalTuningTableDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls, $unionizations, $dbh, $debug)
+        $perls, $unionizations, $dbh, $debug, $dblinkSuffix)
 	= @_;
 
     my $self = {};
@@ -31,6 +31,7 @@ sub new {
     $self->{perls} = $perls;
     $self->{unionizations} = $unionizations;
     $self->{debug} = $debug;
+    $self->{dblinkSuffix} = $dblinkSuffix;
     $self->{internalDependencies} = [];
     $self->{externalDependencies} = [];
     $self->{externalTuningTableDependencies} = [];
@@ -227,7 +228,17 @@ sub update {
     last if $updateError;
 
     my $sqlCopy = $sql;
-    $sqlCopy =~ s/&1/$suffix/g;  # use suffix to make db object names unique
+
+    # change, for example, "@toxo" to "@toxobuild"
+    my $dblinkSuffix = $self->{dblinkSuffix};
+    $sqlCopy =~ s/@(\w*)\b/\@$1$dblinkSuffix/g;
+
+    # use numeric suffix to make db object names unique
+    $sqlCopy =~ s/&1/$suffix/g;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("vvv sql string changed: vvv\nbefore: \"$sql\"\nafter: \"$sqlCopy\"^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+	if $self->{debug} && $sqlCopy ne $sql;
+
     ApiCommonData::Load::TuningConfig::Log::addLog("running sql of length "
 						   . length($sqlCopy)
 						   . " to build $self->{name}:\n$sqlCopy")
@@ -522,12 +533,14 @@ sub getColumnInfo {
     my $sourceNumber;
     my @froms;
 
+  my $dblinkSuffix = $self->{dblinkSuffix};
     foreach my $source (@{$union->{source}}) {
 
       $sourceNumber++;
 
       my $dblink = $source->{dblink};
-      $dblink = "@" . $dblink if $dblink;
+      $dblink = "@" . $dblink . $dblinkSuffix
+	if $dblink;
       my $table = $source->{name};
 
       my $tempTable;
@@ -536,6 +549,8 @@ sub getColumnInfo {
 	my $queryString = $source->{query}[0];
 	$tempTable = 'apidb.UnionizerTemp';
 	$table = $tempTable;
+	# do dblink-suffix transformation on $queryString
+	$queryString =~ s/@(\w*)\b/\@$1$dblinkSuffix/g;
 	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString);
 	$froms[$sourceNumber] = '(' . $queryString . ')';
       } else {

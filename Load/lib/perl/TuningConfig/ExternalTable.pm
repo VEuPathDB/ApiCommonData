@@ -12,10 +12,11 @@ my $currentDate;
 
 sub new {
     my ($class,
-	$name,      # name of database table
-        $dblink,
-        $dbh,       # database handle
-        $doUpdate)  # are we updating, not just checking, the db?
+	$name,         # name of database table
+        $dblink,       # dblink (if any) needed to access table
+        $dbh,          # database handle
+        $doUpdate,     # are we updating, not just checking, the db?
+        $dblinkSuffix) # suffix (such as "build") which must be appended to dblink
 	= @_;
 
     my $self = {};
@@ -25,7 +26,7 @@ sub new {
     $self->{dbh} = $dbh;
 
     if ($dblink) {
-      $dblink = '@' . $dblink;
+      $dblink = '@' . $dblink . $dblinkSuffix;
     }
     $self->{dblink} = $dblink;
 

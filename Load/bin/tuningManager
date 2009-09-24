@@ -82,7 +82,7 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{intermediateTable},
 	  $tuningTable->{sql},
 	  $tuningTable->{perl},
-          $tuningTable->{unionization}, $dbh, $debug);
+          $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix());
 }
 
 if ($doUpdate) {
@@ -118,7 +118,8 @@ foreach my $tableName (keys(%tuningTables)) {
       my $key = $dependency->{name} . '@' . $dependency->{dblink};
       $externalTables{$key}
 	= ApiCommonData::Load::TuningConfig::ExternalTable->
-	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
+	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
+	      $tuningRegistry->getDblinkSuffix())
 	    unless ($externalTables{$key});
 
       # add external-table object to list of external dependencies
@@ -139,7 +140,8 @@ foreach my $tableName (keys(%tuningTables)) {
       my $key = $dependency->{name} . '@' . $dependency->{dblink};
       $externalTuningTables{$key}
 	= ApiCommonData::Load::TuningConfig::ExternalTuningTable->
-	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate)
+	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
+	      $tuningRegistry->getDblinkSuffix())
 	    unless ($externalTuningTables{$key});
 
       # add externalTuning-table object to list of externalTuning dependencies
@@ -474,6 +476,7 @@ sub cleanup {
   my $cleanupCount = 0;
 
   # drop any tables that are listed as obsolete more than the threshold
+  #   and don't have a synonym pointed at them
   my $sql = <<SQL;
 select ott.name,
        to_char(sysdate - ott.timestamp, '9.99') as days_old
@@ -481,6 +484,8 @@ from apidb.ObsoleteTuningTable ott,
      all_tables at
 where ott.timestamp < sysdate - $cleanupAge
   and ott.name = at.owner || '.' || at.table_name
+  and lower(ott.name) not in
+        (select lower(table_owner || '.' || table_name) from all_synonyms)
 SQL
   ApiCommonData::Load::TuningConfig::Log::addLog($sql) if $debug;
 

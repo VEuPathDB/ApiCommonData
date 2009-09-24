@@ -22,7 +22,8 @@ sub getInfoFromRegistry {
     my $dblink = $self->{dblink};
 
     my $sql = <<SQL;
-      select imi.instance_nickname, ti.instance_nickname, tf.subversion_url, tf.notify_emails
+      select imi.instance_nickname, ti.instance_nickname, tf.subversion_url,
+             tf.notify_emails, tf.is_live, tf.config_file
       from apidb_r.TuningInstance\@$dblink ti, apidb_r.TuningFamily\@$dblink tf,
            apidb.InstanceMetaInfo imi
       where ti.instance_nickname(+) =  imi.instance_nickname
@@ -33,7 +34,13 @@ SQL
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
-    ($self->{service_name}, $self->{instance_name}, $self->{subversion_url}, $self->{notify_emails})
+    ($self->{service_name},
+     $self->{instance_name},
+     $self->{subversion_url},
+     $self->{notify_emails},
+     $self->{is_live},
+     $self->{config_file},
+    )
       = $stmt->fetchrow_array();
 
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for instance_nickname \"$self->{service_name}\".\n"
@@ -64,6 +71,22 @@ sub getInstanceName {
     $self->getInfoFromRegistry() if !defined $self->{instance_name};
 
     return($self->{instance_name});
+}
+
+sub getIsLive {
+    my ($self) = @_;
+
+    $self->getInfoFromRegistry() if !defined $self->{is_live};
+
+    return($self->{is_live});
+}
+
+sub getConfigFile {
+    my ($self) = @_;
+
+    $self->getInfoFromRegistry() if !defined $self->{config_file};
+
+    return($self->{config_file});
 }
 
 sub setLastUpdater {
@@ -118,21 +141,31 @@ SQL
 }
 
 sub setOutdated {
-    my ($self) = @_;
+  my ($self) = @_;
 
-    my $dbh = $self->{dbh};
-    my $dblink = $self->{dblink};
-    my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
+  my $dbh = $self->{dbh};
+  my $dblink = $self->{dblink};
+  my $processInfo = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
-    my $sql = <<SQL;
+  my $sql = <<SQL;
       update apidb_r.TuningInstance\@$dblink
       set outdated_since = sysdate
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
          and outdated_since is null
 SQL
 
-    $dbh->do($sql)
+  $dbh->do($sql)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+}
+
+sub getDblinkSuffix {
+  my ($self) = @_;
+
+  if ($self->getIsLive()) {
+    return "";
+  } else {
+    return "build";
+  }
 }
 
 1;

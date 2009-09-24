@@ -2,7 +2,7 @@
 
   <tuningTable name="apidb.AssemblyAttributes">
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="crypto"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="GIARDIA"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="giardia"/>
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="tritryp"/>
@@ -35,7 +35,7 @@
         <query> 
           <![CDATA[ 
             select *
-            from apidb.EstAttributes@AMITO
+            from apidb.EstAttributes@amito
             where project_id = 'TrichDB' 
           ]]> 
         </query>
@@ -84,7 +84,7 @@
         <query> 
           <![CDATA[ 
             select *
-            from apidb.GeneAttributes@AMITO
+            from apidb.GeneAttributes@amito
             where project_id = 'TrichDB' 
           ]]> 
         </query>
@@ -114,8 +114,8 @@
         <query> 
           <![CDATA[ 
             select gi.id,gi.gene  
-            from apidb.GeneId@AMITO gi,
-                 apidb.GeneAttributes@AMITO ga 
+            from apidb.GeneId@amito gi,
+                 apidb.GeneAttributes@amito ga 
             where gi.gene = ga.source_id 
               and ga.project_id = 'TrichDB'
           ]]> 
@@ -158,7 +158,7 @@
         <query> 
           <![CDATA[ 
             select *
-            from apidb.OrfAttributes@AMITO
+            from apidb.OrfAttributes@amito
             where project_id = 'TrichDB' 
           ]]> 
         </query>
@@ -198,7 +198,7 @@
       <source>
         <query> 
           <![CDATA[ 
-            select * from apidb.SequenceAttributes@AMITO where project_id = 'TrichDB' 
+            select * from apidb.SequenceAttributes@amito where project_id = 'TrichDB' 
           ]]> 
         </query>
       </source>
@@ -261,8 +261,8 @@
         <query> 
           <![CDATA[ 
             select gi.id,gi.sequence  
-            from apidb.sequenceid@AMITO gi,
-                 apidb.sequenceattributes@AMITO ga 
+            from apidb.sequenceid@amito gi,
+                 apidb.sequenceattributes@amito ga 
             where gi.sequence = ga.source_id 
               and ga.project_id = 'TrichDB'
           ]]> 
@@ -290,7 +290,7 @@
         <query> 
           <![CDATA[ 
             select *
-            from apidb.SnpAttributes@AMITO
+            from apidb.SnpAttributes@amito
             where project_id = 'TrichDB' 
           ]]> 
         </query>
@@ -316,42 +316,42 @@
     <sql>
       <![CDATA[
         create table apidb.GeneDetailCrypto nologging as
-        select * from apidb.GeneDetail@CRYPTO
+        select * from apidb.GeneDetail@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneDetailGiardia nologging as
-        select * from apidb.GeneDetail@GIARDIA
+        select * from apidb.GeneDetail@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneDetailPlasmo nologging as
-        select * from apidb.GeneDetail@PLASMO
+        select * from apidb.GeneDetail@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneDetailToxo nologging as
-        select * from apidb.GeneDetail@TOXO
+        select * from apidb.GeneDetail@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneDetailTrich nologging as
-        select * from apidb.GeneDetail@AMITO where project_id = 'TrichDB'
+        select * from apidb.GeneDetail@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneDetailTriTryp nologging as
-        select * from apidb.GeneDetail@TRITRYP
+        select * from apidb.GeneDetail@tritryp
       ]]>
     </sql>
 
@@ -392,42 +392,42 @@
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceToxo nologging as
-        select * from apidb.TranscriptSequence@TOXO
+        select * from apidb.TranscriptSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceCrypto nologging as
-        select * from apidb.TranscriptSequence@CRYPTO
+        select * from apidb.TranscriptSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceGiardia nologging as
-        select * from apidb.TranscriptSequence@GIARDIA
+        select * from apidb.TranscriptSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequencePlasmo nologging as
-        select * from apidb.TranscriptSequence@PLASMO
+        select * from apidb.TranscriptSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceTrich nologging as
-        select * from apidb.TranscriptSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.TranscriptSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceTriTryp nologging as
-        select * from apidb.TranscriptSequence@TRITRYP
+        select * from apidb.TranscriptSequence@tritryp
       ]]>
     </sql>
 
@@ -476,42 +476,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceCrypto nologging as
-        select * from apidb.CodingSequence@CRYPTO
+        select * from apidb.CodingSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceGiardia nologging as
-        select * from apidb.CodingSequence@GIARDIA
+        select * from apidb.CodingSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.CodingSequencePlasmo nologging as
-        select * from apidb.CodingSequence@PLASMO
+        select * from apidb.CodingSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceToxo nologging as
-        select * from apidb.CodingSequence@TOXO
+        select * from apidb.CodingSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceTrich nologging as
-        select * from apidb.CodingSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.CodingSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceTriTryp nologging as
-        select * from apidb.CodingSequence@TRITRYP
+        select * from apidb.CodingSequence@tritryp
       ]]>
     </sql>
 
@@ -560,42 +560,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceCrypto nologging as
-        select * from apidb.ProteinSequence@CRYPTO
+        select * from apidb.ProteinSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceGiardia nologging as
-        select * from apidb.ProteinSequence@GIARDIA
+        select * from apidb.ProteinSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.ProteinSequencePlasmo nologging as
-        select * from apidb.ProteinSequence@PLASMO
+        select * from apidb.ProteinSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceToxo nologging as
-        select * from apidb.ProteinSequence@TOXO
+        select * from apidb.ProteinSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceTrich nologging as
-        select * from apidb.ProteinSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.ProteinSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceTriTryp nologging as
-        select * from apidb.ProteinSequence@TRITRYP
+        select * from apidb.ProteinSequence@tritryp
       ]]>
     </sql>
 
@@ -644,42 +644,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.NaSequenceCrypto nologging as
-        select * from apidb.NaSequence@CRYPTO
+        select * from apidb.NaSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.NaSequenceGiardia nologging as
-        select * from apidb.NaSequence@GIARDIA
+        select * from apidb.NaSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.NaSequencePlasmo nologging as
-        select * from apidb.NaSequence@PLASMO
+        select * from apidb.NaSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.NaSequenceToxo nologging as
-        select * from apidb.NaSequence@TOXO
+        select * from apidb.NaSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.NaSequenceTrich nologging as
-        select * from apidb.NaSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.NaSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.NaSequenceTriTryp nologging as
-        select * from apidb.NaSequence@TRITRYP
+        select * from apidb.NaSequence@tritryp
       ]]>
     </sql>
 
@@ -728,42 +728,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceCrypto nologging as
-        select * from apidb.OrfSequence@CRYPTO
+        select * from apidb.OrfSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceGiardia nologging as
-        select * from apidb.OrfSequence@GIARDIA
+        select * from apidb.OrfSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.OrfSequencePlasmo nologging as
-        select * from apidb.OrfSequence@PLASMO
+        select * from apidb.OrfSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceToxo nologging as
-        select * from apidb.OrfSequence@TOXO
+        select * from apidb.OrfSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceTrich nologging as
-        select * from apidb.OrfSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.OrfSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceTriTryp nologging as
-        select * from apidb.OrfSequence@TRITRYP
+        select * from apidb.OrfSequence@tritryp
       ]]>
     </sql>
 
@@ -812,42 +812,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.EstSequenceCrypto nologging as
-        select * from apidb.EstSequence@CRYPTO
+        select * from apidb.EstSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.EstSequenceGiardia nologging as
-        select * from apidb.EstSequence@GIARDIA
+        select * from apidb.EstSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.EstSequencePlasmo nologging as
-        select * from apidb.EstSequence@PLASMO
+        select * from apidb.EstSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.EstSequenceToxo nologging as
-        select * from apidb.EstSequence@TOXO
+        select * from apidb.EstSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.EstSequenceTrich nologging as
-        select * from apidb.EstSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.EstSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.EstSequenceTriTryp nologging as
-        select * from apidb.EstSequence@TRITRYP
+        select * from apidb.EstSequence@tritryp
       ]]>
     </sql>
 
@@ -896,42 +896,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceCrypto nologging as
-        select * from apidb.AssemblySequence@CRYPTO
+        select * from apidb.AssemblySequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceGiardia nologging as
-        select * from apidb.AssemblySequence@GIARDIA
+        select * from apidb.AssemblySequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.AssemblySequencePlasmo nologging as
-        select * from apidb.AssemblySequence@PLASMO
+        select * from apidb.AssemblySequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceToxo nologging as
-        select * from apidb.AssemblySequence@TOXO
+        select * from apidb.AssemblySequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceTrich nologging as
-        select * from apidb.AssemblySequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.AssemblySequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceTriTryp nologging as
-        select * from apidb.AssemblySequence@TRITRYP
+        select * from apidb.AssemblySequence@tritryp
       ]]>
     </sql>
 
@@ -980,42 +980,42 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceCrypto nologging as
-        select * from apidb.IsolateSequence@CRYPTO
+        select * from apidb.IsolateSequence@crypto
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceGiardia nologging as
-        select * from apidb.IsolateSequence@GIARDIA
+        select * from apidb.IsolateSequence@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.IsolateSequencePlasmo nologging as
-        select * from apidb.IsolateSequence@PLASMO
+        select * from apidb.IsolateSequence@plasmo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceToxo nologging as
-        select * from apidb.IsolateSequence@TOXO
+        select * from apidb.IsolateSequence@toxo
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceTrich nologging as
-        select * from apidb.IsolateSequence@AMITO where project_id = 'TrichDB'
+        select * from apidb.IsolateSequence@amito where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceTriTryp nologging as
-        select * from apidb.IsolateSequence@TRITRYP
+        select * from apidb.IsolateSequence@tritryp
       ]]>
     </sql>
 
