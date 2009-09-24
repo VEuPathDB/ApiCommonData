@@ -207,9 +207,10 @@ sub processDataFile {
   if($useSqlLdr) {
     my $sqlLdrFn = "$inputDir/$fn" . ".dat";
     open(OUT, "> $sqlLdrFn") or die "Cannot open file $sqlLdrFn for writing:$!";
-    $analysis->submit();
   }
-
+    
+  $analysis->submit();
+  
   while(<FILE>) {
     chomp;
 
@@ -253,8 +254,8 @@ sub processDataFile {
         $self->error($@) if $@;
 
         $analysisResult->setParent($analysis);
-
-        $analysisResult->submit();
+        
+	$analysisResult->submit();
       }
     }
   }
@@ -343,17 +344,14 @@ sub getProtocol {
 
   unless($protocol->retrieveFromDB()) {
     my $protocolTypeId = $self->getProtocolTypeId($protocolType);
-
     # Can't set parent because there are many fk to Study::OntologyEntry
     $protocol->setProtocolTypeId($protocolTypeId);
-    my $protocolId = $protocol->getId(); 
+  }
     for(my $i = 4; $i < scalar @$configHeader; $i++){
 	my $protocolParamName = $configHeader->[$i]; 
 	my $protocolParam =  GUS::Model::RAD::ProtocolParam->new({name => $protocolParamName});
 	  $protocolParam->setParent($protocol); 
     }
-  }
-
   return $protocol;
 }
 
