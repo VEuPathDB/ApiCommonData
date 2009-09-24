@@ -932,7 +932,7 @@
        <!-- Orthologs -->  
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-       <sqlQuery name="Orthologs" excludeProjects="TrichDB,GiardiaDB"
+       <sqlQuery name="Orthologs"
                   isCacheable="false">
 
             <testParamValues includeProjects="ToxoDB">
@@ -944,9 +944,9 @@
             <column name="ortho_source_id"/>
             <column name="species"/>
             <column name="product"/>
-            <column name="is_syntenic" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
-            <column name="comment_count" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
-            <sql excludeProjects="ToxoDB,PlasmoDB,CryptoDB,TriTrypDB">
+            <column name="is_syntenic" excludeProjects="EuPathDB"/>
+            <column name="comment_count" excludeProjects="EuPathDB"/>
+            <sql includeProjects="EuPathDB">
             <![CDATA[
             SELECT DISTINCT gf2.source_id AS ortho_source_id, tn.name as species, gf2.product, 
                    gf1.source_id, '@PROJECT_ID@' as project_id
@@ -968,7 +968,7 @@
             ]]>
             </sql>
 
-            <sql includeProjects="ToxoDB,CryptoDB,TriTrypDB,PlasmoDB">
+            <sql excludeProjects="EuPathDB">
             <![CDATA[
             SELECT DISTINCT gf.source_id AS ortho_source_id, tn.name as species, 
                gf.product, ga1.source_id,

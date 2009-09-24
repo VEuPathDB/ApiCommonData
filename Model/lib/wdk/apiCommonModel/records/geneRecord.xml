@@ -2255,7 +2255,7 @@
           <!-- Orthologs table -->  
           <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-          <table name="Orthologs" excludeProjects="TrichDB,GiardiaDB"
+          <table name="Orthologs"
                  displayName="Orthologs and Paralogs within @PROJECT_ID@"
                  queryRef="GeneTables.Orthologs">
             <columnAttribute name="ortho_source_id" internal="true" displayName="Gene"/>
@@ -2271,8 +2271,8 @@
             </linkAttribute>
             <columnAttribute displayName="Species" name="species"/>
             <columnAttribute displayName="Product" name="product"/>
-            <columnAttribute displayName="is syntenic" name="is_syntenic" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
-            <columnAttribute displayName="has comments" name="comment_count" includeProjects="PlasmoDB,CryptoDB,TriTrypDB,ToxoDB"/>
+            <columnAttribute displayName="is syntenic" name="is_syntenic" excludeProjects="EuPathDB"/>
+            <columnAttribute displayName="has comments" name="comment_count" excludeProjects="EuPathDB"/>
           </table>
 
 
