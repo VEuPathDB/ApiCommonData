@@ -56,9 +56,9 @@ $mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
 
 ##### Expression Profiles #####
 
-#InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites (Spycher Lab)', 1, 'G_lamblia_1', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
+InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites (Spycher Lab)', 1, 'G_lamblia_1', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
 
-#&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profileavg.config");
+&InsertAveragedExpressionProfile($mgr,"Stress Response in Giardia lamblia Trophozoites","/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_stress-response/working_dir/profileavg.config");
 
 &InsertExpressionProfileFromProcessedResult($mgr, 'Stress Response in Giardia lamblia Trophozoites by varying DTT incubation time', 1, 'G_lamblia_2', 'Loess normalization, maNorm function (Bioconductor marray package)', 'DataTransformationResult', '', 2);
 
@@ -66,9 +66,9 @@ $mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
 
 ##### PaGE Analyses #####
 
-#&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
 
-#&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis/page.xml", "load_GLambliaTrophozoites_pageData", "pagePath");
+&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/microarray/GL_Spycher_radAnalysis/page.xml", "load_GLambliaTrophozoites_pageData", "pagePath");
 
 &copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/GL_Spycher_radAnalysis_2/","$projectDir/$release/analysis_pipeline/primary/data/microarray/", "$projectDir/$release/analysis_pipeline/primary/data/microarray");
 
@@ -571,6 +571,52 @@ my $blastParams = "V=1 B=1 hspsepQmax=50000 hspsepSmax=50000 -span1 -topcomboN=1
 &copyFilesFromComputeCluster($mgr,"GiardiaGenbankIsolates-GlambliaContigs","similarity");
 
 &loadProteinBlast($mgr, "GiardiaGenbankIsolates-GlambliaContigs","DoTS::ExternalNASequence", "DoTS::ExternalNASequence","source_id","source_id","G. lamblia isolates From Genbank","2009-07-21",'G. lamblia contigs from Genbank','2007-09-24', " --subjectsLimit 50 --hspsLimit 10 ");
+
+################################################################################
+# Mercator
+################################################################################
+
+
+&dumpNaSequence($mgr,"mercator/fasta","Giardia_lamblia_ATCC_50803","G. lamblia contigs from Genbank","2007-09-24","Giardia scaffolds","2008-02-14");
+&dumpNaSequence($mgr,"mercator/fasta","Giardia_intestinalis_ATCC_50581","G. intestinalis assemblage B contigs from Genbank","2009-08-07");
+&dumpNaSequence($mgr,"mercator/fasta","Giardia_lamblia_P15","G. intestinalis assemblage E contigs from Genbank","2009-08-07");
+&dumpMercatorGff($mgr,"mercator/gff");
+
+&createRepeatMaskDir_new($mgr, 'Giardia_lamblia_ATCC_50803', 4,'-xsmall', 150,'mercator');
+&createRepeatMaskDir_new($mgr, 'Giardia_intestinalis_ATCC_50581', 4,'-xsmall', 150,'mercator');
+&createRepeatMaskDir_new($mgr, 'Giardia_lamblia_P15', 4, '-xsmall', 150,'mercator');
+&copyFilesToComputeCluster($mgr,'mercator');
+
+&startRepeatMaskOnComputeCluster($mgr, 'Giardia_lamblia_ATCC_50803', 'apidb','mercator');
+&startRepeatMaskOnComputeCluster($mgr, 'Giardia_intestinalis_ATCC_50581', 'apidb','mercator');
+&startRepeatMaskOnComputeCluster($mgr, 'Giardia_lamblia_P15', 'apidb','mercator');
+
+&copyFilesFromComputeCluster($mgr, 'Giardia_lamblia_ATCC_50803', 'mercator/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'Giardia_intestinalis_ATCC_50581', 'mercator/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'Giardia_lamblia_P15', 'mercator/repeatmask');
+
+&copy($mgr,"mercator/repeatmask/Giardia_lamblia_ATCC_50803/master/mainresult/blocked.seq","mercator/fasta/Giardia_lamblia_ATCC_50803.fasta.in", "mercator/fasta");
+&copy($mgr,"mercator/repeatmask/Giardia_intestinalis_ATCC_50581/master/mainresult/blocked.seq","mercator/fasta/Giardia_intestinalis_ATCC_50581.fasta.in", "mercator/fasta");
+&copy($mgr,"mercator/repeatmask/Giardia_lamblia_P15/master/mainresult/blocked.seq","mercator/fasta/Giardia_lamblia_P15.fasta.in", "mercator/fasta");
+
+&modifyFile($mgr, "Giardia_lamblia_ATCC_50803.fasta.in", "Giardia_lamblia_ATCC_50803.fasta", "$dataDir/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+&modifyFile($mgr, "Giardia_intestinalis_ATCC_50581.fasta.in", "Giardia_intestinalis_ATCC_50581.fasta", "$dataDir/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+&modifyFile($mgr, "Giardia_lamblia_P15.fasta.in", "Giardia_lamblia_P15.fasta", "$dataDir/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+
+&fixMercatorOffsetsInGFF($mgr,"Giardia_lamblia_ATCC_50803.fasta","Giardia_lamblia_ATCC_50803.gff","Giardia_lamblia_ATCC_50803_fixed.gff","$dataDir/mercator/","^>(\S+)","^apidb\|(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Giardia_intestinalis_ATCC_50581.fasta","Giardia_intestinalis_ATCC_50581.gff","Giardia_intestinalis_ATCC_50581_fixed.gff","$dataDir/mercator/","^>(\S+)","^apidb\|(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Giardia_lamblia_P15.fasta","Giardia_lamblia_P15.gff","Giardia_lamblia_P15_fixed.gff","$dataDir/mercator/","^>(\S+)","^apidb\|(\S+)");
+
+&runMercatorMavid($mgr, "$dataDir/mercator", "mercatorMavid-5StrainSpeciesGenomes");
+
+&createExtDbAndDbRls($mgr, 'Giardia_intestinalis_ATCC_50581-Giardia_lamblia_ATCC_50803 synteny from Mercator', '2009-09-21', '');
+&createExtDbAndDbRls($mgr, 'Giardia_lamblia_P15-Giardia_lamblia_ATCC_50803 synteny from Mercator', '2009-09-21', '');
+&createExtDbAndDbRls($mgr, 'Giardia_lamblia_P15-Giardia_intestinalis_ATCC_50581 synteny from Mercator', '2009-09-21', '');
+
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Giardia_intestinalis_ATCC_50581-Giardia_lamblia_ATCC_50803.align",  "DoTS.NASequence", "DoTS.NASequence", "Giardia scaffolds|2008-02-14,G. lamblia contigs from Genbank|2007-09-24","G. intestinalis assemblage B contigs from Genbank|2009-08-07","Giardia_intestinalis_ATCC_50581-Giardia_lamblia_ATCC_50803 synteny from Mercator|2009-09-21","","Giardia");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Giardia_lamblia_P15-Giardia_lamblia_ATCC_50803.align",  "DoTS.NASequence", "DoTS.NASequence", "Giardia scaffolds|2008-02-14,G. lamblia contigs from Genbank|2007-09-24","G. intestinalis assemblage E contigs from Genbank|2009-08-07","Giardia_lamblia_P15-Giardia_lamblia_ATCC_50803 synteny from Mercator|2009-09-21","","Giardia");
+
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Giardia_lamblia_P15-Giardia_intestinalis_ATCC_50581.align",  "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "G. intestinalis assemblage B contigs from Genbank|2009-08-07","G. intestinalis assemblage E contigs from Genbank|2009-08-07","Giardia_lamblia_P15-Giardia_intestinalis_ATCC_50581 synteny from Mercator|2009-09-21","$dataDir/mercator/mercator-output/Giardia_intestinalis_ATCC_50581.agp","Giardia");
 
 $mgr->goodbye("Pipeline complete!\n");
 
