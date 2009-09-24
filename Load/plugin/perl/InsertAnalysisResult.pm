@@ -10,6 +10,8 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::Study::OntologyEntry;
 use GUS::Model::RAD::Analysis;
 use GUS::Model::RAD::Protocol;
+use GUS::Model::RAD::AnalysisParam;
+use GUS::Model::RAD::ProtocolParam;
 
 $| = 1;
 
@@ -131,15 +133,17 @@ sub run {
   my $class = "GUS::Model::RAD::$analysisResultView";
   eval "require $class";
 
+  my $configHeader = shift @$config;
+
   foreach my $configRow (@$config) {
     my $dataFile = $configRow->[0];
     my $analysisName = $configRow->[1];
     my $protocolName = $configRow->[2];
     my $protocolType = $configRow->[3];
 
-    my $protocol = $self->getProtocol($protocolName, $protocolType);
+    my $protocol = $self->getProtocol($protocolName, $protocolType, $configHeader);
 
-    my $analysis = $self->createAnalysis($protocol, $analysisName);
+    my $analysis = $self->createAnalysis($protocol, $analysisName, $configHeader, $configRow);
 
     my $count = $self->processDataFile($analysis, $dataFile, $class, $naFeatureView, $useSqlLdr);
 
@@ -310,19 +314,30 @@ sub getTableId {
 #--------------------------------------------------------------------------------
 
 sub createAnalysis {
-  my ($self, $protocol, $analysisName) = @_;
+  my ($self, $protocol, $analysisName,$configHeader, $configRow) = @_;
 
   my $analysis = GUS::Model::RAD::Analysis->new({name => $analysisName});
+  my @protocolParamList =$protocol->getChildren('RAD::ProtocolParam',1);
 
+  for(my $i = 4; $i < scalar @$configRow; $i++){
+      my $analysisParamValue=$configRow->[$i]; 
+      my $analysisParam = GUS::Model::RAD::AnalysisParam->new({value => $analysisParamValue});
+      $analysisParam->setParent($analysis); 
+      my $protocolParamName = $configHeader->[$i];
+      foreach (@protocolParamList){
+	  if ($_->getName() eq $protocolParamName){
+	      $analysisParam->setParent($_); 
+          }
+       }
+  }
   $analysis->setParent($protocol);
-
   return $analysis;
 }
 
 #--------------------------------------------------------------------------------
 
 sub getProtocol {
-  my ($self, $protocolName, $protocolType) = @_;
+  my ($self, $protocolName, $protocolType, $configHeader) = @_;
 
   my $protocol = GUS::Model::RAD::Protocol->new({name => $protocolName });
 
@@ -331,6 +346,12 @@ sub getProtocol {
 
     # Can't set parent because there are many fk to Study::OntologyEntry
     $protocol->setProtocolTypeId($protocolTypeId);
+    my $protocolId = $protocol->getId(); 
+    for(my $i = 4; $i < scalar @$configHeader; $i++){
+	my $protocolParamName = $configHeader->[$i]; 
+	my $protocolParam =  GUS::Model::RAD::ProtocolParam->new({name => $protocolParamName});
+	  $protocolParam->setParent($protocol); 
+    }
   }
 
   return $protocol;
@@ -442,4 +463,11 @@ analysis_result_id \"rad.analysisresultimp_sq.nextval\"
 close CONFIG;
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('RAD.AnalysisResultImp', 'RAD.AnalysisParam', 'RAD.ProtocolParam', 'RAD.Analysis', 'RAD.Protocol');
+}
+
 1;
+
