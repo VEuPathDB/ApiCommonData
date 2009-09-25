@@ -209,6 +209,10 @@ where f.na_sequence_id = s.na_sequence_id
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
       <sqlQuery name="GeneOverlap" includeProjects="PlasmoDB,CryptoDB,ToxoDB,EuPathDB,GiardiaDB">
+         <testParamValues includeProjects="GiardiaDB">
+            <paramValue name="source_id">L49327</paramValue>
+         </testParamValues>
+
             <column name="project_id"/>
             <column name="source_id"/> 
             <column name="gene"/>
