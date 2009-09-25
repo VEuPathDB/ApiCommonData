@@ -2516,6 +2516,42 @@ T. gondii restriction fragment length polymorphysim (RFLP) data was obtained fro
         <publication pmid="16643922"/>
     </resource>
 
+     <resource resource="ToxoDB_Kinome_productNames" version="1"
+        displayName="ToxoDB Kinome Product Names"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@gusHome@/lib/sql/patches/ToxoDB_Kinome_productNames.sql"
+            contact = "Brian Brunk"
+            email = "brunkb@pcbi.upenn.edu"
+            institution = "University of Pennsylvania"
+        />
+        <unpack>sqlplus @user@/@password@ @@downloadDir@/ToxoDB_Kinome_productNames/ToxoDB_Kinome_productNames.sql</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+            ]]>
+        </description>
+    </resource>
+
+     <resource resource="ToxoDB_SRS_productNames" version="1"
+        displayName="ToxoDB SRS Product Names"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@gusHome@/lib/sql/patches/ToxoDB_SRS_productNames.sql"
+            contact = "Brian Brunk"
+            email = "brunkb@pcbi.upenn.edu"
+            institution = "University of Pennsylvania"
+        />
+        <unpack>sqlplus @user@/@password@ @@downloadDir@/ToxoDB_SRS_productNames/ToxoDB_SRS_productNames.sql</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+            ]]>
+        </description>
+    </resource>
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
