@@ -347,11 +347,15 @@ sub getProtocol {
     # Can't set parent because there are many fk to Study::OntologyEntry
     $protocol->setProtocolTypeId($protocolTypeId);
   }
-    for(my $i = 4; $i < scalar @$configHeader; $i++){
-	my $protocolParamName = $configHeader->[$i]; 
-	my $protocolParam =  GUS::Model::RAD::ProtocolParam->new({name => $protocolParamName});
-	  $protocolParam->setParent($protocol); 
-    }
+  
+  my $protocolId = $protocol->getId(); 
+
+  for(my $i = 4; $i < scalar @$configHeader; $i++){
+      my $protocolParamName = $configHeader->[$i]; 
+      my $protocolParam = GUS::Model::RAD::ProtocolParam->new({protocol_id => $protocolId,
+                                                          name => $protocolParamName}); 
+      $protocolParam->setParent($protocol) unless $protocolParam->retrieveFromDB(); 
+  }
   return $protocol;
 }
 
