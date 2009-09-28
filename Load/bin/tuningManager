@@ -51,7 +51,7 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
   unless $instance;
 &usage unless ($instance && ($propFile || $password));
 
-$cleanupAge = 1.5 if !defined $cleanupAge;
+$cleanupAge = 0 if !defined $cleanupAge;
 
 if ($propFile) {
   my $simple = XML::Simple->new();
@@ -345,7 +345,7 @@ options:
   doUpdate        update any tables found to be out of date
   notifyEmail     comma-separated list of email addresses to send log to
   cleanupWarnOnly name but don't drop obsolete tuning tables
-  cleanupAge      specify how long (in days) tuning table must be obsolete before dropping
+  cleanupAge      specify how long (in days) tuning table must be obsolete before dropping (default 0)
   forceUpdate     perform update even if current_updater flag is set
   debug           print debugging info
 
