@@ -1,0 +1,223 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use Data::Dumper;
+
+my ($verbose, $help, $inputGff,$outputGff);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'input_gff=s' => \$inputGff,
+	    'output_gff=s' => \$outputGff,
+
+ 
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputGff && $outputGff);
+
+open(IN,"$inputGff");
+open(OUT,">$outputGff");
+
+
+foreach my $line(<IN>){
+
+    if(!($line =~ /^\#\#/)){
+    my %pmids;
+    my %prevSysIds;
+    chomp($line);
+    my (@cols) = split(/\t/,$line);
+
+    $cols[0] =~ s/\;$//;
+
+#    print "$cols[8]\t\t";
+    $cols[8] =~ s/=/\$\$\"/g;
+
+    $cols[8] =~ s/;/\";/g;
+
+ # 
+
+    $cols[8] .= "\"" if (!($cols[8] =~ /\"$/ || $cols[8] =~ /\";$/));
+ 
+    my (@tags) = split(/\;/,$cols[8]);
+
+    $cols[8] =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
+
+    
+
+
+
+    foreach my $tag(@tags){
+	$tag =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
+	my($tagname,$value)= split(/\$\$/,$tag);
+
+	if(lc($tagname) eq 'comment' || lc($tagname) eq 'product'){
+
+	  #  print "$value\n";
+	    
+	    while($value =~ /PMID: (\d+)/ig){
+	#	print "$1\n";
+		$pmids{$1} = "PMID:$1";
+		
+		
+	    }
+
+
+	    while($value =~ /PMID:(\d+)/ig){
+	#	print "$1\n";
+		$pmids{$1} = "PMID:$1";
+		
+	    }
+
+
+	    while($value =~ /previous_systematic_id (\S+)/ig){
+	#	print "$1\n";
+		$value =~ s/;current=false//g;
+
+		$value =~ s/;\"$/\"/;
+		$prevSysIds{$1} = "previous_systematic_id \"$1\";";
+		
+	    }
+
+	}
+	
+    }
+
+    my $tagsFixed;
+
+    my $id;
+    my $flag = 0;
+
+    foreach my $tag (@tags){
+#	print "$tag\n";
+	$tag =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
+	if($tag =~ /^ID/){
+	    (my $tagname,$id)= split(/\$\$/,$tag);
+	#    print "$id\n";
+	    
+	    
+	    
+	}
+
+	if($tag =~ /^translation/i){
+	    my ($tagname,$value)=split(/\$\$/,$tag);
+
+	    if($value =~/([\+\#])/){
+
+		$value =~ s/[\+\#]/\*/g;
+
+	    }
+	    $tagsFixed .= "$tagname $value;";
+	}elsif($tag =~ /^Dbxref/i){
+	    my ($tagname,$value)=split(/\$\$/,$tag);
+
+	    $value =~ s/,/\";Dbxref  \"/g;
+
+	    $value .= "\"" if (!($value =~ /\"$/ || $value =~ /\";$/));
+
+	    foreach my $key (keys %pmids){
+
+		$value .= ";Dbxref \"$pmids{$key}\"";
+	    }
+	    $flag = 1;
+	    $tagsFixed .= "$tagname $value;";
+	}elsif($tag =~ /^eC_number/i){
+	    my ($tagname,$value)=split(/\$\$/,$tag);
+
+	    $value =~ s/,/\";eC_number  \"/g;
+
+	    $value =~ s/3\.4\.22-/3\.4\.22\.-/g;
+
+	    $value =~ s/3\.1\.1\.89/3\.5\.1\.89/g;
+
+	    $value =~ s/1\.14\.\"/1\.14\.-\.-\"/g;
+
+	    $value =~ s/3\.4\.25\.\"/3\.4\.25\.1\"/g;
+
+	    $value =~ s/3\.6\.3\"/3\.6\.3\.31\"/g;
+
+	    $value =~ s/2\.6\.4\.1\"/2\.6\.1\.42\"/g;
+
+	    $value =~ s/2\.7\.1\"/2\.7\.11\.24\"/g;
+
+
+	    $value .= "\"" if (!($value =~ /\"$/ || $value =~ /\";$/));
+	    $tagsFixed .= "$tagname $value;";
+	}elsif($tag =~ /^product/i){
+	    my ($tagname,$value)=split(/\$\$/,$tag);
+
+
+	    $value =~ s/db_xref=([^;])*;//g;
+	    $value =~ s/evidence=([^;])*;//g;
+	    $value =~ s/term=//g;
+
+	    $value =~ s/term =//g;
+
+	    $value =~ s/;\"$/\"/;
+	    
+	    $value =~ s/;,/,/g;
+
+	    $tagsFixed .= "$tagname $value;";
+	}elsif($tag =~ /^previous_systematic_id/i){
+	    my ($tagname,$value)=split(/\$\$/,$tag);
+
+	    $value =~ s/;current=false//g;
+
+	    $value =~ s/;\"$/\"/;
+
+
+	    if($prevSysIds{$value}){
+		$tagsFixed .= "$tagname $value;";
+		undef($prevSysIds{$value});
+	    }
+	}else{
+	    $tag =~ s/\$\$/ /g;
+	    $tagsFixed .= "$tag;";
+	}
+
+
+
+	
+
+
+    }
+
+    if($flag == 0){
+
+	foreach my $key (keys %pmids){
+
+	    $tagsFixed .= "Dbxref \"$pmids{$key}\";";
+	}
+
+    }
+
+	foreach my $key (keys %prevSysIds){
+
+	    if($prevSysIds{$key}){
+		$tagsFixed .= "$prevSysIds{$key}";
+	    }
+	}
+
+    $cols[8] = $tagsFixed;
+
+    $cols[8] =~ s/\+/ /g;
+    my $fixed = join("\t",@cols);
+
+ #   print "$id\n";
+    print OUT "$fixed\n";
+}
+}
+
+close(IN);
+close(OUT);
+
+
+sub usage{
+
+
+}

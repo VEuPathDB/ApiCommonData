@@ -1,0 +1,144 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use Data::Dumper;
+
+my ($verbose, $help, $inputGff,$inputFasta,$outputFasta,$outputGff);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'input_gff=s' => \$inputGff,
+            'input_fasta=s' => \$inputFasta,
+	    'output_fasta=s' => \$outputFasta,
+	    'output_gff=s' => \$outputGff,
+
+ 
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputGff && $inputFasta && $outputFasta && $outputGff);
+
+open(INGFF,"$inputGff");
+
+open(INFASTA,"$inputFasta");
+
+open(OUTGFF,">$outputGff");
+
+open(OUTFASTA,">$outputFasta");
+
+my %contigs;
+
+my $fastaSeq = '';
+
+my $id = '';
+
+foreach my $line (<INFASTA>){
+  chomp($line);
+
+  if(!($line =~ /^\s+$/) && !($line =~ /^>/)){
+    $fastaSeq .= $line;
+  }
+
+}
+
+close(INFASTA);
+
+foreach my $line (<INGFF>){
+	chomp($line);
+
+	my(@cols) = split(/\t/,$line);
+
+
+	if(($cols[2] eq 'region' || $cols[2] eq 'contig') && ($cols[8] =~ /archived:contig/)){
+	  
+	  $id = $cols[8];
+	  
+
+	  $id =~ s/^ID=//;
+
+	  $id =~ s/;.*$//;
+
+	  $id =~ s/archived://;
+	
+	  $id =~ s/:/_/g;
+	  $contigs{$id}->{id} = $id;
+
+	  $contigs{$id}->{start} = $cols[3];
+
+	  $contigs{$id}->{end} = $cols[4];
+
+
+
+	  print OUTFASTA ">$id\n";
+
+	  my $seq = substr($fastaSeq,$cols[3]-1,($cols[4]-$cols[3]+1));
+
+	  print OUTFASTA "$seq\n";
+
+
+	}
+
+}
+
+close(INGFF);
+
+
+close(OUTFASTA);
+
+
+
+
+
+open(INGFF,"$inputGff");
+
+
+
+foreach my $line(<INGFF>){
+
+  chomp($line);
+
+  if(!($line =~ /^\#\#/)){
+  my(@cols) = split(/\t/,$line);
+if(!(($cols[2] eq 'region' || $cols[2] eq 'contig') && ($cols[8] =~ /archived:contig/))){
+
+  my $flag = 0;
+  foreach my $contigId (keys %contigs){
+
+    if($cols[3] >= $contigs{$contigId}->{start} && $cols[4] <= $contigs{$contigId}->{end}){
+	    
+      $flag = 1;
+
+      $line =~ s/^$cols[0]/$contigId/;
+	    
+      my $newStart = $cols[3] - $contigs{$contigId}->{start} + 1;
+      my $newEnd = $cols[4] - $contigs{$contigId}->{start} + 1;
+      
+      $line =~ s/\t$cols[3]\t/\t$newStart\t/;
+      $line =~ s/\t$cols[4]\t/\t$newEnd\t/;
+
+      print OUTGFF "$line\n";
+    }
+  }
+
+  if($flag == 0){
+
+    $cols[8] =~ /ID=(([^;])*)/;
+    my $featId = $1;
+    print STDERR "$featId\t$cols[3]\t$cols[4] spans multiple contigs\n";
+  }
+}
+}
+}
+
+close(INGFF);
+close(OUTGFF);
+
+
+sub usage{
+
+}
