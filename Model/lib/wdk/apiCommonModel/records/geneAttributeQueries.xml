@@ -712,6 +712,7 @@
             <![CDATA[
                SELECT egs.source_id AS source_id, '@PROJECT_ID@' as project_id,
                       NVL(graph_stress, 0) AS graph_stress,
+                      NVL(graph_sage_pct, 0) AS graph_sage_pct,
                       NVL(graph_stress_ts, 0) AS graph_stress_ts
                FROM apidb.GiardiaExpressionGraphs egs,apidb.geneattributes ga
                WHERE ga.source_id = egs.source_id(+) 
