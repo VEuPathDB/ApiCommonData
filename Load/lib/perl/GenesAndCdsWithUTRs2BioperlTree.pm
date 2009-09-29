@@ -120,7 +120,7 @@ sub preprocess {
 
 	    
 	    }else{
-		if($type eq 'gap' || $type eq 'direct_repeat'){
+		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_UTR' || $type eq 'five_prime_UTR' || $type eq 'splice_acceptor_site'){
 		    $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 		}
 	    }
@@ -152,12 +152,23 @@ sub traverseSeqFeatures {
              'tRNA',
              'ncRNA',
 	     'pseudogenic_transcript',	
+             'scRNA',
+             'region',
 				
              )
         ) {
 
 
 	    my $CDSLocation;
+
+	    if($type eq 'region'){
+		my($id) = $RNA->get_tag_values('ID') if $RNA->has_tag('ID');
+		if($id =~ /splice acceptor/i){
+		    $RNA->primary_tag('splice_acceptor_site');
+		}
+
+		
+	    }
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){
 		    ($type) = $RNA->get_tag_values('ncRNA_class');
@@ -214,14 +225,14 @@ sub traverseSeqFeatures {
 	    
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 		$exonType = '';
-		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR'){
+		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR' || $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 		    if($prevExon && $prevExon->location->end() == $subFeature->location->start() - 1){
 			pop @fixedExons;
 			$prevExon->location->end($subFeature->location->end);
 
 			push @fixedExons, $prevExon;
-		    }else{
+		    }elsif(($prevExon && $prevExon->location->end() < $subFeature->location->start() - 1) || !($prevExon)){
 			$subFeature->add_tag_value('type','utr');
 			$subFeature->primary_tag('exon');
 			push @fixedExons , $subFeature;
