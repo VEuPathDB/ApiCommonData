@@ -2897,7 +2897,8 @@ tablespace indx
 CREATE TABLE apidb.GiardiaExpressionGraphs&1 NOLOGGING AS
 SELECT ga.source_id,
        COUNT(stress) as graph_stress,
-       COUNT(stress_ts) as graph_stress_ts
+       COUNT(stress_ts) as graph_stress_ts,
+       COUNT(sage_pct) as graph_sage_pct
 FROM apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS stress
       FROM apidb.profile p, apidb.profileSet ps
@@ -2906,9 +2907,14 @@ FROM apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS stress_ts
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Stress response Dynamics in Trophozoites (time series)-Averaged'
-        AND p.profile_set_id = ps.profile_set_id) stress2
+        AND p.profile_set_id = ps.profile_set_id) stress2,
+     (SELECT p.source_id, 1 AS sage_pct
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'giar sage count percentages'
+        AND p.profile_set_id = ps.profile_set_id) sage
   WHERE ga.source_id = stress.source_id(+)
   AND ga.source_id = stress2.source_id(+)
+  AND ga.source_id = sage.source_id(+)
 GROUP BY ga.source_id
       ]]>
     </sql>
