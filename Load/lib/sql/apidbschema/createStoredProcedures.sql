@@ -433,4 +433,46 @@ end alphanumeric_str;
 grant execute on apidb.alphanumeric_str to public;
 
 -------------------------------------------------------------------------------
+create or replace function apidb.project_id (organism varchar2)
+return varchar2
+is
+begin
+   case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
+         when 'cryptosporidium'
+           then return 'CryptoDB';
+         when 'plasmodium'
+           then return 'PlasmoDB';
+         when 'toxoplasma'
+           then return 'ToxoDB';
+         when 'neospora'
+           then return 'ToxoDB';
+         when 'leishmania'
+           then return 'TriTrypDB';
+         when 'trypanosoma'
+           then return 'TriTrypDB';
+         when 'trichomonas'
+           then return 'TrichDB';
+         when 'phytomonas'
+           then return 'TrichDB';
+         when 'giardia'
+           then return 'GiardiaDB';
+         when 'gregarina'
+           then return 'OrphanDB';
+         when 'sarcocystis'
+           then return 'OrphanDB';
+         when 'eimeria'
+           then return 'OrphanDB';
+         when 'theileria'
+           then return 'OrphanDB';
+         when 'babesia'
+           then return 'OrphanDB';
+         else return 'ERROR: setting project as a function of organism';
+      end case;
+end project_id;
+/
+
+show errors;
+
+GRANT execute ON apidb.project_id TO public;
+-------------------------------------------------------------------------------
 exit;
