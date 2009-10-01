@@ -2766,7 +2766,7 @@ FROM apidb.GeneAttributes ga,
         AND p.profile_set_id = ps.profile_set_id) stress2,
      (SELECT p.source_id, 1 AS sage_pct
       FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'giar sage count percentages'
+      WHERE ps.name = 'giar sage count'
         AND p.profile_set_id = ps.profile_set_id) sage
   WHERE ga.source_id = stress.source_id(+)
   AND ga.source_id = stress2.source_id(+)
