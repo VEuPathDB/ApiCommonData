@@ -209,6 +209,9 @@
 
 
             <instanceRef ref="all_results" />
+            <instanceRef ref="assemblage_a_genes" />
+            <instanceRef ref="assemblage_b_genes" />
+            <instanceRef ref="assemblage_e_genes" />
             <instanceRef ref="all_genes" />
             <instanceRef ref="deprecated_genes" />
         </answerFilterLayout>
@@ -767,10 +770,10 @@
                 
            <!--     <instance name="all_genes" default="true">  -->
                     <instance name="all_genes">
-                    <displayName><![CDATA[Genes]]></displayName>
+                    <displayName><![CDATA[All Giardia Genes]]></displayName>
                     <description>
                         <![CDATA[
-                              <i>Giardia lamblia</i> genes.
+                              all <i>Giardia</i> genes (undeprecated).
                             ]]>
                     </description>   
                     <paramValue name="deprecated_genes">genes</paramValue>
@@ -785,6 +788,47 @@
                     <paramValue name="deprecated_genes">deprecated_genes</paramValue>
                 </instance>
             </answerFilter>
+
+
+
+            <answerFilter queryRef="GeneSummaries.AssemblageGenes"
+                          includeProjects="GiardiaDB">
+ 
+                <instance name="assemblage_a_genes">
+                    <displayName><![CDATA[Assmb. A Genes]]></displayName>
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> ATCC 50803 genes.
+                            ]]>
+                    </description>
+                    <paramValue name="assemblage_genes">Assemblage A isolate GS</paramValue>
+                </instance>
+
+                <instance name="assemblage_b_genes">
+                    <displayName><![CDATA[Assmb. B Genes]]></displayName>
+                    <description>
+                        <![CDATA[
+                              <i>Giardia intestinalis</i> ATCC 50581 genes.
+                            ]]>
+                    </description>
+                    <paramValue name="assemblage_genes">Assemblage B isolate WGS</paramValue>
+                </instance>
+
+
+                <instance name="assemblage_e_genes">
+                    <displayName><![CDATA[Assmb. E Genes]]></displayName>
+                    <description>
+                        <![CDATA[
+                              <i>Giardia lamblia</i> P15 genes.
+                            ]]>
+                    </description>
+                    <paramValue name="assemblage_genes">Assemblage E isolate P15</paramValue>
+                </instance>
+
+            </answerFilter>
+
+
+
 
             <answerFilter queryRef="GeneSummaries.ToxoGenes"
                           includeProjects="ToxoDB,EuPathDB">

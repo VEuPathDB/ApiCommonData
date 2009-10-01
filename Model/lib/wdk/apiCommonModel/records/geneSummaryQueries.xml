@@ -39,6 +39,38 @@
             </sql>
         </sqlQuery>
 
+        <sqlQuery name="AssemblageGenes" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.assemblage_genes"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.organism = $$assemblage_genes$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
+        <sqlQuery name="Genes" isCacheable="false" includeProjects="GiardiaDB">
+            <paramRef ref="recordParams.deprecated_genes"/>
+            <paramRef ref="recordParams.gene_answer"/>
+            <column name="source_id"/>
+            <column name="project_id"/>
+            <sql>
+                <![CDATA[
+                    SELECT c.source_id, c.project_id
+                    FROM $$gene_answer$$ c, apidb.geneattributes ga
+                    where ga.source_id = c.source_id
+                    and ga.is_deprecated = $$deprecated_genes$$
+                ]]>
+            </sql>
+        </sqlQuery>
+
+
 <!--    deprecated....now using a subset of filters provided in comp sites for easier maintenance
         ....  still needed for those componet sites that do not hvave filters       -->
 
