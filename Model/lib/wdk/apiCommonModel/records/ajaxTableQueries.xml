@@ -248,8 +248,10 @@
             SELECT t.term, t.internal, 
                    $$source_id$$ AS source_id, $$project_id$$ AS project_id
             FROM (
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
-                 SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual
+                 SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual UNION 
+                 SELECT 'Giardia Assemblage A isolate WGS (deprecated)' as term, 'Giardia Assemblage A isolate WGS (deprecated)' as internal from dual
                  ) t
              </sql>
 
@@ -313,8 +315,10 @@
                 SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                 SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION 
                 SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
-                SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
-                SELECT 'Giardia lamblia (deprecated)' as term, 'Giardia lamblia (deprecated)' as internal from dual UNION 
+                SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual UNION                
+                SELECT 'Giardia Assemblage A isolate WGS (deprecated)' as term, 'Giardia Assemblage A isolate WGS (deprecated)' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -443,9 +447,14 @@
             </sql>
 
             <sql includeProjects="GiardiaDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
-             </sql>
+            SELECT t.term, t.internal,
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual
+                ) t
+            </sql>
 
             <sql includeProjects="TrichDB">
                  SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
@@ -490,7 +499,9 @@
             FROM (
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION 
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual UNION
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal  from dual UNION
@@ -529,8 +540,13 @@
             </sql>
 
             <sql includeProjects="GiardiaDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+            SELECT t.term, t.internal,
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual
+                ) t
              </sql>
 
             <sql includeProjects="TrichDB">
@@ -593,8 +609,9 @@
                  SELECT 'Cryptosporidium muris' as term, 'Cryptosporidium muris' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum' as term, 'Cryptosporidium parvum' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
-
+                 SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from UNION
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
 
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
@@ -646,8 +663,13 @@
                  ) t
             </sql>
             <sql includeProjects="GiardiaDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual
+            SELECT t.term, t.internal,
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual
+                ) t
              </sql>
             <sql includeProjects="TrichDB">
                  SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
@@ -707,7 +729,9 @@
                  SELECT 'Cryptosporidium parvum Chr6' as term, 'Cryptosporidium parvum Chr6' as internal from dual UNION
                  SELECT 'Cryptosporidium muris EST' as term, 'Cryptosporidium muris EST' as internal from dual UNION
                  SELECT 'Cryptosporidium parvum EST' as term, 'Cryptosporidium parvum EST' as internal from dual UNION 
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual UNION
                  SELECT 'Plasmodium berghei' as term, 'P. berghei' as internal from dual UNION
                  SELECT 'Plasmodium chabaudi' as term, 'P. chabaudi' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'P. falciparum' as internal from dual UNION
@@ -745,10 +769,16 @@
         <column name="project_id" />
       <column name="term"/>
       <column name="internal"/>
-      <sql includeProjects="GiardiaDB">
-                 SELECT $$source_id$$ AS source_id, $$project_id$$ AS project_id,
-                        'Giardia lamblia' as term, 'Giardia lamblia' as internal, 8 as idx from dual
-      </sql>
+
+            <sql includeProjects="GiardiaDB">
+            SELECT t.term, t.internal,
+                   $$source_id$$ AS source_id, $$project_id$$ AS project_id
+            FROM (
+                SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual
+                ) t
+             </sql>
 
       <sql includeProjects="CryptoDB">
      SELECT t.term, t.internal,
@@ -777,7 +807,9 @@
 <!--                 SELECT 'Eimeria tenella' as term, 'Eimeria tenella' as internal from dual UNION
                  SELECT 'Gregarina niphandrodes' as term, 'Gregarina niphandrodes' as internal from dual UNION
 -->
-                 SELECT 'Giardia lamblia' as term, 'Giardia lamblia' as internal from dual UNION 
+                 SELECT 'Giardia Assemblage A isolate WGS' as term, 'Giardia Assemblage A isolate WGS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage B isolate GS' as term, 'Giardia Assemblage B isolate GS' as internal from dual UNION
+                 SELECT 'Giardia Assemblage E isolate P15' as term, 'Giardia Assemblage E isolate P15' as internal from dual UNION
                  SELECT 'Neospora caninum' as term, 'Neospora caninum' as internal from dual UNION 
                  SELECT 'Plasmodium berghei' as term, 'Plasmodium berghei' as internal from dual UNION
                  SELECT 'Plasmodium falciparum' as term, 'Plasmodium falciparum' as internal from dual UNION
