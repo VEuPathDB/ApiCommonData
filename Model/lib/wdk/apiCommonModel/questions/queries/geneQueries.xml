@@ -611,12 +611,12 @@
   <!-- Orthologs -->
   <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="EuPathDB,CryptoDB,PlasmoDB,TriTrypDB,ToxoDB"
+    <sqlQuery name="GenesByOrthologs" doNotTest="true" includeProjects="EuPathDB,CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB,ToxoDB"
               isCacheable="true">
         <paramRef ref="geneParams.gene_result"/>
         <paramRef ref="organismParams.organism" 
                   queryRef="organismVQ.withGenes" 
-                  includeProjects="CryptoDB,PlasmoDB,TriTrypDB"/>
+                  includeProjects="CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB"/>
         <paramRef ref="organismParams.organism" 
                   queryRef="organismVQ.withStrains"
                   includeProjects="ToxoDB"
@@ -628,7 +628,7 @@
         <column name="project_id" />
 <!--        <column name="orthologs"/> -->
 
-        <sql includeProjects="CryptoDB,PlasmoDB,TriTrypDB">
+        <sql includeProjects="CryptoDB,GiardiaDB,PlasmoDB,TriTrypDB">
             <![CDATA[
             SELECT so.source_id, '@PROJECT_ID@' as project_id
                   --, apidb.tab_to_string(CAST(COLLECT(distinct(so.input)) AS apidb.varchartab),', ') as orthologs 
