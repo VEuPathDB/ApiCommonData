@@ -1217,7 +1217,8 @@
        <!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
        <sqlQuery name="SageTags" isCacheable="false" includeProjects="PlasmoDB,GiardiaDB,EuPathDB">
-            <column name="tag_source_id"/>
+            <column name="sta_source_id"/>
+            <column name="rad_source_id"/>
             <column name="library"/>
             <column name="sequence"/>
             <column name="frequency"/>
@@ -1230,6 +1231,7 @@
             <sql>
             <![CDATA[
                SELECT distinct tg.tag_source_id,
+                       sta.rad_source_id as rad_source_id,
                        t.library_name as library,
                       'CATG' || t.sequence as sequence, 
                       to_char(t.tag_count,'9990.9') as frequency,
