@@ -1456,6 +1456,31 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
 <publication pmid="19356248"/>
     </resource>
 
+ <resource resource="RNASeqCoveragePlot_George_Cross" version="2009-07-29" 
+        displayName="RNA-Seqs from George Cross" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        extDbName="RNA-Seqs from George Cross"
+        extDbRlsVer="2009-07-29"
+        extDbRlsDescrip="load RNA-Seqs coverage plot from George Cross by sqlldr"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_7-29-09/NewData/working_dir/BF_ALL.raw.bt" 
+            contact = "Brian Brunk" 
+            email = "brunkb@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+
+<unpack>cp @manualDelivery@/RNA-seq/GeorgeCross_7-29-09/NewData/working_dir/PF_WT.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.raw.bt</unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 4207420 --nm 50111928 @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_ALL.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_ALL.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 4383939 --nm 73955709 @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov </unpack>
+<unpack>loadCoverage.pl @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_ALL.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov </unpack>
+<unpack>sqlLoader.pl --file @downloadDir@/RNASeqCoveragePlot_George_Cross/loadCov.ctl </unpack>
+<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+
+    </resource> 
 
  <categoryOrder>
    <categoryRef name="Genome"/>
