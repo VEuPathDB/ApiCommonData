@@ -1456,6 +1456,8 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
 <publication pmid="19356248"/>
     </resource>
 
+<resourcesPipeline repository="/files/efr"
+        downloadDir="@downloadDir@">
 
  <resource resource="RNASeqCoveragePlot_George_Cross" version="2009-07-29" 
         displayName="RNA-Seqs from George Cross" 
@@ -1470,15 +1472,11 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
             email = "brunkb@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
 
-<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2442077 --nm 40590556 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF2_2_23_09_tab_dl_unfiltered.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/BF2_2_23_09_tab_dl_unfiltered.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 1502273 --nm 2703443 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/SM_sequence_fastq_36bp_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/SM_sequence_fastq_36bp_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 964871 --nm 15282933 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/s_5_sequence_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/s_5_sequence_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 1823674 --nm 30584226 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_cDNA_December_fastq_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_cDNA_December_fastq_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 232138 --nm 6748806 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_2nd_hexamer_fastq_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_2nd_hexamer_fastq_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 678464 --nm 10615829 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_2_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/Nicolai_cDNA_2_22sequence_2_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 684792 --nm 10723915 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_1_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/Nicolai_cDNA_2_22sequence_1_score.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 263070 --nm 6817929 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF_2_fastq_score.raw.bt >  @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_2_fastq_score.cov </unpack>
-<unpack>loadCoverage.pl @downloadDir@/RNASeqCoveragePlot_George_Cross/BF2_2_23_09_tab_dl_unfiltered.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/SM_sequence_fastq_36bp_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/s_5_sequence_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_cDNA_December_fastq_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_2nd_hexamer_fastq_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/Nicolai_cDNA_2_22sequence_2_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/Nicolai_cDNA_2_22sequence_1_score.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_2_fastq_score.cov</unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2705147 --nm 47408485 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF2_2_23_09_tab_dl_unfiltered.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/SM_sequence_fastq_36bp_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF_2_fastq_score.raw.bt>  @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov </unpack>
+
+<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2705147 --nm 47408485 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/s_5_sequence_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_cDNA_December_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_2nd_hexamer_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_2_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_1_score.raw.bt>  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov </unpack>
+
+<unpack>loadCoverage.pl @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov</unpack>
 <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
