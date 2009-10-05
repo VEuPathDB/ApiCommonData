@@ -26,5 +26,5 @@ multiple
   close C;
 
   ##run sqlldr
-  #system("sqlldr apidb\@$db/po34weep control=loadCov.ctl");
+  system("sqlLoader.pl --file $directories/loadCov.ctl");
 }
