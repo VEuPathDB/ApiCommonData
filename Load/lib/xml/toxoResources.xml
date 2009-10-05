@@ -2573,6 +2573,28 @@ T. gondii restriction fragment length polymorphysim (RFLP) data was obtained fro
         </description>
     </resource>
 
+<resource resource = "Brady_Time_Series"  version="1.0"
+            displayName="Expression profiles of T. gondii time series from Paul Davis"
+            organisms="T.gondii"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Expression profiles of T. gondii time series from Paul Davis"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Expression profiles of T. gondii time series from Paul Davis"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Brady_Time_Series/working_dir/expression_profiles"
+            contact = "Paul H. Davis"
+            email = "paulhd@sas.upenn.edu"
+            institution = "Roos Lab, University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/Brady_Time_Series/expression_profiles/ --configFile @downloadDir@/Brady_Time_Series/expression_profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Expression profiles of T. gondii time series from Paul Davis.
+          ]]>
+    </description>
+  </resource>
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
