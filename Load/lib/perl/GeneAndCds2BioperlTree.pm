@@ -33,6 +33,7 @@ sub preprocess {
     my ($geneFeature, $source);
     my  $primerPair = '';
     my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
+
     if(!($bioperlSeq->molecule =~ /rna/i)){
 	$unflattener->unflatten_seq(-seq=>$bioperlSeq,
                                  -use_magic=>1);
