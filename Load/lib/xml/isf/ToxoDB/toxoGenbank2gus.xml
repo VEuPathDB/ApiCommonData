@@ -17,9 +17,11 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
+  <validator name="validateGene"     handler="api" method="validateGene"/>
     <qualifier name="locus_tag"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="transcript_id"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="curation"         handler="api" method="note"/>
@@ -130,13 +132,19 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="transcript" so="transcript">
   <!-- created by the reshaper -->
+  <qualifier name="locus_tag" ignore="true"/>
+  <qualifier name="product" handler="api" method="product"/>
+  <qualifier name="note" ignore="true"/>
+  <qualifier name="transcript_id" ignore="true"/>
+  <qualifier name="selenocysteine"       ignore="true"/>
+
   </feature>
 
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
     <qualifier name="reading_frame"  column="reading_frame"/>
-    <qualifier name="coding_start"   column="coding_start"/>
-    <qualifier name="coding_end"     column="coding_end"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
     <qualifier name="GenePrediction" column="source_id"/>
     <qualifier name="OrderNumber"    column="order_number"/>
     <qualifier name="type" ignore="true"/>
