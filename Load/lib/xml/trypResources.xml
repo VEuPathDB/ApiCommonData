@@ -1482,7 +1482,32 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
             <![CDATA[
           ]]>
         </description>
+    </resource> 
 
+ <resource resource="ChIPSeqCoveragePlot_George_Cross" version="2009-08-27" 
+        displayName="ChIP-Seqs from George Cross" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        extDbName="ChIP-Seqs from George Cross"
+        extDbRlsVer="2009-08-27"
+        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_8-27-09/working_dir/bowtie/" 
+            contact = "Brian Brunk" 
+            email = "brunkb@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+
+<unpack>generateCoveragePlot.pl --m 14 --sample H4K10ac --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 2074545  --nm 5320979 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/H4K10ac.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample 4_18_2008_Cross_Chua_7_1 --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 2559395  --nm 7260778  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/4_18_2008_Cross_Chua_7_1.raw.bt>  @downloadDir@/ChIPSeqCoveragePlott_George_Cross/4_18_2008_Cross_Chua_7_1.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample 6_26_2008 --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 3022853  --nm 6796518 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/6_26_2008.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample 7_18_8 --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 417231  --nm 1086605 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/7_18_8.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov </unpack>
+
+<unpack>loadCoverage.pl @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/4_18_2008_Cross_Chua_7_1.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov</unpack>
+<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
     </resource> 
 
  <categoryOrder>
