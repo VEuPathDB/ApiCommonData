@@ -2947,7 +2947,7 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
 
        <paramRef ref="geneParams.diffMeanExpr_reference"/>
        <paramRef ref="geneParams.diffMeanExpr_comparitor"/>
-       <paramRef ref="geneParams.regulated_dir"/>
+       <paramRef ref="geneParams.regulated_dir" quote="false"/>
        <paramRef ref="geneParams.fold_change"/>
         <column name="project_id"/>
        <column name="source_id" />
@@ -2978,10 +2978,11 @@ apidb.tab_to_string(CAST(COLLECT(distinct decode(dr.lowercase_secondary_identifi
              AND sof.composite_element_id = ep2.row_id
              AND sof.source_id is not null
              AND ga.alias = sof.source_id
-             having  case when $$regulated_dir$$ = '-' 
-                    then avg(ep2.mean)/avg(ep1.mean)
-                     else avg(ep1.mean)/avg(ep2.mean)
-                     end > $$fold_change$$
+             having $$regulated_dir$$ (
+              case when avg(ep1.mean) >= avg(ep2.mean)
+                   then avg(ep1.mean)/avg(ep2.mean)
+                   else -(avg(ep2.mean)/avg(ep1.mean))
+                   end ) >= $$fold_change$$
              GROUP BY ga.gene
              ORDER BY ga.gene
             ]]>
