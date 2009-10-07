@@ -134,7 +134,7 @@
             ]]>
         </sqlParamValue>
 -->
-        <sqlParamValue name="chrParam" includeProjects="PlasmoDB,ToxoDB">
+        <sqlParamValue name="chrParam" includeProjects="PlasmoDB,ToxoDB,CryptoDB">
             <![CDATA[
               sa.chromosome=$$chromosomeOptional$$
             ]]>
@@ -153,7 +153,7 @@
         <sqlParamValue name="chroOpt" includeProjects="GiardiaDB,TrichDB">
            <![CDATA[ lower(s.source_id) = lower($$sequenceId$$)]]>
         </sqlParamValue>
-        <sql excludeProjects="PlasmoDB,ToxoDB,TriTrypDB">
+        <sql excludeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
@@ -188,7 +188,7 @@
             ) */
            ]]>
         </sql>
-        <sql includeProjects="PlasmoDB,ToxoDB,TriTrypDB">
+        <sql includeProjects="PlasmoDB,ToxoDB,TriTrypDB,CryptoDB">
             <![CDATA[
             select * from (
             SELECT eags.source_id, '@PROJECT_ID@' as project_id,
