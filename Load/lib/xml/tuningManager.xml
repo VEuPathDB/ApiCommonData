@@ -1780,7 +1780,7 @@ SELECT apidb.project_id(tn.name) as project_id,
        NVL(l.vector, 'unknown') AS vector,
        NVL(l.stage, 'unknown') AS stage,
        SUBSTR(CASE
-                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WGS' 
+                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
               END, 1, 40) AS organism,
        taxon.ncbi_tax_id,
@@ -1836,7 +1836,7 @@ tablespace indx
 CREATE TABLE apidb.AssemblyAttributes&1 NOLOGGING AS
 SELECT a.source_id, apidb.project_id(tn.name) as project_id,
        SUBSTR(CASE
-                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WGS' 
+                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
               END, 1, 40) AS organism,
        a.number_of_contained_sequences AS est_count,
@@ -2420,7 +2420,7 @@ SELECT apidb.project_id(tn.name) as project_id,
        st.composite_element_id, st.source_id as rad_source_id,
        l.is_reversed,
        SUBSTR(CASE
-                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WGS' 
+                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
               END, 1, 60) AS organism,
        gene.gene_source_id, nvl(gene.gene_count, 0) gene_count,
