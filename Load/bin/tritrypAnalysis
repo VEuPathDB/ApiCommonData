@@ -1224,6 +1224,17 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 ##################################################################################
 &calculateACGT($mgr);
 
+##################################################################################
+#############ChIP-chip##############################
+#################################################################################
+
+&mapTagsToNaSequences($mgr, "$dataDir/seqfiles/LmajorChromosomes.fsa", "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/data_repository/From_Geo/GSE13415_RAW/probes.fsa", "Peter_Myler_ChIP_RAW");
+
+&loadExpressionFeature($mgr, "mapPeter_Myler_ChIP_RAWTagsToNaSequences.mapping", "ChIP Chip Peter Myler|2008-11-07", "ArrayElementFeature", "Peter_Myler_ChIP_RAW");
+
+&InsertSimpleRadAnalysisFromConfig($mgr, "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/working_dir/data_files/", "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/working_dir/data_files/config.txt", "DataTransformationResult", "ArrayElementFeature", "ChIP-chip_Peter_Myler_Analysis", 1);
+
+
 #####################################################################
 ####### make download files steps#######
 ####################################################################
