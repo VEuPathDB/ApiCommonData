@@ -2595,6 +2595,53 @@ Expression profiles of T. gondii time series from Paul Davis.
     </description>
   </resource>
 
+<resource resource = "Compound1_pH_avg_pct"  version="1.0"
+            displayName="Averaged expression profiles and percentiles of T. gondii three strains under different conditions from Michael W White"
+            organisms="T.gondii"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Averaged expression profiles and percentiles of T. gondii three strains"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Averaged expression profiles and percentiles of T. gondii three strains under different conditions from Michael W White"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Compound1_pH/working_dir/r_work"
+            contact = "Michael W White"
+            email = "uvsmw@montana.edu"
+            institution = "Montana State University"
+      />
+<pluginArgs>--inputDir @downloadDir@/Compound1_pH_avg_pct/r_work/ --configFile @downloadDir@/Compound1_pH_avg_pct/r_work/config_pct_avg.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Lineage and developmental gene expression: type I GT1, type II Me49, and type III CTGara strains under normal (tachyzoite) and induced (Compound 1 and pH 8.2) conditions.
+          ]]>
+    </description>
+ <publication pmid="18433450"/>
+
+  </resource>
+
+
+ <resource resource = "Compound1_pH_expression_profiles" version="1.0"
+            displayName="Expression profiles from Michael W White"
+            organisms="T.gondii"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Compound1_pH/working_dir/r_work/"
+            contact = "Michael W White"
+            email = "uvsmw@montana.edu"
+            institution = "Montana State University"
+     />
+<pluginArgs>--inputDir @downloadDir@/Compound1_pH_expression_profiles/r_work --configFile @downloadDir@/Compound1_pH_expression_profiles/r_work/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+   Lineage and developmental gene expression: type I GT1, type II Me49, and type III CTGara strains under normal (tachyzoite) and induced (Compound 1 and pH 8.2) conditions.
+          ]]>
+    </description>
+ <publication pmid="18433450"/>
+
+  </resource>
+
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
