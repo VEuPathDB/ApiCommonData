@@ -32,6 +32,13 @@
     </ant>
   </target>  
 
+  <target name="ApiCommonShared-Installation">
+    <ant antfile="../ApiCommonShared/build.xml" target="ApiCommonShared-Installation">
+      <property name="project" value="WDK"/>
+      <property name="version" value=""/>
+    </ant>
+  </target>  
+
   <target name="GUS-Checkout" unless="GUS.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false"> 
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/GusAppFramework" />
