@@ -64,6 +64,14 @@
     </ant>
   </target>  
 
+  <target name="ApiCommonShared-Checkout" unless="ApiCommonShared.present"> 
+    <ant target="defaultProjectCheckout" inheritAll="false">
+      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared" />
+      <property name="project" value="ApiCommonShared"/>
+      <property name="version" value=""/>
+    </ant>
+  </target>  
+
   
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
@@ -74,10 +82,12 @@
     <available file="../GUS" type="dir" property="GUS.present" />
     <available file="../DJob" type="dir" property="DJob.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
+    <available file="../ApiCommonShared" type="dir" property="ApiCommonShared.present" />
     <antcall target="WDK-Checkout" />
     <antcall target="GUS-Checkout" />
     <antcall target="DJob-Checkout" />
     <antcall target="DoTS-Checkout" />
+    <antcall target="ApiCommonShared-Checkout" />
   </target>
   
   
@@ -98,6 +108,9 @@
     <ant target="defaultProjectUpdate">
       <property name="project" value="DoTS"/>
     </ant>
+    <ant target="defaultProjectUpdate">
+      <property name="project" value="ApiCommonShared"/>
+    </ant>
   </target>
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -108,8 +121,8 @@
                                             DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
-                                            ApiCommonData/Load-Installation,
-                                            ApiCommonData/Model-Installation">
+                                            ApiCommonShared-Installation,
+                                            ApiCommonData/Load-Installation">
 
     <ant target="defaultProjectInstall"/>
   </target>  
@@ -138,12 +151,6 @@
     </ant>
   </target>  
 
-  <target name="ApiCommonData/Model-Installation" depends="ProjectTree">
-    <ant target="defaultComponentInstall">
-      <property name="project" value="ApiCommonData"/>
-      <property name="component" value="Model"/>
-    </ant>
-  </target>  
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Distributable  ooooooooooooooooooooooooo -->
