@@ -1090,49 +1090,6 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
   </resource> 
 
 
-    <resource resource="TIGRGeneIndices_Tgondii" version="9.0"
-        displayName="TIGR Gene Indices for T. gondii"
-        category="Transcriptome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="TgGI"
-        extDbRlsVer="9.0"
-        extDbRlsDescrip="TIGR Gene Indices for T. gondii"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/tgi_splign/"
-            contact = "Ian Paulsen"
-            email = "ipaulsen@tigr.org"
-            institution = "The Institute for Genomic Research"
-        />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5811 --sequenceFile @downloadDir@/TIGRGeneIndices_Tgondii/tgi_splign/TGGI.072908 --soTermName "transcript" --regexSourceId ">(\S+)" --regexDesc ">\S+\s+(.+)$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-   TIGR Gene Indices for T. gondii were provided by Ian Paulsen and Jennifer Wortman (The Institute for Genomic Research). Contact: Ian Paulsen ipaulsen&#64;tigr&#46;org.
-         ]]>
-        </description>
-    </resource>
-
-<resource resource="TIGRGeneIndices_NeosporaCaninum" version="5.1"
-        displayName="TIGR Gene Indices for Neospora Caninum"
-        category="Transcriptome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="NcGI"
-        extDbRlsVer="5.1"
-        extDbRlsDescrip="TIGR Gene Indices for Neospora Caninum"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/nci_splign/"
-            contact = "Ian Paulsen"
-            email = "ipaulsen@tigr.org"
-            institution = "The Institute for Genomic Research"
-        />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 29176
- --sequenceFile @downloadDir@/TIGRGeneIndices_NeosporaCaninum/nci_splign/NCGI.071608 --soTermName "transcript" --regexSourceId ">(\S+)" --regexDesc ">\S+\s+(.+)$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-   TIGR Gene Indices for Neospora Caninum were provided by Ian Paulsen and Jennifer Wortman (The Institute for Genomic Research). Contact: Ian Paulsen ipaulsen&#64;tigr&#46;org.
-         ]]>
-        </description>
-    </resource>
-
     <resource resource="MetabolicDbXRefs_Feng" version="1.2" 
         displayName="Metabolic Pathway Reconstruction"
         category="Proteome"
