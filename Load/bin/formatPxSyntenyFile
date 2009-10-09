@@ -123,7 +123,7 @@ sub unassembleAndPrint {
       foreach(@$unassembled) {
         $_->{shift} = $shift;
 
-        $shift = printLine($a_seq, $_, $bLength);
+        $shift = printLine($a_seq, $_, $bLength, $b_seq->{strand});
       }
     }
     elsif($b_seq->{contig} !~ /^assembled/) {
@@ -157,15 +157,16 @@ sub readAgpFile {
 #--------------------------------------------------------------------------------
 
 sub printLine {
-  my ($a, $b, $bTot) = @_;
+  my ($a, $b, $bTot, $bTotStrand) = @_;
 
-#  print "BTOT=$bTot\n";
+print "BTOT=$bTot\n";
 
   my $aContig = $a->{contig};
   my $aStart = $a->{start};
   my $aEnd = $a->{end};
   my $aLength = $aEnd - $aStart;
   my $aStrand = $a->{strand};
+  print "ALENGTH=$aLength\n";
 
   my $bContig = $b->{contig};
   my $bStart = $b->{start};
@@ -173,17 +174,26 @@ sub printLine {
   my $bLength = $bEnd - $bStart;
   my $bStrand = $b->{strand};
 
+ # print "BLENGTH=$bLength\n";
+ # print "BTOTSTRAND=$bTotStrand\n";
+
+#  print "----\n";
   my $shift = $b->{shift};
 
+#  print "Shift: $shift\n";
   if($bTot) {
     $aLength = int ((($bEnd - $bStart) / $bTot ) * $aLength);
     $bLength = $bEnd - $bStart;
-    $aStart = $aStart + $shift;
+    if($bTotStrand eq "-"){
+	$aStart = $aEnd - $aLength - $shift;
+    }else{
+	$aStart = $aStart + $shift;
+    }
   }
 
   if($aLength < 0 ) {
-    print "Btot=$bTot\n";
-    print "ALength=$aLength\n";
+ #   print "Btot=$bTot\n";
+ #   print "ALength=$aLength\n";
     print Dumper $a;
     print Dumper $b;
     die "cannot have length < 0, $aLength";
@@ -191,7 +201,8 @@ sub printLine {
   #print  "$aContig\t$aStart\t$aEnd\t$aStrand\t$bContig\t$bStart\t$bEnd\t$bStrand\n";
   print OUT "$bContig\t$aContig\t$bStart\t$bLength\t$aStart\t$aLength\t$bStrand\n";    
 
-  return $aStart + $aLength;
+
+  return $aLength + $shift;
 }
 
 #--------------------------------------------------------------------------------
@@ -309,7 +320,7 @@ sub replaceAssembled {
       push @v, $new;
     }
   }
-#  print Dumper \@v;
+print Dumper \@v;
 
   return \@v; 
 } 
