@@ -3835,4 +3835,45 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
+<resource resource="temp_called_peaks" version="2009-10-12"
+        displayName="Pfalciparum ChIP-on-chip Peak Identifications"
+        category="Genome"
+        organisms="Pfalciparum"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Pfalciparum ChIP-on-chip peak calls"
+        extDbRlsVer="2009-10-12"
+        extDbRlsDescrip="Pfalciparum ChIP-on-chip peak calls|2009-10-12"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/PEAK_DATA/All_PEAKs.gff" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+        />
+
+<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile /home/weili1/gusApps/plas-load/gus_home/lib/xml/isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @downloadDir@/temp_called_peaks/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput @pipelineDir@/logs/temp_called_peaks.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+ <resource resource = "Pfalciparum_ChIP_PEAKs" version="2009-10-12"
+            displayName="Pfalciparum ChIP-on-chip Identifications"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/PEAK_DATA/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_ChIP_PEAKs/PEAK_DATA --configFile @downloadDir@/Pfalciparum_ChIP_PEAKs/PEAK_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
  </resourcesPipeline>
