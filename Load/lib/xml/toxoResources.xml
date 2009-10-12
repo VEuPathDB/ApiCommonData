@@ -353,14 +353,14 @@ Toxoplasma gondii ME49 sequence and annotation from Lis Caler at the J. Craig Ve
     </resource>
 
 
-    <resource resource="PDBProteinSequences" version="2009-03-06"
+    <resource resource="PDBProteinSequences" version="2009-10-02"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
         displayName="Protein Sequences from PDB"
         organisms="Diverse"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="PDB protein sequences" 
-        extDbRlsVer="2009-03-06"
+        extDbRlsVer="2009-10-02"
         extDbRlsDescrip="PDB protein sequences"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
@@ -374,7 +374,7 @@ Protein sequences from PDB used for mapping Plasmodium protein sequences to crys
         </description>
     </resource>
     
-    <resource resource="FetchPDBidx" version="2009-03-06"
+    <resource resource="FetchPDBidx" version="2009-10-02"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
         organisms="Diverse"
         category="ignore"
@@ -390,7 +390,7 @@ PDB Identifiers
         </description>
     </resource>
 
-  <resource resource="Lindstrom454Sequences" version="2009-05-04"
+  <resource resource="Lindstrom454Sequences" version="2009-10-02"
         displayName="T. gondii TgCkUg2 sequence"
         category="Genome"
         organisms="Toxoplasma"
@@ -489,48 +489,50 @@ PDB Identifiers
 
 
     <!-- check the Watanabe identifiers against dbEST to make sure they are not complete duplicates of dbEST entries -->
-    
-    <resource resource="WatanabeTgRH_PredictedTrancripts" version="2006-11-02"
+
+
+   <resource resource="WatanabeTgRH_PredictedTrancripts" version="2008-09-24"
         displayName="T. gondii RH predicted full length transcripts"
         organisms="T. gondii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
         extDbName="WatanabeTgRH_PredictedTranscripts"
-        extDbRlsVer="2006-11-02"
+        extDbRlsVer="2008-09-24"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_tg.fas"
+        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/reffull_tg.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+\(\w+\s\w+\))$" --fastaFile  @downloadDir@/WatanabeTgRH_PredictedTrancripts/reffull_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryStage 'tachyzoites' --libraryName 'derivedFromWatanabeTgRH' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabeTgRH EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <pluginArgs>--sourceIdRegex ">(\S+\(\w+\))$" --fastaFile  @downloadDir@/WatanabeTgRH_PredictedTrancripts/reffull_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryStage 'tachyzoites' --libraryName 'derivedFromWatanabeTgRH' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabeTgRH EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
         <description>
             <![CDATA[
   <i>T. gondii</i> RH EST sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
           ]]>
         </description>
     </resource>
-    
-    <resource resource="WatanabeTgRH_EstLibrary" version="2006-11-02"
+
+    <resource resource="WatanabeTgRH_EstLibrary" version="2008-09-24"
         displayName="T. gondii RH EST library"
         organisms="T. gondii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
         extDbName="WatanabeTgRH_ESTs"
-        extDbRlsVer="2006-11-02"
+        extDbRlsVer="2008-09-24"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_tg.fas"
+        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/onepass_tg.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @downloadDir@/WatanabeTgRH_EstLibrary/onepass_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabeTgRH' --libraryStage 'tachyzoites' --libraryDesc "Toxoplasma gondii RH tachyzoites were infected into Vero (T25) cells and incubated in EMEM medium supplemented with 8% fetal bovine serum for 72 hours in vitro. Infected cells were collected with a scraper and passed through 27G needle for three times and purified by filtration through Millex SV filters (pore size 5 um, Millipore). Cells were collected by centrifugation at 2,000 rpm for 10 min and washed in EMEM medium without FBS. Parasites were suspended at 1x107/ml in EMEM medium without FBS. Five-week old ICR female mice were infected with 1 ml parasites intraperitoneally.Three days after infection, mice were sacrificed by cervical dislocation. Parasites were collected by washing the peritoneal cavity with 5 ml EMEM, passed through 5 um filter, washed in PBS and suspended at 2-3x109 parasite/ml. 20 ml TRI REGENT (Sigma) was added to 1 ml parasite solution, mixed by pipetting, frozen in liquid nitrogen and kept at -80C until used."</pluginArgs>
+        <pluginArgs>--sourceIdRegex ">(\w+)$" --fastaFile  @downloadDir@/WatanabeTgRH_EstLibrary/onepass_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabeTgRH' --libraryStage 'tachyzoites' --libraryDesc "Toxoplasma gondii RH tachyzoites were infected into Vero (T25) cells and incubated in EMEM medium supplemented with 8% fetal bovine serum for 72 hours in vitro. Infected cells were collected with a scraper and passed through 27G needle for three times and purified by filtration through Millex SV filters (pore size 5 um, Millipore). Cells were collected by centrifugation at 2,000 rpm for 10 min and washed in EMEM medium without FBS. Parasites were suspended at 1x107/ml in EMEM medium without FBS. Five-week old ICR female mice were infected with 1 ml parasites intraperitoneally.Three days after infection, mice were sacrificed by cervical dislocation. Parasites were collected by washing the peritoneal cavity with 5 ml EMEM, passed through 5 um filter, washed in PBS and suspended at 2-3x109 parasite/ml. 20 ml TRI REGENT (Sigma) was added to 1 ml parasite solution, mixed by pipetting, frozen in liquid nitrogen and kept at -80C until used."</pluginArgs>
         <description>
             <![CDATA[
    <i>T. gondii</i> RH predicted full length transcript sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
           ]]>
         </description>
     </resource>
+
     
     <!--  Load the MGED Ontology (Requires Term and Relationship Types) -->
 
@@ -669,6 +671,7 @@ PDB Identifiers
         </description>
     </resource>
     
+
      <resource resource="GeneticMarkers_Sibley" version="1"
         displayName="Genetic Markers for T. gondii"
         category="Polymorphisms"
@@ -683,7 +686,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
         <unpack>mkdir @downloadDir@/GeneticMarkers_Sibley_fixed</unpack>
-        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/GeneticMarkers_Sibley/Tg10x_31-SibleySNPs.scaff.gff> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff]]></unpack>
+        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/GeneticMarkers_Sibley/Tg10x_31-SibleySNPs.scaff.gff> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff]]></unpack>
         <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
         <unpack>formatGFF --inFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff --regex SNP</unpack>
         <unpack><![CDATA[egrep 'Sibley' @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff | perl -e 'while(<>) { chomp; my @line = split("\t", $_); $line[8] =~ s/SNP/ID/; my $line = join("\t",@line); print "$line\n";}'> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.fixed.gff]]></unpack>
@@ -695,6 +698,7 @@ PDB Identifiers
         </description>
         <publication pmid="15911631"/>
     </resource>
+
 
  <resource resource="ME49_SNPs" version="2004-08"
         displayName="T. gondii ME49 SNPs"
@@ -710,7 +714,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
         <unpack>mkdir @downloadDir@/ME49_SNPs_fixed</unpack>
-        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_SNPs/Tg10x_31-StanfordSNPs.scaff.gff> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff]]></unpack>
+        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_SNPs/Tg10x_31-StanfordSNPs.scaff.gff> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff]]></unpack>
         <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
         <unpack><![CDATA[egrep 'AffyName' @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff | perl -e 'while(<>) { chomp; $_ =~ s/AffyName/ID/; print "$_\n";}'> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff]]></unpack>
         <unpack>formatGFF --inFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.final.gff --regex ID</unpack>
@@ -722,6 +726,8 @@ PDB Identifiers
         </description>
         <publication pmid="16801557"/>
     </resource>
+
+
     <resource resource="AmitAlignmentSnps" version="2006-10-16"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from alignments of GT1, VEG and RH"
@@ -1089,7 +1095,6 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
     </description>
   </resource> 
 
-
     <resource resource="MetabolicDbXRefs_Feng" version="1.2" 
         displayName="Metabolic Pathway Reconstruction"
         category="Proteome"
@@ -1104,14 +1109,14 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
             institution="The University of Pennsylvania"
         />
         <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/PathMappings/TgondiiME49GeneIDMapping.txt | perl -e 'while(<STDIN>){chomp;my ($new, $old)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+\.\w+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodb.log> tg_metabolicpathway_4toxodbNewID.log]]></unpack>
-        <pluginArgs>--DbRefMappingFile @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodbNewID.log --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --SequenceType "AA"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodbNewID.log --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefAAFeature"</pluginArgs>
         <description>
             <![CDATA[
    Metabolic Pathway Reconstruction for <i>T. gondii</i> gene identifiers, provided on 2006-04-06 by Feng Chen and David Roos (University of Pennsylvania). Contact: David Roos droos&#64;sas&#46;upenn&#46;edu
           ]]>
         </description>
     </resource>
-    
+
     
     <resource resource="ME49_GLEAN" version="2003-08-13"
         displayName="T. gondii ME49 Gene Predictions from GLEAN"
@@ -1343,24 +1348,25 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
         </description>
     </resource>
 
-   <resource resource="IEDB_Epitopes" version="05-28-2009"
+
+   <resource resource="IEDB_Epitopes" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="T. gondii"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDeliveryDir@/IEDB/05-28-2009" 
+        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Toxo" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/05-28-2009  --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Toxo --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
@@ -1369,14 +1375,14 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
     </resource>
     
 
-    <resource resource="IEDB_Epitopes_DBxRefs" version="05-28-2009"
+    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
-        organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
-        category="HIDE"
+        organisms="T. gondii"
+        category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
@@ -2106,7 +2112,8 @@ This data was graciously provided to ToxoDB pre-publication by Silvia Moreno (sm
             Proteomics data provided by Silvia Moreno lab.
           ]]>
          </description>		
-     </resource>  
+     </resource> 
+
 
 <resource resource="Antibody" version="1"
         displayName="Links to Antibodies from Albert Einstein College of Medicine"
@@ -2130,7 +2137,8 @@ This data was graciously provided to ToxoDB pre-publication by Silvia Moreno (sm
 Antibodies may be obatined for free from the Biodefense and Emerging Infections Research Resources Repository.
           ]]>
         </description>
-    </resource>    
+    </resource> 
+
 
 <resource resource="ME49ChromosomeMap" version="2008-08-28"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
