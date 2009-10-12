@@ -207,19 +207,11 @@
         <column name="project_id"/>
         <sql >
           <![CDATA[
-           SELECT distinct nas.source_id, '@PROJECT_ID@' as project_id, 
-                  decode(ed.name, 'Broad 75K genotyping chip', 'HD_Array', 
-                  'Broad 3K genotyping chip', '3kChip',
-                  'Toxoplasma RFLPs from Chunlei Su', 'RFLP Typed',
-                  'Isolate barcode data from Broad','Barcode','Sequencing Typed') as data_type
-           FROM   apidb.isolatevocabulary v, apidb.isolatemapping m,
-                  dots.nasequence nas, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-           WHERE  v.type = 'product'
-           AND    v.isolate_vocabulary_id = m.isolate_vocabulary_id
-           AND    v.term = $$product$$
-           AND    nas.na_sequence_id = m.na_sequence_id
-           AND    nas.external_database_release_id = edr.external_database_release_id
-           AND    edr.external_database_id = ed.external_database_id
+            SELECT distinct ia.source_id, '@PROJECT_ID@' as project_id 
+            from apidb.ISOLATEVOCABULARY v, apidb.ISOLATEMAPPING m, apidb.ISOLATEATTRIBUTES ia
+            where v.term = $$product$$
+            and v.isolate_vocabulary_id = m.isolate_vocabulary_id
+            and m.na_sequence_id = ia.na_sequence_id
             ]]>
          </sql>
     </sqlQuery>
