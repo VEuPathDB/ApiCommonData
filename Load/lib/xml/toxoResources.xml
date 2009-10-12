@@ -2598,6 +2598,27 @@ Lineage and developmental gene expression: type I GT1, type II Me49, and type II
 
   </resource>
 
+<resource resource = "Matt_Tz-Bz_Time_Series"  version="1.0"
+            displayName="Expression profiles of T. gondii Matt_Tz-Bz time series"
+            organisms="T.gondii"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Expression profiles of T. gondii Matt_Tz-Bz time series"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Expression profiles of T. gondii Matt_Tz-Bz time series"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Matt_Tz-Bz/working_dir"
+            contact = "John Brestelli"
+            email = "jbrestel@pcbi.upenn.edu"
+            institution = "University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/Matt_Tz-Bz_Time_Series/working_dir/ --configFile @downloadDir@/Matt_Tz-Bz_Time_Series/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Expression profiles of T. gondii Matt_Tz-Bz time series.
+          ]]>
+    </description>
+  </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>
