@@ -2349,28 +2349,31 @@ For further information please contacts Kami Kim (kkim@aecom.yu.edu) or Boris St
     </description>
     <publication pmid="19457243"/>
   </resource>
-   <resource resource="ToxoIsolatesFromGenbank" version="2009-05-04"
+
+   <resource resource="ToxoIsolatesFromGenbank" version="2009-10-09"
         displayName="T. gondii and N. caninum isolates from Genbank"
         category="Genome"
         organisms="Toxoplasma"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Toxoplasma isolates From Genbank"
-        extDbRlsVer="2009-05-04"
-        extDbRlsDescrip="Toxoplasma isolates From Genbank|2009-05-04"
+        extDbRlsVer="2009-10-09"
+        extDbRlsDescrip="Toxoplasma isolates From Genbank|2009-10-09"
         dbCommit="@dbcommit@">
-           <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ToxoIsolatesFromGenbank/sequences.gb" 
+           <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ToxoIsolatesFromGenbank/10-09-2009/sequences.gb" 
             contact="GenBank"
             email="info@ncbi.nlm.nih.gov"
             institution="NCBI"
         />
         <unpack>fixIsolateSequences --seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences.gb --fixed_seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb --removed_seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences_excluded.gb</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --seqSoTerm "region" --bioperlTreeOutput @pipelineDir@/logs/Toxoisolates.bioperl</pluginArgs>
+        <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb.1</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb.1 --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"  --seqSoTerm "region" --bioperlTreeOutput @pipelineDir@/logs/Toxoisolates.bioperl</pluginArgs>
         <description>
             <![CDATA[
 <i>Toxoplasma gondii</i> and <i>Neospora caninum</i> isolate data was obtained from Genbank.  
           ]]>
         </description>
     </resource>
+
 
    <resource resource="ToxoIsolatesFromDardre" version="2009-05-04"
         displayName="T. gondii isolates"
