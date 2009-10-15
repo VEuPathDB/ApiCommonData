@@ -2291,36 +2291,6 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="apidb.ChIPProtocolParams">
-    <externalDependency name="rad.Analysis"/>
-    <externalDependency name="rad.AnalysisParam"/>
-    <externalDependency name="rad.ProtocolParam"/> 
-    <sql>
-      <![CDATA[
-        create table apidb.ChIPProtocolParams&1 NOLOGGING AS
-        select a.protocol_id as protocol_id, 
-               a.analysis_id as analysis_id,
-               aps.value as strain,
-               apa.value as antibody,
-               apt.value as treatment,
-               apr.value as replicate,
-               app.value as protocol_type
-        from rad.analysis a,
-             rad.analysisparam aps, rad.protocolparam pps,
-             rad.analysisparam apa, rad.protocolparam ppa,
-             rad.analysisparam apt, rad.protocolparam ppt,
-             rad.analysisparam apr, rad.protocolparam ppr,
-             rad.analysisparam app, rad.protocolparam ppp
-        where a.analysis_id = aps.analysis_id and aps.protocol_param_id = pps.protocol_param_id and pps.name ='strain'
-        and   a.analysis_id = apa.analysis_id and apa.protocol_param_id = ppa.protocol_param_id and ppa.name ='antibody'
-        and   a.analysis_id = apt.analysis_id and apt.protocol_param_id = ppt.protocol_param_id and ppt.name ='treatment'
-        and   a.analysis_id = apr.analysis_id and apr.protocol_param_id = ppr.protocol_param_id and ppr.name ='replicate'
-        and   a.analysis_id = app.analysis_id and app.protocol_param_id = ppp.protocol_param_id and ppp.name ='protocol type'
-      ]]>
-    </sql>
-  </tuningTable>
-
-
   <tuningTable name="apidb.ChIPchipGene">
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GeneAttributes"/>
