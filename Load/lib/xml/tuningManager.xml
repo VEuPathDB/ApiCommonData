@@ -2290,7 +2290,38 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="apidb.ChIPFeature">
+ <tuningTable name="apidb.ChIPProtocolParams">
+    <externalDependency name="rad.Analysis"/>
+    <externalDependency name="rad.AnalysisParam"/>
+    <externalDependency name="rad.ProtocolParam"/>
+    <sql>
+      <![CDATA[
+        create table apidb.ChIPProtocolParams&1 NOLOGGING AS
+        select a.protocol_id as protocol_id,
+               a.analysis_id as analysis_id,
+               aps.value as strain,
+               apa.value as antibody,
+               apt.value as treatment,
+               apr.value as replicate,
+               app.value as protocol_type
+        from rad.analysis a,
+             rad.analysisparam aps, rad.protocolparam pps,
+             rad.analysisparam apa, rad.protocolparam ppa,
+             rad.analysisparam apt, rad.protocolparam ppt,
+             rad.analysisparam apr, rad.protocolparam ppr,
+             rad.analysisparam app, rad.protocolparam ppp
+        where a.analysis_id = aps.analysis_id and aps.protocol_param_id = pps.protocol_param_id and pps.name ='strain'
+        and   a.analysis_id = apa.analysis_id and apa.protocol_param_id = ppa.protocol_param_id and ppa.name ='antibody'
+        and   a.analysis_id = apt.analysis_id and apt.protocol_param_id = ppt.protocol_param_id and ppt.name ='treatment'
+        and   a.analysis_id = apr.analysis_id and apr.protocol_param_id = ppr.protocol_param_id and ppr.name ='replicate'
+        and   a.analysis_id = app.analysis_id and app.protocol_param_id = ppp.protocol_param_id and ppp.name ='protocol type'
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+
+<tuningTable name="apidb.ChIPFeature">
     <internalDependency name="apidb.FeatureLocation"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="rad.DataTransformationResult"/>
@@ -2298,65 +2329,30 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ChIPFeature&1 NOLOGGING AS
-SELECT f.na_feature_id   as na_feature_id,
+select f.na_feature_id   as na_feature_id,
        l.na_sequence_id  as na_sequence_id,
+       a.analysis_id     as analysis_id,
        f.source_id       as name,
        r.float_value     as score,
        l.start_min       as start_min,
-       l.end_max         as end_max,
-       substr(a.name, 1, 100) as analysis_name,
-       substr(p.name, 1, 40) as protocol_name,
-       CASE
-          WHEN p.name like '%_called_peaks' then 'called_peaks'
-       ELSE 'raw'
-       END as protocol_type,
-       CASE 
-          WHEN a.name like '%RH%' then 'RH'
-          WHEN a.name like '%TypeIII%' then 'CTG'
-          WHEN a.name like '%PLK%' then 'PLK'
-       ELSE 'unknown' 
-       END as strain,
-       CASE 
-          WHEN a.name like '%H3K9%' AND a.name not like 'Cen%' then 'H3K9ac'
-          WHEN a.name like 'CenH3_H3K9me2%' then 'CenH3_H3K9me2'
-          WHEN a.name like 'CenH3 -%' then 'CenH3'
-          WHEN a.name like '%H3K4%' then 'H3K4me3'
-          WHEN a.name like '%K5,K8,K12,K16%' then 'H4(K5-K8-K12-K16)ac'
-       ELSE 'unknown' 
-       END as antibody,
-       CASE
-          WHEN a.name like '%DMSO%' then 'DMSO Control'
-          WHEN a.name like '%FR235222%' then 'FR235222 (Drug A)'
-       ELSE 'none'
-       END as treatment,
-       CASE 
-          WHEN a.name like '%Rep1%' then '1'
-          WHEN a.name like '%Rep2%' then '2'
-       ELSE '0' 
-       END as rep 
+       l.end_max         as end_max
 FROM   rad.DataTransformationResult r, 
        rad.Analysis a, 
-       rad.Protocol p, 
-       core.Tableinfo t, 
        dots.ArrayElementFeature f, 
        apidb.FeatureLocation l 
 WHERE  a.analysis_id = r.analysis_id 
-   AND p.protocol_id = a.protocol_id
-   AND t.table_id = r.table_id
    AND r.row_id = f.na_feature_id
-   AND t.name = 'ArrayElementFeature'
    AND f.na_feature_id = l.na_feature_id
       ]]>
     </sql>
     <sql>
       <![CDATA[
          CREATE INDEX apidb.Chfe_big_idx_&1
-         ON apidb.ChipFeature&1 (na_sequence_id, protocol_name, strain, start_min, end_max, na_feature_id, antibody, rep, score)
+         ON apidb.ChipFeature&1 (na_sequence_id, analysis_id, start_min, end_max, na_feature_id, score)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
 
 
   <tuningTable name="apidb.ChIPchipGene">
@@ -2366,41 +2362,35 @@ tablespace indx
     <internalDependency name="apidb.SequenceAttributes"/>
     <sql>
       <![CDATA[
-        create table apidb.chipchipgene&1 NOLOGGING AS
-         SELECT distinct
-         ga.source_id as gene_source_id, 
-         cf.name as probe_id,cf.score,
-         cf.analysis_name,cf.strain,cf.treatment,cf.antibody,cf.rep,
+select distinct
+         ga.source_id as gene_source_id,
+         cf.analysis_id as analysis_id,
          CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
               ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END as distance,
-         CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
-                        ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END > 0 THEN 
+         CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END > 0 THEN 
               CASE WHEN ga.is_reversed = 0 THEN '-' ELSE '+' END ELSE 
               CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
-         FROM apidb.chipfeature cf,
-            apidb.geneattributes ga,
-            apidb.featurelocation fl
-         WHERE cf.protocol_type = 'called_peaks'
-            AND cf.na_sequence_id = fl.na_sequence_id
-            AND fl.is_top_level = 1
-            and fl.na_feature_id = ga.na_feature_id
-            and ( (fl.is_reversed = 0 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000)
+from apidb.chipfeature cf,
+     apidb.featurelocation fl,
+     apidb.geneattributes ga,
+     apidb.chipprotocolparams cpp
+where cf.analysis_id = cpp.analysis_id
+and cpp.protocol_type = 'called_peaks'
+and cf.na_sequence_id = fl.na_sequence_id
+AND fl.is_top_level = 1
+and fl.na_feature_id = ga.na_feature_id
+and ( (fl.is_reversed = 0 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000)
                   or (fl.is_reversed = 1 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.end_max) <= 3000) )
-      ]]>
+     ]]>
     </sql>
     <sql>
       <![CDATA[
-       CREATE INDEX apidb.chpgene_str_anti_rep_idx&1 ON apidb.chipchipgene&1 (strain,antibody,rep)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-       CREATE INDEX apidb.chpgene_geneid_idx&1 ON apidb.chipchipgene&1 (gene_source_id)
+       CREATE INDEX apidb.chpgene_geneid_idx&1 ON apidb.chipchipgene&1 (gene_source_id, analysis_id)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
+
 
   <tuningTable name="apidb.SageTagAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
