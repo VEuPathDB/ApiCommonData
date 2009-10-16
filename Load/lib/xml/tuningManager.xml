@@ -2355,41 +2355,6 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="apidb.ChIPchipGene">
-    <internalDependency name="apidb.FeatureLocation"/>
-    <internalDependency name="apidb.GeneAttributes"/>
-    <internalDependency name="apidb.ChIPFeature"/>
-    <internalDependency name="apidb.SequenceAttributes"/>
-    <sql>
-      <![CDATA[
-select distinct
-         ga.source_id as gene_source_id,
-         cf.analysis_id as analysis_id,
-         CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0)
-              ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END as distance,
-         CASE WHEN CASE WHEN fl.is_reversed = 0 THEN round(abs(fl.start_min - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) ELSE round(abs(fl.end_max - (((cf.end_max - cf.start_min) / 2) + cf.start_min)),0) END > 0 THEN 
-              CASE WHEN ga.is_reversed = 0 THEN '-' ELSE '+' END ELSE 
-              CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
-from apidb.chipfeature cf,
-     apidb.featurelocation fl,
-     apidb.geneattributes ga,
-     apidb.chipprotocolparams cpp
-where cf.analysis_id = cpp.analysis_id
-and cpp.protocol_type = 'called_peaks'
-and cf.na_sequence_id = fl.na_sequence_id
-AND fl.is_top_level = 1
-and fl.na_feature_id = ga.na_feature_id
-and ( (fl.is_reversed = 0 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.start_min) <= 3000)
-                  or (fl.is_reversed = 1 and abs((((cf.end_max - cf.start_min) / 2) + cf.start_min) - fl.end_max) <= 3000) )
-     ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-       CREATE INDEX apidb.chpgene_geneid_idx&1 ON apidb.chipchipgene&1 (gene_source_id, analysis_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
 
 
   <tuningTable name="apidb.SageTagAttributes">
