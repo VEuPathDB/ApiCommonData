@@ -21,7 +21,7 @@ my $argsDeclaration =
 
    stringArg ({name => 'extDbRelSpecList',
 	       descr => 'Comma delimited list specifying the database source for the rows being updated in database_name|db_rel_ver format',
-	       reqd => 1,
+	       reqd => 0,
                constraintFunc => undef,
                isList=> 1
               }),
@@ -103,17 +103,18 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $extDbRelSpecList = $self->getArg('extDbRelSpecList');
-
   my $extDbRlsIdList;
 
-  for (my $i=0;$i<@{$extDbRelSpecList};$i++) {
-        $extDbRlsIdList .= $self->getExtDbRlsId($extDbRelSpecList->[$i]).",";
-  }
+  if ($self->getArg('extDbRelSpecList')){
 
-  chop $extDbRlsIdList;
+      my $extDbRelSpecList = $self->getArg('extDbRelSpecList');
 
-  
+      for (my $i=0;$i<@{$extDbRelSpecList};$i++) {
+	  $extDbRlsIdList .= $self->getExtDbRlsId($extDbRelSpecList->[$i]).",";
+      }
+      chop $extDbRlsIdList;
+
+}
   # get source_id -> na_feature_id mapping from db
   #
   my %sourceId2NaFeatureId;
@@ -162,8 +163,9 @@ SELECT nag.name, nag.na_gene_id, nfng.na_feature_id, nfng.na_feature_na_gene_id
 FROM Dots.NAGene nag, Dots.NaFeatureNaGene nfng, Dots.GeneFeature gf
 WHERE nfng.na_gene_id = nag.na_gene_id
   AND nfng.na_feature_id = gf.na_feature_id
-  AND gf.external_database_release_id in ($extDbRlsIdList)
  "; 
+      
+  $sql.=" AND gf.external_database_release_id in ($extDbRlsIdList)" if $extDbRlsIdList;
 
   $sth = $self->prepareAndExecute($sql);
   while (my ($alias, $na_gene_id, $na_feature_id, $na_f_na_g_id)
