@@ -139,34 +139,38 @@
         <publication pmid="15608177"/>
     </resource>
 
- <resource resource="dbEST" version="2008-10-15"
+
+    <resource resource="dbEST" version="2009-08-27"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         extDbName="dbEST"
-        extDbRlsVer="2008-10-15"
+        extDbRlsVer="2009-08-27"
         extDbRlsDescrip="ESTs from the mirrored dbEST"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
+        <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/dbEST/dummy"
         />
-        <unpack>getSubTaxa --ncbiTaxId 5654 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId "5654" --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
         <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs>
         <description>
             <![CDATA[
-                  ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
+       The Expressed Sequence Tags database (dbEST) contains sequence data and other information on single-pass cDNA sequences and is a division of GenBank.
           ]]>
         </description>
     </resource>
 
-    <resource resource="PDBProteinSequences" version="2009-03-06"
+
+    <resource resource="PDBProteinSequences" version="2009-08-20"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
         displayName="Protein Sequences from PDB"
         organisms="Diverse"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="PDB protein sequences" 
-        extDbRlsVer="2009-03-06"
+        extDbName="PDB protein sequences"
+        extDbRlsVer="2009-08-20"
         extDbRlsDescrip="PDB protein sequences"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
@@ -175,12 +179,12 @@
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
         <description>
          <![CDATA[
-Protein sequences from PDB used for mapping Plasmodium protein sequences to crystal structures in PDB.        
+Protein sequences from PDB used for mapping Plasmodium protein sequences to crystal structures in PDB.
           ]]>
         </description>
     </resource>
-    
-    <resource resource="FetchPDBidx" version="2009-03-06"
+
+    <resource resource="FetchPDBidx" version="2009-08-20"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
         organisms="Diverse"
         category="ignore"
@@ -188,10 +192,10 @@ Protein sequences from PDB used for mapping Plasmodium protein sequences to crys
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
         <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
-        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-08-20'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
         <description>
          <![CDATA[
-PDB Identifiers       
+PDB Identifiers
           ]]>
         </description>
     </resource>
