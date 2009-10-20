@@ -2297,24 +2297,38 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.ChIPProtocolParams&1 NOLOGGING AS
-        select a.protocol_id as protocol_id,
-               a.analysis_id as analysis_id,
-               aps.value as strain,
-               apa.value as antibody,
-               apt.value as treatment,
-               apr.value as replicate,
-               app.value as protocol_type
-        from rad.analysis a,
-             rad.analysisparam aps, rad.protocolparam pps,
-             rad.analysisparam apa, rad.protocolparam ppa,
-             rad.analysisparam apt, rad.protocolparam ppt,
-             rad.analysisparam apr, rad.protocolparam ppr,
-             rad.analysisparam app, rad.protocolparam ppp
-        where a.analysis_id = aps.analysis_id and aps.protocol_param_id = pps.protocol_param_id and pps.name ='strain'
-        and   a.analysis_id = apa.analysis_id and apa.protocol_param_id = ppa.protocol_param_id and ppa.name ='antibody'
-        and   a.analysis_id = apt.analysis_id and apt.protocol_param_id = ppt.protocol_param_id and ppt.name ='treatment'
-        and   a.analysis_id = apr.analysis_id and apr.protocol_param_id = ppr.protocol_param_id and ppr.name ='replicate'
-        and   a.analysis_id = app.analysis_id and app.protocol_param_id = ppp.protocol_param_id and ppp.name ='protocol type'
+select a.analysis_id,
+       a.protocol_id,
+       antbd.antibody as antibody,
+       strn.strain as strain,
+       treamnt.treatment as treatment,
+       replcte.replicate as replicate,
+       CASE
+          WHEN lower(p.name) like '%peak%' then 'called_peaks'
+       ELSE 'raw'
+       END as protocol_type
+from   rad.analysis a,rad.protocol p,
+      (select ap.analysis_id,ap.value as antibody
+       from   rad.analysisparam ap,rad.protocolparam pp
+       where  ap.protocol_param_id = pp.protocol_param_id
+       and    lower(name) like 'antibody') antbd,
+      (select ap.analysis_id,ap.value as strain
+       from   rad.analysisparam ap,rad.protocolparam pp
+       where  ap.protocol_param_id = pp.protocol_param_id
+       and    lower(name) like 'strain') strn,
+      (select ap.analysis_id,ap.value as treatment
+       from   rad.analysisparam ap,rad.protocolparam pp
+       where  ap.protocol_param_id = pp.protocol_param_id
+       and    lower(name) like 'treatment') treamnt,
+      (select ap.analysis_id,ap.value as replicate
+       from   rad.analysisparam ap,rad.protocolparam pp
+       where  ap.protocol_param_id = pp.protocol_param_id
+       and    lower(name) like 'replicate') replcte
+where a.protocol_id = p.protocol_id
+and   a.analysis_id = antbd.analysis_id (+)
+and   a.analysis_id = strn.analysis_id (+)
+and   a.analysis_id = treamnt.analysis_id (+)
+and   a.analysis_id = replcte.analysis_id (+)
       ]]>
     </sql>
     <sql>
@@ -2351,7 +2365,7 @@ from  dots.ArrayElementFeature aef,
 where aef.na_feature_id = arrloc.na_feature_id
 and   arrloc.external_database_release_id = edr.external_database_release_id
 and   edr.external_database_id = ed.external_database_id
-and   lower(ed.name) like '%peaks%'
+and   lower(ed.name) like '%peak%'
 and   arrloc.na_sequence_id = ga.na_sequence_id
 and   ( (ga.is_reversed = 0 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.start_min) <= 3000)
                   or (ga.is_reversed = 1 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.end_max) <= 3000) )
