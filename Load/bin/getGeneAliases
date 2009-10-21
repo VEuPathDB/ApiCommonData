@@ -56,7 +56,8 @@ foreach my $sourceId (keys %genes) {
 open(OUT,">$outFile"); 
 
 foreach my $sourceId (keys %genes) {
-  my $line = $genes{$sourceId}->{'aliases'} ? join("\t",$sourceId,@{$genes{$sourceId}->{'aliases'}}) : $sourceId;
+  next  unless($genes{$sourceId}->{'aliases'});
+  my $line = join("\t",$sourceId,@{$genes{$sourceId}->{'aliases'}});
   print OUT "$line\n";
 }
 
