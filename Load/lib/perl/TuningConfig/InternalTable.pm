@@ -1,6 +1,7 @@
 package ApiCommonData::Load::TuningConfig::InternalTable;
 
 use ApiCommonData::Load::TuningConfig::TableSuffix;
+use ApiCommonData::Load::TuningConfig::Utils;
 
 # @ISA = qw( ApiCommonData::Load::TuningConfig::Table );
 
@@ -16,7 +17,7 @@ sub new {
         $externalTuningTableDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls, $unionizations, $dbh, $debug, $dblinkSuffix)
+        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate)
 	= @_;
 
     my $self = {};
@@ -35,6 +36,7 @@ sub new {
     $self->{internalDependencies} = [];
     $self->{externalDependencies} = [];
     $self->{externalTuningTableDependencies} = [];
+    $self->{debug} = $debug;
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -175,7 +177,7 @@ sub getState {
     }
   }
 
-  if ($doUpdate and $needUpdate) {
+  if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate}) {
     my $updateResult = $self->update($dbh, $purgeObsoletes);
     $broken = 1 if $updateResult eq "broken";
   }
@@ -202,7 +204,8 @@ sub update {
 
   my $startTime = time;
 
-  ApiCommonData::Load::TuningConfig::Log::setUpdatePerformedFlag();
+  ApiCommonData::Load::TuningConfig::Log::setUpdatePerformedFlag()
+      unless $self->{alwaysUpdate};
 
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
@@ -236,7 +239,7 @@ sub update {
     # use numeric suffix to make db object names unique
     $sqlCopy =~ s/&1/$suffix/g;
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("vvv sql string changed: vvv\nbefore: \"$sql\"\nafter: \"$sqlCopy\"^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    ApiCommonData::Load::TuningConfig::Log::addLog("vvvvvv sql string changed: vvvvvv\nbefore: \"$sql\"\nafter: \"$sqlCopy\"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 	if $self->{debug} && $sqlCopy ne $sql;
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running sql of length "
@@ -244,14 +247,8 @@ sub update {
 						   . " to build $self->{name}:\n$sqlCopy")
 	if $self->{debug};
 
-    my $sqlReturn = $dbh->do($sqlCopy);
+    $updateError = 1 if !ApiCommonData::Load::TuningConfig::Utils::sqlBugWorkaroundDo($dbh, $sqlCopy);;
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"" . $dbh->errstr . "\"")
-	if $self->{debug};
-    if (!defined $sqlReturn) {
-      $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-    }
   }
 
   foreach my $perl (@{$self->{perls}}) {
@@ -520,7 +517,7 @@ sub unionize {
   my $createTable = "create table $union->{name}$suffix as\n"
     . join("\nunion\n", @unionMembers);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("$createTable") if $self->{debug};
+  ApiCommonData::Load::TuningConfig::Log::addLog("creating union table with following statement:\n$createTable") if $self->{debug};
   runSql($dbh, $createTable);
 }
 

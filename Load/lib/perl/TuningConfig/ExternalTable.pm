@@ -7,6 +7,7 @@ package ApiCommonData::Load::TuningConfig::ExternalTable;
 use strict;
 use Data::Dumper;
 use ApiCommonData::Load::TuningConfig::Log;
+use ApiCommonData::Load::TuningConfig::Utils;
 
 my $currentDate;
 
@@ -76,7 +77,7 @@ sub getTimestamp {
        from $self->{name}$dblink
 SQL
     my $stmt = $dbh->prepare($sql);
-    $stmt->execute()
+    ApiCommonData::Load::TuningConfig::Utils::sqlBugWorkaroundExecute($dbh, $stmt)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     my ($max_mod_date, $row_count) = $stmt->fetchrow_array();
     $stmt->finish();
@@ -89,6 +90,7 @@ SQL
        where name = upper('$self->{name}')
 SQL
     my $stmt = $dbh->prepare($sql);
+
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     my ($stored_max_mod_date, $stored_row_count, $timestamp) = $stmt->fetchrow_array();
