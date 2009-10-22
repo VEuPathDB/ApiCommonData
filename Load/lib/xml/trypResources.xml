@@ -531,26 +531,24 @@ Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> NonE
         </description>
     </resource>
 
-
-
-   <resource resource="IEDB_Epitopes" version="05-28-2009"
+   <resource resource="IEDB_Epitopes" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
-        organisms="T.brucei, T.cruzi, L.major, L.infantum, L.braziliensis"
+        organisms="T.brucei, T.cruzi, L.major, L.infantum, L.braziliensis, T.vivax, T.congolense"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDeliveryDir@/IEDB/05-28-2009" 
+        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/TriTryp" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/05-28-2009 --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/TriTryp --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
@@ -559,14 +557,14 @@ Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> NonE
     </resource>
     
 
-    <resource resource="IEDB_Epitopes_DBxRefs" version="05-28-2009"
+    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
-        organisms="T.brucei, T.cruzi, L.major, L.infantum, L.braziliensis"
-        category="HIDE"
+        organisms="T.brucei, T.cruzi, L.major, L.infantum, L.braziliensis, T.vivax, T.congolense"
+        category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="05-28-2009"
+        extDbRlsVer="2009-06-09"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
@@ -583,6 +581,8 @@ Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> NonE
           ]]>
         </description>
     </resource>
+
+
 
   <resource resource="CorrectGeneAliases" 
         version="1"
