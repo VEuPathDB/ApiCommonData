@@ -82,7 +82,7 @@ foreach my $tuningTable (@{$config->{tuningTable}}) {
 	  $tuningTable->{intermediateTable},
 	  $tuningTable->{sql},
 	  $tuningTable->{perl},
-          $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix());
+          $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate});
 }
 
 if ($doUpdate) {
@@ -410,24 +410,25 @@ Sample prop file:
 sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
-  # default to component tuning manager
-  $configFile = "tuningManager.xml" if !$configFile;
+  my $configPath;
 
-  # if a full path is not given for a config file, get it from Subversion
-  # (that is, check out if there's no slash in $configFile)
-  if (!($configFile =~ m/\//)) {
+  # if no config file was supplied, get it from Subversion
+  if (!$configFile) {
     $configDir = "/tmp/tMan." . $$ . "." . time . "/";
     my $subversionUrl = $tuningRegistry->getSubversionUrl();
+    $configFile = $tuningRegistry->getConfigFile();
     my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
     ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
     ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
     system(@cmdLine) == 0
       or die "system @cmdLine failed: $?";
 
-    $configFile = $configDir . '/' . $configFile;
+    # default to component tuning manager
+    $configFile = "tuningManager.xml" if !$configFile; 
+    $configPath = $configDir . '/' . $configFile;
   }
 
-  return $configFile;
+  return $configPath;
 }
 
 sub parseConfigFile {
