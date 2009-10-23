@@ -2687,13 +2687,19 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.ToxoExpressionGraphs&1 NOLOGGING AS
 SELECT ga.source_id,
-        COUNT(archetypal) AS graph_archetypal
+        COUNT(archetypal) AS graph_archetypal,
+        COUNT(bradyzoite) AS graph_bradyzoite
 FROM Apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS archetypal
       FROM apidb.profile p, apidb.profileSet ps
       WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
-        AND p.profile_set_id = ps.profile_set_id) archetypal
+        AND p.profile_set_id = ps.profile_set_id) archetypal,
+        (SELECT p.source_id, 1 AS bradyzoite
+      FROM apidb.profile p, apidb.profileSet ps
+      WHERE ps.name = 'expression profile percentiles of T. gondii Matt_Tz-Bz time series'
+        AND p.profile_set_id = ps.profile_set_id) bradyzoite
   WHERE ga.source_id = archetypal.source_id(+)
+  and ga.source_id = bradyzoite.source_id (+)
 GROUP BY ga.source_id
       ]]>
     </sql>
