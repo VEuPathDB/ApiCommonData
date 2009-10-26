@@ -2304,6 +2304,7 @@ select a.analysis_id,
        treamnt.treatment as treatment,
        replcte.replicate as replicate,
        gentyp.genotype as genotype,
+       celltyp.celltype as celltype,
        CASE
           WHEN lower(p.name) like '%peak%' then 'called_peaks'
        ELSE 'raw'
@@ -2328,13 +2329,18 @@ from   rad.analysis a,rad.protocol p,
       (select ap.analysis_id,ap.value as genotype
        from   rad.analysisparam ap,rad.protocolparam pp
        where  ap.protocol_param_id = pp.protocol_param_id
-       and    lower(name) like 'genotype') gentyp
+       and    lower(name) like 'genotype') gentyp,
+      (select ap.analysis_id,ap.value as celltype
+       from   rad.analysisparam ap,rad.protocolparam pp
+       where  ap.protocol_param_id = pp.protocol_param_id
+       and    lower(name) like 'celltype') celltyp
 where a.protocol_id = p.protocol_id
 and   a.analysis_id = antbd.analysis_id (+)
 and   a.analysis_id = strn.analysis_id (+)
 and   a.analysis_id = treamnt.analysis_id (+)
 and   a.analysis_id = replcte.analysis_id (+)
 and   a.analysis_id = gentyp.analysis_id (+)
+and   a.analysis_id = celltyp.analysis_id (+)
       ]]>
     </sql>
     <sql>
