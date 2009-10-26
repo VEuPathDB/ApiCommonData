@@ -7,7 +7,7 @@ use Bio::Location::Simple;
 use ApiCommonData::Load::BioperlTreeUtils qw{makeBioperlFeature};
 use Data::Dumper;
 use Bio::SeqFeature::Tools::Unflattener;
-
+use Data::Dumper;
 
 #input:
 #
@@ -39,12 +39,12 @@ sub preprocess {
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
 	my @seqFeatures = $bioperlSeq->remove_SeqFeatures;
 	
-	my %polypeptide;
+        my %polypeptide;
 
 	foreach my $bioperlFeatureTree (@seqFeatures){
 	    my $type = $bioperlFeatureTree->primary_tag();
 
-	    
+#	    print "$type\n";
 	    if($type eq 'polypeptide'){
 		my($id) = $bioperlFeatureTree->get_tag_values("Derives_from") if $bioperlFeatureTree->has_tag("Derives_from");
 		#$bioperlFeatureTree->primary_tag("CDS");
@@ -111,15 +111,24 @@ sub preprocess {
 			
 		    }
 		}       
-		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
+		my ($gene,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
+
+		my @UTRs = @{$UTRArrayRef};
 		if($gene){
 
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
 		
+		foreach my $UTR (@UTRs){
+
+
+		#    print STDERR Dumper $UTR;
+		    $bioperlSeq->add_SeqFeature($UTR);
+		}
 
 	    
 	    }else{
+
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_UTR' || $type eq 'five_prime_UTR' || $type eq 'splice_acceptor_site'){
 		    $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 		}
@@ -131,7 +140,7 @@ sub preprocess {
 sub traverseSeqFeatures {
     my ($geneFeature, $bioperlSeq,$polypeptideHashRef) = @_;
     
-    my $gene;
+    my ($gene,@UTRs);
 
     my %polypeptide = %{$polypeptideHashRef};
     my @RNAs = $geneFeature->get_SeqFeatures;
@@ -153,22 +162,15 @@ sub traverseSeqFeatures {
              'ncRNA',
 	     'pseudogenic_transcript',	
              'scRNA',
-             'region',
 				
              )
         ) {
 
 
 	    my $CDSLocation;
+	    
+	   # print STDERR "-----------------$type----------------------\n";
 
-	    if($type eq 'region'){
-		my($id) = $RNA->get_tag_values('ID') if $RNA->has_tag('ID');
-		if($id =~ /splice acceptor/i){
-		    $RNA->primary_tag('splice_acceptor_site');
-		}
-
-		
-	    }
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){
 		    ($type) = $RNA->get_tag_values('ncRNA_class');
@@ -205,7 +207,7 @@ sub traverseSeqFeatures {
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
-	    #$transcript = &copyQualifiers($RNA,$transcript);
+  	    #$transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 	    
@@ -225,18 +227,91 @@ sub traverseSeqFeatures {
 	    
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 		$exonType = '';
+		if($subFeature->primary_tag eq 'region'){
+		    my($id) = $subFeature->get_tag_values('ID') if $subFeature->has_tag('ID');
+		    
+		    #print STDERR "$id\n";
+		    if($id =~ /splice acceptor/i){
+			#print STDERR "Splice Acceptor\n";
+			$subFeature->primary_tag('splice_acceptor_site');
+		    }
+
+		
+		}
+
 		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR' || $subFeature->primary_tag eq 'splice_acceptor_site'){
+		    
+
+		   my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
+
+		    
+		   $UTR = &copyQualifiers($subFeature,$UTR);
+
+		   my($exonID) = $subFeature->get_tag_values('ID') if $subFeature->has_tag('ID');
+		   my($parent) = $subFeature->get_tag_values('Parent') if $subFeature->has_tag('Parent');
+		   $UTR->add_tag_value('ID',$exonID) if $exonID;
+		   $UTR->add_tag_value('Parent',$parent) if $parent;
+		    
+		    
+#		   print STDERR Dumper $subFeature;
+		    push(@UTRs, $UTR);
+		    
+
+		    my($type) = $prevExon->get_tag_values('type') if ($prevExon && $prevExon->has_tag('type'));
+	
+		   # print STDERR "Hello\t$exonID\n";
+
+
+
+		 #   print STDERR Dumper $subFeature;
 
 		    if($prevExon && $prevExon->location->end() == $subFeature->location->start() - 1){
+		#	print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
 			pop @fixedExons;
 			$prevExon->location->end($subFeature->location->end);
-
+			  
 			push @fixedExons, $prevExon;
-		    }elsif(($prevExon && $prevExon->location->end() < $subFeature->location->start() - 1) || !($prevExon)){
+		    }elsif(($prevExon && $prevExon->location->end() < $subFeature->location->start() - 1) || !($prevExon)){			
+		
+		#	print STDERR "$geneID:$exonID:2ndLoop:".$subFeature->primary_tag.":".$prevExon->location->end().":".$subFeature->location->start()."\n";
+		 
+					    }
+#			my $utrType = $subFeature->primary_tag();
 			$subFeature->add_tag_value('type','utr');
 			$subFeature->primary_tag('exon');
 			push @fixedExons , $subFeature;
 			$prevExon = $subFeature;
+		    }elsif($prevExon && ($prevExon->location->end() < $subFeature->location->end()) && ($subFeature->location->start() < $prevExon->location->end)){
+		#	print STDERR "$geneID:$exonID:3rdLoop:".$subFeature->primary_tag."\n";
+
+			if($type eq 'utr'){
+			    pop @fixedExons;
+
+			    $prevExon = $fixedExons[$#fixedExons];
+			}else{
+
+			     
+			    $prevExon->location->end((($codingStart > $codingEnd)?$codingStart:$codingEnd));
+
+			}
+
+		#	print STDERR "$geneID:$exonID:$type:Outside:".$subFeature->primary_tag.":PrevExonStart:".$prevExon->location->start().":PrevExonEnd:".$prevExon->location->end().":SubFeatureStart".$subFeature->location->start().":SubFeatureEnd".$subFeature->location->end()."\n";
+			if($prevExon && $prevExon->location->end() == $subFeature->location->start() - 1){
+			  #  print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
+			    pop @fixedExons;
+			    $prevExon->location->end($subFeature->location->end);
+			  
+			    push @fixedExons, $prevExon;
+			}elsif(($prevExon && $prevExon->location->end() < $subFeature->location->start() - 1) || !($prevExon)){			
+
+#				print STDERR "$geneID:$exonID:2ndLoop:".$subFeature->primary_tag.":".$prevExon->location->end().":".$subFeature->location->start()."\n";
+	
+			    $subFeature->add_tag_value('type','utr');
+			    $subFeature->primary_tag('exon');
+			    push @fixedExons , $subFeature;
+			    $prevExon = $subFeature;
+			}
+
 		    }
 		    $exonType = 'UTR';
 
@@ -283,6 +358,7 @@ sub traverseSeqFeatures {
 				$subFeature->add_tag_value('type','coding_exon');
 			    }
 			    $subFeature->location->start($prevExon->location->start);
+			    $prevExon = $subFeature;
 			    push @fixedExons , $subFeature;
 
 			}else{
@@ -339,12 +415,26 @@ sub traverseSeqFeatures {
 
 		}
 	    }
+
+	    
+	    if($gene->location->start > $transcript->location->start){
+		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
+		$gene->location->start($transcript->location->start);
+	    }
+
+	    
+	    if($gene->location->end < $transcript->location->end){
+		print STDERR "The transcript for gene $geneID is not within parent boundaries.\n";
+		$gene->location->end($transcript->location->end);
+	    }
+
+	    
 	    $gene->add_SeqFeature($transcript);
 
 
 	}
     }
-    return $gene;
+    return ($gene,\@UTRs);
 }
 
 
