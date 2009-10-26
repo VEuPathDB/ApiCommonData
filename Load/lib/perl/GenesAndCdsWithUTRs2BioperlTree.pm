@@ -261,12 +261,16 @@ sub traverseSeqFeatures {
 	
 		   # print STDERR "Hello\t$exonID\n";
 
-
+		    if($prevExon){
+		#	print STDERR Dumper $prevExon;
+		    }
 
 		 #   print STDERR Dumper $subFeature;
-
+#		    if($prevExon){
+	#		print STDERR "$geneID:$exonID:$type:Outside:".$subFeature->primary_tag.":PrevExonStart:".$prevExon->location->start().":PrevExonEnd:".$prevExon->location->end().":SubFeatureStart".$subFeature->location->start().":SubFeatureEnd".$subFeature->location->end()."\n";
+		#    }
 		    if($prevExon && $prevExon->location->end() == $subFeature->location->start() - 1){
-		#	print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
+			#print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
 			pop @fixedExons;
 			$prevExon->location->end($subFeature->location->end);
 			  
@@ -275,14 +279,13 @@ sub traverseSeqFeatures {
 		
 		#	print STDERR "$geneID:$exonID:2ndLoop:".$subFeature->primary_tag.":".$prevExon->location->end().":".$subFeature->location->start()."\n";
 		 
-					    }
 #			my $utrType = $subFeature->primary_tag();
 			$subFeature->add_tag_value('type','utr');
 			$subFeature->primary_tag('exon');
 			push @fixedExons , $subFeature;
 			$prevExon = $subFeature;
 		    }elsif($prevExon && ($prevExon->location->end() < $subFeature->location->end()) && ($subFeature->location->start() < $prevExon->location->end)){
-		#	print STDERR "$geneID:$exonID:3rdLoop:".$subFeature->primary_tag."\n";
+			#print STDERR "$geneID:$exonID:3rdLoop:".$subFeature->primary_tag."\n";
 
 			if($type eq 'utr'){
 			    pop @fixedExons;
@@ -295,17 +298,17 @@ sub traverseSeqFeatures {
 
 			}
 
-		#	print STDERR "$geneID:$exonID:$type:Outside:".$subFeature->primary_tag.":PrevExonStart:".$prevExon->location->start().":PrevExonEnd:".$prevExon->location->end().":SubFeatureStart".$subFeature->location->start().":SubFeatureEnd".$subFeature->location->end()."\n";
+			#print STDERR "$geneID:$exonID:$type:Outside:".$subFeature->primary_tag.":PrevExonStart:".$prevExon->location->start().":PrevExonEnd:".$prevExon->location->end().":SubFeatureStart".$subFeature->location->start().":SubFeatureEnd".$subFeature->location->end()."\n";
 			if($prevExon && $prevExon->location->end() == $subFeature->location->start() - 1){
-			  #  print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
+			 #   print STDERR "$geneID:1stLoop:".$subFeature->primary_tag.":$exonID\n";
 			    pop @fixedExons;
 			    $prevExon->location->end($subFeature->location->end);
 			  
 			    push @fixedExons, $prevExon;
 			}elsif(($prevExon && $prevExon->location->end() < $subFeature->location->start() - 1) || !($prevExon)){			
+			  
+				#print STDERR "$geneID:$exonID:2ndLoop:".$subFeature->primary_tag.":".$prevExon->location->end().":".$subFeature->location->start()."\n";
 
-#				print STDERR "$geneID:$exonID:2ndLoop:".$subFeature->primary_tag.":".$prevExon->location->end().":".$subFeature->location->start()."\n";
-	
 			    $subFeature->add_tag_value('type','utr');
 			    $subFeature->primary_tag('exon');
 			    push @fixedExons , $subFeature;
