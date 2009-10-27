@@ -1,3 +1,4 @@
+
 <resourcesPipeline repository="/files/efr"
         downloadDir="@downloadDir@">
 
@@ -429,7 +430,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk --output_file @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --db ToxoDB --taxon_id 507601 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk --output_file @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --db ToxoDB --taxon_id 507601 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -453,7 +454,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf --output_file @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --db ToxoDB --taxon_id 508771 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf --output_file @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --db ToxoDB --taxon_id 508771 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -477,7 +478,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf --output_file @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --db ToxoDB --taxon_id 432359 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf --output_file @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --db ToxoDB --taxon_id 432359 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -617,7 +618,7 @@ PDB Identifiers
         />
         <unpack>mkdir @downloadDir@/ME49_Annotation_fixed</unpack>
         <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$old =~ s/^/TGG_/;$ids{$old} = $new;}; while(<>){if (/^(TGG_\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_Annotation/tgal_initial.gff> @downloadDir@/ME49_Annotation_fixed/tgal.gff]]></unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_Annotation_fixed/tgal.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_Annotation_fixed/tgal.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>T. gondii</i> type II ME49 chromosomes by the Toxoplasma Genome Consortium.  For further information contact Ian Paulsen (The Institute for Genomic Research)  ipaulsen&#64;tigr&#46;org, or David Roos (University of Pennsylvania) droos&#64;sas&#46;upenn&#46;edu.
@@ -650,20 +651,20 @@ PDB Identifiers
         </description>
     </resource>
 
-    <resource resource="TgondiiApicoplast" version="2008-08-04"
+    <resource resource="TgondiiApicoplast" version="2009-04-15"
         displayName="T. gondii Apicoplast Genome"
         category="Organellar"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Roos Lab T. gondii apicoplast"
-        extDbRlsVer="2008-08-04"
+        extDbRlsVer="2009-04-15"
         extDbRlsDescrip="apicoplast genome by Roos Lab"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/apicoplastSequences_2008-06-13.gb"
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/apicoplastSequences_2009-04-15.gb"
             contact = "Vishal Nayak"
             email = "vishalkn@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/TgondiiApicoplast/apicoplastSequences_2008-06-13.gb --fileFormat GenBank --soCvsVersion 2.2 --organism "Toxoplasma gondii RH" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "chromosome"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/TgondiiApicoplast/apicoplastSequences_2009-04-15.gb --fileFormat GenBank --soCvsVersion 2.2 --organism "Toxoplasma gondii RH" --handlerExternalDbs "enzyme:enzymeDB:2009-09-24" --seqSoTerm "chromosome" --bioperlTreeOutput @pipelineDir@/logs/TgondiiApicoplast.bioperl --validationLog @pipelineDir@/logs/TgondiiApicoplast.validation.log</pluginArgs>
         <description>
             <![CDATA[
    Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. Contact: David Roos droos&#64;sas&#46;upenn&#46;edu.
