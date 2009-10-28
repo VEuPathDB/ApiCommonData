@@ -29,22 +29,27 @@ if ($subcommand ne "addinstance" && $subcommand ne "removeinstance"
 }
 
 if ($subcommand && !$propFile && !$password) {
-  print STDERR "ERROR: The \"$subcommand\" subcommand requires either \"propFile\" or \"password\" parameter\n";
+  print STDERR "ERROR: The \"$subcommand\" subcommand requires either \"-propFile\" or \"-password\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand && $subcommand ne "list" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
-  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"connectname\" or \"instanceNickname\" parameter\n";
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instanceNickname\" parameter\n";
+  $badUsage = 1;
+}
+
+if ($subcommand && $subcommand ne "list" && $subcommand ne "addinstance" && $subcommand ne "changesvn" && !$connectName && !$instanceNickname) {
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires either \"-connectname\" or \"-instanceNickname\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand eq "changesvn" && !$svn) {
-  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"svn\" parameter\n";
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-svn\" parameter\n";
   $badUsage = 1;
 }
 
 if ($subcommand eq "changesvn" && !$family) {
-  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"family\" parameter\n";
+  print STDERR "ERROR: the \"$subcommand\" subcommand requires the \"-family\" parameter\n";
   $badUsage = 1;
 }
 
