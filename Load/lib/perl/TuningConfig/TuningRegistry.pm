@@ -44,7 +44,7 @@ SQL
       = $stmt->fetchrow_array();
 
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("no tuning info found in registry for instance_nickname \"$self->{service_name}\".\n"
-						       . "Use \"tuningMgrMgr -addInstance\" to add this instance to the registry.")
+						       . "Use \"tuningMgrMgr addInstance\" to add this instance to the registry.")
 	if !defined $self->{subversion_url};
     $stmt->finish();
 }

@@ -3758,6 +3758,188 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.ChangedGene" alwaysUpdate="true">
+    <perl>
+      <![CDATA[ 
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use LWP::UserAgent;
+use HTTP::Request;
+use HTTP::Response;
+
+$| = 1; # turn off buffering of STDOUT
+
+my $insertStatement;
+
+createEmptyTable();
+
+my $genomeListRef = getGenomeList();
+my @genomeList = @$genomeListRef;
+
+foreach my $genome (@genomeList) {
+  print "genome update: taxonomyId " . $genome->{'taxonomyId'} . " date \"" . $genome->{'sinceDate'} . "\"\n";
+  processChangedGenes($genome->{'taxonomyId'}, $genome->{'sinceDate'});
+}
+
+sub getGenomeList {
+
+  my $taxa = getOfferedTaxa();
+
+#  my $dbh = getDbHandle();
+  my $stmt = $dbh->prepare(<<SQL);
+select distinct t.ncbi_tax_id as "taxonomyId", edr.version as "sinceDate"
+from dots.GeneFeature gf, dots.NaSequence ns,
+     sres.Taxon t, sres.ExternalDatabaseRelease edr
+where gf.external_database_release_id = edr.external_database_release_id
+  and gf.na_sequence_id = ns.na_sequence_id
+  and ns.taxon_id = t.taxon_id
+  and t.ncbi_tax_id in ($taxa)
+union
+select distinct YouSayPotato.sanger_taxon as "taxonomyId", edr.version as "sinceDate"
+from dots.GeneFeature gf, dots.NaSequence ns,
+     sres.Taxon t, sres.ExternalDatabaseRelease edr,
+     (select 'Trypanosoma cruzi'       as organism, 353153 as eupath_taxon,   5693 as sanger_taxon from dual
+       union
+      select 'Leishmania major'        as organism,   5664 as eupath_taxon, 347515 as sanger_taxon from dual
+       union
+      select 'Leishmania braziliensis' as organism,   5660 as eupath_taxon, 420245 as sanger_taxon from dual) YouSayPotato
+where gf.external_database_release_id = edr.external_database_release_id
+  and gf.na_sequence_id = ns.na_sequence_id
+  and ns.taxon_id = t.taxon_id
+  and t.ncbi_tax_id = YouSayPotato.eupath_taxon
+  and YouSayPotato.sanger_taxon in ($taxa)
+SQL
+
+  $stmt->execute();
+  my @genomeList;
+  while (my $ref = $stmt->fetchrow_hashref()) {
+    push(@genomeList, $ref);
+  }
+
+  # old, hardwired version
+  #   my @genomeList = (
+  # 		    {taxonomyId => 185431, sinceDate => '2008-11-13'},  # T. brucei
+  # 		    {taxonomyId => 5671, sinceDate => '2008-11-24'} );  # L. infantum
+
+  return \@genomeList;
+}
+
+sub getOfferedTaxa {
+
+  my $ua = new LWP::UserAgent;
+  my $url = "http://www.genedb.org/service/genomes/changes.xml?since=2008-12-01";
+
+  print "getting list of available taxa from = $url\n";
+  my $request = new HTTP::Request('GET', $url);
+  my $response = $ua->request($request);
+  if (!$response->is_success) {
+    die "trying to get taxon list with response ->>" . $response->content . "<<- (end of response to taxon-list request)";
+  }
+
+  my $simple = XML::Simple->new();
+  my $changeList = $simple->XMLin($response->content, KeyAttr => 'taxonomyID');
+  my $results = $changeList->{results};
+
+  my $organisms = $results->{organism};
+
+  my @taxa;
+  map {my $taxonomyID = $_->{'taxonomyID'}; push(@taxa, $taxonomyID) if $taxonomyID} @$organisms;
+
+  my $taxa = join(', ', @taxa);
+  return $taxa;
+}
+
+sub processChangedGenes {
+
+  my ($taxonomyId, $sinceDate) = @_;
+
+  die "bad taxonomyId" if !defined($taxonomyId);
+
+  my $ua = new LWP::UserAgent;
+  my $url = "http://www.genedb.org/service/genome/changes.xml?since=$sinceDate&taxonomyID=$taxonomyId";
+  print "getting list of gene changes from = $url\n";
+  my $request = new HTTP::Request('GET', $url);
+  my $response = $ua->request($request);
+  if (!$response->is_success) {
+    die "trying to get changed-gene list for taxonomy ID $taxonomyId with response ->>"
+        . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)";
+  }
+
+  my $simple = XML::Simple->new();
+  my $changeList = $simple->XMLin($response->content);
+  my $results = $changeList->{results};
+
+  my $features = $results->{feature};
+  my %geneLastChange;
+  foreach my $featureId (keys(%$features)) {
+    my $gene = $features->{$featureId}->{rootUniquename};
+    my $lastMod = $features->{$featureId}->{timelastmodified};
+    $geneLastChange{$gene} = $lastMod
+      if !defined $geneLastChange{$gene} || $lastMod gt $geneLastChange{$gene};
+  }
+
+  my $insertStatement = getInsertStatement();
+  foreach my $gene (keys(%geneLastChange)) {
+    my $modDate = $geneLastChange{$gene};
+
+    # web service date format: 'yyyy-mm-dd hh24:mi:ss.fff'
+    # must truncate fractional seconds to fit into Oracle date
+    $modDate =~ s/\..*$//;
+    $insertStatement->execute($gene, $modDate)
+      or die "Can't insert ChangedGene record (gene $gene, lastModified $modDate)";
+  }
+}
+
+sub getDbHandle {
+
+  my $username = 'apidb';
+  my $password = '<password>';
+  my $instance = '<instance>';
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  return $dbh;
+}
+
+sub getInsertStatement {
+
+  if (!$insertStatement) {
+    # my $dbh = getDbHandle();
+
+    $insertStatement = $dbh->prepare(<<SQL);
+      insert into apidb.ChangedGene&1 (gene, last_modified)
+      values (?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'))
+SQL
+  }
+
+  return $insertStatement;
+}
+
+sub createEmptyTable {
+    # my $dbh = getDbHandle();
+
+    $dbh->do(<<SQL);
+create table apidb.ChangedGene&1 (
+   gene          varchar2(50),
+   last_modified date,
+   constraint cdg_pk&1 primary key (gene)
+)
+SQL
+
+}
+      ]]> 
+    </perl>
+  </tuningTable>
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>

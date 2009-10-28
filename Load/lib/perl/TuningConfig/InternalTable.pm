@@ -37,6 +37,7 @@ sub new {
     $self->{externalDependencies} = [];
     $self->{externalTuningTableDependencies} = [];
     $self->{debug} = $debug;
+    $self->{alwaysUpdate} = $alwaysUpdate;
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -175,6 +176,11 @@ sub getState {
 	ApiCommonData::Load::TuningConfig::Log::addLog("    creation timestamp of $self->{name} ($self->{timestamp}) is older than creation timestamp of " . $dependency->getName() . " (" . $dependency->getTimestamp() . ") -- update needed.");
       }
     }
+  }
+
+
+  if ($self->{alwaysUpdate}) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("    " . $self->{name} . " has alwaysUpdate attribute.");
   }
 
   if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate}) {

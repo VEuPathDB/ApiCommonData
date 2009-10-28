@@ -410,10 +410,10 @@ Sample prop file:
 sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
-  my $configPath;
 
   # if no config file was supplied, get it from Subversion
   if (!$configFile) {
+    my $configPath;
     $configDir = "/tmp/tMan." . $$ . "." . time . "/";
     my $subversionUrl = $tuningRegistry->getSubversionUrl();
     $configFile = $tuningRegistry->getConfigFile();
@@ -426,9 +426,11 @@ sub getConfigFileName {
     # default to component tuning manager
     $configFile = "tuningManager.xml" if !$configFile; 
     $configPath = $configDir . '/' . $configFile;
+    return $configPath;
+  } else {
+    return $configFile;
   }
 
-  return $configPath;
 }
 
 sub parseConfigFile {
