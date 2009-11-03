@@ -24,7 +24,7 @@
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.EstAttributes" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="trich"/>
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="orphan"/>
 
     <unionization>
@@ -39,7 +39,7 @@
         <query>
           <![CDATA[
             select *
-            from apidb.EstAttributes@amito
+            from apidb.EstAttributes@trich
             where project_id = 'TrichDB'
           ]]>
         </query>
@@ -55,7 +55,7 @@
       <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="plasmo"/>
       <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="toxo"/>
       <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="tritryp"/>
-      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="amito"/>
+      <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="trich"/>
       <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="orphan"/>
 
       <source dblink="crypto"/>
@@ -69,7 +69,7 @@
         <query>
           <![CDATA[
             select *
-            from apidb.GeneAttributes@amito
+            from apidb.GeneAttributes@trich
             where project_id = 'TrichDB'
           ]]>
         </query>
@@ -85,7 +85,7 @@
       <externalTuningTableDependency name="apidb.GeneId" dblink="plasmo"/>
       <externalTuningTableDependency name="apidb.GeneId" dblink="toxo"/>
       <externalTuningTableDependency name="apidb.GeneId" dblink="tritryp"/>
-      <externalTuningTableDependency name="apidb.GeneId" dblink="amito"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="trich"/>
       <externalTuningTableDependency name="apidb.GeneId" dblink="orphan"/>
 
       <externalTuningTableDependency name="apidb.GeneAttributes"/>
@@ -101,8 +101,8 @@
         <query>
           <![CDATA[
             select gi.id,gi.gene
-            from apidb.GeneId@amito gi,
-                 apidb.GeneAttributes@amito ga
+            from apidb.GeneId@trich gi,
+                 apidb.GeneAttributes@trich ga
             where gi.gene = ga.source_id
               and ga.project_id = 'TrichDB'
           ]]>
@@ -134,7 +134,7 @@
     <externalTuningTableDependency name="apidb.OrfAttributes" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.OrfAttributes" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.OrfAttributes" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="trich"/>
     <externalTuningTableDependency name="apidb.OrfAttributes" dblink="orphan"/>
 
     <unionization>
@@ -149,7 +149,7 @@
         <query>
           <![CDATA[
             select *
-            from apidb.OrfAttributes@amito
+            from apidb.OrfAttributes@trich
             where project_id = 'TrichDB'
           ]]>
         </query>
@@ -178,7 +178,7 @@
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="trich"/>
     <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="orphan"/>
 
     <unionization>
@@ -192,7 +192,7 @@
       <source>
         <query>
           <![CDATA[
-            select * from apidb.SequenceAttributes@amito where project_id = 'TrichDB'
+            select * from apidb.SequenceAttributes@trich where project_id = 'TrichDB'
           ]]>
         </query>
       </source>
@@ -206,7 +206,7 @@
     <externalTuningTableDependency name="apidb.SequenceId" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.SequenceId" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.SequenceId" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.SequenceId" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="trich"/>
     <externalTuningTableDependency name="apidb.SequenceId" dblink="orphan"/>
     <internalDependency name="apidb.SequenceAttributes"/>
 
@@ -222,8 +222,8 @@
         <query>
           <![CDATA[
             select gi.id,gi.sequence
-            from apidb.sequenceid@amito gi,
-                 apidb.sequenceattributes@amito ga
+            from apidb.sequenceid@trich gi,
+                 apidb.sequenceattributes@trich ga
             where gi.sequence = ga.source_id
               and ga.project_id = 'TrichDB'
           ]]>
@@ -238,7 +238,7 @@
     <externalTuningTableDependency name="apidb.SnpAttributes" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.SnpAttributes" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.SnpAttributes" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="trich"/>
     <externalTuningTableDependency name="apidb.SnpAttributes" dblink="orphan"/>
 
     <unionization>
@@ -253,7 +253,7 @@
         <query>
           <![CDATA[
             select *
-            from apidb.SnpAttributes@amito
+            from apidb.SnpAttributes@trich
             where project_id = 'TrichDB'
           ]]>
         </query>
@@ -268,7 +268,7 @@
     <externalDependency name="apidb.GeneDetail" dblink="plasmo"/>
     <externalDependency name="apidb.GeneDetail" dblink="toxo"/>
     <externalDependency name="apidb.GeneDetail" dblink="tritryp"/>
-    <externalDependency name="apidb.GeneDetail" dblink="amito"/>
+    <externalDependency name="apidb.GeneDetail" dblink="trich"/>
     <externalDependency name="apidb.GeneDetail" dblink="orphan"/>
     <intermediateTable name="apidb.GeneDetailCrypto"/>
     <intermediateTable name="apidb.GeneDetailGiardia"/>
@@ -309,7 +309,7 @@
     <sql>
       <![CDATA[
         create table apidb.GeneDetailTrich nologging as
-        select * from apidb.GeneDetail@amito where project_id = 'TrichDB'
+        select * from apidb.GeneDetail@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -355,7 +355,7 @@
     <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="orphan"/>
     <intermediateTable name="apidb.TranscriptSequenceCrypto"/>
     <intermediateTable name="apidb.TranscriptSequenceGiardia"/>
@@ -396,7 +396,7 @@
     <sql>
       <![CDATA[
         create table apidb.TranscriptSequenceTrich nologging as
-        select * from apidb.TranscriptSequence@amito where project_id = 'TrichDB'
+        select * from apidb.TranscriptSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -450,7 +450,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.CodingSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.CodingSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.CodingSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.CodingSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.CodingSequence" dblink="orphan"/>
     <intermediateTable name="apidb.CodingSequenceCrypto"/>
     <intermediateTable name="apidb.CodingSequenceGiardia"/>
@@ -491,7 +491,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.CodingSequenceTrich nologging as
-        select * from apidb.CodingSequence@amito where project_id = 'TrichDB'
+        select * from apidb.CodingSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -545,7 +545,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.ProteinSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.ProteinSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.ProteinSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.ProteinSequence" dblink="orphan"/>
     <intermediateTable name="apidb.ProteinSequenceCrypto"/>
     <intermediateTable name="apidb.ProteinSequenceGiardia"/>
@@ -586,7 +586,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.ProteinSequenceTrich nologging as
-        select * from apidb.ProteinSequence@amito where project_id = 'TrichDB'
+        select * from apidb.ProteinSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -640,7 +640,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.NaSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.NaSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.NaSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.NaSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.NaSequence" dblink="orphan"/>
     <intermediateTable name="apidb.NaSequenceCrypto"/>
     <intermediateTable name="apidb.NaSequenceGiardia"/>
@@ -681,7 +681,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.NaSequenceTrich nologging as
-        select * from apidb.NaSequence@amito where project_id = 'TrichDB'
+        select * from apidb.NaSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -735,7 +735,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.OrfSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.OrfSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.OrfSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.OrfSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.OrfSequence" dblink="orphan"/>
     <intermediateTable name="apidb.OrfSequenceCrypto"/>
     <intermediateTable name="apidb.OrfSequenceGiardia"/>
@@ -776,7 +776,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.OrfSequenceTrich nologging as
-        select * from apidb.OrfSequence@amito where project_id = 'TrichDB'
+        select * from apidb.OrfSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -830,7 +830,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.EstSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.EstSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.EstSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.EstSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.EstSequence" dblink="orphan"/>
     <intermediateTable name="apidb.EstSequenceCrypto"/>
     <intermediateTable name="apidb.EstSequenceGiardia"/>
@@ -871,7 +871,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.EstSequenceTrich nologging as
-        select * from apidb.EstSequence@amito where project_id = 'TrichDB'
+        select * from apidb.EstSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -925,7 +925,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.AssemblySequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.AssemblySequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.AssemblySequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.AssemblySequence" dblink="orphan"/>
     <intermediateTable name="apidb.AssemblySequenceCrypto"/>
     <intermediateTable name="apidb.AssemblySequenceGiardia"/>
@@ -966,7 +966,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.AssemblySequenceTrich nologging as
-        select * from apidb.AssemblySequence@amito where project_id = 'TrichDB'
+        select * from apidb.AssemblySequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
@@ -1020,7 +1020,7 @@ tablespace indx
     <externalTuningTableDependency name="apidb.IsolateSequence" dblink="plasmo"/>
     <externalTuningTableDependency name="apidb.IsolateSequence" dblink="toxo"/>
     <externalTuningTableDependency name="apidb.IsolateSequence" dblink="tritryp"/>
-    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="amito"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="trich"/>
     <externalTuningTableDependency name="apidb.IsolateSequence" dblink="orphan"/>
     <intermediateTable name="apidb.IsolateSequenceCrypto"/>
     <intermediateTable name="apidb.IsolateSequenceGiardia"/>
@@ -1061,7 +1061,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table apidb.IsolateSequenceTrich nologging as
-        select * from apidb.IsolateSequence@amito where project_id = 'TrichDB'
+        select * from apidb.IsolateSequence@trich where project_id = 'TrichDB'
       ]]>
     </sql>
 
