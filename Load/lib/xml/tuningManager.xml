@@ -3819,7 +3819,7 @@ SQL
     push(@genomeList, $ref);
   }
 
-  # old, hardwired version
+  # old, hardwired taxon/date pairs
   #   my @genomeList = (
   # 		    {taxonomyId => 185431, sinceDate => '2008-11-13'},  # T. brucei
   # 		    {taxonomyId => 5671, sinceDate => '2008-11-24'} );  # L. infantum
@@ -3827,7 +3827,23 @@ SQL
   return \@genomeList;
 }
 
+
 sub getOfferedTaxa {
+
+  # returns a comma-separated string of NCBI taxon IDs for which the Sanger web
+  # service can show changes.  The service itself will provide this list, as a
+  # response to the URL in the code.  But since it changes slowly, and every
+  # component runs the tuning manager, it's hardwired into this RETURN statement
+  return <<SANGERTAXA;
+   5085, 360910, 518, 95486, 272559, 97084, 519, 520, 28450,
+   83555, 1491, 1496, 1717, 42374, 197, 28447, 813, 44689,
+   554, 216592, 5759, 5802, 420245, 5661, 5671,347515, 5665,
+   1765, 1769, 1781, 1773, 29176, 487, 272831, 5821, 5825,
+   5833, 294,5850, 5855, 5861, 384, 46170, 282458, 282459,
+   54736, 4932, 1902, 592, 40324, 6183, 615, 561276, 373153,
+   1313, 170187, 4896, 1314, 90370, 568708, 1349, 5874,
+   5761, 185431, 31285, 5692, 5693, 5699, 2039, 630, 632
+SANGERTAXA
 
   my $ua = new LWP::UserAgent;
   my $url = "http://www.genedb.org/service/genomes/changes.xml?since=2008-12-01";
@@ -3836,7 +3852,7 @@ sub getOfferedTaxa {
   my $request = new HTTP::Request('GET', $url);
   my $response = $ua->request($request);
   if (!$response->is_success) {
-    die "trying to get taxon list with response ->>" . $response->content . "<<- (end of response to taxon-list request)";
+    die "trying to get taxon list with URL ->>\"$url\<<-.  Got response ->>" . $response->content . "<<- (end of response to taxon-list request)";
   }
 
   my $simple = XML::Simple->new();
@@ -3864,7 +3880,7 @@ sub processChangedGenes {
   my $request = new HTTP::Request('GET', $url);
   my $response = $ua->request($request);
   if (!$response->is_success) {
-    die "trying to get changed-gene list for taxonomy ID $taxonomyId with response ->>"
+    die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
         . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)";
   }
 
