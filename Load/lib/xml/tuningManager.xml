@@ -2244,7 +2244,7 @@ FROM (
         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
         'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
         ELSE etn.source_id END as source_id,
-        tn.name as organism,
+        src.organism as organism,
         CASE WHEN src.strain != src.isolate THEN src.strain || ' ' || src.isolate 
              WHEN src.strain is  not null THEN src.strain ELSE src.isolate END as strain,
         src.specific_host as specific_host,
@@ -2265,11 +2265,9 @@ FROM (
              WHEN lower(pinfo.name) like 'giard%' THEN 'GiardiaDB'
              WHEN lower(pinfo.name) like 'tritryp%' THEN 'TriTrypDB'
         ELSE '' END as project_id
-      FROM dots.ExternalNaSequence etn, dots.IsolateSource src, Sres.taxonname tn,
+      FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo
       WHERE etn.na_sequence_id = src.na_sequence_id
-       AND etn.taxon_id = tn.taxon_id
-       AND tn.name_class = 'scientific name'
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND pinfo.project_id = etn.row_project_id
