@@ -7,7 +7,7 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$extDb,$extDbVer,$outFile,$verbose);
+my ($gusConfigFile,$extDb,$extDbVer,$outFile,$verbose,$dbRefNAFeatureExtDbSpec);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "extDb=s" => \$extDb,
 	    "extDbVer=s" => \$extDbVer,
@@ -39,7 +39,7 @@ if($dbRefNAFeatureExtDbSpec){
 
     foreach my $db (@dbRefNAFeatureExtDbSpecList){
 
-	$dbRefNAFeatureExtDbRls .= &getExtDbRlsId($db).",";
+	$dbRefNAFeatureExtDbRls .= getDbRlsId($db).",";
 
     }
 
@@ -58,13 +58,13 @@ while(my ($sourceId,$naFeatId) = $stmt1->fetchrow_array()) {
 
 $sql = "select ng.name from dots.nagene ng,dots.nafeaturenagene nn where nn.na_feature_id = ? and ng.na_gene_id = nn.na_gene_id";
 
-$sq .= " union select df.primary_identifier from SRes.DbRef df, DoTS.DbRefNAFeature dfnf where dfnf.db_ref_id=df.db_ref_id and df.primary_identifier is not null and df.external_database_release_id in ($dbRefNAFeatureExtDbRls) and dfnf.na_feature_id =?" if ($dbRefNAFeatureExtDbRls);
+$sql .= " union select df.primary_identifier from SRes.DbRef df, DoTS.DbRefNAFeature dfnf where dfnf.db_ref_id=df.db_ref_id and df.primary_identifier is not null and df.external_database_release_id in ($dbRefNAFeatureExtDbRls) and dfnf.na_feature_id =?" if ($dbRefNAFeatureExtDbRls);
 
 my $stmt2 = $dbh->prepare($sql);
 
 
 foreach my $sourceId (keys %genes) {
-  $stmt2->execute($genes{$sourceId}->{'nafeat'});
+  $stmt2->execute($genes{$sourceId}->{'nafeat'},$genes{$sourceId}->{'nafeat'});
 
   while(my ($name) = $stmt2->fetchrow_array()){
     push(@{$genes{$sourceId}->{'aliases'}},$name);
@@ -87,7 +87,7 @@ sub getDbRlsId {
 
   my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
 
-  $stmt->execute($extDb,$extDbVer);
+  $stmt->execute($extDbName,$extDbRlsVer);
 
   my ($extDbRlsId) = $stmt->fetchrow_array();
 
@@ -101,7 +101,7 @@ sub getExtDbInfo {
     my $extDbRlsVer = $2;
     return ($extDbName, $extDbRlsVer);
   } else {
-    $self->error("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
+    die("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
   }
 }
 
