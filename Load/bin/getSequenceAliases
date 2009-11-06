@@ -28,6 +28,8 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
+my $naSequenceExtDbRls;
+
 my @naSequenceExtDbSpecList = split(/,/, $naSequenceExtDbSpec);
 
 foreach my $nadb (@naSequenceExtDbSpecList){
@@ -53,7 +55,7 @@ if($dbRefNASequenceExtDbSpec){
     $dbRefNASequenceExtDbRls =~ s/(,)$//g;
 }
 
-my $sql = "select source_id,na_sequence_id from dots.nasequence where external_database_release_id in($naSequenceExtDbRlsls)";
+my $sql = "select source_id,na_sequence_id from dots.nasequence where external_database_release_id in($naSequenceExtDbRls)";
 
 my $stmt1 = $dbh->prepareAndExecute($sql);
 
