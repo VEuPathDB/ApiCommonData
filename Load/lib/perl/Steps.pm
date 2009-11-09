@@ -179,7 +179,7 @@ sub UpdateGusTableWithXml {
 
 
 sub dumpNaSequence {
-  my ($mgr, $mercatorDir, $shortName, $extDbName, $extDbVersion,$virtualExtDbName, $virtualExtDbVersion) = @_;
+  my ($mgr, $mercatorDir, $shortName, $extDbSpec,$virtualExtDbSpec) = @_;
 
   my $signal = "dumpSequence-$shortName";
 
@@ -189,20 +189,34 @@ sub dumpNaSequence {
     $mgr->runCmd("chmod -R g+w $mgr->{dataDir}/$mercatorDir");
   }
 
-
   my $outputFile = "$mgr->{dataDir}/$mercatorDir/$shortName.fsa";
 
-  unless(defined $virtualExtDbName) {
-      $virtualExtDbName = '';
-      $virtualExtDbVersion = '';
+  my ($extDbRls,$virtualExtDbRls);
+
+  my @extDbSpecList = split (/,/,$extDbSpec);
+
+  foreach my $extDb (@extDbSpecList){
+      my ($dbName,$dbRlsVer)= split (/\|/,$extDb);
+      $extDbRls .=&getDbRlsId($mgr,$dbName,$dbRlsVer);
+  }    
+  $extDbRls =~ s/(,)$//g;
+
+  if($virtualExtDbSpec) {
+        my @virtualExtDbSpecList = split (/,/,$virtualExtDbSpec);
+
+	foreach my $extVirtualDb (@virtualExtDbSpecList){
+        my ($virtualDbName,$virtualDbRlsVer)= split (/\|/,$extVirtualDb);
+        $virtualExtDbRls .=&getDbRlsId($mgr,$virtualDbName,$virtualDbRlsVer);
+   }    
+	$virtualExtDbRls =~ s/(,)$//g;
   }
  
       
 
-  my $sql = "select source_id, sequence from Dots.VIRTUALSEQUENCE vs,  SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and vs.external_database_release_id = r.external_database_release_id and r.version = '$virtualExtDbVersion' and e.name = '$virtualExtDbName'";
+  my $sql = "select source_id, sequence from Dots.VIRTUALSEQUENCE vs,  SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and vs.external_database_release_id = r.external_database_release_id and r.external_database_release_id in($virtualExtDbRls)";
 
   $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
-  $sql = "select source_id, sequence from Dots.EXTERNALNASEQUENCE es, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and es.external_database_release_id = r.external_database_release_id and r.version = '$extDbVersion' and e.name = '$extDbName' and es.na_sequence_id NOT IN (select sp.piece_na_sequence_id from dots.SEQUENCEPIECE sp, dots.VIRTUALSEQUENCE vs, Sres.EXTERNALDATABASE e, Sres.EXTERNALDATABASERELEASE r  where vs.na_sequence_id = sp.virtual_na_sequence_id AND vs.external_database_release_id = r.external_database_release_id AND r.external_database_id = e.external_database_id AND r.version = '$virtualExtDbVersion' AND e.name = '$virtualExtDbName')";
+  $sql = "select source_id, sequence from Dots.EXTERNALNASEQUENCE es, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and es.external_database_release_id = r.external_database_release_id and r.external_database_release_id in '$extDbRls' and es.na_sequence_id NOT IN (select sp.piece_na_sequence_id from dots.SEQUENCEPIECE sp, dots.VIRTUALSEQUENCE vs, Sres.EXTERNALDATABASE e, Sres.EXTERNALDATABASERELEASE r  where vs.na_sequence_id = sp.virtual_na_sequence_id AND vs.external_database_release_id = r.external_database_release_id AND r.external_database_id = e.external_database_id AND r.external_database_release_id in '$virtualExtDbRls')";
   $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
   $mgr->endStep($signal);
 }
