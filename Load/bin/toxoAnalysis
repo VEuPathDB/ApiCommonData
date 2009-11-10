@@ -1265,109 +1265,63 @@ my $repeatFinderArgs = "2 7 7 80 20 50 500";
 
 ################################################################################
 #########Species Mercator ###################################################
-#########from toxoDb/4.4/analysis_pipeline/vishalkn/toxoSpeciesMercator#####
 ###############################################################################
 
-# RepeatMasker steps
-# NOTES #####################
-# Don't get the fasta from the download site... use dumpSequence.pl
-&dumpNaSequence($mgr,"$dataDir/mercator/Toxoplasma_species/seqfiles","TgondiiGT1Genomic_Chr_toxoDB-4.4","T.gondii GT1 contigs from Genbank","2008-07-23","Tgondii GT1 Chromosome Map","2008-08-28");
-&dumpNaSequence($mgr,"$dataDir/mercator/Toxoplasma_species/seqfiles","TgondiiME49Genomic_Chr_toxoDB-4.4","T.gondii ME49 contigs from Genbank","2008-07-23","Chromosome Map - David Sibley","2008-08-28");
-&dumpNaSequence($mgr,"$dataDir/mercator/Toxoplasma_species/seqfiles","TgondiiVEGGenomic_Chr_toxoDB-4.4","T.gondii VEG contigs from Genbank","2008-07-23","Tgondii VEG Chromosome Map","2008-08-28");
-&dumpNaSequence($mgr,"$dataDir/mercator/Toxoplasma_species/seqfiles","NeosporaGenomic_Chr_toxoDB-4.4","Neospora caninum annotations from Sanger","2008-08-05");
-&dumpNaSequence($mgr,"$dataDir/mercator/Toxoplasma_species/seqfiles","TgondiiRHGenomic_Chr_toxoDB-4.4","T. gondii RH strain chromosomes","2");
+#&dumpNaSequence($mgr,"mercator/Toxoplasma_species/fasta","TgondiiGT1Genomic_Chr_toxoDB-6.0","T.gondii GT1 contigs from Genbank|2008-07-23","Tgondii GT1 Chromosome Map|2008-08-28");
+#&dumpNaSequence($mgr,"mercator/Toxoplasma_species/fasta","TgondiiME49Genomic_Chr_toxoDB-6.0","T.gondii ME49 contigs from Genbank|2008-07-23","Chromosome Map - David Sibley|2008-08-28");
+#&dumpNaSequence($mgr,"mercator/Toxoplasma_species/fasta","TgondiiVEGGenomic_Chr_toxoDB-4.4","T.gondii VEG contigs from Genbank|2008-07-23","Tgondii VEG Chromosome Map|2008-08-28");
+#&dumpNaSequence($mgr,"mercator/Toxoplasma_species/fasta","NeosporaGenomic_Chr_toxoDB-6.0","Sanger N. caninum chromosomes|2009-10-06");
+##&dumpNaSequence($mgr,"mercator/Toxoplasma_species/fasta","TgondiiRHGenomic_Chr_toxoDB-6.0","T. gondii RH strain chromosomes|2,Roos Lab T. gondii apicoplast|2009-04-15");
+#&dumpMercatorGff($mgr,"mercator/Toxoplasma_species/gff");
 
+#&createRepeatMaskDir_new($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-6.0', 4,'-xsmall', 150,'mercator/Toxoplasma_species');
+#&createRepeatMaskDir_new($mgr, 'TgondiiME49Genomic_Chr_toxoDB-6.0', 4,'-xsmall', 150,'mercator/Toxoplasma_species');
+#&createRepeatMaskDir_new($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-6.0', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
+#&createRepeatMaskDir_new($mgr, 'TgondiiRHGenomic_Chr_toxoDB-6.0', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
+#&createRepeatMaskDir_new($mgr, 'NeosporaGenomic_Chr_toxoDB-6.0', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
+#&copyFilesToComputeCluster($mgr,'mercator/Toxoplasma_species');
 
-# Should be fine... but maybe
-#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
-&copyFilesToComputeCluster($mgr,'mercator');
-#&copyFilesToComputeCluster($mgr, 'TgondiiGT1Genomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
-#&copyFilesToComputeCluster($mgr, 'TgondiiME49Genomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
-#&copyFilesToComputeCluster($mgr, 'TgondiiVEGGenomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
-#&copyFilesToComputeCluster($mgr, 'PknowlesiGenomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
-#&copyFilesToComputeCluster($mgr, 'PvivaxGenomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
-#&copyFilesToComputeCluster($mgr, 'PyoeliiGenomic_toxoDB-4.4.fsa', 'mercator/seqfiles');
+#&startRepeatMaskOnComputeCluster($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-6.0', 'apidb','mercator/Toxoplasma_species');
+#&startRepeatMaskOnComputeCluster($mgr, 'TgondiiME49Genomic_Chr_toxoDB-6.0', 'apidb','mercator/Toxoplasma_species');
+#&startRepeatMaskOnComputeCluster($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-6.0', 'apidb','mercator/Toxoplasma_species');
+#&startRepeatMaskOnComputeCluster($mgr, 'TgondiiRHGenomic_Chr_toxoDB-6.0', 'apidb','mercator/Toxoplasma_species');
+#&startRepeatMaskOnComputeCluster($mgr, 'NeosporaGenomic_Chr_toxoDB-6.0', 'apidb','mercator/Toxoplasma_species');
 
-#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
-&createRepeatMaskDir_new($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-4.4', 4,'-xsmall', 150,'mercator/Toxoplasma_species');
-&createRepeatMaskDir_new($mgr, 'TgondiiME49Genomic_Chr_toxoDB-4.4', 4,'-xsmall', 150,'mercator/Toxoplasma_species');
-&createRepeatMaskDir_new($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-4.4', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
-&createRepeatMaskDir_new($mgr, 'TgondiiRHGenomic_Chr_toxoDB-4.4', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
-&createRepeatMaskDir_new($mgr, 'NeosporaGenomic_Chr_toxoDB-4.4', 4, '-xsmall', 150,'mercator/Toxoplasma_species');
+#&copyFilesFromComputeCluster($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-6.0', 'mercator/Toxoplasma_species/repeatmask');
+#&copyFilesFromComputeCluster($mgr, 'TgondiiME49Genomic_Chr_toxoDB-6.0', 'mercator/Toxoplasma_species/repeatmask');
+#&copyFilesFromComputeCluster($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-6.0', 'mercator/Toxoplasma_species/repeatmask');
+#&copyFilesFromComputeCluster($mgr, 'TgondiiRHGenomic_Chr_toxoDB-6.0', 'mercator/Toxoplasma_species/repeatmask');
+#&copyFilesFromComputeCluster($mgr, 'NeosporaGenomic_Chr_toxoDB-6.0', 'mercator/Toxoplasma_species/repeatmask');
 
+#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiME49Genomic_Chr_toxoDB-6.0/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/tgondii_me49_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
+#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiGT1Genomic_Chr_toxoDB-6.0/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/fasta/tgondii_gt1_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/fasta");
+#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiVEGGenomic_Chr_toxoDB-6.0/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/fasta/tgondii_veg_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/fasta");
+#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiRHGenomic_Chr_toxoDB-6.0/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/fasta/tgondii_rh_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/fasta");
+#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/NeosporaGenomic_Chr_toxoDB-6.0/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/fasta/neospora_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/fasta");
 
-#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
-&copyFilesToComputeCluster($mgr, 'repeatmask','mercator/Toxoplasma_species');
+#&modifyFile($mgr, "tgondii_gt1_chr.fasta.in", "tgondii_gt1_chr.fasta", "$dataDir/mercator/Toxoplasma_species/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+#&modifyFile($mgr, "tgondii_me49_chr.fasta.in", "tgondii_me49_chr.fasta", "$dataDir/mercator/Toxoplasma_species/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+#&modifyFile($mgr, "tgondii_veg_chr.fasta.in", "tgondii_veg_chr.fasta", "$dataDir/mercator/Toxoplasma_species/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+#&modifyFile($mgr, "tgondii_rh_chr.fasta.in", "tgondii_rh_chr.fasta", "$dataDir/mercator/Toxoplasma_species/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
+#&modifyFile($mgr, "neospora_chr.fasta.in", "neospora_chr.fasta", "$dataDir/mercator/Toxoplasma_species/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
 
-&startRepeatMaskOnComputeCluster($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-4.4', 'apidb','mercator/Toxoplasma_species');
-&startRepeatMaskOnComputeCluster($mgr, 'TgondiiME49Genomic_Chr_toxoDB-4.4', 'apidb','mercator/Toxoplasma_species');
-&startRepeatMaskOnComputeCluster($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-4.4', 'apidb','mercator/Toxoplasma_species');
-&startRepeatMaskOnComputeCluster($mgr, 'TgondiiRHGenomic_Chr_toxoDB-4.4', 'apidb','mercator/Toxoplasma_species');
-&startRepeatMaskOnComputeCluster($mgr, 'NeosporaGenomic_Chr_toxoDB-4.4', 'apidb','mercator/Toxoplasma_species');
+#&fixMercatorOffsetsInGFF($mgr,"tgondii_me49_chr.fasta","Toxoplasma_gondii_ME49.gff","tgondii_me49_chr.gff","$dataDir/mercator/Toxoplasma_species/","^>(\S+)","^apidb\|(\S+)");
+#&fixMercatorOffsetsInGFF($mgr,"tgondii_gt1_chr.fasta","Toxoplasma_gondii_GT1.gff","tgondii_gt1_chr.gff","$dataDir/mercator/Toxoplasma_species/","^>(\S+)","^apidb\|(\S+)");
+#&fixMercatorOffsetsInGFF($mgr,"tgondii_veg_chr.fasta","Toxoplasma_gondii_VEG.gff","tgondii_veg_chr.gff","$dataDir/mercator/Toxoplasma_species/","^>(\S+)","^apidb\|(\S+)");
+#&fixMercatorOffsetsInGFF($mgr,"tgondii_rh_chr.fasta","Toxoplasma_gondii_RH.gff","tgondii_rh_chr.gff","$dataDir/mercator/Toxoplasma_species/","^>(\S+)","^apidb\|(\S+)");
+#&fixMercatorOffsetsInGFF($mgr,"neospora_chr.fasta","Neospora_caninum.gff","neospora_chr.gff","$dataDir/mercator/Toxoplasma_species/","^>(\S+)","^apidb\|(\S+)");
 
+&runMercatorMavid($mgr, "$dataDir/mercator/Toxoplasma_species/", "mercatorMavid-5StrainSpeciesGenomes");
 
-$mgr->waitForCluster("Repeat Mask TgondiiGT1Genomic_Chr_toxoDB-4.4", "TgondiiGT1Genomic_Chr_toxoDB-4.4");
-$mgr->waitForCluster("Repeat Mask TgondiiME49Genomic_Chr_toxoDB-4.4", "TgondiiME49Genomic_Chr_toxoDB-4.4");
-$mgr->waitForCluster("Repeat Mask TgondiiVEGGenomic_Chr_toxoDB-4.4", "TgondiiVEGGenomic_Chr_toxoDB-4.4");
-$mgr->waitForCluster("Repeat Mask TgondiiRHGenomic_Chr_toxoDB-4.4", "TgondiiRHGenomic_Chr_toxoDB-4.4");
-$mgr->waitForCluster("Repeat Mask NeosporaGenomic_Chr_toxoDB-4.4", "NeosporaGenomic_Chr_toxoDB-4.4");
-
-
-&copyFilesFromComputeCluster($mgr, 'TgondiiME49Genomic_Chr_toxoDB-4.4', 'mercator/Toxoplasma_species/repeatmask');
-&copyFilesFromComputeCluster($mgr, 'TgondiiVEGGenomic_Chr_toxoDB-4.4', 'mercator/Toxoplasma_species/repeatmask');
-&copyFilesFromComputeCluster($mgr, 'TgondiiGT1Genomic_Chr_toxoDB-4.4', 'mercator/Toxoplasma_species/repeatmask');
-&copyFilesFromComputeCluster($mgr, 'TgondiiRHGenomic_Chr_toxoDB-4.4', 'mercator/Toxoplasma_species/repeatmask');
-&copyFilesFromComputeCluster($mgr, 'NeosporaGenomic_Chr_toxoDB-4.4', 'mercator/Toxoplasma_species/repeatmask');
-
-
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiME49Genomic_Chr_toxoDB-4.4/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/tgondii_me49_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiGT1Genomic_Chr_toxoDB-4.4/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/tgondii_gt1_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiVEGGenomic_Chr_toxoDB-4.4/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/tgondii_veg_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/TgondiiRHGenomic_Chr_toxoDB-4.4/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/tgondii_rh_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/repeatmask/NeosporaGenomic_Chr_toxoDB-4.4/master/mainresult/blocked.seq","$dataDir/mercator/Toxoplasma_species/mercator/fasta/neospora_chr.fasta.in", "$dataDir/mercator/Toxoplasma_species/mercator/fasta");
-
-&modifyFile($mgr, "tgondii_gt1_chr.fasta.in", "tgondii_gt1_chr.fasta", "$dataDir/mercator/Toxoplasma_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
-&modifyFile($mgr, "tgondii_me49_chr.fasta.in", "tgondii_me49_chr.fasta", "$dataDir/mercator/Toxoplasma_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
-&modifyFile($mgr, "tgondii_veg_chr.fasta.in", "tgondii_veg_chr.fasta", "$dataDir/mercator/Toxoplasma_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
-&modifyFile($mgr, "tgondii_rh_chr.fasta.in", "tgondii_rh_chr.fasta", "$dataDir/mercator/Toxoplasma_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
-&modifyFile($mgr, "neospora_chr.fasta.in", "neospora_chr.fasta", "$dataDir/mercator/Toxoplasma_species/mercator/fasta", '\>[\w\d-\.]+\|([\w\d_\.]+)\|.*/>$1');
-
-
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/Tgondii_GT1_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/tgondii_gt1_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/Tgondii_ME49_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/tgondii_me49_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/Tgondii_VEG_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/tgondii_veg_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/Tgondii_RH_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/tgondii_rh_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/Neospora_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/neospora_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-
-#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/ToxoplasmaGhanaianGenomic_Chr_toxoDB-4.4_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/Toxoplasma_ghanaian_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-#&copy($mgr,"$dataDir/mercator/Toxoplasma_species/training_dir/ToxoplasmaITGenomic_Chr_toxoDB-4.4_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/gff/Toxoplasma_it_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-
-
-&grepMercatorGff($mgr, "tgondii_gt1_chr.gff", "tgondii_gt1_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&grepMercatorGff($mgr, "tgondii_me49_chr.gff", "tgondii_me49_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&grepMercatorGff($mgr, "tgondii_veg_chr.gff", "tgondii_veg_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&grepMercatorGff($mgr, "tgondii_rh_chr.gff", "tgondii_rh_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&grepMercatorGff($mgr, "neospora_chr.gff", "neospora_chr.gff.in", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-#&grepMercatorGff($mgr, "Toxoplasma_ghanaian_chr.gff.in", "Toxoplasma_ghanaian_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-#&grepMercatorGff($mgr, "Toxoplasma_it_chr.gff.in", "Toxoplasma_it_chr.gff", "$dataDir/mercator/Toxoplasma_species/mercator/gff");
-&fixMercatorOffsetsInGFF($mgr,"tgondii_me49_chr.fasta","tgondii_me49_chr.gff.in","tgondii_me49_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/","^>(\S+)","^apidb\|(\S+)");
-&fixMercatorOffsetsInGFF($mgr,"tgondii_gt1_chr.fasta","tgondii_gt1_chr.gff.in","tgondii_gt1_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/","^>(\S+)","^apidb\|(\S+)");
-&fixMercatorOffsetsInGFF($mgr,"tgondii_veg_chr.fasta","tgondii_veg_chr.gff.in","tgondii_veg_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/","^>(\S+)","^apidb\|(\S+)");
-&fixMercatorOffsetsInGFF($mgr,"tgondii_rh_chr.fasta","tgondii_rh_chr.gff.in","tgondii_rh_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/","^>(\S+)","^apidb\|(\S+)");
-&fixMercatorOffsetsInGFF($mgr,"neospora_chr.fasta","neospora_chr.gff.in","neospora_chr.gff","$dataDir/mercator/Toxoplasma_species/mercator/","^>(\S+)","^apidb\|(\S+)");
-
-&runMercatorMavid($mgr, "$dataDir/mercator/Toxoplasma_species/mercator", "mercatorMavid-5StrainSpeciesGenomes");
-
-&createExtDbAndDbRls($mgr, 'TgondiiGT1-Neospora synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiME49-Neospora synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiVEG-Neospora synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiME49 synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiVEG-TgondiiME49 synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiVEG synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiME49-TgondiiRH synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiRH synteny from Mercator', '2008-09-10', '');
-&createExtDbAndDbRls($mgr, 'TgondiiVEG-TgondiiRH synteny from Mercator', '2008-09-10', '');
-
+# &createExtDbAndDbRls($mgr, 'TgondiiGT1-Neospora synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiME49-Neospora synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiVEG-Neospora synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiME49 synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiVEG-TgondiiME49 synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiVEG synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiME49-TgondiiRH synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiGT1-TgondiiRH synteny from Mercator', '2008-09-10', '');
+# &createExtDbAndDbRls($mgr, 'TgondiiVEG-TgondiiRH synteny from Mercator', '2008-09-10', '');
 
 &insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Toxoplasma_species/mercator/tgondii_gt1_chr-tgondii_me49_chr.align",  "DoTS.NASequence", "DoTS.NASequence",  "Chromosome Map - David Sibley|2008-08-28,T.gondii ME49 contigs from Genbank|2008-07-23","Tgondii GT1 Chromosome Map|2008-08-28,T.gondii GT1 contigs from Genbank|2008-07-23", "TgondiiGT1-TgondiiME49 synteny from Mercator|2008-09-10","$dataDir/mercator/Toxoplasma_species/mercator/mercator-output/tgondii_me49_chr.agp","Toxoplasma");
 &insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Toxoplasma_species/mercator/tgondii_veg_chr-tgondii_me49_chr.align",  "DoTS.NASequence", "DoTS.NASequence", "Chromosome Map - David Sibley|2008-08-28,T.gondii ME49 contigs from Genbank|2008-07-23","Tgondii VEG Chromosome Map|2008-08-28,T.gondii VEG contigs from Genbank|2008-07-23",  "TgondiiVEG-TgondiiME49 synteny from Mercator|2008-09-10","$dataDir/mercator/Toxoplasma_species/mercator/mercator-output/tgondii_me49_chr.agp","Toxoplasma");
