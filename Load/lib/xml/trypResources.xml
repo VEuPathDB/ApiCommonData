@@ -114,7 +114,68 @@
         </description>
     </resource>
 
+    <resource resource="Mged_Ontology_Term_Types" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyTermType"
+	      displayName="MGED Ontology Term Types"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
+                contact="Trish Whetzel"
+                email="whetzel@pcbi.upenn.edu"
+                institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
+    </resource>    
 
+    <resource resource="Mged_Ontology_Relationship_Types" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
+	      displayName="MGED Ontology Relationship Types"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
+                contact="Trish Whetzel"
+                email="whetzel@pcbi.upenn.edu"
+                institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
+    </resource>    
+
+
+    <resource resource="MGED_Ontology" 
+              version="1.3"
+              plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
+	      displayName="The MGED Ontology"
+              category="Ontology"
+              publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
+              url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
+              extDbName="MGED_Ontology"
+              extDbRlsVer="1.3"
+              extDbRlsDescrip="MGED Ontology"
+	      dbCommit="@dbcommit@"
+            >	
+    <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
+    <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+    <description>
+       <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
+        </description>		
+    </resource>  
+
+
+    <resource resource="Mged_Ontology_Entry" 
+              version="1.3"
+              plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
+	      displayName="MGED Ontology Entry"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty" 
+                contact=""
+                email=""
+                institution=""/>
+        <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
+    </resource>   
 
     <resource resource="InterproscanData" version="22.0"
         plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
