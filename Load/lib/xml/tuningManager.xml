@@ -4016,6 +4016,12 @@ SQL
     term_name, sequence_ontology_id
   </tuningIndex> 
 
+  <!-- remove after 12/15/09; presumed to have been propageted by then.
+       New instances will have this created by ApiCommonData/Load/lib/sql/apidbschema/2aryStructCallPct.sql -->
+  <tuningIndex name="dots.ssc_ssid_ix" table="dots.SecondaryStructureCall">
+    secondary_structure_id
+  </tuningIndex> 
+
 <!--
   This index should be unique, except for the SplicedNaSequence records whose source_ids are null.
 
