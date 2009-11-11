@@ -29,7 +29,7 @@ ADD CONSTRAINT anal_method_pk PRIMARY KEY (analysis_method_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AnalysisMethod TO gus_w;
 GRANT SELECT ON apidb.AnalysisMethod TO gus_r;
 
-CREATE INDEX apiDB.analysis_method_name_idx ON apiDB.Massspecsummary(name);
+CREATE INDEX apiDB.analysis_method_name_idx ON apiDB.AnalysisMethod(name);
 
 ------------------------------------------------------------------------------
 
