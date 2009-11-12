@@ -58,7 +58,7 @@ sub run {
   my $mss;
     
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
-  $self->{geneExtDbRlsId} = $self->getExtDbRlsId($self->getArg('geneExternalDatabaseSpec'));
+  $self->{geneExtDbRlsId} = join ',', map{$self->getExtDbRlsId($_)} split (/,/,$self->getArg('geneExternalDatabaseSpec'));
   my $minPMatch = $self->getArg('minPercentPeptidesToMap');
   $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
 
@@ -208,7 +208,15 @@ sub addRecordsToGenes {
     foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
       if ($naFeature->retrieveFromDB()) {
-        if ($naFeature->getExternalDatabaseReleaseId() == $self->{geneExtDbRlsId} ) {
+	my $isOfficial=0;
+	my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
+	foreach (@geneExtDbRlsIdList){
+	    if ($naFeature->getExternalDatabaseReleaseId()==$_){
+		$isOfficial=1;
+	    }
+	}
+
+        if ($isOfficial) {
           ##this one is the official one ...
           $official = $naFeature;
           warn "Found GeneFeature for $id\n";
@@ -415,7 +423,7 @@ sub getGt100aaOrfs {
       select f.na_feature_id,aas.sequence
       from dots.nafeature f, sres.SEQUENCEONTOLOGY o, dots.translatedaafeature aaf, 
         dots.translatedaasequence aas,dots.nasequence s
-      where s.external_database_release_id = $self->{geneExtDbRlsId} 
+      where s.external_database_release_id in ($self->{geneExtDbRlsId}) 
       and s.na_sequence_id = f.na_sequence_id
       and f.sequence_ontology_id = o.sequence_ontology_id
       and o.term_name = 'ORF'
@@ -442,7 +450,7 @@ sub get50to100aaOrfs {
       select f.na_feature_id,aas.sequence
       from dots.nafeature f, sres.SEQUENCEONTOLOGY o, dots.translatedaafeature aaf, 
         dots.translatedaasequence aas,dots.nasequence s
-      where s.external_database_release_id = $self->{geneExtDbRlsId} 
+      where s.external_database_release_id in ($self->{geneExtDbRlsId}) 
       and s.na_sequence_id = f.na_sequence_id
       and f.sequence_ontology_id = o.sequence_ontology_id
       and o.term_name = 'ORF'
@@ -469,7 +477,7 @@ sub getAllProteins {
     my $protStmt =  $self->getQueryHandle()->prepare(<<"EOSQL");
       select gf.na_feature_id,aas.sequence
       from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taaf, dots.translatedaasequence aas
-      where gf.external_database_release_id = $self->{geneExtDbRlsId}
+      where gf.external_database_release_id in ($self->{geneExtDbRlsId})
       and gf.na_feature_id = t.parent_id
       and taaf.na_feature_id = t.na_feature_id
       and aas.aa_sequence_id = taaf.aa_sequence_id
@@ -492,7 +500,7 @@ sub getAllPredProteins {
       from dots.genefeature gf, dots.transcript t, dots.translatedaafeature taaf, dots.translatedaasequence aas,sres.sequenceontology o
       where o.term_name = 'protein_coding'
       and o.sequence_ontology_id = gf.sequence_ontology_id
-      and gf.external_database_release_id != $self->{geneExtDbRlsId}
+      and gf.external_database_release_id not in ($self->{geneExtDbRlsId})
       and gf.na_feature_id = t.parent_id
       and taaf.na_feature_id = t.na_feature_id
       and aas.aa_sequence_id = taaf.aa_sequence_id
@@ -541,7 +549,7 @@ sub prepareSQLStatements {
         and orf.na_sequence_id = gf.na_sequence_id
         and gfnal.start_min <= orfnal.end_max
         and gfnal.end_max >= orfnal.start_min
-        and gf.external_database_release_id = $self->{geneExtDbRlsId}  
+        and gf.external_database_release_id in ($self->{geneExtDbRlsId})  
         and gf.na_feature_id = t.parent_id
         and t.na_feature_id = taaf.na_feature_id
         and taaf.aa_sequence_id = taas.aa_sequence_id
@@ -992,7 +1000,7 @@ sub declareArgs {
 
    stringArg({
                name            =>  'geneExternalDatabaseSpec', 
-               descr           =>  'External Databzse release `name|version` for the gene models to which will be attaching these peptides',
+               descr           =>  'External Database release `name1|version1,name2|version2` for the gene models to which will be attaching these peptides',
                constraintFunc  =>  undef,
                reqd            =>  1,
                isList          =>  0
