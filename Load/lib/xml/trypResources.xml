@@ -1572,6 +1572,26 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
         </description>
     </resource> 
 
+<resource resource="Sanger_siRNA" version="2008-12-15"
+            plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            displayName="siRNA - phenotype data"
+            category="Phenotype"
+            dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/siRNA/Tbrucei_Drug_target_as_of_080201.txt"
+            contact="Christiane Hertz-Fowler"
+            email="chf@sanger.ac.uk"
+            institution="Sanger Institute"
+        />
+      <unpack>parseSangerSiRNA --inFile @downloadDir@/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sang
+er_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
+      <unpack>nohup sqlldr @oracleUserPswd@ control=@downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt</unpack>
+      <description>
+         <![CDATA[
+Phenotype data generated from siRNA experiments
+          ]]>
+      </description>
+ </resource>
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
