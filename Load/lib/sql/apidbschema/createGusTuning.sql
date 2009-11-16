@@ -1,3 +1,7 @@
+-- indexes on GUS tables
+
+create index dots.AaSeq_source_ix on dots.AaSequenceImp (lower(source_id));
+
 -- GUS table shortcomings
 
 ALTER TABLE core.AlgorithmParam MODIFY (string_value VARCHAR2(2000));
