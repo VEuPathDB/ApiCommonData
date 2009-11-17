@@ -466,7 +466,7 @@ begin
            then return 'OrphanDB';
          when 'babesia'
            then return 'OrphanDB';
-         else return 'ERROR: setting project as a function of organism';
+         else return 'ERROR: project_id()';
       end case;
 end project_id;
 /
