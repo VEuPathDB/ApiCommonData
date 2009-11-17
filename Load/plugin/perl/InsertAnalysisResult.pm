@@ -409,12 +409,14 @@ sub writeSqlLdrInput {
   my $tableId = $hashRef->{table_id};
   my $rowId = $hashRef->{row_id};
   my $floatValue = $hashRef->{float_value};
+  my $intValue = $hashRef->{int_value};
+
 
   unless(defined($floatValue)) {
     $self->userError("Float value must be specified for DatatransformationResult when sqlldr is used");
   }
 
-  my @a = ($subclassView, $analysisId, $tableId, $rowId, $floatValue, $modDate, $userRead, $userWrite, $groupRead, $groupWrite, $otherRead, $otherWrite, $userId, $groupId, $projectId, $algInvocationId);
+  my @a = ($subclassView, $analysisId, $tableId, $rowId, $floatValue, $intValue,$modDate, $userRead, $userWrite, $groupRead, $groupWrite, $otherRead, $otherWrite, $userId, $groupId, $projectId, $algInvocationId);
 
   print $fh join("\t", @a) . "\n";
 }
@@ -447,6 +449,7 @@ analysis_id integer external,
 table_id integer external, 
 row_id integer external, 
 float1 decimal external, 
+NUMBER1 integer external,
 modification_date date, 
 user_read integer external, 
 user_write integer external, 
