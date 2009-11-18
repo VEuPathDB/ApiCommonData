@@ -1129,7 +1129,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
        SUBSTR(gf.product, 1, 200) AS product,
@@ -1507,7 +1507,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SequenceAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
        (sequence.length
@@ -1571,7 +1571,7 @@ CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (sou
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SnpAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
        CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
@@ -1702,7 +1702,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.OrfAttributes&1 NOLOGGING AS
 SELECT distinct
-       apidb.project_id(tn.name) as project_id,
+       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(m.source_id, 1, 60) AS source_id,
        LOWER(SUBSTR(m.source_id, 1, 60)) AS lowercase_source_id,
        SUBSTR(tn.name, 1, 40) AS organism,
@@ -1766,7 +1766,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.EstAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ens.source_id,
        e.seq_primer AS primer,
        ens.a_count,
@@ -1834,7 +1834,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.AssemblyAttributes&1 NOLOGGING AS
-SELECT a.source_id, apidb.project_id(tn.name) as project_id,
+SELECT a.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(CASE
                 WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
@@ -1869,7 +1869,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ArrayElementAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ens.source_id, ed.name AS provider,
        tn.name AS organism,
        taxon.ncbi_tax_id
@@ -2402,7 +2402,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.SageTagAttributes&1 NOLOGGING AS
-SELECT apidb.project_id(tn.name) as project_id,
+SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        substr(s.source_id || '-' || l.start_min || '-' || l.end_max || '.'
               || l.is_reversed, 1, 40) as source_id,
        f.na_feature_id, f.source_id as feature_source_id,
@@ -3558,7 +3558,7 @@ where sim.query_id = extq.na_sequence_id
     <sql>
       <![CDATA[
 create table apidb.TranscriptSequence&1 nologging as
-select gf.source_id, apidb.project_id(tn.name) as project_id,
+select gf.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        sns.sequence
 from apidb.GeneAttributes gf, dots.Transcript t, dots.SplicedNaSequence sns, sres.TaxonName tn
 where t.parent_id = gf.na_feature_id
@@ -3584,7 +3584,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.CodingSequence&1 NOLOGGING AS
-SELECT gf.source_id, apidb.project_id(tn.name) as project_id,
+SELECT gf.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(sns.sequence, tf.translation_start,                            
               tf.translation_stop - tf.translation_start + 1) as sequence
 FROM apidb.GeneAttributes gf, dots.Transcript t, dots.SplicedNaSequence sns,
@@ -3613,7 +3613,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ProteinSequence&1 NOLOGGING AS
-SELECT ga.source_id, apidb.project_id(tn.name) as project_id,
+SELECT ga.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        tas.sequence
 FROM apidb.GeneAttributes ga, dots.Transcript t, dots.TranslatedAaFeature taf,
      dots.TranslatedAaSequence tas, sres.TaxonName tn
@@ -3639,7 +3639,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.NaSequence&1 NOLOGGING AS
-SELECT sa.source_id, apidb.project_id(tn.name) as project_id,
+SELECT sa.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ns.sequence
 FROM apidb.SequenceAttributes sa, dots.NaSequence ns, sres.TaxonName tn
 WHERE sa.na_sequence_id = ns.na_sequence_id
@@ -3665,7 +3665,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.OrfSequence&1 NOLOGGING AS
 SELECT nf.source_id,
-       apidb.project_id(tn.name) as project_id,
+       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ts.sequence
 FROM dots.TranslatedAaSequence ts, dots.TranslatedAaFeature tf,
       dots.NaFeature nf, sres.SequenceOntology so, sres.TaxonName tn
@@ -3693,7 +3693,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.EstSequence&1 NOLOGGING AS
 SELECT ens.source_id,
-       apidb.project_id(tn.name) as project_id,
+       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ens.sequence
 FROM dots.ExternalNaSequence ens, sres.SequenceOntology so, sres.TaxonName tn
 WHERE so.term_name = 'EST'
@@ -3717,7 +3717,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.AssemblySequence&1 NOLOGGING AS
 SELECT a.source_id,
-       apidb.project_id(tn.name) as project_id,
+       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        a.sequence 
 FROM dots.Assembly a, sres.TaxonName tn
 WHERE a.taxon_id = tn.taxon_id
@@ -3740,7 +3740,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE apidb.IsolateSequence&1 NOLOGGING AS
 SELECT ia.source_id,
-       apidb.project_id(tn.name) as project_id,
+       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        ns.sequence
 FROM apidb.IsolateAttributes ia, dots.NaSequence ns, sres.TaxonName tn
 WHERE ia.na_sequence_id = ns.na_sequence_id
