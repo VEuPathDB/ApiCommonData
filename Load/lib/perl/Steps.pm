@@ -1047,7 +1047,7 @@ sub copy {
   $to =~ /([\w|\.]+)$/;
 
   my $signal = $1;
-  $signal = "copy_${from}_To_$signal";
+  $signal = "copy_${from}_To_$1";
   $signal =~ s/\//:/g; 
 
   return if $mgr->startStep("Copying $from to $to", $signal);
@@ -1056,7 +1056,7 @@ sub copy {
   unless (-e $from) { die "$from doesn't exist\n";};
 
   $mgr->runCmd("cp -ar  $from $to");
-  $mgr->endStep($signal);
+  $mgr->endStep();
 }
 
 sub copyDirectory {
@@ -1076,7 +1076,7 @@ sub copyDirectory {
   unless (-e $from) { die "$from doesn't exist\n";};
 
   $mgr->runCmd("cp -ar  $from $to");
-  $mgr->endStep($signal);
+  $mgr->endStep();
 }
 
 sub shortenDefLine{
@@ -1233,7 +1233,7 @@ sub createEpitopeMapFiles {
 
 
 sub extractNaSeq {
-  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy,$taxonName) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy,$taxonName,$soTermId,$soTermName) = @_;
 
   my $type = ucfirst($seqType);
 
@@ -1272,6 +1272,11 @@ EOF
   $taxonId = &getTaxonIdList($mgr,$taxonId,$taxonHierarchy) if $taxonHierarchy;
 
   $sql .= " and taxon_id in ($taxonId)" if $taxonId;
+
+  my $soId = &getSoId($mgr,$soTermId,$soTermName) if ($soTermName||$soTermId);
+
+   $sql .= " and so_id in ($soId)" if $soId;
+  
 
   $sql = $altSql if $altSql;
 
@@ -6222,6 +6227,18 @@ sub getTaxonId {
   my $taxonId = $mgr->runCmd($cmd);
 
   return $taxonId;
+}
+
+sub getSoId {
+  my ($mgr,$soTermId,$soTerm) = @_;
+
+  my $sql = $soTermId ? "select sequence_ontology_id from sres.sequenceontology where so_id = '${soTermId}'" : "select sequence_ontology_id from sres.sequenceontology where term_name = '${soTerm}'";
+
+  my $cmd = "getValueFromTable --idSQL \"$sql\"";
+
+  my $soId = $mgr->runCmd($cmd);
+
+  return $soId;
 }
 
 sub getTaxonIdList {
