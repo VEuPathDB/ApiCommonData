@@ -1,4 +1,3 @@
-
 <resourcesPipeline repository="/files/efr"
         downloadDir="@downloadDir@">
 
@@ -6,7 +5,7 @@
  
     </cleanups>
 
-    <resource resource="taxonomy" version="2009-09-24" 
+    <resource resource="taxonomy" version="2008-07-01" 
         displayName="NCBI Taxonomy"
         publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
         category="Ontology"
@@ -20,39 +19,48 @@
         <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
         <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
         <description>
-            <![CDATA[
+        <![CDATA[
     The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
           ]]>
         </description>
     </resource>
-    
-
-
-
-    <resource resource="SO" version="1.226"
-        displayName="Sequence Ontology"
+    <resource resource="InsertTaxonRowsForTgCkUg2" version="2009-06-15" 
+            plugin="GUS::Supported::Plugin::InsertTaxonAndTaxonName"
+            dbCommit="@dbcommit@">
+            <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty" 
+      />
+     
+     <pluginArgs>--name "Toxoplasma gondii TgCkUg2" --nameClass "scientific name" --rank "no rank" --parentNcbiTaxId "5811" --parentRank "species"</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+    <resource resource="SO" version="2.2"
+        displayName="Sequence Ontology"        
         publicUrl="http://song.sourceforge.net"
-        category="Ontology"
-        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.226"
+        category="Ontology"      
+	url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=2.2"
         plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
-        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.226 --soCvsVersion 1.226</pluginArgs>
-        <description>
-            <![CDATA[
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
+            <description>
+         <![CDATA[
     The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
           ]]>
-        </description>
+     </description>
     </resource>
-
-    <resource resource="enzymeDB" version="2009_09_24" 
+    
+    <resource resource="enzymeDB" version="2008-07-01" 
         displayName="Enzyme nomenclature database"
         publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
         category="Ontology"
         url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
         plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
         extDbName="enzymeDB"
-        extDbRlsVer="2009-09-24"
+        extDbRlsVer="2008-07-01"
+        extDbRlsDescrip="EnzymeDB updated Jul. 1, 2008"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
         <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
@@ -63,89 +71,89 @@
         </description>
     </resource>
     
-    <resource resource="GO_evidence_codes" version="1.19"
+    <resource resource="GO_evidence_codes" version="1.17"
         displayName="Gene Ontology evidence codes"        
-        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
-        category="Ontology"            
-        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"   
+	url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
         plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
         <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
         <description>
             <![CDATA[
-   Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
+   Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support. 
           ]]>
         </description>
     </resource>
     
-    <resource resource="GO" version="1.803"
+    <resource resource="GO" version="4.451"
         displayName="Gene Ontology"
-        publicUrl="http://www.geneontology.org"
+        publicUrl="http://www.geneontology.org/ontology/gene_ontology.obo"
         category="Ontology"
         url="http://www.geneontology.org/ontology/gene_ontology.obo"
         plugin="GUS::Supported::Plugin::InsertGeneOntology"
         extDbName="Gene Ontology"
-        extDbRlsVer="1.803"
-        extDbRlsDescrip="The Gene Ontology from Sep. 24, 2009"
+        extDbRlsVer="4.451"
+        extDbRlsDescrip="The Gene Ontology from Jul. 1, 2008"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
-        <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+        <pluginArgs> --oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
         <description>
             <![CDATA[
-   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+   The Gene Ontology project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
           ]]>
         </description>
     </resource>
-
-    <resource resource="NRDB" version="2009-09-24"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+    
+    <resource resource="NRDB" version="2008-07-01"
         displayName="GenBank NRDB"
         publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
         url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
         extDbName="NRDB"
-        extDbRlsVer="2009-09-24"
-        extDbRlsDescrip="The nr file from 2009-09-24"
+        extDbRlsVer="2008-07-01"
+        extDbRlsDescrip="The nr file from 2008-07-01"
         dbCommit="@dbcommit@">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
-   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+   The non-redundant (nr) database file of protein sequences in FASTA format from GenBank.
           ]]>
         </description>
     </resource>
-
-    <resource resource="InterproscanData" version="23.0"
+    
+    <resource resource="InterproscanData" version="17.0"
         plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
         displayName="InterPro Database"
-        category="Proteome"
         publicUrl="http://www.ebi.ac.uk/interpro"
-        dbCommit="@dbcommit@">	
-        <manualGet 
+        category="Proteome"
+        dbCommit="@dbcommit@">
+        <manualGet
             email="interhelp@ebi.ac.uk"
-            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan23.0"
+            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan17.0/"
             contact="EBI"
             institution="EBI"
-        />
-        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan23.0/iprscan/data</unpack>
-        <unpack>cp @downloadDir@/InterproscanData/iprscan23.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</unpack>
-        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</pluginArgs>
+         />	
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan17.0/iprscan/data</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan17.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan17.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan17.0/iprscan/data/</pluginArgs>
         <description>
             <![CDATA[
-        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
-		]]>
+                InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		    ]]>
         </description>
         <publication pmid="15608177"/>
     </resource>
-
-         <resource resource="dbEST" version="2009-09-25"
+        
+    <resource resource="dbEST" version="2008-07-01"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
         extDbName="dbEST"
-        extDbRlsVer="2009-09-25"
+        extDbRlsVer="2008-07-01"
         extDbRlsDescrip="ESTs from the mirrored dbEST"
         dbCommit="@dbcommit@">
         <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
@@ -159,12 +167,12 @@
           ]]>
         </description>
     </resource>
-<resource resource="dbEST_NC" version="2009-09-25"
+<resource resource="dbEST_NC" version="2008-08-08"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="ignore"
         extDbName="dbEST"
-        extDbRlsVer="2009-09-25"
+        extDbRlsVer="2008-08-08"
         extDbRlsDescrip="ESTs from the mirrored dbEST"
         dbCommit="@dbcommit@">
         <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
@@ -177,10 +185,44 @@
                   ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
           ]]>
         </description>
-    </resource>   
+    </resource>
 
-
-
+    <resource resource="PDBProteinSequences" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="PDB protein sequences" 
+        extDbRlsVer="2009-03-06"
+        extDbRlsDescrip="PDB protein sequences"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <description>
+         <![CDATA[
+Protein sequences from PDB used for mapping Plasmodium protein sequences to crystal structures in PDB.        
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="FetchPDBidx" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
+        organisms="Diverse"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
+        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
+        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <description>
+         <![CDATA[
+PDB Identifiers       
+          ]]>
+        </description>
+    </resource>
 
    <resource resource="T.gondiiGT1_contigsGB" version="2008-07-23"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -313,85 +355,53 @@ Toxoplasma gondii ME49 sequence and annotation from Lis Caler at the J. Craig Ve
     </resource>
 
 
-    <resource resource="N.caninum_chromosomes" version="2009-10-06" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="Neospora caninum"
-        displayName="N.caninum chromosomes"
+<resource resource="NeosporaChromosomesSanger" version="2008-08-05"
+        displayName="Neospora caninum chromosomes and annotations from Sanger"
         category="Genome"
-        extDbName="Sanger N. caninum chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger N. caninum chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Genomes/Neosporacaninum"/>
-        <unpack>mkdir @downloadDir@/N.caninum_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/N.caninum_chromosomes/Neosporacaninum --output_fasta @downloadDir@/N.caninum_chromosomes_fixed/Ncaninum.fasta --output_gff @downloadDir@/N.caninum_chromosomes_fixed/Ncaninum.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 29176 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/N.caninum_chromosomes_fixed/Ncaninum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Chromosome sequences for <i>N.caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
-          ]]>      
-        </description>  
-    </resource>
-
-    <resource resource="N.caninum_Annotation" version="2009-10-06"
-        displayName="N. caninum Genome Annotations"
-        category="Genome"
-        organisms="Neospora caninum"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger N. caninum chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger N.caninum chromosomes|2009-10-06"
+        extDbName="Neospora caninum chromosome annotations from Sanger"
+        extDbRlsVer="2008-08-05"
+        extDbRlsDescrip="Neospora caninum chrosome sequences and annotations from Sanger"
         dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/N.caninum_chromosomes_fixed/Ncaninum.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/N.caninum_chromosomes_fixed/Ncaninum.gff --output_gff @downloadDir@/N.caninum_Annotation/Ncaninum_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/N.caninum_Annotation/Ncaninum_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Neospora caninum" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Ncaninum.validation.log --bioperlTreeOutput @pipelineDir@/logs/Ncaninum.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"</pluginArgs>
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/NeosporaAnnotationsFromSanger/chromosomes"
+            contact = "Arnaub Pain"
+            email = "ap2@sanger.ac.uk"
+            institution = "Welcome Trust Sanger Institute Pathogen Sequencing Unit"
+        />
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/neosporaEmbl2gus.xml --input
+FileOrDir @downloadDir@/NeosporaChromosomesSanger/chromosomes --fileFormat embl --soCvsVersion 2.2 --organism "Neospora caninum" --h
+andlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "chromosome"</pluginArgs>
         <description>
             <![CDATA[
-                  Chromosome sequences and annotations for <i>N.caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
-           ]]>
-        </description>
-    </resource>
-
-
-    <resource resource="PDBProteinSequences" version="2009-10-02"
-        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
-        displayName="Protein Sequences from PDB"
-        organisms="Diverse"
-        category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="PDB protein sequences" 
-        extDbRlsVer="2009-10-02"
-        extDbRlsDescrip="PDB protein sequences"
-        dbCommit="@dbcommit@">
-        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
-        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
-        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
-        <description>
-         <![CDATA[
-Protein sequences from PDB used for mapping Plasmodium protein sequences to crystal structures in PDB.        
+Chromosome sequence and annotation for <i>Neospora caninum</i> provided by Arnab Pain (<a href="http://www.sanger.ac.uk/sequencing/Neospora/caninum/">The Wellcome Trust Sanger Institute</a>) and Jonathan Wastling  (<a href="http://www.liv.ac.uk/vets/index.htm">University of Liverpool, Faculty of Veterinary Science</a>). The Wellcome Trust Sanger Institute and the University of Liverpool plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible (see <a href="http://www.sanger.ac.uk/notices/release-policy.shtml">WTSI data release policy</a>). Permission should be obtained from Arnab Pain or Jonathan Wastling before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
           ]]>
         </description>
     </resource>
-    
-    <resource resource="FetchPDBidx" version="2009-10-02"
-        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
-        organisms="Diverse"
+
+    <resource resource="NeosporaUnassignedContigsSanger" version="2008-08-05"
+        displayName="Neospora caninum chromosomes and annotations from Sanger"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Neospora caninum chromosome annotations from Sanger"
+        extDbRlsVer="2008-08-05"
+        extDbRlsDescrip="Neospora caninum chrosome sequences and annotations from Sanger"
         dbCommit="@dbcommit@">
-        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
-        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
-        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/NeosporaAnnotationsFromSanger/unassigned"
+            contact = "Arnaub Pain"
+            email = "ap2@sanger.ac.uk"
+            institution = "Welcome Trust Sanger Institute Pathogen Sequencing Unit"
+        />
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/neosporaEmbl2gus.xml --input
+FileOrDir @downloadDir@/NeosporaUnassignedContigsSanger/unassigned --fileFormat embl --soCvsVersion 2.2 --organism "Neospora caninum
+" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "contig"</pluginArgs>
         <description>
-         <![CDATA[
-PDB Identifiers       
+            <![CDATA[
+Chromosome sequence and annotation for <i>Neospora caninum</i> provided by Arnab Pain (<a href="http://www.sanger.ac.uk/sequencing/Neospora/caninum/">The Wellcome Trust Sanger Institute</a>) and Jonathan Wastling  (<a href="http://www.liv.ac.uk/vets/index.htm">University of Liverpool, Faculty of Veterinary Science</a>). The Wellcome Trust Sanger Institute and the University of Liverpool plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible (see <a href="http://www.sanger.ac.uk/notices/release-policy.shtml">WTSI data release policy</a>). Permission should be obtained from Arnab Pain or Jonathan Wastling before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
           ]]>
         </description>
     </resource>
 
-  <resource resource="Lindstrom454Sequences" version="2009-10-02"
+  <resource resource="Lindstrom454Sequences" version="2009-05-04"
         displayName="T. gondii TgCkUg2 sequence"
         category="Genome"
         organisms="Toxoplasma"
@@ -430,7 +440,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk --output_file @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --db ToxoDB --taxon_id 507601 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk --output_file @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --db ToxoDB --taxon_id 507601 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_GT1/tgaa1.20080715.gbk</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_GT1/gene_association.Tgondii.GT1 --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -454,7 +464,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf --output_file @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --db ToxoDB --taxon_id 508771 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf --output_file @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --db ToxoDB --taxon_id 508771 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_ME49/tga2_20080716.gbf</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_ME49/gene_association.Tgondii.ME49 --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -478,7 +488,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
 
-        <unpack>makeGoAssocFile --format genbank --fileOrDir @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf --output_file @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --db ToxoDB --taxon_id 432359 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
+        <unpack>makeGoAssocFile --genbank_file @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf --output_file @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --db ToxoDB --taxon_id 432359 --evidence_code IEA --annotation_basis JCVI_Tga1:autoGO</unpack>
         <unpack>rm @downloadDir@/GOAssociations_TG_VEG/tgac1.20080717.gbf</unpack>
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_TG_VEG/gene_association.Tgondii.VEG --goExternalDatabaseSpec "Gene Ontology|4.451" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "JCVI" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
@@ -490,50 +500,48 @@ PDB Identifiers
 
 
     <!-- check the Watanabe identifiers against dbEST to make sure they are not complete duplicates of dbEST entries -->
-
-
-   <resource resource="WatanabeTgRH_PredictedTrancripts" version="2008-09-24"
+    
+    <resource resource="WatanabeTgRH_PredictedTrancripts" version="2006-11-02"
         displayName="T. gondii RH predicted full length transcripts"
         organisms="T. gondii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
         extDbName="WatanabeTgRH_PredictedTranscripts"
-        extDbRlsVer="2008-09-24"
+        extDbRlsVer="2006-11-02"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/reffull_tg.fas"
+        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_tg.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex ">(\S+\(\w+\))$" --fastaFile  @downloadDir@/WatanabeTgRH_PredictedTrancripts/reffull_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryStage 'tachyzoites' --libraryName 'derivedFromWatanabeTgRH' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabeTgRH EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\w+\s\w+\))$" --fastaFile  @downloadDir@/WatanabeTgRH_PredictedTrancripts/reffull_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryStage 'tachyzoites' --libraryName 'derivedFromWatanabeTgRH' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabeTgRH EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
         <description>
             <![CDATA[
   <i>T. gondii</i> RH EST sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
           ]]>
         </description>
     </resource>
-
-    <resource resource="WatanabeTgRH_EstLibrary" version="2008-09-24"
+    
+    <resource resource="WatanabeTgRH_EstLibrary" version="2006-11-02"
         displayName="T. gondii RH EST library"
         organisms="T. gondii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
         extDbName="WatanabeTgRH_ESTs"
-        extDbRlsVer="2008-09-24"
+        extDbRlsVer="2006-11-02"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/onepass_tg.fas"
+        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_tg.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex ">(\w+)$" --fastaFile  @downloadDir@/WatanabeTgRH_EstLibrary/onepass_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabeTgRH' --libraryStage 'tachyzoites' --libraryDesc "Toxoplasma gondii RH tachyzoites were infected into Vero (T25) cells and incubated in EMEM medium supplemented with 8% fetal bovine serum for 72 hours in vitro. Infected cells were collected with a scraper and passed through 27G needle for three times and purified by filtration through Millex SV filters (pore size 5 um, Millipore). Cells were collected by centrifugation at 2,000 rpm for 10 min and washed in EMEM medium without FBS. Parasites were suspended at 1x107/ml in EMEM medium without FBS. Five-week old ICR female mice were infected with 1 ml parasites intraperitoneally.Three days after infection, mice were sacrificed by cervical dislocation. Parasites were collected by washing the peritoneal cavity with 5 ml EMEM, passed through 5 um filter, washed in PBS and suspended at 2-3x109 parasite/ml. 20 ml TRI REGENT (Sigma) was added to 1 ml parasite solution, mixed by pipetting, frozen in liquid nitrogen and kept at -80C until used."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @downloadDir@/WatanabeTgRH_EstLibrary/onepass_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabeTgRH' --libraryStage 'tachyzoites' --libraryDesc "Toxoplasma gondii RH tachyzoites were infected into Vero (T25) cells and incubated in EMEM medium supplemented with 8% fetal bovine serum for 72 hours in vitro. Infected cells were collected with a scraper and passed through 27G needle for three times and purified by filtration through Millex SV filters (pore size 5 um, Millipore). Cells were collected by centrifugation at 2,000 rpm for 10 min and washed in EMEM medium without FBS. Parasites were suspended at 1x107/ml in EMEM medium without FBS. Five-week old ICR female mice were infected with 1 ml parasites intraperitoneally.Three days after infection, mice were sacrificed by cervical dislocation. Parasites were collected by washing the peritoneal cavity with 5 ml EMEM, passed through 5 um filter, washed in PBS and suspended at 2-3x109 parasite/ml. 20 ml TRI REGENT (Sigma) was added to 1 ml parasite solution, mixed by pipetting, frozen in liquid nitrogen and kept at -80C until used."</pluginArgs>
         <description>
             <![CDATA[
    <i>T. gondii</i> RH predicted full length transcript sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
           ]]>
         </description>
     </resource>
-
     
     <!--  Load the MGED Ontology (Requires Term and Relationship Types) -->
 
@@ -618,7 +626,7 @@ PDB Identifiers
         />
         <unpack>mkdir @downloadDir@/ME49_Annotation_fixed</unpack>
         <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$old =~ s/^/TGG_/;$ids{$old} = $new;}; while(<>){if (/^(TGG_\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_Annotation/tgal_initial.gff> @downloadDir@/ME49_Annotation_fixed/tgal.gff]]></unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_Annotation_fixed/tgal.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_Annotation_fixed/tgal.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>T. gondii</i> type II ME49 chromosomes by the Toxoplasma Genome Consortium.  For further information contact Ian Paulsen (The Institute for Genomic Research)  ipaulsen&#64;tigr&#46;org, or David Roos (University of Pennsylvania) droos&#64;sas&#46;upenn&#46;edu.
@@ -651,20 +659,20 @@ PDB Identifiers
         </description>
     </resource>
 
-    <resource resource="TgondiiApicoplast" version="2009-04-15"
+    <resource resource="TgondiiApicoplast" version="2008-08-04"
         displayName="T. gondii Apicoplast Genome"
         category="Organellar"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Roos Lab T. gondii apicoplast"
-        extDbRlsVer="2009-04-15"
+        extDbRlsVer="2008-08-04"
         extDbRlsDescrip="apicoplast genome by Roos Lab"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/apicoplastSequences_2009-04-15.gb"
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/apicoplastSequences_2008-06-13.gb"
             contact = "Vishal Nayak"
             email = "vishalkn@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/TgondiiApicoplast/apicoplastSequences_2009-04-15.gb --fileFormat GenBank --soCvsVersion 2.2 --organism "Toxoplasma gondii RH" --handlerExternalDbs "enzyme:enzymeDB:2009-09-24" --seqSoTerm "chromosome" --bioperlTreeOutput @pipelineDir@/logs/TgondiiApicoplast.bioperl --validationLog @pipelineDir@/logs/TgondiiApicoplast.validation.log</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/TgondiiApicoplast/apicoplastSequences_2008-06-13.gb --fileFormat GenBank --soCvsVersion 2.2 --organism "Toxoplasma gondii RH" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "chromosome"</pluginArgs>
         <description>
             <![CDATA[
    Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. Contact: David Roos droos&#64;sas&#46;upenn&#46;edu.
@@ -672,7 +680,6 @@ PDB Identifiers
         </description>
     </resource>
     
-
      <resource resource="GeneticMarkers_Sibley" version="1"
         displayName="Genetic Markers for T. gondii"
         category="Polymorphisms"
@@ -687,7 +694,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
         <unpack>mkdir @downloadDir@/GeneticMarkers_Sibley_fixed</unpack>
-        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/GeneticMarkers_Sibley/Tg10x_31-SibleySNPs.scaff.gff> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff]]></unpack>
+        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/GeneticMarkers_Sibley/Tg10x_31-SibleySNPs.scaff.gff> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff]]></unpack>
         <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
         <unpack>formatGFF --inFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff --regex SNP</unpack>
         <unpack><![CDATA[egrep 'Sibley' @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff | perl -e 'while(<>) { chomp; my @line = split("\t", $_); $line[8] =~ s/SNP/ID/; my $line = join("\t",@line); print "$line\n";}'> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.fixed.gff]]></unpack>
@@ -699,7 +706,6 @@ PDB Identifiers
         </description>
         <publication pmid="15911631"/>
     </resource>
-
 
  <resource resource="ME49_SNPs" version="2004-08"
         displayName="T. gondii ME49 SNPs"
@@ -715,7 +721,7 @@ PDB Identifiers
             institution = "University of Pennsylvania"
         />
         <unpack>mkdir @downloadDir@/ME49_SNPs_fixed</unpack>
-        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_SNPs/Tg10x_31-StanfordSNPs.scaff.gff> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff]]></unpack>
+        <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_SNPs/Tg10x_31-StanfordSNPs.scaff.gff> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff]]></unpack>
         <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
         <unpack><![CDATA[egrep 'AffyName' @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff | perl -e 'while(<>) { chomp; $_ =~ s/AffyName/ID/; print "$_\n";}'> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff]]></unpack>
         <unpack>formatGFF --inFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.final.gff --regex ID</unpack>
@@ -727,8 +733,6 @@ PDB Identifiers
         </description>
         <publication pmid="16801557"/>
     </resource>
-
-
     <resource resource="AmitAlignmentSnps" version="2006-10-16"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from alignments of GT1, VEG and RH"
@@ -1096,6 +1100,50 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
     </description>
   </resource> 
 
+
+    <resource resource="TIGRGeneIndices_Tgondii" version="9.0"
+        displayName="TIGR Gene Indices for T. gondii"
+        category="Transcriptome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="TgGI"
+        extDbRlsVer="9.0"
+        extDbRlsDescrip="TIGR Gene Indices for T. gondii"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/tgi_splign/"
+            contact = "Ian Paulsen"
+            email = "ipaulsen@tigr.org"
+            institution = "The Institute for Genomic Research"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5811 --sequenceFile @downloadDir@/TIGRGeneIndices_Tgondii/tgi_splign/TGGI.072908 --soTermName "transcript" --regexSourceId ">(\S+)" --regexDesc ">\S+\s+(.+)$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   TIGR Gene Indices for T. gondii were provided by Ian Paulsen and Jennifer Wortman (The Institute for Genomic Research). Contact: Ian Paulsen ipaulsen&#64;tigr&#46;org.
+         ]]>
+        </description>
+    </resource>
+
+<resource resource="TIGRGeneIndices_NeosporaCaninum" version="5.1"
+        displayName="TIGR Gene Indices for Neospora Caninum"
+        category="Transcriptome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="NcGI"
+        extDbRlsVer="5.1"
+        extDbRlsDescrip="TIGR Gene Indices for Neospora Caninum"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/nci_splign/"
+            contact = "Ian Paulsen"
+            email = "ipaulsen@tigr.org"
+            institution = "The Institute for Genomic Research"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 29176
+ --sequenceFile @downloadDir@/TIGRGeneIndices_NeosporaCaninum/nci_splign/NCGI.071608 --soTermName "transcript" --regexSourceId ">(\S+)" --regexDesc ">\S+\s+(.+)$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   TIGR Gene Indices for Neospora Caninum were provided by Ian Paulsen and Jennifer Wortman (The Institute for Genomic Research). Contact: Ian Paulsen ipaulsen&#64;tigr&#46;org.
+         ]]>
+        </description>
+    </resource>
+
     <resource resource="MetabolicDbXRefs_Feng" version="1.2" 
         displayName="Metabolic Pathway Reconstruction"
         category="Proteome"
@@ -1110,14 +1158,14 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
             institution="The University of Pennsylvania"
         />
         <unpack><![CDATA[cat /files/cbil/data/cbil/toxoDb/manualDelivery/PathMappings/TgondiiME49GeneIDMapping.txt | perl -e 'while(<STDIN>){chomp;my ($new, $old)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+\.\w+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodb.log> tg_metabolicpathway_4toxodbNewID.log]]></unpack>
-        <pluginArgs>--DbRefMappingFile @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodbNewID.log --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefAAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodbNewID.log --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --SequenceType "AA"</pluginArgs>
         <description>
             <![CDATA[
    Metabolic Pathway Reconstruction for <i>T. gondii</i> gene identifiers, provided on 2006-04-06 by Feng Chen and David Roos (University of Pennsylvania). Contact: David Roos droos&#64;sas&#46;upenn&#46;edu
           ]]>
         </description>
     </resource>
-
+    
     
     <resource resource="ME49_GLEAN" version="2003-08-13"
         displayName="T. gondii ME49 Gene Predictions from GLEAN"
@@ -1306,7 +1354,7 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
         </description>
         <publication pmid="16324218"/>
     </resource>
-
+    
     <resource resource="ME49B7BACEnds" version="2001-09-19"
         displayName="T. gondii ME49 B7 Genomic BAC Ends"
         category="Genome"
@@ -1349,25 +1397,24 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
         </description>
     </resource>
 
-
-   <resource resource="IEDB_Epitopes" version="2009-06-09"
+   <resource resource="IEDB_Epitopes" version="05-28-2009"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="T. gondii"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="2009-06-09"
+        extDbRlsVer="05-28-2009"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Toxo" 
+        <manualGet fileOrDir="@manualDeliveryDir@/IEDB/05-28-2009" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Toxo --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/05-28-2009  --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
@@ -1376,14 +1423,14 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
     </resource>
     
 
-    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-06-09"
+    <resource resource="IEDB_Epitopes_DBxRefs" version="05-28-2009"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
-        organisms="T. gondii"
-        category="ignore"
+        organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
+        category="HIDE"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to IEDB epitopes"
-        extDbRlsVer="2009-06-09"
+        extDbRlsVer="05-28-2009"
         extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
         dbCommit="@dbcommit@">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
@@ -2113,8 +2160,7 @@ This data was graciously provided to ToxoDB pre-publication by Silvia Moreno (sm
             Proteomics data provided by Silvia Moreno lab.
           ]]>
          </description>		
-     </resource> 
-
+     </resource>  
 
 <resource resource="Antibody" version="1"
         displayName="Links to Antibodies from Albert Einstein College of Medicine"
@@ -2138,8 +2184,7 @@ This data was graciously provided to ToxoDB pre-publication by Silvia Moreno (sm
 Antibodies may be obatined for free from the Biodefense and Emerging Infections Research Resources Repository.
           ]]>
         </description>
-    </resource> 
-
+    </resource>    
 
 <resource resource="ME49ChromosomeMap" version="2008-08-28"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
@@ -2350,31 +2395,28 @@ For further information please contacts Kami Kim (kkim@aecom.yu.edu) or Boris St
     </description>
     <publication pmid="19457243"/>
   </resource>
-
-   <resource resource="ToxoIsolatesFromGenbank" version="2009-10-09"
+   <resource resource="ToxoIsolatesFromGenbank" version="2009-05-04"
         displayName="T. gondii and N. caninum isolates from Genbank"
         category="Genome"
         organisms="Toxoplasma"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Toxoplasma isolates From Genbank"
-        extDbRlsVer="2009-10-09"
-        extDbRlsDescrip="Toxoplasma isolates From Genbank|2009-10-09"
+        extDbRlsVer="2009-05-04"
+        extDbRlsDescrip="Toxoplasma isolates From Genbank|2009-05-04"
         dbCommit="@dbcommit@">
-           <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ToxoIsolatesFromGenbank/10-09-2009/sequences.gb" 
+           <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ToxoIsolatesFromGenbank/sequences.gb" 
             contact="GenBank"
             email="info@ncbi.nlm.nih.gov"
             institution="NCBI"
         />
         <unpack>fixIsolateSequences --seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences.gb --fixed_seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb --removed_seq_file @downloadDir@/ToxoIsolatesFromGenbank/sequences_excluded.gb</unpack>
-        <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb.1</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb.1 --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"  --seqSoTerm "region" --bioperlTreeOutput @pipelineDir@/logs/Toxoisolates.bioperl</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/ToxoIsolatesFromGenbank/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --seqSoTerm "region" --bioperlTreeOutput @pipelineDir@/logs/Toxoisolates.bioperl</pluginArgs>
         <description>
             <![CDATA[
 <i>Toxoplasma gondii</i> and <i>Neospora caninum</i> isolate data was obtained from Genbank.  
           ]]>
         </description>
     </resource>
-
 
    <resource resource="ToxoIsolatesFromDardre" version="2009-05-04"
         displayName="T. gondii isolates"
@@ -2620,23 +2662,23 @@ Lineage and developmental gene expression: type I GT1, type II Me49, and type II
          <![CDATA[
 <br>This data was graciously provided to ToxoDB pre-publication by Matt Zack Anderson and John C. Boothroyd.
           ]]>
-    </description>
-  </resource>
+   </description>
+</resource>
 
-    <resource resource="TASKAnnotation" version="2006-07-20"
-        displayName="Toxoplasma Genome Sequencing Project Annotation"
-        organisms="T. gondii"
-        category="Genome"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        dbCommit="@dbcommit@">
-        <pluginArgs></pluginArgs>
-        <description>
-            <![CDATA[
-Annotation provided by Toxoplasma Genome Sequencing Project.
-          ]]>
-        </description>
-    </resource>
-    
+<resource resource="TASKAnnotation" version="2006-07-20"
+	  displayName="Toxoplasma Genome Sequencing Project Annotation"
+	  organisms="T. gondii"
+	  category="Genome"
+	  plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	  dbCommit="@dbcommit@">
+  <pluginArgs></pluginArgs>
+  <description>
+    <![CDATA[
+	     Annotation provided by Toxoplasma Genome Sequencing Project.
+    ]]>
+  </description>
+</resource>
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
