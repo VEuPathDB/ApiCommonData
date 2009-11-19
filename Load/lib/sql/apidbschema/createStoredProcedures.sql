@@ -451,7 +451,7 @@ begin
          when 'trypanosoma'
            then return 'TriTrypDB';
          when 'trichomonas'
-           then return 'TriTrypDB';
+           then return 'TrichDB';
          when 'phytomonas'
            then return 'TrichDB';
          when 'giardia'
