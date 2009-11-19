@@ -1,19 +1,21 @@
+-- KEEP THIS SCHEMA IN SYNC WITH OrthoMCLEngine/Main/bin/orthomclInstallSchema
+
 CREATE TABLE apidb.SimilarSequences (
- QUERY_ID                 NUMBER(10),
- SUBJECT_ID               NUMBER(10),
- QUERY_TAXON_ID           NUMBER(10),
- SUBJECT_TAXON_ID         NUMBER(10),
- EVALUE_MANT              FLOAT(126),
+ QUERY_ID                 VARCHAR(60),
+ SUBJECT_ID               VARCHAR(60),
+ QUERY_TAXON_ID           VARCHAR(40),
+ SUBJECT_TAXON_ID         VARCHAR(40),
+ EVALUE_MANT              FLOAT,
  EVALUE_EXP               NUMBER,
- PERCENT_IDENTITY         NUMBER,
- PERCENT_MATCH            NUMBER  
-);
+ PERCENT_IDENTITY         FLOAT,
+ PERCENT_MATCH            FLOAT  
+) NOLOGGING;
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SimilarSequences TO gus_w;
 GRANT SELECT ON apidb.SimilarSequences TO gus_r;
 
-CREATE INDEX apidb.ss_qtaxexp_ix ON apidb.SimilarSequences(query_id, subject_taxon_id, evalue_exp, evalue_mant, query_taxon_id, subject_id);
-CREATE INDEX apidb.ss_seqs_ix on apidb.SimilarSequences(query_id, subject_id, evalue_exp, evalue_mant, percent_match);
+CREATE INDEX apidb.ss_qtaxexp_ix ON apidb.SimilarSequences(query_id, subject_taxon_id, evalue_exp, evalue_mant, query_taxon_id, subject_id) NOLOGGING;
+CREATE INDEX apidb.ss_seqs_ix on apidb.SimilarSequences(query_id, subject_id, evalue_exp, evalue_mant, percent_match) NOLOGGING;
 
 -----------------------------------------------------------
 
@@ -31,11 +33,11 @@ GRANT SELECT ON apidb.InterTaxonMatch TO gus_r;
 ------------------------------------------------------------------
 
 CREATE TABLE apidb.Inparalog (
- SEQUENCE_ID_A           NUMBER(10),
- SEQUENCE_ID_B           NUMBER(10),
- TAXON_ID                NUMBER(10),
- UNNORMALIZED_SCORE      NUMBER,
- NORMALIZED_SCORE        NUMBER    
+ SEQUENCE_ID_A           VARCHAR(60),
+ SEQUENCE_ID_B           VARCHAR(60),
+ TAXON_ID                VARCHAR(40),
+ UNNORMALIZED_SCORE      FLOAT,
+ NORMALIZED_SCORE        FLOAT    
 );
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Inparalog TO gus_w;
@@ -44,12 +46,12 @@ GRANT SELECT ON apidb.Inparalog TO gus_r;
 ------------------------------------------------------------
 
 CREATE TABLE apidb.Ortholog (
- SEQUENCE_ID_A           NUMBER(10),
- SEQUENCE_ID_B           NUMBER(10),
- TAXON_ID_A              NUMBER(10),
- TAXON_ID_B              NUMBER(10),
- UNNORMALIZED_SCORE      NUMBER,
- NORMALIZED_SCORE        NUMBER    
+ SEQUENCE_ID_A           VARCHAR(60),
+ SEQUENCE_ID_B           VARCHAR(60),
+ TAXON_ID_A              VARCHAR(40),
+ TAXON_ID_B              VARCHAR(40),
+ UNNORMALIZED_SCORE      FLOAT,
+ NORMALIZED_SCORE        FLOAT    
 );
 
 CREATE INDEX apidb.ortholog_seq_a_ix on apidb.ortholog(sequence_id_a);
@@ -62,12 +64,12 @@ GRANT SELECT ON apidb.ortholog TO gus_r;
 ------------------------------------------------------------
  
 CREATE TABLE apidb.CoOrtholog (
- SEQUENCE_ID_A           NUMBER(10),
- SEQUENCE_ID_B           NUMBER(10),
- TAXON_ID_A              NUMBER(10),
- TAXON_ID_B              NUMBER(10),
- UNNORMALIZED_SCORE      NUMBER,
- NORMALIZED_SCORE        NUMBER    
+ SEQUENCE_ID_A           VARCHAR(60),
+ SEQUENCE_ID_B           VARCHAR(60),
+ TAXON_ID_A              VARCHAR(40),
+ TAXON_ID_B              VARCHAR(40),
+ UNNORMALIZED_SCORE      FLOAT,
+ NORMALIZED_SCORE        FLOAT    
 );
 
 
