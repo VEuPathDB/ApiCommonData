@@ -2535,7 +2535,7 @@ SELECT * FROM apidb.AsmAlignmentGene
   <tuningTable name="apidb.PlasmoExpressionGraphs">
     <externalDependency name="apidb.Profile"/>
     <externalDependency name="apidb.ProfileSet"/>
-    <externalDependency name="dots.NaFeatureImp"/>
+    <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.PlasmoExpressionGraphs&1 NOLOGGING AS
@@ -2551,8 +2551,10 @@ SELECT gf.source_id,
        COUNT(daily) as graph_daily,
        COUNT(newbold) as graph_newbold,
        COUNT(westenberger) as graph_westenberger,
-       COUNT(winzeler_py_mixed) as graph_winzeler_py_mixed
-FROM dots.GeneFeature gf,
+       COUNT(winzeler_py_mixed) as graph_winzeler_py_mixed,
+       COUNT(su_cq) as graph_su_cq,
+       COUNT(cowman_sir2) as graph_cowman_sir2
+FROM apidb.geneattributes gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p3, apidb.profileSet ps3,
@@ -2660,7 +2662,15 @@ FROM dots.GeneFeature gf,
     (SELECT p1.source_id, 1 AS winzeler_py_mixed
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE ps1.name = 'winzeler py mixed RMAouput naturalscale'
-       AND p1.profile_set_id = ps1.profile_set_id) winzeler_py_mixed
+       AND p1.profile_set_id = ps1.profile_set_id) winzeler_py_mixed,
+    (SELECT p1.source_id, 1 AS cowman_sir2
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'Profiles of E-TABM-438 from Cowman'
+       AND p1.profile_set_id = ps1.profile_set_id) cowman_sir2,
+    (SELECT p1.source_id, 1 AS su_cq
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'Profiles of E-GEOD-10022 array from Su'
+       AND p1.profile_set_id = ps1.profile_set_id) su_cq
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
@@ -2678,6 +2688,8 @@ FROM dots.GeneFeature gf,
   AND gf.source_id = pfrnaseq.source_id(+)
   AND gf.source_id = westenberger.source_id(+)
   AND gf.source_id = winzeler_py_mixed.source_id(+)
+  AND gf.source_id = cowman_sir2.source_id(+)
+  AND gf.source_id = su_cq.source_id(+)
 GROUP BY gf.source_id
       ]]>
     </sql>
