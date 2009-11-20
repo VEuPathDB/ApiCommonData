@@ -261,48 +261,88 @@ PDB Identifiers
         </description>
     </resource>
 
- <resource resource="LbraziliensisChromosomesAndAnnotations" version="2008-11-24"
-        displayName="L. braziliensis chromosomes sequence and annotation"
-        organisms="Leishmania braziliensis"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/L_braziliensis/DATASETS/LbrM_wholegenome_V2_29072008.artemis"
+    <resource resource="L.braziliensis_chromosomes" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.braziliensis"
+        displayName="L.braziliensis chromosomes"
         category="Genome"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="L.braziliensis chromosomes and annotations"
-        extDbRlsVer="2008-11-24"
-        extDbRlsDescrip="L.braziliensis chromosomes and annotations|2008-11-24"
+        extDbName="Sanger L. braziliensis chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger L. braziliensis chromosomes|2009-10-06"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Lbraziliensis/LbrM_wholegenome_V2_29072008.artemis_fixed"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lbraziliensis"/>
+        <unpack>mkdir @downloadDir@/L.braziliensis_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/L.braziliensis_chromosomes/Lbraziliensis --output_fasta @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5560 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
 
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypEmbl2gus.xml --inputFileOrDir @downloadDir@/LbraziliensisChromosomesAndAnnotations/LbrM_wholegenome_V2_29072008.artemis_fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania braziliensis" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+          ]]>      
+        </description>  
+<publication pmid="17572675"/>
+    </resource>
+
+    <resource resource="L.braziliensis_Annotation" version="2009-10-06"
+        displayName="L.braziliensis Genome Annotations"
+        category="Genome"
+        organisms="L.braziliensis"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. braziliensis chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger L. braziliensis chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff" />
+        <unpack>cp @downloadDir@/L.braziliensis_chromosomes/Lbraziliensis/Lbrerrs.txt @downloadDir@/L.braziliensis_Annotation/</unpack>
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff --output_gff @downloadDir@/L.braziliensis_Annotation/Lbraziliensis_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/L.braziliensis_Annotation/Lbraziliensis_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Leishmania braziliensis" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lbraziliensis.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lbraziliensis.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
 Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
-          ]]>
+
+           ]]>
         </description>
 <publication pmid="17572675"/>
     </resource>
-<resource resource="LinfantumChromosomesAndAnnotations" version="2008-11-24"
-        displayName="L. infantum chromosomes sequence and annotation"
-        organisms="Leishmania infantum"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/L_infantum/DATASETS/LinJwholegenome_20080508.v3.0a.artemis"
-        category="Genome"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="L.infantum chromosomes and annotations"
-        extDbRlsVer="2008-11-24"
-        extDbRlsDescrip="L.infantum chromosomes and annotations|2008-11-24"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Linfantum/LinJwholegenome_20080508.v3.0a.artemis_fixed"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
 
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypEmbl2gus.xml --inputFileOrDir @downloadDir@/LinfantumChromosomesAndAnnotations/LinJwholegenome_20080508.v3.0a.artemis_fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania infantum" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+    <resource resource="L.infantum_chromosomes" version="2009-09-07" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.infantum"
+        displayName="L.infantum chromosomes"
+        category="Genome"
+        extDbName="Sanger L. infantum chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger L. infantum|2009-09-07"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-07/Linfantum"/>
+        <unpack>mkdir @downloadDir@/L.infantum_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/L.infantum_chromosomes/Linfantum --output_fasta @downloadDir@/L.infantum_chromosomes_fixed/Linfantum.fasta --output_gff @downloadDir@/L.infantum_chromosomes_fixed/Linfantum.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5671 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.infantum_chromosomes_fixed/Linfantum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Leishmania infantum</i> clone JPCM5 (MCAN/ES/98/LLM-877) were downloaded from <a href="http://www.genedb.org/genedb/linfantum/">GeneDB</a> (sequence and annotated features).<br> 
+Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_infantum/">The Sanger Institute pathogen sequencing unit</a>. 
+          ]]>
+        </description>
+<publication pmid="17572675"/>
+   </resource>
+
+    <resource resource="L.infantum_Annotation" version="2009-09-10"
+        displayName="L.infantum Genome Annotations"
+        category="Genome"
+        organisms="L.infantum"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. infantum chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger L. infantum chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/L.infantum_chromosomes_fixed/Linfantum.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/L.infantum_chromosomes_fixed/Linfantum.gff --output_gff @downloadDir@/L.infantum_Annotation/Linfantum_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/L.infantum_Annotation/Linfantum_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Leishmania infantum" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Linfantum.validation.log --bioperlTreeOutput @pipelineDir@/logs/Linfantum.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data for <i>Leishmania infantum</i> clone JPCM5 (MCAN/ES/98/LLM-877) were downloaded from <a href="http://www.genedb.org/genedb/linfantum/">GeneDB</a> (sequence and annotated features).<br> 
@@ -311,23 +351,43 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
         </description>
 <publication pmid="17572675"/>
     </resource>
-     <resource resource="LmajorChromosomesAndAnnotations" version="2008-11-12"
-        displayName="L. major chromosomes sequence and annotation, version 5.2"
-        organisms="Leishmania major"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/databases/L.major_sequences/DATASETS/LmjFwholegenome_20070731_V5.2.embl"
-        category="Genome"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="L.major chromosomes and annotations"
-        extDbRlsVer="2008-11-12"
-        extDbRlsDescrip="L. major chromosome version 5.2, 2008-11-12"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Lmajor/Lmajor_fixed.embl"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
 
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/LmajorEmbl2gus.xml --inputFileOrDir @downloadDir@/LmajorChromosomesAndAnnotations/Lmajor_fixed.embl --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania major" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+
+    <resource resource="L.major_chromosomes" version="2009-09-10" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.major"
+        displayName="L.major chromosomes"
+        category="Genome"
+        extDbName="Sanger L. major chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger L. major chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Lmajor"/>
+        <unpack>mkdir @downloadDir@/L.major_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/L.major_chromosomes/Lmajor --output_fasta @downloadDir@/L.major_chromosomes_fixed/Lmajor.fasta --output_gff @downloadDir@/L.major_chromosomes_fixed/Lmajor.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5664 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.major_chromosomes_fixed/Lmajor.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_major/">The Sanger Institute pathogen sequencing unit</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://www.sanger.ac.uk/Projects/L_major/EUseqlabs.shtml">The European Leishmania major Friedlin Genome Sequencing Consortium</a>.
+          ]]>
+        </description>
+<publication pmid="16020728"/>
+    </resource>
+
+    <resource resource="L.major_Annotation" version="2009-09-10"
+        displayName="L.major Genome Annotations"
+        category="Genome"
+        organisms="L.major"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. major chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger L. major chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/L.major_chromosomes_fixed/Lmajor.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/L.major_chromosomes_fixed/Lmajor.gff --output_gff @downloadDir@/L.major_Annotation/Lmajor_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/L.major_Annotation/Lmajor_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Leishmania major" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lmajor.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lmajor.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
@@ -337,25 +397,22 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 <publication pmid="16020728"/>
     </resource>
 
-    <resource resource="Tbrucei927ChromosomesAndAnnotations" version="2008-11-13"
-        displayName="T. brucei chromosomes sequence and annotation, release 4"
-        organisms="Trypanosoma brucei TREU927"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/databases/T.brucei_sequences/T.brucei_genome_latest/EMBL_files_release4/"
+    <resource resource="T.brucei927_contigs" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei 927"
+        displayName="T.brucei 927 contigs and chromosomes"
         category="Genome"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="T.brucei 927 chromosomes and annotations"
-        extDbRlsVer="2008-11-13"
-        extDbRlsDescrip="T.brucei 927 chromosomes and annotations, 2008-11-13"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tbrucei927/"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
-
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TbruceiEmbl2gus.xml --inputFileOrDir @downloadDir@/Tbrucei927ChromosomesAndAnnotations/Tbrucei927 --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.brucei927_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_contigs/Tbruceibrucei927_contigs/ --output_fasta @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
-            <![CDATA[
+            <![CDATA[ 
    Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
 Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
           ]]>
@@ -363,47 +420,87 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 <publication pmid="16020726"/>
     </resource>
 
-
-    <resource resource="GOAssociations_Lmajor" version="2008-11-19"
-        displayName="L. major protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="L.major GO Associations from GeneDB"
-        extDbRlsVer="2008-11-19"
-        extDbRlsDescrip="L.major GO Associations from GeneDB|2008-11-19"
-        dbCommit="@dbcommit@"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/databases/L.major_sequences/DATASETS/gene_associations/gene_association.GeneDB_Lmajor.060308"
-        url="ftp://ftp.sanger.ac.uk/pub/databases/L.major_sequences/DATASETS/gene_associations/gene_association.GeneDB_Lmajor.060308"
-        >
-        <wgetArgs>--tries=5 --output-document=gene_association.GeneDB_Lmajor.060308</wgetArgs>
-
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lmajor/gene_association.GeneDB_Lmajor.060308 --goExternalDatabaseSpec "Gene Ontology|4.490" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>L. major</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-     <resource resource="TcruziContigsAndAnnotations" version="2008-11-20"
-        displayName="T. cruzi contigs sequence and annotation"
-        organisms="Trypanosoma cruzi"
+    <resource resource="T.brucei927_Annotation_contigs" version="2009-10-06"
+        displayName="T.brucei 927 Genome Annotations"
         category="Genome"
+        organisms="T.brucei927"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="T.cruzi contigs and annotations"
-        extDbRlsVer="2008-11-20"
-        extDbRlsDescrip="T. cruzi contigs sequence and annotation|2008-11-20"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi/sequences.gb"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
-
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TcruziGenbank2gus.xml --inputFileOrDir @downloadDir@/TcruziContigsAndAnnotations/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "contig"</pluginArgs>
+      <manualGet fileOrDir="@downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+     </resource>
+
+    <resource resource="T.brucei927_chromosomes" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei 927"
+        displayName="T.brucei 927 chromosomes and contigs"
+        category="Genome"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_chromosomes"/>
+        <unpack>mkdir @downloadDir@/T.brucei927_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_chromosomes/Tbruceibrucei927_chromosomes --output_fasta @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+    </resource>
+
+    <resource resource="T.brucei927_Annotation_chromosomes" version="2009-10-06"
+        displayName="T.brucei927 Genome Annotations"
+        category="Genome"
+        organisms="T.brucei927"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+     </resource>
+
+    <resource resource="T.cruzi_contigs" version="2009-09-10" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.cruzi"
+        displayName="T.cruzi contigs"
+        category="Genome"
+        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.cruzi_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruzi_contigs/Tcruzi_contigs --output_fasta @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
    Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
           ]]>
         </description>
@@ -411,187 +508,426 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </resource>
 
 
-    <resource resource="GOAssociations_Tbrucei927" version="2008-11-20"
-        displayName="T. brucei927 protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.brucei927 GO Associations from GeneDB embl file"
-        extDbRlsVer="2008-11-20"
-        extDbRlsDescrip="T.brucei927 GO Associations from GeneDB embl file|2008-11-20"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tbrucei927/"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-        />
-
-        <unpack>makeGoAssocFile --fileOrDir @downloadDir@/GOAssociations_Tbrucei927/Tbrucei927 --format embl --fileExt embl --output_file @downloadDir@/GOAssociations_Tbrucei927/gene_association.Tbrucei927 --db TrypDB --taxon_id 114031 --evidence_code IEA --annotation_basis GeneDB_Tbrucei927 </unpack>
-        <unpack>rm -rf @downloadDir@/GOAssociations_Tbrucei927/Tbrucei927/</unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbrucei927/gene_association.Tbrucei927 --goExternalDatabaseSpec "Gene Ontology|4.490" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-            <![CDATA[
-   <i>T. brucei</i> TREU927 Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-     <resource resource="LbraziliensisNonProteinCodingAnnotations" version="2008-11-24"
-        displayName="L. braziliensis non protein coding annotation"
-        organisms="Leishmania braziliensis"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/L_braziliensis/DATASETS/GFF/L.braziliensis.gff.gz"
-        category="ignore"
+    <resource resource="T.cruzi_Annotation" version="2009-09-10"
+        displayName="T.cruzi Genome Annotations"
+        category="Genome"
+        organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="L.braziliensis chromosomes and annotations"
-        extDbRlsVer="2008-11-24"
-        extDbRlsDescrip="L.braziliensis chromosomes and annotations|2008-11-24"
+        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Lbraziliensis/L.braziliensis.gff"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
-        <unpack>/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Lbraziliensis/bin/fixGffForLoading.pl --input_file @downloadDir@/LbraziliensisNonProteinCodingAnnotations/L.braziliensis.gff --output_file @downloadDir@/LbraziliensisNonProteinCodingAnnotations/L.braziliensis.nonproteincoding.gff --version 2 --organism "Leishmania braziliensis"</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypNonProteinEmbl2gus.xml --inputFileOrDir @downloadDir@/LbraziliensisNonProteinCodingAnnotations/L.braziliensis.nonproteincoding.gff --fileFormat gff2 --gff2GroupTag GenePrediction  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --seqExtDbName %EXT_DB_NAME% --seqExtDbRlsVer %EXT_DB_RLS_VER% --soCvsVersion @soVer@ --defaultOrganism "Leishmania braziliensis" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+      <manualGet fileOrDir="@downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff --output_gff @downloadDir@/T.cruzi_Annotation/Tcruzi_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruzi_Annotation/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain CL Brener" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
-   Sequence data from GeneDB for <i>Leishmania braziliensis</i> chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. 
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
           ]]>
         </description>
+<publication pmid="16020725"/>
+     </resource>
+
+    <resource resource="T.cruzi_chromosomes" version="2009-09-10" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.cruzi"
+        displayName="T.cruzi chromosomes"
+        category="Genome"
+        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_chromosomes/"/>
+        <unpack>mkdir @downloadDir@/T.cruzi_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruzi_chromosomes/Tcruzi_chromosomes --output_fasta @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+          ]]>
+        </description>
+<publication pmid="16020725"/>
     </resource>
 
-
-     
-
-     <resource resource="LinfantumNonProteinCodingAnnotations" version="2008-11-24"
-        displayName="L. infantum non protein coding annotation"
-        organisms="Leishmania infantum"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/L_infantum/DATASETS/GFF/L.infantum.gff.gz"
-        category="ignore"
+    <resource resource="T.cruzi_Annotation_Chromosomes" version="2009-09-10"
+        displayName="T.cruzi Genome Annotations"
+        category="Genome"
+        organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="L.infantum chromosomes and annotations"
-        extDbRlsVer="2008-11-24"
-        extDbRlsDescrip="L.infantum chromosomes and annotations|2008-11-24"
+        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Linfantum/L.infantum.gff"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "PCBI"
-        />
-        <unpack>/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Linfantum/bin/fixGffForLoading.pl --input_file @downloadDir@/LinfantumNonProteinCodingAnnotations/L.infantum.gff --output_file @downloadDir@/LinfantumNonProteinCodingAnnotations/L.infantum.nonproteincoding.gff --version 3 --organism "Leishmania infantum"</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypNonProteinEmbl2gus.xml --inputFileOrDir @downloadDir@/LinfantumNonProteinCodingAnnotations/L.infantum.nonproteincoding.gff --fileFormat gff2 --gff2GroupTag GenePrediction  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --seqExtDbName %EXT_DB_NAME% --seqExtDbRlsVer %EXT_DB_RLS_VER% --soCvsVersion @soVer@ --defaultOrganism "Leishmania infantum" --handlerExternalDbs "enzyme:enzymeDB:2008-09-23" --seqSoTerm "chromosome"</pluginArgs>
+      <manualGet fileOrDir="@downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff --output_gff @downloadDir@/T.cruzi_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruzi_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain CL Brener" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
-   Sequence data from GeneDB for <i>Leishmania infantum</i> chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. 
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
           ]]>
+        </description>
+<publication pmid="16020725"/>
+     </resource>
+
+    <resource resource="T.bruceigambiense_chromosomes" version="2009-09-07" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei gambiense"
+        displayName="T.brucei gambiense chromosomes"
+        category="Genome"
+        extDbName="Sanger T. brucei gambiense chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-07/Tbruceigambiense"/>
+        <unpack>mkdir @downloadDir@/T.bruceigambiense_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.bruceigambiense_chromosomes/Tbruceigambiense --output_fasta @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.bruceigambiense_Annotation" version="2009-09-07"
+        displayName="T.brucei gambiense Genome Annotations"
+        category="Genome"
+        organisms="T.bruceigambiense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. brucei gambiense chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff --output_gff @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei gambiense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbruceigambiense.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tbruceigambiense.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Chromosome sequences and annotations for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
         </description>
     </resource>
 
-    <resource resource="GOAssociations_Lbraziliensis" version="2008-11-24"
+    <resource resource="T.vivax_contigs" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.vivax"
+        displayName="T.vivax contigs"
+        category="extDbName"
+        Genome="Sanger T. vivax contigs and chromosomes"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax/Tvivax_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.vivax_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_contigs/Tvivax_contigs --output_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3</unpack>
+        <unpack>makeContigsFromBinChrom --input_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3 --output_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --input_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_fasta @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta 2> @pipelineDir@/logs/TvivaxContigSpanningFeatures.err</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.vivax_Annotation_contigs" version="2009-09-14"
+        displayName="T.vivax Genome Annotations"
+        category="Genome"
+        organisms="T.vivax"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.vivax_contigs_fixed/TvContigs.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --output_gff @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Contig sequences and annotations for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="T.vivax_chromosomes" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.vivax"
+        displayName="T.vivax chromosomes"
+        category="Genome"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-14/Tvivax/Tvivax_chromosomes/"/>
+        <unpack>mkdir @downloadDir@/T.vivax_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_chromosomes/Tvivax_chromosomes --output_fasta @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.vivax_Annotation_chromosomes" version="2009-09-14"
+        displayName="T.vivax Genome Annotations"
+        category="Genome"
+        organisms="T.vivax"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff --output_gff @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Chromosome sequences and annotations for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="T.congolense_contigs" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.congolense"
+        displayName="T.congolense contigs"
+        category="Genome"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcongolense/Tcongolense_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.congolense_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.congolense_contigs/Tcongolense_contigs --output_fasta @downloadDir@/T.congolense_contigs_fixed/Tcongolense.fasta --output_gff @downloadDir@/T.congolense_contigs_fixed/Tcongolense.gff3</unpack>
+        <unpack>makeContigsFromBinChrom --input_gff @downloadDir@/T.congolense_contigs_fixed/Tcongolense.gff3 --output_gff @downloadDir@/T.congolense_contigs_fixed/TcContigs.gff --input_fasta @downloadDir@/T.congolense_contigs_fixed/Tcongolense.fasta --output_fasta @downloadDir@/T.congolense_contigs_fixed/TcContigs.fasta 2> @pipelineDir@/logs/TcongolenseContigSpanningFeatures.err</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.congolense_contigs_fixed/TcContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.congolense_Annotation_contigs" version="2009-09-14"
+        displayName="T.congolense Genome Annotations"
+        category="Genome"
+        organisms="T.congolense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.congolense_contigs_fixed/TcContigs.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.congolense_contigs_fixed/TcContigs.gff --output_gff @downloadDir@/T.congolense_Annotation_contigs/TcContigs_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.congolense_Annotation_contigs/TcContigs_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma congolense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcongolense.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tcongolense.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Contig sequences and annotations for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="T.congolense_chromosomes" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.congolense"
+        displayName="T.congolense chromosomes"
+        category="Genome"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-14/Tcongolense/Tcongolense_chromosomes/"/>
+        <unpack>mkdir @downloadDir@/T.congolense_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.congolense_chromosomes/Tcongolense_chromosomes --output_fasta @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.fasta --output_gff @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.congolense_Annotation_chromosomes" version="2009-09-14"
+        displayName="T.congolense Genome Annotations"
+        category="Genome"
+        organisms="T.congolense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff --output_gff @downloadDir@/T.congolense_Annotation_chromosomes/Tcongolense_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.congolense_Annotation_chromosomes/Tcongolense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma congolense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcongolense.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcongolense.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Chromosome sequences and annotations for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
+ 
+
+
+    <resource resource="GOAssociations_Lbraziliensis" version="2009-10-06"
         displayName="L. braziliensis protein GO Associations"        
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
         extDbName="L.braziliensis GO Associations from GeneDB"
-        extDbRlsVer="2008-11-24"
-        extDbRlsDescrip="L.braziliensis GO Associations from GeneDB|2008-11-24"
-        dbCommit="@dbcommit@"
-        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/L_braziliensis/DATASETS/GO/gene_association.GeneDB_Lbraziliensis"
-        url="ftp://ftp.sanger.ac.uk/pub/pathogens/L_braziliensis/DATASETS/GO/gene_association.GeneDB_Lbraziliensis"
-        >
-        <wgetArgs>--tries=5 --output-document=gene_association.GeneDB__Lbraziliensis</wgetArgs>
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="L.braziliensis GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lbraziliensis.gas"/>
 
 
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lbraziliensis/gene_association.GeneDB__Lbraziliensis --goExternalDatabaseSpec "Gene Ontology|4.490" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lbraziliensis/Lbraziliensis.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
           <![CDATA[
-          <i>L. braziliensis</i> Gene Ontology  associations from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a>.
+          <i>L. braziliensis</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
           ]]>
         </description>
     </resource>
 
-  <resource resource="TcruziEsmeraldo_likeChromosomeMap" version="2008-12-05"
-         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-         displayName="T. cruzi Esmeraldo-like Chromosome Map"
-         category="Genome"
-         extDbName="Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton"
-         extDbRlsVer="2008-12-05"
-         extDbRlsDescrip="Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05"
-         dbCommit="@dbcommit@">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi/tcruziEsmeraldo.agp"
-         />
-         <pluginArgs>--agpFile @downloadDir@/TcruziEsmeraldo_likeChromosomeMap/tcruziEsmeraldo.agp --seqPieceExtDbName "T.cruzi contigs and annotations" --seqPieceExtDbRlsVer "2008-11-20" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "5693" --soVer @soVer@ --sourceIdPrefix ''</pluginArgs> 
-         <description>
-            <![CDATA[
-Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> Esmeraldo-like homologous chromosome, generated by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA.
-         ]]>
-        </description>
-  </resource>
-
-  <resource resource="TcruziNonEsmeraldo_likeChromosomeMap" version="2008-12-05"
-         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-         displayName="T. cruzi NonEsmeraldo-like Chromosome Map"
-         category="Genome"
-         extDbName="Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton"
-         extDbRlsVer="2008-12-05"
-         extDbRlsDescrip="Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05"
-         dbCommit="@dbcommit@">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi/tcruziNonEsmeraldo.agp"
-         />
-         <pluginArgs>--agpFile @downloadDir@/TcruziNonEsmeraldo_likeChromosomeMap/tcruziNonEsmeraldo.agp --seqPieceExtDbName "T.cruzi contigs and annotations" --seqPieceExtDbRlsVer "2008-11-20" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "5693" --soVer @soVer@ --sourceIdPrefix ''</pluginArgs> 
-         <description>
-            <![CDATA[
-Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> NonEsmeraldo-like homologous chromosome, generated by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA.
-         ]]>
-        </description>
-  </resource>
-
-    <resource resource="GOAssociations_Linfantum" version="2008-11-20"
+    <resource resource="GOAssociations_Linfantum" version="2009-10-06"
         displayName="L. infantum protein GO Associations"        
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="L.infantum GO Associations from GeneDB embl file"
-        extDbRlsVer="2008-12-11"
-        extDbRlsDescrip="L.infantum GO Associations from GeneDB embl file|2008-12-11"
+        extDbName="L.infantum GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="L.infantum GO Associations from GeneDB|2009-10-06"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Linfantum/LinJwholegenome_20080508.v3.0a.artemis_fixed"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-        />
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Linfantum.gas"/>
 
-        <unpack>makeGoAssocFile --fileOrDir @downloadDir@/GOAssociations_Linfantum/LinJwholegenome_20080508.v3.0a.artemis_fixed --format embl --fileExt embl --output_file @downloadDir@/GOAssociations_Linfantum/gene_association.Linfantum --db TrypDB --taxon_id 113769 --evidence_code IEA --annotation_basis GeneDB_Linfantum </unpack>
-        <unpack>rm -rf @downloadDir@/GOAssociations_Linfantum/LinJwholegenome_20080508.v3.0a.artemis_fixed</unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Linfantum/gene_association.Linfantum --goExternalDatabaseSpec "Gene Ontology|4.490" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Linfantum/Linfantum.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
-            <![CDATA[
-   <i>L. infantum</i> Gene Ontology  associations from <a href="http://www.genedb.org/genedb/linfantum/">GeneDB</a>.
+          <![CDATA[
+          <i>L. infantum</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
           ]]>
         </description>
     </resource>
 
-    <resource resource="GOAssociations_Tcruzi" version="2008-12-11"
+    <resource resource="GOAssociations_Lmajor" version="2009-10-06"
+        displayName="L. major protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="L.major GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="L.major GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmajor.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lmajor/Lmajor.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>L. major</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tbruceibrucei927" version="2009-10-06"
+        displayName="T. brucei brucei927 protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.bruceibrucei927 GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.bruceibrucei927 GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceibrucei927/Tbruceibrucei927.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. brucei brucei927</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tbruceigambiense" version="2009-10-06"
+        displayName="T. brucei gambiense protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.bruceigambiense GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.bruceigambiense GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceigambiense.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceigambiense/Tbruceigambiense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. brucei gambiense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tcruzi" version="2009-10-06"
         displayName="T. cruzi protein GO Associations"        
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.cruzi GO Associations from TcruziDB genbank file"
-        extDbRlsVer="2008-12-11"
-        extDbRlsDescrip="T.cruzi GO Associations from TcruziDB genbank file|2008-12-11"
+        extDbName="T.cruzi GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.cruzi GO Associations from GeneDB|2009-10-06"
         dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi/sequences.gb"
-            contact = "Vishal Nayak"
-            email = "vishalkn@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-        />
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcruzi.gas"/>
 
-        <unpack>makeGoAssocFile --fileOrDir @downloadDir@/GOAssociations_Tcruzi/sequences.gb --format genbank --fileExt genbank --output_file @downloadDir@/GOAssociations_Tcruzi/gene_association.Tcruzi --db TrypDB --taxon_id 114018 --evidence_code IEA --annotation_basis TcruziDB --dbInstance tryp100n --username vishalkn --passwd vishalkngus --ext_db "Gene Ontology|4.490"</unpack>
-        <unpack>rm -rf @downloadDir@/GOAssociations_Tcruzi/sequences.gb</unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcruzi/gene_association.Tcruzi --goExternalDatabaseSpec "Gene Ontology|4.490" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "TcruziDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcruzi/Tcruzi.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
-            <![CDATA[
-   <i>T. cruzi</i> Gene Ontology  associations from <a href="http://tcruzidb.org/tcruzidb/">TcruziDB</a>.
+          <![CDATA[
+          <i>T. cruzi</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
           ]]>
         </description>
     </resource>
 
+    <resource resource="GOAssociations_Tcongolense" version="2009-10-06"
+        displayName="T. congolense protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.congolense GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.congolense GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcongolense.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcongolense/Tcongolense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. congolense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tvivax" version="2009-10-06"
+        displayName="T. vivax protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.vivax GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.vivax GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tvivax/Tvivax.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. vivax</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+ 
    <resource resource="IEDB_Epitopes" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
