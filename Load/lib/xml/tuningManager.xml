@@ -2213,7 +2213,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.IsolateAttributes&1 NOLOGGING AS
-select na_sequence_id, taxon_id,
+select  na_sequence_id, taxon_id,
        external_db_version,
        external_db_name,
        na_feature_id,
@@ -2234,17 +2234,17 @@ select na_sequence_id, taxon_id,
        project_id,
        data_type
 FROM (
-   select iso.*,
+   select  iso.*,
        prod.product,
        prod.product_alias
-   from (SELECT etn.na_sequence_id, etn.taxon_id,etn.length,
+   from (SELECT  etn.na_sequence_id, etn.taxon_id,etn.length,
         edr.version as external_db_version, src.na_feature_id,
         edb.name as external_db_name,
         CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
         'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
         ELSE etn.source_id END as source_id,
-        src.organism as organism,
+        tn.name as organism,
         CASE WHEN src.strain != src.isolate THEN src.strain || ' ' || src.isolate 
              WHEN src.strain is  not null THEN src.strain ELSE src.isolate END as strain,
         src.specific_host as specific_host,
@@ -2266,8 +2266,10 @@ FROM (
              WHEN lower(pinfo.name) like 'tritryp%' THEN 'TriTrypDB'
         ELSE '' END as project_id
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
-           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo, 
+           (select  distinct taxon_id,name from sres.taxonname where name_class = 'scientific name') tn
       WHERE etn.na_sequence_id = src.na_sequence_id
+       AND  etn.taxon_id = tn.taxon_id(+)
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND pinfo.project_id = etn.row_project_id
