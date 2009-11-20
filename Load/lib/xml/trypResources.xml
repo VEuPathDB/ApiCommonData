@@ -485,14 +485,14 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 <publication pmid="16020726"/>
      </resource>
 
-    <resource resource="T.cruzi_contigs" version="2009-09-10" 
+    <resource resource="T.cruziNonEsmeraldo_contigs" version="2009-09-10" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="T.cruzi"
-        displayName="T.cruzi contigs"
+        displayName="T.cruzi Non-Esmeraldo contigs"
         category="Genome"
-        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
         extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
         <manualGet
            fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_contigs/"/>
@@ -508,14 +508,14 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </resource>
 
 
-    <resource resource="T.cruzi_Annotation" version="2009-09-10"
-        displayName="T.cruzi Genome Annotations"
+    <resource resource="T.cruziNonEsmeraldo_Annotation_contigs" version="2009-09-10"
+        displayName="T.cruzi Non-Esmeraldo Genome Annotations"
         category="Genome"
         organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
         extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
       <manualGet fileOrDir="@downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff" />
         <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff --output_gff @downloadDir@/T.cruzi_Annotation/Tcruzi_fixed.gff</unpack>
@@ -528,20 +528,25 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 <publication pmid="16020725"/>
      </resource>
 
-    <resource resource="T.cruzi_chromosomes" version="2009-09-10" 
+    <resource resource="T.cruziNonEsmeraldo_chromosomes" version="2009-09-10" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="T.cruzi"
-        displayName="T.cruzi chromosomes"
+        displayName="T.cruzi Non-Esmeraldo chromosomes"
         category="Genome"
-        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
         extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
         <manualGet
            fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_chromosomes/"/>
-        <unpack>mkdir @downloadDir@/T.cruzi_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruzi_chromosomes/Tcruzi_chromosomes --output_fasta @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <unpack>mkdir @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruziNonEsmeraldo_chromosomes/Tcruzi_chromosomes --output_fasta @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff</unpack>
+        <unpack>grep "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff</unpack>
+        <unpack>grep -v "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff</unpack>
+        <unpack>grep -A 1 "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.fasta > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.fasta</unpack>
+        <unpack>grep -A 1 "-P[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.fasta > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.fasta</unpack>
+        
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxonName "Trypanosoma cruzi strain NonEsmeraldo" --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi_NonEsmeraldo.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
             <![CDATA[ 
    Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
@@ -550,18 +555,59 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 <publication pmid="16020725"/>
     </resource>
 
-    <resource resource="T.cruzi_Annotation_Chromosomes" version="2009-09-10"
+    <resource resource="T.cruziNonEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
         displayName="T.cruzi Genome Annotations"
         category="Genome"
         organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. cruzi contigs and chromosomes"
+        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
         extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi contigs and chromosomes|2009-09-10"
+        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
         dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.gff --output_gff @downloadDir@/T.cruzi_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruzi_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain CL Brener" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+      <manualGet fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff --output_gff @downloadDir@/T.cruziNonEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruziNonEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain NonEsmeraldo" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+          ]]>
+        </description>
+<publication pmid="16020725"/>
+     </resource>
+
+
+    <resource resource="T.cruziEsmeraldo_chromosomes" version="2009-09-10" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.cruzi"
+        displayName="T.cruzi Esmeraldo chromosomes"
+        category="Genome"
+        extDbName="Sanger T. cruzi Esmeraldo chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. cruzi Esmeraldo chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.fasta"/>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruziEsmeraldo_chromosomes/Tcruzi_Esmeraldo.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+          ]]>
+        </description>
+<publication pmid="16020725"/>
+    </resource>
+
+    <resource resource="T.cruziEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
+        displayName="T.cruzi Esmeraldo Genome Annotations"
+        category="Genome"
+        organisms="T.cruzi"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. cruzi Esmeraldo chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. cruzi Esmeraldo chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff --output_gff @downloadDir@/T.cruziEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruziEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain Esmeraldo" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
@@ -773,7 +819,43 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
         </description>
     </resource>
  
+    <resource resource="L.mexicana_chromosomes" version="2009-11-03" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.mexicana"
+        displayName="L.mexicana contigs and chromosomes"
+        category="Genome"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes/fasta/"/>
+         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --seqFileDir @downloadDir@/L.mexicana_chromosomes/fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
 
+    <resource resource="L.mexicana_unassigned_contigs" version="2009-11-03" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.mexicana"
+        displayName="L.mexicana contigs and chromosomes"
+        category="Genome"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/bin.fasta"/>
+         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.mexicana_unassigned_contigs/bin.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+          ]]>      
+        </description>  
+    </resource>
 
     <resource resource="GOAssociations_Lbraziliensis" version="2009-10-06"
         displayName="L. braziliensis protein GO Associations"        
