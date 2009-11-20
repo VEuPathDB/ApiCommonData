@@ -3767,7 +3767,7 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
     </resource> 
     <resource resource="ChIP_Chip_Henk_Stunnenberg" version="2009-05-18"
         displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
-        category="Genome"
+        category="ignore"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         extDbName="ChIP Chip Henk Stunnenberg"
         extDbRlsVer="2009-05-18"
@@ -3836,16 +3836,17 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
-<resource resource="temp_called_peaks" version="2009-10-12"
+
+<resource resource="temp_called_peaks" version="2009-11-11"
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         category="Genome"
         organisms="Pfalciparum"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Pfalciparum ChIP-on-chip peak calls"
-        extDbRlsVer="2009-10-12"
-        extDbRlsDescrip="Pfalciparum ChIP-on-chip peak calls|2009-10-12"
+        extDbRlsVer="2009-11-11"
+        extDbRlsDescrip="Pfalciparum ChIP-on-chip peak calls|2009-11-11"
         dbCommit="@dbcommit@">
-           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/PEAK_DATA/All_PEAKs.gff" 
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/All_PEAKs.gff" 
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -3858,13 +3859,13 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
- <resource resource = "Pfalciparum_ChIP_PEAKs" version="2009-10-12"
+ <resource resource = "Pfalciparum_ChIP_PEAKs" version="2009-11-11"
             displayName="Pfalciparum ChIP-on-chip Identifications"
             organisms="P.falciparum"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
             dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/PEAK_DATA/"
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/PEAK_DATA/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -3873,6 +3874,105 @@ Contact Till Voss, till.voss@unibas.ch, for further information
    <description>
          <![CDATA[
 
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "Pfalciparum_ChIP_SMOOTHED" version="2009-11-11"
+            displayName="Pfalciparum ChIP-on-chip Identifications"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/SMOOTHED_DATA/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_ChIP_SMOOTHED/SMOOTHED_DATA --configFile @downloadDir@/Pfalciparum_ChIP_SMOOTHED/SMOOTHED_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="New_Cowman_Sir2_KO" version="1.0"
+            displayName="affymetrix array data on two Sir2 KO lines(Cowman)"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="New Cowman Sir2 KO"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="New Cowman Sir2 KO"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-TABM-438_Cowman/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/New_Cowman_Sir2_KO/working_dir --configFile @downloadDir@/New_Cowman_Sir2_KO/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="E-GEOD-10022_array" version="1.0"
+            displayName="E-GEOD-10022 array data(Su lab)"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="E-GEOD-10022 array data"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="E-GEOD-10022 array data"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE10022_CQstudy/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/E-GEOD-10022_array/working_dir --configFile @downloadDir@/E-GEOD-10022_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "E-GEOD-10022_page" version="1.0"
+            displayName="E-GEOD-10022 array data(Su lab) page analysis"
+            organisms="P. falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE10022_CQstudy/working_dir/page/newFormat"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/E-GEOD-10022_page/page/newFormat --configFile @downloadDir@/E-GEOD-10022_page/page//newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "New_Cowman_foldChange" version="1.0"
+            displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
+            organisms="P. falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-TABM-438_Cowman/working_dir/analysis/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/New_Cowman_foldChange/analysis --configFile @downloadDir@/New_Cowman_foldChange/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
           ]]>
     </description>
   </resource>
