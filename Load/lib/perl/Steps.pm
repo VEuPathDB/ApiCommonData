@@ -3351,13 +3351,18 @@ sub parseBlastForSqlldr {
 }
 
 sub loadBlastWithSqlldr {
-  my ($mgr,$blastName,$restart) = @_;
+  my ($mgr,$blastName,$restart,$file) = @_;
 
   my $signal = "sqlldrLoad$blastName";
 
   return if $mgr->startStep("Load $blastName using sqldr", $signal);
 
   my $sqlldrFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/blastSimForSqlldr.out";
+
+  if ($file) {
+    $sqlldrFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/$file";
+    $mgr->runCmd("gunzip $sqlldrFile") if $sqlldrFile =~ /\.gz/;
+  }
 
   my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
