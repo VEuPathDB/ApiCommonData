@@ -2007,8 +2007,7 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
             email="chf@sanger.ac.uk"
             institution="Sanger Institute"
         />
-      <unpack>parseSangerSiRNA --inFile @downloadDir@/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sang
-er_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
+      <unpack>parseSangerSiRNA --inFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
       <unpack>nohup sqlldr @oracleUserPswd@ control=@downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt</unpack>
       <description>
          <![CDATA[
@@ -2016,6 +2015,29 @@ Phenotype data generated from siRNA experiments
           ]]>
       </description>
  </resource>
+
+
+ <resource resource="updateChromosomeNumberFromMap" version="2009-11-23" 
+        displayName="update Chromosome Number From Mapping file" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        extDbName="updateChromosomeNumberFromMap"
+        extDbRlsVer="2009-11-23"
+        extDbRlsDescrip="update Chromosome Number From Mapping file"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/chromosomeNumberMap/tritryp_chromosome_map.txt" 
+            contact = "" 
+            email = "" 
+            institution = "" />
+
+<unpack>updateChromosomeNumberFromMap.pl --map_file @downloadDir@/updateChromosomeNumberFromMap/tritryp_chromosome_map.txt --sequence_table ExternalNaSequence </unpack>
+
+<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource> 
 
  <categoryOrder>
    <categoryRef name="Genome"/>
