@@ -864,6 +864,26 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
         </description>  
     </resource>
 
+
+<resource resource="Ltarentolae_contigs" version="2009-04-07"
+        displayName="L. tarentolae contig sequences from Marc Ouellette"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L. tarentolae contig sequences"
+        extDbRlsVer="2009-04-07"
+        extDbRlsDescrip="L. tarentolae contig sequences|2009-04-07"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Sequence/Tarentolae/4-7-09/L_tarentolae_dna_r1596.fasta"/>
+	<unpack>mkdir @downloadDir@/Ltarentolae_contigs_fixed</unpack>
+	<unpack><![CDATA[cat @downloadDir@/Ltarentolae_contigs/L_tarentolae_dna_r1596.fasta|perl -e 'while(<>){s/^>/>r1596\./;print $_;}' >@downloadDir@/Ltarentolae_contigs_fixed/L_tarentolae_dna_r1596_fixed.fasta]]></unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5689 --sequenceFile @downloadDir@/Ltarentolae_contigs_fixed/L_tarentolae_dna_r1596_fixed.fasta --soTermName "contig" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+Chromosome sequence for Leishmania tarentolae is provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
+          ]]>
+        </description>
+    </resource>
+
     <resource resource="GOAssociations_Lbraziliensis" version="2009-10-06"
         displayName="L. braziliensis protein GO Associations"        
         category="Proteome"
@@ -1750,26 +1770,6 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
         </description>		
     </resource>    
     
-
-<resource resource="Ltarentolae_contigs" version="2009-04-07"
-        displayName="L. tarentolae contig sequences from Marc Ouellette"
-        category="Genome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="L. tarentolae contig sequences"
-        extDbRlsVer="2009-04-07"
-        extDbRlsDescrip="L. tarentolae contig sequences|2009-04-07"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Sequence/Tarentolae/4-7-09/L_tarentolae_dna_r1596.fasta"/>
-	<unpack>mkdir @downloadDir@/Ltarentolae_contigs_fixed</unpack>
-	<unpack><![CDATA[cat @downloadDir@/Ltarentolae_contigs/L_tarentolae_dna_r1596.fasta|perl -e 'while(<>){s/^>/>r1596\./;print $_;}' >@downloadDir@/Ltarentolae_contigs_fixed/L_tarentolae_dna_r1596_fixed.fasta]]></unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5689 --sequenceFile @downloadDir@/Ltarentolae_contigs_fixed/L_tarentolae_dna_r1596_fixed.fasta --soTermName "contig" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-Chromosome sequence for Leishmania tarentolae is provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
-          ]]>
-        </description>
-    </resource>
-
 <resource resource="GeneDB_DBRefs" version="2009-04-21"
         displayName="DBRefs for GeneDB URL links of 458 updated genes"
         category="ignore"
