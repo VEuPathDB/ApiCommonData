@@ -79,7 +79,6 @@
     </ant>
   </target>  
 
-  
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
@@ -158,6 +157,40 @@
     </ant>
   </target>  
 
+
+  <target name="ApiCommonData/Datasources-Installation" depends="ProjectTree">
+    <property name="loadresources" value="${targetDir}/lib/xml/loadresources"/>
+    <property name="cache" value="${targetDir}/config/.cache/datasources"/>
+    <property name="datasources" value="${targetDir}/lib/xml/datasources"/>
+    <mkdir dir="${cache}"/>
+    <mkdir dir="${datasources}"/>
+    <copy todir="${loadresources}">
+      <fileset dir="${projectsDir}/ApiCommonData/Load/lib/xml">
+        <include name="*Resources.xml"/>
+      </fileset>
+    </copy>
+    <echo message="Running updateResourcesWithPubmed"/>
+    <apply executable="${targetDir}/bin/updateResourcesWithPubmed" verbose="true">
+        <srcfile/>
+        <targetfile/>
+        <fileset dir="${loadresources}">
+          <include name="*Resources.xml"/>
+        </fileset>
+        <mapper type="glob" from="*.xml" to="${cache}/*-pubmed.xml"/>
+    </apply>
+    <copy todir="${datasources}">
+      <fileset dir="${cache}">
+        <include name="*-pubmed.xml"/>
+      </fileset>
+    </copy>
+    <delete dir="${loadresources}"/>
+
+    <ant target="buildInfo">
+      <property name="component" value="updateResourcesWithPubmed"/>
+    </ant>
+
+  </target>
+ 
 
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo  Distributable  ooooooooooooooooooooooooo -->
