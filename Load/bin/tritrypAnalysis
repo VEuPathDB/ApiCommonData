@@ -1239,99 +1239,143 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 ####### make download files steps#######
 ####################################################################
 
-&makeESTDownloadFileFromAllSources($mgr,"Tbrucei", 5691, 1, "TrypDB");
+&makeESTDownloadFileFromAllSources($mgr,"Tbrucei", 5691, 1, "TriTrypDB");
 
-&makeESTDownloadFileFromAllSources($mgr,"Tcruzi", 5693, 1, "TrypDB");
+&makeESTDownloadFileFromAllSources($mgr,"Tcruzi", 5693, 1, "TriTrypDB");
 
-&makeESTDownloadFileFromAllSources($mgr,"Lbraziliensis", 5660, 1, "TrypDB");
+&makeESTDownloadFileFromAllSources($mgr,"Tcongolense", 5692, 1, "TriTrypDB");
 
-&makeESTDownloadFileFromAllSources($mgr,"Linfantum", 5671, 1, "TrypDB");
+&makeESTDownloadFileFromAllSources($mgr,"Lbraziliensis", 5660, 1, "TriTrypDB");
 
-&makeESTDownloadFileFromAllSources($mgr,"Lmajor", 5664, 1, "TrypDB");
+&makeESTDownloadFileFromAllSources($mgr,"Linfantum", 5671, 1, "TriTrypDB");
 
-&makeDerivedCdsDownloadFileTransformed($mgr, "Tbrucei", "TbruceiAnnotatedCDS","T.brucei 927 chromosomes and annotations","2008-11-13","psu","TrypDB",0);
+&makeESTDownloadFileFromAllSources($mgr,"Lmajor", 5664, 1, "TriTrypDB");
 
-&makeDerivedCdsDownloadFileTransformed($mgr, "Tcruzi", "TcruziAnnotatedCDS","T.cruzi contigs and annotations","2008-11-20","gb","TrypDB",0);
+&makeESTDownloadFileFromAllSources($mgr,"Lmexicana", 5665, 1, "TriTrypDB");
 
-&makeDerivedCdsDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedCDS","L.braziliensis chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedCDS","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeDerivedCdsDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedCDS","L.infantum chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedCDS","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeDerivedCdsDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedCDS","L.major chromosomes and annotations","2008-11-12","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldoAnnotatedCDS","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeTranscriptDownloadFileTransformed($mgr, "Tbrucei", "TbruceiAnnotatedTranscripts","T.brucei 927 chromosomes and annotations","2008-11-13","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldoAnnotatedCDS","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeTranscriptDownloadFileTransformed($mgr, "Tcruzi", "TcruziAnnotatedTranscripts","T.cruzi contigs and annotations","2008-11-20","gb","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedCDS","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeTranscriptDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedTranscripts","L.braziliensis chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedCDS","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeTranscriptDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedTranscripts","L.infantum chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedCDS","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeTranscriptDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedTranscripts","L.major chromosomes and annotations","2008-11-12","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedCDS","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiAnnotatedProteins","T.brucei 927 chromosomes and annotations","2008-11-13","psu","TrypDB",0);
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedCDS","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcruzi", "TcruziAnnotatedProteins","T.cruzi contigs and annotations","2008-11-20","gb","TrypDB",0);
+&makeTranscriptDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedTranscripts","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedProteins","L.braziliensis chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeTranscriptDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedTranscripts","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeAnnotatedProteinDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedProteins","L.infantum chromosomes and annotations","2008-11-24","psu","TrypDB",0);
+&makeTranscriptDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldoAnnotatedTranscripts","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedProteins","L.major chromosomes and annotations","2008-11-12","psu","TrypDB",0);
+&makeTranscriptDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldoAnnotatedTranscripts","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiOrfs", "T.brucei 927 chromosomes and annotations","2008-11-13", 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedTranscripts","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziOrfs", 'T.cruzi contigs and annotations','2008-11-20', 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedTranscripts","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisOrfs", 'L.braziliensis chromosomes and annotations','2008-11-24', 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedTranscripts","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumOrfs", 'L.infantum chromosomes and annotations','2008-11-24', 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedTranscripts","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorOrfs", 'L.major chromosomes and annotations','2008-11-12', 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedTranscripts","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiOrfNAs", "T.brucei 927 chromosomes and annotations","2008-11-13", 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Ltarentolae", "LtarentolaeAnnotatedTranscripts","L. tarentolae contig sequences","2009-04-07","psu","TriTrypDB",0);
 
-&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziOrfNAs", 'T.cruzi contigs and annotations','2008-11-20', 50, "TrypDB");
+&makeTranscriptDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedTranscripts","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
 
-&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorOrfNAs", 'L.major chromosomes and annotations','2008-11-12', 50, "TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedProteins","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisOrfNAs", 'L.braziliensis chromosomes and annotations','2008-11-24', 50, "TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedProteins","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumOrfNAs", 'L.infantum chromosomes and annotations','2008-11-24', 50, "TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldoAnnotatedProteins","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiGenomic","T.brucei 927 chromosomes and annotations","2008-11-13","psu","TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldoAnnotatedProteins","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeMixedGenomicDownloadFile($mgr, "Tcruzi", "TcruziGenomic","T.cruzi contigs and annotations,Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton,Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton","2008-11-20,2008-12-05,2008-12-05","gb","TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedProteins","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeMixedGenomicDownloadFile($mgr, "Lbraziliensis", "LbraziliensisGenomic","L.braziliensis chromosomes and annotations","2008-11-24","psu","TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedProteins","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeMixedGenomicDownloadFile($mgr, "Linfantum", "LinfantumGenomic","L.infantum chromosomes and annotations","2008-11-24","psu","TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedProteins","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
 
-&makeMixedGenomicDownloadFile($mgr, "Lmajor", "LmajorGenomic","L.major chromosomes and annotations","2008-11-12","psu","TrypDB");
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedProteins","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeDoTSAssemblyDownloadFile ($mgr, 'Tbrucei', 'assemblies',185431, 'TrypDB');
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedProteins","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeDoTSAssemblyDownloadFile ($mgr, 'Tcruzi', 'assemblies',353153, 'TrypDB');
+&makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiTreu927Genomic","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB");
 
-&makeDoTSAssemblyDownloadFile ($mgr, 'Lbraziliensis', 'assemblies',5660, 'TrypDB');
+&makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiGambienseGenomic","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
 
-&makeDoTSAssemblyDownloadFile ($mgr, 'Linfantum', 'assemblies',5671, 'TrypDB');
+&makeMixedGenomicDownloadFile($mgr, "Tcruzi", "TcruziEsmeraldoGenomic","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB");
 
-&makeDoTSAssemblyDownloadFile ($mgr, 'Lmajor', 'assemblies',5664, 'TrypDB');
+&makeMixedGenomicDownloadFile($mgr, "Tcruzi", "TcruziNonEsmeraldoGenomic","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
 
-&makeInterproDownloadFile ($mgr, 'Tbrucei', "Interpro", "T.brucei 927 chromosomes and annotations","2008-11-13", "INTERPRO", "18.0", "TrypDB");
+&makeMixedGenomicDownloadFile($mgr, "Tcongolense", "TcongolenseGenomic","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeInterproDownloadFile ($mgr, 'Tcruzi', "Interpro", "T.cruzi contigs and annotations","2008-11-20", "INTERPRO", "18.0", "TrypDB");
+&makeMixedGenomicDownloadFile($mgr, "Tvivax", "TvivaxGenomic","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
 
-&makeInterproDownloadFile ($mgr, 'Lbraziliensis', "Interpro", "L.braziliensis chromosomes and annotations","2008-11-24", "INTERPRO", "18.0", "TrypDB");
+&makeMixedGenomicDownloadFile($mgr, "Lbraziliensis", "LbraziliensisGenomic","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB");
 
-&makeInterproDownloadFile ($mgr, 'Linfantum', "Interpro", "L.infantum chromosomes and annotations","2008-11-24", "INTERPRO", "18.0", "TrypDB");
+&makeMixedGenomicDownloadFile($mgr, "Linfantum", "LinfantumGenomic","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB");
 
-&makeInterproDownloadFile ($mgr, 'Lmajor', "Interpro", "L.major chromosomes and annotations","2008-11-12", "INTERPRO", "18.0", "TrypDB");
+&makeMixedGenomicDownloadFile($mgr, "Lmajor", "LmajorGenomic","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB");
 
-&makeCodonUsage($mgr, "Tbrucei", "AnnotatedCDS");
+&makeMixedGenomicDownloadFile($mgr, "Ltarentolae", "LtarentolaeGenomic","L. tarentolae contig sequences","2009-04-07","psu","TriTrypDB",0);
 
-&makeCodonUsage($mgr, "Tcruzi", "AnnotatedCDS");
+&makeMixedGenomicDownloadFile($mgr, "Lmexicana", "LmexicanaGenomic","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tbrucei', 'assemblies',185431, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tcruzi', 'assemblies',366581, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tcongolense', 'assemblies',5692, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lbraziliensis', 'assemblies',5660, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Linfantum', 'assemblies',5671, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lmajor', 'assemblies',5664, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lmexicana', 'assemblies',5665, 'TriTrypDB');
+
+&makeInterproDownloadFile ($mgr, 'Tbrucei', "Interpro", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", "INTERPRO", "19.0", "TriTrypDB","TbruceiTreu927");
+
+&makeInterproDownloadFile ($mgr, 'Tbrucei', "Interpro", "Sanger T. brucei gambiense chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB","TbruceiGambiense");
+
+&makeInterproDownloadFile ($mgr, 'Tcruzi', "Interpro", "Sanger T.cruzi Esmeraldo chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB","TcruziEsmeraldo");
+
+&makeInterproDownloadFile ($mgr, 'Tcruzi', "Interpro", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10", "INTERPRO", "19.0", "TriTrypDB","TcruziEsmeraldo");
+
+&makeInterproDownloadFile ($mgr, 'Tcongolense', "Interpro", "Sanger T. congolense contigs and chromosomes","2009-09-14", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Tvivax', "Interpro", "Sanger T. vivax contigs and chromosomes","2009-09-14", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Lbraziliensis', "Interpro", "Sanger L. braziliensis chromosomes","2009-10-06", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Linfantum', "Interpro", "Sanger L. infantum chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Lmajor', "Interpro", "Sanger L. major chromosomes","2009-09-10", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeCodonUsage($mgr, "Tbrucei", "AnnotatedCDS", "TbruceiTreu927");
+
+&makeCodonUsage($mgr, "Tbrucei", "AnnotatedCDS", "TbruceiGambiense");
+
+&makeCodonUsage($mgr, "Tcruzi", "AnnotatedCDS", "TcruziEsmeraldo");
+
+&makeCodonUsage($mgr, "Tcruzi", "AnnotatedCDS", "TcruziNonEsmeraldo");
+
+&makeCodonUsage($mgr, "Tcongolense", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Tvivax", "AnnotatedCDS");
 
 &makeCodonUsage($mgr, "Lbraziliensis", "AnnotatedCDS");
 
@@ -1339,124 +1383,197 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 
 &makeCodonUsage($mgr, "Lmajor", "AnnotatedCDS");
 
-&writeGeneAliasFile($mgr,'T.brucei 927 chromosomes and annotations','2008-11-13',"TrypDB","Tbrucei");
+&makeCodonUsage($mgr, "Ltarentolae", "AnnotatedCDS");
 
-&writeGeneAliasFile($mgr,'T.cruzi contigs and annotations','2008-11-20',"TrypDB","Tcruzi");
+&makeCodonUsage($mgr, "Lmexicana", "AnnotatedCDS");
 
-&writeGeneAliasFile($mgr,'L.braziliensis chromosomes and annotations','2008-11-24',"TrypDB","Lbraziliensis");
+&writeGeneAliasFile($mgr,'Sanger T. brucei 927 contigs and chromosomes','2009-10-06',"TriTrypDB","Tbrucei","TbruceiTreu927");
 
-&writeGeneAliasFile($mgr,'L.infantum chromosomes and annotations','2008-11-24',"TrypDB","Linfantum");
+&writeGeneAliasFile($mgr,'Sanger T. brucei gambiense chromosomes','2009-09-07',"TriTrypDB","Tbrucei","TbruceiGambiense");
 
-&writeGeneAliasFile($mgr,'L.major chromosomes and annotations','2008-11-12',"TrypDB","Lmajor");
+&writeGeneAliasFile($mgr,'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07',"TriTrypDB","Tcruzi","TcruziEsmeraldo");
 
+&writeGeneAliasFile($mgr,'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10',"TriTrypDB","Tcruzi","TcruziNonEsmeraldo");
 
-##################################################################################
-###### Format BLAST Files ######
-#################################################################################
+&writeGeneAliasFile($mgr,'Sanger T. congolense contigs and chromosomes','2009-09-14',"TriTrypDB","Tcongolense");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiEST_TriTrypDB-1.1.fasta","TbruceiEST","-n -t release-1.1/TbruceiEST");
+&writeGeneAliasFile($mgr,'Sanger T. vivax contigs and chromosomes','2009-09-14',"TriTrypDB","Tvivax");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAssemblies_TriTrypDB-1.1.fasta","TbruceiAssemblies","-n -t release-1.1/TbruceiAssemblies");
+&writeGeneAliasFile($mgr,'Sanger L. braziliensis chromosomes','2009-10-06',"TriTrypDB","Lbraziliensis");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAnnotatedTranscripts_TriTrypDB-1.1.fasta","TbruceiTranscripts","-n -t release-1.1/TbruceiTranscripts");
+&writeGeneAliasFile($mgr,'Sanger L. infantum chromosomes','2009-09-07',"TriTrypDB","Linfantum");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAnnotatedProteins_TriTrypDB-1.1.fasta","TbruceiProteins","-p -C X -t release-1.1/TbruceiProteins");
+&writeGeneAliasFile($mgr,'Sanger L. major chromosomes','2009-09-10',"TriTrypDB","Lmajor");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei","TbruceiOrfs_TriTrypDB-1.1.fasta","TbruceiORF","-p -C X -t release-1.1/TbruceiORF");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGenomic_TriTrypDB-1.1.fasta","TbruceiGenomics","-n -t release-1.1/TbruceiGenomics");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAnnotatedCDS_TriTrypDB-1.1.fasta","TbruceiCDS","-n -t release-1.1/TbruceiCDS");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziEsmeraldoORFs", 'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisEST_TriTrypDB-1.1.fasta","LbraziliensisEST","-n -t release-1.1/LbraziliensisEST");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldoORFs", 'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAssemblies_TriTrypDB-1.1.fasta","LbraziliensisAssemblies","-n -t release-1.1/LbraziliensisAssemblies");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcongolense", "TcongolenseORFs","Sanger T. congolense contigs and chromosomes","2009-09-14",50,"TriTrypDB",0);
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedTranscripts_TriTrypDB-1.1.fasta","LbraziliensisTranscripts","-n -t release-1.1/LbraziliensisTranscripts");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tvivax", "TvivaxORFs","Sanger T. vivax contigs and chromosomes","2009-09-14",50,"TriTrypDB",0);
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedProteins_TriTrypDB-1.1.fasta","LbraziliensisProteins","-p -C X -t release-1.1/LbraziliensisProteins");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisORFs", 'Sanger L. braziliensis chromosomes','2009-10-06', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis","LbraziliensisOrfs_TriTrypDB-1.1.fasta","LbraziliensisORF","-p -C X -t release-1.1/LbraziliensisORF");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumORFs", 'Sanger L. infantum chromosomes','2009-09-07', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisGenomic_TriTrypDB-1.1.fasta","LbraziliensisGenomics","-n -t release-1.1/LbraziliensisGenomics");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorORFs", 'Sanger L. major chromosomes','2009-09-10', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedCDS_TriTrypDB-1.1.fasta","LbraziliensisCDS","-n -t release-1.1/LbraziliensisCDS");
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Ltarentolae", "LtarentolaeORFs", 'L. tarentolae contig sequences','2009-04-07', 50, "TriTrypDB");
 
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
 
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFNAs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumEST_TriTrypDB-1.1.fasta","LinfantumEST","-n -t release-1.1/LinfantumEST");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFNAs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAssemblies_TriTrypDB-1.1.fasta","LinfantumAssemblies","-n -t release-1.1/LinfantumAssemblies");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziEsmeraldoORFNAs", 'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedTranscripts_TriTrypDB-1.1.fasta","LinfantumTranscripts","-n -t release-1.1/LinfantumTranscripts");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldoORFNAs", 'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedProteins_TriTrypDB-1.1.fasta","LinfantumProteins","-p -C X -t release-1.1/LinfantumProteins");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcongolense", "TcongolenseORFNAs", 'Sanger T. congolense contigs and chromosomes','2009-09-14', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum","LinfantumOrfs_TriTrypDB-1.1.fasta","LinfantumORF","-p -C X -t release-1.1/LinfantumORF");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tvivax", "TvivaxORFNAs", 'Sanger T. vivax contigs and chromosomes','2009-09-14', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumGenomic_TriTrypDB-1.1.fasta","LinfantumGenomics","-n -t release-1.1/LinfantumGenomics");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorORFNAs", 'Sanger L. major chromosomes','2009-09-10', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedCDS_TriTrypDB-1.1.fasta","LinfantumCDS","-n -t release-1.1/LinfantumCDS");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisORFNAs", 'Sanger L. braziliensis chromosomes','2009-10-06', 50, "TriTrypDB");
 
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumORFNAs", 'Sanger L. infantum chromosomes','2009-09-07', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorEST_TriTrypDB-1.1.fasta","LmajorEST","-n -t release-1.1/LmajorEST");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Ltarentolae", "LtarentolaeORFNAs", 'L. tarentolae contig sequences','2009-04-07', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAssemblies_TriTrypDB-1.1.fasta","LmajorAssemblies","-n -t release-1.1/LmajorAssemblies");
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFNAs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedTranscripts_TriTrypDB-1.1.fasta","LmajorTranscripts","-n -t release-1.1/LmajorTranscripts");
+# ##################################################################################
+# ###### Format BLAST Files ######
+# #################################################################################
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedProteins_TriTrypDB-1.1.fasta","LmajorProteins","-p -C X -t release-1.1/LmajorProteins");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiEST_TriTrypDB-2.0.fasta","TbruceiEST","-n -t release-2.0/TbruceiEST");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor","LmajorOrfs_TriTrypDB-1.1.fasta","LmajorORF","-p -C X -t release-1.1/LmajorORF");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAssemblies_TriTrypDB-2.0.fasta","TbruceiAssemblies","-n -t release-2.0/TbruceiAssemblies");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorGenomic_TriTrypDB-1.1.fasta","LmajorGenomics","-n -t release-1.1/LmajorGenomics");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedTranscripts_TriTrypDB-2.0.fasta","TbruceiTreu927Transcripts","-n -t release-2.0/TbruceiTreu927Transcripts");
 
-&xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedCDS_TriTrypDB-1.1.fasta","LmajorCDS","-n -t release-1.1/LmajorCDS");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedProteins_TriTrypDB-2.0.fasta","TbruceiTreu927Proteins","-p -C X -t release-2.0/TbruceiTreu927Proteins");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEST_TriTrypDB-1.1.fasta","TcruziEST","-n -t release-1.1/TcruziEST");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei","TbruceiTreu927ORFs_TriTrypDB-2.0.fasta","TbruceiTreu927ORF","-p -C X -t release-2.0/TbruceiTreu927ORF");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAssemblies_TriTrypDB-1.1.fasta","TcruziAssemblies","-n -t release-1.1/TcruziAssemblies");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927Genomic_TriTrypDB-2.0.fasta","TbruceiTreu927Genomics","-n -t release-2.0/TbruceiTreu927Genomics");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAnnotatedTranscripts_TriTrypDB-1.1.fasta","TcruziTranscripts","-n -t release-1.1/TcruziTranscripts");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedCDS_TriTrypDB-2.0.fasta","TbruceiTreu927CDS","-n -t release-2.0/TbruceiTreu927CDS");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAnnotatedProteins_TriTrypDB-1.1.fasta","TcruziProteins","-p -C X -t release-1.1/TcruziProteins");
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedTranscripts_TriTrypDB-2.0.fasta","TbruceiGambienseTranscripts","-n -t release-2.0/TbruceiGambienseTranscripts");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi","TcruziOrfs_TriTrypDB-1.1.fasta","TcruziORF","-p -C X -t release-1.1/TcruziORF");
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedProteins_TriTrypDB-2.0.fasta","TbruceiGambienseProteins","-p -C X -t release-2.0/TbruceiGambienseProteins");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziGenomic_TriTrypDB-1.1.fasta","TcruziGenomics","-n -t release-1.1/TcruziGenomics");
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei","TbruceiGambienseORFs_TriTrypDB-2.0.fasta","TbruceiGambienseORF","-p -C X -t release-2.0/TbruceiGambienseORF");
 
-&xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAnnotatedCDS_TriTrypDB-1.1.fasta","TcruziCDS","-n -t release-1.1/TcruziCDS");
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseGenomic_TriTrypDB-2.0.fasta","TbruceiGambienseGenomics","-n -t release-2.0/TbruceiGambienseGenomics");
 
-&xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeGenomic_TriTrypDB-1.1.fasta","LtarentolaeGenomics","-n -t release-1.1/LtarentolaeGenomics");
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedCDS_TriTrypDB-2.0.fasta","TbruceiGambienseCDS","-n -t release-2.0/TbruceiGambienseCDS");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEST_TriTrypDB-2.0.fasta","TcruziEST","-n -t release-2.0/TcruziEST");
 
-&xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeOrfs_TriTrypDB-1.1.fasta","LtarentolaeORF","-p -C X -t release-1.1/LtarentolaeORF");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAssemblies_TriTrypDB-2.0.fasta","TcruziAssemblies","-n -t release-2.0/TcruziAssemblies");
 
-#################################################
-##########WebService Motif######################
-################################################
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldoAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcruziEsmeraldoTranscripts","-n -t release-2.0/TcruziEsmeraldoTranscripts");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Tbrucei/TbruceiAnnotatedProteins_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/TbruceiAnnotatedProteins_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldoAnnotatedProteins_TriTrypDB-2.0.fasta","TcruziEsmeraldoProteins","-p -C X -t release-2.0/TcruziEsmeraldoProteins");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Tbrucei/TbruceiOrfs_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/TbruceiOrfs_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi","TcruziEsmeraldoORFs_TriTrypDB-2.0.fasta","TcruziEsmeraldoORF","-p -C X -t release-2.0/TcruziEsmeraldoORF");
 
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldoGenomic_TriTrypDB-2.0.fasta","TcruziEsmeraldoGenomics","-n -t release-2.0/TcruziEsmeraldoGenomics");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Lmajor/LmajorAnnotatedProteins_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LmajorAnnotatedProteins_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldoAnnotatedCDS_TriTrypDB-2.0.fasta","TcruziEsmeraldoCDS","-n -t release-2.0/TcruziEsmeraldoCDS");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Lmajor/LmajorOrfs_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LmajorOrfs_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldoAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcruziNonEsmeraldoTranscripts","-n -t release-2.0/TcruziNonEsmeraldoTranscripts");
 
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldoAnnotatedProteins_TriTrypDB-2.0.fasta","TcruziNonEsmeraldoProteins","-p -C X -t release-2.0/TcruziNonEsmeraldoProteins");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Linfantum/LinfantumAnnotatedProteins_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LinfantumAnnotatedProteins_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi","TcruziNonEsmeraldoORFs_TriTrypDB-2.0.fasta","TcruziNonEsmeraldoORF","-p -C X -t release-2.0/TcruziNonEsmeraldoORF");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Linfantum/LinfantumOrfs_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LinfantumOrfs_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldoGenomic_TriTrypDB-2.0.fasta","TcruziNonEsmeraldoGenomics","-n -t release-2.0/TcruziNonEsmeraldoGenomics");
 
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldoAnnotatedCDS_TriTrypDB-2.0.fasta","TcruziNonEsmeraldoCDS","-n -t release-2.0/TcruziNonEsmeraldoCDS");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Lbraziliensis/LbraziliensisAnnotatedProteins_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LbraziliensisAnnotatedProteins_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseEST_TriTrypDB-2.0.fasta","TcongolenseEST","-n -t release-2.0/TcongolenseEST");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Lbraziliensis/LbraziliensisOrfs_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/LbraziliensisOrfs_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAssemblies_TriTrypDB-2.0.fasta","TcongolenseAssemblies","-n -t release-2.0/TcongolenseAssemblies");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Tcruzi/TcruziAnnotatedProteins_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/TcruziAnnotatedProteins_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcongolenseTranscripts","-n -t release-2.0/TcongolenseTranscripts");
 
-&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/TrypDB/release-1.0/Tcruzi/TcruziOrfs_TrypDB-1.0.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif/TcruziOrfs_TrypDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/TrypDB/release-1.0/motif");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedProteins_TriTrypDB-2.0.fasta","TcongolenseProteins","-p -C X -t release-2.0/TcongolenseProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense","TcongolenseORFs_TriTrypDB-2.0.fasta","TcongolenseORF","-p -C X -t release-2.0/TcongolenseORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseGenomic_TriTrypDB-2.0.fasta","TcongolenseGenomics","-n -t release-2.0/TcongolenseGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedCDS_TriTrypDB-2.0.fasta","TcongolenseCDS","-n -t release-2.0/TcongolenseCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedTranscripts_TriTrypDB-2.0.fasta","TvivaxTranscripts","-n -t release-2.0/TvivaxTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedProteins_TriTrypDB-2.0.fasta","TvivaxProteins","-p -C X -t release-2.0/TvivaxProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax","TvivaxORFs_TriTrypDB-2.0.fasta","TvivaxORF","-p -C X -t release-2.0/TvivaxORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxGenomic_TriTrypDB-2.0.fasta","TvivaxGenomics","-n -t release-2.0/TvivaxGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedCDS_TriTrypDB-2.0.fasta","TvivaxCDS","-n -t release-2.0/TvivaxCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisEST_TriTrypDB-2.0.fasta","LbraziliensisEST","-n -t release-2.0/LbraziliensisEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAssemblies_TriTrypDB-2.0.fasta","LbraziliensisAssemblies","-n -t release-2.0/LbraziliensisAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedTranscripts_TriTrypDB-2.0.fasta","LbraziliensisTranscripts","-n -t release-2.0/LbraziliensisTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedProteins_TriTrypDB-2.0.fasta","LbraziliensisProteins","-p -C X -t release-2.0/LbraziliensisProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis","LbraziliensisORFs_TriTrypDB-2.0.fasta","LbraziliensisORF","-p -C X -t release-2.0/LbraziliensisORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisGenomic_TriTrypDB-2.0.fasta","LbraziliensisGenomics","-n -t release-2.0/LbraziliensisGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedCDS_TriTrypDB-2.0.fasta","LbraziliensisCDS","-n -t release-2.0/LbraziliensisCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumEST_TriTrypDB-2.0.fasta","LinfantumEST","-n -t release-2.0/LinfantumEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAssemblies_TriTrypDB-2.0.fasta","LinfantumAssemblies","-n -t release-2.0/LinfantumAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedTranscripts_TriTrypDB-2.0.fasta","LinfantumTranscripts","-n -t release-2.0/LinfantumTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedProteins_TriTrypDB-2.0.fasta","LinfantumProteins","-p -C X -t release-2.0/LinfantumProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum","LinfantumORFs_TriTrypDB-2.0.fasta","LinfantumORF","-p -C X -t release-2.0/LinfantumORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumGenomic_TriTrypDB-2.0.fasta","LinfantumGenomics","-n -t release-2.0/LinfantumGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedCDS_TriTrypDB-2.0.fasta","LinfantumCDS","-n -t release-2.0/LinfantumCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorEST_TriTrypDB-2.0.fasta","LmajorEST","-n -t release-2.0/LmajorEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAssemblies_TriTrypDB-2.0.fasta","LmajorAssemblies","-n -t release-2.0/LmajorAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedTranscripts_TriTrypDB-2.0.fasta","LmajorTranscripts","-n -t release-2.0/LmajorTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedProteins_TriTrypDB-2.0.fasta","LmajorProteins","-p -C X -t release-2.0/LmajorProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor","LmajorORFs_TriTrypDB-2.0.fasta","LmajorORF","-p -C X -t release-2.0/LmajorORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorGenomic_TriTrypDB-2.0.fasta","LmajorGenomics","-n -t release-2.0/LmajorGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedCDS_TriTrypDB-2.0.fasta","LmajorCDS","-n -t release-2.0/LmajorCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeGenomic_TriTrypDB-2.0.fasta","LtarentolaeGenomics","-n -t release-2.0/LtarentolaeGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeORFs_TriTrypDB-2.0.fasta","LtarentolaeORF","-p -C X -t release-2.0/LtarentolaeORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaGenomic_TriTrypDB-2.0.fasta","LmexicanaGenomics","-n -t release-2.0/LmexicanaGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaORFs_TriTrypDB-2.0.fasta","LmexicanaORF","-p -C X -t release-2.0/LmexicanaORF");
+
 
 #################################################################################
 ############### Make Brc Download Files ######################
