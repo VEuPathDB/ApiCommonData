@@ -83,22 +83,6 @@ $dbh->prepareAndExecute($sql_statement1);
 
 $dbh->commit;
 
-my $sql_statement2 = <<EOSQL;
-
-insert into apidb.genegenomicsequence (
-	select source_id, apidb.clob_clob_agg (gene_genomic_sequence) from 
-        (select * from apidb.GENEGENOMICSEQUENCE_SPLIT order by start_min) group by source_id)
-
-EOSQL
-
-$dbh->prepareAndExecute("update apidb.genegenomicsequence set gene_genomic_sequence=replace(gene_genomic_sequence,chr(10),'')");
-
-$dbh->commit;
-
-$dbh->prepareAndExecute("DROP apidb.GENEGENOMICSEQUENCE_SPLIT");
-
-$dbh->commit;
-
 $dbh->disconnect();
 
 
