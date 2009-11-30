@@ -1592,9 +1592,10 @@ EOF
 }
 
 sub makeInterproDownloadFile {
-  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB) = @_;
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB, $strain) = @_;
 
   my $signal = "${species}${name}DownloadFile";
+  $signal = "${strain}${name}DownloadFile" if $strain;
 
   return if $mgr->startStep("Extracting $species Interpro results from GUS", $signal);
 
@@ -1610,6 +1611,8 @@ sub makeInterproDownloadFile {
   die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
   my $outFile = "$dlDir/${species}${name}_$projectDB-${release}.txt";
+
+  $outFile = "$dlDir/${strain}${name}_$projectDB-${release}.txt" if $strain;
 
   (-e $outFile) and die "'$outFile' already exists. Remove it before running this step.\n";
 
@@ -4772,7 +4775,7 @@ sub modifyDownloadFile {
 
 sub writeGeneAliasFile {
 
-  my ($mgr,$extDb,$extDbVer,$project, $dir, $species) = @_;
+  my ($mgr,$extDb,$extDbVer,$project, $dir, $species, $dbRefNAFeatureExtDbSpec) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -4788,7 +4791,11 @@ sub writeGeneAliasFile {
 
   my $outFile = $species ? "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${species}GeneAlias_$projectDB-${release}.txt" : "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}GeneAlias_$projectDB-${release}.txt";
 
-  $mgr->runCmd("getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile");
+  my  $cmd ="getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile";
+  
+  $cmd .= " --dbRefNAFeatureExtDbSpec $dbRefNAFeatureExtDbSpec" if $dbRefNAFeatureExtDbSpec;
+
+  $mgr->runCmd($cmd);
 
   $mgr->endStep($signal);
 }
