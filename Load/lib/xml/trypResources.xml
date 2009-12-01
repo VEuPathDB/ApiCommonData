@@ -2039,6 +2039,27 @@ Phenotype data generated from siRNA experiments
         </description>
     </resource> 
 
+   <resource resource="Entrez_Gene_dbxref" version="12-01-2009"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="12-01-2009"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_tryp"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_tryp --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>

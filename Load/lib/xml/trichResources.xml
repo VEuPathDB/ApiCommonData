@@ -318,6 +318,27 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
          </description>		
      </resource>  
 
+   <resource resource="Entrez_Gene_dbxref" version="12-01-2009"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="12-01-2009"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_trich"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_trich --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
 
 </resourcesPipeline>
 
