@@ -182,7 +182,11 @@ sub addFeat {
                 %{$translTableOpt}
              },
           );
-      $seqObj->add_SeqFeature($feat);
+
+    my $count = ($translation =~ tr/[Xx]//);
+    my $length = length($translation);
+
+    $seqObj->add_SeqFeature($feat) unless ($count / $length * 100) > 50;
       
 }
 
