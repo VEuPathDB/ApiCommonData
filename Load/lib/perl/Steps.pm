@@ -3369,6 +3369,25 @@ sub makeOrthoSqlldrCtlFile {
 
 }
 
+
+sub updateBlastEval {
+  my ($mgr,$inFile,$outFile) = @_;
+
+  my $signal = "blastEvalModified";
+
+  return if $mgr->startStep("Update eval to min in $inFile to create $outFile", $signal);
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/blastEvalMod.log";
+
+  my $cmd = "modifyExpToMin $mgr->{dataDir}/similarity/$blastName/master/mainresult/$inFile $mgr->{dataDir}/similarity/$blastName/master/mainresult/$outFile 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+
+}
+
+
 sub loadBlastWithSqlldr {
   my ($mgr,$blastName,$restart,$file, $ctl) = @_;
 
