@@ -2786,7 +2786,7 @@ SELECT ga.source_id,
 FROM apidb.GeneAttributes ga,
      (SELECT p.source_id, 1 AS promastigote
       FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Lmajor promastigote time-course biorep01'
+      WHERE ps.name = 'Linfantum promastigote time-course biorep01'
         AND p.profile_set_id = ps.profile_set_id) promastigote
   WHERE ga.source_id = promastigote.source_id(+)
 GROUP BY ga.source_id
