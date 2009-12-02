@@ -2657,7 +2657,26 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
           ]]>
         </description>
     </resource>
-    
+       <resource resource="Uniprot_Gene_dbxref" version="11-24-2009"
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Uniprot Genes"
+        extDbRlsVer="11-24-2009"
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_tgondii"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_tgondii --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
