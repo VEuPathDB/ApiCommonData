@@ -2820,46 +2820,6 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
       <publication pmid="15637271"/>
     </resource>
 
-
-   <resource resource="Waters_arrayData" 
-              version="1.0"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="Regulation of sexual development of P. berghei - array data"
-              category="Transcriptome"
-	      dbCommit="@dbcommit@"
-              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5889"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/watersArrayData.xml" 
-                contact="Andrew Waters"
-                email="waters@lumc.nl"
-                institution="Leiden University Medical Centre"
-        />
-          <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-        <description>
-            <![CDATA[
-Translational repression of messenger RNAs (mRNAs) plays an important role in sexual differentiation and gametogenesis in multicellular eukaryotes. Translational repression and mRNA turnover were shown to influence stage-specific gene expression in the protozoan <i>P.berghei</i>. The DDX6-class RNA helicase, DOZI (development of zygote inhibited), is found in a complex with mRNA species in cytoplasmic bodies of female, blood-stage gametocytes. These translationally repressed complexes are normally stored for translation after fertilization. Genetic disruption of pbdozi inhibits the formation of the ribonucleoprotein complexes, and instead, at least 370 transcripts are diverted to a degradation pathway. (taken from GEO record GSE5889).  
-<p>
-This study was performed on purified gametocytes.
-         ]]>
-        </description>
-      <publication pmid="16888139"/>
-    </resource>    
-
-    <resource resource="Waters_radAnalysis" 
-              version="1.0"
-              plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	      displayName="DOZI mutant vs. Wild Type Expression Analysis"
-              category="ignore"
-	      dbCommit="@dbcommit@"
-            >
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/radAnalysis/"
-                contact="Andrew Waters"
-                email="waters@lumc.nl"
-                institution="Leiden University Medical Centre"
-        />
-          <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-    </resource>
-
  <resource resource = "Kappe_expressionProfiles" version="1.0"
             displayName="P. yoelii liver stage expression data"
             organisms="P. yoelii"
@@ -4018,4 +3978,46 @@ Contact Till Voss, till.voss@unibas.ch, for further information
           ]]>
         </description>
     </resource>
+
+  <resource resource="DOZI_array" version="1.0"
+            displayName="P. berghei DOZI array data"
+            category="Transcriptome"
+            organisms="P. berghei"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P. berghei DOZI array data"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P. berghei DOZI array data"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/DOZI_array/working_dir --configFile @downloadDir@/DOZI_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "DOZI_page" version="1.0"
+            displayName="P. berghei DOZI array data page analysis"
+            organisms="P. berghei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/newFormat"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/DOZI_page/newFormat --configFile @downloadDir@/DOZI_page/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+
  </resourcesPipeline>

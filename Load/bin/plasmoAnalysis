@@ -2120,11 +2120,8 @@ my $blastParams = "-nogaps E=10 M=1 N=-3 Q=3 R=1","blastn";
 &InsertCompositeElementNaSequences($mgr,'Pfab', 1);
 
 # #RAD Analysis (Normalization)
-&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/Waters_arrayData/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
 
 &copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/E-MEXP-128_arrayData/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
-
-&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/Waters_arrayData/watersArrayData.xml", "load_Waters_arrayData","");
 
 &InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/E-MEXP-128_arrayData/e-mexp-128_arrayData.xml", "load_E-MEXP-128_arrayData");
 
@@ -2133,11 +2130,6 @@ my $blastParams = "-nogaps E=10 M=1 N=-3 Q=3 R=1","blastn";
 &copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/Cowman_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
 
 &InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/Cowman_radAnalysis/radAnalysis/expressionProfile.xml", "load_Cowman_expressionProfile","Rpath");
-
-&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/Waters_radAnalysis/","$projectDir/$release/analysis_pipeline/primary/data/", "$projectDir/$release/analysis_pipeline/primary/data/");
-
-&InsertRadAnalysisFromConfig($mgr, "$projectDir/$release/analysis_pipeline/primary/data/Waters_radAnalysis/radAnalysis/page.xml", "load_Waters_pageData","pagePath");
-
 
 # ##expression profiles#######
 &documentProfileAveraging($mgr);
