@@ -3353,8 +3353,24 @@ sub parseBlastForSqlldr {
 
 }
 
+sub makeOrthoSqlldrCtlFile {
+  my ($mgr,$blastName,$file,$text) = @_;
+  my $signal = "make$file";
+
+  return if $mgr->startStep("Make $file for sqldr", $signal);
+
+  my $ctlFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/$file";
+
+  open(CTL, ">$ctlFile") || die "Can't open '$ctlFile' for writing";
+  print CTL $text;
+  close(CTL);
+
+  $mgr->endStep($signal);
+
+}
+
 sub loadBlastWithSqlldr {
-  my ($mgr,$blastName,$restart,$file) = @_;
+  my ($mgr,$blastName,$restart,$file, $ctl) = @_;
 
   my $signal = "sqlldrLoad$blastName";
 
@@ -3364,8 +3380,12 @@ sub loadBlastWithSqlldr {
 
   if ($file) {
     $sqlldrFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/$file";
+
     $mgr->runCmd("gunzip $sqlldrFile") if $sqlldrFile =~ /\.gz/;
+    $sqlldrFile =~ s/\.gz//;
   }
+
+  my $ctlFile = "$mgr->{dataDir}/similarity/$blastName/master/mainresult/$ctl" if $ctl;
 
   my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
@@ -3376,6 +3396,8 @@ sub loadBlastWithSqlldr {
   my $oracleUserPswd = $propertySet->getProp('oracleUserPswd');
 
   my $cmd = "nohup sqlldr $oracleUserPswd control=$sqlldrFile log=$logfile rows=25000 direct=TRUE";
+
+  $cmd = "nohup sqlldr $oracleUserPswd data=$sqlldrFile control=$ctlFile log=$logfile rows=25000 direct=TRUE" if $ctl;
 
   $cmd .= " SKIP=$restart" if $restart;
 
