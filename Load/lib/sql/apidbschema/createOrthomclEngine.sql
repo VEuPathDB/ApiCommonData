@@ -14,8 +14,8 @@ CREATE TABLE apidb.SimilarSequences (
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.SimilarSequences TO gus_w;
 GRANT SELECT ON apidb.SimilarSequences TO gus_r;
 
-CREATE INDEX apidb.ss_qtaxexp_ix ON apidb.SimilarSequences(query_id, subject_taxon_id, evalue_exp, evalue_mant, query_taxon_id, subject_id) NOLOGGING;
-CREATE INDEX apidb.ss_seqs_ix on apidb.SimilarSequences(query_id, subject_id, evalue_exp, evalue_mant, percent_match) NOLOGGING;
+CREATE INDEX apidb.ss_qtaxexp_ix ON apidb.SimilarSequences(query_id, subject_taxon_id, evalue_exp, evalue_mant, query_taxon_id, subject_id) NOLOGGING TABLESPACE INDX;
+CREATE INDEX apidb.ss_seqs_ix on apidb.SimilarSequences(query_id, subject_id, evalue_exp, evalue_mant, percent_match) NOLOGGING TABLESPACE INDX;
 
 -----------------------------------------------------------
 
