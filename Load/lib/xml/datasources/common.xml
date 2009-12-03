@@ -1,0 +1,236 @@
+<resourcesPipeline>
+
+  <resource resource="taxonomy" version="2009-02-23" 
+            displayName="NCBI Taxonomy"
+            publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+            category="Ontology"
+            url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+            plugin="GUS::Supported::Plugin::LoadTaxon"
+            dbCommit="@dbcommit@">
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+     <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+     <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+     <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+     <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+     <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+     <description>
+        <![CDATA[
+    The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
+          ]]>
+    </description>
+  </resource>
+
+    <resource resource="SO" version="2.3"
+        displayName="Sequence Ontology"        
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"      
+	url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=2.3"
+        plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
+            <description>
+         <![CDATA[
+    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+     </description>
+    </resource>
+
+  <resource resource="enzymeDB" version="2009-02-11" 
+            displayName="Enzyme nomenclature database"
+            publicUrl="http://www.expasy.org/enzyme"
+            category="Ontology"
+            url="ftp://ftp.expasy.org/databases/enzyme/"
+            plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
+            extDbName="enzymeDB"
+            extDbRlsVer="2009-02-11"
+            dbCommit="@dbcommit@">
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
+     <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
+     <description>
+         <![CDATA[
+    ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+     </description>
+  </resource>
+ 
+<resource resource="GO_evidence_codes" version="1.17"
+        displayName="Gene Ontology evidence codes"        
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"   
+	url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+        <description>
+            <![CDATA[
+   Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support. 
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="GO" version="4.540"
+            displayName="Gene Ontology"
+            publicUrl="http://www.geneontology.org"
+            category="Ontology"
+            url="http://www.geneontology.org/ontology/gene_ontology.obo"
+            plugin="GUS::Supported::Plugin::InsertGeneOntology"
+            extDbName="Gene Ontology"
+            extDbRlsVer="4.540"
+            extDbRlsDescrip="The Gene Ontology from 02/20/2009"
+            dbCommit="@dbcommit@">
+      <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
+      <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+      <description>
+         <![CDATA[
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+      </description>
+  </resource>   
+
+ <resource resource="NRDB" version="2009-02-22"
+            plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            displayName="GenBank NRDB"
+            publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+            category="Proteome"
+            url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+            extDbName="NRDB"
+            extDbRlsVer="2009-02-22"
+            extDbRlsDescrip="The nr file from 2009-02-22"
+            dbCommit="@dbcommit@">
+      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+      <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      <description>
+         <![CDATA[
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+      </description>
+ </resource>
+
+
+    <resource resource="BibRefType" 
+        version="1"
+        plugin="GUS::Supported::Plugin::LoadGusXml"
+        displayName="Bibliographic Reference Types"
+        category="ignore"
+        publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BibliographicReferenceType/ncbiPublicationTypes.xml" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>	
+        <pluginArgs>--filename @downloadDir@/BibRefType/ncbiPublicationTypes.xml</pluginArgs>
+    </resource>  
+    
+    <resource resource="Mged_Ontology_Term_Types" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyTermType"
+        displayName="MGED Ontology Term Types"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
+    </resource>    
+    
+    
+    <resource resource="Mged_Ontology_Relationship_Types" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
+        displayName="MGED Ontology Relationship Types"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
+    </resource>    
+    
+    <resource resource="MGED_Ontology" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
+        displayName="The MGED Ontology"
+        category="Ontology"
+        publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
+        url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
+        extDbName="MGED_Ontology"
+        extDbRlsVer="1.3"
+        extDbRlsDescrip="MGED Ontology"
+        dbCommit="@dbcommit@"
+        >	
+        <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
+        <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+        <description>
+            <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
+        </description>		
+    </resource>
+    
+    <resource resource="Mged_Ontology_Entry" 
+        version="1.3"
+        plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
+        displayName="MGED Ontology Entry"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania" />
+        <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
+    </resource>  
+   
+        <resource resource="InterproscanData" version="19.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        category="Proteome"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan19.0/"
+            contact = "EBI"
+            email = "interhelp@ebi.ac.uk"
+            institution = "EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan19.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</pluginArgs>
+        <description>
+            <![CDATA[
+			InterPro family of databases
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>    
+
+
+
+    <resource resource="OrthoMCL_Phyletic" version="3.0"
+        displayName="OrthoMCL phyletic profiles"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi, P.knowlesi"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/orthoMCL-v3.0/orthomclGroups.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--groupsFile @downloadDir@/OrthoMCL_Phyletic/orthomclGroups.txt --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe"</pluginArgs>
+        <description>
+            <![CDATA[
+OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+          ]]>
+        </description>
+        <publication pmid="16381887"/>
+    </resource>
+
+
+ </resourcesPipeline>

@@ -1,0 +1,217 @@
+    <resource resource="dbEST" version="2009-02-23"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        extDbName="dbEST"
+        extDbRlsVer="2009-02-23"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        />
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId 5820 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <description>
+            <![CDATA[
+                  Plasmodium ESTs from dbEST.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="PDBProteinSequences" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="PDB protein sequences" 
+        extDbRlsVer="2009-03-06"
+        extDbRlsDescrip="PDB protein sequences"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <description>
+         <![CDATA[
+Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.        
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="FetchPDBidx" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
+        organisms="Diverse"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
+        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
+        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <description>
+         <![CDATA[
+PDB Identifiers       
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="Entrez_DBRefs" version="2009-04-29"
+        displayName="DBRefs for Entrez gene links"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Entrez DBRefs"
+        extDbRlsVer="2009-04-29"
+        extDbRlsDescrip="Entrez gene links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2entrez.tab"
+            contact = "Wei Li"
+            email = "weili1@pcbi.upenn.edu"
+            institution = "University of Pennsylania"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_DBRefs/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            DBRefs for Entrez gene links.
+            ]]>
+        </description>
+    </resource>
+
+ <resource resource="Pubmed_DBRefs" version="2009-08-14"
+        displayName="DBRefs for pubmed links"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Pubmed DBRefs"
+        extDbRlsVer="2009-08-14"
+        extDbRlsDescrip="Pubmed links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed_08_14_09.tab"
+            contact = "Wei Li"
+            email = "weili1@pcbi.upenn.edu"
+            institution = "University of Pennsylania"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Pubmed_DBRefs/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            DBRefs for Entrez pubmed links.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="Phenotype_DBRefs" version="2009-08-14"
+        displayName="DBRefs for Phenotype db links"
+        category="External_links"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Phenotype DBRefs"
+        extDbRlsVer="2009-08-14"
+        extDbRlsDescrip="DBRefs for Phenotype db links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_08-14-09.txt"
+            contact = "Shahid Kahn"
+            email = "S.M.Khan@lumc.nl"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            Phenotype links from Genetically Modified Rodent Malaria Parasites: 
+            <a href="http://www.pberghei.eu/index.php">Pberghei.eu</a>  hosts a database
+            containing information on genetically modified rodent malaria parasite
+            lines generated by many labs worldwide. Specifically, it contains data
+            of three rodent malaria parasite species; Plasmodium berghei, P. yoelii
+            and P. chabaudi. The aim of this database is to provide the research
+            community access to detailed information on the generation (e.g.
+            disruption, tagging, mutation, transgene expression) and phenotype of
+            genetically modified malaria parasites. The database not only provides
+            information on 'successful' mutants with a clear phenotype, but also
+            (un)published mutants without a clear phenotype and (un)published
+            negative trials to disrupt genes.
+            ]]>
+        </description>
+    </resource>
+
+ <resource resource="isolateVocabulary" version="2009-06-14" 
+        displayName="load isolate vocabulary" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolateVocabulary.txt" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>updateIsolateVocabulary.pl --gus_config_file @gusHome@/config/gus.config --inFile @downloadDir@/isolateVocabulary/isolateVocabulary.txt</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_isolation_source" version="2009-06-14" 
+        displayName="update isolate vocabulary-isolation_source" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/isolationSource.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @downloadDir@/isolateVocabularyUpdate_isolation_source/isolationSource.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_specific_host" version="2009-06-14" 
+        displayName="update isolate vocabulary-specific_host" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/specificHost.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @downloadDir@/isolateVocabularyUpdate_specific_host/specificHost.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_geographic_location" version="2009-06-14" 
+        displayName="update isolate vocabulary-geographic_location" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/geographicLocation.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/geographicLocation.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_product" version="2009-06-14" 
+        displayName="update isolate vocabulary-product" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/product.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/product.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+<resource resource="OrthoMCL" version="3.0"
+        displayName="Orthologous groups generated using OrthoMCL"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi,P.knowlesi"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/orthoMCL-v3.0/orthomclGroups.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+    </resource>
