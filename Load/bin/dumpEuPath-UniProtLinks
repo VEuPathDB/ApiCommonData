@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($gusConfigFile,$dbrefExtDbSpec,$outFile,$verbose,$projectName);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "dbrefExtDbSpec=s" => \$dbrefExtDbSpec,
+	    "projectName=s" => \$projectName,
+	    "verbose!" => \$verbose,
+	    "outfile=s" => \$outFile);
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+print STDERR "Establishing dbi login\n";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+
+my $dbrefExtDbRls;
+
+my @dbrefExtDbSpecList = split(/,/, $dbrefExtDbSpec);
+
+foreach my $nadb (@dbrefExtDbSpecList){
+
+  $dbrefExtDbRls .= getDbRlsId($nadb).",";
+
+}
+
+$dbrefExtDbRls =~ s/(,)$//g;
+
+my $sql = "select drf.primary_identifier as uniprot_accession,gf.source_id as eupath_source_id, 'http://www.'||$projectName||'.org/gene/'||gf.source_id as URL from sres.DBREF drf, DoTS.DbRefNAFeature nf, dots.GENEFEATURE gf where drf.db_ref_id=nf.db_ref_id and gf.na_feature_id=nf.na_feature_id and drf.external_database_release_id in($dbrefExtDbRls)";
+
+my $stmt1 = $dbh->prepareAndExecute($sql);
+
+open(OUT,">$outFile"); 
+
+while(my ($uniprot_accession,$eupath_source_id, $URL) = $stmt1->fetchrow_array()) {
+
+  print OUT "$uniprot_accession\t$eupath_source_id\t$URL\n";
+
+}
+
+sub getDbRlsId {
+
+  my ($extDbRlsSpec) = @_;
+
+  my ($extDbName, $extDbRlsVer) = &getExtDbInfo($extDbRlsSpec);
+
+  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+
+  $stmt->execute($extDbName,$extDbRlsVer);
+
+  my ($extDbRlsId) = $stmt->fetchrow_array();
+
+  return $extDbRlsId;
+}
+
+sub getExtDbInfo {
+  my ($extDbRlsSpec) = @_;
+  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
+    my $extDbName = $1;
+    my $extDbRlsVer = $2;
+    return ($extDbName, $extDbRlsVer);
+  } else {
+    die("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
+  }
+}
+
+
