@@ -14,8 +14,6 @@ my ($gusConfigFile,$dbrefExtDbSpec,$outFile,$verbose,$projectName);
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile);
 
-$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
-
 print STDERR "Establishing dbi login\n";
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);

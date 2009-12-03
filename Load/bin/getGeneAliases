@@ -7,10 +7,9 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$extDb,$extDbVer,$outFile,$verbose,$dbRefNAFeatureExtDbSpec);
+my ($gusConfigFile,$extDbSpec,$outFile,$verbose,$dbRefNAFeatureExtDbSpec);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	    "extDb=s" => \$extDb,
-	    "extDbVer=s" => \$extDbVer,
+	    "extDbSpec=s" => \$extDbSpec,
 	    "dbRefNAFeatureExtDbSpec=s" => \$dbRefNAFeatureExtDbSpec,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile);
@@ -29,7 +28,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
-my $extDbRls = getDbRlsId("$extDb|$extDbVer");
+my $extDbRlsId = getDbRlsId($extDbSpec);
 
 my $dbRefNAFeatureExtDbRls;
 
@@ -46,7 +45,7 @@ if($dbRefNAFeatureExtDbSpec){
     $dbRefNAFeatureExtDbRls =~ s/(,)$//g;
 }
 
-my $sql = "select source_id,na_feature_id from dots.genefeature where external_database_release_id = $extDbRls";
+my $sql = "select source_id,na_feature_id from dots.genefeature where external_database_release_id = $extDbRlsId";
 
 my $stmt1 = $dbh->prepareAndExecute($sql);
 
