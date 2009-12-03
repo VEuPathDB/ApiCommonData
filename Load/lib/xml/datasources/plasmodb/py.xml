@@ -253,3 +253,25 @@ rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
     </description>
   </resource>
 
+<resource resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pyoelii LiverStage LS40"
+        extDbRlsVer="2008-07-18"
+        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40) by searching spectra against P. yoelii protein sequence database"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py40h.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS40/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
+        <description>
+            <![CDATA[
+             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 hrs post-infection (LS40).
+          ]]>
+        </description>	
+	<publication pmid="18172196"/>	
+    </resource> 
