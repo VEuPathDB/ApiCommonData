@@ -4816,7 +4816,7 @@ sub modifyDownloadFile {
 
 sub writeGeneAliasFile {
 
-  my ($mgr,$extDb,$extDbVer,$project, $dir, $species, $dbRefNAFeatureExtDbSpec) = @_;
+  my ($mgr,$extDbSpec,$project, $dir, $species, $dbRefNAFeatureExtDbSpec) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
@@ -4832,7 +4832,7 @@ sub writeGeneAliasFile {
 
   my $outFile = $species ? "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${species}GeneAlias_$projectDB-${release}.txt" : "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}GeneAlias_$projectDB-${release}.txt";
 
-  my  $cmd ="getGeneAliases --extDb '$extDb' --extDbVer '$extDbVer' --outfile $outFile";
+  my  $cmd ="getGeneAliases --extDbSpec '$extDbSpec' --outfile $outFile";
   
   $cmd .= " --dbRefNAFeatureExtDbSpec $dbRefNAFeatureExtDbSpec" if $dbRefNAFeatureExtDbSpec;
 
