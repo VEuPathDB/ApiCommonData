@@ -1,0 +1,41 @@
+    <resource resource="P.chabaudi_chromosomes" version="2009.03.24"
+        displayName="P. chabaudi (AS) chromosomes annotation"
+        category="Genome"
+        organisms="P.chabaudi"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="P. chabaudi genome and annotation"
+        extDbRlsVer="2009-03-24"
+        extDbRlsDescrip="P. chabaudi genome and annotation|2009-03-24"
+        dbCommit="@dbcommit@">
+         <manualGet
+           fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/chromosomes/"/>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_chromosomes/chromosomes/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudichr.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudichr.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+   Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
+   The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
+
+           ]]>
+        </description>
+    </resource> 
+
+    <resource resource="P.chabaudi_unmapped_contigs" version="2009.03.24"
+        displayName="P. chabaudi (AS) unmapped contigs annotation"
+        category="ignore"
+        organisms="P.chabaudi"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="P. chabaudi genome and annotation"
+        extDbRlsVer="2009-03-24"
+        extDbRlsDescrip="P. chabaudi genome and annotation|2009-03-24"
+        dbCommit="@dbcommit@">
+         <manualGet
+           fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/unmapped_contigs/"/>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_unmapped_contigs/unmapped_contigs/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudicontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudicontigs.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+   Annotation of the <i>P. chabaudi</i> AS unmapped contigs obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models.    
+           ]]>
+        </description>
+    </resource> 
+
+

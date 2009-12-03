@@ -1,0 +1,22 @@
+ 
+
+    <resource resource="P.knowlesi_chromosomes" version="2007-10-03"
+        url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_knowlesi/PK4.annotation"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        organisms="P.knowlesi"
+        displayName="P. knowlesi (H) chromosomes sequence and annotation" 
+        category="Genome" 
+        extDbName="Sanger P. knowlesi chromosomes"
+        extDbRlsVer="2007-10-03"
+        extDbRlsDescrip="Sanger P. knowlesi chromosomes|2007-10-03"
+        dbCommit="@dbcommit@"> 
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=PK4.chr*.embl</wgetArgs>
+        <unpack>mkdir @downloadDir@/P.knowlesi_chromosomes_fixed</unpack>
+        <unpack>for f in `ls @downloadDir@/P.knowlesi_chromosomes`; do cat @downloadDir@/P.knowlesi_chromosomes/$f | adjustPlasmoEmblFile > @downloadDir@/P.knowlesi_chromosomes_fixed/$f.fixed; done</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @downloadDir@/P.knowlesi_chromosomes_fixed --inputFileExtension fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium knowlesi H" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pknowlesi.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pknowlesi.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+                 Chromosome sequences and annotation for <i>P. knowlesi</i> strain H obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute (February 2007)
+          ]]>
+        </description>
+    </resource> 

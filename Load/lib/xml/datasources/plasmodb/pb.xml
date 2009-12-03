@@ -1,0 +1,318 @@
+    
+    <resource resource="WatanabePbANKA_PredictedTranscripts" version="2006-11-02"
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. berghei ANKA predicted full length transcripts"
+        organisms="P. berghei"
+        category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        extDbName="WatanabePbANKA_PredictedTranscripts"
+        extDbRlsVer="2006-11-02"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_pb.fas"
+            contact="Junichi Watanabe"
+            email="jwatanab@ims.u-tokyo.ac.jp"
+            institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
+        />
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @downloadDir@/WatanabePbANKA_PredictedTranscripts/reffull_pb.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 5823 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePbANKA' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePbANKA EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <description>
+            <![CDATA[
+   <i>P. berghei</i> ANKA predicted full length transcript sequences.
+          ]]>
+        </description>
+        <publication pmid="17151081"/>
+    </resource>
+
+
+    <resource resource="P.berghei_wholeGenomeShotgunSequence" version="2006-02-27"
+        displayName="P. berghei (ANKA) genome"
+        category="Genome"
+        organisms="P.berghei"
+        url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/pb.fasta.gz"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="P. berghei genome"
+        extDbRlsVer="2006-02-27"
+        extDbRlsDescrip="P. berghei genome|2006-02-27"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pb.fasta.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/P.berghei_wholeGenomeShotgunSequence/pb.fasta.gz</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5823 --sequenceFile @downloadDir@/P.berghei_wholeGenomeShotgunSequence/pb.fasta --soTermName "contig" --regexSourceId "(PB_[A-Z]{2}\d+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Whole genome shotgun sequence for <i>P. berghei</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute (February 2006).
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="P.berghei_Annotation" version="2006-02-27"
+        displayName="P. berghei (ANKA) genome annotation"
+        category="Genome"
+        organisms="P.berghei"
+        url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="P. berghei genome"
+        extDbRlsVer="2006-02-27"
+        extDbRlsDescrip="P. berghei genome|2006-02-27"
+        dbCommit="@dbcommit@">
+        <publication pmid="15637271"/>
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=pb.gff.gz,P_berghei.GeneDB.pep</wgetArgs>
+        <unpack>gunzip @downloadDir@/P.berghei_Annotation/pb.gff.gz</unpack>
+        <unpack>sangerGff2TranscriptGff @downloadDir@/P.berghei_Annotation/pb.gff > @downloadDir@/P.berghei_Annotation/pb_fixed1.gff</unpack>
+        <unpack>addProteinsToGff @downloadDir@/P.berghei_Annotation/P_berghei.GeneDB.pep @downloadDir@/P.berghei_Annotation/pb_fixed1.gff > @downloadDir@/P.berghei_Annotation/pb_fixed2.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.berghei_Annotation/pb_fixed2.gff --fileFormat gff2 --gff2GroupTag "GenePrediction" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei strain ANKA" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Pberghei.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pberghei.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+   Annotation of the <i>P. berghei</i> ANKA genome obtained from the Pathogen Sequencing Unit at the Welcome Trust Sanger Institute, 2006-02-27. Includes gene models and predicted protein translations.    
+           ]]>
+        </description>
+    </resource>
+    
+ <resource resource="berghei_gss_oligos" version="1.0"
+            displayName="P. berghei GSS oligos"
+            organisms="P.berghei"
+            category="Transcriptome"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            extDbName="P.berghei GSS oligos"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="The GSS oligos used in the Hall, Waters, Sinden array."
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/elements.fasta" 
+                contact="Andy Waters"
+                email="A.P.Waters@lumc.nl"
+                institution="Leiden University"
+      />
+      <publication pmid="15637271"/>
+      <pluginArgs>--sequenceFile @downloadDir@/berghei_gss_oligos/elements.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
+   <description>
+         <![CDATA[
+   GSS shotgun sequence of <i>P. berghei</i> generated by mung bean digest.
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="berghei_oligo_gene_mapping" version="1.0"
+            displayName="P. berghei GSS oligos to genes mapping"
+            organisms="P.berghei"
+            category="Transcriptome"
+            plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/gss2genes.tab" 
+                contact="Andy Waters"
+                email="A.P.Waters@lumc.nl"
+                institution="Leiden University"
+      />
+    <publication pmid="15637271"/>
+    <pluginArgs>--inputFile @downloadDir@/berghei_oligo_gene_mapping/gss2genes.tab --oligosExternalDatabase "P.berghei GSS oligos"  --oligosExternalDatabaseRls "1.0"  @commit@</pluginArgs>
+
+    <description>
+         <![CDATA[
+   A mapping of the <i>P. berghei</i> GSS oligos to <i>P. berghei</i> genes.
+          ]]>
+     </description>
+  </resource>
+
+    <resource resource="Waters_female_gametes" version="2007-09-25" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
+        category="Transcriptome"
+        publicUrl=""
+        extDbName="Waters Female Gametes"
+        extDbRlsVer="2007-09-25"
+        extDbRlsDescrip="Female gametocyte proteomics data provided by Leiden Malaria Group"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Female_peptide_list_PlasmoDB.xls"
+            contact="Andy Waters"
+            email="A.P.Waters@lumc.nl"
+            institution="Leiden University"
+        />
+        <unpack>parseWatersExcelProteomics.pl --infile @downloadDir@/Waters_female_gametes/Female_peptide_list_PlasmoDB.xls --outfile @downloadDir@/Waters_female_gametes/Female_peptide_list_PlasmoDB_load.tab</unpack>
+        <pluginArgs>--inputFile @downloadDir@/Waters_female_gametes/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <description>
+            <![CDATA[
+              Female gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
+          ]]>
+				<publication pmid="15935755"/>
+        </description>		
+    </resource>    
+    
+    <resource resource="Waters_male_gametes" version="2007-09-25"
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of Male Gametocytes from Leiden Malaria Group"
+        category="Transcriptome"
+        publicUrl=""
+        extDbName="Waters Male Gametes"
+        extDbRlsVer="2007-09-25"
+        extDbRlsDescrip="Male gametocyte proteomics data provided by Leiden Malaria Group"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Male_peptide_list_PlasmoDB.xls"
+            contact="Andy Waters"
+            email="A.P.Waters@lumc.nl"
+            institution="Leiden University"
+        />
+        <unpack>parseWatersExcelProteomics.pl --infile @downloadDir@/Waters_male_gametes/Male_peptide_list_PlasmoDB.xls --outfile @downloadDir@/Waters_male_gametes/Male_peptide_list_PlasmoDB_load.tab</unpack>
+        <pluginArgs>--inputFile @downloadDir@/Waters_male_gametes/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <description>
+            <![CDATA[
+              Male gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
+          ]]>
+				<publication pmid="15935755"/>
+        </description>		
+    </resource>    
+    
+    <resource resource="Waters_mixed_gametes" version="2007-09-25"
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
+        category="Transcriptome"
+        publicUrl=""
+        extDbName="Waters Mixed Gametes"
+        extDbRlsVer="2007-09-25"
+        extDbRlsDescrip="Mixed gametocyte proteomics data provided by Leiden Malaria Group"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Mixed_Gams_peptide_list_PlasmoDB.xls"
+            contact="Andy Waters"
+            email="A.P.Waters@lumc.nl"
+            institution="Leiden University"
+        />
+        <unpack>parseWatersExcelProteomics.pl --infile @downloadDir@/Waters_mixed_gametes/Mixed_Gams_peptide_list_PlasmoDB.xls --outfile @downloadDir@/Waters_mixed_gametes/Mixed_Gams_peptide_list_PlasmoDB_load.tab</unpack>
+        <pluginArgs>--inputFile @downloadDir@/Waters_mixed_gametes/Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <description>
+            <![CDATA[
+             Mixed gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
+          ]]>
+				<publication pmid="15935755"/>
+        </description>		
+    </resource> 
+
+    <resource resource="Agilent_P_Berghei_Array" 
+              version="1.0"
+              plugin="GUS::Supported::Plugin::LoadArrayDesign"
+	      displayName="Agilent P. Berghei Oligo Array"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3824"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/Agilent_P_Berghei/" 
+                contact="George Dimopoulos"
+                email="gdimopou@jhsph.edu"
+                institution="Johns Hopkins School of Public Health"
+        />
+          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/columnTranslator.xml --data_in @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/GPL3824.txt --log @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/translator.log --data_out @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Agilent' --commit @dbcommit@</unpack>
+          <pluginArgs>--cfg_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/agilentBerghei.config --data_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Agilent</pluginArgs>
+        <description>
+            <![CDATA[
+This microarray is a high-resolution, high performance 60-mer oligonucleotide array that represents the <i>P. berghei</i> transcriptome. (taken from GEO record GPL3824)
+          ]]>
+        </description>
+    </resource>    
+
+    <resource resource="Waters_metaData" 
+              version="1.0"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="Regulation of sexual development of P. berghei - meta data"
+              category="Transcriptome"
+              extDbName="Regulation of sexual development of P.berghei (Waters Lab)"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Regulation of sexual development of Plasmodium by translational repression."
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/Waters.xls" 
+                contact="Andrew Waters"
+                email="waters@lumc.nl"
+                institution="Leiden University Medical Centre"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/Waters_metaData/Waters.xls >@downloadDir@/Waters_metaData/loadMageDoc.config</unpack>
+          <pluginArgs>--configfile @downloadDir@/Waters_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    <description>
+    Information describing the methods of the experiment
+    </description>
+    </resource>    
+
+ <resource resource="Pberghei_Protein_Expression" version="1.0"
+        displayName="P. berghei protein expression"
+        organisms="P.berghei"
+				category="proteome"
+        publicUrl="http://www.sciencemag.org/content/vol307/issue5706/images/data/82/DC1/hall-SOM-tables.zip"
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+        extDbName="Plasmodium Life Cycle by Proteomic Analyses"
+        extDbRlsVer="1.0"
+        extDbRlsDescrip="Summary of Plasmodium berghei proteins detected in mixed
+        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/proteinExpression/berghei/"
+            contact="Neil Hall or Robert Sinden"
+            email = "nhall@tigr.org, r.sinden@imperial.ac.uk"
+            institution = "The Wellcome Trust Sanger Institute"
+        />
+        <pluginArgs>--inputDir @downloadDir@/Pberghei_Protein_Expression/berghei/ --configFile @downloadDir@/Pberghei_Protein_Expression/berghei/tableS8.config --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+        Summary of <i>P. berghei</i> proteins detected in mixed
+        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis.
+            ]]>
+        </description>
+      <publication pmid="15637271"/>
+    </resource>
+ 
+  <resource resource="berghei_gss_time_series" version="1.0"
+            displayName="P. berghei transcript expression - HP"
+            organisms="P.berghei"
+            category="Transcriptome"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P.berghei expression profile - HP - Hall-Waters"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P.berghei expression profile - HP - Hall-Waters"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HP/" 
+                contact="Andy Waters"
+                email="A.P.Waters@lumc.nl"
+                institution="Leiden University"
+      />
+<pluginArgs>--inputDir @downloadDir@/berghei_gss_time_series/HP --configFile @downloadDir@/berghei_gss_time_series/HP/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs><publication pmid="16267556"/>
+   <description>
+         <![CDATA[
+   Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
+          ]]>
+    </description>
+      <publication pmid="15637271"/>
+  </resource>
+
+    <resource resource="berghei_gss_time_seriesHPE" version="1.0"
+        displayName="P. berghei transcript expression - HPE"
+        organisms="P.berghei"
+        category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+        extDbName="P.berghei expression profile - HPE - Hall-Waters"
+        extDbRlsVer="1.0"
+        extDbRlsDescrip="P.berghei expression profile - HPE - Hall-Waters"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HPE/" 
+            contact="Andy Waters"
+            email="A.P.Waters@lumc.nl"
+            institution="Leiden University"
+        />
+        <pluginArgs>--inputDir @downloadDir@/berghei_gss_time_seriesHPE/HPE --configFile @downloadDir@/berghei_gss_time_seriesHPE/HPE/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+   Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
+          ]]>
+        </description>
+      <publication pmid="15637271"/>
+    </resource>
+

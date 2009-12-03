@@ -1,0 +1,255 @@
+    <resource resource="WatanabePy17XL_PredictedTranscripts" version="2006-11-02"
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL predicted full length transcripts"
+        organisms="P. yoelii"
+        category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        extDbName="WatanabePy17XL_PredictedTranscripts"
+        extDbRlsVer="2006-11-02"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_py.fas"
+            contact="Junichi Watanabe"
+            email="jwatanab@ims.u-tokyo.ac.jp"
+            institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
+        />
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @downloadDir@/WatanabePy17XL_PredictedTranscripts/reffull_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <description>
+            <![CDATA[
+   <i>P. yoelii</i> 17XL predicted full length transcript sequences.
+          ]]>
+        </description>
+        <publication pmid="17151081"/>
+    </resource>
+    
+    <resource resource="WatanabePy17XL_EstLibrary" version="2006-11-02"
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL EST library"
+        organisms="P. yoelii"
+        category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        extDbName="WatanabePy17XL_ESTs"
+        extDbRlsVer="2006-11-02"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_py.fas"
+            contact="Junichi Watanabe"
+            email="jwatanab@ims.u-tokyo.ac.jp"
+            institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
+        />
+        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @downloadDir@/WatanabePy17XL_EstLibrary/onepass_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 352914  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePy17XL' --libraryDesc "P. yoelii 17XL (XPYw) and P. yoelii 17XNL (XPYs) were propagated in vivo in five-week old female ICR mice. Blood was filtrated through Plamsodipur filter to remove white blood cells."</pluginArgs>
+        <description>
+            <![CDATA[
+   <i>P. yoelii</i> 17XL EST library.
+          ]]>
+        </description>
+        <publication pmid="17151081"/>
+    </resource>
+
+
+    <resource resource="P.yoelii_Annotation" version="2005-09-01"
+        displayName="P. yoelii (17XNL) genome annotation"
+        category="Genome"
+        organisms="P.yoelii"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Jane Carlton P. yoelii chromosomes"
+        extDbRlsVer="2002-09-10"
+        extDbRlsDescrip="Jane Carlton P. yoelii chromosomes|2002-09-10"
+        dbCommit="@dbcommit@">
+        <publication pmid="12368865"/>
+        <publication pmid="15580778"/>
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/sequences.gb" 
+            contact="GenBank"
+            email="info@ncbi.nlm.nih.gov"
+            institution="NCBI"
+        />
+        <unpack>filterContaminantsFromGenbankFile --seqFile @downloadDir@/P.yoelii_Annotation/sequences.gb --outFile @downloadDir@/P.yoelii_Annotation/sequences_fixed.gb --contaminantFile /files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/contaminants.txt</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @downloadDir@/P.yoelii_Annotation/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "contig" --validationLog @pipelineDir@/logs/Pyoeliicontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pyoeliicontigs.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+   Annotation of the <i>P. yoelii</i> 17XNL genome obtained from Jane Carlton (TIGR), 2005-09-01. Includes gene models and predicted protein translations.
+          ]]>
+        </description>
+    </resource>
+  
+<resource resource="Pyoelii_EC_numbers" version="2005-09-01"
+     displayName="P. yoelii, EC Numbers for Annotation"
+        organisms="P.yoelii"
+        category="Proteome"
+        plugin="GUS::Community::Plugin::InsertECMapping"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/ec_numbers.txt"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "EuPathDB"
+        />
+        
+        <pluginArgs>--ECMappingFile @downloadDir@/Pyoelii_EC_numbers/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+        <description>
+            <![CDATA[
+   
+          ]]>
+        </description>
+       </resource>
+
+
+ 
+    <resource resource="P.yoelii_Kappe_Annotation" version="2009-03-25"
+        displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
+        category="Genome"
+        organisms="P.yoelii"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="P. yoelii Provisional Annotations from Kappe"
+        extDbRlsVer="2009-03-25"
+        extDbRlsDescrip="P. yoelii Provisional Annotations from Kappe|2009-03-25"
+        dbCommit="@dbcommit@">
+
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/GeneModels/From_Kappe/" 
+            contact="Stephen Kappe"
+        />
+        <unpack>cat @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii_fixed.tab</unpack>
+        <unpack>createGffForYoeliiGenes --infile @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii_fixed.tab --gfffile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe.gff --idmapfile @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/PyoeliiGI.txt</unpack>
+        <unpack>dumpSequencesFromTable.pl --outputFile @downloadDir@/P.yoelii_Kappe_Annotation/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'Jane Carlton P. yoelii chromosomes' AND edr.version = '2002-09-10'"</unpack>
+        <unpack>fixMercatorOffsetsInGFF.pl --f @downloadDir@/P.yoelii_Kappe_Annotation/Pyoelii.fasta --g @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe.gff --o @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed_1.gff</unpack>
+        <unpack>fixYoeliiGFF --inputFile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed_1.gff --outputFile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Jane Carlton P. yoelii chromosomes" --seqExtDbRlsVer "2002-09-10" --validationLog @pipelineDir@/logs/PyoeliiKappe.validation.log --bioperlTreeOutput @pipelineDir@/logs/PyoeliiKappe.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+   Annotation of the <i>P. yoelii</i> 17XNL genome obtained from Stephen Kappe, 2009-03-25. Includes gene models inferred from orthology.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="PhylogeneticProfiles_Pyoelii" version="2005-11-29"
+	    displayName="Phylogenetic profiles for P. yoelii"
+            organisms="P.yoelii"
+            category="Proteome"
+	    plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles"
+	    dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
+            contact = "Shailesh Date"
+            email = "svdate@pcbi.upenn.edu"
+            institution = "CBIL"
+        />
+        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --headerFile @downloadDir@/PhylogeneticProfiles_Pyoelii/phyloProfiles/pvPy_TaxonNameHeaders --dataFile @downloadDir@/PhylogeneticProfiles_Pyoelii/phyloProfiles/pyoelii/pp-any-and-pyoelii.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
+   <description>
+         <![CDATA[
+Phylogenetic profiles based on the presence or absence of all known P. yoelii ORFs in 195 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function. 
+          ]]>
+   </description>
+   <publication pmid="10200254"/>
+    </resource>
+
+  <resource resource="MutualInformationScores_Pyoelii" version="2005-11-29"
+	displayName="Phylogenetic profiles for P. yoelii (mutual information scores)"
+            organisms="P.yoelii"
+        category="Proteome"
+        plugin="GUS::Community::Plugin::LoadMutualInformationScores"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
+            contact = "Shailesh Date"
+            email = "svdate@pcbi.upenn.edu"
+            institution = "CBIL"
+        />
+        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --threshold "0.472" --dataFile @downloadDir@/MutualInformationScores_Pyoelii/phyloProfiles/pyoelii/pp-any-and-pyoelii.muInfo.gz --tolerateMissingIds 1</pluginArgs>
+        <publication pmid="12923548"/>
+        <description>
+         <![CDATA[
+Mutual information, an entropy based, information theoretic measure, was used to measure similarity between phylogenetic profiles. This measure is more sensitive, and can detect inverse or non-linear relationships, as opposed to using simpler metrics such as Pearson correlation (Date and Marcotte, 2003).
+          ]]>
+        </description>
+    </resource>
+    
+rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pyoelii LiverStage LS40"
+        extDbRlsVer="2008-07-18"
+        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40) by searching spectra against P. yoelii protein sequence database"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py40h.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS40/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
+        <description>
+            <![CDATA[
+             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 hrs post-infection (LS40).
+          ]]>
+        </description>	
+	<publication pmid="18172196"/>	
+    </resource> 
+
+<resource resource="Pyoelii_LiverStage_LS50" version="2008-07-18" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pyoelii LiverStage LS50"
+        extDbRlsVer="2008-07-18"
+        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50) by searching spectra against P. yoelii protein sequence database"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py50h.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS50/Py50h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
+        <description>
+            <![CDATA[
+             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 50 hrs post-infection (LS50).
+          ]]>
+        </description>		
+		<publication pmid="18172196"/>
+    </resource> 
+
+ <resource resource = "Kappe_expressionProfiles" version="1.0"
+            displayName="P. yoelii liver stage expression data"
+            organisms="P. yoelii"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Kappe expression profiles"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "P. yoelii liver stage expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/"
+                contact = "Stefan Kappe"
+                email = "stefan.kappe@sbri.org"
+                institution = "Seattle Biomedical Research Institute"
+     />
+<pluginArgs>--inputDir @downloadDir@/Kappe_expressionProfiles/working_dir/ --configFile @downloadDir@/Kappe_expressionProfiles/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+     P. yoelii liver stage expression data from Kappe lab.
+     Seattle Biomedical Research Institute
+     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
+     206-256-7205
+ 
+          ]]>
+    </description>
+        <publication pmid="18172196"/>
+    </resource>
+
+
+ <resource resource = "Kappe_foldChange" version="1.0"
+            displayName="P. yoelii liver stage expression data fold change"
+            organisms="P. yoelii"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/analysis/"
+                contact = "Stefan Kappe"
+                email = "stefan.kappe@sbri.org"
+                institution = "Seattle Biomedical Research Institute"
+  
+     />
+<pluginArgs>--inputDir @downloadDir@/Kappe_foldChange/analysis --configFile @downloadDir@/Kappe_foldChange/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
+   <description>
+         <![CDATA[
+  P. yoelii liver stage expression data from Kappe lab.
+     Seattle Biomedical Research Institute
+     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
+     206-256-7205
+          ]]>
+    </description>
+  </resource>
+

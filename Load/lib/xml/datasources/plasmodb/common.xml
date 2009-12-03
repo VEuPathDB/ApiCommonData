@@ -215,3 +215,246 @@ PDB Identifiers
         </description>
         <publication pmid="12952885"/>
     </resource>
+
+    <resource resource="plasmoDB_GeneIDs" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="plasmoDB_GeneIDs"
+        category="ignore"
+        extDbName="plasmoDB"
+        extDbRlsVer="unknown"
+        extDbRlsDescrip="The complete set of GeneIDs from PlasmoDB"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+            contact=""
+            email=""
+            institution=""/>
+        <pluginArgs>--dbRefExternalDatabaseSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    </resource>  
+    
+    <resource resource="NAGenBankDbRefs" version="2008-06-09"
+        plugin="ApiCommonData::Load::Plugin::InsertGenBankDbRef"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi"
+        category="Genome"
+        displayName="Genbank references for genomic sequences"
+        extDbName="GenBank"
+        extDbRlsVer="2008-06-09"
+        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/empty"
+            contact = "Wei li"
+            email = "weili1@pcbi.upenn.edu"
+            institution = "CBIL"
+        />
+        <unpack>mapGenBankAccessions --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PbergheiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PchabaudiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PvivaxAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PyoeliiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PknowlesiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumPlastidAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumMitoAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PvivaxMitoAnnotatedProteins.fsa  --nrFile @projectDir@/analysis_pipeline/primary/data/seqfiles/nr.fsa > @downloadDir@/NAGenBankDbRefs/giDbRefs.txt</unpack>
+        <unpack>cat @downloadDir@/NAGenBankDbRefs/giDbRefs.txt | perl -pe 's/^(\S+)/$1-1/' > @downloadDir@/NAGenBankDbRefs/giDbRefs_fixed.txt</unpack>
+        <pluginArgs>--inputFile @downloadDir@/NAGenBankDbRefs/giDbRefs_fixed.txt --seqType 'NASequence' --dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+       <description>
+         <![CDATA[
+Mappings from PlasmoDB gene IDs to GenBank gi numbers. (In the future PlasmoDB genes will be directly synchronized with GenBank.)
+          ]]>
+        </description>
+    </resource>
+    
+    
+    <resource resource="AAGenBankDbRefs" version="2008-06-09"
+        plugin="ApiCommonData::Load::Plugin::InsertGenBankDbRef"
+        category="Proteome"
+        organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi"
+        displayName="Genbank references for amino acid sequences"
+        extDbName="GenBank"
+        extDbRlsVer="2008-06-09"
+        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/empty"
+            contact = "Wei Li"
+            email = "weili1@pcbi.upenn.edu"
+            institution = "CBIL"
+        />
+        <unpack>mapGenBankAccessions --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PbergheiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PchabaudiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PvivaxAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PyoeliiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PknowlesiAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumPlastidAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PfalciparumMitoAnnotatedProteins.fsa --protFile @projectDir@/analysis_pipeline/primary/data/seqfiles/PvivaxMitoAnnotatedProteins.fsa --nrFile @projectDir@/analysis_pipeline/primary/data/seqfiles/nr.fsa > @downloadDir@/AAGenBankDbRefs/giDbRefs.txt</unpack>
+        <pluginArgs>--inputFile @downloadDir@/AAGenBankDbRefs/giDbRefs.txt --seqType 'AASequence' --dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect identity of predicted protein and NRDB.  
+          ]]>
+        </description>
+    </resource>
+    
+
+    <resource resource="IEDB_Epitopes" version="2009-03-18"
+        publicUrl="http://www.immuneepitope.org"
+        displayName="IEDB Epitopes"
+        organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="Links to IEDB epitopes"
+        extDbRlsVer="2009-03-18"
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@manualDelivery@/IEDB/03-18-2009/" 
+            contact="IEDB"
+            email=""
+            institution="IEDB"
+        />
+        <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/03-18-2009 --outDir @downloadDir@/IEDB_Epitopes_fixed </unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <description>
+            <![CDATA[
+   IEDB epitopes.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-03-18"
+        publicUrl="http://www.immuneepitope.org"
+        displayName="IEDB Epitopes"
+        organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to IEDB epitopes"
+        extDbRlsVer="2009-03-18"
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
+            contact="IEDB"
+            email=""
+            institution="IEDB"
+        />
+         <unpack>createEpitopeDbRefFile --inputDir @downloadDir@/IEDB_Epitopes_DBxRefs/IEDB_Epitopes_fixed --outputFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt</unpack>
+        <pluginArgs>--DbRefMappingFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+        <description>
+            <![CDATA[
+   IEDB epitopes.
+          ]]>
+        </description>
+    </resource>
+
+  <resource resource="CorrectGeneAliases" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
+        displayName="CorrectGeneAliases"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+            contact=""
+            email=""
+            institution=""/>
+        <unpack>cleanUpDBRefNaFeature.pl</unpack>
+        <pluginArgs>--mappingFiles /files/cbil/data/cbil/plasmoDB/manualDelivery/aliases.tab --extDbRelSpecList "P.vivax contigs from Genbank|2007-06-13,Sanger P. falciparum chromosomes|2009-02-19,P. chabaudi genome and annotation|2009-03-24,P. vivax mitochondrial genome|2005-07-12,Sanger P. knowlesi chromosomes|2007-10-03,Jane Carlton P. yoelii chromosomes|2002-09-10,P. yoelii Provisional Annotations from Kappe|2009-03-25,P.falciparum GO Associations from GeneDB embl file|2009-02-19,P. berghei genome|2006-02-27"</pluginArgs>
+    </resource> 
+
+   <resource resource="RodentPlasmodiumChromosomes" version="2007-09-24"
+         plugin="ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes"
+         displayName="Assignment of chromosome numbers to rodent malaria parasite contigs"
+         category="Genome"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/taco/RMP_Pf_fromKooij.txt"
+         />
+         <pluginArgs>--mappingFile @downloadDir@/RodentPlasmodiumChromosomes/RMP_Pf_fromKooij.txt --extDbNames "yoelii-falciparum synteny from Mercator,berghei-falciparum synteny from Mercator" --addChrColorTable 1 </pluginArgs> 
+         <description>
+            <![CDATA[
+         Assignment of chromosome numbers to rodent malaria parasite (RMP) contigs 
+                           using Taco Kaoij's RMP genome mapping of <i>P. falciparum</i> genes and Mercator synteny data.  
+         ]]>
+        </description>
+    </resource>
+ 
+<resource resource="Phenotype_DBRefs" version="2009-08-14"
+        displayName="DBRefs for Phenotype db links"
+        category="External_links"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Phenotype DBRefs"
+        extDbRlsVer="2009-08-14"
+        extDbRlsDescrip="DBRefs for Phenotype db links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_08-14-09.txt"
+            contact = "Shahid Kahn"
+            email = "S.M.Khan@lumc.nl"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            Phenotype links from Genetically Modified Rodent Malaria Parasites: 
+            <a href="http://www.pberghei.eu/index.php">Pberghei.eu</a>  hosts a database
+            containing information on genetically modified rodent malaria parasite
+            lines generated by many labs worldwide. Specifically, it contains data
+            of three rodent malaria parasite species; Plasmodium berghei, P. yoelii
+            and P. chabaudi. The aim of this database is to provide the research
+            community access to detailed information on the generation (e.g.
+            disruption, tagging, mutation, transgene expression) and phenotype of
+            genetically modified malaria parasites. The database not only provides
+            information on 'successful' mutants with a clear phenotype, but also
+            (un)published mutants without a clear phenotype and (un)published
+            negative trials to disrupt genes.
+            ]]>
+        </description>
+    </resource>
+
+  <resource resource = "winzeler_yoelii_falciparum_comparison_expression" version="1.0"
+            displayName="Winzeler Pyoelii mixed RMAouput naturalscale expression data"
+            organisms="Pyoelii"
+            category="Transcriptome"
+            publicUrl="http://www.scripps.edu/cb/winzeler/"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Winzeler Pyoelii mixed RMAouput naturalscale"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Winzeler Pyoelii mixed RMAouput naturalscale expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/winzeler_yoelii_falciparum_comparison/2009-05-14/"
+                contact = "Greg Grant"
+                email = "ggrant@pcbi.upenn.edu"
+                institution = "University of Pennsylvania"
+     />
+  <pluginArgs>--inputDir @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14 --configFile @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+   Winzeler lab (Scripps Research Institute) performed comparative expression analysis on Plasmodium parasite life cycle data derived from P. falciparum blood, sporozoite, zygote and ookinete stages, and P. yoelii mosquito oocyst and salivary gland sporozoites, blood and liver stages and show that type II fatty acid biosynthesis genes are upregulated in liver and insect stages relative to asexual blood stages.
+          ]]>
+    </description>
+    <publication pmid="18270564"/>
+  </resource>
+
+   <resource resource="Entrez_Gene_dbxref" version="12-01-2009"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="12-01-2009"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_plasmo"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Uniprot_Gene_dbxref" version="11-24-2009"
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Uniprot Genes"
+        extDbRlsVer="11-24-2009"
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_plasmo"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
