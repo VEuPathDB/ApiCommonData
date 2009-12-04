@@ -1,12 +1,10 @@
+<resources>
     <resource resource="dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
-        extDbName="dbEST"
-        extDbRlsVer="2009-02-23"
-        extDbRlsDescrip="ESTs from the mirrored dbEST"
-        dbCommit="@dbcommit@">
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
+
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
         />
         <unpack>mkdir @pipelineDir@/config/</unpack>
@@ -25,11 +23,7 @@
         displayName="Protein Sequences from PDB"
         organisms="Diverse"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="PDB protein sequences" 
-        extDbRlsVer="2009-03-06"
-        extDbRlsDescrip="PDB protein sequences"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
         <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
         <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
@@ -43,10 +37,8 @@ Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium p
     
     <resource resource="FetchPDBidx" version="2009-03-06"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
-        organisms="Diverse"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
         <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
         <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
@@ -60,11 +52,7 @@ PDB Identifiers
 <resource resource="Entrez_DBRefs" version="2009-04-29"
         displayName="DBRefs for Entrez gene links"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Entrez DBRefs"
-        extDbRlsVer="2009-04-29"
-        extDbRlsDescrip="Entrez gene links"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir = "@manualDelivery@/entrez/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -81,11 +69,8 @@ PDB Identifiers
  <resource resource="Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Pubmed DBRefs"
-        extDbRlsVer="2009-08-14"
-        extDbRlsDescrip="Pubmed links"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
         <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -101,12 +86,9 @@ PDB Identifiers
 
 <resource resource="Phenotype_DBRefs" version="2009-08-14"
         displayName="DBRefs for Phenotype db links"
+        organisms="P. berghei, P. yoelli, P. chabaudi"
         category="External_links"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Phenotype DBRefs"
-        extDbRlsVer="2009-08-14"
-        extDbRlsDescrip="DBRefs for Phenotype db links"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
         <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_08-14-09.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
@@ -133,8 +115,7 @@ PDB Identifiers
  <resource resource="isolateVocabulary" version="2009-06-14" 
         displayName="load isolate vocabulary" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolateVocabulary.txt" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -146,8 +127,7 @@ PDB Identifiers
  <resource resource="isolateVocabularyUpdate_isolation_source" version="2009-06-14" 
         displayName="update isolate vocabulary-isolation_source" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/isolationSource.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -159,8 +139,7 @@ PDB Identifiers
  <resource resource="isolateVocabularyUpdate_specific_host" version="2009-06-14" 
         displayName="update isolate vocabulary-specific_host" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/specificHost.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -169,24 +148,22 @@ PDB Identifiers
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
     </resource> 
 
- <resource resource="isolateVocabularyUpdate_geographic_location" version="2009-06-14" 
+  <resource resource="isolateVocabularyUpdate_geographic_location" version="2009-06-14" 
         displayName="update isolate vocabulary-geographic_location" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/geographicLocation.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/geographicLocation.xml</unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-    </resource> 
+  </resource> 
 
  <resource resource="isolateVocabularyUpdate_product" version="2009-06-14" 
         displayName="update isolate vocabulary-product" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/product.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -200,8 +177,7 @@ PDB Identifiers
         organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi,P.knowlesi"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
-        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/orthoMCL-v3.0/orthomclGroups.txt"
             email="pinney@pcbi.upenn.edu"
             contact="Deborah Pinney"
@@ -223,9 +199,7 @@ PDB Identifiers
         category="ignore"
         extDbName="plasmoDB"
         extDbRlsVer="unknown"
-        extDbRlsDescrip="The complete set of GeneIDs from PlasmoDB"
-        dbCommit="@dbcommit@"
-        >
+        extDbRlsDescrip="The complete set of GeneIDs from PlasmoDB">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
             contact=""
             email=""
@@ -240,8 +214,7 @@ PDB Identifiers
         displayName="Genbank references for genomic sequences"
         extDbName="GenBank"
         extDbRlsVer="2008-06-09"
-        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file"
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file">
         <manualGet fileOrDir = "@manualDelivery@/empty"
             contact = "Wei li"
             email = "weili1@pcbi.upenn.edu"
@@ -265,8 +238,7 @@ Mappings from PlasmoDB gene IDs to GenBank gi numbers. (In the future PlasmoDB g
         displayName="Genbank references for amino acid sequences"
         extDbName="GenBank"
         extDbRlsVer="2008-06-09"
-        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file"
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file">
         <manualGet fileOrDir = "@manualDelivery@/empty"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -290,8 +262,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         extDbName="Links to IEDB epitopes"
         extDbRlsVer="2009-03-18"
-        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB.">
         <manualGet fileOrDir="@manualDelivery@/IEDB/03-18-2009/" 
             contact="IEDB"
             email=""
@@ -315,8 +286,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to IEDB epitopes"
         extDbRlsVer="2009-03-18"
-        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB.">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
             contact="IEDB"
             email=""
@@ -335,9 +305,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
-        category="ignore"
-        dbCommit="@dbcommit@"
-        >
+        category="ignore">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
             contact=""
             email=""
@@ -349,8 +317,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
    <resource resource="RodentPlasmodiumChromosomes" version="2007-09-24"
          plugin="ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes"
          displayName="Assignment of chromosome numbers to rodent malaria parasite contigs"
-         category="Genome"
-         dbCommit="@dbcommit@">
+         category="Genome">
          <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/taco/RMP_Pf_fromKooij.txt"
          />
          <pluginArgs>--mappingFile @downloadDir@/RodentPlasmodiumChromosomes/RMP_Pf_fromKooij.txt --extDbNames "yoelii-falciparum synteny from Mercator,berghei-falciparum synteny from Mercator" --addChrColorTable 1 </pluginArgs> 
@@ -371,8 +338,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
             plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
             extDbName = "Winzeler Pyoelii mixed RMAouput naturalscale"
             extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Winzeler Pyoelii mixed RMAouput naturalscale expression data"
-            dbCommit = "@dbcommit@">
+            extDbRlsDescrip = "Winzeler Pyoelii mixed RMAouput naturalscale expression data">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/winzeler_yoelii_falciparum_comparison/2009-05-14/"
                 contact = "Greg Grant"
                 email = "ggrant@pcbi.upenn.edu"
@@ -393,8 +359,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Entrez Genes"
         extDbRlsVer="12-01-2009"
-        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
          <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_plasmo"
             contact=""
             email=""
@@ -414,8 +379,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Uniprot Genes"
         extDbRlsVer="11-24-2009"
-        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
          <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_plasmo"
             contact=""
             email=""
@@ -436,8 +400,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Plasmodium isolates From Genbank"
         extDbRlsVer="2009-04-13"
-        extDbRlsDescrip="Plasmodium isolates From Genbank|2009-04-13"
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="Plasmodium isolates From Genbank|2009-04-13">
            <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/plasmoIsolatesFromGenbank/sequences_fixed_1.gb" 
             contact="GenBank"
             email="info@ncbi.nlm.nih.gov"
@@ -452,4 +415,4 @@ Plasmodium isolates from Genbank
           ]]>
         </description>
     </resource>
-
+<resources>
