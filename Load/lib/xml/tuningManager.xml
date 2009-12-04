@@ -2555,7 +2555,8 @@ SELECT gf.source_id,
        COUNT(westenberger) as graph_westenberger,
        COUNT(winzeler_py_mixed) as graph_winzeler_py_mixed,
        COUNT(su_cq) as graph_su_cq,
-       COUNT(cowman_sir2) as graph_cowman_sir2
+       COUNT(cowman_sir2) as graph_cowman_sir2,
+       COUNT(waters_dozi) as graph_waters_dozi
 FROM apidb.geneattributes gf,
      (SELECT p1.source_id, 1 AS derisi_winzeler
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2672,7 +2673,11 @@ FROM apidb.geneattributes gf,
     (SELECT p1.source_id, 1 AS su_cq
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE ps1.name = 'Profiles of E-GEOD-10022 array from Su'
-       AND p1.profile_set_id = ps1.profile_set_id) su_cq
+       AND p1.profile_set_id = ps1.profile_set_id) su_cq,
+    (SELECT p1.source_id, 1 AS waters_dozi
+      FROM apidb.profile p1, apidb.profileSet ps1
+      WHERE ps1.name = 'Profiles of P. berghei DOZI array data'
+       AND p1.profile_set_id = ps1.profile_set_id) waters_dozi
   WHERE gf.source_id = combo.source_id(+)
   AND gf.source_id = winzeler.source_id(+)
   AND gf.source_id = threeD7.source_id(+)
@@ -2692,6 +2697,7 @@ FROM apidb.geneattributes gf,
   AND gf.source_id = winzeler_py_mixed.source_id(+)
   AND gf.source_id = cowman_sir2.source_id(+)
   AND gf.source_id = su_cq.source_id(+)
+  AND gf.source_id = waters_dozi.source_id(+)
 GROUP BY gf.source_id
       ]]>
     </sql>
