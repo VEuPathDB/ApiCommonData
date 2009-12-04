@@ -3371,7 +3371,7 @@ sub makeOrthoSqlldrCtlFile {
 
 
 sub updateBlastEval {
-  my ($mgr,$inFile,$outFile) = @_;
+  my ($mgr,$blastName, $inFile,$outFile) = @_;
 
   my $signal = "blastEvalModified";
 
@@ -3554,12 +3554,12 @@ sub makePairsDownloadFile{
 
 }
 
-sub makeOrthoAbcFile {
+sub makeOrthoPairsFiles {
   my ($mgr) = @_;
 
-   my $signal = "orthoAbcFile";
+   my $signal = "orthoPairsFiles";
 
-  return if $mgr->startStep("Dumping orthomcl abc file", $signal);
+  return if $mgr->startStep("Dumping orthomcl pairs file", $signal);
 
   my $mclPath = "$mgr->{dataDir}/mcl/";
 
@@ -3567,15 +3567,15 @@ sub makeOrthoAbcFile {
 
   die "$mclPath directory not created\n" if (! -d $mclPath);
 
-  my $abcFile = "$mgr->{dataDir}/mcl/orthoAbc.txt";
-
   my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
   my $propertySet = $mgr->{propertySet};
 
   my $config = $propertySet->getProp('orthoMclPairsConfig');
 
-  my $cmd = "dumpMclAbcFile $config  > $abcFile 2>> $logfile";
+  my $cmd = "orthomclDumpPairsFiles $config  2>> $logfile";
+
+  chdir "$mclPath" || die "Can't chdir to $mclPath\n";
 
   $mgr->runCmd($cmd);
 
