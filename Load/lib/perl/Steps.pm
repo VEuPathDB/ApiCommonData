@@ -3596,13 +3596,11 @@ sub runMcl{
 
   my $outputFile = "$mgr->{dataDir}/mcl/mcl.out";
 
-  my $abcFile = "$mgr->{dataDir}/mcl/orthoAbc.txt";
+  my $abcFile = "$mgr->{dataDir}/mcl/mclInput";
 
   die " $abcFile file does not exist\n" if (! -e $abcFile);
 
-  my $mclPath = $propertySet->getProp("mclPath");
-
-  my $mclCommand = "$mclPath $abcFile --abc -I $mainInflation -o $outputFile 2>> $logfile";
+  my $mclCommand = "mcl $abcFile --abc -I $mainInflation -o $outputFile 2>> $logfile";
 
   $mgr->runCmd($mclCommand);
 
