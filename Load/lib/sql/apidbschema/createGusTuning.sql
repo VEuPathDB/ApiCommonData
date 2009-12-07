@@ -1,6 +1,7 @@
 -- indexes on GUS tables
 
-create index dots.AaSeq_source_ix on dots.AaSequenceImp (lower(source_id));
+create index dots.AaSeq_source_ix on dots.AaSequenceImp (lower(source_id)) tablespace INDX;
+create index dots.AaSeq_2ary_ix on dots.AaSequenceImp (string1, aa_sequence_id) tablespace INDX;
 
 -- GUS table shortcomings
 
