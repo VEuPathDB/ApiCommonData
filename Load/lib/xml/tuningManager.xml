@@ -3976,16 +3976,19 @@ SQL
   </tuningTable>
 -->
 
-  <tuningTable name="apidb.GeneContextSyntenicGenes">
+  <tuningTable name="apidb.SyntenicExonCache">
     <internalDependency name="apidb.GeneAttributes"/>
     <internalDependency name="apidb.FeatureLocation"/>
     <!-- externalDependency name="apidb.Synteny"/ -->
     <!-- externalDependency name="apidb.SyntenyAnchor"/ -->
     <sql>
       <![CDATA[
-create table apidb.GeneContextSyntenicGenes&1
-      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
-      )
+create table SyntenicExonCache&1
+            (organism, na_sequence_id, feature_id, context_start, context_end,
+             context_source_id, project_id, syntenic_na_feature_id,
+             syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
+             strand, atts
+            )
 partition by list (organism)
   (
    partition Chominis values ('Cryptosporidium hominis'),
@@ -4016,66 +4019,31 @@ partition by list (organism)
   )
 nologging
 as
-select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
+SELECT
+       syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
+       exfloc.na_feature_id feature_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
        substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
        substr(context_gene_attrs.project_id, 1, 10) project_id,
        syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
-       substr(syntenic_gene_attrs.source_id, 1, 25) as syntenic_source_id,
-       anch_left.synteny_id synteny_id,
+       exfloc.na_feature_id as syntenic_exon_feature_id,
+       exfloc.parent_id as syntenic_gene_feature_id,
        CASE WHEN (syn.is_reversed = 1) 
-            THEN anch_left.ref_loc - ((anch_left.syntenic_loc
-                                       - (CASE WHEN syn_fl.end_max > syn.b_end
-                                               THEN syn.b_end ELSE syn_fl.end_max
-                                          END))
-                                      * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                                      / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-            ELSE anch_left.ref_loc
-                 + (((CASE WHEN syn_fl.start_min < syn.b_start
-                           THEN syn.b_start
-                           ELSE syn_fl.start_min
-                      END) - anch_left.syntenic_loc)
-                    * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
-            END startm,
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END) - anch_left.syntenic_loc)  * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+       END startm,
        CASE WHEN (syn.is_reversed = 1) 
-            THEN anch_left.ref_loc
-                 - ((anch_left.syntenic_loc
-                     - (CASE WHEN syn_fl.start_min < syn.b_start
-                             THEN syn.b_start
-                             ELSE syn_fl.start_min
-                        END)) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                              / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-            ELSE anch_left.ref_loc + (((CASE WHEN syn_fl.end_max > syn.b_end
-                                             THEN syn.b_end
-                                             ELSE syn_fl.end_max
-                                             END) - anch_left.syntenic_loc)
-                                                  * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                                                  / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
-            END end,
-       CASE WHEN (syn_fl.is_reversed = syn.is_reversed)
-            THEN 1
-            ELSE -1
-            END strand,
-       substr('Note=' || syntenic_gene_attrs.product ||
-              decode(syntenic_gene_attrs.is_deprecated,1,' (deprecated)') || ',' ||
-              'SOTerm=' || syntenic_gene_attrs.so_term_name || ',' ||
-              'SyntenyID=' || syn.synteny_id || ',' ||
-              'Contig=' || syntenic_gene_attrs.sequence_id || ',' ||
-              'IsPseudo=' || syntenic_gene_attrs.is_pseudo || ',' ||
-              'isDeprecated=' || syntenic_gene_attrs.is_deprecated || ',' ||
-              'Start=' || syntenic_gene_attrs.start_min || ',' ||
-              'End=' || syntenic_gene_attrs.end_max || ',' ||
-              'isReversed=' || syntenic_gene_attrs.is_reversed || ',' ||
-              'Truncated=' || CASE WHEN syn_fl.end_max > syn.b_end THEN syn.b_end 
-                                  WHEN syn_fl.start_min < syn.b_start THEN syn.b_start 
-                                  END || ',' ||
-              'Taxon=' || syntenic_gene_attrs.organism, 1, 400) atts
-FROM apidb.GeneAttributes context_gene_attrs,
-     apidb.Synteny syn, apidb.SyntenyAnchor anch_left, apidb.SyntenyAnchor anch_right,
-     apidb.GeneAttributes syntenic_gene_attrs, apidb.FeatureLocation syn_fl
-WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
-  AND syn.a_start <= context_gene_attrs.context_end
+         THEN anch_left.ref_loc - ((anch_left.syntenic_loc - (CASE WHEN exfloc.start_min < syn.b_start THEN syn.b_start ELSE exfloc.start_min END)) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+         ELSE anch_left.ref_loc + (((CASE WHEN exfloc.end_max > syn.b_end THEN syn.b_end ELSE exfloc.end_max END) - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+       END end,
+       CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
+       'isDeprecated=' ||  syntenic_gene_attrs.is_deprecated atts 
+FROM apidb.synteny syn, apidb.syntenyAnchor anch_left, apidb.syntenyAnchor anch_right,
+     apidb.featurelocation exfloc, apidb.geneattributes syntenic_gene_attrs,
+     apidb.geneattributes context_gene_attrs
+WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
+  AND syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
+  AND syn.a_start <= context_gene_attrs.context_end 
   AND syn.a_end >= context_gene_attrs.context_start 
   AND anch_left.synteny_id = syn.synteny_id 
   AND anch_left.prev_ref_loc < context_gene_attrs.context_start 
@@ -4083,39 +4051,29 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
   AND anch_right.synteny_id = syn.synteny_id
   AND anch_right.ref_loc < context_gene_attrs.context_end
   AND anch_right.next_ref_loc >= context_gene_attrs.context_end
-  AND syn_fl.na_sequence_id = syn.b_na_sequence_id 
-  AND syn_fl.feature_type = 'GeneFeature'
-  AND syntenic_gene_attrs.na_feature_id = syn_fl.na_feature_id
+  AND exfloc.feature_type = 'ExonFeature'
+  AND exfloc.na_sequence_id = syn.b_na_sequence_id 
   AND (
        (syn.is_reversed = 0
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
-        AND anch_left.ref_loc
-            + ((syn_fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-            <= context_gene_attrs.context_end 
-        AND anch_left.ref_loc
-            + ((syn_fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
-            >= context_gene_attrs.context_start) 
-      OR
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= context_gene_attrs.context_start
+       ) 
+       OR
        (syn.is_reversed = 1 
-        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1) > 0
-        AND anch_left.ref_loc
-            + ((anch_left.syntenic_loc - syn_fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
-            <= context_gene_attrs.context_end 
-        AND anch_left.ref_loc
-            + ((anch_left.syntenic_loc - syn_fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
-            >= context_gene_attrs.context_start) )
-  AND syn_fl.start_min <= syn.b_end
-  AND syn_fl.end_max >= syn.b_start
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= context_gene_attrs.context_start
+        )
+  )
+  AND exfloc.start_min <= syn.b_end
+  AND exfloc.end_max >= syn.b_start
       ]]> 
     </sql>
     <sql>
       <![CDATA[
-create index apidb.gcsg_ix&1
-        on apidb.GeneContextSyntenicGenes&1 (organism, na_sequence_id, context_start, context_end)
+create index apidb.sec_ix&1
+        on apidb.SyntenicExonCache&1 (na_sequence_id, context_start, context_end, organism);
       ]]> 
     </sql>
   </tuningTable>
