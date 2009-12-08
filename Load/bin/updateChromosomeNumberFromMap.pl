@@ -44,13 +44,13 @@ my $error;
 
 while(<FILE>) {
   chomp;
-  my ($sourceId, $chr) = split(/\t/, $_);
+  my ($sourceId, $chr_order_num, $chrom) = split(/\t/, $_);
 
-  next unless($chr);
+  next unless($chr_order_num);
 
-  my $chrom = "chromosome $chr";
+  $chrom = "chromosome $chr_order_num" unless $chrom;
 
-  $sh->execute($chrom, $chr, $sourceId);
+  $sh->execute($chrom, $chrom, $sourceId);
   my $rowCount = $sh->rows;
   unless($rowCount == 1) {
     print STDERR "ERROR:  Chrom $sourceId updated $rowCount rows !!!\n";
