@@ -229,6 +229,9 @@ sub processProteinResults {
 	return;
   }
   my $aaId = $self->sourceId2aaSeqId($protein->att('id'));
+
+  return unless $aaId; #remove this - DP
+
   my @interproKids = $protein->children('interpro');
 
   my $gusAASeq = $queryTable->new({ 'aa_sequence_id' => $aaId });
@@ -460,14 +463,16 @@ sub sourceId2aaSeqId {
 SELECT $srcIdColumn, aa_sequence_id
 FROM Dots.$aaSeqTable
 ";
+
+    $self->{sourceId2aaSeqId}->{$sourceId} = 0;    #remove this - DP
     my $stmt = $self->prepareAndExecute($sql);
     while ( my($sourceId, $aa_sequence_id) = $stmt->fetchrow_array()) {
       $self->{sourceId2aaSeqId}->{$sourceId} = $aa_sequence_id;
     }
   }
 
-  $self->error("Can't find AA seq w/ source_id '$sourceId' in $aaSeqTable") 
-    unless $self->{sourceId2aaSeqId}->{$sourceId};
+  #$self->error("Can't find AA seq w/ source_id '$sourceId' in $aaSeqTable")  #restore this - DP
+    $self->log ("Can't find AA seq w/ source_id '$sourceId' in $aaSeqTable") unless $self->{sourceId2aaSeqId}->{$sourceId}; 
 
   return $self->{sourceId2aaSeqId}->{$sourceId};
 }
