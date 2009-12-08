@@ -2677,6 +2677,32 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
           ]]>
         </description>
     </resource>
+
+
+ <resource resource="updateChromosomeNumberFromMap" version="2009-11-23" 
+        displayName="update Chromosome and Chromosome order Number From Mapping file" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        extDbName="updateChromosomeNumberFromMap"
+        extDbRlsVer="2009-11-23"
+        extDbRlsDescrip="update Chromosome Number From Mapping file"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/chromosomeNumberMap/neospChrs.txt" 
+            contact = "" 
+            email = "" 
+            institution = "" />
+
+<unpack>updateChromosomeNumberFromMap.pl --map_file @downloadDir@/updateChromosomeNumberFromMap/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
+
+<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource> 
+
+
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
