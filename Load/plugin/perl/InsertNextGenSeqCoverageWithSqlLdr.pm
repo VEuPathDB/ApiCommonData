@@ -59,7 +59,10 @@ sub getDocumentation {
 #--------------------------------------------------------------------------------
 
 sub new {
-  my ($self) = @_;
+  my ($class) = @_;
+  my $self = {};
+  bless($self,$class);
+
   my $documentation = &getDocumentation();
   my $argumentDeclaration = &getArgumentsDeclaration();
 
@@ -84,7 +87,17 @@ sub run {
  
   my $logFile = "$dataFile" . ".log";
 
-  $self->writeConfigFile($configFile);
+  $self->writeConfigFile($configFile,$dataFile);
+
+  my $login       = $self->getConfig->getDatabaseLogin();
+
+  my $password    = $self->getConfig->getDatabasePassword();
+
+  my $dbiDsn      = $self->getConfig->getDbiDsn();
+
+  my ($dbi, $type, $db) = split(':', $dbiDsn);
+
+  system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
   
 }
 
@@ -96,7 +109,6 @@ sub writeConfigFile {
   my $algInvocationId = $database->getDefaultAlgoInvoId();
 
   open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
-
 
   print CONFIG "LOAD DATA
 INFILE '$dataFile'
@@ -113,6 +125,17 @@ multiple,
 row_alg_invocation_id constant '$algInvocationId',
 )\n";
   close CONFIG;
+}
+
+sub getConfig {
+  my ($self) = @_;
+
+  if (!$self->{config}) {
+    my $gusConfigFile = $self->getArg('gusconfigfile');
+     $self->{config} = GUS::Supported::GusConfig->new($gusConfigFile);
+   }
+
+  $self->{config};
 }
 
 sub undoTables {
