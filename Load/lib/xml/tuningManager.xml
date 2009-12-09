@@ -3976,6 +3976,150 @@ SQL
   </tuningTable>
 -->
 
+  <tuningTable name="apidb.GeneContextSyntenicGenes">
+    <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.FeatureLocation"/>
+    <!-- externalDependency name="apidb.Synteny"/ -->
+    <!-- externalDependency name="apidb.SyntenyAnchor"/ -->
+    <sql>
+      <![CDATA[
+create table apidb.GeneContextSyntenicGenes&1
+      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
+      )
+partition by list (organism)
+  (
+   partition Chominis values ('Cryptosporidium hominis'),
+   partition Cmuris values ('Cryptosporidium muris'),
+   partition Cparvum values ('Cryptosporidium parvum'),
+   partition Cparvum_Iowa values ('Cryptosporidium parvum Iowa II'),
+   partition Gintestinalis values ('Giardia intestinalis ATCC 50581'),
+   partition Glamblia values ('Giardia lamblia ATCC 50803'),
+   partition GlambliaP15 values ('Giardia lamblia P15'),
+   partition Lbraziliensis values ('Leishmania braziliensis'),
+   partition Linfantum values ('Leishmania infantum'),
+   partition Lmajor values ('Leishmania major'),
+   partition Ncaninum values ('Neospora caninum'),
+   partition Pberghei values ('Plasmodium berghei str. ANKA'),
+   partition Pchabaudi values ('Plasmodium chabaudi chabaudi'),
+   partition Pfalciparum values ('Plasmodium falciparum 3D7'),
+   partition Pknowlesi values ('Plasmodium knowlesi strain H'),
+   partition Pvivax values ('Plasmodium vivax SaI-1'),
+   partition Pyoelii values ('Plasmodium yoelii yoelii str. 17XNL'),
+   partition TgondiiGT1 values ('Toxoplasma gondii GT1'),
+   partition TgondiiME49 values ('Toxoplasma gondii ME49'),
+   partition TgondiiRH values ('Toxoplasma gondii RH'),
+   partition TgondiiVEG values ('Toxoplasma gondii VEG'),
+   partition Tvaginalis values ('Trichomonas vaginalis G3'),
+   partition Tbrucei values ('Trypanosoma brucei TREU927'),
+   partition Tcruzi values ('Trypanosoma cruzi strain CL Brener'),
+   partition others values (default)
+  )
+nologging
+as
+select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
+       context_gene_attrs.context_start, context_gene_attrs.context_end,
+       substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
+       substr(context_gene_attrs.project_id, 1, 10) project_id,
+       syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
+       substr(syntenic_gene_attrs.source_id, 1, 25) as syntenic_source_id,
+       anch_left.synteny_id synteny_id,
+       CASE WHEN (syn.is_reversed = 1) 
+            THEN anch_left.ref_loc - ((anch_left.syntenic_loc
+                                       - (CASE WHEN syn_fl.end_max > syn.b_end
+                                               THEN syn.b_end ELSE syn_fl.end_max
+                                          END))
+                                      * (anch_right.ref_loc - anch_left.ref_loc + 1)
+                                      / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            ELSE anch_left.ref_loc
+                 + (((CASE WHEN syn_fl.start_min < syn.b_start
+                           THEN syn.b_start
+                           ELSE syn_fl.start_min
+                      END) - anch_left.syntenic_loc)
+                    * (anch_right.ref_loc - anch_left.ref_loc + 1)
+                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+            END startm,
+       CASE WHEN (syn.is_reversed = 1) 
+            THEN anch_left.ref_loc
+                 - ((anch_left.syntenic_loc
+                     - (CASE WHEN syn_fl.start_min < syn.b_start
+                             THEN syn.b_start
+                             ELSE syn_fl.start_min
+                        END)) * (anch_right.ref_loc - anch_left.ref_loc + 1)
+                              / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            ELSE anch_left.ref_loc + (((CASE WHEN syn_fl.end_max > syn.b_end
+                                             THEN syn.b_end
+                                             ELSE syn_fl.end_max
+                                             END) - anch_left.syntenic_loc)
+                                                  * (anch_right.ref_loc - anch_left.ref_loc + 1)
+                                                  / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+            END end,
+       CASE WHEN (syn_fl.is_reversed = syn.is_reversed)
+            THEN 1
+            ELSE -1
+            END strand,
+       substr('Note=' || syntenic_gene_attrs.product ||
+              decode(syntenic_gene_attrs.is_deprecated,1,' (deprecated)') || ',' ||
+              'SOTerm=' || syntenic_gene_attrs.so_term_name || ',' ||
+              'SyntenyID=' || syn.synteny_id || ',' ||
+              'Contig=' || syntenic_gene_attrs.sequence_id || ',' ||
+              'IsPseudo=' || syntenic_gene_attrs.is_pseudo || ',' ||
+              'isDeprecated=' || syntenic_gene_attrs.is_deprecated || ',' ||
+              'Start=' || syntenic_gene_attrs.start_min || ',' ||
+              'End=' || syntenic_gene_attrs.end_max || ',' ||
+              'isReversed=' || syntenic_gene_attrs.is_reversed || ',' ||
+              'Truncated=' || CASE WHEN syn_fl.end_max > syn.b_end THEN syn.b_end 
+                                  WHEN syn_fl.start_min < syn.b_start THEN syn.b_start 
+                                  END || ',' ||
+              'Taxon=' || syntenic_gene_attrs.organism, 1, 400) atts
+FROM apidb.GeneAttributes context_gene_attrs,
+     apidb.Synteny syn, apidb.SyntenyAnchor anch_left, apidb.SyntenyAnchor anch_right,
+     apidb.GeneAttributes syntenic_gene_attrs, apidb.FeatureLocation syn_fl
+WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
+  AND syn.a_start <= context_gene_attrs.context_end
+  AND syn.a_end >= context_gene_attrs.context_start 
+  AND anch_left.synteny_id = syn.synteny_id 
+  AND anch_left.prev_ref_loc < context_gene_attrs.context_start 
+  AND anch_left.ref_loc >= context_gene_attrs.context_start
+  AND anch_right.synteny_id = syn.synteny_id
+  AND anch_right.ref_loc < context_gene_attrs.context_end
+  AND anch_right.next_ref_loc >= context_gene_attrs.context_end
+  AND syn_fl.na_sequence_id = syn.b_na_sequence_id 
+  AND syn_fl.feature_type = 'GeneFeature'
+  AND syntenic_gene_attrs.na_feature_id = syn_fl.na_feature_id
+  AND (
+       (syn.is_reversed = 0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
+        AND anch_left.ref_loc
+            + ((syn_fl.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc
+            + ((syn_fl.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            >= context_gene_attrs.context_start) 
+      OR
+       (syn.is_reversed = 1 
+        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1) > 0
+        AND anch_left.ref_loc
+            + ((anch_left.syntenic_loc - syn_fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
+            <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc
+            + ((anch_left.syntenic_loc - syn_fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
+            >= context_gene_attrs.context_start) )
+  AND syn_fl.start_min <= syn.b_end
+  AND syn_fl.end_max >= syn.b_start
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.gcsg_ix&1
+        on apidb.GeneContextSyntenicGenes&1 (organism, na_sequence_id, context_start, context_end)
+      ]]> 
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.SyntenicExonCache">
     <internalDependency name="apidb.GeneAttributes"/>
     <internalDependency name="apidb.FeatureLocation"/>
