@@ -259,4 +259,13 @@ sub deleteNAGene {
     }
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.NAFeatureNAGene',
+	  'DoTS::NAGene',
+	 );
+}
+
+
 1;

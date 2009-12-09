@@ -287,4 +287,16 @@ sub getAASeqId {
 
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.DbRefNAFeature',
+	  'DoTS.DbRefAAFeature',
+	  'DoTS.DbRefNASequence',
+	  'DoTS.AASequenceDbRef',
+          'SRes.DbRef',
+	 );
+}
+
+
 1;

@@ -143,6 +143,12 @@ sub run {
   return("Inserted $line rows into ApiDB::RelatedNaFeature");
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB::RelatedNaFeature');
+}
+
 
 1;
 
