@@ -180,5 +180,10 @@ sub _parseBlock {
   return ($name, $def);
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('SRes.GOEvidenceCode');
+}
 
 1;
