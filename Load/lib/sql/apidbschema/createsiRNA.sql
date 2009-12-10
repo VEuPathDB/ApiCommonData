@@ -11,7 +11,8 @@ CREATE TABLE apidb.siRNA (
  evid_desc                    VARCHAR2(200),
  species                      VARCHAR2(200),
  db_xref                      VARCHAR2(100),
- annotator                    VARCHAR2(200)
+ annotator                    VARCHAR2(200),
+ ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL
 );
 GRANT SELECT ON apidb.siRNA TO gus_r;
 GRANT SELECT ON apidb.siRNA TO gus_w;
