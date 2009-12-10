@@ -389,6 +389,14 @@ create index apidb.featloc4_ix&1 on apidb.FeatureLocation&1
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc5_ix&1
+on apidb.FeatureLocation&1 
+(na_sequence_id, feature_type, start_min, end_max, parent_id, na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.GeneId">
@@ -3984,7 +3992,7 @@ SQL
     <sql>
       <![CDATA[
 create table apidb.GeneContextSyntenicGenes&1
-      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, atts
+      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, is_truncated, atts
       )
 partition by list (organism)
   (
@@ -4057,6 +4065,9 @@ select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
             THEN 1
             ELSE -1
             END strand,
+       CASE WHEN syn_fl.end_max > syn.b_end THEN syn.b_end 
+            WHEN syn_fl.start_min < syn.b_start THEN syn.b_start 
+       END is_truncated,
        substr('Note=' || syntenic_gene_attrs.product ||
               decode(syntenic_gene_attrs.is_deprecated,1,' (deprecated)') || ';;' ||
               'SOTerm=' || syntenic_gene_attrs.so_term_name || ';;' ||
