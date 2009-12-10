@@ -7,8 +7,6 @@ use strict;
 use GUS::Supported::GusConfig;
 use GUS::PluginMgr::Plugin;
 
-use GUS::Model::Study::OntologyEntry;
-
 $| = 1;
 
 # ---------------------------------------------------------------------------
@@ -38,18 +36,17 @@ sub getArgumentsDeclaration{
 sub getDocumentation {
   my $purpose = "Inserts apidb.nextgenseq_coverage.";
 
-  my $purposeBrief = "Inserts Rad.Analysis and Rad.AnalysisResultImp View.  Creates the associated Rad.Protocol if it doesn't exist";
+  my $purposeBrief = "";
 
   my $tablesAffected = [['apidb.nextgenseq_coverage', 'One Row to Identify sequence coverage']];
 
-  my $tablesDependedOn = [['Study::OntologyEntry',  'new protocols will be assigned unknown_protocol_type'],
-                          ['DoTS::GeneFeature', 'The id in the data file must ge an existing Gene Feature']];
+  my $tablesDependedOn = [];
 
   my $howToRestart = "No restart";
 
   my $failureCases = "";
 
-  my $notes = "The first column in the data file specifies the Dots.GeneFeature SourceId.  Subsequent columns are view specific. (ex:  fold_change for DifferentialExpression OR float_value for DataTransformationResult).  The Config file has the following columns (no header):file analysis_name protocol_name protocol_type(OPTOINAL)";
+  my $notes = "";
 
   my $documentation = {purpose=>$purpose, purposeBrief=>$purposeBrief, tablesAffected=>$tablesAffected, tablesDependedOn=>$tablesDependedOn, howToRestart=>$howToRestart, failureCases=>$failureCases,notes=>$notes};
 
