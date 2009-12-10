@@ -98,7 +98,8 @@ sub run {
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
   system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
-  
+    
+  return "Processed lines from data files";
 }
 
 #--------------------------------------------------------------------------------
