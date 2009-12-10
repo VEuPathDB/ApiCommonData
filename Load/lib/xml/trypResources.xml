@@ -1949,7 +1949,7 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
  <resource resource="RNASeqCoveragePlot_George_Cross" version="2009-07-29" 
         displayName="RNA-Seqs from George Cross" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
         extDbName="RNA-Seqs from George Cross"
         extDbRlsVer="2009-07-29"
         extDbRlsDescrip="load RNA-Seqs coverage plot from George Cross by sqlldr"
@@ -1963,8 +1963,9 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
 
 <unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2705147 --nm 47408485 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/s_5_sequence_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_cDNA_December_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_2nd_hexamer_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_2_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_1_score.raw.bt>  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov </unpack>
 
-<unpack>loadCoverage.pl @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov</unpack>
-<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+<unpack>cat @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov > @downloadDir@/RNASeqCoveragePlot_George_Cross/RNASeqCoveragePlot_George_Cross.cov</unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_George_Cross/RNASeqCoveragePlot_George_Cross.cov</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -1989,8 +1990,8 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
 <unpack>generateCoveragePlot.pl --m 14 --sample H2AZ --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 3022853  --nm 6796518 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/6_26_2008.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov </unpack>
 <unpack>generateCoveragePlot.pl --m 14 --sample BDF3 --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 417231  --nm 1086605 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/7_18_8.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov </unpack>
 
-<unpack>loadCoverage.pl @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/4_18_2008_Cross_Chua_7_1.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov</unpack>
-<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+<unpack>cat @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/4_18_2008_Cross_Chua_7_1.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov > @downloadDir@/ChIPSeqCoveragePlot_George_Cross/ChIPSeqCoveragePlot_George_Cross.cov</unpack>
+<pluginArgs>--dataFile @downloadDir@/ChIPSeqCoveragePlot_George_Cross/ChIPSeqCoveragePlot_George_Cross.cov</pluginArgs>
         <description>
             <![CDATA[
           ]]>
