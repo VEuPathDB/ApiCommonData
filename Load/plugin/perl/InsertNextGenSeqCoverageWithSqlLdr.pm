@@ -123,7 +123,7 @@ na_sequence_id,
 location,
 coverage,
 multiple,
-row_alg_invocation_id constant '$algInvocationId',
+row_alg_invocation_id constant $algInvocationId
 )\n";
   close CONFIG;
 }
