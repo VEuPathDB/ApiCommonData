@@ -2,7 +2,8 @@ CREATE TABLE ApiDB.PlasmoMapp (
  na_sequence_id  NUMBER(10) NOT NULL,
  strand          NUMBER(3)  NOT NULL,
  location        NUMBER(10) NOT NULL,
- value	         FLOAT(10) NOT NULL
+ value	         FLOAT(10) NOT NULL,
+ ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL
 );
 
 GRANT insert, select, update, delete ON ApiDB.PlasmoMapp TO gus_w;
