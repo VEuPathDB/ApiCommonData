@@ -4058,18 +4058,18 @@ select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
             ELSE -1
             END strand,
        substr('Note=' || syntenic_gene_attrs.product ||
-              decode(syntenic_gene_attrs.is_deprecated,1,' (deprecated)') || ',' ||
-              'SOTerm=' || syntenic_gene_attrs.so_term_name || ',' ||
-              'SyntenyID=' || syn.synteny_id || ',' ||
-              'Contig=' || syntenic_gene_attrs.sequence_id || ',' ||
-              'IsPseudo=' || syntenic_gene_attrs.is_pseudo || ',' ||
-              'isDeprecated=' || syntenic_gene_attrs.is_deprecated || ',' ||
-              'Start=' || syntenic_gene_attrs.start_min || ',' ||
-              'End=' || syntenic_gene_attrs.end_max || ',' ||
-              'isReversed=' || syntenic_gene_attrs.is_reversed || ',' ||
+              decode(syntenic_gene_attrs.is_deprecated,1,' (deprecated)') || ';;' ||
+              'SOTerm=' || syntenic_gene_attrs.so_term_name || ';;' ||
+              'SyntenyID=' || syn.synteny_id || ';;' ||
+              'Contig=' || syntenic_gene_attrs.sequence_id || ';;' ||
+              'IsPseudo=' || syntenic_gene_attrs.is_pseudo || ';;' ||
+              'isDeprecated=' || syntenic_gene_attrs.is_deprecated || ';;' ||
+              'Start=' || syntenic_gene_attrs.start_min || ';;' ||
+              'End=' || syntenic_gene_attrs.end_max || ';;' ||
+              'isReversed=' || syntenic_gene_attrs.is_reversed || ';;' ||
               'Truncated=' || CASE WHEN syn_fl.end_max > syn.b_end THEN syn.b_end 
                                   WHEN syn_fl.start_min < syn.b_start THEN syn.b_start 
-                                  END || ',' ||
+                                  END || ';;' ||
               'Taxon=' || syntenic_gene_attrs.organism, 1, 400) atts
 FROM apidb.GeneAttributes context_gene_attrs,
      apidb.Synteny syn, apidb.SyntenyAnchor anch_left, apidb.SyntenyAnchor anch_right,
