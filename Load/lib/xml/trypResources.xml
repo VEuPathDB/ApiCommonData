@@ -1999,7 +1999,7 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
     </resource> 
 
 <resource resource="Sanger_siRNA" version="2008-12-15"
-            plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr"
             displayName="siRNA - phenotype data"
             category="Phenotype"
             dbCommit="@dbcommit@">
@@ -2008,8 +2008,8 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
             email="chf@sanger.ac.uk"
             institution="Sanger Institute"
         />
-      <unpack>parseSangerSiRNA --inFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
-      <unpack>nohup sqlldr @oracleUserPswd@ control=@downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt</unpack>
+      <unpack>parseSangerSiRNA --inFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
+      <pluginArgs>--dataFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt</pluginArgs>
       <description>
          <![CDATA[
 Phenotype data generated from siRNA experiments

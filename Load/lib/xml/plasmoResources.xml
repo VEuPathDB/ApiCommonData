@@ -1093,14 +1093,13 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
  <resource resource="loadPfLocationMapWithSqlldr" version="2009-05-14" 
         displayName="load Pf location map With Sqlldr" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        plugin="ApiCommonData::Load::Plugin::InsertPlasmoPfalLocationsWithSqlLdr" 
         dbCommit="@dbcommit@"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/combined_Su_Broad_Sanger_SNPs/2007-08/map_v6.0.sql" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
-        <unpack>sqlLoader.pl --file @downloadDir@/loadPfLocationMapWithSqlldr/map_v6.0.sql</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dataFile @downloadDir@/loadPfLocationMapWithSqlldr/map_v6.0.sql</pluginArgs>
     </resource> 
 
     <resource resource="WinzelerGeneticVariationArray" 
@@ -2311,14 +2310,13 @@ IsolatesByCountry
  <resource resource="loadMAPPWithSqlldr" version="2009-05-01" 
         displayName="load MAPP With Sqlldr" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        plugin="ApiCommonData::Load::Plugin::InsertPlasmoMappWithSqlLdr" 
         dbCommit="@dbcommit@"> 
         <manualGet fileOrDir = "@downloadDir@/MAPPpromoters/Pfal_MAPP-version3.sql" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
-        <unpack>sqlLoader.pl --file @downloadDir@/loadMAPPWithSqlldr/Pfal_MAPP-version3.sql </unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dataFile @downloadDir@/loadMAPPWithSqlldr/Pfal_MAPP-version3.sql</pluginArgs>
         <description> 
             <![CDATA[ MAPP (Malaria Promoter Predictor) recognises transcription start sites using 21 physicochemical properties of DNA. The predictor is comprised of a series of support vector machines which were trained on the 5' ends of full-length cDNAs from the FULL-Malaria database. Optimal prediction performance is achieved using only predictions with a MAPP score > 0.90.  Predictions are strand specific. (Brick K, Watanabe J, Pizzi E).
           ]]> 
