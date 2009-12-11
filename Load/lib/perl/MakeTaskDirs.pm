@@ -59,10 +59,10 @@ sub makeMsaDir {
   my ($localDataDir, $clusterDataDir, $taskSize, $musclePath, $nodeClass,$nodePath );
   my $inputDir = "$localDataDir/msa/input";
   my $serverBase = "$clusterDataDir/msa";
-  my $numNodes ||= 10;
+  my $slotsPerNode = 1;
   &_createDir("$localDataDir/msa");
 
-  &makeControllerPropFile($inputDir, $serverBase, $numNodes, $taskSize,
+  &makeControllerPropFile($inputDir, $serverBase, $slotsPerNode, $taskSize,
 			    $nodePath,
 			    "DJob::DistribJobTasks::MsaTask",
 			    $nodeClass);
