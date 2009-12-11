@@ -6820,34 +6820,22 @@ sub extractFilesForMsa {
 
 
 
-sub runMuscleForMSAFile {
-  my ($mgr) = @_;
-
-  #step to run muscle locally, not practical for large numbers of groups
+sub startMuscleOnCluster {
+  my ($mgr, $queue) = @_;
 
   my $propertySet = $mgr->{propertySet};
 
-  my $muscle = $propertySet->getProp('musclePath');
+  my $signal = "startMuscleOnCluster";
 
-  my $signal = "runMuscle";
-
-  my $fileDir = "$mgr->{dataDir}/seqfiles/groups";
-
-  $mgr->runCmd("mkdir -p $mgr->{dataDir}/msa");
-
-  return if $mgr->startStep("Run muscle program to generate a clustalw formatted file", $signal);
-
-  opendir(DIR, $fileDir) || die "Can't open directory '$fileDir'";
-
-  while (defined (my $file = readdir (DIR))) {
-    next if ($file eq "." || $file eq "..");
-
-    $mgr->runCmd("$muscle/muscle -in $fileDir/$file -out $mgr->{dataDir}/msa/${file}.msa -clw -log $mgr->{myPipelineDir}/logs/${signal}.log");
-  }
-
-  closedir(DIR);
+  return if $mgr->startStep("Starting iprscan of $dir on cluster", $signal);
 
   $mgr->endStep($signal);
+
+  my $clusterCmdMsg = "runMsa --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --queue $queue";
+  my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/msa.log";
+
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, $returnImmediately);
+
 }
 
 sub loadMsaResultFiles {
