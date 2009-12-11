@@ -513,6 +513,32 @@ sub createTRNAscanDir {
   $mgr->endStep($signal);
 }
 
+sub createMuscleDir {
+  my ($mgr) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "makeMuscleDir";
+
+  return if $mgr->startStep("Creating muscle input dir", $signal);
+
+  my $dataDir = $mgr->{'dataDir'};
+  my $clusterDataDir = $mgr->{'clusterDataDir'};
+  my $nodePath = $propertySet->getProp('nodePath');
+  my $nodeClass = $propertySet->getProp('nodeClass');
+  my $muscleTaskSize = $propertySet->getProp('muscle.taskSize');
+  my $muscleBinDir = $propertySet->getProp('muscleBinDir');
+
+  $mgr->runCmd("mkdir -p $dataDir/msa");
+
+  &makeMsaDir($dataDir, $clusterDataDir,
+		   $muscleTaskSize,$muscleBinDir
+		   $nodeClass,$nodePath,
+		   );
+
+  $mgr->endStep($signal);
+}
+
 sub rnaScanToGff2 {
   my ($mgr,$dir) = @_;
 
@@ -3608,7 +3634,7 @@ sub runMcl{
 }
 
 sub mclOutToGroupsFile {
-  my ($mgr) = @_;
+  my ($mgr, $prefix) = @_;
 
   my $signal = 'mclOutToGroupsFile';
 
@@ -3616,35 +3642,11 @@ sub mclOutToGroupsFile {
 
   my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
 
-  my $propertySet = $mgr->{propertySet};
-
-  my $gus_config_file = $propertySet->getProp('gusConfigFile');
-
-  my @properties = ();
-  my $gusconfig = CBIL::Util::PropertySet->new($gus_config_file, \@properties, 1);
-  my $login = $gusconfig->{props}->{databaseLogin};
-  my $password = $gusconfig->{props}->{databasePassword};
-  my $dsn = $gusconfig->{props}->{dbiDsn};
-
-my $configString =
-"dbConnectString=$dsn
-dbLogin=$login
-dbPassword=$password
-";
-
-  my $configFile = "or-thomclEdges.config";
-  open(CONFIG, ">$configFile") || die "Can't open '$configFile' for writing";
-  print CONFIG $configString;
-  close(CONFIG);
-
   my $mclFile = "$mgr->{dataDir}/mcl/mcl.out";
-  my $tmpFile = "$mgr->{dataDir}/mcl/tmp.out";
-  my $cmd = "internalIdsToExternalIds $configFile < $mclFile > $tmpFile 2>> $logfile";
-
-  $mgr->runCmd($cmd);
 
   my $outFile = "$mgr->{dataDir}/mcl/orthomclGroups.txt";
-  my $cmd = "mclOutput2groupsFile OG30_ 10000 < $tmpFile > $outFile 2>> $logfile";
+
+  my $cmd = "orthomclMclToGroups $prefix 10000 < $mclFile > $outFile 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
