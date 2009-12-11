@@ -170,13 +170,15 @@
       </fileset>
     </copy>
     <echo message="Running updateResourcesWithPubmed"/>
-    <apply executable="${targetDir}/bin/updateResourcesWithPubmed" verbose="true">
+    <apply executable="${targetDir}/bin/updateResourcesWithPubmed" 
+           dest="${cache}"
+           verbose="true">
         <srcfile/>
         <targetfile/>
         <fileset dir="${loadresources}">
           <include name="*Resources.xml"/>
         </fileset>
-        <mapper type="glob" from="*.xml" to="${cache}/*-pubmed.xml"/>
+        <mapper type="glob" from="*.xml" to="*-pubmed.xml"/>
     </apply>
     <copy todir="${datasources}">
       <fileset dir="${cache}">
