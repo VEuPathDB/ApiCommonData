@@ -4037,29 +4037,29 @@ select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
                                                THEN syn.b_end ELSE syn_fl.end_max
                                           END))
                                       * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                                      / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+                                      / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
             ELSE anch_left.ref_loc
                  + (((CASE WHEN syn_fl.start_min < syn.b_start
                            THEN syn.b_start
                            ELSE syn_fl.start_min
                       END) - anch_left.syntenic_loc)
                     * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
             END startm,
-       CASE WHEN (syn.is_reversed = 1) 
+       CASE WHEN (syn.is_reversed = 1)
             THEN anch_left.ref_loc
                  - ((anch_left.syntenic_loc
                      - (CASE WHEN syn_fl.start_min < syn.b_start
                              THEN syn.b_start
                              ELSE syn_fl.start_min
-                        END)) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                              / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+                        END)) * (anch_right.ref_loc - anch_left.ref_loc - 1)
+                              / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
             ELSE anch_left.ref_loc + (((CASE WHEN syn_fl.end_max > syn.b_end
                                              THEN syn.b_end
                                              ELSE syn_fl.end_max
                                              END) - anch_left.syntenic_loc)
                                                   * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                                                  / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))   
+                                                  / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
             END end,
        CASE WHEN (syn_fl.is_reversed = syn.is_reversed)
             THEN 1
@@ -4198,7 +4198,7 @@ SELECT
                            ELSE exfloc.start_min
                       END) - anch_left.syntenic_loc)
                     * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) 
+                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
             END startm,
        CASE WHEN (syn.is_reversed = 1) 
             THEN anch_left.ref_loc
@@ -4215,7 +4215,7 @@ SELECT
                            ELSE exfloc.end_max
                       END) - anch_left.syntenic_loc)
                     * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))  
+                    / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
             END end,
        CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
        'isDeprecated=' ||  syntenic_gene_attrs.is_deprecated atts 
@@ -4227,7 +4227,7 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   AND syn.a_start <= context_gene_attrs.context_end 
   AND syn.a_end >= context_gene_attrs.context_start 
   AND anch_left.synteny_id = syn.synteny_id 
-  AND anch_left.prev_ref_loc < context_gene_attrs.context_start 
+  AND anch_left.prev_ref_loc < context_gene_attrs.context_start
   AND anch_left.ref_loc >= context_gene_attrs.context_start
   AND anch_right.synteny_id = syn.synteny_id
   AND anch_right.ref_loc < context_gene_attrs.context_end
@@ -4236,15 +4236,31 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   AND exfloc.na_sequence_id = syn.b_na_sequence_id 
   AND (
        (syn.is_reversed = 0
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND anch_left.ref_loc + ((exfloc.start_min - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= context_gene_attrs.context_end 
-        AND anch_left.ref_loc + ((exfloc.end_max - anch_left.syntenic_loc) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= context_gene_attrs.context_start
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
+        AND anch_left.ref_loc
+            + ((exfloc.start_min - anch_left.syntenic_loc)
+               * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc
+            + ((exfloc.end_max - anch_left.syntenic_loc)
+               * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1))
+            >= context_gene_attrs.context_start
        ) 
        OR
        (syn.is_reversed = 1 
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1)>0
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) <= context_gene_attrs.context_end 
-        AND anch_left.ref_loc - ((anch_left.syntenic_loc - exfloc.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1) / (anch_right.syntenic_loc - anch_left.syntenic_loc + 1)) >= context_gene_attrs.context_start
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1) > 0
+        AND anch_left.ref_loc
+            - ((anch_left.syntenic_loc - exfloc.end_max)
+               * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+            <= context_gene_attrs.context_end 
+        AND anch_left.ref_loc
+            - ((anch_left.syntenic_loc - exfloc.start_min)
+               * (anch_right.ref_loc - anch_left.ref_loc + 1)
+               / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+            >= context_gene_attrs.context_start
         )
   )
   AND exfloc.start_min <= syn.b_end
