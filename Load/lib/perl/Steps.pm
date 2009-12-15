@@ -532,7 +532,7 @@ sub createMuscleDir {
   $mgr->runCmd("mkdir -p $dataDir/msa");
 
   &makeMsaDir($dataDir, $clusterDataDir,
-		   $muscleTaskSize,$muscleBinDir
+		   $muscleTaskSize,$muscleBinDir,
 		   $nodeClass,$nodePath,
 		   );
 
@@ -1079,7 +1079,7 @@ sub copy {
   return if $mgr->startStep("Copying $from to $to", $signal);
 
   $mgr->runCmd("mkdir -p $dir") if $dir;
-  unless (-e $from) { die "$from doesn't exist\n";};
+  unless ($from !~ m/\*/ && -e $from) { die "$from doesn't exist\n";};
 
   $mgr->runCmd("cp -ar  $from $to");
   $mgr->endStep();
@@ -1695,7 +1695,7 @@ EOF
 
    if ($projectDB =~ /ortho/i) {
 
-     $outFile = "$dlDir/iprscan_$projectDB-${release}.txt";xs
+     $outFile = "$dlDir/iprscan_$projectDB-${release}.txt";
 
      $sql = <<"EOF";
      SELECT xas.source_id
@@ -3659,7 +3659,7 @@ sub mapOldIdsToNewIds {
 
   my $signal = "mapVersion${dbVersion}IdsToNew";
 
-  my $args = " --oldIdsFastaFile $oldSeqFile --taxonMapFile $abbrevMap --dbVersion $dbVersion";
+  my $args = " --oldIdsFastaFile $oldSeqFile --taxonMapFile $abbrevMap --dbVersion $dbVersion ";
 
   $mgr->runPlugin($signal,
                   "OrthoMCLData::Load::Plugin::InsertOrthomclOldIdsMap", $args,
@@ -3671,7 +3671,7 @@ sub mapOldGroupsToNewIds {
 
   my $signal = "mapVersion${dbVersion}GroupsToNewIds";
 
-  my $args = " --oldGroupsFile $oldGroupsFile --taxonMapFile $abbrevMap --dbVersion $dbVersion";
+  my $args = " --oldGroupsFile $oldGroupsFile --taxonMapFile $abbrevMap --dbVersion $dbVersion ";
 
   $mgr->runPlugin($signal,
                   "OrthoMCLData::Load::Plugin::InsertOrthomclOldGroupsMap", $args,
@@ -4629,7 +4629,7 @@ sub formatBlastFileForOrtho {
 
   my $blastBinDir = $propertySet->getProp('ncbiBlastPath');
 
-  my $outputFile1  = "$$fileDir/$file";
+  my $outputFile1  = "$fileDir/$file";
 
   my $fastalink1 = "$mgr->{dataDir}/blastSite/$link";
 
@@ -6827,14 +6827,14 @@ sub startMuscleOnCluster {
 
   my $signal = "startMuscleOnCluster";
 
-  return if $mgr->startStep("Starting iprscan of $dir on cluster", $signal);
+  return if $mgr->startStep("Starting iprscan on cluster", $signal);
 
   $mgr->endStep($signal);
 
   my $clusterCmdMsg = "runMsa --buildDir $mgr->{clusterDataDir} --numnodes NUMBER_OF_NODES --queue $queue";
   my $clusterLogMsg = "monitor $mgr->{clusterDataDir}/logs/msa.log";
 
-  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg, $returnImmediately);
+  $mgr->exitToCluster($clusterCmdMsg, $clusterLogMsg);
 
 }
 
