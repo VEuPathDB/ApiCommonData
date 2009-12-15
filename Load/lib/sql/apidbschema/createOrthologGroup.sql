@@ -13,6 +13,8 @@ CREATE TABLE apidb.OrthologGroup (
  aa_seq_group_experiment_id   NUMBER(12),
  external_database_release_id NUMBER(10) NOT NULL,
  multiple_sequence_alignment  CLOB,
+ biolayout_image              BLOB,
+ svg_content                  CLOB,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
