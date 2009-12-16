@@ -13,6 +13,7 @@ use GUS::Model::SRes::SequenceOntology;
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
 
+
 my $argsDeclaration =[];
 my $purposeBrief = 'Insert EST sequences from a FASTA file.';
 
