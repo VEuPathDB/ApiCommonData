@@ -3784,7 +3784,6 @@ tablespace indx
     </sql>
   </tuningTable>
 
-<!--
   <tuningTable name="apidb.ChangedGene" alwaysUpdate="true">
     <perl>
       <![CDATA[ 
@@ -3902,10 +3901,20 @@ sub processChangedGenes {
   die "bad taxonomyId" if !defined($taxonomyId);
 
   my $ua = new LWP::UserAgent;
-  my $url = "http://www.genedb.org/service/genome/changes.xml?since=$sinceDate&taxonomyID=$taxonomyId";
+  my $url = "http://www.genedb.org/testservice/genes/annotation_changes?since=$sinceDate&taxonomyID=$taxonomyId";
   print "getting list of gene changes from = $url\n";
-  my $request = new HTTP::Request('GET', $url);
-  my $response = $ua->request($request);
+
+  my $request;
+  my $response;
+
+  my $attempts;
+  my $MAX_ATTEMPTS = 5;
+  do {
+    print "trying again (attempt $attempts) with \"$url\"\n" if $attempts;
+    $request = new HTTP::Request('GET', $url);
+    $response = $ua->request($request);
+  } until ($response->is_success or $response->content or ++$attempts > $MAX_ATTEMPTS);
+
   if (!$response->is_success) {
     die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
         . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)";
@@ -3915,11 +3924,13 @@ sub processChangedGenes {
   my $changeList = $simple->XMLin($response->content);
   my $results = $changeList->{results};
 
-  my $features = $results->{feature};
+  my $changes = $results->{gene};
+
   my %geneLastChange;
-  foreach my $featureId (keys(%$features)) {
-    my $gene = $features->{$featureId}->{rootUniquename};
-    my $lastMod = $features->{$featureId}->{timelastmodified};
+  foreach my $change (@$changes) {
+    my $gene = $change->{geneuniquename};
+    my $lastMod = $change->{date};
+
     $geneLastChange{$gene} = $lastMod
       if !defined $geneLastChange{$gene} || $lastMod gt $geneLastChange{$gene};
   }
@@ -3928,9 +3939,6 @@ sub processChangedGenes {
   foreach my $gene (keys(%geneLastChange)) {
     my $modDate = $geneLastChange{$gene};
 
-    # web service date format: 'yyyy-mm-dd hh24:mi:ss.fff'
-    # must truncate fractional seconds to fit into Oracle date
-    $modDate =~ s/\..*$//;
     $insertStatement->execute($gene, $modDate)
       or die "Can't insert ChangedGene record (gene $gene, lastModified $modDate)";
   }
@@ -3960,7 +3968,7 @@ sub getInsertStatement {
 
     $insertStatement = $dbh->prepare(<<SQL);
       insert into apidb.ChangedGene&1 (gene, last_modified)
-      values (?, to_date(?, 'yyyy-mm-dd hh24:mi:ss'))
+      values (?, to_date(?, 'yyyy-mm-dd'))
 SQL
   }
 
@@ -3982,7 +3990,6 @@ SQL
       ]]> 
     </perl>
   </tuningTable>
--->
 
   <tuningTable name="apidb.GeneContextSyntenicGenes">
     <internalDependency name="apidb.GeneAttributes"/>
