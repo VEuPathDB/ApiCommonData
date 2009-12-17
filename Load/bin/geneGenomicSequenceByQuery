@@ -32,14 +32,17 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
   
 $dbh->do("DROP apidb.GENEGENOMICSEQUENCE_SPLIT");
 $dbh->do(<<EOSQL);
-  CREATE TABLE apidb.GENEGENOMICSEQUENCE_SPLI(
-    source_id VARCHAR2(255) NOT NULL,   
-    gene_genomic_sequence CLOB, 
+  CREATE TABLE apidb.GENEGENOMICSEQUENCE_SPLIT(
+    source_id VARCHAR2(255) NOT NULL,
+    gene_genomic_sequence CLOB,
     start_min NUMBER(12) NOT NULL
   ) NOLOGGING
 EOSQL
 
   $dbh->do(<<EOSQL);
+create index ggss_source_ix
+on apidb.GeneGenomicSequence_split (source_id)
+tablespace indx
 EOSQL
 
 my $sql_statement1 = <<EOSQL;
