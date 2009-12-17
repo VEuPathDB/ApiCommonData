@@ -1839,7 +1839,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$soTermName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1892,10 +1892,28 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+  if ($soTermName){
+      my $naSequenceIdList = &getNaSequecneIdListFromSoTermName($mgr,$soTermName);
+      $sql.=" AND fl.na_sequence_id in ($naSequenceIdList)";
+  }
+
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
+
+sub getNaSequecneIdListFromSoTermName {
+  my ($mgr,$soTerm) = @_;
+
+  my $sql = "select distinct ena.na_sequence_id from dots.EXTERNALNASEQUENCE ena, sres.SEQUENCEONTOLOGY so where ena.sequence_ontology_id = so.sequence_ontology_id and so.term_name = '${soTerm}'";
+
+  my $cmd = "getValueListFromTable --idSQL \"$sql\"";
+
+  my $naSequenceIdList = $mgr->runCmd($cmd);
+
+  return $naSequenceIdList;
+}
+
 
 sub makeRGDerivedCdsDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
