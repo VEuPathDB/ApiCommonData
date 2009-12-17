@@ -5059,28 +5059,45 @@ sub runPairwiseMercatorMavid {
   my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
   my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
 
-  my (@drafts,@nonDrafts);
+  my @drafts = ();
+  my @nonDrafts = ();
+  my @allGenomes = ();
+  my $draftIdx = 0;
+  my  $nonDraftIdx = 0;
 
   if(uc($draftString) ne 'NONE'){
       @drafts =  map { "$_" } split(',', $draftString);
+      $draftIdx = $#drafts;
   }
   
   if(uc($nonDraftString) ne 'NONE'){
       @nonDrafts = map { "$_" } split(',', $nonDraftString);
+      $nonDraftIdx = $#nonDrafts;
   }
 
-  foreach my $draft (@drafts) {
-    my $dirName = "$mercatorDir/$draft-$referenceGenome";
+  push(@allGenomes,@drafts,@nonDrafts);
 
-    my $command = "runMercator  -t '($draft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $referenceGenome  2>$logFile";
-    $mgr->runCmd($command);
-  }
 
-  foreach my $nonDraft (@nonDrafts) {
-    my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
+  for(my $i =0; $i <= ($#allGenomes-1); $i++){
+      for(my $j =$i+1 ; $j <= $#allGenomes; $j++){
+	  my $dirName = "$mercatorDir/$allGenomes[$i]-$allGenomes[$j]";
 
-    my $command = "runMercator  -t '($nonDraft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft -n $referenceGenome 2>$logFile";
-    $mgr->runCmd($command);
+	  my $command = "runMercator  -t '($allGenomes[$i]:0.1,$allGenomes[$j]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid ";
+	  if($i <= $draftIdx){
+	      $command .= "-d  $allGenomes[$i] ";
+	  }else{
+	      $command .= "-n $allGenomes[$i] ";
+	  }
+	  if($j <= $draftIdx){
+	      $command .= "-d  $allGenomes[$j] ";
+	  }else{
+	      $command .= "-n $allGenomes[$j] ";
+	  }
+
+
+          $command .= "2>>$logFile";
+	  $mgr->runCmd($command);
+      }
   }
 
 
