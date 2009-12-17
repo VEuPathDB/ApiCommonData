@@ -3907,10 +3907,10 @@ sub processChangedGenes {
   my $request;
   my $response;
 
-  my $attempts;
-  my $MAX_ATTEMPTS = 5;
+  my $attempts = 1;
+  my $MAX_ATTEMPTS = 10;
   do {
-    print "trying again (attempt $attempts) with \"$url\"\n" if $attempts;
+    print "trying again (retry $attempts) with \"$url\"\n" if $attempts;
     $request = new HTTP::Request('GET', $url);
     $response = $ua->request($request);
   } until ($response->is_success or $response->content or ++$attempts > $MAX_ATTEMPTS);
@@ -3921,7 +3921,7 @@ sub processChangedGenes {
   }
 
   my $simple = XML::Simple->new();
-  my $changeList = $simple->XMLin($response->content);
+  my $changeList = $simple->XMLin($response->content, forcearray => 1);
   my $results = $changeList->{results};
 
   my $changes = $results->{gene};
