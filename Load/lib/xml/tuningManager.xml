@@ -3924,12 +3924,15 @@ sub processChangedGenes {
   my $changeList = $simple->XMLin($response->content, forcearray => 1);
   my $results = $changeList->{results};
 
-  my $changes = $results->{gene};
+  my $details = $results->{'genes/annotation_changes'};
+  my $changes = $details->{gene};
 
   my %geneLastChange;
   foreach my $change (@$changes) {
     my $gene = $change->{geneuniquename};
     my $lastMod = $change->{date};
+ 
+    # print "gene $gene changed $lastMod\n";
 
     $geneLastChange{$gene} = $lastMod
       if !defined $geneLastChange{$gene} || $lastMod gt $geneLastChange{$gene};
