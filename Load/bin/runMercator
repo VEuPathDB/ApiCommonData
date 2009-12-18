@@ -74,13 +74,13 @@ export PATH=$CNDSRC_DIR:$PATH
 
 #--------------------------------------------------------------------------------
 # Check that directories are there and make the ones you need if they're not
-for X in $MERCATOR_DIR $CNDSRC_DIR $FASTA_DIR $GFF_DIR $ALIGN_DIR $MERCATOR_INPUT $MERCATOR_OUTPUT
+for X in $MERCATOR_DIR $CNDSRC_DIR $FASTA_DIR $GFF_DIR $MERCATOR_INPUT $MERCATOR_OUTPUT $ALIGN_DIR
   do
     echo Checking Directory Exists [$X]
     if [ -d $X ]; then 
       echo Directory $X Exists
     elif [ ${X} = ${ALIGN_DIR} -o ${X} = ${MERCATOR_INPUT} -o ${X} = ${MERCATOR_OUTPUT} ]; then
-      mkdir $X
+      mkdir -p $X
       echo Created Directory $X
     else
         echo Expected Directory is MISSING [$X]
