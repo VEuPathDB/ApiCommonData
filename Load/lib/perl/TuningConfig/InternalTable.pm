@@ -189,7 +189,7 @@ sub getState {
   }
 
   ApiCommonData::Load::TuningConfig::Log::setUpdateNeededFlag()
-      if $needUpdate;
+      if $needUpdate and !$self->{alwaysUpdate};  # don't set the update flag for alwaysUpdate tables
 
   if ($broken) {
     $self->{state} = "broken";
