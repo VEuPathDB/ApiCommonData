@@ -1385,13 +1385,27 @@ tablespace indx
   set exon_count = 1
   where exon_count > 1
    and project_id = 'TriTrypDB' 
-   and source_id not in ('LmjF29.2600',
-                         'LinJ29_V3.2710',
-                         'Tb927.3.3160',
-                         'Tb927.8.1510',
-                         'Tc00.1047053508153.440',
-                         'Tc00.1047053508547.110',
-                         'Tc00.1047053508973.50')
+   and source_id not in (
+                select source_id
+                from (
+                  select 'intron' as type, ga.source_id,
+                          abs(rightLoc.start_min - leftLoc.end_max) as len
+                  from dots.ExonFeature left, apidb.FeatureLocation leftLoc,
+                       dots.ExonFeature right, apidb.FeatureLocation rightLoc,
+                       apidb.geneattributes ga
+                  where left.parent_id = right.parent_id
+                    and left.parent_id = ga.na_feature_id
+                    and (left.order_number = right.order_number - 1
+                         or left.order_number = right.order_number + 1)
+                    and leftLoc.start_min < rightLoc.start_min
+                    and left.na_feature_id = leftLoc.na_feature_id
+                    and leftLoc.is_top_level = 1
+                    and right.na_feature_id = rightLoc.na_feature_id
+                    and rightLoc.is_top_level = 1
+                   ) 
+               group by source_id
+               having min(len) > 10
+           )
       ]]>
     </sql>
     <sql>
