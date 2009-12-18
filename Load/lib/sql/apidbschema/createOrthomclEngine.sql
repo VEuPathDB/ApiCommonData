@@ -43,6 +43,13 @@ CREATE TABLE apidb.Inparalog (
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Inparalog TO gus_w;
 GRANT SELECT ON apidb.Inparalog TO gus_r;
 
+CREATE INDEX apidb.inparalog_seqa_ix
+ON apidb.inparalog (sequence_id_a)
+TABLESPACE indx;
+
+CREATE INDEX apidb.inparalog_seqb_ix
+ON apidb.inparalog (sequence_id_b)
+TABLESPACE indx;
 ------------------------------------------------------------
 
 CREATE TABLE apidb.Ortholog (
@@ -54,8 +61,8 @@ CREATE TABLE apidb.Ortholog (
  NORMALIZED_SCORE        FLOAT    
 );
 
-CREATE INDEX apidb.ortholog_seq_a_ix on apidb.ortholog(sequence_id_a);
-CREATE INDEX apidb.ortholog_seq_b_ix on apidb.ortholog(sequence_id_b);
+CREATE INDEX apidb.ortholog_seq_a_ix on apidb.ortholog(sequence_id_a) TABLESPACE indx;
+CREATE INDEX apidb.ortholog_seq_b_ix on apidb.ortholog(sequence_id_b) TABLESPACE indx;
 
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.ortholog TO gus_w;
