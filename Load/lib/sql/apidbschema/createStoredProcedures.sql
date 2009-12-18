@@ -456,6 +456,10 @@ begin
            then return 'TrichDB';
          when 'giardia'
            then return 'GiardiaDB';
+         when 'entamoeba'
+           then return 'AmoebaDB';
+         when 'encephalitozoon'
+           then return 'MicrosporidiaDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
