@@ -191,7 +191,8 @@ sub dumpNaSequence {
 
   my $outputFile = "$mgr->{dataDir}/$mercatorDir/$shortName.fsa";
 
-  my ($extDbRls,$virtualExtDbRls);
+  my $extDbRls = 0,
+  my $virtualExtDbRls=0;
 
   my @extDbSpecList = split (/,/,$extDbSpec);
 
