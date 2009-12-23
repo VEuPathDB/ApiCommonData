@@ -153,6 +153,33 @@ sub initTrypAnalysis{
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+
+sub initAmoebAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Ehistolytica,Edispar,Einvadens';
+
+  my $taxId = ["Ehistolytica:294381","Edispar:370354","Einvadens:370355"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
+sub initMicrosporidiaAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = 'Ecuniculi,Eintenstinalis';
+
+  my $taxId = ["Ecuniculi:284813","Eintestinalis:58839"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
 sub initOrphAnalysis{
   my ($propertyFile, $optionalArgs) = @_;
 
