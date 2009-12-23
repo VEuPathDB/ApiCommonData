@@ -584,40 +584,40 @@ my $repeatFinderArgs = "2 7 7 80 20 50 500";
 ##### ESTs #####
 #########################################
 
-&documentBLATAlignment($mgr,"v. 31","-minIntron 500,-minScore 30,-minIdentity 90");
+#&documentBLATAlignment($mgr,"v. 31","-minIntron 500,-minScore 30,-minIdentity 90");
 
-&makeTranscriptSeqs($mgr,"Cmuris",5808,1);
+#&makeTranscriptSeqs($mgr,"Cmuris",5808,1);
 
-&makeTranscriptSeqs($mgr,"Cparvum",5807,1);
+#&makeTranscriptSeqs($mgr,"Cparvum",5807,1);
 
-&makeTranscriptSeqs($mgr,"Cparvum Predicted",5807,1,"select e.na_sequence_id 
-           from dots.ExternalNASequence e, sres.sequenceontology s,
-                sres.externalDatabase d, sres.externalDatabaseRelease r
-           where e.taxon_id in(5807)
-           and e.external_database_release_id = r.external_database_release_id
-           and r.external_database_id = d.external_database_id
-           and r.version = '2006-11-02'
-           and d.name = 'WatanabeCpHNJ-1_PredictedTrancripts'
-           and s.term_name = 'transcript'
-           and e.sequence_ontology_id = s.sequence_ontology_id
-           and e.na_sequence_id not in
-           (select a.na_sequence_id from dots.AssemblySequence a)");
+#&makeTranscriptSeqs($mgr,"Cparvum Predicted",5807,1,"select e.na_sequence_id 
+#            from dots.ExternalNASequence e, sres.sequenceontology s,
+#                 sres.externalDatabase d, sres.externalDatabaseRelease r
+#            where e.taxon_id in(458872)
+#            and e.external_database_release_id = r.external_database_release_id
+#            and r.external_database_id = d.external_database_id
+#            and r.version = '2008-09-24'
+#            and d.name = 'WatanabeCpHNJ-1_PredictedTranscripts'
+#            and s.term_name = 'transcript'
+#            and e.sequence_ontology_id = s.sequence_ontology_id
+#            and e.na_sequence_id not in
+#            (select a.na_sequence_id from dots.AssemblySequence a)");
 
-&extractTranscriptSeqs($mgr,"CmurisTranscriptSeqs",5808,1);
+#&extractTranscriptSeqs($mgr,"CmurisTranscriptSeqs",5808,1);
 
-&extractTranscriptSeqs($mgr,"CparvumTranscriptSeqs",5807,1);
+#&extractTranscriptSeqs($mgr,"CparvumTranscriptSeqs",5807,1);
 
 &copyFilesToComputeCluster($mgr,"CmurisTranscriptSeqs.fsa","seqfiles");
 
 &copyFilesToComputeCluster($mgr,"CparvumTranscriptSeqs.fsa","seqfiles");
 
-&extractIndividualNaSeq ($mgr,'C.muris scaffold from Genbank','2008-08-13',"Cmuris","genome","ExternalNASequence","source_id");
+#&extractIndividualNaSeq ($mgr,'C.muris scaffold from Genbank','2008-08-13',"Cmuris","genome","ExternalNASequence","source_id");
 
-&extractIndividualNaSeq ($mgr,'C.hominis scaffold from Genbank','2008-08-13',"Chominis","genome","ExternalNASequence","source_id");
+#&extractIndividualNaSeq ($mgr,'C.hominis scaffold from Genbank','2008-08-13',"Chominis","genome","ExternalNASequence","source_id");
 
-&extractIndividualNaSeq ($mgr,'C.parvum scaffold from Genbank','2008-08-13',"Cparvum","genome","ExternalNASequence","source_id");
+#&extractIndividualNaSeq ($mgr,'C.parvum scaffold from Genbank','2008-08-13',"Cparvum","genome","ExternalNASequence","source_id");
 
-&extractIndividualNaSeq ($mgr,'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"CparvumChr6","genome","ExternalNASequence","source_id");
+#&extractIndividualNaSeq ($mgr,'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13',"CparvumChr6","genome","ExternalNASequence","source_id");
 
 &copyFilesToComputeCluster($mgr,"CmurisGenome","seqfiles");
 
@@ -651,30 +651,27 @@ my $repeatFinderArgs = "2 7 7 80 20 50 500";
 
 &startGfClientWORepMaskOnComputeCluster($mgr,"CparvumTranscriptSeqs","CparvumChr6Genome","apidb",4);
 
-$mgr->waitForCluster("CmurisTranscriptSeqs BLAT alignment to CmurisGenome", "waitCmurisTranscriptSeqs-CmurisGenome");
+# $mgr->waitForCluster("CmurisTranscriptSeqs BLAT alignment to CmurisGenome", "waitCmurisTranscriptSeqs-CmurisGenome");
 
-$mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumGenome", "waitCparvumTranscriptSeqs-CparvumGenome");
+# $mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumGenome", "waitCparvumTranscriptSeqs-CparvumGenome");
 
-$mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome", "waitCparvumTranscriptSeqs-CparvumChr6Genome");
+# $mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome", "waitCparvumTranscriptSeqs-CparvumChr6Genome");
 
-&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs-CmurisGenome","genome");
+#&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs-CmurisGenome","genome");
 
-&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumGenome","genome");
+#&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumGenome","genome");
 
-&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumChr6Genome","genome");
+#&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs-CparvumChr6Genome","genome");
 
-&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs","repeatmask");
+#&copyFilesFromComputeCluster($mgr,"CmurisTranscriptSeqs","repeatmask");
 
-&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs","repeatmask");
+#&copyFilesFromComputeCluster($mgr,"CparvumTranscriptSeqs","repeatmask");
 
-##script fills the BlatAlignmentQuality table ###########
-&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/lib/xml/blatalignmentquality.xml","BlatAlignmentQuality");
-
-&loadContigAlignments($mgr, 5808, "CmurisTranscriptSeqs","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load");
+ &loadContigAlignments($mgr, 5808, "CmurisTranscriptSeqs","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load");
 
 &loadContigAlignments($mgr, 5808, "CmurisTranscriptSeqs","CmurisGenome","","",'C.muris scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","","",100);
 
-&loadContigAlignments($mgr, 353152, "CparvumTranscriptSeqs","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load",5807);
+&loadContigAlignments($mgr, 353152, "CparvumTranscriptSeqs","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","load","","","",5807);
 
 &loadContigAlignments($mgr, 353152, "CparvumTranscriptSeqs","CparvumGenome","","",'C.parvum scaffold from Genbank','2008-08-13',"ExternalNASequence",">(\\d+)","setbest","","",100,5807);
 
@@ -690,9 +687,9 @@ $mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome"
 
 &getNotAlignedEstAndAddOneCluster($mgr,"Cmuris",5808,1,5808,"/repeatmask/CmurisTranscriptSeqs/master/mainresult","/cluster/CmurisTranscripts");
 
-&clusterMultiEstSourcesByAlign($mgr, "Transcripts", "Cparvum", 'C.parvum scaffold from Genbank','2008-08-13', 353152, "ExternalNASequence",20000);
+&clusterMultiEstSourcesByAlign($mgr, "Transcripts", "Cparvum", 'C.parvum scaffold from Genbank','2008-08-13', 5807, "ExternalNASequence",20000);
 
-&getNotAlignedEstAndAddOneCluster($mgr,"Cparvum",5807,1,353152,"/repeatmask/CparvumTranscriptSeqs/master/mainresult","/cluster/CparvumTranscripts");
+&getNotAlignedEstAndAddOneCluster($mgr,"Cparvum",5807,1,5807,"/repeatmask/CparvumTranscriptSeqs/master/mainresult","/cluster/CparvumTranscripts");
 
 &clusterMultiEstSourcesByAlign($mgr, "Transcripts", "CparvumChr6", 'C.parvum Iowa Chr6 scaffold from Genbank','2008-08-13', 5807, "ExternalNASequence",20000);
 
@@ -707,6 +704,12 @@ $mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome"
 &assembleTranscripts($mgr, "Cparvum", "", "", "Transcripts", 353152);
 
 &assembleTranscripts($mgr, "CparvumChr6", "", "", "Transcripts", 5807);
+
+&updateAssemblySourceId($mgr,"Cparvum",353152);
+
+&updateAssemblySourceId($mgr,"Cmuris",5808);
+
+&updateAssemblySourceId($mgr,"Cp6",5807);
 
 &extractAssemblies($mgr, "Cmuris", "Assemblies", 5808);
 
@@ -746,17 +749,17 @@ $mgr->waitForCluster("CparvumTranscriptSeqs BLAT alignment to CparvumChr6Genome"
 
 &copyFilesToComputeCluster($mgr, "CparvumChr6Assemblies","repeatmask");
 
-#&startGenomeAlignOnComputeCluster($mgr,"CmurisAssemblies","CmurisGenome","apidb",4);
+&startGenomeAlignOnComputeCluster($mgr,"CmurisAssemblies","CmurisGenome","apidb",4);
 
-#&startGenomeAlignOnComputeCluster($mgr,"CparvumAssemblies","CparvumGenome","apidb",4);
+&startGenomeAlignOnComputeCluster($mgr,"CparvumAssemblies","CparvumGenome","apidb",4);
 
-#&startGenomeAlignOnComputeCluster($mgr,"CparvumChr6Assemblies","CparvumChr6Genome","apidb",4);
+&startGenomeAlignOnComputeCluster($mgr,"CparvumChr6Assemblies","CparvumChr6Genome","apidb",4);
 
-#$mgr->waitForCluster("CmurisAssemblies BLAT alignment to CmurisGenome", "waitCmurisAssemblies-CmurisGenome");
+# #$mgr->waitForCluster("CmurisAssemblies BLAT alignment to CmurisGenome", "waitCmurisAssemblies-CmurisGenome");
 
-#$mgr->waitForCluster("CparvumAssemblies BLAT alignment to CparvumGenome", "waitCparvumAssemblies-CparvumGenome");
+# #$mgr->waitForCluster("CparvumAssemblies BLAT alignment to CparvumGenome", "waitCparvumAssemblies-CparvumGenome");
 
-#$mgr->waitForCluster("CparvumChr6Assemblies BLAT alignment to CparvumChr6Genome", "waitCparvumChr6Assemblies-CparvumChr6Genome");
+# #$mgr->waitForCluster("CparvumChr6Assemblies BLAT alignment to CparvumChr6Genome", "waitCparvumChr6Assemblies-CparvumChr6Genome");
 
 &copyFilesFromComputeCluster($mgr,"CmurisAssemblies-CmurisGenome","genome");
 
