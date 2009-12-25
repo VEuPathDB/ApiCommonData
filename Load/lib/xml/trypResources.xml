@@ -864,6 +864,24 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
         </description>  
     </resource>
 
+    <resource resource="L.mexicana_Annotations" version="2009-11-03"
+
+        displayName="L.mexicana Genome Annotations"
+        category="Genome"
+        organisms="L.mexicana"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes" />
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypEmbl2gus.xml --inputFileOrDir @downloadDir@/L.mexicana_Annotations/Chromosomes --fileFormat embl --inputFileExtension embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania mexicana mexicana" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lmexicana.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lmexicana.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Genome and annotations for <i>L. mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
 
 <resource resource="Ltarentolae_contigs" version="2009-04-07"
         displayName="L. tarentolae contig sequences from Marc Ouellette"
