@@ -5090,8 +5090,8 @@ sub runPairwiseMercatorMavid {
   my @drafts = ();
   my @nonDrafts = ();
   my @allGenomes = ();
-  my $draftIdx = 0;
-  my  $nonDraftIdx = 0;
+  my $draftIdx = -1;
+  my  $nonDraftIdx = -1;
 
   if(uc($draftString) ne 'NONE'){
       @drafts =  map { "$_" } split(',', $draftString);
