@@ -1,3 +1,4 @@
+
 package ApiCommonData::Load::Plugin::InsertSyntenySpans;
 @ISA = qw( GUS::PluginMgr::Plugin);
 
@@ -59,7 +60,7 @@ my $argsDeclaration =
               constraintFunc=> undef,
               reqd  => 1,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp,Giardia",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia",
              }),
 
   ];
