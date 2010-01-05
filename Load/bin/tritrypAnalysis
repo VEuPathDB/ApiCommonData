@@ -1449,6 +1449,17 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFNAs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
 
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedCDS","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedTranscripts","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedProteins","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeInterproDownloadFile ($mgr, 'Lmexicana', "Interpro", "Sanger L. mexicana contigs and chromosomes","2009-11-03", "INTERPRO", "19.0", "TriTrypDB","Lmexicana");
+
+&makeCodonUsage($mgr, "Lmexicana", "AnnotatedCDS");
+
+&writeGeneAliasFile($mgr,'Sanger L. mexicana contigs and chromosomes|2009-11-03',"TriTrypDB","Lmexicana");
 # ##################################################################################
 # ###### Format BLAST Files ######
 # #################################################################################
@@ -1570,10 +1581,19 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 
  &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeORFs_TriTrypDB-2.0.fasta","LtarentolaeORF","-p -C X -t release-2.0/LtarentolaeORF");
 
- &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaGenomic_TriTrypDB-2.0.fasta","LmexicanaGenomics","-n -t release-2.0/LmexicanaGenomics");
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaEST_TriTrypDB-2.1.fasta","LmexicanaEST","-n -t release-2.1/LmexicanaEST");
 
- &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaORFs_TriTrypDB-2.0.fasta","LmexicanaORF","-p -C X -t release-2.0/LmexicanaORF");
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAssemblies_TriTrypDB-2.1.fasta","LmexicanaAssemblies","-n -t release-2.1/LmexicanaAssemblies");
 
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaGenomic_TriTrypDB-2.1.fasta","LmexicanaGenomics","-n -t release-2.1/LmexicanaGenomics");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaORFs_TriTrypDB-2.1.fasta","LmexicanaORF","-p -C X -t release-2.1/LmexicanaORF");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedTranscripts_TriTrypDB-2.1.fasta","LmexicanaTranscripts","-n -t release-2.1/LmexicanaTranscripts");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedProteins_TriTrypDB-2.1.fasta","LmexicanaProteins","-p -C X -t release-2.1/LmexicanaProteins");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedCDS_TriTrypDB-2.1.fasta","LmexicanaCDS","-n -t release-2.1/LmexicanaCDS");
 
 #################################################################################
 ############### Make Brc Download Files ######################
@@ -1703,6 +1723,26 @@ $mgr->waitForCluster("Repeat Mask Tbrucei927Genomic_trypDB-1.0", "Tbrucei927Geno
 
 &insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-tcruzi_nonesmeraldo.align",  "DoTS.NASequence", "DoTS.NASequence", "Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Tcruzi_nonesmeraldo synteny from Mercator|2008-12-18","","TriTryp");
 
+#############l_mexicana################
+
+&createExtDbAndDbRls($mgr, 'l_braziliensis-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 'l_major-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_cruzinonesmeraldo-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_bruceigambiense-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_congolense-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_vivax-l_mexicana synteny from Mercator', '2009-12-24', '');
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_mexicana/l_braziliensis-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_mexicana/l_infantum-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-l_mexicana/l_major-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. major chromosomes|2009-09-10", "l_major-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-l_mexicana/t_brucei927-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-l_mexicana/t_cruziesmeraldo-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-l_mexicana/t_cruzinonesmeraldo-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "t_cruzinonesmeraldo-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-l_mexicana/t_bruceigambiense-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. brucei gambiense chromosomes|2009-09-07", "t_bruceigambiense-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_congolense-l_mexicana/t_congolense-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. congolense contigs and chromosomes|2009-09-14", "t_congolense-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_vivax-l_mexicana/t_vivax-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. vivax contigs and chromosomes|2009-09-14", "t_vivax-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
 
 #####################################################################################
 #######Microarray
