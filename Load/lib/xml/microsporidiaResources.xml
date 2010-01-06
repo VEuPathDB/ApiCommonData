@@ -95,5 +95,45 @@
         </description>
     </resource>
 
+   <resource resource="Entrez_Gene_dbxref_microsporidia" version="1-16-2010"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="1-16-2010"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_microsporidia"
+            contact=""
+            email=""
+            institution=""
+        />
 
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref_microsporidia/gene_info_microsporidia --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Uniprot_Gene_dbxref_microsporidia" version="1-16-2010"
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Uniprot Genes"
+        extDbRlsVer="1-16-2010"
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_microsporidia"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref_microsporidia/Uniprot_Gene_microsporidia --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
 </resourcesPipeline>
