@@ -417,7 +417,7 @@ my $sql;
 
 
 
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia'){
+if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'){
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
     from apidb.geneattributes ga, dots.genefeature gf
