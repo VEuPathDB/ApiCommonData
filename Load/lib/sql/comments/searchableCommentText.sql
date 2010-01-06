@@ -31,10 +31,15 @@ create or replace procedure apidb.move_comments
 is
 begin
   insert into apidb.TextSearchableComment (comment_id, source_id, project_id, organism, content)
-  select comment_id, stable_id, project_name, organism,
-          apidb.searchable_comment_text(comment_id)
-  from comments2.comments
-  where comment_id not in (select comment_id from apidb.TextSearchableComment);
+  select c.comment_id, ci.stable_id, c.project_name, c.organism,
+         apidb.searchable_comment_text(c.comment_id)
+  from comments2.comments c,
+       (select comment_id, stable_id from comments2.comments
+       union
+       select comment_id, stable_id from comments2.commentStableId) ci
+  where c.comment_target_id = 'gene'
+    and c.comment_id = ci.comment_id
+    and (c.comment_id, ci.stable_id) not in (select comment_id, source_id from apidb.TextSearchableComment);
 end;
 /
 
