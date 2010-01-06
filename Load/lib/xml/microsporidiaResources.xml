@@ -1,0 +1,99 @@
+
+
+<resourcesPipeline repository="/files/efr"
+                   downloadDir="@downloadDir@">
+    <cleanups>
+    </cleanups>
+
+    <resource resource="dbEST" version="2009-12-07"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        extDbName="dbEST"
+        extDbRlsVer="2009-12-07"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
+        />
+        <unpack>getSubTaxa --ncbiTaxId 6033 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs>
+        <description>
+            <![CDATA[
+                  ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/"TARGET="_blank">dbEST</a> site.
+          ]]>
+        </description>
+    </resource>
+     <resource resource="EcuniculiChromosomesAndAnnotations" version="2008-06-19"
+        displayName="E. cuniculi chromosomes sequence and annotation"
+        organisms="Encephalitozoon cuniculi"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E. cuniculi chromosomes and annotations from Genbank"
+        extDbRlsVer="2008-06-19"
+        extDbRlsDescrip="E. cuniculi chromosomes and annotations from Genbank|2008-06-19"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Encephalitozoon/genome/Encephalitozoon_cuniculi/genbank/"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/MicrosporidiaDB/EcuniculiGenbank2gus.xml --inputFileOrDir @downloadDir@/EcuniculiChromosomesAndAnnotations/genbank --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Encephalitozoon cuniculi GB-M1" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "chromosome" --bioperlTreeOutput @pipelineDir@/logs/Ecuniculi.bioperl --validationLog @pipelineDir@/logs/Ecuniculi.validation.log</pluginArgs>
+        <description>
+            <![CDATA[
+   Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
+          ]]>
+        </description>
+      </resource>
+
+
+     <resource resource="EintestinalisChromosomesAndAnnotations" version="2009-11-23"
+        displayName="E. intestinalis chromosomes sequence and annotation"
+        organisms="Encephalitozoon intestinalis"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E. intestinalis chromosomes and annotations from Patrick Keeling"
+        extDbRlsVer="2009-11-23"
+        extDbRlsDescrip="E. intestinalis chromosomes and annotations from Patrick Keeling|2009-11-23"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/E_intestinalis/EMBL/"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/MicrosporidiaDB/EintestinalisEmbl2gus.xml --inputFileOrDir @downloadDir@/EintestinalisChromosomesAndAnnotations/EMBL --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Encephalitozoon intestinalis" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "chromosome" --bioperlTreeOutput @pipelineDir@/logs/Eintestinalis.bioperl --validationLog @pipelineDir@/logs/Eintestinalis.validation.log </pluginArgs>
+        <description>
+            <![CDATA[
+   Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia for <i>Encephalitozoon intestinalis</i> chromosomes in EMBL (sequence and annotated features) format. 
+          ]]>
+        </description>
+    </resource>
+   <resource resource="IEDB_Epitopes" version="2009-12-09"
+        publicUrl="http://www.immuneepitope.org"
+        displayName="IEDB Epitopes"
+        organisms="E. cuniculi"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="Links to IEDB epitopes"
+        extDbRlsVer="2009-12-09"
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Microsporidia" 
+            contact="IEDB"
+            email=""
+            institution="IEDB"
+        />
+        <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Microsporidia --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <description>
+            <![CDATA[
+   Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
+          ]]>
+        </description>
+    </resource>
+
+
+</resourcesPipeline>
