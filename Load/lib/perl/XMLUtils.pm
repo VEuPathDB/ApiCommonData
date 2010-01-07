@@ -3,23 +3,23 @@
 # Author: Praveen Chakravarthula (praveenc@pcbi.upenn.edu)
 # Purpose: Quick and dirty collection of XML parsing functions.
 
-package XMLUtils;
-                                                                                             
+package ApiCommonData::Load::XMLUtils;
+
 require Exporter;
 @ISA = qw (Exporter);
 @EXPORT = qw (
-            spliceByTag,
-            extractTag,
-            extractTagContent,
-            extractAllTags,
-            deleteTag,
-            deleteAllTags,
-            getAttrValue,
-			getTagName,
-			getChildContent,
+            spliceByTag
+            extractTag
+            extractTagContent
+            extractAllTags
+            deleteTag
+            deleteAllTags
+            getAttrValue
+			getTagName
+			getChildContent
 			encloseTag
             );
-                                                                                             
+
 use strict;
 
 #
@@ -28,7 +28,7 @@ use strict;
 #
 sub deleteTag {
     my ($content, $tag) = @_;
-                                                                                             
+
     my ($pre, $tagContent, $post) = spliceByTag ($content, $tag);
     return $pre . $post;
 }
@@ -39,12 +39,12 @@ sub deleteTag {
 #
 sub deleteAllTags {
     my ($content, $tag) = @_;
-                                                                                             
+
     my $tagBeginPattern = getTagBeginPattern($tag);
     do {
         deleteTag ($content, $tag);
     } while ($content =~ /$tagBeginPattern/);
-                                                                                             
+
     return $content;
 }
 
@@ -53,7 +53,7 @@ sub deleteAllTags {
 #
 sub extractTag {
     my ($content, $tag) = @_;
-                                                                                             
+
     my ($pre, $tagContent, $post) = spliceByTag ($content, $tag);
     return $tagContent;
 }
@@ -69,7 +69,7 @@ sub extractTagContent {
 #
 sub extractAllTags {
     my ($content, $tag) = @_;
-                                                                                             
+
     my @tagContents;
     my $tagBeginPattern = getTagBeginPattern($tag);
     do {
@@ -103,10 +103,10 @@ sub getTagEndPattern {
 #
 sub getAttrValue {
     my ($content, $tag, $attrName) = @_;
-                                                                                             
+
     my $tagBegin = getTagBeginPattern($tag);
     $content =~ /$tagBegin/;
-                                                                                             
+
     my $temp = $&;
     $temp =~ s/\/?>//;
     foreach my $attr (grep {/=/} split(/\s+/, $temp)) {
@@ -114,11 +114,11 @@ sub getAttrValue {
         if ($aName eq $attrName) {
             $aValue =~ s/^[\'\"]//;
             $aValue =~ s/[\'\"]$//;
-                                                                                             
+
             return $aValue;
         }
     }
-                                                                                             
+
     return "";
 }
 
@@ -142,9 +142,9 @@ sub replaceTag {
 #
 sub replaceAllTags {
 	my ($content, $tag, $replacementFunc) = @_;
-	my $modified = "";	
+	my $modified = "";
 	my $beginTag = getTagBeginPattern ($tag);
-	
+
 	my ($pre, $tagContent, $post);
 	do {
 		($pre, $tagContent, $post) = spliceByTag ($content, $tag);
@@ -186,7 +186,7 @@ sub spliceByTag {
     if ($tagContent =~ /\/>$/) {
         return ($pre, $tagContent, $rest);
     }
-                                                                                           
+
     $rest =~ /$tagEndPat/;
     $tagContent .= $` . $&;
     my $post = $';
@@ -211,7 +211,7 @@ sub getChildContent {
 	my $tag = getTagName ($content);
 	my $begin = getTagBeginPattern ($tag);
 	my $end = getTagEndPattern ($tag);
-	
+
 	#print "$tag: $begin -- $end\n";
 
 	$content =~ s/$begin//;
