@@ -52,6 +52,13 @@ begin
 end;
 /
 
+create or replace trigger comments2.csi_insert
+after insert on comments2.commentStableId
+begin
+  apidb.move_comments;
+end;
+/
+
 -- this update trigger won't do the right thing if the comment_id itself is updated
 create or replace trigger comments2.comments_update
 after update on comments2.comments
