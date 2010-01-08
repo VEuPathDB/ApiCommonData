@@ -628,8 +628,82 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.SageTagAnalysisAttributes">
+    <externalDependency name="core.TableInfo"/>
+    <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="rad.Analysis"/>
+    <externalDependency name="rad.AnalysisInput"/>
+    <externalDependency name="rad.AnalysisResultImp"/>
+    <externalDependency name="rad.Assay"/>
+    <externalDependency name="rad.CompositeElementImp"/>
+    <externalDependency name="rad.CompositeElementResultImp"/>
+    <externalDependency name="rad.LogicalGroup"/>
+    <externalDependency name="rad.LogicalGroupLink"/>
+    <externalDependency name="rad.Protocol"/>
+    <externalDependency name="rad.Quantification"/>
+    <sql>
+      <![CDATA[
+create table apidb.SageTagAnalysisAttributes&1 NOLOGGING as
+select dtr.analysis_id, max(dtr.float_value) as tag_count,
+       max(ct.occurrence) as occurrence, substr(st.tag, 1, 30) as sequence,
+       st.composite_element_id, a.name as library_name,
+       library_total.total_count as library_total_tag_count,
+       (max(dtr.float_value) * 100) / library_total.total_count
+         as library_tag_percentage,
+       r.tag_count as raw_count, tot.total_raw_count,
+       100 *(r.tag_count / tot.total_raw_count ) as raw_percent
+from dots.SageTagFeature stf, -- apidb.FeatureLocation nl,
+     rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
+     rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
+     rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
+     rad.SageTagResult r, rad.Quantification q,
+     (select source_id , count(*) as occurrence
+      from dots.SageTagFeature
+      group by source_id) ct,
+     (select dt.analysis_id, sum(float_value) as total_count
+      from rad.DataTransformationResult dt, rad.Analysis a, rad.Protocol p
+      where dt.analysis_id = a.analysis_id
+        and a.protocol_id = p.protocol_id
+        and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
+      group by dt.analysis_id) library_total,
+     (select quantification_id, sum(tag_count) as total_raw_count
+      from rad.SageTagResult
+      group by quantification_id) tot
+where ti.name = 'SAGETag'
+  and quant_ti.name = 'Assay'
+  --and di.name = 'RAD'
+  and dtr.table_id = ti.table_id
+  and st.composite_element_id = dtr.row_id
+  and stf.source_id = st.composite_element_id
+  and st.composite_element_id = r.composite_element_id
+  and q.quantification_id = r.quantification_id
+  and tot.quantification_id = r.quantification_id
+--  and nl.na_feature_id = stf.na_feature_id
+  and ct.source_id = stf.source_id
+  and dtr.analysis_id = ai.analysis_id
+  and ai.logical_group_id = lg.logical_group_id
+  and lg.logical_group_id = ll.logical_group_id
+  and ll.row_id = a.assay_id
+  and a.name = q.name
+  and ll.table_id = quant_ti.table_id
+  --and di.database_id = quant_ti.database_id
+  and dtr.analysis_id = library_total.analysis_id
+group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
+         a.name, library_total.total_count,
+         q.name, r.tag_count, tot.total_raw_count
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, composite_element_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.SageTagGene">
     <internalDependency name="apidb.FeatureLocation"/>
+    <internalDependency name="apidb.SageTagAnalysisAttributes"/>
     <externalDependency name="rad.DataTransformationResult"/>
     <externalDependency name="dots.SageTagFeature"/>
     <intermediateTable name="apidb.SageTagGeneFivePrime"/>
@@ -743,87 +817,18 @@ select t.direction, t.gene_source_id, t.tag_source_id, t.distance,
        case
          when t.antisense = 0 then 0
          else t.tag_count
-       end as antisense_count
+       end as antisense_count, 
+       libs.library_name
 from
   (select * from apidb.SageTagGeneFivePrime
    union all
-   select * from apidb.SageTagGeneThreePrime) t
+   select * from apidb.SageTagGeneThreePrime) t,
+  (select distinct(analysis_id), library_name from apidb.SageTagAnalysisAttributes) libs
+  where t.analysis_id = libs.analysis_id
       ]]>
     </sql>
   </tuningTable>
 
-  <tuningTable name="apidb.SageTagAnalysisAttributes">
-    <externalDependency name="core.TableInfo"/>
-    <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="rad.Analysis"/>
-    <externalDependency name="rad.AnalysisInput"/>
-    <externalDependency name="rad.AnalysisResultImp"/>
-    <externalDependency name="rad.Assay"/>
-    <externalDependency name="rad.CompositeElementImp"/>
-    <externalDependency name="rad.CompositeElementResultImp"/>
-    <externalDependency name="rad.LogicalGroup"/>
-    <externalDependency name="rad.LogicalGroupLink"/>
-    <externalDependency name="rad.Protocol"/>
-    <externalDependency name="rad.Quantification"/>
-    <sql>
-      <![CDATA[
-create table apidb.SageTagAnalysisAttributes&1 NOLOGGING as
-select dtr.analysis_id, max(dtr.float_value) as tag_count,
-       max(ct.occurrence) as occurrence, substr(st.tag, 1, 30) as sequence,
-       st.composite_element_id, a.name as library_name,
-       library_total.total_count as library_total_tag_count,
-       (max(dtr.float_value) * 100) / library_total.total_count
-         as library_tag_percentage,
-       r.tag_count as raw_count, tot.total_raw_count,
-       100 *(r.tag_count / tot.total_raw_count ) as raw_percent
-from dots.SageTagFeature stf, -- apidb.FeatureLocation nl,
-     rad.DataTransformationResult dtr, rad.SageTag st, core.TableInfo ti,
-     rad.AnalysisInput ai, rad.LogicalGroup lg, rad.LogicalGroupLink ll,
-     rad.Assay a, core.TableInfo quant_ti, --core.DatabaseInfo di,
-     rad.SageTagResult r, rad.Quantification q,
-     (select source_id , count(*) as occurrence
-      from dots.SageTagFeature
-      group by source_id) ct,
-     (select dt.analysis_id, sum(float_value) as total_count
-      from rad.DataTransformationResult dt, rad.Analysis a, rad.Protocol p
-      where dt.analysis_id = a.analysis_id
-        and a.protocol_id = p.protocol_id
-        and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
-      group by dt.analysis_id) library_total,
-     (select quantification_id, sum(tag_count) as total_raw_count
-      from rad.SageTagResult
-      group by quantification_id) tot
-where ti.name = 'SAGETag'
-  and quant_ti.name = 'Assay'
-  --and di.name = 'RAD'
-  and dtr.table_id = ti.table_id
-  and st.composite_element_id = dtr.row_id
-  and stf.source_id = st.composite_element_id
-  and st.composite_element_id = r.composite_element_id
-  and q.quantification_id = r.quantification_id
-  and tot.quantification_id = r.quantification_id
---  and nl.na_feature_id = stf.na_feature_id
-  and ct.source_id = stf.source_id
-  and dtr.analysis_id = ai.analysis_id
-  and ai.logical_group_id = lg.logical_group_id
-  and lg.logical_group_id = ll.logical_group_id
-  and ll.row_id = a.assay_id
-  and a.name = q.name
-  and ll.table_id = quant_ti.table_id
-  --and di.database_id = quant_ti.database_id
-  and dtr.analysis_id = library_total.analysis_id
-group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
-         a.name, library_total.total_count,
-         q.name, r.tag_count, tot.total_raw_count
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, composite_element_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
 
   <tuningTable name="apidb.GeneAttributes">
     <internalDependency name="apidb.GeneId"/>
