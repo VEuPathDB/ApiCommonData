@@ -56,14 +56,14 @@ my $argsDeclaration =
 	    isList => 0
 	   }),
 
- stringArg({name => 'pubmed_id',
+ stringArg({name => 'pubmedId',
 	    descr => '',
 	    constraintFunc => undef,
 	    reqd => ,
 	    isList => 0
 	   }),
 
- stringArg({name => 'citation_string',
+ stringArg({name => 'citation',
 	    descr => 'the citation provided by ncbi for the pubmed_id',
 	    constraintFunc => undef,
 	    reqd => ,
@@ -147,8 +147,8 @@ sub run {
     my $output = $self->getArg('output');
     my $parameters = $self->getArg('parameters');
     my $description = $self->getArg('description');
-    my $pubmed_id = $self->getArg('pubmed_id');
-    my $citation_string = $self->getArg('citation_string');
+    my $pubmed_id = $self->getArg('pubmedId');
+    my $citation_string = $self->getArg('citation');
     my $url = $self->getArg('url');
     my $credits = $self->getArg('credits');
 
