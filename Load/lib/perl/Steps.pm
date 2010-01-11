@@ -153,33 +153,6 @@ sub initTrypAnalysis{
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
-
-sub initAmoebAnalysis {
-  my ($propertyFile, $optionalArgs) = @_;
-
-  my $allSpecies = 'Ehistolytica,Edispar,Einvadens';
-
-  my $taxId = ["Ehistolytica:294381","Edispar:370354","Einvadens:370355"];
-
-  my ($mgr, $projectDir, $release)
-    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
-
-  return ($mgr, $projectDir, $release, $allSpecies);
-}
-
-sub initMicrosporidiaAnalysis {
-  my ($propertyFile, $optionalArgs) = @_;
-
-  my $allSpecies = 'Ecuniculi,Eintenstinalis';
-
-  my $taxId = ["Ecuniculi:284813","Eintestinalis:58839"];
-
-  my ($mgr, $projectDir, $release)
-    = &init($propertyFile, $optionalArgs, $allSpecies, $taxId);
-
-  return ($mgr, $projectDir, $release, $allSpecies);
-}
-
 sub initOrphAnalysis{
   my ($propertyFile, $optionalArgs) = @_;
 
@@ -218,8 +191,7 @@ sub dumpNaSequence {
 
   my $outputFile = "$mgr->{dataDir}/$mercatorDir/$shortName.fsa";
 
-  my $extDbRls = 0,
-  my $virtualExtDbRls=0;
+  my ($extDbRls,$virtualExtDbRls);
 
   my @extDbSpecList = split (/,/,$extDbSpec);
 
@@ -1094,7 +1066,7 @@ sub renameFile {
 }
 
 sub copy {
-  my ($mgr, $from, $to, $dir) = @_;
+  my ($mgr, $from, $to, $dir, $compress) = @_;
   my $propertySet = $mgr->{propertySet};
 
   $to =~ s/\/$//;
@@ -1110,6 +1082,7 @@ sub copy {
   unless ($from !~ m/\*/ && -e $from) { die "$from doesn't exist\n";};
 
   $mgr->runCmd("cp -ar  $from $to");
+  $mgr->runCmd("gzip $to") if $compress;
   $mgr->endStep();
 }
 
@@ -1762,6 +1735,9 @@ EOF
   my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
 
   $mgr->runCmd($cmd);
+
+  $mgr->runCmd("gzip $outFile");
+
   $mgr->endStep($signal);
 }
 
@@ -1867,7 +1843,7 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$soTermName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
@@ -1920,28 +1896,10 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
-  if ($soTermName){
-      my $naSequenceIdList = &getNaSequecneIdListFromSoTermName($mgr,$soTermName);
-      $sql.=" AND fl.na_sequence_id in ($naSequenceIdList)";
-  }
-
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
 }
-
-sub getNaSequecneIdListFromSoTermName {
-  my ($mgr,$soTerm) = @_;
-
-  my $sql = "select distinct ena.na_sequence_id from dots.EXTERNALNASEQUENCE ena, sres.SEQUENCEONTOLOGY so where ena.sequence_ontology_id = so.sequence_ontology_id and so.term_name = '${soTerm}'";
-
-  my $cmd = "getValueListFromTable --idSQL \"$sql\"";
-
-  my $naSequenceIdList = $mgr->runCmd($cmd);
-
-  return $naSequenceIdList;
-}
-
 
 sub makeRGDerivedCdsDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer,$seqTable,$dataSource, $project) = @_;
@@ -3680,7 +3638,7 @@ sub runMcl{
 }
 
 sub mclOutToGroupsFile {
-  my ($mgr, $prefix) = @_;
+  my ($mgr, $prefix, $startWith) = @_;
 
   my $signal = 'mclOutToGroupsFile';
 
@@ -3692,7 +3650,7 @@ sub mclOutToGroupsFile {
 
   my $outFile = "$mgr->{dataDir}/mcl/orthomclGroups.txt";
 
-  my $cmd = "orthomclMclToGroups $prefix 10000 < $mclFile > $outFile 2>> $logfile";
+  my $cmd = "orthomclMclToGroups $prefix $startWith < $mclFile > $outFile 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
@@ -5087,45 +5045,28 @@ sub runPairwiseMercatorMavid {
   my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
   my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
 
-  my @drafts = ();
-  my @nonDrafts = ();
-  my @allGenomes = ();
-  my $draftIdx = -1;
-  my  $nonDraftIdx = -1;
+  my (@drafts,@nonDrafts);
 
   if(uc($draftString) ne 'NONE'){
       @drafts =  map { "$_" } split(',', $draftString);
-      $draftIdx = $#drafts;
   }
   
   if(uc($nonDraftString) ne 'NONE'){
       @nonDrafts = map { "$_" } split(',', $nonDraftString);
-      $nonDraftIdx = $#nonDrafts;
   }
 
-  push(@allGenomes,@drafts,@nonDrafts);
+  foreach my $draft (@drafts) {
+    my $dirName = "$mercatorDir/$draft-$referenceGenome";
 
+    my $command = "runMercator  -t '($draft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -d  $draft -n $referenceGenome  2>$logFile";
+    $mgr->runCmd($command);
+  }
 
-  for(my $i =0; $i <= ($#allGenomes-1); $i++){
-      for(my $j =$i+1 ; $j <= $#allGenomes; $j++){
-	  my $dirName = "$mercatorDir/$allGenomes[$i]-$allGenomes[$j]";
+  foreach my $nonDraft (@nonDrafts) {
+    my $dirName = "$mercatorDir/$nonDraft-$referenceGenome";
 
-	  my $command = "runMercator  -t '($allGenomes[$i]:0.1,$allGenomes[$j]:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid ";
-	  if($i <= $draftIdx){
-	      $command .= "-d  $allGenomes[$i] ";
-	  }else{
-	      $command .= "-n $allGenomes[$i] ";
-	  }
-	  if($j <= $draftIdx){
-	      $command .= "-d  $allGenomes[$j] ";
-	  }else{
-	      $command .= "-n $allGenomes[$j] ";
-	  }
-
-
-          $command .= "2>>$logFile";
-	  $mgr->runCmd($command);
-      }
+    my $command = "runMercator  -t '($nonDraft:0.1,p_falciparum:0.1);' -p $dirName -c $cndsrcBin -r $referenceGenome -m $mavid -n $nonDraft -n $referenceGenome 2>$logFile";
+    $mgr->runCmd($command);
   }
 
 
@@ -6881,7 +6822,17 @@ sub extractFilesForMsa {
   $mgr->endStep($signal);
 }
 
+sub updateSecondaryIds {
+  my ($mgr) = @_;
 
+  my $signal = "updateAASeqSecIds";
+
+  return if $mgr->startStep("updating dots.externalaasequence.secondary_identifier from source_id and abbrev", $signal);
+
+  $mgr->runCmd("updateAASecondaryId");
+
+  $mgr->endStep($signal);
+}
 
 sub startMuscleOnCluster {
   my ($mgr, $queue) = @_;
