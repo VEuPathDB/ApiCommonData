@@ -207,14 +207,12 @@ PDB Identifiers
         <pluginArgs>--dbRefExternalDatabaseSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
     </resource>  
     
+    <!-- previous extDbName was 'GenBank' -->
     <resource resource="NAGenBankDbRefs" version="2008-06-09"
         plugin="ApiCommonData::Load::Plugin::InsertGenBankDbRef"
         organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi"
         category="Genome"
         displayName="Genbank references for genomic sequences"
-        extDbName="GenBank"
-        extDbRlsVer="2008-06-09"
-        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file">
         <manualGet fileOrDir = "@manualDelivery@/empty"
             contact = "Wei li"
             email = "weili1@pcbi.upenn.edu"
@@ -230,15 +228,12 @@ Mappings from PlasmoDB gene IDs to GenBank gi numbers. (In the future PlasmoDB g
         </description>
     </resource>
     
-    
+    <!-- previous extDbName was 'GenBank' -->
     <resource resource="AAGenBankDbRefs" version="2008-06-09"
         plugin="ApiCommonData::Load::Plugin::InsertGenBankDbRef"
         category="Proteome"
         organisms="P.falciparum, P.vivax, P.yoelii, P.berghei, P.chabaudi"
         displayName="Genbank references for amino acid sequences"
-        extDbName="GenBank"
-        extDbRlsVer="2008-06-09"
-        extDbRlsDescrip="The GenBank version used for the creation of the giDbRefs file">
         <manualGet fileOrDir = "@manualDelivery@/empty"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -260,9 +255,6 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="Links to IEDB epitopes"
-        extDbRlsVer="2009-03-18"
-        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB.">
         <manualGet fileOrDir="@manualDelivery@/IEDB/03-18-2009/" 
             contact="IEDB"
             email=""
@@ -284,9 +276,6 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         organisms="P.falciparum, P.yoelii, P.vivax, P.berghei, P.knowlesi, P. chabaudi"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Links to IEDB epitopes"
-        extDbRlsVer="2009-03-18"
-        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB.">
         <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
             contact="IEDB"
             email=""
