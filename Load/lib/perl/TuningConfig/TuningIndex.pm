@@ -58,7 +58,8 @@ sub new {
       ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: the database contains the index "
 						     . $index_name
 						     . ", which is an extension of the tuningIndex "
-						     . $self->{name})
+						     . $self->{name}
+						     . " -- is the tuningManager config file out of date?")
 	  if $columnCount > $columnNumber;
     }
     $stmt->finish();
