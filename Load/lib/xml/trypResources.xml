@@ -2139,6 +2139,26 @@ Effect of TbDRBD3 depletion on procyclic T. brucei transcriptome.
     </description>
   </resource>
 
+<resource resource = "Tbrucei_Expression_Profiles_From_Christine_Clayton" version="1.0"
+            displayName="Expression profiling of T. brucei from Christine Clayton"
+            organisms="T. brucei"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Tbrucei_Expression_Profiles_From_Christine_Clayton"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Tbrucei_Expression_Profiles_From_Christine_Clayton"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Clayton_Christine"
+                contact="Christine Clayton"
+                email="cclayton@zmbh.uni-heidelberg.de"
+                institution="" />
+<pluginArgs>--inputDir @downloadDir@/Tbrucei_Expression_Profiles_From_Christine_Clayton/Clayton_Christine --configFile @downloadDir@/Tbrucei_Expression_Profiles_From_Christine_Clayton/Clayton_Christine/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Data from Christine Clayton.  
+          ]]>
+    </description>
+  </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>
