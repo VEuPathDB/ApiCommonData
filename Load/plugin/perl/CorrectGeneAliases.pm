@@ -263,7 +263,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.NAFeatureNAGene',
-	  'DoTS::NAGene',
+	  'DoTS.NAGene',
 	 );
 }
 
