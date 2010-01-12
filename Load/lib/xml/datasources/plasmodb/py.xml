@@ -2,10 +2,7 @@
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL predicted full length transcripts"
         organisms="P. yoelii"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-        extDbName="WatanabePy17XL_PredictedTranscripts"
-        extDbRlsVer="2006-11-02"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
         <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_py.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
@@ -24,10 +21,7 @@
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL EST library"
         organisms="P. yoelii"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-        extDbName="WatanabePy17XL_ESTs"
-        extDbRlsVer="2006-11-02"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
         <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_py.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
@@ -47,11 +41,7 @@
         displayName="P. yoelii (17XNL) genome annotation"
         category="Genome"
         organisms="P.yoelii"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Jane Carlton P. yoelii chromosomes"
-        extDbRlsVer="2002-09-10"
-        extDbRlsDescrip="Jane Carlton P. yoelii chromosomes|2002-09-10"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
         <publication pmid="12368865"/>
         <publication pmid="15580778"/>
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/sequences.gb" 
@@ -94,11 +84,7 @@
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         category="Genome"
         organisms="P.yoelii"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. yoelii Provisional Annotations from Kappe"
-        extDbRlsVer="2009-03-25"
-        extDbRlsDescrip="P. yoelii Provisional Annotations from Kappe|2009-03-25"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/GeneModels/From_Kappe/" 
             contact="Stephen Kappe"
@@ -156,15 +142,10 @@ Mutual information, an entropy based, information theoretic measure, was used to
         </description>
     </resource>
     
-rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
+resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
-        category="Proteome"
-        publicUrl=""
-        extDbName="Pyoelii LiverStage LS40"
-        extDbRlsVer="2008-07-18"
-        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40) by searching spectra against P. yoelii protein sequence database"
-        dbCommit="@dbcommit@">	
+        category="Proteome">	
         <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py40h.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
@@ -182,12 +163,7 @@ rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
 <resource resource="Pyoelii_LiverStage_LS50" version="2008-07-18" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50)"
-        category="Proteome"
-        publicUrl=""
-        extDbName="Pyoelii LiverStage LS50"
-        extDbRlsVer="2008-07-18"
-        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50) by searching spectra against P. yoelii protein sequence database"
-        dbCommit="@dbcommit@">	
+        category="Proteome">	
         <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py50h.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
@@ -206,11 +182,7 @@ rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
             displayName="P. yoelii liver stage expression data"
             organisms="P. yoelii"
             category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Kappe expression profiles"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "P. yoelii liver stage expression data"
-            dbCommit = "@dbcommit@">
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/"
                 contact = "Stefan Kappe"
                 email = "stefan.kappe@sbri.org"
@@ -253,25 +225,3 @@ rce resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
     </description>
   </resource>
 
-<resource resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
-        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
-        category="Proteome"
-        publicUrl=""
-        extDbName="Pyoelii LiverStage LS40"
-        extDbRlsVer="2008-07-18"
-        extDbRlsDescrip="Summary of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40) by searching spectra against P. yoelii protein sequence database"
-        dbCommit="@dbcommit@">	
-        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py40h.tab"
-          contact="Omar Harb"
-            email="oharb@pcbi.upenn.edu"
-            institution= "CBIL" 
-        />
-        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS40/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
-        <description>
-            <![CDATA[
-             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 hrs post-infection (LS40).
-          ]]>
-        </description>	
-	<publication pmid="18172196"/>	
-    </resource> 

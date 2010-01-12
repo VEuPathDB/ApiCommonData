@@ -5,11 +5,7 @@
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         organisms="P.knowlesi"
         displayName="P. knowlesi (H) chromosomes sequence and annotation" 
-        category="Genome" 
-        extDbName="Sanger P. knowlesi chromosomes"
-        extDbRlsVer="2007-10-03"
-        extDbRlsDescrip="Sanger P. knowlesi chromosomes|2007-10-03"
-        dbCommit="@dbcommit@"> 
+        category="Genome"> 
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=PK4.chr*.embl</wgetArgs>
         <unpack>mkdir @downloadDir@/P.knowlesi_chromosomes_fixed</unpack>
         <unpack>for f in `ls @downloadDir@/P.knowlesi_chromosomes`; do cat @downloadDir@/P.knowlesi_chromosomes/$f | adjustPlasmoEmblFile > @downloadDir@/P.knowlesi_chromosomes_fixed/$f.fixed; done</unpack>

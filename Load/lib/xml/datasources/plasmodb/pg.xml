@@ -3,11 +3,7 @@
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="P.gallinaceum" 
         displayName="P. gallinaceum contigs" 
-        category="Genome"               
-        extDbName="Sanger P. gallinaceum contigs"        
-        extDbRlsVer="2006-12-31"     
-        extDbRlsDescrip="P. gallinaceum contig sequences from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute"
-        dbCommit="@dbcommit@">
+        category="Genome">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
         <unpack>mkdir @downloadDir@/P.gallinaceum.contigs_fixed</unpack>
         <unpack>cat @downloadDir@/P.gallinaceum.contigs/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @downloadDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>

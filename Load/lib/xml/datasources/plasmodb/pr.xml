@@ -4,11 +4,7 @@
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="P.reichenowi"
         displayName="P. reichenowi contigs"
-        category="Genome"
-        extDbName="Sanger P. reichenowi contigs"
-        extDbRlsVer="2004-03-11"
-        extDbRlsDescrip="Contig sequences from the Sanger Institute"
-        dbCommit="@dbcommit@">
+        category="Genome">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=P_reichenowi.contigs.031104</wgetArgs> 
         <unpack>mkdir @downloadDir@/P.reichenowi.contigs_fixed</unpack>
         <unpack>cat @downloadDir@/P.reichenowi.contigs/P_reichenowi.contigs.031104 | perl -pe 's/>/>Pr_/' > @downloadDir@/P.reichenowi.contigs_fixed/P_reichenowi.contigs.031104</unpack>

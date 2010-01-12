@@ -2,10 +2,7 @@
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax predicted full length transcripts"
         organisms="P. vivax"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-        extDbName="WatanabePv_PredictedTranscripts"
-        extDbRlsVer="2006-11-02"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
         <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_pv.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
@@ -24,10 +21,7 @@
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax EST library"
         organisms="P. vivax"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-        extDbName="WatanabePv_ESTs"
-        extDbRlsVer="2006-11-02"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
         <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_pv.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
@@ -45,11 +39,7 @@
 <resource resource="P.vivax_contigsGB" version="2007-06-13"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         displayName="P. vivax contig sequence and annotation from Genbank"
-        category="Genome"
-        extDbName="P.vivax contigs from Genbank"
-        extDbRlsVer="2007-06-13"
-        extDbRlsDescrip="P.vivax contigs from Genbank|2007-06-13"
-        dbCommit="@dbcommit@">
+        category="Genome">
         <publication pmid="18843361"/>
         <manualGet
            fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/genbank/pvContigs/sequences.gb"
@@ -69,11 +59,7 @@
         displayName="P. vivax strain Salvador I mitochondrial DNA sequence and annotation"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         organisms="P.vivax"
-        category="Organellar"
-        extDbName="P. vivax mitochondrial genome"
-        extDbRlsVer="2005-07-12"
-        extDbRlsDescrip="P. vivax mitochondrial genome|2005-07-12"
-        dbCommit="@dbcommit@">
+        category="Organellar">
         <publication pmid="15901839"/>
         <manualGet
            fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/organellarData/pvMitochondrial/sequences.gb"
@@ -93,10 +79,7 @@
 <resource resource="PvivaxChromosomes" version="2007-09-04"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
          displayName="P. vivax contig to chromosome map"
-         category="Genome"
-         extDbName="Plasmodium vivax chromosomes"
-         extDbRlsVer="2007-09-04"
-         dbCommit="@dbcommit@">
+         category="Genome">
          <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/PvivaxAGP/AAKM00000000_20070904_abrev.agp"
          />
          <pluginArgs>--agpFile @downloadDir@/PvivaxChromosomes/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "P.vivax contigs from Genbank" --seqPieceExtDbRlsVer "2007-06-13" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs> 
@@ -111,11 +94,7 @@
         displayName="P. vivax Genbank source_id DBRefs"
         organisms="P.vivax"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="P.vivax Genbank source_Id DBRefs"
-        extDbRlsVer="2008-07-18"
-        extDbRlsDescrip="P.vivax Genbank source_id DBRefs"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir = "@manualDelivery@/P.vivax_contigsGB_DBRefs/pv_fea_match"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -135,11 +114,7 @@
         displayName="P. vivax Genbank contigs sequences DBRefs"
         organisms="P.vivax"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="P.vivax Genbank contigs sequences DBRefs"
-        extDbRlsVer="2008-05-29"
-        extDbRlsDescrip="P.vivax Genbank contigs sequences DBRefs"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir = "@manualDelivery@/P.vivax_contigsGB_DBRefs/pv_seq_match"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
@@ -154,32 +129,11 @@
     </resource>
 
 
-<resource resource="PvivaxChromosomes" version="2007-09-04"
-         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-         displayName="P. vivax contig to chromosome map"
-         category="Genome"
-         extDbName="Plasmodium vivax chromosomes"
-         extDbRlsVer="2007-09-04"
-         dbCommit="@dbcommit@">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/PvivaxAGP/AAKM00000000_20070904_abrev.agp"
-         />
-         <pluginArgs>--agpFile @downloadDir@/PvivaxChromosomes/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "P.vivax contigs from Genbank" --seqPieceExtDbRlsVer "2007-06-13" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose </pluginArgs> 
-         <description>
-            <![CDATA[
-         Contig to chromosome map for <i>P. vivax</i> SaI-1.
-         ]]>
-        </description>
-    </resource>
-
 <resource resource = "Pvivax_ZB_Time_Series_ExpressionData" version="1.0"
             displayName="Transcriptional profile throughout 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
             organisms="Pvivax"
             category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Transcriptional profile of the Pvivax time-series"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Transcriptional profile throughout the 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
-            dbCommit = "@dbcommit@">
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/ZB_vivax/data/working_dir/profiles"
                 contact="Zbynek Bozdech"
                 email="ZBozdech@ntu.edu.sg"
@@ -197,11 +151,7 @@ Transcriptional profile throughout the 48-h intraerythrocytic cycle of three dis
             displayName="Westenberger Pvivax ExpressionData"
             organisms="Pvivax"
             category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Westenberger Pvivax ExpressionData"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Westenberger Pvivax ExpressionData"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/westenberger_vivax"
                 contact="Scott Westenberger"
                 email="scottw@scripps.edu"
@@ -219,12 +169,7 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
 <resource resource="P.vivax_Clinical_Proteomics" version="2009-08-11" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P.vivax proteomics data from clinical samples (Tatu)"
-        category="Proteome"
-        publicUrl=""
-        extDbName="P.vivax Clinical Proteomics"
-        extDbRlsVer="2009-08-1"
-        extDbRlsDescrip="P.vivax proteomics data from clinical samples"
-        dbCommit="@dbcommit@">	
+        category="Proteome">	
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Tatu_clinical/working_dir/P.vivax_Clinical_Proteomics.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"

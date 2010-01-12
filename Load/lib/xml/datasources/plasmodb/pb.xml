@@ -3,10 +3,7 @@
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. berghei ANKA predicted full length transcripts"
         organisms="P. berghei"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-        extDbName="WatanabePbANKA_PredictedTranscripts"
-        extDbRlsVer="2006-11-02"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
         <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_pb.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
@@ -27,11 +24,7 @@
         category="Genome"
         organisms="P.berghei"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/pb.fasta.gz"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="P. berghei genome"
-        extDbRlsVer="2006-02-27"
-        extDbRlsDescrip="P. berghei genome|2006-02-27"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pb.fasta.gz</wgetArgs>
         <unpack>gunzip @downloadDir@/P.berghei_wholeGenomeShotgunSequence/pb.fasta.gz</unpack>
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5823 --sequenceFile @downloadDir@/P.berghei_wholeGenomeShotgunSequence/pb.fasta --soTermName "contig" --regexSourceId "(PB_[A-Z]{2}\d+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
@@ -47,11 +40,7 @@
         category="Genome"
         organisms="P.berghei"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. berghei genome"
-        extDbRlsVer="2006-02-27"
-        extDbRlsDescrip="P. berghei genome|2006-02-27"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
         <publication pmid="15637271"/>
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=pb.gff.gz,P_berghei.GeneDB.pep</wgetArgs>
         <unpack>gunzip @downloadDir@/P.berghei_Annotation/pb.gff.gz</unpack>
@@ -69,11 +58,7 @@
             displayName="P. berghei GSS oligos"
             organisms="P.berghei"
             category="Transcriptome"
-            plugin="GUS::Supported::Plugin::LoadFastaSequences"
-            extDbName="P.berghei GSS oligos"
-            extDbRlsVer="1.0"
-            extDbRlsDescrip="The GSS oligos used in the Hall, Waters, Sinden array."
-            dbCommit="@dbcommit@">
+            plugin="GUS::Supported::Plugin::LoadFastaSequences">
      <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/elements.fasta" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
@@ -112,12 +97,7 @@
     <resource resource="Waters_female_gametes" version="2007-09-25" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
-        category="Transcriptome"
-        publicUrl=""
-        extDbName="Waters Female Gametes"
-        extDbRlsVer="2007-09-25"
-        extDbRlsDescrip="Female gametocyte proteomics data provided by Leiden Malaria Group"
-        dbCommit="@dbcommit@">	
+        category="Transcriptome">	
         <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Female_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
@@ -136,12 +116,7 @@
     <resource resource="Waters_male_gametes" version="2007-09-25"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Male Gametocytes from Leiden Malaria Group"
-        category="Transcriptome"
-        publicUrl=""
-        extDbName="Waters Male Gametes"
-        extDbRlsVer="2007-09-25"
-        extDbRlsDescrip="Male gametocyte proteomics data provided by Leiden Malaria Group"
-        dbCommit="@dbcommit@">	
+        category="Transcriptome">	
         <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Male_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
@@ -160,12 +135,7 @@
     <resource resource="Waters_mixed_gametes" version="2007-09-25"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
-        category="Transcriptome"
-        publicUrl=""
-        extDbName="Waters Mixed Gametes"
-        extDbRlsVer="2007-09-25"
-        extDbRlsDescrip="Mixed gametocyte proteomics data provided by Leiden Malaria Group"
-        dbCommit="@dbcommit@">	
+        category="Transcriptome">	
         <manualGet fileOrDir="@manualDelivery@/massSpec/Waters/Mixed_Gams_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
@@ -208,12 +178,7 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
               version="1.0"
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="Regulation of sexual development of P. berghei - meta data"
-              category="Transcriptome"
-              extDbName="Regulation of sexual development of P.berghei (Waters Lab)"
-              extDbRlsVer="1"
-              extDbRlsDescrip="Regulation of sexual development of Plasmodium by translational repression."
-	      dbCommit="@dbcommit@"
-            >
+              category="Transcriptome">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/Waters.xls" 
                 contact="Andrew Waters"
                 email="waters@lumc.nl"
@@ -231,12 +196,7 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
         organisms="P.berghei"
 				category="proteome"
         publicUrl="http://www.sciencemag.org/content/vol307/issue5706/images/data/82/DC1/hall-SOM-tables.zip"
-        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-        extDbName="Plasmodium Life Cycle by Proteomic Analyses"
-        extDbRlsVer="1.0"
-        extDbRlsDescrip="Summary of Plasmodium berghei proteins detected in mixed
-        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis."
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/proteinExpression/berghei/"
             contact="Neil Hall or Robert Sinden"
             email = "nhall@tigr.org, r.sinden@imperial.ac.uk"
@@ -256,11 +216,7 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
             displayName="P. berghei transcript expression - HP"
             organisms="P.berghei"
             category="Transcriptome"
-            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName="P.berghei expression profile - HP - Hall-Waters"
-            extDbRlsVer="1.0"
-            extDbRlsDescrip="P.berghei expression profile - HP - Hall-Waters"
-            dbCommit="@dbcommit@">
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
      <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HP/" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
@@ -288,11 +244,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
         displayName="P. berghei transcript expression - HPE"
         organisms="P.berghei"
         category="Transcriptome"
-        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-        extDbName="P.berghei expression profile - HPE - Hall-Waters"
-        extDbRlsVer="1.0"
-        extDbRlsDescrip="P.berghei expression profile - HPE - Hall-Waters"
-        dbCommit="@dbcommit@">
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HPE/" 
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"

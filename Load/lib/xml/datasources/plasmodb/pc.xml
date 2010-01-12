@@ -2,11 +2,7 @@
         displayName="P. chabaudi (AS) chromosomes annotation"
         category="Genome"
         organisms="P.chabaudi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. chabaudi genome and annotation"
-        extDbRlsVer="2009-03-24"
-        extDbRlsDescrip="P. chabaudi genome and annotation|2009-03-24"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
          <manualGet
            fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/chromosomes/"/>
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_chromosomes/chromosomes/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudichr.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudichr.bioperl</pluginArgs>
@@ -19,15 +15,11 @@
         </description>
     </resource> 
 
-    <resource resource="P.chabaudi_unmapped_contigs" version="2009.03.24"
+    <resource resource="P.chabaudi_unmapped_contigs" parentResource="P.chabaudi_chromosomes"
         displayName="P. chabaudi (AS) unmapped contigs annotation"
         category="ignore"
         organisms="P.chabaudi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. chabaudi genome and annotation"
-        extDbRlsVer="2009-03-24"
-        extDbRlsDescrip="P. chabaudi genome and annotation|2009-03-24"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
          <manualGet
            fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/unmapped_contigs/"/>
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_unmapped_contigs/unmapped_contigs/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudicontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudicontigs.bioperl</pluginArgs>
