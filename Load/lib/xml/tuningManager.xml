@@ -3825,7 +3825,6 @@ my $genomeListRef = getGenomeList();
 my @genomeList = @$genomeListRef;
 
 foreach my $genome (@genomeList) {
-  print "genome update: taxonomyId " . $genome->{'taxonomyId'} . " date \"" . $genome->{'sinceDate'} . "\"\n";
   processChangedGenes($genome->{'taxonomyId'}, $genome->{'sinceDate'});
 }
 
@@ -3926,23 +3925,22 @@ sub processChangedGenes {
   my $request;
   my $response;
 
-  my $attempts = 1;
-  my $MAX_ATTEMPTS = 10;
+  my $retries = 0;
+  my $MAX_RETRIES = 10;
   do {
-    print "trying again (retry $attempts) with \"$url\"\n" if $attempts;
+    print "trying again (retry $retries) with \"$url\"\n" if $retries;
     $request = new HTTP::Request('GET', $url);
     $response = $ua->request($request);
 
-    if ($response->content =~ /The Sanger Institute Web service you requested is temporarily unavailable/ ) {
-      print "web service reports being temporarily unavailable\n";
-      $response->content = '';
-    }
+      if (!$response->is_success) {
+        print "unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
+            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)";
+      }
 
-  } until ($response->is_success or $response->content or ++$attempts > $MAX_ATTEMPTS);
+  } until (++$retries >= $MAX_RETRIES or $response->is_success);
 
   if (!$response->is_success) {
-    die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
-        . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)";
+    die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url";
   }
 
   my $simple = XML::Simple->new();
