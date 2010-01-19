@@ -4845,6 +4845,33 @@ sub writeGeneAliasFile {
   $mgr->endStep($signal);
 }
 
+sub writeSequenceAliasFile {
+
+  my ($mgr,$extDbSpec,$project, $dir, $species, $naSequenceExtDbSpec) = @_;
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $release = $propertySet->getProp('projectRelease');
+
+  my $projectDB = $project ? $project : $propertySet->getProp('projectDB');
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $signal =  $species ? "write${species}SequenceAliasFile" : "write${dir}SequenceAliasFile";
+
+  return if $mgr->startStep("Writing $dir sequence alias file for download site", $signal);
+
+  my $outFile = $species ? "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${species}SequenceAlias_$projectDB-${release}.txt" : "$siteFileDir/downloadSite/$projectDB/release-$release/$dir/${dir}SequenceAlias_$projectDB-${release}.txt";
+
+  my  $cmd ="getSequenceAliases --naSequenceExtDbSpec '$extDbSpec' --outfile $outFile";
+  
+  $cmd .= " --dbRefNASequenceExtDbSpec '$naSequenceExtDbSpec'" if $naSequenceExtDbSpec;
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
 sub modifyGenomeDownloadFile {
   my ($mgr,$dir,$file,$type,$extDb,$extDbVer, $database,$sequenceTable) = @_;
 
