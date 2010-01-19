@@ -2182,6 +2182,27 @@ Data from Christine Clayton.
 <publication pmid="16020725"/>
     </resource>
 
+<resource resource="T.cruzi_genome_id_mappings" version="2010-01-19"
+        displayName="T.cruzi mappings of older genome ids to the newer ones"
+        organisms="T.cruzi"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="T.cruzi_genome_id_mappings"
+        extDbRlsVer="2010-01-19"
+        extDbRlsDescrip="T.cruzi_genome_id_mappings|2010-01-19"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/Tcruzi/Tcruzi_names_mapped.txt"
+            contact = "Deborah Pinney"
+            email = "pinney@pcbi.upenn.edu"
+            institution = "University of Pennsylania"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/T.cruzi_genome_id_mappings/Tcruzi_names_mapped.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+            <i>T.cruzi</i> mappings of older genome ids to the newer ones.
+            ]]>
+        </description>
+    </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>
