@@ -32,6 +32,11 @@ SQL
 
     return $suffix;
   }
+
+  sub suffixDefined {
+
+    return (defined $suffix);
+  }
 }
 
 1;

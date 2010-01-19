@@ -12,6 +12,7 @@ use ApiCommonData::Load::TuningConfig::ExternalTuningTable;
 use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
+use ApiCommonData::Load::TuningConfig::TableSuffix;
 
 my $configDir;
 my $props;
@@ -528,12 +529,18 @@ SQL
   # check for obsolete tables not in apidb.ObsoleteTuningTable
   # note that the backslash in the regex is to protect the dollar-sign from Perl
   # it's really "zero or more digits, followed by end-of-line": [0-9]*$
+  my $newTablesTerm = '';
+  if (ApiCommonData::Load::TuningConfig::TableSuffix::suffixDefined()) {
+    my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
+    $newTablesTerm = "and atab.name not like '%$suffix%'";
+  }
   $sql = <<SQL;
 select owner || '.' || table_name
 from (select atab.owner, atab.table_name
       from all_synonyms asyn, all_tables atab
       where asyn.owner = atab.owner
         and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name
+        $newTablesTerm
     minus select table_owner, table_name from all_synonyms)
 minus select name from apidb.ObsoleteTuningTable
 SQL
@@ -542,13 +549,9 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable");
-
-    if (!ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag()) {
-      ApiCommonData::Load::TuningConfig::Log::addLog(". . . dropping");
-      $dbh->do("drop table $table")
-	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-    }
+    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . dropping");
+    $dbh->do("drop table $table")
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
   $stmt->finish();
