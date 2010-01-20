@@ -532,7 +532,7 @@ SQL
   my $newTablesTerm = '';
   if (ApiCommonData::Load::TuningConfig::TableSuffix::suffixDefined()) {
     my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
-    $newTablesTerm = "and atab.name not like '%$suffix%'";
+    $newTablesTerm = "and atab.table_name not like '%$suffix%'";
   }
   $sql = <<SQL;
 select owner || '.' || table_name
