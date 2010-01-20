@@ -4315,6 +4315,9 @@ create index apidb.sec_ix&1
   </tuningTable>
 
 
+  <!-- GUS indexes moved to createGusTuning.sql on 1/20/10.  These tuningIndexes
+       can be removed any time after 1/27/10 -->
+
   <tuningIndex name="dots.aaseq_subclassdbrel_ix" table="dots.AaSequenceImp">
     external_database_release_id, subclass_view, aa_sequence_id
   </tuningIndex>
@@ -4374,27 +4377,5 @@ create index apidb.sec_ix&1
   <tuningIndex name="sres.so_term_ix" table="sres.SequenceOntology">
     term_name, sequence_ontology_id
   </tuningIndex> 
-
-  <!-- remove after 12/15/09; presumed to have been propageted by then.
-       New instances will have this created by ApiCommonData/Load/lib/sql/apidbschema/2aryStructCallPct.sql -->
-  <tuningIndex name="dots.ssc_ssid_ix" table="dots.SecondaryStructureCall">
-    secondary_structure_id
-  </tuningIndex> 
-
-<!--
-  This index should be unique, except for the SplicedNaSequence records whose source_ids are null.
-
-  <tuningIndex name="dots.NaSequenceImp_UniqSrcid_ix" table="dots.NaSequenceImp">
-    string1, external_database_release_id
-  </tuningIndex>
--->
-
-<!--
-  This index should be unique, except for the TranslatedAaSequence records whose source_ids are null.
-
-  <tuningIndex name="dots.AaSequenceImp_UniqSrcid_ix" table="dots.AaSequenceImp">
-    source_id, external_database_release_id
-  </tuningIndex>
--->
 
 </tuningConfig>
