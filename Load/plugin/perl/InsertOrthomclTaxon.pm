@@ -1,4 +1,4 @@
-package OrthoMCLData::Load::Plugin::InsertOrthomclTaxon;
+package ApiCommonData::Load::Plugin::InsertOrthomclTaxon;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
