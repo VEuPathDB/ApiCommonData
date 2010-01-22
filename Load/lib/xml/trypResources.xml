@@ -1778,28 +1778,7 @@ Institute, USA and is described in further detail in Sivam et al.
   </resource>
 
 
-    <resource resource="Cross_RNA_Seq" version="2009-08-01" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        displayName="Splice Leader and Poly A Sites from RNASeq"
-        category="Transcriptome"
-        publicUrl=""
-        extDbName="RNASeq - George Cross"
-        extDbRlsVer="2009-08-01"
-        extDbRlsDescrip="RNASeq - George Cross|2009-08-01"
-        dbCommit="@dbcommit@">	
-        <manualGet fileOrDir="@manualDelivery@/RNA-seq/GeorgeCross_7-29-09"
-            contact="George Cross"
-            email="gamc@mail.rockefeller.edu"
-            institution="Rockefeller University"
-        />
-        <unpack></unpack>
-        <pluginArgs></pluginArgs>
-        <description>
-            <![CDATA[
-Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
-          ]]>
-        </description>		
-    </resource>    
+   
     
 <resource resource="Linfantum_Proteomics_OuelletteM" version="2009-07-17"
                 plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
@@ -1969,7 +1948,7 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
  <resource resource="ChIPSeqCoveragePlot_George_Cross" version="2009-08-27" 
         displayName="ChIP-Seqs from George Cross" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
         extDbName="ChIP-Seqs from George Cross"
         extDbRlsVer="2009-08-27"
         extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
@@ -1991,6 +1970,33 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
           ]]>
         </description>
     </resource> 
+
+ <resource resource="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross" version="2010-01-10" 
+        displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)" 
+        category="Transcriptome" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqAlignmentWithSqlLdr" 
+        extDbName="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross"
+        extDbRlsVer="2010-01-10"
+        extDbRlsDescrip="Splice Leader and Poly A Sites from RNASeq (George Cross)"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_1-10-10_pas_sas/bowtie/" 
+            contact="George Cross"
+            email="gamc@mail.rockefeller.edu"
+            institution="Rockefeller University" />
+
+<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated.bowtie --sample curated_splice --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-10' > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated.align</unpack>
+
+<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.bowtie  --sample curated_polyA --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-10' > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align</unpack>
+
+<unpack>cat @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated.align @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align</unpack>
+<pluginArgs>--dataFile @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align</pluginArgs>
+        <description>
+            <![CDATA[
+Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
+          ]]>
+        </description>
+    </resource> 
+
 
 <resource resource="Sanger_siRNA" version="2008-12-15"
             plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr"
