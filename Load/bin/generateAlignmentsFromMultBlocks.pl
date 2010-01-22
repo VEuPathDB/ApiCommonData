@@ -17,7 +17,7 @@ my $maxBlockCount = 2;
 my $sample;
 my $mappingFile;
 my $fileType;
-my $extdbrelid;
+my $extDbSpecs;
 
 
 &GetOptions("filename|f=s" => \$filename, 
@@ -26,7 +26,7 @@ my $extdbrelid;
             "sample|e=s"=> \$sample,
             "mappingFile|mf=s"=> \$mappingFile,
             "fileType|ft=s"=> \$fileType,
-            "ext_db_rel_id|eid=i"=> \$extdbrelid,
+            "extDbSpecs|s=s" => \$extDbSpecs,
             );
 
 die "usage: generateAlignmentsFromMultBlocks.pl 
@@ -36,8 +36,15 @@ die "usage: generateAlignmentsFromMultBlocks.pl
              --sample <sample name (reqired)> 
              --type <type of analysis (unique|multiple|provider)> 
              --mappingFile|mf <filename of source_id\tna_sequence_id mapping> 
-             --ext_db_rel_id|eid <external_database_release_id for this experiment> 
+             --extDbSpecs|s <external_database_name|version for this experiment> 
              --fileType|ft <(blat|bowtie)>\n" unless $sample && $fileType =~ /(blat|bowtie)/i;
+
+
+my ($extDbName,$extDbRlsVer)=split(/\|/,$extDbSpecs);
+
+my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
+
+my $extDbRlsId= `getValueFromTable --idSQL \"$sql\"`;
 
 my %map;
 if($mappingFile){
@@ -55,7 +62,7 @@ my $ct = 0;
 my $data = {};
 my %dis;
 
-#print "\t$extdbrelid\tsample\tsequence_id\tquery_id\tstrand\tstart_a\tend_a\tstart_b\tend_b\tintron_size\tgenomeMatches\n";
+#print "\t$extDbRlsId\tsample\tsequence_id\tquery_id\tstrand\tstart_a\tend_a\tstart_b\tend_b\tintron_size\tgenomeMatches\n";
 
 open(F,"$filename") || die "unable to open $filename\n";
 while(<F>){
@@ -92,6 +99,6 @@ while(<F>){
 
 foreach my $val (values %{$data}){
   foreach my $h (sort {$a->[2] <=> $b->[2]} @{$val}){
-    print "\t$extdbrelid\t$sample\t",join("\t",@{$h}),"\n";
+    print "\t$extDbRlsId\t$sample\t",join("\t",@{$h}),"\n";
   }
 }
