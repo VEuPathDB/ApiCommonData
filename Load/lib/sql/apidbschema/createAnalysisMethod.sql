@@ -1,7 +1,9 @@
 CREATE TABLE apidb.AnalysisMethod (
  analysis_method_id         NUMBER(12) NOT NULL,
  name                       VARCHAR(40) NOT NULL,
+ tool                       VARCHAR(40),
  version                    VARCHAR(30),
+ category                   VARCHAR(30),
  input                      VARCHAR(50),
  output                     VARCHAR(50),
  parameters                 VARCHAR(200),

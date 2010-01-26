@@ -21,7 +21,21 @@ my $argsDeclaration =
 	    isList => 0
 	   }),
 
+ stringArg({name => 'tool',
+	    descr => '',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0
+	   }),
+
  stringArg({name => 'version',
+	    descr => '',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0
+	   }),
+
+ stringArg({name => 'category',
 	    descr => '',
 	    constraintFunc => undef,
 	    reqd => 1,
@@ -142,7 +156,9 @@ sub run {
     my ($self) = @_;
 
     my $name = $self->getArg('name');
+    my $tool = $self->getArg('tool');
     my $version = $self->getArg('version');
+    my $version = $self->getArg('category');
     my $input = $self->getArg('input');
     my $output = $self->getArg('output');
     my $parameters = $self->getArg('parameters');
@@ -155,7 +171,9 @@ sub run {
    my $am = GUS::Model::ApiDB::AnalysisMethod->
      new(
 	 {'name' => $name,
+	 'tool' => $tool,
 	 'version' => $version,
+	 'category' => $category,
 	 'input' => $input,
 	 'output' => $output,
 	 'parameters' => $parameters,
