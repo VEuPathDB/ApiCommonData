@@ -5,6 +5,161 @@
     <cleanups>
     </cleanups>
 
+    <resource resource="taxonomy" version="2009-11-05" 
+        displayName="NCBI Taxonomy"
+        publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        category="Ontology"
+        url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        plugin="GUS::Supported::Plugin::LoadTaxon"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+        <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+        <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+        <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+        <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="SO" version="1.234"
+        displayName="Sequence Ontology"
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.234"
+        plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.234 --soCvsVersion 1.234</pluginArgs>
+        <description>
+            <![CDATA[
+    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="enzymeDB" version="2009_11_03" 
+        displayName="Enzyme nomenclature database"
+        publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
+        category="Ontology"
+        url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
+        plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
+        extDbName="enzymeDB"
+        extDbRlsVer="2009-11-03"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
+        <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="GO_evidence_codes" version="1.20"
+        displayName="Gene Ontology evidence codes"        
+        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
+        category="Ontology"            
+        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+        <description>
+            <![CDATA[
+   Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
+          ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="GO" version="1.875"
+        displayName="Gene Ontology"
+        publicUrl="http://www.geneontology.org"
+        category="Ontology"
+        url="http://www.geneontology.org/ontology/gene_ontology.obo"
+        plugin="GUS::Supported::Plugin::InsertGeneOntology"
+        extDbName="Gene Ontology"
+        extDbRlsVer="1.875"
+        extDbRlsDescrip="The Gene Ontology from Nov. 3, 2009"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="NRDB" version="2009-11-03"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="GenBank NRDB"
+        publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        category="Proteome"
+        url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        extDbName="NRDB"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="The nr file from 2009-11-03"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+        </description>
+    </resource>
+
+
+
+    <resource resource="InterproscanData" version="23.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        category="Proteome"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            email="interhelp@ebi.ac.uk"
+            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan23.0"
+            contact="EBI"
+            institution="EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan23.0/iprscan/data</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan23.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</pluginArgs>
+        <description>
+            <![CDATA[
+        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>
+ 
+    <resource resource="PDBProteinSequences" version="2009-12-09"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="PDB protein sequences" 
+        extDbRlsVer="2009-12-09"
+        extDbRlsDescrip="PDB protein sequences|2009-12-09"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <description>
+         <![CDATA[
+Protein sequences from PDB used for mapping protein sequences to crystal structures in PDB.        
+          ]]>
+        </description>
+    </resource>
+
     <resource resource="dbEST" version="2009-12-07"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
@@ -136,4 +291,47 @@
           ]]>
         </description>
     </resource>
+
+    <resource resource="OrthoMCL_Phyletic" version="4.0"
+        displayName="OrthoMCL phyletic profiles"
+        organisms="E. cuniculi"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/apiSiteFiles/downloadSite/OrthoMCL/release-4/groups_OrthoMCL-4.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--groupsFile @downloadDir@/OrthoMCL_Phyletic/groups_OrthoMCL-4.txt --taxaToLoad "ecun"</pluginArgs>
+        <description>
+            <![CDATA[
+OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+          ]]>
+        </description>
+        <publication pmid="16381887"/>
+    </resource>
+
+<resource resource="OrthoMCL" version="4.0"
+        displayName="Orthologous groups generated using OrthoMCL"
+        organisms="E. cuniculi"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/apiSiteFiles/downloadSite/OrthoMCL/release-4/groups_OrthoMCL-4.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/groups_OrthoMCL-4.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "ecun" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+</resource>
+
 </resourcesPipeline>
