@@ -9,9 +9,14 @@ use GUS::PluginMgr::Plugin;
 
 use GUS::Model::Study::OntologyEntry;
 use GUS::Model::RAD::Analysis;
+use GUS::Model::RAD::AnalysisInput;
+
 use GUS::Model::RAD::Protocol;
 use GUS::Model::RAD::AnalysisParam;
 use GUS::Model::RAD::ProtocolParam;
+
+use GUS::Model::RAD::LogicalGroup;
+use GUS::Model::RAD::LogicalGroupLink;
 
 $| = 1;
 
@@ -62,6 +67,13 @@ sub getArgumentsDeclaration{
                constraintFunc => undef,
                enum           => "ArrayElementFeature,GeneFeature", 
              }),
+
+     stringArg({name => 'profileSetName',
+                descr => 'Name of an associated Apidb.profileset',
+                constraintFunc=> undef,
+                reqd  => 0,
+                isList => 0
+               }),
 
     ];
   return $argsDeclaration;
@@ -135,15 +147,20 @@ sub run {
 
   my $configHeader = shift @$config;
 
+  $self->validateHeader($configHeader);
+
   foreach my $configRow (@$config) {
     my $dataFile = $configRow->[0];
     my $analysisName = $configRow->[1];
     my $protocolName = $configRow->[2];
     my $protocolType = $configRow->[3];
+    my $profileElements = $configRow->[4];
+
+    my $logicalGroup = $self->makeLogicalGroup($profileElements, $analysisName);
 
     my $protocol = $self->getProtocol($protocolName, $protocolType, $configHeader);
 
-    my $analysis = $self->createAnalysis($protocol, $analysisName, $configHeader, $configRow);
+    my $analysis = $self->createAnalysis($protocol, $analysisName, $configHeader, $configRow, $logicalGroup);
 
     my $count = $self->processDataFile($analysis, $dataFile, $class, $naFeatureView, $useSqlLdr);
 
@@ -156,6 +173,59 @@ sub run {
 
   return "Processed $totalLines lines from data files and $totalInserts Total Inserts";
 }
+
+#--------------------------------------------------------------------------------
+
+sub validateHeader {
+  my ($self, $header) = @_;
+
+  my @expected = ('datafile', 'analysisname', 'protocolname', 'protocoltype', 'profileelementname');
+
+  for(my $i = 0; $i < scalar @expected; $i++) {
+    my $value = $header->[$i];
+    $value =~ s/\s//g;
+
+    my $e = $expected[$i];
+
+    unless($value =~ /$e/i) {
+      $self->userError("Config file missing missing expected Column: $e");
+    }
+  }
+  return 1;
+}
+
+
+#--------------------------------------------------------------------------------
+
+sub makeLogicalGroup {
+  my ($self, $profileElements, $analysisName) = @_;
+
+  return unless($profileElements);
+
+  my ($tableId) = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = 'ProfileElementName'" );
+
+  my $logicalGroupName = "$analysisName INPUTS";
+  my $logicalGroup = GUS::Model::RAD::LogicalGroup->new({name => $logicalGroupName});
+
+  my $profileSetName = $self->getArg('profileSetName');
+  my ($profileSetId) = $self->sqlAsArray( Sql => "select profile_set_id from apidb.profileset where name = '$profileSetName'" );
+
+  my @profileElements = split(';', $profileElements);
+
+  foreach my $pe (@profileElements) {
+    my ($profileElementNameId) = $self->sqlAsArray( Sql => "select profile_element_name_id from apidb.profileelementname where profile_set_id = $profileSetId and name = '$pe'" );
+
+    unless($profileElementNameId) {
+      $self->userError("No row in apidb.profileelementname for profile set [$profileSetName] and Name [$pe]");
+    }
+
+    my $link = GUS::Model::RAD::LogicalGroupLink->new({table_id => $tableId, row_id => $profileElementNameId});
+    $link->setParent($logicalGroup);
+  }
+  return $logicalGroup;
+}
+
+
 
 #--------------------------------------------------------------------------------
 
@@ -315,12 +385,12 @@ sub getTableId {
 #--------------------------------------------------------------------------------
 
 sub createAnalysis {
-  my ($self, $protocol, $analysisName,$configHeader, $configRow) = @_;
+  my ($self, $protocol, $analysisName,$configHeader, $configRow, $logicalGroup) = @_;
 
   my $analysis = GUS::Model::RAD::Analysis->new({name => $analysisName});
   my @protocolParamList =$protocol->getChildren('RAD::ProtocolParam',1);
 
-  for(my $i = 4; $i < scalar @$configRow; $i++){
+  for(my $i = 5; $i < scalar @$configRow; $i++){
       my $analysisParamValue=$configRow->[$i]; 
       my $analysisParam = GUS::Model::RAD::AnalysisParam->new({value => $analysisParamValue});
       $analysisParam->setParent($analysis); 
@@ -332,6 +402,14 @@ sub createAnalysis {
        }
   }
   $analysis->setParent($protocol);
+
+  if($logicalGroup) {
+    my $ai = GUS::Model::RAD::AnalysisInput->new({});
+
+    $ai->setParent($analysis);
+    $ai->setParent($logicalGroup);
+  }
+
   return $analysis;
 }
 
@@ -350,8 +428,9 @@ sub getProtocol {
   
   my $protocolId = $protocol->getId(); 
 
-  for(my $i = 4; $i < scalar @$configHeader; $i++){
+  for(my $i = 5; $i < scalar @$configHeader; $i++){
       my $protocolParamName = $configHeader->[$i]; 
+
       my $protocolParam = GUS::Model::RAD::ProtocolParam->new({protocol_id => $protocolId,
                                                           name => $protocolParamName}); 
       $protocolParam->setParent($protocol) unless $protocolParam->retrieveFromDB(); 
