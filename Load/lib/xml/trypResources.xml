@@ -1945,6 +1945,29 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
         </description>
     </resource> 
 
+  <resource resource="George_Cross_RNA_Seq_Profiles" version="1.0"
+            displayName="RNA sequence profiles from George Cross"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="George_Cross_RNA_Seq_Profiles"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="George_Cross_RNA_Seq_Profiles|1.0"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_7-29-09/NewData/working_dir/profiles" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/George_Cross_RNA_Seq_Profiles/profiles --configFile @downloadDir@/George_Cross_RNA_Seq_Profiles/profiles/config.txt --tolerateMissingIds  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+RNA sequence profiles from George Cross.
+          ]]>
+    </description>
+  </resource>
+
+
  <resource resource="ChIPSeqCoveragePlot_George_Cross" version="2009-08-27" 
         displayName="ChIP-Seqs from George Cross" 
         category="ignore" 
@@ -2248,6 +2271,7 @@ Data from Christine Clayton.
           ]]>
     </description>
   </resource>
+
 
  <categoryOrder>
    <categoryRef name="Genome"/>
