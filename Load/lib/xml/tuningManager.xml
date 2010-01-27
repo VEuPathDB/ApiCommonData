@@ -3814,6 +3814,7 @@ use Data::Dumper;
 use LWP::UserAgent;
 use HTTP::Request;
 use HTTP::Response;
+use ApiCommonData::Load::TuningConfig::Log;
 
 $| = 1; # turn off buffering of STDOUT
 
@@ -3892,7 +3893,7 @@ SANGERTAXA
   my $ua = new LWP::UserAgent;
   my $url = "http://www.genedb.org/service/genomes/changes.xml?since=2008-12-01";
 
-  print "getting list of available taxa from = $url\n";
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of available taxa from = $url");
   my $request = new HTTP::Request('GET', $url);
   my $response = $ua->request($request);
   if (!$response->is_success) {
@@ -3920,7 +3921,7 @@ sub processChangedGenes {
 
   my $ua = new LWP::UserAgent;
   my $url = "http://www.genedb.org/testservice/genes/annotation_changes?since=$sinceDate&taxonomyID=$taxonomyId";
-  print "getting list of gene changes from = $url\n";
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of gene changes from = $url");
 
   my $request;
   my $response;
@@ -3928,13 +3929,13 @@ sub processChangedGenes {
   my $retries = 0;
   my $MAX_RETRIES = 10;
   do {
-    print "trying again (retry $retries) with \"$url\"\n" if $retries;
+    ApiCommonData::Load::TuningConfig::Log::addLog("trying again (retry $retries) with \"$url\"") if $retries;
     $request = new HTTP::Request('GET', $url);
     $response = $ua->request($request);
 
       if (!$response->is_success) {
-        print "unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
-            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)\n";
+        ApiCommonData::Load::TuningConfig::Log::addLog("unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
+            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
       }
 
   } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success));
@@ -3955,8 +3956,6 @@ sub processChangedGenes {
     my $gene = $change->{geneuniquename};
     my $lastMod = $change->{date};
  
-    # print "gene $gene changed $lastMod\n";
-
     $geneLastChange{$gene} = $lastMod
       if !defined $geneLastChange{$gene} || $lastMod gt $geneLastChange{$gene};
   }
