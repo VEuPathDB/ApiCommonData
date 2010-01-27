@@ -2146,20 +2146,39 @@ Data from marilyn Parsons (Dhileep is contact person).  Involves 8 conditions an
     </description>
   </resource>
 
-<resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion" version="1.0"
+ <resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion_Page" version="1.0"
+            displayName="L.major Beverly Steve Array page analysis"
+            organisms="Tbrucei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Estevez_Antonio/analysis/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Page/analysis --configFile @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Page/analysis/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+
+<resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles" version="1.0"
             displayName="Expression profiling of T. brucei Procyclic TbDRBD3 depletion from Antonio M Estevez"
             organisms="T. brucei"
             category="Transcriptome"
             plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Tbrucei_Procyclic_TbDRBD3_Depletion"
+            extDbName = "Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles"
             extDbRlsVer = "1.0"
             extDbRlsDescrip = "Expression profiling of Tbrucei Procyclic TbDRBD3 depletion"
             dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Estevez_Antonio"
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Estevez_Antonio/analysis"
                 contact="Antonio M Estevez"
                 email="aestevez@ipb.csic.es"
                 institution="" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion/Estevez_Antonio --configFile @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion/Estevez_Antonio/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+<pluginArgs>--inputDir @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles/analysis --configFile @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
 Effect of TbDRBD3 depletion on procyclic T. brucei transcriptome.
