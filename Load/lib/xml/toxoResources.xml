@@ -2701,7 +2701,23 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
         </description>
     </resource> 
 
+  <resource resource="Neosporacaninum_Gene_Aliases" version="01-27-2010"
+        displayName="Neosporacaninum genes with the previous source_ids"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/Genomes/Neosporacaninum/new2oldIds_Ncaninum_new.txt"
+            contact=""
+            email=""
+            institution=""
+        />
 
+        <pluginArgs>--MappingFile @downloadDir@/Neosporacaninum_Gene_Aliases/new2oldIds_Ncaninum.txt </pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>
