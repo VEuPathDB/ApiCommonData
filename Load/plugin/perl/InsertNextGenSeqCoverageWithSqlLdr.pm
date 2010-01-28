@@ -25,6 +25,20 @@ sub getArgumentsDeclaration{
                constraintFunc => undef,
                isList         => 0,
              }),
+
+      stringArg({name => 'externalDatabase',
+	      descr => 'External database from whence this data came',
+	      constraintFunc=> undef,
+	      reqd  => 1,
+	      isList => 0
+	     }),
+
+   stringArg({name => 'externalDatabaseRls',
+	      descr => 'Version of external database from whence this data came',
+	      constraintFunc=> undef,
+	      reqd  => 1,
+	      isList => 0
+	     }),
     ];
   return $argsDeclaration;
 }
