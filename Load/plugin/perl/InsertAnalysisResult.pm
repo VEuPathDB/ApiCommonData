@@ -221,6 +221,7 @@ sub makeLogicalGroup {
 
     my $link = GUS::Model::RAD::LogicalGroupLink->new({table_id => $tableId, row_id => $profileElementNameId});
     $link->setParent($logicalGroup);
+    $link->submit();
   }
   return $logicalGroup;
 }
