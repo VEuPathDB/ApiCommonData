@@ -2310,6 +2310,27 @@ Data from Christine Clayton.
     </description>
   </resource>
 
+ <resource resource="RNASeqCoveragePlot_Clayton" version="01-22-2010" 
+        displayName="RNA-Seqs from Clayton" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="RNASeqCoveragePlot_Clayton"
+        extDbRlsVer="01-22-2010"
+        extDbRlsDescrip="RNASeqCoveragePlot_Clayton|01-22-2010"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/Clayton_1-22-10/working_dir/bowtie/" 
+            contact = "Christine Clayton" 
+            email = "cclayton@zmbh.uni-heidelberg.de" 
+            institution = "ZMBH" />
+
+<unpack>generateCoveragePlot.pl --m 14 --sample Paired_sequences --extDbSpecs 'RNASeqCoveragePlot_Clayton|01-22-2010' --ft bowtie --nu 5581514 --nm 301437486 @downloadDir@/RNASeqCoveragePlot_Clayton/bowtie/Clayton_RNA_seq_trimed.raw.bt>@downloadDir@/RNASeqCoveragePlot_Clayton/Paired_sequence.cov </unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Clayton/Paired_sequence.cov  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource> 
 
  <categoryOrder>
    <categoryRef name="Genome"/>
