@@ -157,9 +157,10 @@ sub makeProfile {
   if($loadProfileElement){
     my $count = 1;
     foreach my $value (@$profileRow) {
+      $value = undef if($value eq 'NA');
       my $profileElement = GUS::Model::ApiDB::ProfileElement->
 	new({value => $value,
-	     element_order => $count++
+	     element_order => $count++,
 	    });
       $profile->addChild($profileElement);
     }
