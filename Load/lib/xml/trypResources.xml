@@ -2175,7 +2175,7 @@ Data from marilyn Parsons (Dhileep is contact person).  Involves 8 conditions an
 
 
  <resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion_Page" version="1.0"
-            displayName="L.major Beverly Steve Array page analysis"
+            displayName="Tbrucei Procyclic TbDRBD3 Depletion Array page analysis"
             organisms="Tbrucei"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
@@ -2340,6 +2340,49 @@ Data from Christine Clayton.
           ]]>
         </description>
     </resource> 
+
+
+  <resource resource="T.cruzi_Tarleton_Rick_Array_Profiles" version="1.0"
+            displayName="T.cruzi Tarleton Rick Array Profiles"
+            category="Transcriptome"
+            organisms="T.cruzi"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="T.cruzi_Tarleton_Rick_Array_Profiles"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="T.cruzi_Tarleton_Rick_Array_Profiles|1.0"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Tarleton_Rick/analysis/PROFILE/" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+      />
+<pluginArgs>--inputDir @downloadDir@/T.cruzi_Tarleton_Rick_Array_Profiles/PROFILE --configFile @downloadDir@/T.cruzi_Tarleton_Rick_Array_Profiles/PROFILE/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+
+ <resource resource = "T.cruzi_Tarleton_Rick_Array_Page" version="1.0"
+            displayName="T.cruzi Tarleton Rick Array page analysis"
+            organisms="T.cruzi"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Tarleton_Rick/analysis/PAGE/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/T.cruzi_Tarleton_Rick_Array_Page/PAGE --configFile @downloadDir@/T.cruzi_Tarleton_Rick_Array_Page/PAGE/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
 
  <categoryOrder>
    <categoryRef name="Genome"/>
