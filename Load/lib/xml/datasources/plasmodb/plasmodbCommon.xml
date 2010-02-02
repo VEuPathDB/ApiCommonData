@@ -7,10 +7,9 @@
 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
         />
-        <unpack>mkdir @pipelineDir@/config/</unpack>
         <unpack>getSubTaxa --ncbiTaxId 5820 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
-        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <unpack>createPropFile --file dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -394,7 +393,7 @@ Mappings from PlasmoDB gene IDs to GenBank protein gi numbers, based on perfect 
         />
 
 
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/PlasmodiumIsolates/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "region" --bioperlTreeOutput @pipelineDir@/logs/Plasmoisolates.bioperl</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/PlasmodiumIsolates/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "region" --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
 Plasmodium isolates from Genbank
