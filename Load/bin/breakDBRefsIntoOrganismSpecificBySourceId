@@ -60,6 +60,18 @@ while(my ($sourceId,$naFeatId) = $stmt1->fetchrow_array()) {
   $genes{$sourceId} = $naFeatId;
 }
 
+$sql = "select ng.name from dots.nagene ng,dots.nafeaturenagene nn where nn.na_feature_id = ? and ng.na_gene_id = nn.na_gene_id";
+
+my $stmt2 = $dbh->prepare($sql);
+
+foreach my $sourceId (keys %genes) {
+  $stmt2->execute($genes{$sourceId});
+
+  while(my ($aliasName) = $stmt2->fetchrow_array()){
+    $genes{$aliasName}=1;
+  }
+}
+
 open(FILE, $inFile) or die "Cannot open file $inFile for reading:$!";
 
 open(OUT,">$outFile"); 
