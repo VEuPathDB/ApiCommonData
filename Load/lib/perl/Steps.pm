@@ -1741,7 +1741,58 @@ EOF
   $mgr->endStep($signal);
 }
 
+sub makeOrthoResourceFile {
+  my ($mgr) = @_;
 
+  my $signal = "orthoResourceFile";
+
+  return if $mgr->startStep("Creating file of ortho resources for download site", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+  my $release = $propertySet->getProp('projectRelease');
+  my $projectDB = $propertySet->getProp('projectDB');
+
+  my $project = ucfirst($projectDB);
+
+  my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $dlDir = "$siteFileDir/downloadSite/$project/release-$release";
+
+  $mgr->runCmd("mkdir -p $dlDir");
+
+  die "Failed to create $dlDir.\n"  unless (-e $dlDir);
+
+  my $outFile = "${dlDir}/resources_OrthoMCL-${release}.txt";
+
+  my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  my $sql = <<"EOF";
+     SELECT
+          ot.three_letter_abbrev
+                || chr(9) ||
+          t.ncbi_tax_id
+                || chr(9) ||
+          ot.name
+                || chr(9) ||
+          r.resource_url
+     FROM
+        apidb.orthomcltaxon ot,
+        sres.taxon t, 
+        apidb.orthomclresource r
+    WHERE
+        ot.is_species = 1
+        AND ot.orthomcl_taxon_id = r.orthomcl_taxon_id
+        AND ot.taxon_id = t.taxon_id
+EOF
+
+  my $cmd = "makeFileWithSql --outFile $outFile --sql \"$sql\" 2>> $logFile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->runCmd("gzip $outFile");
+
+  $mgr->endStep($signal);
+}
 
 sub makeCdsDownloadFile {
   my ($mgr, $species, $name, $extDb, $extDbVer) = @_;
