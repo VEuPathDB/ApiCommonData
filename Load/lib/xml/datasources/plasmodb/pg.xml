@@ -1,3 +1,21 @@
+    <resource resource="dbEST" version="2009-02-23"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="Plasmodium dbEST ESTs"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
+
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        />
+        <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <description>
+            <![CDATA[
+                  Plasmodium ESTs from dbEST.
+          ]]>
+        </description>
+    </resource>
+
     <resource resource="P.gallinaceum.contigs" version="2006-12-31" 
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
