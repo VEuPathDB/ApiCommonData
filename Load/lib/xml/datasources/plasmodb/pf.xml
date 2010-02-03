@@ -386,7 +386,7 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
         />
         <unpack>perl @gusHome@/bin/preLoadArrayDesign --category TechnologyType --value @PlasmoSageTags.OntologyEntryValue@ --manufacturer @PlasmoSageTags.Contact@</unpack>
         <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags.txt > @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags_header.txt</unpack>
-        <pluginArgs>--cfg_file @downloadDir@/SageTagArrayDesign/array/sageArray.config --data_file @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags_header.txt  --manufacturer @PlasmoSageTags.Contact@ --technology_type @PlasmoSageTags.OntologyEntryValue@ @commit@</pluginArgs>
+        <pluginArgs>--cfg_file @downloadDir@/SageTagArrayDesign/array/sageArray.config --data_file @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags_header.txt  --manufacturer @PlasmoSageTags.Contact@ --technology_type @PlasmoSageTags.OntologyEntryValue@</pluginArgs>
         <publication pmid="11598196"/>
         <publication pmid="14622411"/>
         <publication pmid="15138065"/>
@@ -699,7 +699,7 @@ A conserved pentameric sequence was shown to play a central role in protein expo
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @downloadDir@/Haldar_Subcellular_motifs/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2005-09-26" @commit@</pluginArgs>
+        <pluginArgs>--inputFile @downloadDir@/Haldar_Subcellular_motifs/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2005-09-26"</pluginArgs>
         <description>
             <![CDATA[
 An 11-amino acid signal required for the secretion of proteins from the <i>P. falciparum</i> vacuole to the human erythrocyte was identified leading to a predicted secretome.
@@ -717,7 +717,7 @@ An 11-amino acid signal required for the secretion of proteins from the <i>P. fa
             email = "jldommer@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @downloadDir@/ApicoplastTargeting/apFile.txt --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2009-02-19" --category "secretome" @commit@</pluginArgs>
+        <pluginArgs>--inputFile @downloadDir@/ApicoplastTargeting/apFile.txt --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2009-02-19" --category "secretome"</pluginArgs>
         <description>
             <![CDATA[
 Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified based on amino acid characteristics of transit peptides that target proteins to the apicoplast.
