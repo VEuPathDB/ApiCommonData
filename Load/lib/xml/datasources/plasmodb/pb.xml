@@ -77,8 +77,7 @@
             displayName="P. berghei GSS oligos to genes mapping"
             organisms="P.berghei"
             category="Transcriptome"
-            plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities"
-            dbCommit="@dbcommit@">
+            plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities">
      <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/gss2genes.tab" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
@@ -156,7 +155,6 @@
               plugin="GUS::Supported::Plugin::LoadArrayDesign"
 	      displayName="Agilent P. Berghei Oligo Array"
               category="Transcriptome"
-	      dbCommit="@dbcommit@"
               publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3824"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/Agilent_P_Berghei/" 
@@ -165,7 +163,7 @@
                 institution="Johns Hopkins School of Public Health"
         />
           <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/columnTranslator.xml --data_in @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/GPL3824.txt --log @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/translator.log --data_out @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data</unpack>
-          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Agilent' --commit @dbcommit@</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Agilent' --commit</unpack>
           <pluginArgs>--cfg_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/agilentBerghei.config --data_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Agilent</pluginArgs>
         <description>
             <![CDATA[
