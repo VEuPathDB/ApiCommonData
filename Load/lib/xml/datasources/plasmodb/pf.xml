@@ -377,8 +377,7 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
     <resource resource="SageTagArrayDesign" version="1"
         displayName="P. falciparum Sage Tags"
         category="Transcriptome"
-        plugin="GUS::Supported::Plugin::LoadArrayDesign"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Supported::Plugin::LoadArrayDesign">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/sage/array/"
             contact = "Dyann F. Wirth"
             email = "dfwirth@hsph.harvard.edu"
@@ -400,8 +399,7 @@ Serial analysis of gene expression (SAGE) was applied to the malarial parasite <
     <resource resource="PlasmoSageTagFreqs" version="1"
         displayName="P. falciparum 3D7 Experimental SAGE tags"
         category="Transcriptome"
-        plugin="GUS::Community::Plugin::LoadSageResults"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Community::Plugin::LoadSageResults">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/sage/freq/freqs.tsv"
             contact = "Dyann F. Wirth"
             email = "dfwirth@hsph.harvard.edu"
@@ -422,8 +420,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
             displayName="P. falciparum protein interaction network"
             organisms="P.falciparum"
             category="Interactome"
-            plugin="ApiCommonData::Load::Plugin::InsertYeastTwoHybrid"
-            dbCommit="@dbcommit@">
+            plugin="ApiCommonData::Load::Plugin::InsertYeastTwoHybrid">
      <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/y2h_data/interaction_dataset.txt" 
             contact="Doug LaCount"
             email="dlacount@pharmacy.purdue.edu"
@@ -485,8 +482,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
 	    displayName="Phylogenetic profiles for P. falciparum"
             organisms="P.falciparum"
             category="Proteome"
-	    plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles"
-	    dbCommit="@dbcommit@">
+	    plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
             contact = "Shailesh Date"
             email = "svdate@pcbi.upenn.edu"
@@ -505,8 +501,7 @@ Phylogenetic profiles based on the presence or absence of all known <i>P. falcip
 	displayName="Phylogenetic profiles for P. falciparum (mutual information scores)"
         organisms="P.falciparum"
         category="Proteome"
-        plugin="GUS::Community::Plugin::LoadMutualInformationScores"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Community::Plugin::LoadMutualInformationScores">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
             contact = "Shailesh Date"
             email = "svdate@pcbi.upenn.edu"
@@ -528,8 +523,7 @@ Mutual information, an entropy based, information theoretic measure, was used to
         plugin="ApiCommonData::Load::Plugin::InsertGenBankDbRef"
         extDbName="GenBank"
         extDbRlsVer="150.0"
-        extDbRlsDescrip="The GenBank version used by Entrez Genome for the creation of the pfChrDbRefs.txt file"
-        dbCommit="@dbcommit@">
+        extDbRlsDescrip="The GenBank version used by Entrez Genome for the creation of the pfChrDbRefs.txt file">
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/pfChrDbRefs.txt"
             contact = "Aaron Mackey"
             email = "amackey@pcbi.upenn.edu"
@@ -567,8 +561,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         displayName="EC mappings from Ginsburg"
         organisms="P.falciparum"
         category="Proteome"
-        plugin="GUS::Community::Plugin::InsertECMapping"
-        dbCommit="@dbcommit@">
+        plugin="GUS::Community::Plugin::InsertECMapping">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=ecMappings.txt</wgetArgs>
         <unpack><![CDATA[cut -s -f 1,6 @downloadDir@/ecMappings_Hagai/ecMappings.txt &> @downloadDir@/ecMappings_Hagai/Pfid.txt]]></unpack>
         <pluginArgs>--ECMappingFile @downloadDir@/ecMappings_Hagai/Pfid.txt --evidenceCode "Hagai Ginsburg" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" </pluginArgs>
@@ -839,8 +832,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
  <resource resource="updateEviganSecondaryScore" version="1" 
         displayName="updating secondary score for evigan gene models" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -911,8 +903,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
         organisms="P.falciparum"
         extDbName="IsolatesByCountry"
         extDbRlsVer="2008-08-26"
-        extDbRlsDescrip="IsolatesByCountry"
-        dbCommit="@dbcommit@">	
+        extDbRlsDescrip="IsolatesByCountry">	
         <manualGet fileOrDir="@manualDelivery@/continents/continents.txt"
              contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
@@ -932,8 +923,7 @@ IsolatesByCountry
  <resource resource="MAPPpromoters" version="2008-09-10" 
         displayName="MAPP (Malaria Promoter Predictor)" 
         category="Genome" 
-        plugin="ApiCommonData::Load::Plugin::CreatePlasmoMappFile" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::CreatePlasmoMappFile"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/plasmoMAPP_kevin_brick/version3" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -949,8 +939,7 @@ IsolatesByCountry
  <resource resource="loadMAPPWithSqlldr" version="2009-05-01" 
         displayName="load MAPP With Sqlldr" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
         <manualGet fileOrDir = "@downloadDir@/MAPPpromoters/Pfal_MAPP-version3.sql" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
@@ -971,16 +960,14 @@ IsolatesByCountry
               plugin="GUS::Supported::Plugin::LoadArrayDesign"
 	      displayName="Scripps Malaria GeneChip"
               category="Transcriptome"
-              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL1892"
-	      dbCommit="@dbcommit@"
-            >
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL1892">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/affy_arrays/scrMalaria/newMapping" 
                 contact="Elizabeth Winzeler"
                 email="winzeler@scripps.edu"
                 institution="The Scripps Research Institute"
         />
           <unpack>MakeLoadAffyArrayDesignInput.pl --target_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/targets.txt --probe_tab_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/probes.txt --cdf_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/winzeler_newmapping_5-13-09_PF.cdf --design_element_type short_oligo --polymer_type DNA --physical_biosequence_type unknown_sequence --output_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalariaPlasmoSubset.out --non_fasta_target_file</unpack>
-          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Affymetrix' --commit @dbcommit@</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Affymetrix' --commit</unpack>
           <pluginArgs>--cfg_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalaria.config --data_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalariaPlasmoSubset.out --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Affymetrix</pluginArgs>
         <description>
             <![CDATA[
@@ -996,7 +983,6 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         plugin="GUS::Supported::Plugin::LoadArrayDesign"
         displayName="Karolinska Institutet MTC P. falciparum Oligo Array"
         category="Transcriptome"
-        dbCommit="@dbcommit@"
         publicUrl="http://www.ebi.ac.uk/aerep/lob?name=adss&amp;id=325368727"
         >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/MTC_KI_33k_v1/" 
@@ -1005,7 +991,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
             institution="Parasitology, Karolinska Institutet, MTC"
         />
         <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/columnTranslator.xml --data_in  @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/A-MEXP-75.txt --log @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/translator.log --data_out @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/loadArrayDesign.data</unpack>
-        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Bobo Mok' --first Bobo --last Mok --commit @dbcommit@</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Bobo Mok' --first Bobo --last Mok --commit</unpack>
         <pluginArgs>--cfg_file  @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/mtc_ki_33k_v1.config --data_file @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Bobo Mok'</pluginArgs>
         <description>
             <![CDATA[
@@ -1019,7 +1005,6 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         plugin="GUS::Supported::Plugin::LoadArrayDesign"
         displayName="Malaria Oligo p19"
         category="Transcriptome"
-        dbCommit="@dbcommit@"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3983"
         >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/GPL3983/" 
@@ -1028,7 +1013,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
             institution="Biochemistry and Biophysics, University of California San Francisco"
         />
         <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/columnTranslator.xml --data_in  @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/gpl3983_configforloading.txt --log @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/translator.log --data_out @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/loadArrayDesign.data</unpack>
-        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Joseph DeRisi' --first Joseph --last DeRisi --commit @dbcommit@</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Joseph DeRisi' --first Joseph --last DeRisi --commit</unpack>
         <pluginArgs>--cfg_file @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/gpl3983_config --data_file @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Joseph DeRisi'</pluginArgs>
         <description>
             <![CDATA[
@@ -1042,7 +1027,6 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         plugin="GUS::Supported::Plugin::LoadArrayDesign"
         displayName="Pfab Array"
         category="Transcriptome"
-        dbCommit="@dbcommit@"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL1858"
         >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/GPL1858/" 
@@ -1051,7 +1035,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
             institution="National Institute for Allergy and Infectious Diseases"
         />
         <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/columnTranslator.xml --data_in  @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/gpl1858_data --log @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/translator.log --data_out @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/loadArrayDesign.data</unpack>
-        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'NIAID Microarray Research Facility' --commit @dbcommit@</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'NIAID Microarray Research Facility' --commit</unpack>
         <pluginArgs>--cfg_file @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/gpl1858_config --data_file @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'NIAID Microarray Research Facility'</pluginArgs>
         <description>
             <![CDATA[
@@ -1353,7 +1337,6 @@ To characterize the antimalarial mechanism of tetracyclines, evaluated their sta
               plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
 	      displayName="P. falciparum invasion pathways - array data"
               category="Transcriptome"
-	      dbCommit="@dbcommit@"
               publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2878"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/stubbs/" 
@@ -1375,7 +1358,6 @@ The malaria parasite, <i>P. falciparum</i>, exploits multiple ligand-receptor in
               plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
 	      displayName="P. falciparum strain 3D7, SIR2 knockout - array data"
               category="Transcriptome"
-	      dbCommit="@dbcommit@"
               publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=1350"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/duraisingh/" 
@@ -1397,7 +1379,6 @@ Expression profiling of 3D7 silent information regulator 2 homolog (Sir2) knocko
               plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
 	      displayName="Invasion by P. falciparum merozoites - array data"
               category="Transcriptome"
-	      dbCommit="@dbcommit@"
               publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=2346"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/baum/" 
@@ -1420,7 +1401,6 @@ Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasi
               plugin="ApiCommonData::Load::Plugin::LoadNothing"
 	      displayName="Comparison of Various P. falciparum Knock outs - Invasion Pathways"
               category="ignore"
-	      dbCommit="@dbcommit@"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/radAnalysis/"
                 contact="Alan Cowman"
@@ -1435,9 +1415,7 @@ Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasi
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - array data"
         category="Transcriptome"
-        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/e-mexp-128_arrayData.xml" 
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
@@ -1457,9 +1435,7 @@ Antigenic variation is a survival mechanism developed by the malaria parasite <i
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="3D7AH1S1 vs. 3D7S8.4 AND 3D7AH1S3 vs. 3D7S8.4 (ring) - array data"
         category="Transcriptome"
-        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-439"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-439">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-439/working_dir/e-mexp-439_arrayData.xml" 
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
@@ -1480,9 +1456,7 @@ Antigenic variation is a survival mechanism developed by the malaria parasite <i
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum - array data"
         category="Transcriptome"
-        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-494"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-494">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-494/working_dir/e-mexp-494_arrayData.xml" 
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
@@ -1502,9 +1476,7 @@ Identification of genome wide gene copy number polymorphisms in <i>P. falciparum
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Tetracyclines Specifically Target the Apicoplast of the Malaria Parasite Plasmodium falciparum - array data"
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5267"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5267">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE5267/data_repository/quantifications/" 
             contact="Joseph L DeRisi"
             email="joe@derisilab.ucsf.edu"
@@ -1525,9 +1497,7 @@ To characterize the antimalarial mechanism of tetracyclines, evaluated their sta
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Whole genome analysis of mRNA decay in P. falciparum - array data"
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8099"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8099">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE8099/data_repository/quantifications/" 
             contact="Joseph L DeRisi"
             email="joe@derisilab.ucsf.edu"
@@ -1548,9 +1518,7 @@ Whole genome analysis of mRNA decay in <i>P. falciparum</i> reveals a global len
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Plasmodium falciparum W2/Dd2 Day 8 gametocytes - array data"
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2265"
-        dbCommit="@dbcommit@"
-        >
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2265">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE2265/data_repository/quantifications" 
             contact="Tetsuya Furuya"
             email="tfuruya@niaid.nih.gov"
@@ -1570,9 +1538,7 @@ To characterize the antimalarial mechanism of tetracyclines, evaluated their sta
         version="1"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="S8.4 vs. AH1S2 (Ring, Schizont, Trophozite) Expression Analysis"
-        category="ignore"
-        dbCommit="@dbcommit@"
-        >
+        category="ignore">
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/radAnalysis/"
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
@@ -1605,8 +1571,7 @@ To characterize the antimalarial mechanism of tetracyclines, evaluated their sta
             displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients"
             organisms="P.falciparum"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Daily/working_dir/analysis/"
                 contact="Johanna Daily"
                 email="jdaily@partners.org"
@@ -1792,8 +1757,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
  <resource resource="Pf_Gene_Aliases" version="2009-07-22" 
         displayName="insert P. falciparum old gene aliases from version 5.5" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene" 
-        dbCommit="@dbcommit@"> 
+        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"> 
         <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/naGeneNAFeature/6.0/pfGeneAlias.tab"/>
         <pluginArgs>--MappingFile @downloadDir@/Pf_Gene_Aliases/pfGeneAlias.tab</pluginArgs>
     </resource>
@@ -1950,8 +1914,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             displayName="Pfalciparum ChIP-on-chip Identifications"
             organisms="P.falciparum"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/PEAK_DATA/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
@@ -1969,8 +1932,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             displayName="Pfalciparum ChIP-on-chip Identifications"
             organisms="P.falciparum"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/SMOOTHED_DATA/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
@@ -2024,8 +1986,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             displayName="E-GEOD-10022 array data(Su lab) page analysis"
             organisms="P. falciparum"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE10022_CQstudy/working_dir/page/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
@@ -2042,8 +2003,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
             organisms="P. falciparum"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-TABM-438_Cowman/working_dir/analysis/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
@@ -2079,8 +2039,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             displayName="P. berghei DOZI array data page analysis"
             organisms="P. berghei"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
      <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
