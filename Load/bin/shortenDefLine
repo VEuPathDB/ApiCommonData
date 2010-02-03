@@ -20,8 +20,10 @@ open(IN, "< $inputFile");
 open(OUT, "> $outputFile");
 
 while(<IN>){
-	if(/(^\>gi\S+)/){
-		print OUT "$1\n";
+	if(/^\>gi/){
+	    my @descList=split('gi\|', $_);
+	    my $shorDefLine = $descList[0]."gi|".$descList[1];
+	    print OUT "$shorDefLine\n";
 	}else{
 		print OUT;
 	}
