@@ -1762,7 +1762,7 @@ sub makeOrthoResourceFile {
 
   die "Failed to create $dlDir.\n"  unless (-e $dlDir);
 
-  my $outFile = "${dlDir}/resources_OrthoMCL-${release}.txt";
+  my $outFile = "${dlDir}/data_sources_OrthoMCL-${release}.txt";
 
   my $logFile = "$mgr->{myPipelineDir}/logs/${signal}.log";
 
