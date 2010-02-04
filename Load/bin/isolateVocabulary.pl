@@ -24,6 +24,8 @@ my ($help, $gusConfigFile, $type, $xmlFile);
 &usage if($help);
 &usage unless($subCommand eq 'report' || $subCommand eq 'insert');
 
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
 if(!$gusConfigFile || !$type || !$xmlFile) {
   &usage("Error: Required Argument omitted");
 }
