@@ -2011,14 +2011,14 @@ RNA sequence profiles from George Cross.
         extDbRlsVer="2010-01-27"
         extDbRlsDescrip="Splice Leader and Poly A Sites from RNASeq (George Cross)"
         dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_01-22-10-sas/working_dir/bowtie/" 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_1-10-10_pas_sas/unique_bowtie/" 
             contact="George Cross"
             email="gamc@mail.rockefeller.edu"
             institution="Rockefeller University" />
 
-<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/bowtie/sas_curated_basicinfo_for_ttdb_100122.bt --sample curated_splice --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated_basicinfo_for_ttdb_100122.align</unpack>
+<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/unique_bowtie/sas_curated_unique.bowtie --sample curated_splice --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --m 14> @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated_basicinfo_for_ttdb_100122.align</unpack>
 
-<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/bowtie/pas_curated.bowtie  --sample curated_polyA --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align</unpack>
+<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/unique_bowtie/pas_curated_unique.bowtie  --sample curated_polyA --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --m 14> @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align</unpack>
 
 <unpack>cat @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated_basicinfo_for_ttdb_100122.align @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align</unpack>
 <pluginArgs>--dataFile @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
