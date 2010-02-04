@@ -3816,8 +3816,6 @@ use HTTP::Request;
 use HTTP::Response;
 use ApiCommonData::Load::TuningConfig::Log;
 
-$| = 1; # turn off buffering of STDOUT
-
 my $insertStatement;
 
 createEmptyTable();
@@ -3879,6 +3877,10 @@ sub getOfferedTaxa {
   # service can show changes.  The service itself will provide this list, as a
   # response to the URL in the code.  But since it changes slowly, and every
   # component runs the tuning manager, it's hardwired into this RETURN statement
+
+  return '5671, 5692, 5693, 5699, 31285, 185431, 347515, 420245';
+
+  # old, longer list
   return <<SANGERTAXA;
    5085, 360910, 518, 95486, 272559, 97084, 519, 520, 28450,
    83555, 1491, 1496, 1717, 42374, 197, 28447, 813, 44689,
