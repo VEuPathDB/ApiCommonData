@@ -506,23 +506,6 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
 	<publication pmid="16789840"/>	
     </resource>    
     
-    <resource resource="Vaidya_Bergman_oligos" version="1.0"
-        displayName="P. yoelii glass slide array oligos"
-        organisms="P.yoelii"
-        category="Transcriptome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/vaidyaBergmanOligos/PyoeliiVadyiaOligos.fasta" 
-            contact="Akhil B. Vaidya"
-            email="akhil.vaidya@drexel.edu"
-            institution="Drexel University College of Medicine"
-        />
-        <pluginArgs>--sequenceFile @downloadDir@/Vaidya_Bergman_oligos/PyoeliiVadyiaOligos.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
-        <description>
-            <![CDATA[
-   Version 1 of oligos for <i>P. yoelii</i> from Vaidya/Bergman (Drexel).
-          ]]>
-        </description>
-    </resource>
     
   <resource resource="DeRisi_oligos" version="2.0"
             displayName="Oligos on MOS11 and MOS14 (DeRisi)"
