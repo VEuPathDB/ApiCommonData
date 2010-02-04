@@ -43,7 +43,7 @@
         <unpack>gunzip @downloadDir@/P.berghei_Annotation/pb.gff.gz</unpack>
         <unpack>sangerGff2TranscriptGff @downloadDir@/P.berghei_Annotation/pb.gff > @downloadDir@/P.berghei_Annotation/pb_fixed1.gff</unpack>
         <unpack>addProteinsToGff @downloadDir@/P.berghei_Annotation/P_berghei.GeneDB.pep @downloadDir@/P.berghei_Annotation/pb_fixed1.gff > @downloadDir@/P.berghei_Annotation/pb_fixed2.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.berghei_Annotation/pb_fixed2.gff --fileFormat gff2 --gff2GroupTag "GenePrediction" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei strain ANKA" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.berghei_Annotation/pb_fixed2.gff --fileFormat gff2 --gff2GroupTag "GenePrediction" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei strain ANKA" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>P. berghei</i> ANKA genome obtained from the Pathogen Sequencing Unit at the Welcome Trust Sanger Institute, 2006-02-27. Includes gene models and predicted protein translations.    
