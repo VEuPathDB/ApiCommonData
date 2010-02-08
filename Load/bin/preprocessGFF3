@@ -26,8 +26,10 @@ open(OUT,">$outputGff");
 
 
 foreach my $line(<IN>){
+    
+    $line =~ s/\cM//g;
 
-    if(!($line =~ /^\#\#/)){
+    if(!($line =~ /^\#\#/) && !($line =~ /^\s+$/)){
     my %pmids;
     my %prevSysIds;
     chomp($line);
@@ -39,6 +41,8 @@ foreach my $line(<IN>){
     $cols[8] =~ s/=/\$\$\"/g;
 
     $cols[8] =~ s/;/\";/g;
+    
+    $cols[8] =~ s/\"\"/\"/g;
 
  # 
 
@@ -53,6 +57,8 @@ foreach my $line(<IN>){
 
 
     foreach my $tag(@tags){
+
+#	print "$tag\n";
 	$tag =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
 	my($tagname,$value)= split(/\$\$/,$tag);
 
@@ -76,7 +82,7 @@ foreach my $line(<IN>){
 
 
 	    while($value =~ /previous_systematic_id (\S+)/ig){
-	#	print "$1\n";
+#		print "previous_systematic_id: $1\n";
 		$value =~ s/;current=false//g;
 
 		$value =~ s/;\"$/\"/;
@@ -170,7 +176,7 @@ foreach my $line(<IN>){
 
 	    $value =~ s/;\"$/\"/;
 
-
+	    $tagsFixed .= "$tagname $value;";
 	    if($prevSysIds{$value}){
 		$tagsFixed .= "$tagname $value;";
 		undef($prevSysIds{$value});
