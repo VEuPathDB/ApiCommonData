@@ -13,17 +13,25 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 use CBIL::Bio::SequenceUtils;
 
-my ($sample,$verbose,$gusConfigFile,$ext_db_rel_id,$type,$organism,$commit);
+my ($sample,$verbose,$gusConfigFile,$extDbSpecs,$type,$organism,$commit);
 &GetOptions("verbose|v!"=> \$verbose,
             "organism|o=s" => \$organism,
             "sample|s=s" => \$sample,
             "type|t=s" => \$type,
-            "ext_db_rel_id|r=s" => \$ext_db_rel_id,
+            "extDbSpecs|r=s" => \$extDbSpecs,
             "gusConfigFile|c=s" => \$gusConfigFile,
             "commit!" => \$commit,
            );
 
-die "you MUST provide --organism|o <external_db_name for genome> --sample|s <sample name> --ext_db_rel_id|r <external_database_release_id> --type|t <(polyA|splice)> and optionally --gusConfigFile|c --verbose|v on command line\n" unless ($type && $sample && $ext_db_rel_id && $organism); 
+die "you MUST provide --organism|o <external_db_name for genome> --sample|s <sample name> --extDbSpecs|r <RNA Seq extDbSpecs> --type|t <(polyA|splice)> and optionally --gusConfigFile|c --verbose|v on command line\n" unless ($type && $sample && $extDbSpecs && $organism); 
+
+my ($extDbName,$extDbRlsVer)=split(/\|/,$extDbSpecs);
+
+my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
+
+my $ext_db_rel_id= `getValueFromTable --idSQL \"$sql\"`;
+
+
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
 my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
