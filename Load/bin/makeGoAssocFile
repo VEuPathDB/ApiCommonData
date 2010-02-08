@@ -15,7 +15,7 @@ my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date)); 
 
 
-my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension, $dbInstance, $username, $passwd, $extDb, $dbh, $dsn);
+my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension, $dbInstance, $username, $passwd, $extDb, $dbh, $dsn, $idQualifier, $goQualifier, $productQualifier);
 
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
@@ -30,7 +30,10 @@ my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis,
 	    'dbInstance=s'      => \$dbInstance,
 	    'username=s'        =>  \$username,
 	    'passwd=s'          =>  \$passwd,
-	    'ext_db=s'         =>   \$extDb
+	    'ext_db=s'         =>   \$extDb,
+	    'id_qualifier=s'       =>  \$idQualifier,
+	    'go_qualifier=s'       => \$goQualifier,
+	    'product_qualifier=s'  => \$productQualifier,
             
            );
 
@@ -60,6 +63,7 @@ my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
 foreach my $inFile (@inputFiles){
 
+if(!($format =~ /gff/)){ 
 my $in  = Bio::SeqIO->new(-file => $inFile , '-format' => $format) or die("Could not open $inFile for reading\n");;
 
 
@@ -224,6 +228,44 @@ while ( my $seq = $in->next_seq() ) {
 	    }
 	}
       }
+    }
+}
+}else{
+    open(IN,"$inFile");
+    foreach my $line (<IN>){
+	chomp($line);
+	my $product = '';
+	my $aspect = 'C';
+	if($line =~ /$idQualifier/ && $line =~ /$goQualifier/){
+
+	    $line =~ /$idQualifier \"([^\"]*)\";/;
+
+
+	    my $sourceId = $1;
+
+	    $line =~ /$goQualifier \"([^\"]*)\";/;
+	    my $goId = $1;
+
+	    if($productQualifier){
+		$line =~ /$productQualifier \"([^\"]*)\";/;
+		$product = $1;
+	    }
+
+	    if($goId =~ /\,/){
+
+		my @goIds = split(/\,/,$goId);
+
+		foreach my $go (@goIds){
+
+		    $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$go\t\t$evidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+		}
+	    }else{
+		$goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+	    }
+	    
+
+	    
+	}
     }
 }
 }
