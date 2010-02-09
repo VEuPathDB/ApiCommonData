@@ -5111,7 +5111,7 @@ sub runMercatorMavid {
 sub runPairwiseMercatorMavid {
   my ($mgr, $mercatorDir, $signal) = @_;
 
-  return if $mgr->startStep("running mercator-MAVID [$signal]", $signal);
+  return if $mgr->startStep("running pairwise mercator-MAVID [$signal]", $signal);
 
   my $logFile = "$mgr->{myPipelineDir}/logs/$signal";
 
@@ -5170,6 +5170,91 @@ sub runPairwiseMercatorMavid {
 }
 
 
+sub insertPairwiseMercatorSyntenySpans {
+  my ($mgr, $mercatorDir, $syntenyVersion, $organism, $signal) = @_;
+
+  return if $mgr->startStep("running pairwise insert mercator synteny spans [$signal]", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+
+  my $draftString = $propertySet->getProp('mercator_draft_genomes');
+  my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
+  my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
+  
+  my $draftExternalDatabases = $propertySet->getProp('mercator_draft_externaldatabase');
+
+  my $nonDraftExternalDatabases = $propertySet->getProp('mercator_nondraft_externaldatabase');
+
+  my $draftSeqTables = $propertySet->getProp('mercator_draft_seqtables');
+
+  my $nonDraftSeqTables = $propertySet->getProp('mercator_nondraft_seqtables');
+
+  my @drafts = ();
+  my @nonDrafts = ();
+  my @draftExternalDbs = ();
+  my @nonDraftExternalDbs = ();
+  my @draftSeqTables = ();
+  my @nonDraftSeqTables = ();
+
+  my ($seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile);
+  my @allGenomes = ();
+  my @allExternalDbs = ();
+  my @allSeqTables = ();
+
+  my $draftIdx = -1;
+  my  $nonDraftIdx = -1;
+
+  if(uc($draftString) ne 'NONE'){
+      @drafts =  map { "$_" } split(',', $draftString);
+      @draftExternalDbs =  map { "$_" } split(',', $draftExternalDatabases);
+      @draftSeqTables =  map { "$_" } split(',', $draftSeqTables);
+
+      $draftIdx = $#drafts;
+  }
+  
+  if(uc($nonDraftString) ne 'NONE'){
+      @nonDrafts = map { "$_" } split(',', $nonDraftString);
+      @nonDraftExternalDbs =  map { "$_" } split(',', $nonDraftExternalDatabases);
+      @nonDraftSeqTables =  map { "$_" } split(',', $nonDraftSeqTables);
+
+      $nonDraftIdx = $#nonDrafts;
+  }
+
+  push(@allGenomes,@drafts,@nonDrafts);
+  push(@allExternalDbs,@draftExternalDbs,@nonDraftExternalDbs);
+  push(@allSeqTables,@draftSeqTables,@nonDraftSeqTables);
+
+
+  for(my $i =0; $i <= ($#allGenomes-1); $i++){
+      for(my $j =$i+1 ; $j <= $#allGenomes; $j++){
+
+
+	  if($j <= $draftIdx){
+	      $agpFile = "$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/mercator-output/$allGenomes[$j].agp";
+	  }else{
+	      $agpFile = "";
+	  }
+
+	  my $file = "$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/$allGenomes[$i]-$allGenomes[$j].align";
+	  $seqTableA = $allSeqTables[$j];
+	  $seqTableB = $allSeqTables[$i];
+	  
+	  $specA = $allExternalDbs[$j];
+	  $specB = $allExternalDbs[$i];
+
+
+	  &createExtDbAndDbRls($mgr,"$allGenomes[$i]-$allGenomes[$j] synteny from Mercator", $syntenyVersion, '');
+	  $syntenySpec = "$allGenomes[$i]-$allGenomes[$j] synteny from Mercator|$syntenyVersion";
+
+	  &insertMercatorSyntenySpans($mgr,$file,$seqTableA,$seqTableB,$specA,$specB,$syntenySpec,$agpFile,$organism);
+      }
+  }
+
+
+
+  $mgr->endStep($signal);
+}
 
 
 sub grepMercatorGff {
