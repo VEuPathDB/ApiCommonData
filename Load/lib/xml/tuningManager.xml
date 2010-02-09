@@ -3809,8 +3809,7 @@ use Data::Dumper;
 use LWP::UserAgent;
 use HTTP::Request;
 use HTTP::Response;
-
-$| = 1; # turn off buffering of STDOUT
+use ApiCommonData::Load::TuningConfig::Log;
 
 my $insertStatement;
 
@@ -3820,7 +3819,6 @@ my $genomeListRef = getGenomeList();
 my @genomeList = @$genomeListRef;
 
 foreach my $genome (@genomeList) {
-  print "genome update: taxonomyId " . $genome->{'taxonomyId'} . " date \"" . $genome->{'sinceDate'} . "\"\n";
   processChangedGenes($genome->{'taxonomyId'}, $genome->{'sinceDate'});
 }
 
@@ -3874,6 +3872,10 @@ sub getOfferedTaxa {
   # service can show changes.  The service itself will provide this list, as a
   # response to the URL in the code.  But since it changes slowly, and every
   # component runs the tuning manager, it's hardwired into this RETURN statement
+
+  return '5671, 5692, 5693, 5699, 31285, 185431, 347515, 420245';
+
+  # old, longer list
   return <<SANGERTAXA;
    5085, 360910, 518, 95486, 272559, 97084, 519, 520, 28450,
    83555, 1491, 1496, 1717, 42374, 197, 28447, 813, 44689,
@@ -3888,7 +3890,7 @@ SANGERTAXA
   my $ua = new LWP::UserAgent;
   my $url = "http://www.genedb.org/service/genomes/changes.xml?since=2008-12-01";
 
-  print "getting list of available taxa from = $url\n";
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of available taxa from = $url");
   my $request = new HTTP::Request('GET', $url);
   my $response = $ua->request($request);
   if (!$response->is_success) {
@@ -3916,7 +3918,7 @@ sub processChangedGenes {
 
   my $ua = new LWP::UserAgent;
   my $url = "http://www.genedb.org/testservice/genes/annotation_changes?since=$sinceDate&taxonomyID=$taxonomyId";
-  print "getting list of gene changes from = $url\n";
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of gene changes from = $url");
 
   my $request;
   my $response;
@@ -3924,13 +3926,13 @@ sub processChangedGenes {
   my $retries = 0;
   my $MAX_RETRIES = 10;
   do {
-    print "trying again (retry $retries) with \"$url\"\n" if $retries;
+    ApiCommonData::Load::TuningConfig::Log::addLog("trying again (retry $retries) with \"$url\"") if $retries;
     $request = new HTTP::Request('GET', $url);
     $response = $ua->request($request);
 
       if (!$response->is_success) {
-        print "unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
-            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)\n";
+        ApiCommonData::Load::TuningConfig::Log::addLog("unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
+            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
       }
 
   } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success));
