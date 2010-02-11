@@ -179,6 +179,8 @@ sub getMapping {
 
     for (my $i=0;$i<@{$cols};$i++) {
       next if (! (defined $vals[$i+1]));
+      $vals[$i+1] =~ s/^\s+//;
+      $vals[$i+1] =~ s/\s+$//;
       $dbRef{$cols->[$i]} = $vals[$i+1];
     }
 
