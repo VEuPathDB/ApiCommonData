@@ -2818,13 +2818,13 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="apidb.TriTrypExpressionGraphs">
+  <tuningTable name="apidb.ExpressionGraphs">
     <internalDependency name="apidb.GeneAttributes"/>
     <externalDependency name="apidb.Profile"/>
     <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
-CREATE TABLE apidb.TriTrypExpressionGraphs&1 NOLOGGING AS
+CREATE TABLE apidb.ExpressionGraphs&1 NOLOGGING AS
 select all_gg.*, case when pr.name is null then 0 ELSE 1 END as has_profile
 from 
   (
@@ -2834,33 +2834,39 @@ from
     select 'Linfantum promastigote time-course biorep01' as profile_name,
            'MylerLinfantum::Ver1' as module,
            'Leishmania infantum' as species,
+           'TriTrypDB' as project_id,
            1 as order_num 
     from dual
     UNION
     select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
            'Clayton::TbTimeSeries' as module,
            'Trypanosoma brucei' as species,
+           'TriTrypDB' as project_id,
            2 as order_num
     from dual
     UNION
     select 'Expression profiling of T. brucei differentiation series' as profile_name,
            'Matthews::TbDifferentiationSeries' as module,
            'Trypanosoma brucei' as species,
+           'TriTrypDB' as project_id,
            3 as order_num
     from dual
     UNION
     select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
            'Parsons::TbDevelopmentalStages' as module,
            'Trypanosoma brucei' as species,
+           'TriTrypDB' as project_id,
            4 as order_num
     from dual
     UNION
     select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
            'Tarleton::TcTranscriptome' as module,
            'Trypanosoma cruzi' as species,
+           'TriTrypDB' as project_id,
            5 as order_num
     from dual
     ) pm, apidb.geneattributes ga
+    where ga.project_id = pm.project_id
   ) all_gg,
   (select p.source_id, ps.name
    from apidb.profile p, apidb.profileset ps
@@ -2872,7 +2878,7 @@ from
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.TrypExpGraph_sourceId_idx&1 ON apidb.TriTrypExpressionGraphs&1 (source_id)
+CREATE INDEX apidb.ExpGraph_sourceId_idx&1 ON apidb.ExpressionGraphs&1 (source_id)
 tablespace indx
       ]]>
     </sql>
