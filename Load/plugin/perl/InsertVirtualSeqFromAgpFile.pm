@@ -114,6 +114,12 @@ integerArg({name => 'ncbiTaxId',
                isList          =>  0
               }),
 
+ booleanArg({  name            =>  'notChromosomes', 
+               descr           =>  'if true the virtual sequences are not chromosomes and do not require chromosome name/order numbers',
+               reqd            =>  0,
+               isList          =>  0
+              }),
+
 ];
 
 return $argsDeclaration;
@@ -208,7 +214,7 @@ sub run {
 
   my $file = $self->getArg('agpFile');
 
-  die "Do not use both 'chromosomeOrderMappingFile' and 'chromosomesInOrder', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder'));
+  die "Do not use 'chromosomeOrderMappingFile' and 'chromosomesInOrder' and 'notChromosomes', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder') && $self->getArg('notChromosomes'));
 
  $self->validateFileFormat($file);
 
@@ -264,7 +270,7 @@ sub processFile {
 
       $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc};
 
-      die "No chromosome order information provided for virtual sequence\n" unless $chromosomeOrder;
+      die "No chromosome order information provided for virtual sequence\n" if (!($chromosomeOrder || $self->getArg('notChromosomes')));
 
       $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder);
 
@@ -331,9 +337,12 @@ sub makeVirtualSequence {
   my $virDbRlsId = $self->getVirDbRlsId($self->getArg('virSeqExtDbName'),$self->getArg('virSeqExtDbRlsVer'));
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
-  my $chromosome="chromosome $chromosomeOrderNum";
+  my $chromosome="chromosome $chromosomeOrderNum" if $chromosomeOrderNum;
 
-  my $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
+  my $virtualSeq;
+
+  if($chromosomeORderNum){
+      $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
                                                            chromosome => $chromosome,
                                                            chromosome_order_num => $chromosomeOrderNum,
                                                            external_database_release_id => $virDbRlsId,
@@ -341,6 +350,14 @@ sub makeVirtualSequence {
                                                            sequence_ontology_id => $SOTermId,
                                                            taxon_id => $taxonId
                                                           });
+  }else{
+      $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
+                                                           external_database_release_id => $virDbRlsId,
+                                                           sequence_version => 1,
+                                                           sequence_ontology_id => $SOTermId,
+                                                           taxon_id => $taxonId
+                                                          });
+  }
   
   $virtualSeq->retrieveFromDB();
 
