@@ -341,7 +341,7 @@ sub makeVirtualSequence {
 
   my $virtualSeq;
 
-  if($chromosomeORderNum){
+  if($chromosomeOrderNum){
       $virtualSeq = GUS::Model::DoTS::VirtualSequence->new({source_id => $sourceId, 
                                                            chromosome => $chromosome,
                                                            chromosome_order_num => $chromosomeOrderNum,
