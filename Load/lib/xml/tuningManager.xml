@@ -2825,15 +2825,49 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.TriTrypExpressionGraphs&1 NOLOGGING AS
-SELECT ga.source_id,
-       COUNT(promastigote) as graph_infantum_promastigote
-FROM apidb.GeneAttributes ga,
-     (SELECT p.source_id, 1 AS promastigote
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Linfantum promastigote time-course biorep01'
-        AND p.profile_set_id = ps.profile_set_id) promastigote
-  WHERE ga.source_id = promastigote.source_id(+)
-GROUP BY ga.source_id
+select all_gg.*, case when pr.name is null then 0 ELSE 1 END as has_profile
+from 
+  (
+    select ga.source_id, pm.*
+    from
+    (
+    select 'Linfantum promastigote time-course biorep01' as profile_name,
+           'MylerLinfantum::Ver1' as module,
+           'Leishmania infantum' as species,
+           1 as order_num 
+    from dual
+    UNION
+    select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
+           'Clayton::TbTimeSeries' as module,
+           'Trypanosoma brucei' as species,
+           2 as order_num
+    from dual
+    UNION
+    select 'Expression profiling of T. brucei differentiation series' as profile_name,
+           'Matthews::TbDifferentiationSeries' as module,
+           'Trypanosoma brucei' as species,
+           3 as order_num
+    from dual
+    UNION
+    select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
+           'Parsons::TbDevelopmentalStages' as module,
+           'Trypanosoma brucei' as species,
+           4 as order_num
+    from dual
+    UNION
+    select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
+           'Tarleton::TcTranscriptome' as module,
+           'Trypanosoma cruzi' as species,
+           5 as order_num
+    from dual
+    ) pm, apidb.geneattributes ga
+  ) all_gg,
+  (select p.source_id, ps.name
+   from apidb.profile p, apidb.profileset ps
+   where p.profile_set_id = ps.profile_set_id
+   ) pr
+  where  all_gg.source_id = pr.source_id (+)
+  and all_gg.profile_name = pr.name (+)
       ]]>
     </sql>
     <sql>
