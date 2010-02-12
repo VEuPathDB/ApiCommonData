@@ -8,9 +8,9 @@ create table apidb.GeneDetail (
       MODIFICATION_DATE DATE
 );
 
-CREATE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name);
-CREATE INDEX apidb.genedtl_idx02 ON apidb.GeneDetail(field_name, source_id);
-CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id);
+CREATE INDEX apidb.genedtl_idx01 ON apidb.GeneDetail(source_id, project_id, field_name) tablespace indx;
+CREATE INDEX apidb.genedtl_idx02 ON apidb.GeneDetail(field_name, source_id) tablespace indx;
+CREATE INDEX apidb.genedtl_idx03 ON apidb.GeneDetail(row_count, source_id) tablespace indx;
 
 CREATE INDEX apidb.gene_text_ix on apidb.GeneDetail(content)
 indextype is ctxsys.context
