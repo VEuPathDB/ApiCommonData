@@ -3,11 +3,13 @@ DROP TABLE comments2.CommentFile;
 DROP TABLE comments2.CommentTargetCategory;
 DROP TABLE comments2.TargetCategory;
 DROP TABLE comments2.CommentReference;
+DROP TABLE comments2.CommentSequence;
 
 DROP SEQUENCE comments2.commentStableId_pkseq; 
 DROP SEQUENCE comments2.commentTargetCategory_pkseq; 
 DROP SEQUENCE comments2.commentReference_pkseq; 
 DROP SEQUENCE comments2.commentFile_pkseq; 
+DROP SEQUENCE comments2.commentSquence_pkseq; 
 
 CREATE TABLE comments2.TargetCategory
 (
@@ -98,6 +100,23 @@ GRANT select on comments2.CommentReference to GUS_R;
 CREATE SEQUENCE comments2.commentReference_pkseq START WITH 1 INCREMENT BY 1;
 GRANT select on comments2.commentReference_pkseq to GUS_W;
 GRANT select on comments2.commentReference_pkseq to GUS_R;
+
+CREATE TABLE comments2.CommentSequence
+(
+  comment_sequence_id NUMBER(10) NOT NULL,
+  seqeucne CLOB NOT NULL,
+  comment_id NUMBER(10) NOT NULL,
+  CONSTRAINT comment_sequence_key PRIMARY KEY (comment_sequence_id),
+  CONSTRAINT comment_id_seq_fkey FOREIGN KEY (comment_id)
+     REFERENCES comments2.comments (comment_id)
+);
+
+GRANT insert, update, delete on comments2.CommentSequence to GUS_W;
+GRANT select on comments2.CommentSequence to GUS_R;
+
+CREATE SEQUENCE comments2.commentSequence_pkseq START WITH 1 INCREMENT BY 1;
+GRANT select on comments2.commentSequence_pkseq to GUS_W;
+GRANT select on comments2.commentSequence_pkseq to GUS_R;
 
 CREATE TABLE comments2.CommentFile
 (
