@@ -2832,38 +2832,23 @@ from
     from
     (
     select 'Linfantum promastigote time-course biorep01' as profile_name,
-           'MylerLinfantum::Ver1' as module,
-           'Leishmania infantum' as species,
-           'TriTrypDB' as project_id,
-           1 as order_num 
+           'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
-           'Clayton::TbTimeSeries' as module,
-           'Trypanosoma brucei' as species,
-           'TriTrypDB' as project_id,
-           2 as order_num
+           'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of T. brucei differentiation series' as profile_name,
-           'Matthews::TbDifferentiationSeries' as module,
-           'Trypanosoma brucei' as species,
-           'TriTrypDB' as project_id,
-           3 as order_num
+           'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
-           'Parsons::TbDevelopmentalStages' as module,
-           'Trypanosoma brucei' as species,
-           'TriTrypDB' as project_id,
-           4 as order_num
+           'TriTrypDB' as project_id
     from dual
     UNION
     select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
-           'Tarleton::TcTranscriptome' as module,
-           'Trypanosoma cruzi' as species,
-           'TriTrypDB' as project_id,
-           5 as order_num
+           'TriTrypDB' as project_id
     from dual
     ) pm, apidb.geneattributes ga
     where ga.project_id = pm.project_id
@@ -2880,6 +2865,64 @@ from
       <![CDATA[
 CREATE INDEX apidb.ExpGraph_sourceId_idx&1 ON apidb.ExpressionGraphs&1 (source_id)
 tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+  <tuningTable name="apidb.ProfileSetGraphDescriptions">
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.ProfileSetGraphDescriptions&1 NOLOGGING AS
+select 'Linfantum promastigote time-course biorep01' as profile_name,
+       'MylerLinfantum::Ver1' as module,
+       'Leishmania infantum' as species,
+       'Differentiation Time Series: Promastigote to Amastigote' as display_name,
+       'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.' as description,
+       'Time point in hours' as x_axis,
+       'Fold Induction (vs. 0 hour) or expression percentile value for raw red and green values.' as y_axis,
+       1 as order_num 
+from dual
+UNION
+select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
+       'Clayton::TbTimeSeries' as module,
+       'Trypanosoma brucei' as species,
+       '' as display_name,
+       '' as description,
+       'Time point in hours; also high and low density blood form' as x_axis,
+       'M value (log2(R/G)) or percentile.' as y_axis,
+       2 as order_num
+from dual
+UNION
+select 'Expression profiling of T. brucei differentiation series' as profile_name,
+       'Matthews::TbDifferentiationSeries' as module,
+       'Trypanosoma brucei' as species,
+       'Dynamic mRNA Expression analysis of cells undergoing synchronous life-cycle differentiation in Trypanosoma brucei' as display_name,
+       'mRNA expression profiles of trypanosomes from two discrete bloodstream form stages of the parasite (slender and stumpy forms), as well as during the transition of the stumpy population to the procyclic life-cycle stage were studied.  This analysis represents the first comparison of in vivo derived pleomorphic slender cells with genetically identical stumpy forms, and a first analysis of the dynamic changes in mRNA profile that accompany the transition to procyclic forms.' as description,
+       'Time point in hours or the slender stage (sl)' as x_axis,
+       'RMA value (log2) or percentile' as y_axis,
+       3 as order_num
+from dual
+UNION
+select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
+       'Parsons::TbDevelopmentalStages' as module,
+       'Trypanosoma brucei' as species,
+       'Widespread variation in transcript abundance within and across developmental stages of Trypanosoma brucei' as display_name,
+       'Whole genome comparison of RNA levels for both protein coding genes and structural RNAs in five different life cycle stages: in vivo slender bloodstream form, in vivo stumpy bloodstream form, cultured bloodstream form, log-phase procyclic culture form and stationary-phase procyclic culture form' as description,
+       'Average value from three independent biological replicates from five different life cycle stages.' as x_axis,
+       'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
+       4 as order_num
+from dual
+UNION
+select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
+       'Tarleton::TcTranscriptome' as module,
+       'Trypanosoma cruzi' as species,
+       'Transcriptome analysis of the Trypanosoma cruzi life-cycle' as display_name,
+       'Global assessment of transcript abundances in each life-cycle stage of T. cruzi was performed to identify stage-regulated genes and provide an essential element of an integrated database of T. cruzi genomic, proteomic, and transcriptomic data.' as description,
+       'Average of 3 biological replicates from each Life cycle stage (trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET)).' as x_axis,
+       'M value (log2(R/G)) or percentile.' as y_axis,
+       5 as order_num
+from dual
       ]]>
     </sql>
   </tuningTable>
