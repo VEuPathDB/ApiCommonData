@@ -9,7 +9,7 @@ DROP SEQUENCE comments2.commentStableId_pkseq;
 DROP SEQUENCE comments2.commentTargetCategory_pkseq; 
 DROP SEQUENCE comments2.commentReference_pkseq; 
 DROP SEQUENCE comments2.commentFile_pkseq; 
-DROP SEQUENCE comments2.commentSquence_pkseq; 
+DROP SEQUENCE comments2.commentSequence_pkseq; 
 
 CREATE TABLE comments2.TargetCategory
 (
