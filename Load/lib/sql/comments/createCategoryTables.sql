@@ -104,7 +104,7 @@ GRANT select on comments2.commentReference_pkseq to GUS_R;
 CREATE TABLE comments2.CommentSequence
 (
   comment_sequence_id NUMBER(10) NOT NULL,
-  seqeucne CLOB NOT NULL,
+  sequence CLOB NOT NULL,
   comment_id NUMBER(10) NOT NULL,
   CONSTRAINT comment_sequence_key PRIMARY KEY (comment_sequence_id),
   CONSTRAINT comment_id_seq_fkey FOREIGN KEY (comment_id)
