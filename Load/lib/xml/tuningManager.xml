@@ -1391,7 +1391,14 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneAttr_orthoname_ix&1
-       ON apidb.GeneAttributes&1 (orthomcl_name)
+       ON apidb.GeneAttributes&1 (orthomcl_name, source_id, taxon_id, gene_type)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneAttr_ortholog_ix&1
+       ON apidb.GeneAttributes&1 (source_id, na_sequence_id, start_min, end_max, orthomcl_name)
 tablespace indx
       ]]>
     </sql>
