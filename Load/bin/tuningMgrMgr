@@ -190,12 +190,16 @@ SQL
 
     $printedSomething = 1;
 
-    if ($family eq $lastFamily) {
-      $family = "   \"     ";
-      $svn = "   \"     ";
-    } else {
-      $lastFamily = $family;
-    }
+# This changes the "family" and "svn" fields to double-quotes ("dittoes") when
+# they're the same as the previous value.  This isn't so good when you want to
+# grep out a single instance.
+#
+#    if ($family eq $lastFamily) {
+#      $family = "   \"     ";
+#      $svn = "   \"     ";
+#    } else {
+#      $lastFamily = $family;
+#    }
 
     printf "%-12s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
   }
