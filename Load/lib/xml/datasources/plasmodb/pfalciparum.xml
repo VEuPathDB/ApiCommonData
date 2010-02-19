@@ -7,9 +7,9 @@
 
         <manualGet fileOrDir = "PlasmoDB/common/empty"
         />
-        <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile taxonIdFile</unpack>
-        <unpack>createPropFile --file dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
+        <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile @dataDir@/taxonIdFile</unpack>
+        <unpack>createPropFile --file  @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile  @dataDir@/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -27,8 +27,8 @@
             email="malcolm.gardner@sbri.org"
             institution="Seattle Biomedical Research Institute."
         />
-        <unpack>gunzip pfc.fasta.gz</unpack>
-        <pluginArgs>--sourceIdRegex ">(\w+)" --fastaFile  pfc.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER% --SOTermName 'EST' --ncbiTaxId 36329 --libraryStrain '3D7' --libraryStage 'Asexual stage' --libraryVector 'pOTB7b' --contactName 'Malcolm Gardner' --contactAddress1 'Seattle Biomedical Research Institute' --contactAddress2 '307 Westlake Avenue N., Suite 500 Seattle, WA 98109-5219' --libraryName 'Zhang/Gardner Pf 3D7 mixed asexual' --libraryDesc "CDNA was prepared from polyA+ RNA using the SMART cDNA Library Construction Kit and was cloned into the pOTB7b vector, a derivative of pOTB7 (1.8 kb) in which a SfiI stuffer fragment was inserted between the BamHI and XhoI sites of pOTB7.PFOCB48 indicates plate and well. T indicates dye terminator chemistry. F and R indicates M13 forward and reverse primers.The R primer is at the 3' polyA end of the mRNA."</pluginArgs>
+        <unpack>gunzip @dataDir@/pfc.fasta.gz</unpack>
+        <pluginArgs>--sourceIdRegex ">(\w+)" --fastaFile  @dataDir@/pfc.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER% --SOTermName 'EST' --ncbiTaxId 36329 --libraryStrain '3D7' --libraryStage 'Asexual stage' --libraryVector 'pOTB7b' --contactName 'Malcolm Gardner' --contactAddress1 'Seattle Biomedical Research Institute' --contactAddress2 '307 Westlake Avenue N., Suite 500 Seattle, WA 98109-5219' --libraryName 'Zhang/Gardner Pf 3D7 mixed asexual' --libraryDesc "CDNA was prepared from polyA+ RNA using the SMART cDNA Library Construction Kit and was cloned into the pOTB7b vector, a derivative of pOTB7 (1.8 kb) in which a SfiI stuffer fragment was inserted between the BamHI and XhoI sites of pOTB7.PFOCB48 indicates plate and well. T indicates dye terminator chemistry. F and R indicates M13 forward and reverse primers.The R primer is at the 3' polyA end of the mRNA."</pluginArgs>
         <description>
             <![CDATA[
    Hanbang Zhang and Malcolm Gardner <i>P. falciparum</i> 3D7 mixed asexual stage EST library.
@@ -46,7 +46,7 @@
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  reffull_pf.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 36329  --libraryStrain '3D7' --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePf3D7_cultured' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePf3D7_cultured EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_pf.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 36329  --libraryStrain '3D7' --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePf3D7_cultured' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePf3D7_cultured EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
         <description>
             <![CDATA[
  <i>P. falciparum</i> 3D7 predicted full length transcript sequences.
@@ -65,8 +65,8 @@
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <unpack> fixESTFasta --inputFile onepass/onepass_pf.fas --duplicatesFile onepass/watanabeESTs_pfalciparum_inDbest_02.15.10 > onepass_pf.fas_fixed</unpack>
-        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  onepass_pf.fas_fixed --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 36329  --libraryStrain '3D7' --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan"  --libraryName 'WatanabePf3D7_cultured' --libraryDesc "P. falciparum 3D7 parasites were cultured either in a candle jar (XPFn, XPF2n) or in the mixed gas consisting of 3% oxygen, 5% carbon dioxide and 92% nitrogen using blood type A erythrocytes and frozen human plasma."</pluginArgs>
+        <unpack> fixESTFasta --inputFile @dataDir@/onepass/onepass_pf.fas --duplicatesFile @dataDir@/onepass/watanabeESTs_pfalciparum_inDbest_02.15.10 > @dataDir@/onepass_pf.fas_fixed</unpack>
+        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_pf.fas_fixed --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 36329  --libraryStrain '3D7' --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan"  --libraryName 'WatanabePf3D7_cultured' --libraryDesc "P. falciparum 3D7 parasites were cultured either in a candle jar (XPFn, XPF2n) or in the mixed gas consisting of 3% oxygen, 5% carbon dioxide and 92% nitrogen using blood type A erythrocytes and frozen human plasma."</pluginArgs>
         <description>
             <![CDATA[
    Cultured <i>P. falciparum</i> 3D7 EST library.
@@ -85,8 +85,8 @@
             email="florent@mnhn.fr"
             institution="Museum National d Histoire Naturelle"
         />
-        <unpack>cat PUA_seq4web.msk | perl -pe "if(/^>/){s/\s+#\w+\s/|/g;}" > PUA_seq4web.fsa_fixed</unpack>
-        <pluginArgs>--sourceIdRegex "^>[A-Za-z0-9]+\|([A-Za-z0-9]+)\|" --fastaFile PUA_seq4web.fsa_fixed --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 36329  --contactName 'I. Florent, B. Setterblad, E. Guillaume, C. Da Silva, F. Artiguenave, E. Marechal, O. Gascuel, P. Wincker and P. Grellier' --contactAddress1 "Museum National d Histoire Naturelle, Paris; Genoscope; CEA Grenoble; LIRMM Montpellier" --contactAddress2 "" --libraryName 'GenoScope Schizont enriched' --libraryDesc "Plasmodium falciparum FcB1 strain, erythrocitic stages, schizont/merozoite stage library."</pluginArgs>
+        <unpack>cat @dataDir@/PUA_seq4web.msk | perl -pe "if(/^>/){s/\s+#\w+\s/|/g;}" > @dataDir@/PUA_seq4web.fsa_fixed</unpack>
+        <pluginArgs>--sourceIdRegex "^>[A-Za-z0-9]+\|([A-Za-z0-9]+)\|" --fastaFile @dataDir@/PUA_seq4web.fsa_fixed --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 36329  --contactName 'I. Florent, B. Setterblad, E. Guillaume, C. Da Silva, F. Artiguenave, E. Marechal, O. Gascuel, P. Wincker and P. Grellier' --contactAddress1 "Museum National d Histoire Naturelle, Paris; Genoscope; CEA Grenoble; LIRMM Montpellier" --contactAddress2 "" --libraryName 'GenoScope Schizont enriched' --libraryDesc "Plasmodium falciparum FcB1 strain, erythrocitic stages, schizont/merozoite stage library."</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum</i> ESTs, FcB1 strain, Erythrocytic stages, schizont/merozoite stage library, from GenoScope.
@@ -103,7 +103,7 @@
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
         <manualGet
            fileOrDir="PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/2010-02-01/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir 2009-02-01 --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/2009-02-01 --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Sequence data from GeneDB for <i>P. falciparum</i> 3D7 chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
@@ -121,7 +121,7 @@
             email = "pinney@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile mapping --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,l
+        <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,l
 owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <description>
             <![CDATA[
@@ -137,8 +137,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <manualGet fileOrDir = "PlasmoDB/pfalciparum/function/GOAssociations_Pfalciparum/2009-02-19/"
         />
 
-        <unpack>makeGoAssocFile --fileOrDir 2009_02_19 --format embl --fileExt embl.gz --output_file gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
+        <unpack>makeGoAssocFile --fileOrDir @dataDir@/2009_02_19 --format embl --fileExt embl.gz --output_file @dataDir@/gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum 3D7</i> Gene Ontology  associations from GeneDB
@@ -155,10 +155,10 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             contact = "Su,X.-z"
             institution = "NIH"
         />
-        <unpack>dumpSequencesFromTable.pl --outputFile PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Sanger P. falciparum chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = '2010-02-01' and ns.external_database_release_id = edr.external_database_release_id"</unpack>
-        <unpack>createSTSFileFromGB --genbank_file_or_dir sequences.gb.fixed --output_file sequences.sts </unpack>
-        <unpack> ePCRMicrosatelliteForLocations --sts_file sequences.sts --output_file Pf_ms.gff --seq_file PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2010-02-01"</pluginArgs>
+        <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Sanger P. falciparum chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = '2010-02-01' and ns.external_database_release_id = edr.external_database_release_id"</unpack>
+        <unpack>createSTSFileFromGB --genbank_file_or_dir @dataDir@/sequences.gb.fixed --output_file @dataDir@/sequences.sts </unpack>
+        <unpack> ePCRMicrosatelliteForLocations --sts_file @dataDir@/sequences.sts --output_file @dataDir@/Pf_ms.gff --seq_file @dataDir@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2010-02-01"</pluginArgs>
         <description>
             <![CDATA[
    Su microsatellite data from Genbank 
@@ -182,9 +182,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <publication pmid="12368869"/>
         <publication pmid="15580778"/>
         <wgetArgs>--tries=5 --mirror -r --no-parent --no-host-directories --cut-dirs=5</wgetArgs>
-        <unpack>mkdir P.falciparum_old_annotations_fixed</unpack>
-        <unpack>for f in `ls data.exchange`; do cat data.exchange/$f | adjustPlasmoEmblFile > data.exchange/$f.fixed; cat data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > P.falciparum_old_annotations_fixed/$f.fixed; done</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @downloadDir@/P.falciparum_old_annotations_fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2009-02-19"</pluginArgs>
+        <unpack>mkdir @dataDir@/P.falciparum_old_annotations_fixed</unpack>
+        <unpack>for f in `ls @dataDir@/data.exchange`; do cat @dataDir@/data.exchange/$f | adjustPlasmoEmblFile" > @dataDir@/data.exchange/$f.fixed; cat @dataDir@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @dataDir@/P.falciparum_old_annotations_fixed/$f.fixed; done</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@//P.falciparum_old_annotations_fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2009-02-19"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data from GeneDB for <i>P. falciparum</i> 3D7 chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute, TIGR/NRMC, and Stanford University. This data has sequence updates for chromosomes 6, 7 , 8 and 13. For more information see the GeneDB 3D7 News Archive. Includes sequence updates to TIGR chromsomes 2, 10, 11 and 14. Originally described in Gardner et al. Nature 419:498, 2002.  Also includes centromere features and curated Gene Ontology and E.C. number associations to genes.
@@ -199,7 +199,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="Proteome"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum</i> Gene Ontology associations assigned by GeneDB.
@@ -218,11 +218,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email=""
             institution="IEDB"
         />
-        <unpack>mkdir IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir 2009-03-18 --outDir IEDB_Epitopes_fixed </unpack>
-        <unpack>mkdir -p PlasmoDB/pfalciparum/epitope/IEDB_fixed/2009-03-18/</unpack>
-        <unpack>cp -r IEDB_Epitopes_fixed PlasmoDB/pfalciparum/epitope/IEDB_fixed/2009-03-18/</unpack>
-        <pluginArgs>--seqFileDir IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/2009-03-18 --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -236,13 +234,13 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         organisms="P.falciparum"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/epitope/IEDB_fixed/2009-03-18/IEDB_Epitopes_fixed" 
+        <manualGet fileOrDir="@dataDir@/../IEDB_Epitopes_fixed" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
-         <unpack>createEpitopeDbRefFile --inputDir IEDB_Epitopes_fixed --outputFile dbRefs.txt</unpack>
-        <pluginArgs>--DbRefMappingFile dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
+        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -260,7 +258,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email=""
             institution=""/>
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles aliases.tab --extDbRelSpecList "Sanger P. falciparum chromosomes|2009-02-19"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Sanger P. falciparum chromosomes|2009-02-19"</pluginArgs>
     </resource> 
 
 <resource resource="Entrez_DBRefs" version="2009-04-29"
@@ -272,7 +270,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez gene links.
@@ -288,7 +286,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
-        <pluginArgs>--DbRefMappingFile geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             Phenotype links from Genetically Modified Rodent Malaria Parasites: 
@@ -317,7 +315,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez pubmed links.
@@ -338,7 +336,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -358,7 +356,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -376,9 +374,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email="mb4@sanger.ac.uk"
             institution="Sanger"
         />
-        <unpack>tar -xzf sangerPfalciparumSnps.tar.gz</unpack>
-        <unpack>sangerSnps2Gff.pl --sf 'WTSI_PFAL.GHANA1.0.dbsnp.new WTSI_PFAL.IT.0.dbsnp.new' --cf 'IT.uniq.hq.nr3.gff.ORA GHANA1.uniq.hq.nr3.gff.ORA' --s Sanger --r 3D7 > sangerPfalciparumSnps.gff; cd $currDir</unpack>
-        <unpack>rm -f sangerPfalciparumSnps.tar.gz ; cp  * PlasmoDB/pfalciparum/sangerItGhanaSnps/2006-10-21/
+        <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf sangerPfalciparumSnps.tar.gz ; cd $currDir</unpack>
+        <unpack>sangerSnps2Gff.pl --sf "@dataDir@/WTSI_PFAL.GHANA1.0.dbsnp.new @dataDir@/WTSI_PFAL.IT.0.dbsnp.new" --cf "@dataDir@/IT.uniq.hq.nr3.gff.ORA @dataDir@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @dataDir@/sangerPfalciparumSnps.gff</unpack>
+        <unpack>rm -f @dataDir@/sangerPfalciparumSnps.tar.gz </unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
@@ -399,8 +397,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email = "JMU@NIAID.NIH.GOV"
             institution = "National Institute of Allergy and Infectious Diseases, National Institutes of Health"
         />
-        <unpack>suSnpTabToGffTransform --tab_file Pf_snps_allChromosomes.in --out_file Su_SNPs/Pf_snps_allChromosomes.gff</unpack>
-        <unpack>cp -f Su_SNPs/Pf_snps_allChromosomes.gff PlasmoDB/pfalciparum/su_SNPs/08-26-2006/</unpack>
+        <unpack>suSnpTabToGffTransform --tab_file "@dataDir@/Pf_snps_allChromosomes.in --out_file "@dataDir@/Su_SNPs/Pf_snps_allChromosomes.gff</unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
@@ -979,7 +976,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/> 
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile broad_barcode_plasmodb.txt </pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile @dataDir@/broad_barcode_plasmodb.txt </pluginArgs>
         <description>
             <![CDATA[
 The Genotyping Barcode is based on 24 different high frequency SNPs (minor allele frequency > 30%) in <i>P. falciparum</i>.  These were selected from whole genome sequencing and affymetrix genotyping of <i>P. falciparum</i> strains from around the globe. The method itself uses the TaqMan SNP genotyping assay.
@@ -997,7 +994,7 @@ The Genotyping Barcode is based on 24 different high frequency SNPs (minor allel
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>  
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile 3K_plasmo.txt</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile  @dataDir@/3K_plasmo.txt</pluginArgs>
         <description>
             <![CDATA[
 The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two thirds are from chromosome 7 and the rest are distributed throughout the genome).
@@ -1015,7 +1012,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>  
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile 75K_plasmo.txt --SOTermName 'SNP'</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --inputFile @dataDir@/75K_plasmo.txt --SOTermName 'SNP'</pluginArgs>
         <description>
             <![CDATA[
 75k SNP chip data from the Broad.  There appear to be ~17500 informative snps.
@@ -1122,7 +1119,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         <pluginArgs>--cfg_file  1/mtc_ki_33k_v1.config --data_file loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Bobo Mok'</pluginArgs>
         <description>
             <![CDATA[
-	ArrayExpress (A-MEXP-75).  The 70-mer oligonucleotides microarray consisted of 6850 probes. From there, 6542 probes (Malaria Genome Oligo Set Version 1.0) were designed and synthesized by Qiagen Operon and 14 probes were obtained from the SpotReport Alien oligo array validation system (Stratagene, CA, USA). The rest of the oligos were selected using ArrayDesigner Version 1 (Premier Biosoft International, CA, USA). Oligonucleotides were dissolved in 1:3 of DMSO:dH2O at a final concentration of 40 ÂµM in preparation for spotting on CMT-UltraGaps slides. Microarraying was done by Genetix Qarray. Each probe was printed in quadruplicate on the slides.
+	ArrayExpress (A-MEXP-75).  The 70-mer oligonucleotides microarray consisted of 6850 probes. From there, 6542 probes (Malaria Genome Oligo Set Version 1.0) were designed and synthesized by Qiagen Operon and 14 probes were obtained from the SpotReport Alien oligo array validation system (Stratagene, CA, USA). The rest of the oligos were selected using ArrayDesigner Version 1 (Premier Biosoft International, CA, USA). Oligonucleotides were dissolved in 1:3 of DMSO:dH2O at a final concentration of 40 µM in preparation for spotting on CMT-UltraGaps slides. Microarraying was done by Genetix Qarray. Each probe was printed in quadruplicate on the slides.
           ]]>
         </description>
     </resource>    
@@ -1970,13 +1967,13 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
         <manualGet fileOrDir = "PlasmoDB/common/empty"
             contact = "Artur Scherf"
             email = "artur.scherf@pasteur.fr"
-            institution = "UnitÃ© de Biologie des Interactions HÃ´te-Parasite"
+            institution = "Unité de Biologie des Interactions Hôte-Parasite"
         />
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
 Chromatin immunoprecipitation to identify histone modifications (H3K9me3, H3K9Ac, H3K4me3, H4K20me3) in Plasmodium falciparum wild type and Sir2 knock-outs.
-Contact Artur Scherf, artur.scherf@pasteur.fr, UnitÃ© de Biologie des Interactions HÃ´te-Parasite.
+Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactions Hôte-Parasite.
           ]]>
         </description>
 <publication pmid="19218088"/>
