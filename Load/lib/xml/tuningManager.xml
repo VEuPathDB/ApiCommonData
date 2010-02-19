@@ -2865,6 +2865,10 @@ from
     select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
            'TriTrypDB' as project_id
     from dual
+    UNION
+    select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
+           'TriTrypDB' as project_id
+    from dual
     ) pm, apidb.geneattributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -2897,7 +2901,7 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
        'Time point in hours' as x_axis,
        'Fold Induction (vs. 0 hour) or expression percentile value for raw red and green values.' as y_axis,
        'fc,pct' as visual_parts,
-       1 as order_num 
+       rownum as order_num
 from dual
 UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
@@ -2908,7 +2912,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
        'Time point in hours; also high and low density blood form' as x_axis,
        'M value (log2(R/G)) or percentile.' as y_axis,
        'm,pct' as visual_parts,
-       2 as order_num
+       rownum as order_num
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -2919,7 +2923,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
        'Time point in hours or the slender stage (sl)' as x_axis,
        'RMA value (log2) or percentile' as y_axis,
        'rma,pct' as visual_parts,
-       3 as order_num
+       rownum as order_num
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -2930,7 +2934,7 @@ select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
        'Average value from three independent biological replicates from five different life cycle stages.' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
        'rma,pct' as visual_parts,
-       4 as order_num
+       rownum as order_num
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
@@ -2941,7 +2945,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
        'Average of 3 biological replicates from each Life cycle stage (trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET)).' as x_axis,
        'M value (log2(R/G)) or percentile.' as y_axis,
        'm,pct' as visual_parts,
-       5 as order_num
+       rownum as order_num
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -2952,7 +2956,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'Direct comparison of Mouse Lesion Derived Amastigotes vs. Early Log Procyclic Promastigotes OR PNA - Metacyclic Promastigotes vs. Early Log Procyclic Promastigotes.  Data for each biologial replicate (3) for each comparison is shown.' as x_axis,
        'M value (log2(R/G)) or percentile.' as y_axis,
        'm,pct' as visual_parts,
-       6 as order_num
+       rownum as order_num
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
@@ -2964,6 +2968,17 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
        'M value (log2(R/G)) or percentile.' as y_axis,
        'm,pct' as visual_parts,
        7 as order_num
+from dual
+UNION
+select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
+       'Cross::TbRnaSeqBfPf' as module,
+       'Trypanosoma brucei' as species,
+       'T.brucei blood and procyclic forms RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
+       'log2 X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of billions of bases of reads mapped; Z = length of the gene' as y_axis,
+       'cov,pct' as visual_parts,
+       rownum as order_num
 from dual
       ]]>
     </sql>
