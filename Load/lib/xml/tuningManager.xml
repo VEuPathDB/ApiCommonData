@@ -2897,7 +2897,7 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
        'MylerLinfantum::Ver1' as module,
        'Leishmania infantum' as species,
        'Differentiation Time Series: Promastigote to Amastigote' as display_name,
-       'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.' as description,
+       'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.  Values in the data table are log2(R/G)' as description,
        'Time point in hours' as x_axis,
        'Fold Induction (vs. 0 hour) or expression percentile value for raw red and green values.' as y_axis,
        'fold_induction,pct' as visual_parts,
@@ -2907,10 +2907,10 @@ UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
        'Clayton::TbTimeSeries' as module,
        'Trypanosoma brucei' as species,
-       '' as display_name,
-       '' as description,
-       'Time point in hours; also high and low density blood form' as x_axis,
-       'M value (log2(R/G)) or percentile.' as y_axis,
+       'Expression profiling of T. brucei' as display_name,
+       'Time series data are shown as Fold Induction compared to a common reference.  Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.  Values in the data table are log2(R/G)' as description,
+       'high and low density blood form (hd-bf represents the 0 hour in the time series); Time point in hours' as x_axis,
+       'Fold Induction or percentile.' as y_axis,
        'fold_induction,pct' as visual_parts,
        rownum as order_num
 from dual
@@ -2941,9 +2941,9 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
        'Tarleton::TcTranscriptome' as module,
        'Trypanosoma cruzi' as species,
        'Transcriptome analysis of the Trypanosoma cruzi life-cycle' as display_name,
-       'Global assessment of transcript abundances in each life-cycle stage of T. cruzi was performed to identify stage-regulated genes and provide an essential element of an integrated database of T. cruzi genomic, proteomic, and transcriptomic data.' as description,
+       'Global assessment of transcript abundances in each life-cycle stage of T. cruzi was performed to identify stage-regulated genes and provide an essential element of an integrated database of T. cruzi genomic, proteomic, and transcriptomic data.    Values in the data table are log2(R/G)' as description,
        'Average of 3 biological replicates from each Life cycle stage (trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET)).' as x_axis,
-       'M value (log2(R/G)) or percentile.' as y_axis,
+       'Fold Induction or percentile.' as y_axis,
        'fold_induction,pct' as visual_parts,
        rownum as order_num
 from dual
@@ -2954,7 +2954,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'Transcription profiling of three developmental stages of Leishmania major - earlylLog, PNA- metacyclics and mouse lesion derived amastigotes' as display_name,
        'Comparison of three developmental stages (Early Log, PNA- metacyclics and Mouse lesion Derived Amastigotes) of L.major FV1.' as description,
        'Direct comparison of Mouse Lesion Derived Amastigotes vs. Early Log Procyclic Promastigotes OR PNA - Metacyclic Promastigotes vs. Early Log Procyclic Promastigotes.  Data for each biologial replicate (3) for each comparison is shown.' as x_axis,
-       'M value (log2(R/G)) or percentile.' as y_axis,
+       'Fold Induction or percentile.' as y_axis,
        'fold_induction,pct' as visual_parts,
        rownum as order_num
 from dual
@@ -2965,9 +2965,9 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
        'Effect of TbDRBD3 depletion on procyclic T. brucei transcriptome' as display_name,
        'In order to analyze whether TbDRBD3 has a role in the regulation of mRNA turnover, the transcriptome of procyclic trypanosomes depleted of TbDRBD3 was compared to that of uninduced cells using hybridizations of genomic microarrays. RNA samples were isolated from cells harvested after 48 hours of induction with tetracycline. At this point, cell growth was barely affected and trypanosomes remained highly motile. 15 microg of RNA were reverse-transcribed in the presence of 100 ng of oligo(dT)12-18, 0.25 mM dATP, 0.25 mM dTTP, 0.25 mM dGTP, 0.05 mM dCTP, 0.05 mM Cy3- or Cy5-dCTP, 50 mM Tris-HCl, pH 8.3, 75 mM KCl, 3 mM MgCl2, 5 mM DTT, 40 U of RNaseOUT (Invitrogen) and 400 U of Superscript III reverse transcriptase (Invitrogen). Reactions were incubated for 3 hours at 50 degrees C, stopped by heating at 70 degrees C for 15 min and treated with 5 U of RNase H for 20 min at 37 degrees C. cDNA was purified using the MinElute kit (Qiagen), ethanol precipitated and resuspended in hybridization buffer. Genomic T. brucei microarray glass slides containing ca. 24,000 independent random genomic clones (Brems et al., 2005) were pre-hybridized and hybridized as described (Diehl et al., 2002). Four hybridizations (two biological replicates with a dye swap each) were analyzed.' as description,
        'Direct comparison; 2 biological replicates' as x_axis,
-       'M value (log2(R/G)) or percentile.' as y_axis,
-       'fold_induction,pct' as visual_parts,
-       7 as order_num
+       'Fold Induction or percentile.' as y_axis,
+       'fold_induction' as visual_parts,
+       rownum as order_num
 from dual
 UNION
 select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
