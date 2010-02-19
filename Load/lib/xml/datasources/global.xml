@@ -181,6 +181,96 @@
     </resource>    
 
 
+ <resource resource="isolateVocabulary" version="2009-06-14" 
+        displayName="load isolate vocabulary" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolateVocabulary.txt" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>updateIsolateVocabulary.pl --inFile @downloadDir@/isolateVocabulary/isolateVocabulary.txt</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_isolation_source" version="2009-06-14" 
+        displayName="update isolate vocabulary-isolation_source" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/isolationSource.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --type isolation_source --xml_file @downloadDir@/isolateVocabularyUpdate_isolation_source/isolationSource.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_specific_host" version="2009-06-14" 
+        displayName="update isolate vocabulary-specific_host" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/specificHost.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --type specific_host --xml_file @downloadDir@/isolateVocabularyUpdate_specific_host/specificHost.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+  <resource resource="isolateVocabularyUpdate_geographic_location" version="2009-06-14" 
+        displayName="update isolate vocabulary-geographic_location" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/geographicLocation.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update  --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/geographicLocation.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+  </resource> 
+
+ <resource resource="isolateVocabularyUpdate_product" version="2009-06-14" 
+        displayName="update isolate vocabulary-product" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/product.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/product.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+    <resource resource="PDBProteinSequences" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <description>
+         <![CDATA[
+Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.        
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="FetchPDBidx" version="2009-03-06"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
+        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
+        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <description>
+         <![CDATA[
+PDB Identifiers       
+          ]]>
+        </description>
+    </resource>
 
 
 
