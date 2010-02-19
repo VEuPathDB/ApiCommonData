@@ -234,12 +234,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         organisms="P.falciparum"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="@dataDir@/../IEDB_Epitopes_fixed" 
-            contact="IEDB"
-            email=""
-            institution="IEDB"
-        />
-         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
+        <manualGet fileOrDir="PlasmoDB/common/empty />
+         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
