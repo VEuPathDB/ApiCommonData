@@ -4,11 +4,11 @@
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        <manualGet fileOrDir = "PlasmoDB/common/empty"
         />
-        <unpack>getSubTaxa --ncbiTaxId 5825 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
-        <unpack>createPropFile --file dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <unpack>getSubTaxa --ncbiTaxId 5825 --outputFile @dataDir@/taxonIdFile</unpack>
+        <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -17,13 +17,13 @@
     </resource>
 
     <resource resource="P.chabaudi_chromosomes" version="2009.03.24"
-        displayName="P. chabaudi (AS) chromosomes annotation"
+        displayName="P. chabaudi (AS) chromosome sequences and annotation"
         category="Genome"
         organisms="P.chabaudi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
          <manualGet
-           fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/chromosomes/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_chromosomes/chromosomes/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+           fileOrDir="PlasmoDB/pberghei/genome/P.chabaudi_chromosomes/2010-02-01/"/>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @dataDir@/2010-02-01 --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
@@ -33,34 +33,19 @@
         </description>
     </resource> 
 
-    <resource resource="P.chabaudi_unmapped_contigs" parentResource="P.chabaudi_chromosomes"
-        displayName="P. chabaudi (AS) unmapped contigs annotation"
-        category="ignore"
-        organisms="P.chabaudi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-         <manualGet
-           fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/unmapped_contigs/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_unmapped_contigs/unmapped_contigs/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
-        <description>
-            <![CDATA[
-   Annotation of the <i>P. chabaudi</i> AS unmapped contigs obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models.    
-           ]]>
-        </description>
-    </resource> 
-
     <resource resource="IEDB_Epitopes" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Plasmo/IEDBExportPcha.txt" 
+        <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/2009-03-18/" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
-        <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/03-18-2009 --outDir @downloadDir@/IEDB_Epitopes_fixed </unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/2009-03-18 --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -73,13 +58,9 @@
         displayName="IEDB Epitopes"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
-            contact="IEDB"
-            email=""
-            institution="IEDB"
-        />
-         <unpack>createEpitopeDbRefFile --inputDir @downloadDir@/IEDB_Epitopes_DBxRefs/IEDB_Epitopes_fixed --outputFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt</unpack>
-        <pluginArgs>--DbRefMappingFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+        <manualGet fileOrDir="PlasmoDB/common/empty" /> 
+        <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
+        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -93,12 +74,9 @@
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
-            contact=""
-            email=""
-            institution=""/>
+        <manualGet fileOrDir="PlasmoDB/common/empty" />  
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--extDbRelSpecList "P. chabaudi genome and annotation|2009-03-24"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "P. chabaudi genome and annotation|2009-03-24"</pluginArgs>
     </resource> 
 
 
@@ -106,12 +84,12 @@
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Entrez/2009-04-29/gene2entrez.tab" 
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_DBRefs/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez gene links.
@@ -123,11 +101,11 @@
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
-        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_08-14-09.txt"
+        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Phenotype/2009-08-14/geneid_list_08-14-09.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             Phenotype links from Genetically Modified Rodent Malaria Parasites: 
@@ -150,13 +128,12 @@
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-
-        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Pubmed/2009-08-14/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Pubmed_DBRefs/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez pubmed links.
@@ -171,13 +148,13 @@
         extDbName="Links to Entrez Genes"
         extDbRlsVer="12-01-2009"
         extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Entrez_Gene/gene_info_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -191,13 +168,13 @@
         extDbName="Links to Uniprot Genes"
         extDbRlsVer="11-24-2009"
         extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Uniprot_Gene_plasmo/11-24-2009/Uniprot_Gene_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
