@@ -5169,6 +5169,65 @@ sub runPairwiseMercatorMavid {
   $mgr->endStep($signal);
 }
 
+sub createPairwiseMercatorDirs {
+  my ($mgr, $mercatorDir, $fastaDir, $gffDir, $organism, $signal) = @_;
+
+  return if $mgr->startStep("creating pairwise mercator dirs [$signal]", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+
+  my $draftString = $propertySet->getProp('mercator_draft_genomes');
+  my $nonDraftString = $propertySet->getProp('mercator_nondraft_genomes');
+  my $referenceGenome = $propertySet->getProp('mercator_reference_genome');
+  
+
+
+  my @drafts = ();
+  my @nonDrafts = ();
+
+
+  my @allGenomes = ();
+
+
+  my $draftIdx = -1;
+  my  $nonDraftIdx = -1;
+
+  if(uc($draftString) ne 'NONE'){
+      @drafts =  map { "$_" } split(',', $draftString);
+
+      $draftIdx = $#drafts;
+  }
+  
+  if(uc($nonDraftString) ne 'NONE'){
+      @nonDrafts = map { "$_" } split(',', $nonDraftString);
+ 
+      $nonDraftIdx = $#nonDrafts;
+  }
+
+  push(@allGenomes,@drafts,@nonDrafts);
+ 
+
+
+  for(my $i =0; $i <= ($#allGenomes-1); $i++){
+      for(my $j =$i+1 ; $j <= $#allGenomes; $j++){
+
+
+	      $mgr->runCmd("mkdir -p $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      $mgr->runCmd("mkdir -p $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      
+	      &copy($mgr,"$fastaDir/$allGenomes[$i].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      &copy($mgr,"$fastaDir/$allGenomes[$j].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      &copy($mgr,"$gffDir/$allGenomes[$i].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      &copy($mgr,"$gffDir/$allGenomes[$j].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      
+      }
+  }
+
+
+
+  $mgr->endStep($signal);
+}
 
 sub insertPairwiseMercatorSyntenySpans {
   my ($mgr, $mercatorDir, $syntenyVersion, $organism, $signal) = @_;
