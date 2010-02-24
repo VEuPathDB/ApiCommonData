@@ -5,7 +5,7 @@
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
 
-        <manualGet fileOrDir = "PlasmoDB/common/empty"
+        <manualGet fileOrDir = "common/empty"
         />
         <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile @dataDir@/taxonIdFile</unpack>
         <unpack>createPropFile --file  @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
@@ -146,12 +146,12 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-<resource resource="Su_P.falciparum_Microsatellite_Markers" version="05-29-2008"
+<resource resource="Su_P.falciparum_Microsatellite_Markers" version="2008-05-29"
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         category="Genome"
         organisms="P.falciparum"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/genomeFeature/SuMicrosatelliteMarkers/2008-05-29/sequences.gb.fixed"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/genomeFeature/Su_P.falciparum_Microsatellite_Markers/2008-05-29/sequences.gb.fixed"
             contact = "Su,X.-z"
             institution = "NIH"
         />
@@ -182,9 +182,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <publication pmid="12368869"/>
         <publication pmid="15580778"/>
         <wgetArgs>--tries=5 --mirror -r --no-parent --no-host-directories --cut-dirs=5</wgetArgs>
-        <unpack>mkdir @dataDir@/P.falciparum_old_annotations_fixed</unpack>
-        <unpack>for f in `ls @dataDir@/data.exchange`; do cat @dataDir@/data.exchange/$f | adjustPlasmoEmblFile" > @dataDir@/data.exchange/$f.fixed; cat @dataDir@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @dataDir@/P.falciparum_old_annotations_fixed/$f.fixed; done</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@//P.falciparum_old_annotations_fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2009-02-19"</pluginArgs>
+        <unpack>mkdir @dataDir@/fixed</unpack>
+        <unpack>for f in `ls @dataDir@/data.exchange`; do cat @dataDir@/data.exchange/$f | adjustPlasmoEmblFile" > @dataDir@/data.exchange/$f.fixed; cat @dataDir@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @dataDir@/fixed/$f.fixed; done</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2009-02-19"</pluginArgs>
         <description>
             <![CDATA[
    Sequence data from GeneDB for <i>P. falciparum</i> 3D7 chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute, TIGR/NRMC, and Stanford University. This data has sequence updates for chromosomes 6, 7 , 8 and 13. For more information see the GeneDB 3D7 News Archive. Includes sequence updates to TIGR chromsomes 2, 10, 11 and 14. Originally described in Gardner et al. Nature 419:498, 2002.  Also includes centromere features and curated Gene Ontology and E.C. number associations to genes.
@@ -234,7 +234,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         organisms="P.falciparum"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="PlasmoDB/common/empty" />
+        <manualGet fileOrDir="common/empty" />
          <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
@@ -392,7 +392,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email = "JMU@NIAID.NIH.GOV"
             institution = "National Institute of Allergy and Infectious Diseases, National Institutes of Health"
         />
-        <unpack>suSnpTabToGffTransform --tab_file "@dataDir@/Pf_snps_allChromosomes.in --out_file "@dataDir@/Pf_snps_allChromosomes.gff</unpack>
+        <unpack>suSnpTabToGffTransform --tab_file @dataDir@/Pf_snps_allChromosomes.in --out_file @dataDir@/Pf_snps_allChromosomes.gff</unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
@@ -499,7 +499,7 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
         displayName="P. falciparum Sage Tags"
         category="Transcriptome"
         plugin="GUS::Supported::Plugin::LoadArrayDesign">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/microarray/WirthSageTagArrayDesign/1/array/"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/microarray/WirthSageTagArrayDesign/1/array"
             contact = "Dyann F. Wirth"
             email = "dfwirth@hsph.harvard.edu"
             institution = "Harvard School of Public Health, Harvard University"
