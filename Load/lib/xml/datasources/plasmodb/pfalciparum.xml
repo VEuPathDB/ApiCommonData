@@ -5,7 +5,7 @@
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
 
-        <manualGet fileOrDir = "common/empty"
+         <manualGet fileOrDir = "common/empty"
         />
         <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile @dataDir@/taxonIdFile</unpack>
         <unpack>createPropFile --file  @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
@@ -22,7 +22,7 @@
         organisms="P. falciparum"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/ZhangGardnerESTs/2007-08-23/pfc.fasta.gz"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/ZhangGardner/2007-08-23/pfc.fasta.gz"
             contact="Malcolm J. Gardner"
             email="malcolm.gardner@sbri.org"
             institution="Seattle Biomedical Research Institute."
@@ -41,7 +41,7 @@
         organisms="P. falciparum"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/WatanabeESTs/2006-11-02/reffull_pf.fas"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/Watanabe/2006-11-02/reffull_pf.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
@@ -60,7 +60,7 @@
         organisms="P. falciparum"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/WatanabeESTs/2008-09-26/onepass/"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/Watanabe/2008-09-26/onepass/"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
@@ -80,7 +80,7 @@
         organisms="P. falciparum"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/Florent_ESTs/2007-10-19/PUA_seq4web.msk"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/EST/Florent/2007-10-19/PUA_seq4web.msk"
             contact="Isabelle Florent"
             email="florent@mnhn.fr"
             institution="Museum National d Histoire Naturelle"
@@ -199,7 +199,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="Proteome"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum</i> Gene Ontology associations assigned by GeneDB.
@@ -260,7 +260,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez_DBRefs/2009-04-29/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez/2009-04-29/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -277,7 +277,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Phenotype_DBRefs/2009-08-14/geneid_list_08-14-09.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Phenotype/2009-08-14/geneid_list_08-14-09.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
@@ -305,7 +305,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Pubmed_DBRefs/2009-08-14/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Pubmed/2009-08-14/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -325,7 +325,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         extDbName="Links to Entrez Genes"
         extDbRlsVer="12-01-2009"
         extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez_Gene_dbxref/12-01-2009/gene_info_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez_Gene/12-01-2009/gene_info_plasmo"
             contact=""
             email=""
             institution=""
@@ -345,7 +345,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         extDbName="Links to Uniprot Genes"
         extDbRlsVer="11-24-2009"
         extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Uniprot_Gene_dbxref/11-24-2009/Uniprot_Gene_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Uniprot_Gene/11-24-2009/Uniprot_Gene_plasmo"
             contact=""
             email=""
             institution=""
@@ -364,13 +364,13 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="Polymorphisms"
         publicUrl="http://www.sanger.ac.uk/Projects/Pathogens/"
         organisms="P.falciparum">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhanaSnps/2006-10-21/sangerPfalciparumSnps.tar.gz" 
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhana/2006-10-21/sangerPfalciparumSnps.tar.gz" 
             contact="Matt Berriman"
             email="mb4@sanger.ac.uk"
             institution="Sanger"
         />
         <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf sangerPfalciparumSnps.tar.gz ; cd $currDir</unpack>
-        <unpack>sangerSnps2Gff.pl --sf "@dataDir@/WTSI_PFAL.GHANA1.0.dbsnp.new @dataDir@/WTSI_PFAL.IT.0.dbsnp.new" --cf "@dataDir@/IT.uniq.hq.nr3.gff.ORA @dataDir@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @dataDir@/sangerPfalciparumSnps.gff</unpack>
+        <unpack>sangerSnps2Gff.pl --sf '@dataDir@/WTSI_PFAL.GHANA1.0.dbsnp.new @dataDir@/WTSI_PFAL.IT.0.dbsnp.new' --cf "@dataDir@/IT.uniq.hq.nr3.gff.ORA @dataDir@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @dataDir@/sangerPfalciparumSnps.gff</unpack>
         <unpack>rm -f @dataDir@/sangerPfalciparumSnps.tar.gz </unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
@@ -387,7 +387,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         displayName="SNPs from the NIH"
         category="Polymorphisms"
         organisms="P.falciparum">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/su_SNPs/08-26-2006/Pf_snps_allChromosomes.in"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Su/08-26-2006/Pf_snps_allChromosomes.in"
             contact = "Jianbing Mu"
             email = "JMU@NIAID.NIH.GOV"
             institution = "National Institute of Allergy and Infectious Diseases, National Institutes of Health"
@@ -407,7 +407,7 @@ Based on CDS sequences from strains 3D7, 7G8, D10, Dd2, HB3
         displayName="SNPs from the Broad Institute"
         category="Genome"
         organisms="P.falciparum">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/broad_SNPs/2007-08/broad_snps.gff.gz"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Broad/2007-08/broad_snps.gff.gz"
             contact = "Dyann Wirth"
             email = "dfwirth@hsph.harvard.edu"
             institution = "The Broad Institute of MIT and Harvard"
@@ -427,7 +427,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
         category="Polymorphisms"
         publicUrl="http://www.plasmodb.org/"
         organisms="P.falciparum">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger_SNPs/2007-08-01/combinedSnps.gff.gz"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/2007-08-01/combinedSnps.gff.gz"
             contact="Brian Brunk"
             email="brunkb@pcbi.upenn.edu"
             institution="UPenn"
@@ -447,7 +447,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
         displayName="load Pf location map With Sqlldr" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger_SNPs/2007-08/map_v6.0.sql" 
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/2007-08/map_v6.0.sql" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
@@ -517,7 +517,7 @@ Serial analysis of gene expression (SAGE) was applied to the malarial parasite <
         </description>
     </resource>
     
-    <resource resource="PlasmoSageTagFreqs" version="1"
+    <resource resource="WirthSageTagFreqs" version="1"
         displayName="P. falciparum 3D7 Experimental SAGE tags"
         category="Transcriptome"
         plugin="GUS::Community::Plugin::LoadSageResults">
@@ -537,12 +537,12 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
         </description>
     </resource>
     
-  <resource resource="y2h_data" version="1.0" 
+  <resource resource="LaCount_y2h_data" version="1.0" 
             displayName="P. falciparum protein interaction network"
             organisms="P.falciparum"
             category="Interactome"
             plugin="ApiCommonData::Load::Plugin::InsertYeastTwoHybrid">
-     <manualGet fileOrDir="PlasmoDB/pfalciparum/interaction/y2h_data/1.0/interaction_dataset.txt" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/interaction/LaCount_y2h/1.0/interaction_dataset.txt" 
             contact="Doug LaCount"
             email="dlacount@pharmacy.purdue.edu"
             institution="Purdue University"
@@ -563,7 +563,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
         category="Interactome"
         publicUrl="www.cbil.upenn.edu/plasmoMAP"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/PlasmoMAP_DBRefs/1.0/plasmomap_dbrefs.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/PlasmoMAP/1.0/plasmomap_dbrefs.txt"
             contact = "Shailesh Date"
             email = "svdate@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -643,7 +643,7 @@ Mutual information, an entropy based, information theoretic measure, was used to
         extDbName="GenBank"
         extDbRlsVer="150.0"
         extDbRlsDescrip="The GenBank version used by Entrez Genome for the creation of the pfChrDbRefs.txt file">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref//pfChrsGenBankDbRefs/2007-06-28/pfChrDbRefs.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/chrsGenBank/2007-06-28/pfChrDbRefs.txt"
             contact = "Aaron Mackey"
             email = "amackey@pcbi.upenn.edu"
             institution = "CBIL"
@@ -662,7 +662,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         category="ignore"
         publicUrl="http://pasa.igs.umaryland.edu/"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/PASA_dbrefs/2009-05-12/2009-05-12.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/PASA/2009-05-12/2009-05-12.txt"
             contact = "Wortman, Jennifer"
             email = "jwortman@som.umaryland.edu"
             institution = "University of Maryland School of Medicine"
@@ -716,7 +716,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         category="ignore"
         organisms="P.falciparum"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger_dbrefs/winzeler_genes_OPI_clusters.txt"
+         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/winzeler_genes_OPI_clusters.txt"
             contact="Elizabeth Winzeler"
             email="winzeler@scripps.edu"
             institution="The Scripps Research Institute"
@@ -733,7 +733,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         category="ignore"
         organisms="P.falciparum"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger_dbrefs/winzeler_genes_lit.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/winzeler_genes_lit.txt"
             contact="Elizabeth Winzeler"
             email="winzeler@scripps.edu"
             institution="The Scripps Research Institute"
@@ -787,7 +787,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
         plugin="ApiCommonData::Load::Plugin::InsertSingleMotifMultMappings"
         displayName="Pexel motif for P. falciparum protein export to the erythrocyte membrane."
         category="Secretome">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/CowmanSubcellularLocation/2004/PEXEL_MOTIF_AND_POSITION"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/cellularLocation/Cowman/2004/PEXEL_MOTIF_AND_POSITION"
             contact = "Trish Whetzel"
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
@@ -806,7 +806,7 @@ A conserved pentameric sequence was shown to play a central role in protein expo
         plugin="ApiCommonData::Load::Plugin::InsertSingleMotifMultMappings"
         displayName="HT motif for P. falciparum protein export to the erythrocyte membrane."
         category="Secretome">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/cellularLocation/HaldarSubcellularLocation/2004/final_positions2.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/cellularLocation/Haldar/2004/final_positions2.txt"
             contact = "Trish Whetzel"
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
@@ -846,8 +846,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         category="Genome"
         organisms="P.falciparum"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/plasmoDB/snp/manualDelivery/broad_SNPs/2007-08/coverage/allStrains.fa"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad/2007-08/coverage/allStrains.fa"
         />
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5833 --sequenceFile @dataDir@/allStrains.fa --soTermName "genomic_DNA"  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
@@ -881,7 +880,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="Mass Spec of Mosquito oocysts from Lasonder"
         category="ignore"
         publicUrl="">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoOocystMassSpec/Lasonder_MOSQUITO_STAGES_Oocyst.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoOocyst/Lasonder_MOSQUITO_STAGES_Oocyst.tab"
             contact="Edwin Lasonder"
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
@@ -899,7 +898,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="Mass Spec of Mosquito oocyst-derived sporozoites from Lasonder"
         category="ignore"
         publicUrl="">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoDerivedSporozoiteMassSpec/2008-03-30/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoDerivedSporozoite/2008-03-30/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab"
             contact="Edwin Lasonder"
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
@@ -916,7 +915,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Mosquito salivary gland sporozoites from Lasonder"
         category="ignore">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoSalivarySporozoitesMassSpec/2008-03-30/Lasonder_MOSQUITO_STAGES_Salivary.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoSalivarySporozoites/2008-03-30/Lasonder_MOSQUITO_STAGES_Salivary.tab"
           contact="Edwin Lasonder"
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre" 
@@ -939,7 +938,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             institution = "University of Pennsylvania"
         />
         <unpack>gunzip @dataDir@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion 2.2 --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-04-29" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2007-06-28"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:@enzymeDBVer@" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "@pfSangerChrVer@"</pluginArgs>
         <description>
             <![CDATA[ Evigan is a eukaryotic gene predictor which produces consensus gene models by integrating multiple sources of evidence. Evigan can incorporate various types of evidence such as gene models predicted by gene finders, EST matches, protein-to-genome alignment, etc. Employing a Dynamic Bayesian Network(DBN), Evigan makes predictions by infering the most likely consensus gene models given observed source evidence. Its model parameters are estimated by the Expectation-Maximization(EM) algorithm, eliminating the need of curated training data. Click <a href="http://www.seas.upenn.edu/~strctlrn/evigan/evigan.html">here</a> to get more information.
           ]]>
@@ -952,7 +951,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="updating secondary score for evigan gene models" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/empty" 
+        <manualGet fileOrDir = "common/empty" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
@@ -966,8 +965,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip"
         organisms="P.falciparum"
         category="Polymorphisms">
-        <manualGet
-           fileOrDir="PlasmoDB/pfalciparum/BroadIsolateBarcode/snp/2008-06-13/broad_barcode_plasmodb.txt"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/BroadIsolateBarcode/2008-06-13/broad_barcode_plasmodb.txt"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/> 
@@ -984,8 +982,7 @@ The Genotyping Barcode is based on 24 different high frequency SNPs (minor allel
         plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip"
         organisms="P.falciparum"
         category="Polymorphisms">
-        <manualGet
-           fileOrDir="PlasmoDB/pfalciparum/snp/Broad3KGenotyping/2008-06-13/3K_plasmo.txt"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad3KGenotyping/2008-06-13/3K_plasmo.txt"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>  
@@ -1002,8 +999,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
         plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip"
         organisms="P.falciparum"
         category="Polymorphisms">
-        <manualGet
-           fileOrDir="PlasmoDB/pfalciparum/snp/Broad75KGenotyping/2009-03-06/working_dir/75K_plasmo.txt"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad75KGenotyping/2009-03-06/working_dir/75K_plasmo.txt"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>  
@@ -1087,7 +1083,7 @@ IsolatesByCountry
         />
           <unpack>MakeLoadAffyArrayDesignInput.pl --target_file @dataDir@/2009-05-13/targets.txt --probe_tab_file @dataDir@/2009-05-13/probes.txt --cdf_file @dataDir@/2009-05-13/winzeler_newmapping_5-13-09_PF.cdf --design_element_type short_oligo --polymer_type DNA --physical_biosequence_type unknown_sequence --output_file @dataDir@/scrMalariaPlasmoSubset.out --non_fasta_target_file</unpack>
           <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Affymetrix' --commit</unpack>
-          <pluginArgs>--cfg_file @dataDir@/scrMalaria.config --data_file @dataDir@/scrMalariaPlasmoSubset.out --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Affymetrix</pluginArgs>
+          <pluginArgs>--cfg_file @dataDir@/2009-05-13/scrMalaria.config --data_file @dataDir@/scrMalariaPlasmoSubset.out --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Affymetrix</pluginArgs>
         <description>
             <![CDATA[
 Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
@@ -1098,20 +1094,19 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
 
     
     <resource resource="MTC_KI_Plasmodium_falciparum_33k_Array" version="1"
-        version="1"
         plugin="GUS::Supported::Plugin::LoadArrayDesign"
         displayName="Karolinska Institutet MTC P. falciparum Oligo Array"
         category="Transcriptome"
         publicUrl="http://www.ebi.ac.uk/aerep/lob?name=adss&amp;id=325368727"
         >
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/MTC-KI_33kArray/1/" 
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/MTC-KI_33kArray/1" 
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
             institution="Parasitology, Karolinska Institutet, MTC"
         />
         <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/1/columnTranslator.xml --data_in  @dataDir@/1/MTC_KI_33k_v1/A-MEXP-75.txt --log translator.log --data_out @dataDir@/loadArrayDesign.data</unpack>
         <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Bobo Mok' --first Bobo --last Mok --commit</unpack>
-        <pluginArgs>--cfg_file  1/mtc_ki_33k_v1.config --data_file @dataDir@/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Bobo Mok'</pluginArgs>
+        <pluginArgs>--cfg_file @dataDir@/1/mtc_ki_33k_v1.config --data_file @dataDir@/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Bobo Mok'</pluginArgs>
         <description>
             <![CDATA[
 	ArrayExpress (A-MEXP-75).  The 70-mer oligonucleotides microarray consisted of 6850 probes. From there, 6542 probes (Malaria Genome Oligo Set Version 1.0) were designed and synthesized by Qiagen Operon and 14 probes were obtained from the SpotReport Alien oligo array validation system (Stratagene, CA, USA). The rest of the oligos were selected using ArrayDesigner Version 1 (Premier Biosoft International, CA, USA). Oligonucleotides were dissolved in 1:3 of DMSO:dH2O at a final concentration of 40 µM in preparation for spotting on CMT-UltraGaps slides. Microarraying was done by Genetix Qarray. Each probe was printed in quadruplicate on the slides.
@@ -1119,7 +1114,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         </description>
     </resource>    
     
-    <resource resource="DeRisiOligoArray7282GPL3983" version="1"
+    <resource resource="DeRisiOligoArray_7282_GPL3983" version="1"
         version="1"
         plugin="GUS::Supported::Plugin::LoadArrayDesign"
         displayName="Malaria Oligo p19"
@@ -1133,7 +1128,7 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
         />
         <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/1/columnTranslator.xml --data_in  @dataDir@/1/gpl3983_configforloading.txt --log translator.log --data_out @dataDir@/loadArrayDesign.data</unpack>
         <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Joseph DeRisi' --first Joseph --last DeRisi --commit</unpack>
-        <pluginArgs>--cfg_file 1/gpl3983_config --data_file loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Joseph DeRisi'</pluginArgs>
+        <pluginArgs>--cfg_file @dataDir@/gpl3983_config --data_file loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Joseph DeRisi'</pluginArgs>
         <description>
             <![CDATA[
 <i>P. falciparum</i> coding specific 70mer oligonucleotides designed by ArrayOligoSelector
@@ -1153,9 +1148,9 @@ Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
             email="niaid-mrf-geo@nih.gov"
             institution="National Institute for Allergy and Infectious Diseases"
         />
-        <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/1/columnTranslator.xml --data_in  @dataDir@/1/gpl1858_data --log translator.log --data_out @dataDir@/loadArrayDesign.data</unpack>
+        <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/1/columnTranslator.xml --data_in  @dataDir@/1/gpl1858_data --log translator.log --data_out @dataDir@/1/loadArrayDesign.data</unpack>
         <unpack>ga GUS::Supported::Plugin::InsertContact --name 'NIAID Microarray Research Facility' --commit</unpack>
-        <pluginArgs>--cfg_file 1/gpl1858_config --data_file @dataDir@/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'NIAID Microarray Research Facility'</pluginArgs>
+        <pluginArgs>--cfg_file @dataDir@/gpl1858_config --data_file @dataDir@/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'NIAID Microarray Research Facility'</pluginArgs>
         <description>
             <![CDATA[
 Printing by NIAID / Microarray Research Facility
@@ -1168,7 +1163,6 @@ Printing by NIAID / Microarray Research Facility
 <!--Microarray metaData-->
 
     <resource resource="CowmanStubbs_metaData" version="1"
-              version="1.0"
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="P. falciparum invasion pathways - meta data"
               category="Transcriptome">
@@ -1185,7 +1179,6 @@ Printing by NIAID / Microarray Research Facility
     </resource>    
 
     <resource resource="CowmanDuraisingh_metaData" version="1"
-              version="1.0"
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="P. falciparum strain 3D7, SIR2 knockout - meta data"
               category="Transcriptome">
@@ -1202,7 +1195,6 @@ Printing by NIAID / Microarray Research Facility
     </resource>    
 
     <resource resource="CowmanBaumMetaData" version="1"
-              version="1.0"
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="Invasion by P. falciparum merozoites - meta data"
               category="Transcriptome">
@@ -1220,7 +1212,6 @@ Printing by NIAID / Microarray Research Facility
 
 
     <resource resource="E-MEXP-128_metaData" version="1"
-        version="1"
         plugin="GUS::Community::Plugin::LoadMageDoc"
         displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - meta data"
         category="ignore">
@@ -1240,7 +1231,6 @@ Antigenic variation is a survival mechanism developed by the malaria parasite <i
     </resource>   
     
     <resource resource="E-MEXP-439_metaData" version="1"
-        version="1"
         plugin="GUS::Community::Plugin::LoadMageDoc"
         displayName="3D7AH1S1 vs. 3D7S8.4 AND 3D7AH1S3 vs. 3D7S8.4 (ring) - meta data"
         category="Transcriptome">
@@ -1261,7 +1251,6 @@ Antigenic variation is a survival mechanism developed by the malaria parasite <i
     </resource>   
     
     <resource resource="E-MEXP-494_metaData" version="1"
-        version="1"
         plugin="GUS::Community::Plugin::LoadMageDoc"
         displayName="Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum - meta data"
         category="Transcriptome"
@@ -1282,7 +1271,6 @@ Identification of genome wide gene copy number polymorphisms in <i>P. falciparum
     </resource>      
     
     <resource resource="GSE5267_metaData" version="1"
-        version="1"
         plugin="GUS::Community::Plugin::LoadMageDoc"
         displayName="Tetracyclines Specifically Target the Apicoplast of the Malaria Parasite Plasmodium falciparum - meta data"
         category="Transcriptome"
@@ -1698,7 +1686,7 @@ om made Affy array (Scrmalaria) based on the laboratory strain 3D7.
             organisms="P.falciparum"
             category="ignore"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/E-MEXP128/working_dir/1.0/profiles"
+     <manualGet fileOrDir = "PlasmoDB/pfalciparum/microarray/E-MEXP128/working_dir/1.0/profiles"
             contact="Bobo Mok"
             email="bobo.mok@mtc.ki.se"
             institution="Parasitology, Karolinska Institutet, MTC"
@@ -1769,12 +1757,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
         category="Proteome">	
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleMassSpecTpz/1/life_cycle_nature01107-Tpz.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleTpz/1/life_cycle_nature01107-Tpz.tab"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage trophozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage trophozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1788,12 +1776,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
         category="ignore">	
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleMassSpecMrz/1/life_cycle_nature01107-Mrz.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleMrz/1/life_cycle_nature01107-Mrz.tab"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage merozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage merozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1806,12 +1794,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
         category="ignore">	
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleMassSpecGmt/1/life_cycle_nature01107-Gmt.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleGmt/1/life_cycle_nature01107-Gmt.tab"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage gametocytes</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage gametocytes</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1824,12 +1812,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
         category="ignore">	
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleMassSpecSpz/1/life_cycle_nature01107-Spz.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensLifeCycleSpz/1/life_cycle_nature01107-Spz.tab"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage sporozoite</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage sporozoite</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1843,12 +1831,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec. Data from P. falciparum infected red blood cell membrane fractions, 2004"
         category="Proteome">	
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensPIESPsMassSpec/1/PIESPs_Florens_2Rev11242003.tab"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/massSpec/FlorensPIESPs/1/PIESPs_Florens_2Rev11242003.tab"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in two stages of the <i>P. falciparum</i> life cycle and the iRBC Membrane, identified by multi-dimensional protein identification technology.
@@ -1886,7 +1874,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             category="Transcriptome"
             organisms="P.falciparum"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold_8-5-09/Profiles/" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold/1.0/Profiles/" 
                 contact="Brian P. Brunk"
                 email="brunkb@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
@@ -1904,7 +1892,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             category="Transcriptome"
             organisms="P.falciparum"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Newbold/working_dir/" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Newbold/1.0/working_dir/" 
                 contact="Chris I. Newbold"
                 email="cnewbold@hammer.imm.ox.ac.uk"
                 institution="Weatherall Institute of Molecular Medicine"
@@ -1922,12 +1910,12 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P. falciparum proteomics data from clinical samples (Tatu)"
         category="Proteome">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Tatu_clinical/working_dir/P.falciparum_Clinical_Proteomics.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Tatu_clinical/2009-08-11/working_dir/P.falciparum_Clinical_Proteomics.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
              Data produced by proteomics analysis of clinical isolates of early stages of <i>P. falciparum</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
@@ -1939,7 +1927,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::LoadNothing">
-        <manualGet fileOrDir = "PlasmoDB/common/empty"
+        <manualGet fileOrDir = "common/empty"
             contact = "Henk Stunnenberg"
             email = "h.stunnenberg@ncmls.ru.nl"
             institution = "NCMLS Radboud Universiteit"
@@ -1959,7 +1947,7 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
         category="Genome"
         plugin="ApiCommonData::Load::Plugin::LoadNothing">
-        <manualGet fileOrDir = "PlasmoDB/common/empty"
+        <manualGet fileOrDir = "common/empty"
             contact = "Artur Scherf"
             email = "artur.scherf@pasteur.fr"
             institution = "Unité de Biologie des Interactions Hôte-Parasite"
@@ -1979,7 +1967,7 @@ Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactio
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
         category="Genome"
         plugin="ApiCommonData::Load::Plugin::LoadNothing">
-        <manualGet fileOrDir = "PlasmoDB/common/empty"
+        <manualGet fileOrDir = "common/empty"
             contact = "Till Voss"
             email = "till.voss@unibas.ch"
             institution = "Swiss Tropical Institute"
@@ -2000,7 +1988,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         category="Genome"
         organisms="Pfalciparum"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-           <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/All_PEAKs.gff" 
+           <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/2009-11-11/working_dir/All_PEAKs.gff" 
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2018,7 +2006,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P.falciparum"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = "PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/PEAK_DATA/"
+     <manualGet fileOrDir = "PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/2009-11-11/working_dir/PEAK_DATA/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2036,7 +2024,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P.falciparum"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = "PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/SMOOTHED_DATA/"
+     <manualGet fileOrDir = "PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/2009-11-11/working_dir/SMOOTHED_DATA/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2054,7 +2042,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             category="Transcriptome"
             organisms="P.falciparum"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/working_dir/" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/1.0/working_dir/" 
                 contact="Greg Grant"
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
@@ -2090,7 +2078,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P. falciparum"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/GSE10022_CQstudy/working_dir/page/newFormat"
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/GSE10022_CQstudy/1.0/working_dir/page/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2107,7 +2095,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P. falciparum"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/working_dir/analysis/"
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/1.0/working_dir/analysis/"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2125,7 +2113,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             category="Transcriptome"
             organisms="P. berghei"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir=""PlasmoDB/pfalciparum/microarray/Waters/working_dir/" 
+     <manualGet fileOrDir=""PlasmoDB/pfalciparum/microarray/Waters_DOZI/1.0/working_dir/" 
                 contact="Greg Grant"
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
@@ -2143,7 +2131,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P. berghei"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters/working_dir/newFormat"
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters_DOZI/1.0/working_dir/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2162,7 +2150,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
          plugin="ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes"
          displayName="Assignment of chromosome numbers to rodent malaria parasite contigs"
          category="Genome">
-         <manualGet fileOrDir = ""PlasmoDB/pfalciparum/comparativeGenomics/taco/RMP_Pf_fromKooij.txt"
+         <manualGet fileOrDir = ""PlasmoDB/pfalciparum/comparativeGenomics/taco_RMP/2007-09-24/RMP_Pf_fromKooij.txt"
          />
          <pluginArgs>--mappingFile @dataDir@/RMP_Pf_fromKooij.txt --extDbNames "yoelii-falciparum synteny from Mercator,berghei-falciparum synteny from Mercator" --addChrColorTable 1 </pluginArgs> 
          <description>
