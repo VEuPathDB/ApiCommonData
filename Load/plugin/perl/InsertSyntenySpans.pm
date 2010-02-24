@@ -387,8 +387,8 @@ sub prepareGenesLocStmt {
 from apidb.FEATURELOCATION
 where feature_type = 'GeneFeature'
 and na_sequence_id = ?
-and end_max > ?
-and start_min < ?";
+and start_min > ?
+and end_max < ?";
 
   return $self->getDbHandle()->prepare($sql);
 }
