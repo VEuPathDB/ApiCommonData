@@ -5037,12 +5037,19 @@ sub fixMercatorOffsetsInGFF {
 }
 
 sub dumpMercatorGff {
-    my($mgr, $outputDir) = @_;
+    my($mgr, $outputDir, $organism, $fileNamePrefix) = @_;
     
     my $signal = "mercatorGffDump";
     return if $mgr->startStep("$signal", $signal);
     $mgr->runCmd("mkdir -p $mgr->{dataDir}/$outputDir");
-    $mgr->runCmd("mercatorGffDump.pl --outputDir $mgr->{dataDir}/$outputDir");
+
+    my $cmd = "mercatorGffDump.pl --outputDir $mgr->{dataDir}/$outputDir";
+
+    $cmd .= " --organism $organism" if $organism;
+
+    $cmd .= " --file_name_prefix $fileNamePrefix" if $fileNamePrefix;
+
+    $mgr->runCmd($cmd);
     $mgr->endStep($signal);
 }
 
