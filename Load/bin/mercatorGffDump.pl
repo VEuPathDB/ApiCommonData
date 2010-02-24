@@ -9,11 +9,13 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputDir);
+my ($verbose,$gusConfigFile,$outputDir,$organism,$fileNamePrefix);
 
 &GetOptions("verbose!" => \$verbose,
             "outputDir=s" => \$outputDir,
-            "gusConfigFile=s" => \$gusConfigFile);
+            "gusConfigFile=s" => \$gusConfigFile,
+            "organism=s" => \$organism,
+	    "file_name_prefix=s" => \$fileNamePrefix);
 
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -42,7 +44,7 @@ my ($species,$GFFFile,$GFFString);
 #------------------------------
 
 
-my $TaxonQuery = &GetTaxonQuery;
+my $TaxonQuery = &GetTaxonQuery($organism);
 my %SpeciesHash = &GetTaxonID(\$dbh,$TaxonQuery);
 
 foreach my  $Taxon_ID (keys (%SpeciesHash)) {
@@ -50,8 +52,11 @@ foreach my  $Taxon_ID (keys (%SpeciesHash)) {
   $species = $SpeciesHash{$Taxon_ID};
   $species =~ s/ /_/g;
 
-  $GFFFile = "$outputDir/$species.gff";
-
+  if($fileNamePrefix){
+      $GFFFile = "$outputDir/$fileNamePrefix.gff";
+  }else{
+      $GFFFile = "$outputDir/$species.gff";
+  }
 
   $GFFString = new  Bio::Tools::GFF(-file => ">$GFFFile",  -gff_version => 3);
 
@@ -154,17 +159,26 @@ sub WriteGFF {
 #--------QUERIES-----------------#
 
 sub GetTaxonQuery {
+    
+    my($organism) = @_;
 
-  return ("SELECT distinct ga.organism as organism, nas.taxon_id as taxon_id
+  my $sql = "SELECT distinct ga.organism as organism, nas.taxon_id as taxon_id
            FROM   apidb.geneattributes ga,dots.nasequence nas
-           WHERE  ga.na_sequence_id = nas.na_sequence_id");
+           WHERE  ga.na_sequence_id = nas.na_sequence_id";
+
+    if($organism){
+
+	$sql .= " AND ga.organism = '$organism'";
+    }
+  
+  return ($sql);
 }
 
 
 sub GetExonQuery {
 
   my ($TaxonID) = @_;
-  print "$TaxonID\n";
+
   return ("SELECT ns.source_id as gff_seqname,
                   'ApiDB' as gff_source,
                   'exon' as gff_feature,
