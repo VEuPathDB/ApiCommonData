@@ -138,7 +138,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         />
 
         <unpack>makeGoAssocFile --fileOrDir @dataDir@/2009_02_19 --format embl --fileExt embl.gz --output_file @dataDir@/gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|4.540" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum 3D7</i> Gene Ontology  associations from GeneDB
@@ -253,7 +253,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             email=""
             institution=""/>
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Sanger P. falciparum chromosomes|2009-02-19"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Sanger P. falciparum chromosomes|@pfSangerChrVer@"</pluginArgs>
     </resource> 
 
 <resource resource="Entrez_DBRefs" version="2009-04-29"
@@ -792,7 +792,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/PEXEL_MOTIF_AND_POSITION --motif "{R,(NOT R,K,E,D),(L,I),(NOT R,K,E,D),(E,D,Q)}" --motifName "secretome-cowman-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2005-09-26"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/PEXEL_MOTIF_AND_POSITION --motif "{R,(NOT R,K,E,D),(L,I),(NOT R,K,E,D),(E,D,Q)}" --motifName "secretome-cowman-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@"</pluginArgs>
         <description>
             <![CDATA[
 A conserved pentameric sequence was shown to play a central role in protein export into the host cell and used to predict the exported proteome in <i>P. falciparum</i>. 
@@ -811,7 +811,7 @@ A conserved pentameric sequence was shown to play a central role in protein expo
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2005-09-26"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@"</pluginArgs>
         <description>
             <![CDATA[
 An 11-amino acid signal required for the secretion of proteins from the <i>P. falciparum</i> vacuole to the human erythrocyte was identified leading to a predicted secretome.
@@ -829,7 +829,7 @@ An 11-amino acid signal required for the secretion of proteins from the <i>P. fa
             email = "jldommer@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/apFile.txt --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|2009-02-19" --category "secretome"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/apFile.txt --extDbRelSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@" --category "secretome"</pluginArgs>
         <description>
             <![CDATA[
 Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified based on amino acid characteristics of transit peptides that target proteins to the apicoplast.
@@ -866,7 +866,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="S.M.Khan@lumc.nl"
             institution="Leiden University"
         />
-        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2007-06-28'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
               This data was provided by the Leiden Malaria Group (prepublication from Dr. Shahid Khan). Mass spec data was generated from <i>P. falciparum</i> merozoites.
@@ -885,7 +885,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2007-06-28'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito oocysts by Edwin Lasonder lab
@@ -903,7 +903,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2007-06-28'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
               Mass Spec of Mosquito oocyst-derived sporozoites by Edwin Lasonder lab
@@ -920,7 +920,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre" 
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2007-06-28'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito salivary gland sporozoites by Edwin Lasonder lab
