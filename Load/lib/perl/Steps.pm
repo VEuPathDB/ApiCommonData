@@ -5041,15 +5041,18 @@ sub dumpMercatorGff {
     
     my $signal = "mercatorGffDump";
 
-    $signal .= "_$organism" if $organism; 
+    $signal .= "_$organism" if $organism;
+
+    $signal =~ s/ /_/g;
+
     return if $mgr->startStep("$signal", $signal);
     $mgr->runCmd("mkdir -p $mgr->{dataDir}/$outputDir");
 
     my $cmd = "mercatorGffDump.pl --outputDir $mgr->{dataDir}/$outputDir";
 
-    $cmd .= " --organism $organism" if $organism;
+    $cmd .= " --organism \"$organism\"" if $organism;
 
-    $cmd .= " --file_name_prefix $fileNamePrefix" if $fileNamePrefix;
+    $cmd .= " --file_name_prefix \"$fileNamePrefix\"" if $fileNamePrefix;
 
     $mgr->runCmd($cmd);
     $mgr->endStep($signal);
