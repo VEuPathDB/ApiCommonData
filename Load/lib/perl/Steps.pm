@@ -5040,6 +5040,8 @@ sub dumpMercatorGff {
     my($mgr, $outputDir, $organism, $fileNamePrefix) = @_;
     
     my $signal = "mercatorGffDump";
+
+    $signal .= "_$organism" if $organism; 
     return if $mgr->startStep("$signal", $signal);
     $mgr->runCmd("mkdir -p $mgr->{dataDir}/$outputDir");
 
