@@ -5182,7 +5182,7 @@ sub runPairwiseMercatorMavid {
 }
 
 sub createPairwiseMercatorDirs {
-  my ($mgr, $mercatorDir, $fastaDir, $gffDir, $organism, $signal) = @_;
+  my ($mgr, $mercatorDir, $fastaDir, $gffDir, $signal) = @_;
 
   return if $mgr->startStep("creating pairwise mercator dirs [$signal]", $signal);
 
@@ -5230,8 +5230,8 @@ sub createPairwiseMercatorDirs {
 	      
 	      &copy($mgr,"$fastaDir/$allGenomes[$i].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
 	      &copy($mgr,"$fastaDir/$allGenomes[$j].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
-	      &copy($mgr,"$gffDir/$allGenomes[$i].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
-	      &copy($mgr,"$gffDir/$allGenomes[$j].fasta","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      &copy($mgr,"$gffDir/$allGenomes[$i].gff","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      &copy($mgr,"$gffDir/$allGenomes[$j].gff","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
 	      
       }
   }
