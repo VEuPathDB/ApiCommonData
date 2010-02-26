@@ -2915,10 +2915,10 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
        'Matthews::TbDifferentiationSeries' as module,
        'Trypanosoma brucei' as species,
        'Dynamic mRNA Expression analysis of cells undergoing synchronous life-cycle differentiation in Trypanosoma brucei' as display_name,
-       'mRNA expression profiles of trypanosomes from two discrete bloodstream form stages of the parasite (slender and stumpy forms), as well as during the transition of the stumpy population to the procyclic life-cycle stage were studied.  This analysis represents the first comparison of in vivo derived pleomorphic slender cells with genetically identical stumpy forms, and a first analysis of the dynamic changes in mRNA profile that accompany the transition to procyclic forms.' as description,
+       'mRNA expression profiles of trypanosomes from two discrete bloodstream form stages of the parasite (slender and stumpy forms), as well as during the transition of the stumpy population to the procyclic life-cycle stage were studied.  This analysis represents the first comparison of in vivo derived pleomorphic slender cells with genetically identical stumpy forms, and a first analysis of the dynamic changes in mRNA profile that accompany the transition to procyclic forms.  Data is plotted as fold induction vs. the 0 HR.  The data table contains RMA values in log2 scale.' as description,
        'Time point in hours or the slender stage (sl)' as x_axis,
-       'RMA value (log2) or percentile' as y_axis,
-       'rma,pct' as visual_parts,
+       'Fold Induction (vs. 0 HR) or percentile' as y_axis,
+       'fold_induction,pct' as visual_parts,
        rownum as order_num
 from dual
 UNION
