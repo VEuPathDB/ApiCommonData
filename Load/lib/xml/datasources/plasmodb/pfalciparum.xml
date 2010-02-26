@@ -382,12 +382,12 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     </resource> 
     
        
-    <resource resource="Su_SNPs" version="08-26-2006"
+    <resource resource="Su_SNPs" version="2006-08-26"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the NIH"
         category="Polymorphisms"
         organisms="P.falciparum">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Su/08-26-2006/Pf_snps_allChromosomes.in"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Su/2006-08-26/Pf_snps_allChromosomes.in"
             contact = "Jianbing Mu"
             email = "JMU@NIAID.NIH.GOV"
             institution = "National Institute of Allergy and Infectious Diseases, National Institutes of Health"
@@ -402,12 +402,12 @@ Based on CDS sequences from strains 3D7, 7G8, D10, Dd2, HB3
         <publication pmid="17159981"/>
     </resource>
     
-    <resource resource="Broad_SNPs" version="2007-08"
+    <resource resource="Broad_SNPs" version="2007-08-01"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the Broad Institute"
         category="Genome"
         organisms="P.falciparum">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Broad/2007-08/broad_snps.gff.gz"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/Broad/2007-08-01/broad_snps.gff.gz"
             contact = "Dyann Wirth"
             email = "dfwirth@hsph.harvard.edu"
             institution = "The Broad Institute of MIT and Harvard"
@@ -476,11 +476,11 @@ Based on whole genome sequence for P. reichenowi_Oscar
         <publication pmid="17159981"/>
     </resource>
 
- <resource resource="loadPfLocationMapWithSqlldr" version="2009-05-14" 
+ <resource resource="loadPfLocationMapWithSqlldr" version="2007-08-01" 
         displayName="load Pf location map With Sqlldr" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/2007-08/map_v6.0.sql" 
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/2007-08-01/map_v6.0.sql" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
@@ -640,7 +640,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
             email = "svdate@pcbi.upenn.edu"
             institution = "CBIL"
         />
-        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. falciparum' --headerFile @dataDir@/2005-11-29/pf_TaxonNameHeaders --dataFile @dataDir@/2005-11-29/pp-any-and-pfal.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
+        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. falciparum' --headerFile @dataDir@/2005-11-29/pf_TaxonNameHeaders --dataFile @dataDir@/2005-11-29/pfalciparum/pp-any-and-pfal.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
     <publication pmid="10200254"/>
     <description>
          <![CDATA[
@@ -749,7 +749,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         category="ignore"
         organisms="P.falciparum"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/winzeler_genes_OPI_clusters.txt"
+         <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/2009-04-30/winzeler_genes_OPI_clusters.txt"
             contact="Elizabeth Winzeler"
             email="winzeler@scripps.edu"
             institution="The Scripps Research Institute"
@@ -784,7 +784,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         category="Proteome"
         publicUrl="http://bioinfo.icgeb.res.in/codes/model.html"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/structure/predictedProteinStructures/2005-11-21/icgeb_dbrefs.txt"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/predictedProteinStructures/2005-11-21/icgeb_dbrefs.txt"
             contact = "Dinesh Gupta"
             email = "dinesh@icgeb.res.in"
             institution = "The International Centre for Genetic Engineering and Biotechnology"
@@ -803,7 +803,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
         organisms="P.falciparum"
         publicUrl="http://www.mr4.org/"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-       <manualGet fileOrDir = "PlasmoDB/pfalciparum/reagent/MR4Reagents/MR4_plasmodb_mapping_trimmed.csv"
+       <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/MR4Reagents/MR4_plasmodb_mapping_trimmed.csv"
             contact = "Tim Stedman"
             email = "TStedman@atcc.org"
             institution = "Malaria Research and Reference Reagent Resource Center"
@@ -874,12 +874,12 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
 
 
 
- <resource resource="Broad_SNP_coverage" version="2008-05-20"
+ <resource resource="Broad_SNP_coverage" version="2007-08-01"
         displayName="Broad_SNP_coverage"
         category="Genome"
         organisms="P.falciparum"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad/2007-08/coverage/allStrains.fa"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad/2007-08-01/coverage/allStrains.fa"
         />
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5833 --sequenceFile @dataDir@/allStrains.fa --soTermName "genomic_DNA"  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
@@ -894,7 +894,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="Mass Spec of P. falciparum merozoite peptides from the Leiden Malaria Group"
        organisms="P.falciparum"
         category="Proteome">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/KhanMerozoitePeptides/Pf_merozoite_peptides_shahid_kahn.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/KhanMerozoitePeptides/2008-06-13/Pf_merozoite_peptides_shahid_kahn.tab"
             contact="Shahid Kahn"
             email="S.M.Khan@lumc.nl"
             institution="Leiden University"
@@ -913,7 +913,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="Mass Spec of Mosquito oocysts from Lasonder"
         category="ignore"
         publicUrl="">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoOocyst/Lasonder_MOSQUITO_STAGES_Oocyst.tab"
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderMosquitoOocyst/2008-03-30/Lasonder_MOSQUITO_STAGES_Oocyst.tab"
             contact="Edwin Lasonder"
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
@@ -965,7 +965,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
         displayName="P. falciparum Evigan Gene Models"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/genePrediction/EviganModels/Evigan_pf_nbest_chr_forImport.gff.gz"
+        <manualGet fileOrDir = "PlasmoDB/pfalciparum/genePrediction/EviganModels/2008-01-14/Evigan_pf_nbest_chr_forImport.gff.gz"
             contact = "Qian Liu"
             email = "qianliu@seas.upenn.edu"
             institution = "University of Pennsylvania"
@@ -1088,11 +1088,8 @@ IsolatesByCountry
         displayName="load MAPP With Sqlldr" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/pfalciparum/genomeFeature/BrickMAPPpromoters/3/Pfal_MAPP-version3.sql" 
-            contact = "Bindu Gajria" 
-            email = "bindu@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-        <unpack>sqlLoader.pl --file @dataDir@/Pfal_MAPP-version3.sql </unpack>
+        <manualGet fileOrDir = common/empty />
+        <unpack>sqlLoader.pl --file @dataDir@/../BrickMAPPpromoters/Pfal_MAPP-version3.sql </unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description> 
             <![CDATA[ MAPP (Malaria Promoter Predictor) recognises transcription start sites using 21 physicochemical properties of DNA. The predictor is comprised of a series of support vector machines which were trained on the 5' ends of full-length cDNAs from the FULL-Malaria database. Optimal prediction performance is achieved using only predictions with a MAPP score > 0.90.  Predictions are strand specific. (Brick K, Watanabe J, Pizzi E).
@@ -1215,7 +1212,7 @@ Printing by NIAID / Microarray Research Facility
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="P. falciparum strain 3D7, SIR2 knockout - meta data"
               category="Transcriptome">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanStubbsMetaData/1/working_dir/Duraisingh.xls" 
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanDuraisinghMetaData/1/Duraisingh.xls" 
                 contact="Alan Cowman"
                 email="cowman@wehi.edu.au"
                 institution="The Walter and Eliza Hall Institute of Medical Research"
@@ -1231,7 +1228,7 @@ Printing by NIAID / Microarray Research Facility
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="Invasion by P. falciparum merozoites - meta data"
               category="Transcriptome">
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanStubbsMetaData/1/working_dir/Baum.xls" 
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanBaumMetaData/1/Baum.xls" 
                 contact="Alan Cowman"
                 email="cowman@wehi.edu.au"
                 institution="The Walter and Eliza Hall Institute of Medical Research"
@@ -1412,7 +1409,7 @@ To characterize the antimalarial mechanism of tetracyclines, evaluated their sta
             organisms="P.falciparum"
             category="Transcriptome"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/derisiHB3TimeSeries/HB3" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/derisiHB3TimeSeries/1.0/HB3/" 
                 contact="Greg Grant"
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
@@ -2021,7 +2018,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         category="Genome"
         organisms="Pfalciparum"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-           <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/2009-11-11/working_dir/All_PEAKs.gff" 
+           <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/2009-11-11/working_dir/PEAK_DATA/All_PEAKs.gff" 
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -2164,7 +2161,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             organisms="P. berghei"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters_DOZI/1.0/working_dir/newFormat"
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters_DOZI/1.0/working_dir/page/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
