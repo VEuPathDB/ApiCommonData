@@ -2905,9 +2905,9 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
        'Clayton::TbTimeSeries' as module,
        'Trypanosoma brucei' as species,
        'Transcriptome of in vitro cultured <i>T. brucei</i> during bloodstream form to procyclic differentiation' as display_name,
-       'Gene Expression during in vitro differentiation from slender bloodstream forms to stumpy procyclic forms (click on data sources for additional information about this study).  <br>
-				Time series data are shown as Fold Induction compared to established procyclic parasites as the common reference (upper graph).  Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.  <br>
-				The Percentile graph (bottom graph) shows the level of expression of each gene relative to other genes in the same time point.  <br>
+       'Gene Expression during in vitro differentiation from slender bloodstream forms to stumpy and procyclic forms (click on data sources for additional information about this study).  <br>
+				Time series data are shown as <u>Fold Induction</u> compared to established procyclic parasites as the common reference (upper graph).  Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.  <br>
+				The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same time point.  <br>
 				Values in the data table (above) are log2(sample/reference) and were used to generate the values in the fold change graph' as description,
        'High and low density blood forms (hd-bf represents the 0 hour in the time series); Time points are in hours' as x_axis,
        'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
@@ -2918,9 +2918,13 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
        'Matthews::TbDifferentiationSeries' as module,
        'Trypanosoma brucei' as species,
        'Dynamic mRNA Expression analysis of cells undergoing synchronous life-cycle differentiation in <i>T. brucei</i>' as display_name,
-       'mRNA expression profiles of trypanosomes from two discrete bloodstream form stages of the parasite (slender and stumpy forms), as well as during the transition of the stumpy population to the procyclic life-cycle stage were studied.  This analysis represents the first comparison of in vivo derived pleomorphic slender cells with genetically identical stumpy forms, and a first analysis of the dynamic changes in mRNA profile that accompany the transition to procyclic forms.  Data is plotted as fold induction vs. the 0 HR.  The data table contains RMA values in log2 scale.' as description,
-       'Time point in hours or the slender stage (sl)' as x_axis,
-       'Fold Induction (vs. 0 HR) or percentile' as y_axis,
+       'mRNA expression profiles of <i>T. brucei</i> slender and stumpy bloodstream stages, as well as during the transition of the stumpy population to the procyclic life-cycle stage. Data
+				represents values derived from 5 parallel biological replicates. (click on data sources for additional information about this study).<br>
+				Data is plotted as <u>Fold Induction</u> as compared to the 0hr (stumpy form) time point (upper graph).<br>
+				The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same time point.<br>
+				The data table above contains RMA values in log2 scale.' as description,
+       'Time points are in hours (sl = slender forms)' as x_axis,
+       'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
        'fold_induction,pct' as visible_parts
 from dual
 UNION
