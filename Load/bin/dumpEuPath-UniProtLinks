@@ -7,9 +7,10 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$dbrefExtDbSpec,$outFile,$verbose,$projectName);
+my ($gusConfigFile,$dbrefExtDbSpec,$dbrefExtDbName,$outFile,$verbose,$projectName);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "dbrefExtDbSpec=s" => \$dbrefExtDbSpec,
+	    "dbrefExtDbName=s" => \$dbrefExtDbName,
 	    "projectName=s" => \$projectName,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile);
@@ -28,15 +29,36 @@ my $dbh = $db->getQueryHandle(0);
 
 my $dbrefExtDbRls;
 
-my @dbrefExtDbSpecList = split(/,/, $dbrefExtDbSpec);
+if ($dbrefExtDbSpec){
 
-foreach my $nadb (@dbrefExtDbSpecList){
+    my @dbrefExtDbSpecList = split(/,/, $dbrefExtDbSpec) ;
 
-  $dbrefExtDbRls .= getDbRlsId($nadb).",";
+    foreach my $nadb (@dbrefExtDbSpecList){
+
+	$dbrefExtDbRls .= getDbRlsId($nadb).",";
+
+    }
+
+    $dbrefExtDbRls =~ s/(,)$//g;
+
+}elsif ($dbrefExtDbName){
+
+    my @dbrefExtDbNameList = split(/,/, $dbrefExtDbName) ;
+
+    foreach my $nadb (@dbrefExtDbNameList){
+
+	$dbrefExtDbRls .= getDbRlsId($nadb,1).",";
+
+    }
+
+    $dbrefExtDbRls =~ s/(,)$//g;
+}else{
+    
+    die "You need to provide either dbrefExtDbSpec or dbrefExtDbName";
 
 }
 
-$dbrefExtDbRls =~ s/(,)$//g;
+
 
 my $sql = "select drf.primary_identifier as uniprot_accession,gf.source_id as eupath_source_id, 'http://www.'||$projectName||'.org/gene/'||gf.source_id as URL from sres.DBREF drf, DoTS.DbRefNAFeature nf, dots.GENEFEATURE gf where drf.db_ref_id=nf.db_ref_id and gf.na_feature_id=nf.na_feature_id and drf.external_database_release_id in($dbrefExtDbRls)";
 
@@ -52,13 +74,26 @@ while(my ($uniprot_accession,$eupath_source_id, $URL) = $stmt1->fetchrow_array()
 
 sub getDbRlsId {
 
-  my ($extDbRlsSpec) = @_;
+  my ($extDbRlsSpec,$nameOnly) = @_;
 
-  my ($extDbName, $extDbRlsVer) = &getExtDbInfo($extDbRlsSpec);
+  my ($extDbName, $extDbRlsVer, $stmt);
+  
+  if ($nameOnly){
 
-  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+      $extDbName= $extDbRlsSpec;
 
-  $stmt->execute($extDbName,$extDbRlsVer);
+      $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id");
+
+      $stmt->execute($extDbName);
+  }else{
+
+      ($extDbName, $extDbRlsVer) = &getExtDbInfo($extDbRlsSpec);
+
+      $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+
+      $stmt->execute($extDbName,$extDbRlsVer);
+  }
+
 
   my ($extDbRlsId) = $stmt->fetchrow_array();
 
