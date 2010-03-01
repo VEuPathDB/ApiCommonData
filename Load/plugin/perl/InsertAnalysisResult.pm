@@ -17,6 +17,7 @@ use GUS::Model::RAD::ProtocolParam;
 
 use GUS::Model::RAD::LogicalGroup;
 use GUS::Model::RAD::LogicalGroupLink;
+use ApiCommonData::Load::Util;
 
 $| = 1;
 
@@ -361,7 +362,15 @@ sub processDataFile {
 sub getNaFeatureId {
   my ($self, $sourceId, $naFeatureView) = @_;
 
-  my @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.${naFeatureView} where source_id = '$sourceId'" );
+  my @naFeatures;
+
+  if ($naFeatureView eq 'GeneFeature'){
+      my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
+
+      push @naFeatures, $naFeatureId;
+  }else{
+      @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.${naFeatureView} where source_id = '$sourceId'" );
+  }
 
   if(scalar @naFeatures > 1) {
     $self->log("WARN:  Several NAFeatures are found for source_id $sourceId. Loading multiple rows.");
