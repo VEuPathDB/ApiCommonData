@@ -2191,3 +2191,22 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
+
+   <resource resource="Pfalciparum_ECNumbers" version="2010-02-01"
+         plugin="GUS::Community::Plugin::InsertECMapping"
+         displayName="EC Number Mapping for Plasmodium falciparum genes"
+         category="Proteome">
+         <manualGet fileOrDir = "PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/2010-02-01/gff"
+         />
+        <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pfalciparum.fasta --output_gff @dataDir@/gff/Pfalciparum.gff3</unpack>
+        <unpack>preprocessGFF3 --input_gff @dataDir@/Pfalciparum.gff3 --output_gff @dataDir@/Pfalciparum.gff</unpack>
+       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pfalciparum.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pfalciparum.ec </unpack>
+   
+        <pluginArgs>--ECMappingFile @dataDir@/Pfalciparum.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+         <description>
+            <![CDATA[
+         EC Number mapping for <i>P. falciparum</i> genes.  
+         ]]>
+        </description>
+    </resource>
+
