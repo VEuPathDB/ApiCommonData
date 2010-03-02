@@ -3,8 +3,7 @@
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
-
-        <manualGet fileOrDir = "PlasmoDB/common/empty"
+        <manualGet fileOrDir = "common/empty"
         />
         <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @dataDir@/taxonIdFile</unpack>
         <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
