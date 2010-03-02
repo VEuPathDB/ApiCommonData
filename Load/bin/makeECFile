@@ -86,12 +86,15 @@ while ( my $seq = $in->next_seq() ) {
   foreach my $line (<IN>){
     chomp($line);
 
+
     if($line =~ /$idQualifier/ && $line =~ /$ecQualifier/){
 
       $line =~ /$idQualifier \"([^\"]*)\";/;
 
 
       my $sourceId = $1;
+
+      $sourceId =~ s/\:pep//g;
 
       $line =~ /$ecQualifier \"([^\"]*)\";/;
       my $ecId = $1;
