@@ -2932,7 +2932,7 @@ select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
        'Parsons::TbDevelopmentalStages' as module,
        'Trypanosoma brucei' as species,
        'Widespread variation in transcript abundance within and across developmental stages of <i>T. brucei</i>' as display_name,
-       'Whole genome comparison of RNA levels for both protein coding genes and structural RNAs in five different life cycle stages: cultured bloodstream form (bf), in vivo slender bloodstream form (sl), in vivo stumpy bloodstream form (st), log-phase procyclic culture form (pf_log) and stationary-phase procyclic culture form (pf_stat).  Data is averaged from three biological replicas (click on data sources for additional information about this study).<br>
+       'Whole genome comparison of RNA levels for both protein coding genes and structural RNAs in five different life-cycle stages: cultured bloodstream form (bf), in vivo slender bloodstream form (sl), in vivo stumpy bloodstream form (st), log-phase procyclic culture form (pf_log) and stationary-phase procyclic culture form (pf_stat).  Data is averaged from three biological replicas (click on data sources for additional information about this study).<br>
 <u>RMA normalized</u> (log base 2) values are plotted for each stage in the top graph.<br>
 The <u>Percentile graph </u> (bottom graph) shows the level of expression of each gene relative to other genes in the same life-cycle stage.<br>
 The data table above contains the actual expression values.' as description,
@@ -2945,8 +2945,11 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
        'Tarleton::TcTranscriptome' as module,
        'Trypanosoma cruzi' as species,
        'Transcriptome analysis of the <i>T. cruzi</i> life-cycle' as display_name,
-       'Global assessment of transcript abundances in each life-cycle stage of T. cruzi was performed to identify stage-regulated genes and provide an essential element of an integrated database of T. cruzi genomic, proteomic, and transcriptomic data.    Values in the data table are log2(R/G)' as description,
-       'Average of 3 biological replicates from each Life cycle stage (trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET)).' as x_axis,
+       'RNA from 3 biological replicates from a single time point in each stage were subjected to DNA microarrays containing probes for the complete, annotated <i>T. cruzi</i> genome (click on data sources for additional information about this study). <br>
+				Data is plotted as <u>Fold Induction</u> as compared to a control sample consisting of an equal mixture of all four life-cycle stages (Upper graph). <br>
+				The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same lifecycle stage.<br>
+				The data table above contains are log2(Red/green) expression values' as description,
+       'Average of 3 biological replicates from each Life cycle stage: trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET).' as x_axis,
        'Fold Induction or percentile.' as y_axis,
        'fold_induction,pct' as visible_parts
 from dual
