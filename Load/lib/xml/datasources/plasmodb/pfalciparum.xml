@@ -94,15 +94,15 @@
         </description>
         <publication pmid="15287595"/>
         <publication pmid="19454033"/>
-    </resource>  
-  
+    </resource> 
+ 
+ 
     <resource resource="P.falciparum_chromosomes" version=@pfChromosomeVer@
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         organisms="P.falciparum"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-        <manualGet
-           fileOrDir="PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/%EXT_DB_RLS_VER%/"/>
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/%EXT_DB_RLS_VER%/"/>
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%EXT_DB_RLS_VER% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
@@ -110,6 +110,23 @@
           ]]>
         </description>
     </resource>
+
+
+ <resource resource="P.falciparum_anticodons" version="2007-06-28"
+        displayName="P. falciparum (3D7) anticodons"           
+        organisms="P.falciparum"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::InsertAntiCodon">
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/mRNA/anticodon/%EXT_DB_RLS_VER%/PfAntiCodons" />
+        <pluginArgs>"--data_file $dataDir@/PfAntiCodons --genomeDbName 'P.falciparum_chromosomes' --genomeDbVer @pfChromosomeVer@" />
+        <description>
+            <![CDATA[
+        Anticodons contained in specified tRNA
+        ]]>
+        </description>
+    </resource>
+
+
 
 <resource resource="P.falciparum_chromosomes_xRefs" version="2009-06-01"
         displayName="P. falicparum chromosomes DBRefs"
