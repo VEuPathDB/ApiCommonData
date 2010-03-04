@@ -2,13 +2,14 @@
 
 use strict;
 use DBI;
+use Data::Dumper;
 
-my ($configFile);
+my $sqlDelim = '===';
+my $eofDelim = '###';
 
-GetOptions("config=s" => \$configFile,
-	  );
+usage() unless scalar(@ARGV) == 1;
 
-usage() unless $configFile;
+my $configFile = $ARGV[0];
 
 open(F, $configFile) || die "Can't open config file '$configFile'\n";
 my $config = {trackingDBI=> "",
@@ -18,7 +19,7 @@ my $config = {trackingDBI=> "",
 	      appDBI=> "",
 	      appLogin=> "",
 	      appPassword=> "",
-	      sql=> ""
+	      sql=> "",
 	      description=> "",
 	      nickname=> "",
 	      hide=> "",
@@ -31,8 +32,7 @@ my $optionalConfig = {
 	      };
 
 my $processingSql;
-my $sqlDelim = '===';
-my $eofDelim = '###';
+
 while (<F>) {
   next unless /\S/;
   last if /^$eofDelim/;
@@ -40,7 +40,7 @@ while (<F>) {
     if (/^$sqlDelim/) {    # done processing sql
       $processingSql = 0;
     } else {
-      $config->{sql} . = $_;
+      $config->{sql} .= $_;
     }
   } else {
     if (/^$sqlDelim/) {
@@ -53,13 +53,15 @@ while (<F>) {
   }
 }
 
+#print STDERR Dumper $config;
+
 # validate the configuration
-if (scalar($config) != 11) {
+if (scalar(keys(%$config)) != 11) {
   print STDERR "ERROR: looks like you have an unsupported property in your config file\n\n";
   usage();
 }
 
-foreach my $prop () {
+foreach my $prop (keys(%$config)) {
   if (!$config->{$prop} && !$optionalConfig->{$prop}) {
     print STDERR "ERROR: missing required property '$prop' in your config file\n\n";
   usage();
@@ -88,7 +90,7 @@ sub usage {
 qq{
 Usage:
 
-apiSqlBenchmarking config_file
+apiSqlBenchmarker config_file
 
 Config file format:
 
@@ -111,6 +113,9 @@ nickname=
 hide=
 
 $eofDelim
+
+Junk below the above delimter is ignored.
+
 });
   exit(1);
 }
