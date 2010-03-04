@@ -153,4 +153,22 @@
         <manualGet fileOrDir="common/empty" />  
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
         <pluginArgs>--extDbRelSpecList "P.knowlesi_chromosomes|2007-10-03"</pluginArgs>
-    </resource> 
+    </resource>
+ 
+   <resource resource="Pknowlesi_ECNumbers" version="2010-02-01"
+         plugin="GUS::Community::Plugin::InsertECMapping"
+         displayName="EC Number Mapping for Plasmodium knowlesi genes"
+         category="Proteome">
+         <manualGet fileOrDir = "PlasmoDB/pknowlesi/genome/P.knowlesi_chromosomes/%EXT_DB_RLS_VER%/gff"
+         />
+        <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pknowlesi.fasta --output_gff @dataDir@/gff/Pknowlesi.gff3</unpack>
+        <unpack>preprocessGFF3 --input_gff @dataDir@/Pknowlesi.gff3 --output_gff @dataDir@/Pknowlesi.gff</unpack>
+       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pknowlesi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pknowlesi.ec </unpack>
+   
+        <pluginArgs>--ECMappingFile @dataDir@/Pknowlesi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+         <description>
+            <![CDATA[
+         EC Number mapping for <i>P. knowlesi</i> genes.  
+         ]]>
+        </description>
+    </resource>

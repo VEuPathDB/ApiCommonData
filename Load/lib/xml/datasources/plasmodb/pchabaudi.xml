@@ -178,3 +178,21 @@
           ]]>
         </description>
     </resource>
+
+   <resource resource="Pchabaudi_ECNumbers" version="2010-02-01"
+         plugin="GUS::Community::Plugin::InsertECMapping"
+         displayName="EC Number Mapping for Plasmodium chabaudi genes"
+         category="Proteome">
+         <manualGet fileOrDir = "PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%EXT_DB_RLS_VER%/gff"
+         />
+        <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
+        <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
+       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
+   
+        <pluginArgs>--ECMappingFile @dataDir@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+         <description>
+            <![CDATA[
+         EC Number mapping for <i>P. chabaudi</i> genes.  
+         ]]>
+        </description>
+    </resource>
