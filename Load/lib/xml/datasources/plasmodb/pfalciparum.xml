@@ -96,7 +96,7 @@
         <publication pmid="19454033"/>
     </resource>  
   
-    <resource resource="P.falciparum_chromosomes" version="2010-02-01"
+    <resource resource="P.falciparum_chromosomes" version=@pfChromosomeVer@
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         organisms="P.falciparum"
         category="Genome"
@@ -112,7 +112,7 @@
     </resource>
 
 <resource resource="P.falciparum_chromosomes_xRefs" version="2009-06-01"
-        displayName="P. falicparum Sanger chromosomes DBRefs"
+        displayName="P. falicparum chromosomes DBRefs"
         organisms="P.falciparum"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -125,7 +125,7 @@
 owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <description>
             <![CDATA[
-            <i>P. falciparum</i> Sanger chromosomes DBRefs.
+            <i>P. falciparum</i> chromosomes DBRefs.
             ]]>
         </description>
     </resource>
@@ -138,7 +138,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         />
 
         <unpack>makeGoAssocFile --fileOrDir @dataDir@/%EXT_DB_RLS_VER% --format embl --fileExt embl.gz --output_file @dataDir@/gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec %EXT_DB_NAME%|%EXT_DB_RLS_VER% --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum 3D7</i> Gene Ontology  associations from GeneDB
@@ -146,7 +146,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-<resource resource="Su_P.falciparum_Microsatellite_Markers" version="2008-05-29"
+<resource resource="Su_P.falciparum_Microsatellite_Markers" version="2008-05-29" 
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         category="Genome"
         organisms="P.falciparum"
@@ -155,10 +155,10 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
             contact = "Su,X.-z"
             institution = "NIH"
         />
-        <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Sanger P. falciparum chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = %EXT_DB_NAME% and ns.external_database_release_id = edr.external_database_release_id"</unpack>
+        <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'P.falciparum_chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = @pfChromosomeVer@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
         <unpack>createSTSFileFromGB --genbank_file_or_dir @dataDir@/sequences.gb.fixed --output_file @dataDir@/sequences.sts </unpack>
         <unpack> ePCRMicrosatelliteForLocations --sts_file @dataDir@/sequences.sts --output_file @dataDir@/Pf_ms.gff --seq_file @dataDir@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "2010-02-01"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
         <description>
             <![CDATA[
    Su microsatellite data from Genbank 
@@ -320,7 +320,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Entrez Genes"
-        extDbRlsVer="12-01-2009"
+        extDbRlsVer=%EXT_DB_RLS_VER%
         extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
          <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez_Gene/%EXT_DB_RLS_VER%/gene_info_plasmo"
             contact=""
@@ -340,7 +340,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Uniprot Genes"
-        extDbRlsVer="11-24-2009"
+        extDbRlsVer=%EXT_DB_RLS_VER%
         extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
          <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Uniprot_Gene/%EXT_DB_RLS_VER%/Uniprot_Gene_plasmo"
             contact=""
@@ -429,7 +429,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
         publicUrl="http://www.sanger.ac.uk/Projects/Pathogens/"
         organisms="P.falciparum"
         extDbName="Sanger reichenowi SNPs"
-        extDbRlsVer="2006-10-21"
+        extDbRlsVer=%EXT_DB_RLS_VER%
         extDbRlsDescrip="SNPs generated by the PSU by resequencing P.reichenowi"
         dbCommit="@dbcommit@">	
         <manualGet fileOrDir="@manualDelivery@/sanger_SNPs/%EXT_DB_RLS_VER%/sangerPReichenowiSnps.tar.gz"
@@ -485,8 +485,7 @@ Based on whole genome sequence for P. reichenowi_Oscar
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
     </resource> 
 
-    <resource resource="WinzelerGeneticVariationArray" 
-        version="2006-10-16"
+    <resource resource="WinzelerGeneticVariationArray" version="2006-10-16"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Microarray CGH on P. falciparum strains"
         category="Polymorphisms"
@@ -896,7 +895,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="S.M.Khan@lumc.nl"
             institution="Leiden University"
         />
-        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
               This data was provided by the Leiden Malaria Group (prepublication from Dr. Shahid Khan). Mass spec data was generated from <i>P. falciparum</i> merozoites.
@@ -915,7 +914,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito oocysts by Edwin Lasonder lab
@@ -933,7 +932,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
               Mass Spec of Mosquito oocyst-derived sporozoites by Edwin Lasonder lab
@@ -950,7 +949,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre" 
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito salivary gland sporozoites by Edwin Lasonder lab
@@ -968,7 +967,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             institution = "University of Pennsylvania"
         />
         <unpack>gunzip @dataDir@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:@enzymeDBVer@" --seqExtDbName "Sanger P. falciparum chromosomes"   --seqExtDbRlsVer "@pfSangerChrVer@"</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
         <description>
             <![CDATA[ Evigan is a eukaryotic gene predictor which produces consensus gene models by integrating multiple sources of evidence. Evigan can incorporate various types of evidence such as gene models predicted by gene finders, EST matches, protein-to-genome alignment, etc. Employing a Dynamic Bayesian Network(DBN), Evigan makes predictions by infering the most likely consensus gene models given observed source evidence. Its model parameters are estimated by the Expectation-Maximization(EM) algorithm, eliminating the need of curated training data. Click <a href="http://www.seas.upenn.edu/~strctlrn/evigan/evigan.html">here</a> to get more information.
           ]]>
@@ -1047,7 +1046,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
         category="Polymorphisms"
         organisms="P.falciparum"
         extDbName="IsolatesByCountry"
-        extDbRlsVer="2008-08-26"
+        extDbRlsVer=%EXT_DB_RLS_VER%
         extDbRlsDescrip="IsolatesByCountry">	
         <manualGet fileOrDir="PlasmoDB/pfalciparum/isolate/Continents/%EXT_DB_RLS_VER%/continents.txt"
              contact="John Brestelli"
@@ -1789,7 +1788,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage trophozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage trophozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1808,7 +1807,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage merozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage merozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1826,7 +1825,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage gametocytes</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage gametocytes</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1844,7 +1843,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@' --developmentalStage sporozoite</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage sporozoite</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1863,7 +1862,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in two stages of the <i>P. falciparum</i> life cycle and the iRBC Membrane, identified by multi-dimensional protein identification technology.
@@ -1942,7 +1941,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|@pfSangerChrVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
         <description>
             <![CDATA[
              Data produced by proteomics analysis of clinical isolates of early stages of <i>P. falciparum</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
@@ -2021,7 +2020,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
             institution="EuPathDB"
         />
 
-<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput bioperlTree.out</pluginArgs>
+<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @pfChromosomeVer@ --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
           ]]>
