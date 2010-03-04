@@ -163,7 +163,7 @@ SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
          AS percent_identity,
        ROUND( (s.total_match_length / tas.length) * 100)
          AS percent_plasmo_coverage,
-       s.score
+       s.score, eas.taxon_id as pdb_taxon_id, tas.taxon_id as gene_taxon_id
 FROM dots.TranslatedAaFeature taf,
      dots.TranslatedAaSequence tas, core.TableInfo tas_ti,
      dots.Similarity s, core.TableInfo eas_ti,
