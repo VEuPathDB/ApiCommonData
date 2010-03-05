@@ -1505,6 +1505,7 @@ CREATE TABLE apidb.GenomicSequence&1 NOLOGGING AS
   FROM dots.ExternalNaSequence ens, sres.SequenceOntology so
   WHERE ens.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name != 'EST'
+    AND so.term_name != 'oligo'
     AND -- see both? use the VirtualSequence.
         ens.source_id IN (SELECT source_id FROM dots.ExternalNaSequence
                          MINUS
