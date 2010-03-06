@@ -47,6 +47,7 @@ create table apidb.WorkflowStep (
   end_time            date,
   step_class          varchar(200),
   params_digest       varchar(100),
+  depends_string      varchar(4000),
   depth_first_order   number(5)
 );
 
