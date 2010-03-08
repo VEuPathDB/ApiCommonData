@@ -214,13 +214,13 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         organisms="P.falciparum"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/epitope/IEDB/%EXT_DB_NAME%/" 
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/epitope/IEDB/%EXT_DB_RLS_VER%/" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_NAME% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_RLS_VER% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
         <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
@@ -229,14 +229,14 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
     
-    <resource resource="Pf_IEDB_Epitopes_DBxRefs" version="2009-03-18"
+    <resource resource="pf_IEDB_Epitopes_DBxRefs" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="P.falciparum"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         <manualGet fileOrDir="common/empty" />
-         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
+         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pf_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
