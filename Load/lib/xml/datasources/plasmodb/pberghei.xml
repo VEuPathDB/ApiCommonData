@@ -1,4 +1,4 @@
-    <resource resource="dbEST" version="2009-02-23"
+    <resource resource="pb_dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
@@ -17,14 +17,14 @@
     </resource>
 
 
-<resource resource="P.berghei_chromosomes" version="2010-02-01"
+<resource resource="P.berghei_chromosomes" version=@pbChromosomeVer@
         displayName="P.berghei (ANKA) chromosomes sequence and annotation"
         organisms="P.berghei"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
         <manualGet
-           fileOrDir="PlasmoDB/pberghei/genome/P.berghiChromosomes/2010-02-01/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/2010-02-01 --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei ANKA" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+           fileOrDir="PlasmoDB/pberghei/genome/P.berghiChromosomes/%EXT_DB_RLS_VER%/"/>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%EXT_DB_RLS_VER% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei ANKA" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Sequence data from GeneDB for <i>P. berghei</i> ANKA chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. berghei ANKA genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
@@ -33,18 +33,18 @@
     </resource>
 
 
-   <resource resource="IEDB_Epitopes" version="2009-03-18"
+   <resource resource="pb_IEDB_Epitopes" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="PlasmoDB/pberghei/epitope/IEDB/2009-03-18/" 
+        <manualGet fileOrDir="PlasmoDB/pberghei/epitope/IEDB/%EXT_DB_RLS_VER%" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir -p @dataDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/2009-03-18 --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_RLS_VER% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
         <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
@@ -53,7 +53,7 @@
         </description>
     </resource>
     
-   <resource resource="IEDB_Epitopes_DBxRefs" version="2009-03-18"
+   <resource resource="pb_IEDB_Epitopes_DBxRefs" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
@@ -69,13 +69,13 @@
     </resource>
 
 
- <resource resource="CorrectGeneAliases" version="1"
+ <resource resource="pb_CorrectGeneAliases" version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
-        <manualGet fileOrDir=PlasmoDB/pberghei/dbxref/CorrectGeneAliases/1/aliases.tab" />
+        <manualGet fileOrDir=PlasmoDB/pberghei/dbxref/CorrectGeneAliases/%EXT_DB_RLS_VER%/aliases.tab" />
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "P. berghei genome|2010-03-01"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
     </resource> 
     
     <resource resource="WatanabePbANKA_PredictedTranscripts" version="2006-11-02"
@@ -83,7 +83,7 @@
         organisms="P. berghei"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/2006-11-02/reffull_pf.fas"
+        <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/%EXT_DB_RLS_VER%/reffull_pf.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
@@ -97,11 +97,11 @@
         <publication pmid="17151081"/>
     </resource>
 
-<resource resource="Entrez_DBRefs" version="2009-04-29"
+<resource resource="pb_Entrez_DBRefs" version="2009-04-29"
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/entrez/2009-04-29/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/entrez/%EXT_DB_RLS_VER%/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -114,11 +114,11 @@
         </description>
     </resource>
 
-<resource resource="RMgm_Phenotype_DBRefs" version="2010-02-19"
+<resource resource="pb_RMgm_Phenotype_DBRefs" version="2010-02-19"
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
-        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/RMgmPhenotypes/2010-02-19/geneid_list_02-19-2010.txt"
+        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/RMgmPhenotypes/%EXT_DB_RLS_VER%/geneid_list_02-19-2010.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
@@ -141,12 +141,12 @@
         </description>
     </resource>
 
- <resource resource="Pubmed_DBRefs" version="2009-08-14"
+ <resource resource="pb_Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/Pubmed/2009-08-14/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/Pubmed/%EXT_DB_RLS_VER%/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -159,17 +159,12 @@
         </description>
     </resource>
 
-   <resource resource="Entrez_Gene_dbxref" version="2009-12-01"
+   <resource resource="pb_Entrez_Gene_dbxref" version="2009-12-01"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Links to Entrez Genes"
-        extDbRlsVer="12-01-2009"
         extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmosDB/common/dbxref/EntrezGene/2009-12-01/gene_info_plasmo"
-            contact=""
-            email=""
-            institution=""
+         <manualGet fileOrDir = "PlasmosDB/common/dbxref/EntrezGene/%EXT_DB_RLS_VER%/gene_info_plasmo"
         />
         <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
@@ -178,17 +173,11 @@
         </description>
     </resource>
 
-   <resource resource="Uniprot_Gene_dbxref" version="2009-11-24"
+   <resource resource="pb_Uniprot_Gene_dbxref" version="2009-11-24"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Links to Uniprot Genes"
-        extDbRlsVer="11-24-2009"
-        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/UniprotGene/2009-11-24/Uniprot_Gene_plasmo"
-            contact=""
-            email=""
-            institution=""
+         <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/UniprotGene/%EXT_DB_RLS_VER%/Uniprot_Gene_plasmo"
         />
 
         <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -204,7 +193,7 @@
             organisms="P.berghei"
             category="Transcriptome"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSOligos/1.0/elements.fasta" 
+     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSOligos/%EXT_DB_RLS_VER%/elements.fasta" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
                 institution="Leiden University"
@@ -223,7 +212,7 @@
             organisms="P.berghei"
             category="Transcriptome"
             plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities">
-     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersOligoMapping/1.0/gss2genes.tab" 
+     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersOligoMapping/%EXT_DB_RLS_VER%/gss2genes.tab" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
                 institution="Leiden University"
@@ -242,13 +231,13 @@
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
         category="Transcriptome">	
-        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersFemaleGametes/2007-09-25/Female_peptide_list_PlasmoDB.xls"
+        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersFemaleGametes/%EXT_DB_RLS_VER%/Female_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile Female_peptide_list_PlasmoDB.xls --outfile Female_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
         <description>
             <![CDATA[
               Female gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
@@ -261,13 +250,13 @@
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Male Gametocytes from Leiden Malaria Group"
         category="Transcriptome">	
-        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMaleGametes/2007-09-25/Male_peptide_list_PlasmoDB.xls"
+        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMaleGametes/%EXT_DB_RLS_VER%/Male_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Male_peptide_list_PlasmoDB.xls --outfile @dataDir@/Male_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
         <description>
             <![CDATA[
               Male gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
@@ -280,13 +269,13 @@
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
         category="Transcriptome">	
-        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMixedGametes/2007-09-25/Mixed_Gams_peptide_list_PlasmoDB.xls"
+        <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMixedGametes/%EXT_DB_RLS_VER%/Mixed_Gams_peptide_list_PlasmoDB.xls"
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB.xls --outfile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
+        <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
         <description>
             <![CDATA[
              Mixed gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
@@ -295,21 +284,20 @@
         </description>		
     </resource> 
 
-    <resource resource="Agilent_P_Berghei_Array" 
-              version="1.0"
+    <resource resource="Agilent_P_Berghei_Array" version="1.0"
               plugin="GUS::Supported::Plugin::LoadArrayDesign"
 	      displayName="Agilent P. Berghei Oligo Array"
               category="Transcriptome"
               publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3824"
             >
-        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/Agilent/1.0/" 
+        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/Agilent/%EXT_DB_RLS_VER%/" 
                 contact="George Dimopoulos"
                 email="gdimopou@jhsph.edu"
                 institution="Johns Hopkins School of Public Health"
         />
-          <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/1.0/columnTranslator.xml --data_in @dataDir@/1.0/GPL3824.txt --log translator.log --data_out @dataDir@/loadArrayDesign.data</unpack>
+          <unpack>loadArrayDesignHelper.pl --xml_config @dataDir@/%EXT_DB_RLS_VER%/columnTranslator.xml --data_in @dataDir@/%EXT_DB_RLS_VER%/GPL3824.txt --log translator.log --data_out @dataDir@/loadArrayDesign.data</unpack>
           <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Agilent' --commit</unpack>
-          <pluginArgs>--cfg_file @dataDir@/1.0/agilentBerghei.config --data_file @dataDir@/1.0/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Agilent</pluginArgs>
+          <pluginArgs>--cfg_file @dataDir@/%EXT_DB_RLS_VER%/agilentBerghei.config --data_file @dataDir@/%EXT_DB_RLS_VER%/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Agilent</pluginArgs>
         <description>
             <![CDATA[
 This microarray is a high-resolution, high performance 60-mer oligonucleotide array that represents the <i>P. berghei</i> transcriptome. (taken from GEO record GPL3824)
@@ -317,17 +305,16 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
         </description>
     </resource>    
 
-    <resource resource="Waters_metaData" 
-              version="1.0"
+    <resource resource="Waters_metaData" version="1.0"
               plugin="GUS::Community::Plugin::LoadMageDoc"
 	      displayName="Regulation of sexual development of P. berghei - meta data"
               category="Transcriptome">
-        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersMetaData/1.0" 
+        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersMetaData/%EXT_DB_RLS_VER%" 
                 contact="Andrew Waters"
                 email="waters@lumc.nl"
                 institution="Leiden University Medical Centre"
         />
-        <unpack>makeMageTabConfig.pl @dataDir@/1.0/Waters.xls > @dataDir@/loadMageDoc.config</unpack>
+        <unpack>makeMageTabConfig.pl @dataDir@/%EXT_DB_RLS_VER%/Waters.xls > @dataDir@/loadMageDoc.config</unpack>
           <pluginArgs>--configfile @dataDir@/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
     <description>
     Information describing the methods of the experiment
@@ -340,12 +327,12 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
         category="proteome"
         publicUrl="http://www.sciencemag.org/content/vol307/issue5706/images/data/82/DC1/hall-SOM-tables.zip"
         plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-        <manualGet fileOrDir = "PlasmoDB/pberghei/microarray/ProteinExpressionSurvey/1.0"
+        <manualGet fileOrDir = "PlasmoDB/pberghei/microarray/ProteinExpressionSurvey/%EXT_DB_RLS_VER%"
             contact="Neil Hall or Robert Sinden"
             email = "nhall@tigr.org, r.sinden@imperial.ac.uk"
             institution = "The Wellcome Trust Sanger Institute"
         />
-        <pluginArgs>--inputDir @dataDir@/1.0 --configFile @dataDir@/1.0/tableS8.config --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/tableS8.config --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
         <description>
             <![CDATA[
         Summary of <i>P. berghei</i> proteins detected in mixed
@@ -360,12 +347,12 @@ This microarray is a high-resolution, high performance 60-mer oligonucleotide ar
             organisms="P.berghei"
             category="Transcriptome"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HP/1.0" 
+     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HP/%EXT_DB_RLS_VER%" 
                 contact="Andy Waters"
                 email="A.P.Waters@lumc.nl"
                 institution="Leiden University"
       />
-<pluginArgs>--inputDir @dataDir@/1.0 --configFile @dataDir@/1.0/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs><publication pmid="16267556"/>
+<pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs><publication pmid="16267556"/>
    <description>
          <![CDATA[
    Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
@@ -388,12 +375,12 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
         organisms="P.berghei"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HPE/1.0" 
+        <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HPE/%EXT_DB_RLS_VER%" 
             contact="Andy Waters"
             email="A.P.Waters@lumc.nl"
             institution="Leiden University"
         />
-        <pluginArgs>--inputDir @dataDir@/1.0 --configFile @dataDir@/1.0/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
         <description>
             <![CDATA[
    Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
@@ -411,7 +398,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
       <publication pmid="15637271"/>
     </resource>
 
-   <resource resource="Pberghei_ECNumbers" version="2010-02-01"
+   <resource resource="Pberghei_ECNumbers" version="@pbChromosomeVer@"
          plugin="GUS::Community::Plugin::InsertECMapping"
          displayName="EC Number Mapping for Plasmodium berghei genes"
          category="Proteome">
