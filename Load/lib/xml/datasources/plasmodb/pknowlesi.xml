@@ -1,4 +1,4 @@
-     <resource resource="dbEST" version="2009-02-23"
+     <resource resource="pk_dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
@@ -15,13 +15,13 @@
         </description>
     </resource>
 
-    <resource resource="P.knowlesi_chromosomes" version="2010-02-01"
+    <resource resource="P.knowlesi_chromosomes" version=@pkChromosomeVer@
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         organisms="P.knowlesi"
         displayName="P. knowlesi (H) chromosomes sequence and annotation" 
         category="Genome"> 
-        <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/2010-02-01/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/2010-02-01/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium knowlesi H" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%EXT_DB_RLS_VER%/"/>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/%EXT_DB_RLS_VER%/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium knowlesi H"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
                  Chromosome sequences and annotation for <i>P. knowlesi</i> strain H obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute (February 2007)
@@ -30,11 +30,11 @@
     </resource> 
 
 
-<resource resource="Entrez_DBRefs" version="2009-04-29"
+<resource resource="pk_Entrez_DBRefs" version="2009-04-29"
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Entrez/2009-04-29/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Entrez/%EXT_DB_RLS_VER%/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -48,12 +48,12 @@
     </resource>
 
 
- <resource resource="Pubmed_DBRefs" version="2009-08-14"
+ <resource resource="pk_Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-        <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Pubmed/2009-08-14/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Pubmed/%EXT_DB_RLS_VER%/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
@@ -66,17 +66,11 @@
         </description>
     </resource>
 
-   <resource resource="Entrez_Gene_dbxref" version="2009-12-01"
+   <resource resource="pk_Entrez_Gene_dbxref" version="2009-12-01"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Links to Entrez Genes"
-        extDbRlsVer="12-01-2009"
-        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Entrez_Gene/2009-12-01/gene_info_plasmo"
-            contact=""
-            email=""
-            institution=""
+         <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Entrez_Gene/%EXT_DB_RLS_VER%/gene_info_plasmo"
         />
 
         <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -86,17 +80,11 @@
         </description>
     </resource>
 
-   <resource resource="Uniprot_Gene_dbxref" version="2009-11-24"
+   <resource resource="pk_Uniprot_Gene_dbxref" version="2009-11-24"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="Links to Uniprot Genes"
-        extDbRlsVer="11-24-2009"
-        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Uniprot_Gene/2009-11-24/Uniprot_Gene_plasmo"
-            contact=""
-            email=""
-            institution=""
+         <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Uniprot_Gene/%EXT_DB_RLS_VER%/Uniprot_Gene_plasmo"
         />
 
         <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -106,18 +94,18 @@
         </description>
     </resource>
 
-   <resource resource="IEDB_Epitopes" version="2009-03-18"
+   <resource resource="pk_IEDB_Epitopes" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="PlasmoDB/pknowlesi/epitope/IEDB/2009-03-18" 
+        <manualGet fileOrDir="PlasmoDB/pknowlesi/epitope/IEDB/%EXT_DB_RLS_VER%" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/2009-03-18 --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_RLS_VER% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
         <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
@@ -126,7 +114,7 @@
         </description>
     </resource>
     
-    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-03-18"
+    <resource resource="pk_IEDB_Epitopes_DBxRefs" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
@@ -145,14 +133,13 @@
         </description>
     </resource>
 
- <resource resource="CorrectGeneAliases" 
-        version="1"
+ <resource resource="pk_CorrectGeneAliases" version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
         <manualGet fileOrDir="common/empty" />  
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--extDbRelSpecList "P.knowlesi_chromosomes|2007-10-03"</pluginArgs>
+        <pluginArgs>--extDbRelSpecList "P.knowlesi_chromosomes|@pkChromosomeVer"</pluginArgs>
     </resource>
  
    <resource resource="Pknowlesi_ECNumbers" version="2010-02-01"
@@ -163,8 +150,7 @@
          />
         <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pknowlesi.fasta --output_gff @dataDir@/gff/Pknowlesi.gff3</unpack>
         <unpack>preprocessGFF3 --input_gff @dataDir@/Pknowlesi.gff3 --output_gff @dataDir@/Pknowlesi.gff</unpack>
-       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pknowlesi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pknowlesi.ec </unpack>
-   
+       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pknowlesi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pknowlesi.ec </unpack>   
         <pluginArgs>--ECMappingFile @dataDir@/Pknowlesi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
          <description>
             <![CDATA[
