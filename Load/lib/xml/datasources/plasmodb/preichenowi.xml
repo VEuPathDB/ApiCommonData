@@ -1,6 +1,6 @@
 <resourcesPipeline>
 
-    <resource resource="dbEST" version="2009-02-23"
+    <resource resource="pr_dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
@@ -18,7 +18,7 @@
     </resource>
 
 
-    <resource resource="P.reichenowi.contigs" version="2004-03-11" 
+    <resource resource="P.reichenowi.contigs" version=@prContigVer@ 
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_reichenowi/P_reichenowi.contigs.031104"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="P.reichenowi"
@@ -35,26 +35,4 @@
         </description>  
     </resource>
     
- <resource resource="sangerReichenowiSnps" version="2006-10-21"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
-        category="Polymorphisms"
-        publicUrl="http://www.sanger.ac.uk/Projects/Pathogens/"
-        organisms="P.falciparum">	
-        <manualGet fileOrDir="PlasmoDB/preichenowi/SNP/sanger/2006-10-21/sangerPReichenowiSnps.tar.gz"
-            contact="Matt Berriman"
-            email="mb4@sanger.ac.uk"
-            institution="Sanger PSU"
-        />
-        <unpack>currDir=`pwd`; cd @dataDir@; tar -xzf sangerPReichenowiSnps.tar.gz; cd $currDir</unpack>
-        <unpack>sangerSnps2Gff.pl --sf @dataDir@/WTSI_PFAL.Preich.0.dbsnp.new --cf @dataDir@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @dataDir@/sangerPreichenowiSnps.gff</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-        <description>
-            <![CDATA[
-Based on whole genome sequence for P. reichenowi_Oscar
-          ]]>
-        </description>	
-	<publication pmid="17159978"/> 
-    </resource> 
-
 </resourcesPipeline>
