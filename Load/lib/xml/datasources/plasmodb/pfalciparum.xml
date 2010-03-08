@@ -1,5 +1,5 @@
 
-    <resource resource="dbEST" version="2009-02-23"
+    <resource resource="pf_dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
@@ -75,7 +75,7 @@
         <publication pmid="17151081"/>
     </resource>
   
-    <resource resource="Florent_ESTLibrary" version="2007-10-19"
+    <resource resource="Florent_Pf_ESTLibrary" version="2007-10-19"
         displayName="Schizont enriched EST library"
         organisms="P. falciparum"
         category="Transcriptome"
@@ -193,7 +193,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-    <resource resource="GOAssociations" version="2008-04-03"
+    <resource resource="Pf_GOAssociations" version="2008-04-03"
         displayName="P. falciparum protein GO associations"
         organisms="P.falciparum"
         publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403"
@@ -208,7 +208,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-    <resource resource="IEDB_Epitopes" version="2009-03-18"
+    <resource resource="Pf_IEDB_Epitopes" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="P.falciparum"
@@ -229,7 +229,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
     
-    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-03-18"
+    <resource resource="Pf_IEDB_Epitopes_DBxRefs" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         organisms="P.falciparum"
@@ -245,7 +245,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-  <resource resource="CorrectGeneAliases" version="1"
+  <resource resource="Pf_CorrectGeneAliases" version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
@@ -271,7 +271,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-<resource resource="Phenotype_DBRefs" version="2009-08-14"
+<resource resource="Pf_Phenotype_DBRefs" version="2009-08-14"
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
@@ -298,7 +298,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
- <resource resource="Pubmed_DBRefs" version="2009-08-14"
+ <resource resource="Pf_Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -322,9 +322,6 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         />
          <manualGet fileOrDir = "PlasmoDB/pfalciparum/dbxref/Entrez_Gene/%EXT_DB_RLS_VER%/gene_info_plasmo"
-            contact=""
-            email=""
-            institution=""
         />
 
         <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -375,7 +372,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     </resource> 
     
        
-    <resource resource="Su_SNPs" version="2006-08-26"
+    <resource resource="Pf_Su_SNPs" version="2006-08-26"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the NIH"
         category="Polymorphisms"
@@ -395,7 +392,7 @@ Based on CDS sequences from strains 3D7, 7G8, D10, Dd2, HB3
         <publication pmid="17159981"/>
     </resource>
     
-    <resource resource="Broad_SNPs" version="2007-08-01"
+    <resource resource="Pf_Broad_SNPs" version="2007-08-01"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the Broad Institute"
         category="Genome"
@@ -418,7 +415,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
     </resource> 
 
 
-    <resource resource="sangerReichenowiSnps" version="2006-10-21"       
+    <resource resource="sangerPReichenowiSnps" version="2006-10-21"       
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
         category="Polymorphisms"
@@ -442,7 +439,7 @@ Based on whole genome sequence for P. reichenowi_Oscar
     </resource> 
    
 
-    <resource resource="plasmoDbCombinedSnps" version="2007-08-01"
+    <resource resource="pf_plasmoDbCombinedSnps" version="2007-08-01"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from all P. falciparum strains"
         category="Polymorphisms"
@@ -579,7 +576,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
     </description>
   </resource>
  
-    <resource resource="PlasmoMAP_DBRefs" version="1.0"
+    <resource resource="Pf_PlasmoMAP_DBRefs" version="1.0"
         displayName="DBxRefs for P. falciparum protein functional interactions"
         organisms="P.falciparum"
         category="Interactome"
@@ -599,7 +596,7 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>P. falc
         <publication pmid="16520460"/>
     </resource>
     
-    <resource resource="PlasmoMap_Interactome" version="1.0"
+    <resource resource="Pf_PlasmoMap_Interactome" version="1.0"
         displayName="P. falciparum protein functional interactions"
         organisms="P.falciparum"
         category="Interactome"
@@ -675,7 +672,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         </description>
     </resource>
 
-      <resource resource="PASA_DBRefs" version="2009-05-12"
+      <resource resource="Pf_PASA_DBRefs" version="2009-05-12"
         displayName="PASA alignments of EST sequences"
         organisms="P.falciparum"
         category="ignore"
@@ -764,7 +761,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         </description>
     </resource>
   
-    <resource resource="predictedProteinStructures" version="2005-11-21"
+    <resource resource="pf_predictedProteinStructures" version="2005-11-21"
         displayName="Predicted protein structures"
         organisms="P.falciparum"
         category="Proteome"
@@ -783,7 +780,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
         </description>
     </resource>
  
-    <resource resource="MR4Reagents" version="1"
+    <resource resource="pf_MR4Reagents" version="1"
         displayName="Links to MR4 reagents"
         category="Proteome"
         organisms="P.falciparum"
@@ -839,7 +836,7 @@ An 11-amino acid signal required for the secretion of proteins from the <i>P. fa
         <publication pmid="15591203"/>
     </resource>
     
-    <resource resource="ApicoplastTargeting" version="1"
+    <resource resource="Pf_ApicoplastTargeting" version="1"
         plugin="ApiCommonData::Load::Plugin::InsertPredictedAAFeature"
         displayName="PlasmoAP motif for P. falciparum protein export to the apicoplast."
         category="Secretome">
@@ -860,7 +857,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
 
 
 
- <resource resource="Broad_SNP_coverage" version="2007-08-01"
+ <resource resource="Pf_Broad_SNP_coverage" version="2007-08-01"
         displayName="Broad_SNP_coverage"
         category="Genome"
         organisms="P.falciparum"
@@ -1067,7 +1064,7 @@ IsolatesByCountry
 		<publication pmid="19094208"/>
     </resource>    
 
- <resource resource="loadMAPPWithSqlldr" version="2009-05-01" 
+ <resource resource="pf_loadMAPPWithSqlldr" version="2009-05-01" 
         displayName="load MAPP With Sqlldr" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
@@ -1744,7 +1741,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
     </resource>  
 
 
-    <resource resource="SGPPMapping" version="2009-05-12"
+    <resource resource="pf_SGPPMapping" version="2009-05-12"
         displayName="Links to SGPP reagents"
         category="Proteome"
         organisms="P.falciparum"
@@ -1868,7 +1865,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
     </resource>
 
 
-<resource resource="Plasmodraft_DBRefs" version="2009-04-20"
+<resource resource="pf_Plasmodraft_DBRefs" version="2009-04-20"
         displayName="DBRefs for plasmodraft URL links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -1996,7 +1993,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
     </resource>
 
 
-<resource resource="temp_called_peaks" version="2009-11-11"
+<resource resource="pf_temp_called_peaks" version="2009-11-11"
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         category="Genome"
         organisms="Pfalciparum"
