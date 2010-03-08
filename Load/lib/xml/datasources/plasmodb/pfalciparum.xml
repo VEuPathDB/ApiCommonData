@@ -370,8 +370,31 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>		
 	<publication pmid="17159978"/> 
     </resource> 
-    
-       
+
+  <resource resource="sangerPReichenowiSnps" version="2006-10-21"       
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
+        category="Polymorphisms"
+        publicUrl="http://www.sanger.ac.uk/Projects/Pathogens/"
+        organisms="P.falciparum"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/sangerPReichenowiSnps.tar.gz"
+            contact="Matt Berriman"
+            email="mb4@sanger.ac.uk"
+            institution="Sanger PSU"
+        />
+        <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf @dataDir@/sangerPReichenowiSnps.tar.gz; cd $currDir</unpack>
+        <unpack>sangerSnps2Gff.pl --sf @dataDir@/WTSI_PFAL.Preich.0.dbsnp.new --cf @dataDir@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @dataDir@/sangerPreichenowiSnps.gff</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Based on whole genome sequence for P. reichenowi_Oscar
+          ]]>
+        </description>	
+	<publication pmid="17159978"/> 
+    </resource> 
+
+         
     <resource resource="Pf_Su_SNPs" version="2006-08-26"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the NIH"
@@ -414,30 +437,6 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
         <publication pmid="17159979"/>
     </resource> 
 
-
-    <resource resource="sangerPReichenowiSnps" version="2006-10-21"       
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
-        category="Polymorphisms"
-        publicUrl="http://www.sanger.ac.uk/Projects/Pathogens/"
-        organisms="P.falciparum"
-        dbCommit="@dbcommit@">	
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/sangerPReichenowiSnps.tar.gz"
-            contact="Matt Berriman"
-            email="mb4@sanger.ac.uk"
-            institution="Sanger PSU"
-        />
-        <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf @dataDir@/sangerPReichenowiSnps.tar.gz; cd $currDir</unpack>
-        <unpack>sangerSnps2Gff.pl --sf @dataDir@/WTSI_PFAL.Preich.0.dbsnp.new --cf @dataDir@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @dataDir@/sangerPreichenowiSnps.gff</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-        <description>
-            <![CDATA[
-Based on whole genome sequence for P. reichenowi_Oscar
-          ]]>
-        </description>	
-	<publication pmid="17159978"/> 
-    </resource> 
-   
 
     <resource resource="pf_plasmoDbCombinedSnps" version="2007-08-01"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
