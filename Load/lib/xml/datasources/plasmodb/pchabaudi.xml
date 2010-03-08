@@ -57,7 +57,7 @@
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         <manualGet fileOrDir="common/empty" /> 
-        <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
+        <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pc_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
@@ -189,19 +189,3 @@
          ]]>
         </description>
     </resource>
-
-<resource resource="Pchabaudi_GO_associations" version="2010-02-01"
-        displayName="GO associations for P.chabaudi genes"
-        category="Genome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        category="proteome">
-        <manualGet fileOrDir = "@dataDir@/../Pchabaudi_ECNumbers/Pchabaudi.gff"
-        />
-       <unpack>makeGoAssocFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --db PlasmoDB --taxon_id 294381 --annotation_basis GeneDB --id_qualifier ID --go_qualifier gO --product_qualifier product --output_file @dataDir@/Pchabaudi.go </unpack>
-        <pluginArgs>--externalDatabaseSpec "Pchabaudi_GO_associations|%EXT_DB_RLS_VER%" --goExternalDatabaseSpec "Gene Ontology|@goVer@" --inputFile @dataDir@/Pchabaudi.go --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id</pluginArgs>
-        <description>
-            <![CDATA[
-             GO Associations for <i>P. chabaudi</i> from GeneDB
-          ]]>
-        </description>
-       </resource>
