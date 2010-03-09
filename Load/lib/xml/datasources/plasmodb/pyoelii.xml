@@ -1,14 +1,14 @@
-    <resource resource="dbEST" version="2009-02-23"
+    <resource resource="py_dbEST" version="2009-02-23"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        <manualGet fileOrDir = "common/empty"
         />
-        <unpack>getSubTaxa --ncbiTaxId 5861 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
-        <unpack>createPropFile --file dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <unpack>getSubTaxa --ncbiTaxId 5861 --outputFile @dataDir@/taxonIdFile</unpack>
+        <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -21,12 +21,12 @@
         organisms="P. yoelii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/reffull_py.fas"
+        <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%EXT_DB_RLS_VER%/reffull_py.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @downloadDir@/WatanabePy17XL_PredictedTranscripts/reffull_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
         <description>
             <![CDATA[
    <i>P. yoelii</i> 17XL predicted full length transcript sequences.
@@ -40,12 +40,12 @@
         organisms="P. yoelii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="@manualDelivery@/ESTs/WatanabeESTs/onepass_py.fas"
+        <manualGet fileOrDir=""PlasmoDB/pyoelii/EST/WatanabeESTs/%EXT_DB_RLS_VER%/onepass_py.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @downloadDir@/WatanabePy17XL_EstLibrary/onepass_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 352914  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePy17XL' --libraryDesc "P. yoelii 17XL (XPYw) and P. yoelii 17XNL (XPYs) were propagated in vivo in five-week old female ICR mice. Blood was filtrated through Plamsodipur filter to remove white blood cells."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_py.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 352914  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePy17XL' --libraryDesc "P. yoelii 17XL (XPYw) and P. yoelii 17XNL (XPYs) were propagated in vivo in five-week old female ICR mice. Blood was filtrated through Plamsodipur filter to remove white blood cells."</pluginArgs>
         <description>
             <![CDATA[
    <i>P. yoelii</i> 17XL EST library.
@@ -55,20 +55,20 @@
     </resource>
 
 
-    <resource resource="P.yoelii_Annotation" version="2005-09-01"
+    <resource resource="P.yoelii_Contigs" version=@pyContigVer@
         displayName="P. yoelii (17XNL) genome annotation"
         category="Genome"
         organisms="P.yoelii"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
         <publication pmid="12368865"/>
         <publication pmid="15580778"/>
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/sequences.gb" 
+        <manualGet fileOrDir="PlasmoDB/pyoelii/genome/P.yoelii_contigsGB/%EXT_DB_RLS_VER%/sequences.gb" 
             contact="GenBank"
             email="info@ncbi.nlm.nih.gov"
             institution="NCBI"
         />
-        <unpack>filterContaminantsFromGenbankFile --seqFile @downloadDir@/P.yoelii_Annotation/sequences.gb --outFile @downloadDir@/P.yoelii_Annotation/sequences_fixed.gb --contaminantFile /files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/contaminants.txt</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @downloadDir@/P.yoelii_Annotation/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <unpack>filterContaminantsFromGenbankFile --seqFile @dataDir@/sequences.gb --outFile @dataDir@/sequences_fixed.gb --contaminantFile @dataDir@/contaminants.txt</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>P. yoelii</i> 17XNL genome obtained from Jane Carlton (TIGR), 2005-09-01. Includes gene models and predicted protein translations.
@@ -76,18 +76,18 @@
         </description>
     </resource>
   
-<resource resource="Pyoelii_EC_numbers" version="2005-09-01"
+<resource resource="Pyoelii_EC_numbers" version=@pyContigVer@
      displayName="P. yoelii, EC Numbers for Annotation"
         organisms="P.yoelii"
         category="Proteome"
         plugin="GUS::Community::Plugin::InsertECMapping">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/P.yoelii_contigsGB/ec_numbers.txt"
+        <manualGet fileOrDir = "PlasmoDB/pyoelii/genome/P.yoelii_contigsGB/%EXT_DB_RLS_VER%/ec_numbers.txt"
             contact = "Vishal Nayak"
             email = "vishalkn@pcbi.upenn.edu"
             institution = "EuPathDB"
         />
         
-        <pluginArgs>--ECMappingFile @downloadDir@/Pyoelii_EC_numbers/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+        <pluginArgs>--ECMappingFile @dataDir@/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
         <description>
             <![CDATA[
    
@@ -96,21 +96,21 @@
        </resource>
 
  
-    <resource resource="P.yoelii_Kappe_Annotation" version="2009-03-25"
+    <resource resource="P.yoelii_Kappe_Annotation" version=@kappeAnnotationsVer@
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         category="Genome"
         organisms="P.yoelii"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/GeneModels/From_Kappe/" 
+        <manualGet fileOrDir="PlasmoDB/pyoelii/genePrediction/From_Kappe/%EXT_DB_RLS_VER%/" 
             contact="Stephen Kappe"
         />
-        <unpack>cat @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii_fixed.tab</unpack>
-        <unpack>createGffForYoeliiGenes --infile @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/ReAnnotatedPyoelii_fixed.tab --gfffile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe.gff --idmapfile @downloadDir@/P.yoelii_Kappe_Annotation/From_Kappe/PyoeliiGI.txt</unpack>
-        <unpack>dumpSequencesFromTable.pl --outputFile @downloadDir@/P.yoelii_Kappe_Annotation/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'Jane Carlton P. yoelii chromosomes' AND edr.version = '2002-09-10'"</unpack>
-        <unpack>fixMercatorOffsetsInGFF.pl --f @downloadDir@/P.yoelii_Kappe_Annotation/Pyoelii.fasta --g @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe.gff --o @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed_1.gff</unpack>
-        <unpack>fixYoeliiGFF --inputFile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed_1.gff --outputFile @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.yoelii_Kappe_Annotation/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Jane Carlton P. yoelii chromosomes" --seqExtDbRlsVer "2002-09-10" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <unpack>cat @dataDir@/%EXT_DB_RLS_VER%/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @dataDir@/ReAnnotatedPyoelii_fixed.tab</unpack>
+        <unpack>createGffForYoeliiGenes --infile @dataDir@/ReAnnotatedPyoelii_fixed.tab --gfffile @dataDir@/PyoeliiKappe.gff --idmapfile @dataDir@/%EXT_DB_RLS_VER%/PyoeliiGI.txt</unpack>
+        <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'P.yoelii_Contigs' AND edr.version = @pyContigVer@ "</unpack>
+        <unpack>fixMercatorOffsetsInGFF.pl --f @dataDir@/Pyoelii.fasta --g @dataDir@/PyoeliiKappe.gff --o @dataDir@/PyoeliiKappe_fixed_1.gff</unpack>
+        <unpack>fixYoeliiGFF --inputFile @dataDir@/PyoeliiKappe_fixed_1.gff --outputFile @dataDir@/PyoeliiKappe_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @dataDir@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @pyContigVer@ --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
    Annotation of the <i>P. yoelii</i> 17XNL genome obtained from Stephen Kappe, 2009-03-25. Includes gene models inferred from orthology.
@@ -118,19 +118,19 @@
         </description>
     </resource>
 
-    <resource resource="IEDB_Epitopes" version="2009-03-18"
+    <resource resource="py_IEDB_Epitopes" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Plasmo/IEDBExportPyoe.txt" 
+        <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%EXT_DB_RLS_VER%/" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
-        <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/03-18-2009 --outDir @downloadDir@/IEDB_Epitopes_fixed </unpack>
-        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_RLS_VER%/ --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -138,18 +138,18 @@
         </description>
     </resource>
     
-    <resource resource="IEDB_Epitopes_DBxRefs" version="2009-03-18"
+    <resource resource="py_IEDB_Epitopes_DBxRefs" version="2009-03-18"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed" 
+        <manualGet fileOrDir="common/empty" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
-         <unpack>createEpitopeDbRefFile --inputDir @downloadDir@/IEDB_Epitopes_DBxRefs/IEDB_Epitopes_fixed --outputFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt</unpack>
-        <pluginArgs>--DbRefMappingFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../py_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
+        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -157,31 +157,30 @@
         </description>
     </resource>
 
-
- <resource resource="CorrectGeneAliases" 
+ <resource resource="py_CorrectGeneAliases" 
         version="1"
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+        <manualGet fileOrDir="common/empty" 
             contact=""
             email=""
             institution=""/>
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--extDbRelSpecList "Jane Carlton P. yoelii chromosomes|2002-09-10,P. yoelii Provisional Annotations from Kappe|2009-03-25"</pluginArgs>
+        <pluginArgs>--extDbRelSpecList "P.yoelii_Contigs|@pyContigVer@,P.yoelii_Kappe_Annotation|@kappeAnnotationsVer@"</pluginArgs>
     </resource> 
 
 
-<resource resource="Entrez_DBRefs" version="2009-04-29"
+<resource resource="py_Entrez_DBRefs" version="2009-04-29"
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pyoelii/dbxref/entrez/%EXT_DB_RLS_VER%/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_DBRefs/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez gene links.
@@ -190,17 +189,17 @@
     </resource>
 
 
- <resource resource="Pubmed_DBRefs" version="2009-08-14"
+ <resource resource="py_Pubmed_DBRefs" version="2009-08-14"
         displayName="DBRefs for pubmed links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-        <manualGet fileOrDir = "@manualDelivery@/entrez/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pyoelii/dbxref/entrez/%EXT_DB_RLS_VER%/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Pubmed_DBRefs/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez pubmed links.
@@ -208,40 +207,40 @@
         </description>
     </resource>
 
-   <resource resource="Entrez_Gene_dbxref" version="12-01-2009"
+   <resource resource="py_Entrez_Gene_dbxref" version="2009-12-01"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Entrez Genes"
         extDbRlsVer="12-01-2009"
         extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pyoelii/dbxref/Entrez_Gene/%EXT_DB_RLS_VER%/gene_info_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
         </description>
     </resource>
 
-   <resource resource="Uniprot_Gene_dbxref" version="11-24-2009"
+   <resource resource="py_Uniprot_Gene_dbxref" version="2009-11-24"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         extDbName="Links to Uniprot Genes"
         extDbRlsVer="11-24-2009"
         extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pyoelii/dbxref/Uniprot/%EXT_DB_RLS_VER%/Uniprot_Gene_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -254,12 +253,12 @@
             organisms="P.yoelii"
             category="Proteome"
 	    plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
+        <manualGet fileOrDir = "PlasmoDB/pyoelii/phylogeny/phyloProfiles/%EXT_DB_RLS_VER%"
             contact = "Shailesh Date"
             email = "svdate@pcbi.upenn.edu"
             institution = "CBIL"
         />
-        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --headerFile @downloadDir@/PhylogeneticProfiles_Pyoelii/phyloProfiles/pvPy_TaxonNameHeaders --dataFile @downloadDir@/PhylogeneticProfiles_Pyoelii/phyloProfiles/pyoelii/pp-any-and-pyoelii.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
+        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --headerFile @dataDir@/%EXT_DB_RLS_VER%/pvPy_TaxonNameHeaders --dataFile @dataDir@/%EXT_DB_RLS_VER%/pyoelii/pp-any-and-pyoelii.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
    <description>
          <![CDATA[
 Phylogenetic profiles based on the presence or absence of all known P. yoelii ORFs in 195 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function. 
@@ -273,12 +272,12 @@ Phylogenetic profiles based on the presence or absence of all known P. yoelii OR
             organisms="P.yoelii"
         category="Proteome"
         plugin="GUS::Community::Plugin::LoadMutualInformationScores">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/phyloProfiles/"
+        <manualGet fileOrDir = "PlasmoDB/pyoelii/phylogeny/phyloProfiles/%EXT_DB_RLS_VER%/"
             contact = "Shailesh Date"
             email = "svdate@pcbi.upenn.edu"
             institution = "CBIL"
         />
-        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --threshold "0.472" --dataFile @downloadDir@/MutualInformationScores_Pyoelii/phyloProfiles/pyoelii/pp-any-and-pyoelii.muInfo.gz --tolerateMissingIds 1</pluginArgs>
+        <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --threshold "0.472" --dataFile @dataDir@/%EXT_DB_RLS_VER%/pyoelii/pp-any-and-pyoelii.muInfo.gz --tolerateMissingIds 1</pluginArgs>
         <publication pmid="12923548"/>
         <description>
          <![CDATA[
@@ -286,17 +285,17 @@ Mutual information, an entropy based, information theoretic measure, was used to
           ]]>
         </description>
     </resource>
-    
+   
 resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
         category="Proteome">	
-        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py40h.tab"
+        <manualGet fileOrDir="PlasmoDB/pyoelii/massSpec/Pyliverstage/%EXT_DB_RLS_VER%/Py40h.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS40/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.yoelii_Contigs|@pyContigVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 hrs post-infection (LS40).
@@ -309,12 +308,12 @@ resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50)"
         category="Proteome">	
-        <manualGet fileOrDir="@manualDelivery@/massSpec/Pyliverstage/Py50h.tab"
+        <manualGet fileOrDir="PlasmoDB/pyoelii/massSpec/Pyliverstage/%EXT_DB_RLS_VER%/Py50h.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS50/Py50h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Py50h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.yoelii_Contigs|@pyContigVer@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 50 hrs post-infection (LS50).
@@ -328,12 +327,12 @@ resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
             organisms="P. yoelii"
             category="Transcriptome"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/"
+     <manualGet fileOrDir = "PlasmoDB/pyoelii/microarray/Kappe/%EXT_DB_RLS_VER%/working_dir/"
                 contact = "Stefan Kappe"
                 email = "stefan.kappe@sbri.org"
                 institution = "Seattle Biomedical Research Institute"
      />
-<pluginArgs>--inputDir @downloadDir@/Kappe_expressionProfiles/working_dir/ --configFile @downloadDir@/Kappe_expressionProfiles/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+<pluginArgs>--inputDir @dataDir@/working_dir/ --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
      P. yoelii liver stage expression data from Kappe lab.
@@ -352,13 +351,13 @@ resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
             organisms="P. yoelii"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/analysis/"
+     <manualGet fileOrDir = "PlasmoDB/pyoelii/microarray/Kappe/%EXT_DB_RLS_VER%/working_dir/analysis/"
                 contact = "Stefan Kappe"
                 email = "stefan.kappe@sbri.org"
                 institution = "Seattle Biomedical Research Institute"
   
      />
-<pluginArgs>--inputDir @downloadDir@/Kappe_foldChange/analysis --configFile @downloadDir@/Kappe_foldChange/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
+<pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
    <description>
          <![CDATA[
   P. yoelii liver stage expression data from Kappe lab.
@@ -375,12 +374,12 @@ resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
             category="Transcriptome"
             publicUrl="http://www.scripps.edu/cb/winzeler/"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/winzeler_yoelii_falciparum_comparison/2009-05-14/"
+     <manualGet fileOrDir = "PlasmoDB/pyoelii/microarray/winzeler_yoelii_falciparum_comparison/%EXT_DB_RLS_VER%/"
                 contact = "Greg Grant"
                 email = "ggrant@pcbi.upenn.edu"
                 institution = "University of Pennsylvania"
      />
-  <pluginArgs>--inputDir @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14 --configFile @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+  <pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER%/ --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
    Winzeler lab (Scripps Research Institute) performed comparative expression analysis on Plasmodium parasite life cycle data derived from P. falciparum blood, sporozoite, zygote and ookinete stages, and P. yoelii mosquito oocyst and salivary gland sporozoites, blood and liver stages and show that type II fatty acid biosynthesis genes are upregulated in liver and insect stages relative to asexual blood stages.
@@ -394,12 +393,12 @@ resource="Pyoelii_LiverStage_LS40" version="2008-07-18"
         organisms="P.yoelii"
         category="Transcriptome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/vaidyaBergmanOligos/PyoeliiVadyiaOligos.fasta" 
+        <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/vaidyaBergmanOligos/%EXT_DB_RLS_VER%/PyoeliiVadyiaOligos.fasta" 
             contact="Akhil B. Vaidya"
             email="akhil.vaidya@drexel.edu"
             institution="Drexel University College of Medicine"
         />
-        <pluginArgs>--sequenceFile @downloadDir@/Vaidya_Bergman_oligos/PyoeliiVadyiaOligos.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
+        <pluginArgs>--sequenceFile @dataDir@/PyoeliiVadyiaOligos.fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
         <description>
             <![CDATA[
    Version 1 of oligos for <i>P. yoelii</i> from Vaidya/Bergman (Drexel).
