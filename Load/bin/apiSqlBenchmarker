@@ -12,11 +12,11 @@ usage() unless scalar(@ARGV) == 1;
 my $configFile = $ARGV[0];
 
 open(F, $configFile) || die "Can't open config file '$configFile'\n";
-my $config = {trackingDBI=> "",
+my $config = {trackingInstance=> "",
 	      trackingLogin=> "",
 	      trackingPassword=> "",
 	      project=> "",
-	      appDBI=> "",
+	      appInstance=> "",
 	      appLogin=> "",
 	      appPassword=> "",
 	      sql=> "",
@@ -24,6 +24,7 @@ my $config = {trackingDBI=> "",
 	      nickname=> "",
 	      hide=> "",
 	      };
+my $propertyCount = scalar(keys(%$config));
 
 my $optionalConfig = {
 	      description=> 1,
@@ -53,10 +54,12 @@ while (<F>) {
   }
 }
 
+chomp($config->{sql});
+
 #print STDERR Dumper $config;
 
 # validate the configuration
-if (scalar(keys(%$config)) != 11) {
+if (scalar(keys(%$config)) != $propertyCount) {
   print STDERR "ERROR: looks like you have an unsupported property in your config file\n\n";
   usage();
 }
@@ -68,19 +71,97 @@ foreach my $prop (keys(%$config)) {
   }
 }
 
-my $trackerDbh = DBI->connect($config->{trackingDBI},
+my $trackingDbh = DBI->connect('dbi:Oracle:' . $config->{trackingInstance},
 			      $config->{trackingLogin},
 			      $config->{trackingPassword},
 			      { PrintError => 1, RaiseError => 0}
 			     )
-  or die "Can't connect to the tracker database: $DBI::errstr\n";
+  or die "Can't connect to the tracking database: $DBI::errstr\n";
 
-my $appDbh = DBI->connect($config->{appDBI},
+my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 			  $config->{appLogin},
 			  $config->{appPassword},
 			  { PrintError => 1, RaiseError => 0}
 			 )
   or die "Can't connect to the app database: $DBI::errstr\n";
+
+# execute query to get timing and row count
+my $startTime = time;
+Log('starting');
+my $query = $appDbh->prepare($config->{sql});
+my $finishedPrepare = time;
+Log('finished prepare');
+$query->execute();
+my $finishedExecute = time;
+Log('finished execute');
+my $rowCount = 0;
+while (my @row = $query->fetchrow_array()) {
+  $rowCount++;
+}
+$query->finish();
+Log('finished');
+
+my $fetchTime = time - $finishedExecute;
+my $totalTime = time - $startTime;
+my $prepareTime = $finishedPrepare - $startTime;
+my $executeTime = $finishedExecute - $finishedPrepare;
+
+# get plan
+my $plan;
+
+$appDbh->do("explain plan for " . $config->{sql})
+         or die "explaining plan";
+my $planQ = $appDbh->prepare("select * from table(dbms_xplan.display())");
+$planQ->execute();
+while (my ($line) = $planQ->fetchrow_array()) {
+  $plan .= $line . "\n"
+}
+
+# get statistics
+my $statistics;
+
+$|=1;
+print "heading for sqlplus-land\n";
+
+my $queryString = $config->{sql} . ';';
+
+print "queryString is ->$queryString<-\n";
+# my $result = qx { sqlplus $config->{appLogin}/$config->{appPassword}\@$config->{appInstance} <<EOF
+# set autotrace on statistics
+# $queryString
+# exit;
+# EOF
+# };
+# print "result is ==>" . $result . "<== is result\n";
+
+
+# save benchmark record
+my $insert = $trackingDbh->prepare(<<SQL);
+  insert into apidb.BenchmarkedQuery
+              (bqid, project, query, statistics, plan, instance, login, hide, nickname,
+               description, rows_returned, prepare_time, execute_time, fetch_time, total_time)
+  values (apidb.BenchmarkedQuery_sq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+$insert->bind_param(1, $config->{project});
+$insert->bind_param(2, $config->{sql});
+$insert->bind_param(3, $statistics);
+$insert->bind_param(4, $plan);
+$insert->bind_param(5, $config->{appInstance});
+$insert->bind_param(6, $config->{appLogin});
+$insert->bind_param(7, $config->{hide});
+$insert->bind_param(8, $config->{nickname});
+$insert->bind_param(9, $config->{description});
+$insert->bind_param(10, $rowCount);
+$insert->bind_param(11, $prepareTime);
+$insert->bind_param(12, $executeTime);
+$insert->bind_param(13, $fetchTime);
+$insert->bind_param(14, $totalTime);
+
+$insert->execute();
+$insert->finish();
+
+# fetch bqid for display
+
 
 
 ###############################################################################
@@ -94,11 +175,11 @@ apiSqlBenchmarker config_file
 
 Config file format:
 
-trackingDBI=
+trackingInstance=
 trackingLogin=
 trackingPassword=
 project=
-appDBI=
+appInstance=
 appLogin=
 appPassword=
 
@@ -120,4 +201,10 @@ Junk below the above delimter is ignored.
   exit(1);
 }
 
+sub Log {
+  my ($message) = @_;
 
+  my $date = `date`;
+  chomp($date);
+  print "$date: $message\n";
+}
