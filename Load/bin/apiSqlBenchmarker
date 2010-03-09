@@ -48,7 +48,7 @@ while (<F>) {
       $processingSql = 1; # start processing sql
     } else {
       chomp;
-      /(\w+)\=(\S+)/;
+      /(\w+)\=(.+)/;
       $config->{$1} = $2;
     }
   }
@@ -87,24 +87,41 @@ my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 
 # execute query to get timing and row count
 my $startTime = time;
-Log('starting');
 my $query = $appDbh->prepare($config->{sql});
 my $finishedPrepare = time;
-Log('finished prepare');
 $query->execute();
 my $finishedExecute = time;
-Log('finished execute');
 my $rowCount = 0;
 while (my @row = $query->fetchrow_array()) {
   $rowCount++;
 }
 $query->finish();
-Log('finished');
 
 my $fetchTime = time - $finishedExecute;
 my $totalTime = time - $startTime;
 my $prepareTime = $finishedPrepare - $startTime;
 my $executeTime = $finishedExecute - $finishedPrepare;
+
+# get statistics
+my $statistics;
+my $consistentGets;
+
+my $statQ = $appDbh->prepare(<<SQL);
+select ms.value, sn.name
+from v\$mystat ms, v\$statname sn
+where ms.statistic# = sn.statistic#
+  and sn.name in ('recursive calls', 'db block gets', 'consistent gets', 
+                  'physical reads', 'redo size', 'bytes sent via SQL*Net to client', 
+                  'bytes received via SQL*Net from client', 
+                  'SQL*Net roundtrips to/from client', 'sorts (memory)', 
+                  'sorts (disk)')
+SQL
+$statQ->execute();
+while (my ($value, $statistic) = $statQ->fetchrow_array()) {
+  $statistics .= sprintf('%10d %s', $value, $statistic) . "\n";
+  $consistentGets = $value if $statistic eq 'consistent gets';
+}
+$statQ->finish();
 
 # get plan
 my $plan;
@@ -116,31 +133,15 @@ $planQ->execute();
 while (my ($line) = $planQ->fetchrow_array()) {
   $plan .= $line . "\n"
 }
-
-# get statistics
-my $statistics;
-
-$|=1;
-print "heading for sqlplus-land\n";
-
-my $queryString = $config->{sql} . ';';
-
-print "queryString is ->$queryString<-\n";
-# my $result = qx { sqlplus $config->{appLogin}/$config->{appPassword}\@$config->{appInstance} <<EOF
-# set autotrace on statistics
-# $queryString
-# exit;
-# EOF
-# };
-# print "result is ==>" . $result . "<== is result\n";
-
+$planQ->finish();
 
 # save benchmark record
 my $insert = $trackingDbh->prepare(<<SQL);
   insert into apidb.BenchmarkedQuery
               (bqid, project, query, statistics, plan, instance, login, hide, nickname,
-               description, rows_returned, prepare_time, execute_time, fetch_time, total_time)
-  values (apidb.BenchmarkedQuery_sq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               description, rows_returned, prepare_time, execute_time, fetch_time,
+               total_time, consistent_gets)
+  values (apidb.BenchmarkedQuery_sq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 $insert->bind_param(1, $config->{project});
 $insert->bind_param(2, $config->{sql});
@@ -156,12 +157,22 @@ $insert->bind_param(11, $prepareTime);
 $insert->bind_param(12, $executeTime);
 $insert->bind_param(13, $fetchTime);
 $insert->bind_param(14, $totalTime);
+$insert->bind_param(15, $consistentGets);
 
 $insert->execute();
 $insert->finish();
 
 # fetch bqid for display
+my $bqidQ = $trackingDbh->prepare(<<SQL);
+select apidb.BenchmarkedQuery_sq.currval from dual
+SQL
+$bqidQ->execute();
+my ($bqid) = $bqidQ->fetchrow_array();
+print "created new BenchmarkedQuery record with bqid $bqid\n";
+$bqidQ->finish();
 
+$appDbh->disconnect();
+$trackingDbh->disconnect();
 
 
 ###############################################################################
@@ -199,12 +210,4 @@ Junk below the above delimter is ignored.
 
 });
   exit(1);
-}
-
-sub Log {
-  my ($message) = @_;
-
-  my $date = `date`;
-  chomp($date);
-  print "$date: $message\n";
 }
