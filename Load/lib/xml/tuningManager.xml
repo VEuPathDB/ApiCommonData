@@ -2231,8 +2231,9 @@ CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
     AND sa.allele != sb.allele
     AND sa.parent_id = sb.parent_id
     AND sa.parent_id = snp.na_feature_id
-    AND sa.na_feature_id = fl.na_feature_id
-    AND snp.parent_id = nl.na_feature_id (+)
+    AND snp.na_feature_id = fl.na_feature_id
+    AND fl.parent_id = nl.na_feature_id (+)
+    AND fl.na_sequence_id = nl.na_sequence_id (+)
     AND snp.parent_id = gf.na_feature_id (+)
       ]]>
     </sql>
