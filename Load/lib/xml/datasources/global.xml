@@ -7,11 +7,9 @@
             url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
             plugin="GUS::Supported::Plugin::LoadTaxon">
      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
-     <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
-     <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
-     <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
-     <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
-     <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --verbose</pluginArgs>
+     <unpack>gunzip @downloadDir@/gi_taxid_prot.dmp.gz</unpack>
+     <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf taxdump.tar.gz ; rm -f taxdump.tar ; cd $currDir</unpack>
+     <pluginArgs>--names @dataDir@/names.dmp --nodes @dataDir@/nodes.dmp --gencode @dataDir@/gencode.dmp --merged @dataDir@/merged.dmp --verbose</pluginArgs>
      <description>
         <![CDATA[
     The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
@@ -26,7 +24,7 @@
 	url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=2.3"
         plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO">
         <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
-        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
             <description>
          <![CDATA[
     The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
@@ -41,7 +39,7 @@
             url="ftp://ftp.expasy.org/databases/enzyme/"
             plugin="GUS::Community::Plugin::LoadEnzymeDatabase">            >
      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
-     <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+     <pluginArgs>--InPath @dataDir@ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
      <description>
          <![CDATA[
     ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
@@ -56,7 +54,7 @@
 	url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
         plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo">
       <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
-      <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+      <pluginArgs>--oboFile @dataDir@/evidence_code.obo</pluginArgs>
       <description>
             <![CDATA[
    Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support. 
@@ -71,7 +69,7 @@
             url="http://www.geneontology.org/ontology/gene_ontology.obo"
             plugin="GUS::Supported::Plugin::InsertGeneOntology">
       <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
-      <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+      <pluginArgs>--oboFile @dataDir@/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
       <description>
          <![CDATA[
    The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
@@ -95,59 +93,52 @@
           ]]>
       </description>
  </resource>
-
-
-
     
-    <resource resource="Mged_Ontology_Term_Types" 
-        version="1.3"
+    <resource resource="Mged_Ontology_Term_Types" version="1.3"
         plugin="GUS::Supported::Plugin::InsertOntologyTermType"
         displayName="MGED Ontology Term Types"
         category="ignore">
-      <manualGet fileOrDir="@manualDelivery@/PlasmoDB/MGED_Ontology/MgedOntologyTermTypes.tab" 
+      <manualGet fileOrDir="global/Montology/Mged/%EXT_DB_RLS_VER%/MgedOntologyTermTypes.tab" 
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>
-        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/MgedOntologyTermTypes.tab</pluginArgs>
     </resource>    
     
     
-    <resource resource="Mged_Ontology_Relationship_Types" 
-        version="1.3"
+    <resource resource="Mged_Ontology_Relationship_Types" version="1.3"
         plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
         displayName="MGED Ontology Relationship Types"
         category="ignore">
-      <manualGet fileOrDir="@manualDelivery@/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
+      <manualGet fileOrDir="global/Montology/Mged/%EXT_DB_RLS_VER%/MgedOntologyRelationshipTypes.tab" 
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>
-        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/MgedOntologyRelationshipTypes.tab</pluginArgs>
     </resource>    
     
-    <resource resource="MGED_Ontology" 
-        version="1.3"
+    <resource resource="MGED_Ontology" version="1.3"
         plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
         displayName="The MGED Ontology"
         category="Ontology"
         publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
         url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl">	
       <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
-      <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+      <pluginArgs>--inFile @dataDir@/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
       <description>
             <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
       </description>		
     </resource>
     
-    <resource resource="Mged_Ontology_Entry" 
-        version="1.3"
+    <resource resource="Mged_Ontology_Entry" version="1.3"
         plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
         displayName="MGED Ontology Entry"
         category="ignore">
-      <manualGet fileOrDir="@manualDelivery@/empty" 
+      <manualGet fileOrDir=global/empty
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania" />
-      <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
+      <pluginArgs>--externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
     </resource>  
    
         <resource resource="InterproscanData" version="19.0"
@@ -155,14 +146,14 @@
            displayName="InterPro Database"
            publicUrl="http://www.ebi.ac.uk/interpro"
            category="Proteome">	
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery@/iprscan19.0/"
+        <manualGet fileOrDir = "global/domain/iprscanData/%EXT_DB_RLS_VER%/"
             contact = "EBI"
             email = "interhelp@ebi.ac.uk"
             institution = "EBI"
         />
-        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
-        <unpack>cp @downloadDir@/InterproscanData/iprscan19.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
-        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</pluginArgs>
+        <unpack>fixSuperfamily @dataDir@/iprscan/data/</unpack>
+        <unpack>cp @dataDir@/insertInterpro-config.xml @dataDir@/iprscan/data/</unpack>
+        <pluginArgs>--inPath @dataDir@/iprscan/data/</pluginArgs>
         <description>
             <![CDATA[
 			InterPro family of databases
@@ -176,11 +167,11 @@
         displayName="load isolate vocabulary" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/Common/isolateVocabulary/isolateVocabulary.txt" 
+        <manualGet fileOrDir = "global/ontology/isolate/%EXT_DB_RLS_VER%/isolateVocabulary.txt" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
-        <unpack>updateIsolateVocabulary.pl --inFile @downloadDir@/isolateVocabulary/isolateVocabulary.txt</unpack>
+        <unpack>updateIsolateVocabulary.pl --inFile @dataDir@/isolateVocabulary.txt</unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
     </resource> 
 
@@ -193,9 +184,9 @@
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
-        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
-        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <unpack>gunzip @dataDir@/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @dataDir@/pdb_seqres.txt --outputFile  @dataDir@/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @dataDir@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
         <description>
          <![CDATA[
 Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.        
@@ -208,8 +199,8 @@ Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium p
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
-        <unpack>processSourceIdxFile --inFile @downloadDir@/FetchPDBidx/source.idx --outFile @downloadDir@/FetchPDBidx/source.idx.processed</unpack>
-        <pluginArgs>--fileName @downloadDir@/FetchPDBidx/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDB protein sequences|2009-03-06'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <unpack>processSourceIdxFile --inFile @dataDir@/source.idx --outFile @dataDir@/source.idx.processed</unpack>
+        <pluginArgs>--fileName @dataDir@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
         <description>
          <![CDATA[
 PDB Identifiers       
@@ -221,8 +212,8 @@ PDB Identifiers
     <resource resource="blatAlignmentQuality" version="2010-02-01"
         category="ignore"
         plugin="GUS::Supported::Plugin::LoadGusXml">
-        <manualGet fileOrDir="@manualDelivery@/empty"/>
-        <pluginArgs>--filename /lib/xml/blatalignmentquality.xml</pluginArgs>
+        <manualGet fileOrDir="global/ontology/alignmentQuality/%EXT_DB_RLS_VER%/blatalignmentquality.xml"/>
+        <pluginArgs>--filename @dataDir@/blatalignmentquality.xml</pluginArgs>
         <description>
             <![CDATA[
           ]]>
