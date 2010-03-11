@@ -210,7 +210,7 @@ PDB Identifiers
 
 
     <resource resource="blatAlignmentQuality" version="2010-02-01"
-        category="ignore"
+        category="ontology"
         plugin="GUS::Supported::Plugin::LoadGusXml">
         <manualGet fileOrDir="global/ontology/alignmentQuality/%EXT_DB_RLS_VER%/blatalignmentquality.xml"/>
         <pluginArgs>--filename @dataDir@/blatalignmentquality.xml</pluginArgs>
@@ -219,5 +219,23 @@ PDB Identifiers
           ]]>
         </description>
     </resource>
+
+<resource resource="Continents" version="2008-08-26"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="IsolatesByCountry"
+        category="ontology"
+        <manualGet fileOrDir="global/ontology/Continents/%EXT_DB_RLS_VER%/continents.txt"
+             contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"
+        />
+        <unpack>updateContinents.pl --file @dataDir@/continents.txt </unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+IsolatesByCountry
+          ]]>
+        </description>	
+    </resource> 
 
  </resourcesPipeline>
