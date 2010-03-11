@@ -1081,22 +1081,20 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
         </description>
     </resource>
 
-    <resource resource="pf_update_Continents" version="2008-08-26"
+    <resource resource="bogus place saver" version="2008-08-26"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        displayName="IsolatesByCountry"
-        category="Polymorphisms"
+        displayName="ignore"
+        category="ignore"
         organisms="P.falciparum"
-        <manualGet fileOrDir="PlasmoDB/pfalciparum/isolate/Continents/%EXT_DB_RLS_VER%/continents.txt"
+        <manualGet fileOrDir="common/empty"
              contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"
         />
-        <unpack>updateContinents.pl --file @dataDir@/continents.txt </unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
         <description>
             <![CDATA[
-IsolatesByCountry
           ]]>
         </description>	
     </resource> 
