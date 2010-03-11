@@ -158,7 +158,7 @@ SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
               instr(eas.source_id, '_', -1) - 1)
          AS pdb_id,
        s.pvalue_mant, s.pvalue_exp, 
-       SUBSTR(tn.name, 1, 40) AS taxon,
+       SUBSTR(tn.name, 1, 100) AS taxon,
        ROUND( (s.number_identical / s.total_match_length) * 100)
          AS percent_identity,
        ROUND( (s.total_match_length / tas.length) * 100)
@@ -575,7 +575,7 @@ CREATE TABLE apidb.EpitopeSummary&1 NOLOGGING AS
 SELECT gf.source_id, dr.primary_identifier AS iedb_id,
        al.start_min||'-'||al.end_max AS location,
        mas.sequence, 
-       SUBSTR(tn.name, 1, 40) AS name,
+       SUBSTR(tn.name, 1, 100) AS name,
        DECODE(ef.type, 'Not Full Set Not on Blast Hit', 'Low',
                        'Not Full Set On Blast Hit', 'Medium',
                        'Full Set Not on Blast Hit', 'Medium',
@@ -1171,8 +1171,8 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        DECODE(nvl(nl.is_reversed, 0), 0, 'forward', 1, 'reverse',
               nl.is_reversed) AS strand,
        SUBSTR(sequence.source_id, 1, 50) AS sequence_id,
-       SUBSTR(tn.name, 1, 40) AS organism,
-       SUBSTR(species_name.name, 1, 40) AS species,
+       SUBSTR(tn.name, 1, 100) AS organism,
+       SUBSTR(species_name.name, 1, 100) AS species,
        taxon.ncbi_tax_id,
        so_id, SUBSTR(so.term_name, 1, 150) AS so_term_name,
        SUBSTR(so.definition, 1, 150) AS so_term_definition,
@@ -1562,7 +1562,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        sequence.length,
        to_char((sequence.a_count + sequence.t_count) / sequence.length * 100, '99.99')
          AS at_percent,
-       SUBSTR(tn.name, 1, 40) AS organism,
+       SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
        SUBSTR(sequence.description, 1, 400) AS sequence_description,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
@@ -1663,7 +1663,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
          AS lflank,
        SUBSTR(DBMS_LOB.SUBSTR(sequence.sequence, 60, snp_loc.start_min + 1), 1, 60)
          AS rflank,
-       SUBSTR(tn.name, 1, 40) AS organism,
+       SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
        SUBSTR(chromosome_info.chromosome, 1, 20) AS chromosome,
        chromosome_info.chromosome_order_num
@@ -1751,7 +1751,7 @@ SELECT distinct
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(m.source_id, 1, 60) AS source_id,
        LOWER(SUBSTR(m.source_id, 1, 60)) AS lowercase_source_id,
-       SUBSTR(tn.name, 1, 40) AS organism,
+       SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
        SUBSTR(sequence.source_id, 1, 30) AS nas_id,
        tas.length,
@@ -1828,7 +1828,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(CASE
                 WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
-              END, 1, 40) AS organism,
+              END, 1, 100) AS organism,
        taxon.ncbi_tax_id,
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
@@ -1884,7 +1884,7 @@ SELECT a.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_i
        SUBSTR(CASE
                 WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
-              END, 1, 40) AS organism,
+              END, 1, 100) AS organism,
        a.number_of_contained_sequences AS est_count,
        a.length,
        a.a_count,
