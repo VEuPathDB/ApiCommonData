@@ -381,46 +381,44 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
       <publication pmid="15637271"/>
     </resource>
 
-
   <resource resource="DOZI_array" version="1.0"
+       project="PlasmoDB"
             displayName="P. berghei DOZI array data"
             category="Transcriptome"
             organisms="P. berghei"
-            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName="P. berghei DOZI array data"
-            extDbRlsVer="1.0"
-            extDbRlsDescrip="P. berghei DOZI array data"
-            dbCommit="@dbcommit@">
-     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/" 
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
+     <manualGet fileOrDir=""PlasmoDB/pfalciparum/microarray/Waters_DOZI/%EXT_DB_RLS_VER%/working_dir/" 
                 contact="Greg Grant"
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
       />
-<pluginArgs>--inputDir @downloadDir@/DOZI_array/working_dir --configFile @downloadDir@/DOZI_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
-   <description>
+<pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>-   <description>
          <![CDATA[
+ 
+         ]]>
+   </description>
+ </resource>
 
-          ]]>
-    </description>
-  </resource>
 
- <resource resource = "DOZI_page" version="1.0"
+ <resource resource= "DOZI_page" version="1.0"
+       project="PlasmoDB"
             displayName="P. berghei DOZI array data page analysis"
             organisms="P. berghei"
             category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/newFormat"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters_DOZI/%EXT_DB_RLS_VER%/working_dir/page/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
      />
-<pluginArgs>--inputDir @downloadDir@/DOZI_page/newFormat --configFile @downloadDir@/DOZI_page/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+<pluginArgs>--inputDir @dataDir@/newFormat --configFile @dataDir@/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
    <description>
          <![CDATA[
           ]]>
     </description>
   </resource>
+
+
 
    <resource resource="Pberghei_ECNumbers" version="@pbChromosomeVer@"
        project="PlasmoDB"
