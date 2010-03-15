@@ -1212,6 +1212,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
                 institution = "University of Pennsylvania"
      />
      <publication pmid="12893887"/>
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
@@ -1232,6 +1233,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
                 email = "ggrant@pcbi.upenn.edu"
                 institution = "University of Pennsylvania"
      />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
   <pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
@@ -1307,6 +1309,22 @@ Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasi
       <publication pmid="16362075"/>
     </resource>     
 
+    <resource resource="Cowman_radAnalysis" 
+              version="1.0"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Comparison of Various P. falciparum Knock outs - Invasion Pathways"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/radAnalysis/"
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+          <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource>    
+
+
   <resource resource= "daily_expressionProfiles" version="1.0"
        project="PlasmoDB"
             displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients - expression profiles"
@@ -1318,6 +1336,7 @@ Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasi
                 email="jdaily@partners.org"
                 institution="Harvard"
      />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
    <description>
          <![CDATA[
@@ -1339,6 +1358,7 @@ Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasi
                 email="jdaily@partners.org"
                 institution="Harvard"
      />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config.txt --analysisResultView 'DataTransformationResult'</pluginArgs>
    <description>
          <![CDATA[
@@ -1348,6 +1368,43 @@ om made Affy array (Scrmalaria) based on the laboratory strain 3D7.
     </description>
   </resource>
 
+    <resource resource="E-MEXP-128_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/e-mexp-128_arrayData.xml" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Antigenic variation is a survival mechanism developed by the malaria parasite <i>P. falciparum</i> in order to allow for the establishment of a chronic infection. Here we have studied clonal differences in the transcriptomes of two isogenic <i>P. falciparum</i> clones (3D7S8.4 and 3D7AH1S2) of distinct adhesive and antigenic phenotypes employing a <i>P. falciparum</i> 70-mer oligonucleotide microarray. Fifteen transcripts were highly differentially expressed (greater than a 5-fold change) with five transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4, and ten downregulated. Identified genes encode apical organellar (Gbph2, GBP-related antigen), cell cycle and DNA/RNA processing (SERA-5, RNA-methylase), cell-rescue, defense/virulence (RESA-2, RIFIN, PfEMP1) and hypothetical proteins (PFB0115w, PFI1445w, MAL13P1.121). A number of short and full-length var transcripts were differentially expressed between the clones but one full-length transcript was dominant in both rings and trophozoites (PFD0630c versus PFF0845c). Distinct members of two other variant gene families (phist-a and rif-like), scattered over the subtelomeric areas of the 14 chromosomes, were also found to be clonally and developmentally expressed. Three sibling-clones of 3D7AH1S2 (3D7AH1S1, -S3, -S4) were further studied for the expression of transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4. Individual var and phist-a genes were found expressed in all of the clones while the expression of a rif-like gene and gbph2 varied in-between the clones. The present data provides evidence for complex transcriptional differences between closely related isogenic <i>P. falciparum</i> of distinct adhesive and antigenic characteristics.
+         ]]>
+        </description>
+        <publication pmid="17196675"/>
+    </resource>  
+
+    <resource resource="E-MEXP-128_radAnalysis" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="S8.4 vs. AH1S2 (Ring, Schizont, Trophozite) Expression Analysis"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/radAnalysis/"
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource>      
+  
 
  <resource resource= "e-mexp-128_percentiles" version="1.0"
        project="PlasmoDB"
@@ -1577,6 +1634,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
                 email="cnewbold@hammer.imm.ox.ac.uk"
                 institution="Weatherall Institute of Molecular Medicine"
       />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
    <description>
          <![CDATA[
@@ -1755,10 +1813,29 @@ Contact Till Voss, till.voss@unibas.ch, for further information
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
       />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
    <description>
          <![CDATA[
 
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource= "New_Cowman_foldChange" version="1.0"
+       project="PlasmoDB"
+            displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
+            organisms="P. falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
+     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/%EXT_DB_RLS_VER%/working_dir/analysis/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
           ]]>
     </description>
   </resource>
@@ -1774,6 +1851,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
       />
+<unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
 <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
    <description>
          <![CDATA[
@@ -1800,23 +1878,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
     </description>
   </resource>
 
- <resource resource= "New_Cowman_foldChange" version="1.0"
-       project="PlasmoDB"
-            displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
-            organisms="P. falciparum"
-            category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/%EXT_DB_RLS_VER%/working_dir/analysis/"
-            contact="John Brestelli"
-            email="jbrestel@pcbi.upenn.edu"
-            institution="EuPathDB"
-     />
-<pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
-   <description>
-         <![CDATA[
-          ]]>
-    </description>
-  </resource>
+
 
 
 
