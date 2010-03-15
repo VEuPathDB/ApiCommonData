@@ -2410,12 +2410,30 @@ select distinct
       ga.source_id as gene_source_id,
       aef.source_id as probe_id,
       aef.na_feature_id as chip_na_feature_id,
-      CASE WHEN ga.is_reversed = 0 THEN round(abs(ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0)
-              ELSE round(abs(ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0) END as distance,
-         CASE WHEN CASE WHEN ga.is_reversed = 0 THEN round(abs(ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0)
-                        ELSE round(abs(ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0) END > 0 THEN 
-              CASE WHEN ga.is_reversed = 0 THEN '-' ELSE '+' END ELSE 
-              CASE WHEN ga.is_reversed = 1 THEN '-' ELSE '+' END END as direction
+      CASE 
+        WHEN ga.is_reversed = 0 
+        THEN round(abs(ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0)
+        ELSE round(abs(ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0) 
+      END as distance,
+      CASE 
+        WHEN -- distance > 0
+          CASE WHEN ga.is_reversed = 0 
+            THEN ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)
+            ELSE ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)
+          END > 0 
+        THEN 
+          CASE 
+            WHEN ga.is_reversed = 0 
+            THEN '-' 
+            ELSE '+'
+          END 
+        ELSE 
+          CASE 
+            WHEN ga.is_reversed = 1 
+            THEN '-' 
+            ELSE '+'
+          END 
+        END as direction
 from  dots.ArrayElementFeature aef,
       apidb.FeatureLocation arrloc,
       apidb.geneattributes ga,
