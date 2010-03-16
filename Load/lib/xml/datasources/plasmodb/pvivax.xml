@@ -10,7 +10,7 @@
         />
         <unpack>getSubTaxa --ncbiTaxId 5855 --outputFile @dataDir@/taxonIdFile</unpack>
         <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -24,12 +24,12 @@
         organisms="P. vivax"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%EXT_DB_RLS_VER%/reffull_pv.fas"
+        <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%RESOURCE_VERSION%/reffull_pv.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_pv.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePv' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePv EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePv' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePv EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
         <description>
             <![CDATA[
    <i>P. vivax</i> redicted full length transcript sequences.
@@ -44,12 +44,12 @@
         organisms="P. vivax"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%EXT_DB_RLS_VER%/onepass_pv.fas"
+        <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_pv.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
         />
-        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_pv.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter (Eurodiagnostica) to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
+        <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter (Eurodiagnostica) to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
         <description>
             <![CDATA[
    <i>P. vivax</i> EST library.
@@ -65,9 +65,9 @@
         category="Genome">
         <publication pmid="18843361"/>
         <manualGet
-           fileOrDir="PlasmoDB/pvivax/genome/pvContigs/%EXT_DB_RLS_VER%/sequences.gb.gz"
+           fileOrDir="PlasmoDB/pvivax/genome/pvContigs/%RESOURCE_VERSION%/sequences.gb.gz"
         />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
             <i>P. vivax</i> , Salvador I isolate, contig sequence and annotation obtained 
@@ -86,11 +86,11 @@
         category="Organellar">
         <publication pmid="15901839"/>
         <manualGet
-           fileOrDir="PlasmoDB/pvivax/genome/mitochondrial/%EXT_DB_RLS_VER%/sequences.gb"
+           fileOrDir="PlasmoDB/pvivax/genome/mitochondrial/%RESOURCE_VERSION%/sequences.gb"
         />
         <unpack>mkdir @dataDir@/P.vivax_mitochondrial_fixed</unpack>
         <unpack>cat @dataDir@/sequences.gb | perl -pe 's/protein_id=/secondary_id=/g' > @dataDir@/P.vivax_mitochondrial_fixed/sequences_fixed.gb</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/organellarFeatures2gus.xml --inputFileOrDir @dataDir@/P.vivax_mitochondrial_fixed --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1" --seqSoTerm "supercontig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/organellarFeatures2gus.xml --inputFileOrDir @dataDir@/P.vivax_mitochondrial_fixed --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1" --seqSoTerm "supercontig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
          <i>P. vivax</i> mitochondrial sequence and annotation obtained from Genbank (modification date 2005-07-12)
@@ -105,9 +105,9 @@
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
          displayName="P. vivax contig to chromosome map"
          category="Genome">
-         <manualGet fileOrDir = "PlasmoDB/pvivax/genome/AGP/%EXT_DB_RLS_VER%/AAKM00000000_20070904_abrev.agp"
+         <manualGet fileOrDir = "PlasmoDB/pvivax/genome/AGP/%RESOURCE_VERSION%/AAKM00000000_20070904_abrev.agp"
          />
-         <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "P.vivax contigs from Genbank" --seqPieceExtDbRlsVer @pvContigVer@ --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs> 
+         <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "P.vivax contigs from Genbank" --seqPieceExtDbRlsVer @pvContigVer@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs> 
          <description>
             <![CDATA[
          Contig to chromosome map for <i>P. vivax</i> SaI-1.
@@ -122,14 +122,14 @@
         displayName="IEDB Epitopes"
         category="Proteome"
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        <manualGet fileOrDir="PlasmoDB/pvivax/epitope/IEDB/%EXT_DB_RLS_VER%/IEDBExportPviv.txt" 
+        <manualGet fileOrDir="PlasmoDB/pvivax/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPviv.txt" 
             contact="IEDB"
             email=""
             institution="IEDB"
         />
         <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%EXT_DB_RLS_VER% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
-        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%RESOURCE_VERSION% --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -149,7 +149,7 @@
             institution="IEDB"
         />
          <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pv_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
-        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
    IEDB epitopes.
@@ -177,12 +177,12 @@
         displayName="DBRefs for Entrez gene links"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/entrez/%EXT_DB_RLS_VER%/gene2entrez.tab"
+        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/entrez/%RESOURCE_VERSION%/gene2entrez.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez gene links.
@@ -196,11 +196,11 @@
         displayName="DBRefs for Phenotype db links"
         category="External_links"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
-        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Phenotype/%EXT_DB_RLS_VER%/geneid_list_08-14-09.txt"
+        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list_08-14-09.txt"
             contact = "Shahid Kahn"
             email = "S.M.Khan@lumc.nl"
         />
-        <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             Phenotype links from Genetically Modified Rodent Malaria Parasites: 
@@ -226,12 +226,12 @@
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/entrez/%EXT_DB_RLS_VER%/gene2pubmed_08_14_09.tab"
+        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/entrez/%RESOURCE_VERSION%/gene2pubmed_08_14_09.tab"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             DBRefs for Entrez pubmed links.
@@ -244,13 +244,13 @@
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-         <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Entrez_Gene/%EXT_DB_RLS_VER%/gene_info_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -262,13 +262,13 @@
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-         <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Uniprot/%EXT_DB_RLS_VER%/Uniprot_Gene_plasmo"
+         <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Uniprot/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
             contact=""
             email=""
             institution=""
         />
 
-        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
           ]]>
@@ -282,12 +282,12 @@
         organisms="P.vivax"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/P.vivax_contigsGB_DBRefs/%EXT_DB_RLS_VER%/pv_fea_match"
+        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/P.vivax_contigsGB_DBRefs/%RESOURCE_VERSION%/pv_fea_match"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @dataDir@/pv_fea_match --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/pv_fea_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
         <description>
             <![CDATA[
             <i>P. vivax</i> Genbank source_id DBRefs.
@@ -301,12 +301,12 @@
         organisms="P.vivax"
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/P.vivax_contigSeqs_GB_DBRefs/%EXT_DB_RLS_VER%/pv_seq_match"
+        <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/P.vivax_contigSeqs_GB_DBRefs/%RESOURCE_VERSION%/pv_seq_match"
             contact = "Wei Li"
             email = "weili1@pcbi.upenn.edu"
             institution = "University of Pennsylania"
         />
-        <pluginArgs>--DbRefMappingFile @dataDir@/pv_seq_match --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+        <pluginArgs>--DbRefMappingFile @dataDir@/pv_seq_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <description>
             <![CDATA[
             <i>P. vivax</i> Genbank contigs sequences DBRefs.
@@ -321,12 +321,12 @@
             organisms="Pvivax"
             category="Transcriptome"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir = "PlasmoDB/pvivax/microarray/ZB_vivax/%EXT_DB_RLS_VER%/data/working_dir/profiles"
+     <manualGet fileOrDir = "PlasmoDB/pvivax/microarray/ZB_vivax/%RESOURCE_VERSION%/data/working_dir/profiles"
                 contact="Zbynek Bozdech"
                 email="ZBozdech@ntu.edu.sg"
                 institution="School of Biological Sciences, Nanyang Technological University" />
         <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-<pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+<pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
    <description>
          <![CDATA[
 Transcriptional profile throughout the 48-h intraerythrocytic cycle of three distinct P. vivax isolates.
@@ -341,12 +341,12 @@ Transcriptional profile throughout the 48-h intraerythrocytic cycle of three dis
             organisms="Pvivax"
             category="Transcriptome"
             plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir = "PlasmoDB/pvivax/microarray/westenberger_vivax/%EXT_DB_RLS_VER%"
+     <manualGet fileOrDir = "PlasmoDB/pvivax/microarray/westenberger_vivax/%RESOURCE_VERSION%"
                 contact="Scott Westenberger"
                 email="scottw@scripps.edu"
                 institution="The Scripps Research Institute" />
         <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-<pluginArgs>--inputDir @dataDir@/%EXT_DB_RLS_VER% --configFile @dataDir@/%EXT_DB_RLS_VER%/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+<pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
    <description>
          <![CDATA[
 Sporozoites were purified from dissected mosquitoes fed on monkeys infected with the genome reference strain Salvador I at the Centers for Disease Control and Prevention, Atlanta, Georgia. Asexual blood stage parasites were obtained from P. vivax-infected patients in Iquitos, Peru. White blood cells were removed by CF-11 cellulose column filtration, asexual parasites were enriched by gradient centrifugation and purified by saponin lysis of RBCs. Total RNA was isolated from purified parasites and subjected to two rounds of RNA amplification for microarray analysis as described previously (Zhou, et al. 2008). Experimental technical replicate hybridizations were performed for the single sporozoite sample and two asexual samples (CM012 and CM013). Gene expression values were calculated using MOID; expression profiles were clustered using OPI as described previously (Zhou, et al. 2008). <br/><br/>
@@ -361,12 +361,12 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P.vivax proteomics data from clinical samples (Tatu)"
         category="Proteome">	
-        <manualGet fileOrDir="PlasmoDB/pvivax/massspec/Tatu_clinical/%EXT_DB_RLS_VER%/working_dir/P.vivax_Clinical_Proteomics.tab"
+        <manualGet fileOrDir="PlasmoDB/pvivax/massspec/Tatu_clinical/%RESOURCE_VERSION%/working_dir/P.vivax_Clinical_Proteomics.tab"
           contact="Omar Harb"
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @dataDir@/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.vivax contigs from Genbank|@pvContigVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.vivax contigs from Genbank|@pvContigVer@'</pluginArgs>
         <description>
             <![CDATA[
              Data produced by proteomics analysis of clinical isolates of early stages of <i>P. vivax</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.

@@ -8,7 +8,7 @@
         />
         <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @dataDir@/taxonIdFile</unpack>
         <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
         <description>
             <![CDATA[
                   Plasmodium ESTs from dbEST.
@@ -26,7 +26,7 @@
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
         <unpack>mkdir @dataDir@/P.gallinaceum.contigs_fixed</unpack>
         <unpack>cat @dataDir@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>  
+        <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>  
         <description>  
             <![CDATA[
                  Contig sequences for <i>P. gallinaceum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.

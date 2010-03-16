@@ -39,7 +39,7 @@
             url="ftp://ftp.expasy.org/databases/enzyme/"
             plugin="GUS::Community::Plugin::LoadEnzymeDatabase">            >
      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
-     <pluginArgs>--InPath @dataDir@ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+     <pluginArgs>--InPath @dataDir@ --enzymeDbName %RESOURCE_NAME% --enzymeDbRlsVer %RESOURCE_VERSION%</pluginArgs>
      <description>
          <![CDATA[
     ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
@@ -69,7 +69,7 @@
             url="http://www.geneontology.org/ontology/gene_ontology.obo"
             plugin="GUS::Supported::Plugin::InsertGeneOntology">
       <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
-      <pluginArgs>--oboFile @dataDir@/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+      <pluginArgs>--oboFile @dataDir@/gene_ontology.obo --extDbRlsName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION%</pluginArgs>
       <description>
          <![CDATA[
    The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
@@ -86,7 +86,7 @@
       <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
         <unpack>gunzip @dataDir@/nr.gz </unpack>
         <unpack>shortenDefLine --inputFile @dataDir@/nr --outputFile @dataDir@/nrdb-short-defline.fsa --taxonIdMappingFile @dataDir@/../taxonomy/gi_taxid_prot.dmp</unpack>
-      <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
       <description>
          <![CDATA[
    The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
@@ -98,7 +98,7 @@
         plugin="GUS::Supported::Plugin::InsertOntologyTermType"
         displayName="MGED Ontology Term Types"
         category="ignore">
-      <manualGet fileOrDir="global/Montology/Mged/%EXT_DB_RLS_VER%/MgedOntologyTermTypes.tab" 
+      <manualGet fileOrDir="global/Montology/Mged/%RESOURCE_VERSION%/MgedOntologyTermTypes.tab" 
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>
@@ -110,7 +110,7 @@
         plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
         displayName="MGED Ontology Relationship Types"
         category="ignore">
-      <manualGet fileOrDir="global/Montology/Mged/%EXT_DB_RLS_VER%/MgedOntologyRelationshipTypes.tab" 
+      <manualGet fileOrDir="global/Montology/Mged/%RESOURCE_VERSION%/MgedOntologyRelationshipTypes.tab" 
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>
@@ -124,7 +124,7 @@
         publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
         url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl">	
       <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
-      <pluginArgs>--inFile @dataDir@/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+      <pluginArgs>--inFile @dataDir@/MGEDOntology.owl --extDbName %RESOURCE_NAME% --extDbVersion %RESOURCE_VERSION% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
       <description>
             <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
       </description>		
@@ -138,7 +138,7 @@
             contact="Trish Whetzel"
             email="whetzel@pcbi.upenn.edu"
             institution="University of Pennsylvania" />
-      <pluginArgs>--externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+      <pluginArgs>--externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     </resource>  
    
         <resource resource="InterproscanData" version="19.0"
@@ -146,7 +146,7 @@
            displayName="InterPro Database"
            publicUrl="http://www.ebi.ac.uk/interpro"
            category="Proteome">	
-        <manualGet fileOrDir = "global/domain/iprscanData/%EXT_DB_RLS_VER%/"
+        <manualGet fileOrDir = "global/domain/iprscanData/%RESOURCE_VERSION%/"
             contact = "EBI"
             email = "interhelp@ebi.ac.uk"
             institution = "EBI"
@@ -167,12 +167,12 @@
         displayName="load isolate vocabulary" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
-        <manualGet fileOrDir = "global/ontology/isolate/%EXT_DB_RLS_VER%/isolateVocabulary.txt" 
+        <manualGet fileOrDir = "global/ontology/isolate/%RESOURCE_VERSION%/isolateVocabulary.txt" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>updateIsolateVocabulary.pl --inFile @dataDir@/isolateVocabulary.txt</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
 
@@ -186,7 +186,7 @@
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
         <unpack>gunzip @dataDir@/pdb_seqres.txt.gz</unpack>
         <unpack>filterPdbFile --inputFile @dataDir@/pdb_seqres.txt --outputFile  @dataDir@/pdb.fsa</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @dataDir@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile  @dataDir@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
         <description>
          <![CDATA[
 Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.        
@@ -200,7 +200,7 @@ Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium p
         plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=source.idx</wgetArgs>
         <unpack>processSourceIdxFile --inFile @dataDir@/source.idx --outFile @dataDir@/source.idx.processed</unpack>
-        <pluginArgs>--fileName @dataDir@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+        <pluginArgs>--fileName @dataDir@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec '%RESOURCE_NAME%|%RESOURCE_VERSION%'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
         <description>
          <![CDATA[
 PDB Identifiers       
@@ -212,7 +212,7 @@ PDB Identifiers
     <resource resource="blatAlignmentQuality" version="2010-02-01"
         category="ontology"
         plugin="GUS::Supported::Plugin::LoadGusXml">
-        <manualGet fileOrDir="global/ontology/alignmentQuality/%EXT_DB_RLS_VER%/blatalignmentquality.xml"/>
+        <manualGet fileOrDir="global/ontology/alignmentQuality/%RESOURCE_VERSION%/blatalignmentquality.xml"/>
         <pluginArgs>--filename @dataDir@/blatalignmentquality.xml</pluginArgs>
         <description>
             <![CDATA[
@@ -224,13 +224,13 @@ PDB Identifiers
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="IsolatesByCountry"
         category="ontology"
-        <manualGet fileOrDir="global/ontology/Continents/%EXT_DB_RLS_VER%/continents.txt"
+        <manualGet fileOrDir="global/ontology/Continents/%RESOURCE_VERSION%/continents.txt"
              contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"
         />
         <unpack>updateContinents.pl --file @dataDir@/continents.txt </unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
         <description>
             <![CDATA[
 IsolatesByCountry

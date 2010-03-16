@@ -6,12 +6,12 @@
         category="Genome"
         organisms="Plasmodium"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-           <manualGet fileOrDir="PlasmoDB/common/isolate/plasmoIsolatesFromGenbank/%EXT_DB_RLS_VER%/sequences_fixed_1.gb" 
+           <manualGet fileOrDir="PlasmoDB/common/isolate/plasmoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences_fixed_1.gb" 
             contact="GenBank"
             email="info@ncbi.nlm.nih.gov"
             institution="NCBI"
         />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
         <description>
             <![CDATA[
 Plasmodium isolates from Genbank
@@ -24,12 +24,12 @@ Plasmodium isolates from Genbank
         displayName="update isolate vocabulary-isolation_source" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%EXT_DB_RLS_VER%/isolationSource.xml" 
+        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/isolationSource.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @dataDir@/isolationSource.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
  <resource resource="isolateVocabularyMap_specific_host" version="2009-06-14" 
@@ -37,12 +37,12 @@ Plasmodium isolates from Genbank
         displayName="update isolate vocabulary-specific_host" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%EXT_DB_RLS_VER%/specificHost.xml" 
+        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/specificHost.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @dataDir@/specificHost.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
   <resource resource="isolateVocabularyMap_geographic_location" version="2009-06-14" 
@@ -50,12 +50,12 @@ Plasmodium isolates from Genbank
         displayName="update isolate vocabulary-geographic_location" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%EXT_DB_RLS_VER%/geographicLocation.xml" 
+        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/geographicLocation.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>isolateVocabulary.pl insert  --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/geographicLocation.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource> 
 
  <resource resource="isolateVocabularyMap_product" version="2009-06-14" 
@@ -63,12 +63,12 @@ Plasmodium isolates from Genbank
         displayName="update isolate vocabulary-product" 
         category="ignore" 
         plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%EXT_DB_RLS_VER%/product.xml" 
+        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/product.xml" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
         <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/product.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
 
@@ -94,7 +94,7 @@ Plasmodium isolates from Genbank
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
         publicUrl="http://orthomcl.cbil.upenn.edu">
-           <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%EXT_DB_RLS_VER%/orthomclGroups.txt"
+           <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"
             email="pinney@pcbi.upenn.edu"
             contact="Deborah Pinney"
             institution="PCBI"
@@ -115,7 +115,7 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
-        <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%EXT_DB_RLS_VER%/orthomclGroups.txt"
+        <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"
             email="pinney@pcbi.upenn.edu"
             contact="Deborah Pinney"
             institution="PCBI"
