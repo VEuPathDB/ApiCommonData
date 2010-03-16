@@ -78,19 +78,17 @@
         </description>
        </resource>
 
- <resource resource="P.vivax_mitochondrial" version=@pvMitoVer@
+ <resource resource="P.vivax_mitochondrial" version="2005-07-12" parentResource="P.vivax_contigsGB"
        project="PlasmoDB"
         displayName="P. vivax strain Salvador I mitochondrial DNA sequence and annotation"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
         organisms="P.vivax"
         category="Organellar">
         <publication pmid="15901839"/>
         <manualGet
-           fileOrDir="PlasmoDB/pvivax/genome/mitochondrial/%RESOURCE_VERSION%/sequences.gb"
+           fileOrDir="common/empty"
         />
-        <unpack>mkdir @dataDir@/P.vivax_mitochondrial_fixed</unpack>
-        <unpack>cat @dataDir@/sequences.gb | perl -pe 's/protein_id=/secondary_id=/g' > @dataDir@/P.vivax_mitochondrial_fixed/sequences_fixed.gb</unpack>
-        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/organellarFeatures2gus.xml --inputFileOrDir @dataDir@/P.vivax_mitochondrial_fixed --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1" --seqSoTerm "supercontig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
         <description>
             <![CDATA[
          <i>P. vivax</i> mitochondrial sequence and annotation obtained from Genbank (modification date 2005-07-12)
