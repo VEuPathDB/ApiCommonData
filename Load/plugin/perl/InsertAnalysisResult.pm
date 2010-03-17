@@ -369,7 +369,9 @@ sub getNaFeatureId {
 
       push @naFeatures, $naFeatureId;
   }else{
-      @naFeatures = $self->sqlAsArray( Sql => "select na_feature_id from dots.${naFeatureView} where source_id = '$sourceId'" );
+      my $naFeatureIds =  ApiCommonData::Load::Util::getNaFeatureIdsFromSourceId($self, $sourceId, $naFeatureView);
+
+      @naFeatures = @$naFeatureIds;
   }
 
   if(scalar @naFeatures > 1) {
