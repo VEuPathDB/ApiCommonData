@@ -1,5 +1,5 @@
 
-    <resource resource="pf_dbEST" version="2009-02-23"
+    <resource resource="Pf_dbEST" version=@pf_dbESTVersion@
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
@@ -38,7 +38,7 @@
         </description>
     </resource>
 
-    <resource resource="WatanabePf3D7_PredictedTranscripts" version="2006-11-02"
+    <resource resource="WatanabePf3D7_PredictedTranscripts" version=@PfalciparumPredictedTranscriptsExtDbVersion@
        project="PlasmoDB"
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. falciparum 3D7 predicted full length transcripts"
         organisms="P. falciparum"
@@ -102,7 +102,7 @@
     </resource> 
  
  
-    <resource resource="P.falciparum_chromosomes" version=@pfChromosomeVer@
+    <resource resource="P.falciparum_chromosomes" version=@PfalciparumChromosomesVersion@
        project="PlasmoDB"
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         organisms="P.falciparum"
@@ -249,7 +249,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-    <resource resource="Pf_IEDB_Epitopes" version="2009-03-18"
+    <resource resource="Pf_IEDB_Epitopes" version=@pf_iedbVersion@
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -271,7 +271,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
     
-    <resource resource="pf_IEDB_Epitopes_DBxRefs" version="2009-03-18"
+    <resource resource="Pf_IEDB_Epitopes_DBxRefs" version="2009-03-18"
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -491,7 +491,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
     </resource> 
 
 
-    <resource resource="pf_plasmoDbCombinedSnps" version="2007-08-01"
+    <resource resource="Pf_plasmoDbCombinedSnps" version="2007-08-01"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from all P. falciparum strains"
@@ -830,7 +830,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         </description>
     </resource>
   
-    <resource resource="pf_predictedProteinStructures" version="2005-11-21"
+    <resource resource="Pf_predictedProteinStructures" version=@pf_pdbVersion@
        project="PlasmoDB"
         displayName="Predicted protein structures"
         organisms="P.falciparum"
@@ -850,7 +850,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
         </description>
     </resource>
  
-    <resource resource="pf_MR4Reagents" version="1"
+    <resource resource="Pf_MR4Reagents" version="1"
        project="PlasmoDB"
         displayName="Links to MR4 reagents"
         category="Proteome"
@@ -1111,25 +1111,6 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
         </description>
     </resource>
 
-    <resource resource="bogus place saver" version="2008-08-26"
-       project="PlasmoDB"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
-        displayName="ignore"
-        category="ignore"
-        organisms="P.falciparum"
-        <manualGet fileOrDir="common/empty"
-             contact="John Brestelli"
-            email="jbrestel@pcbi.upenn.edu"
-            institution="University of Pennsylvania"
-        />
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>	
-    </resource> 
-
-
 
  <resource resource="BrickMAPPpromoters" version="3" 
        project="PlasmoDB"
@@ -1148,7 +1129,7 @@ The 3K genotyping chip is an affymetrix array containing ~3000 SNPs (about two t
 		<publication pmid="19094208"/>
     </resource>    
 
- <resource resource="pf_loadMAPPWithSqlldr" version="2009-05-01" 
+ <resource resource="Pf_loadMAPPWithSqlldr" version="2009-05-01" 
        project="PlasmoDB"
         displayName="load MAPP With Sqlldr" 
         category="ignore" 
@@ -1488,7 +1469,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
     </resource>  
 
 
-    <resource resource="pf_SGPPMapping" version="2009-05-12"
+    <resource resource="Pf_SGPPMapping" version="2009-05-12"
        project="PlasmoDB"
         displayName="Links to SGPP reagents"
         category="Proteome"
@@ -1619,7 +1600,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
     </resource>
 
 
-<resource resource="pf_Plasmodraft_DBRefs" version="2009-04-20"
+<resource resource="Pf_Plasmodraft_DBRefs" version="2009-04-20"
        project="PlasmoDB"
         displayName="DBRefs for plasmodraft URL links"
         category="ignore"
@@ -1775,7 +1756,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
-<resource resource="pf_temp_called_peaks" version="2009-11-11"
+<resource resource="Pf_temp_called_peaks" version="2009-11-11"
        project="PlasmoDB"
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         category="Genome"
@@ -1907,13 +1888,6 @@ Contact Till Voss, till.voss@unibas.ch, for further information
           ]]>
     </description>
   </resource>
-
-
-
-
-
-
-<!--need Mercator results-->
 
    <resource resource="RodentPlasmodiumChromosomes" version="2007-09-24"
        project="PlasmoDB"
