@@ -42,15 +42,42 @@ SELECT g.name, gf.na_feature_id
 FROM Dots.GeneFeature gf, Dots.NAFeatureNAGene nfng, Dots.NAGene g
 WHERE nfng.na_feature_id = gf.na_feature_id
 AND nfng.na_gene_id = g.na_gene_id
+union
+select ga.alias, gf.na_feature_id
+from apidb.genealias ga, dots.genefeature gf
+where ga.gene = gf.source_id
 ";
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
       $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
     }
+    $stmt->finish();
   }
 
   return $plugin->{_sourceIdGeneFeatureIdMap}->{$sourceId};
 }
+
+
+# return null if not found:  be sure to check handle that condition!!
+sub getNaFeatureIdsFromSourceId {
+  my ($plugin, $sourceId, $naFeatureView) = @_;
+
+  if (!$plugin->{_sourceIdNaFeatureIdMap}) {
+
+    $plugin->{_sourceIdNaFeatureIdMap} = {};
+
+    my $sql = "select source_id, na_feature_id from dots.${naFeatureView}";
+
+    my $stmt = $plugin->prepareAndExecute($sql);
+    while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
+      push @{$plugin->{_sourceIdNaFeatureIdMap}->{$source_id}}, $na_feature_id;
+    }
+    $stmt->finish();
+  }
+
+  return $plugin->{_sourceIdNaFeatureIdMap}->{$sourceId};
+}
+
 
 # return null if not found:  be sure to check handle that condition!!
 # NOTE: the provided source_id must be an AAFeature source_id, not a 
