@@ -3,6 +3,17 @@ CREATE TABLE ApiDB.IsolateVocabulary (
  term                        varchar(200) NOT NULL,
  parent                      varchar(200),
  type                        varchar(50) NOT NULL,
+ MODIFICATION_DATE     DATE,
+ USER_READ             NUMBER(1),
+ USER_WRITE            NUMBER(1),
+ GROUP_READ            NUMBER(1),
+ GROUP_WRITE           NUMBER(1),
+ OTHER_READ            NUMBER(1),
+ OTHER_WRITE           NUMBER(1),
+ ROW_USER_ID           NUMBER(12),
+ ROW_GROUP_ID          NUMBER(3),
+ ROW_PROJECT_ID        NUMBER(4),
+ ROW_ALG_INVOCATION_ID NUMBER(12),
  PRIMARY KEY (isolate_vocabulary_id)
 );
 
