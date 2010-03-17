@@ -1,6 +1,6 @@
 <resources>
 
-    <resource resource="PlasmodiumIsolates" version="2009-04-13"
+    <resource resource="PlasmodiumGenbankIsolates" version="2009-04-13"
         project=PlasmoDB
         displayName="Plasmodium isolates from Genbank"
         category="Genome"
@@ -79,7 +79,7 @@ Plasmodium isolates from Genbank
         displayName="Bibliographic Reference Types"
         category="ignore"
         publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html">
-      <manualGet fileOrDir="PlasmoDB/common/misc/BibliographicReferenceType/1/ncbiPublicationTypes.xml" 
+      <manualGet fileOrDir="PlasmoDB/common/misc/BibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml" 
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"/>	
@@ -129,19 +129,19 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         <publication pmid="12952885"/>
     </resource>
 
-<resource resource="OrthoMCL" version="4"
+<resource resource="OrthoMCLTree" version="4"
         project=PlasmoDB
         displayName="OrthoMCL phyletic pattern tree"
         organisms="P.falciparum"
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon"
         publicUrl="http://orthomcl.cbil.upenn.edu">
-        <manualGet fileOrDir="PlasmoDB/common/phylogeny/OrthoMCLTaxon/4/"
+        <manualGet fileOrDir="PlasmoDB/common/phylogeny/OrthoMCLTaxon/%RESOURCE_VERSION%/"
             email="pinney@pcbi.upenn.edu"
             contact="Deborah Pinney"
             institution="PCBI"
         />
-        <pluginArgs>--cladeFile @dataDir@/4/orthomclClades.txt --speciesFile @dataDir@/4/orthomclTaxons.txt </pluginArgs>
+        <pluginArgs>--cladeFile @dataDir@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @dataDir@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
         <description>
             <![CDATA[
     Phyletic pattern tree for the organisms used in OrthoMCL.
