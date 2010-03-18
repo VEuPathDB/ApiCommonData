@@ -11,7 +11,7 @@ use FileHandle;
 use ApiCommonData::Load::Util;
 
 use GUS::Model::DoTS::ExternalNASequence;
-
+use GUS::Model::ApiDB::RodentChrColors;
 
 my $argsDeclaration =
   [
@@ -158,13 +158,7 @@ sub readFile {
 sub addChromosomeColorTable {
   my ($self, @arrData) = @_;
   my (%name, %color);
-  my $dbh = $self->getQueryHandle();
 
-  # delete existent entries
-  my $initStmt = $dbh->prepare("DELETE ApiDB.RodentChrColors");
-  $initStmt->execute();
-
-  my $stmt = $dbh->prepare("INSERT INTO ApiDB.RodentChrColors (chromosome, color, value) VALUES (?, ?, ?)");
   for my $row (@arrData){
     my %row = %{$row};
     $name{$row{rmp_chr}} = $row{colorName};
@@ -174,7 +168,12 @@ sub addChromosomeColorTable {
   foreach my $key (sort keys(%name)) {
     my ($name, $value) = ($name{$key}, $color{$key});
     $self->log("COLORS: $key, $name, $value");
-    $stmt->execute($key, $name, $value);
+     my $profile = GUS::Model::ApiDB::RodentChrColors->
+	      new({chromosome => $key,
+		   color => $name,
+		   value => $value
+		   });
+	  $profile->submit();
   }
 }
 
