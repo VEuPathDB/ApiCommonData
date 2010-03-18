@@ -297,12 +297,13 @@ $tuningRegistry->setLastChecker()
 $tuningRegistry->setLastUpdater()
   if !$tables && !$doUpdate;
 
+# set OK if: we looked at everything, nothing was broken, and if updates were needed, we did them.
 $tuningRegistry->setOk()
   if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate);
-  # looked at everything, nothing was broken, and if updates were needed, we did them.
 
+# set outdated if: something was broken, or needed an update but didn't get it
 $tuningRegistry->setOutdated()
-  if $neededUpdateCount || $brokenCount;
+  if ($neededUpdateCount && !$doUpdate) || $brokenCount;
 
 # if a temporary config-file dir was checked out from svn, delete it now
 if ($configDir) {

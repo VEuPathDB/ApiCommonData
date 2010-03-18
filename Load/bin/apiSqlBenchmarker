@@ -138,10 +138,10 @@ $planQ->finish();
 # save benchmark record
 my $insert = $trackingDbh->prepare(<<SQL);
   insert into apidb.BenchmarkedQuery
-              (bqid, project, query, statistics, plan, instance, login, hide, nickname,
+              (bqid, run_date, project, query, trace, plan, instance, login, hide, nickname,
                description, rows_returned, prepare_time, execute_time, fetch_time,
                total_time, consistent_gets)
-  values (apidb.BenchmarkedQuery_sq.nextval, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  values (apidb.BenchmarkedQuery_sq.nextval, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 $insert->bind_param(1, $config->{project});
 $insert->bind_param(2, $config->{sql});
@@ -206,7 +206,7 @@ hide=
 
 $eofDelim
 
-Junk below the above delimter is ignored.
+Junk below the above delimiter is ignored.
 
 });
   exit(1);
