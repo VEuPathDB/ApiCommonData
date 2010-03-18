@@ -585,6 +585,8 @@ SQL
 sub lockForUpdate {
   my ($forceUpdate) = @_;
 
+  clearDeadLock() unless $forceUpdate;
+
   my $processInfo  = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
   my $sql = <<SQL;
@@ -621,3 +623,38 @@ sub releaseLockForUpdate {
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
+sub clearDeadLock {
+
+  my $stmt = $dbh->prepare("select current_updater from apidb.InstanceMetaInfo");
+  $stmt->execute();
+  my ($updater) = $stmt->fetchrow_array();
+
+  return if !$updater;
+
+  if (!($updater =~ /process \d* on \S*/)) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("ERROR: parsing current_updater string: \"" . $updater . "\"");
+    return;
+  }
+
+  my @parts = split / /, $updater;
+  my $pid = $parts[1];
+  my $server = $parts[3];
+  my $current_server = `uname -n`;
+  chomp($current_server);
+
+  if ($current_server ne $server) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("can't check for tM process; it's on \"$server\" and I'm on \"$current_server\"");
+    return;
+  }
+
+  my $pid_test = ` ps -fp $pid|tail +2|wc -l`;
+  chomp($pid_test);
+  if (!$pid_test) {
+    # named process no longer exists; null out CURRENT_UPDATER
+    ApiCommonData::Load::TuningConfig::Log::addLog("CURRENT_UPDATER process (" . $updater . ") no longer exists; updating InstanceMetaInfo.");
+    $dbh->do("update apidb.InstanceMetaInfo set current_updater = null")
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  }
+
+  return;
+}
