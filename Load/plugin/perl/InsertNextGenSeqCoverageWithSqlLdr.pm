@@ -116,9 +116,20 @@ sub run {
 #--------------------------------------------------------------------------------
 sub writeConfigFile {
   my ($self, $configFile, $dataFile) = @_;
-
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
+  my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
+  $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
   my $database = $self->getDb();
+  my $projectId = $database->getDefaultProjectId();
+  my $userId = $database->getDefaultUserId();
+  my $groupId = $database->getDefaultGroupId();
   my $algInvocationId = $database->getDefaultAlgoInvoId();
+  my $userRead = $database->getDefaultUserRead();
+  my $userWrite = $database->getDefaultUserWrite();
+  my $groupRead = $database->getDefaultGroupRead();
+  my $groupWrite = $database->getDefaultGroupWrite();
+  my $otherRead = $database->getDefaultOtherRead();
+  my $otherWrite = $database->getDefaultOtherWrite();
 
   open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
 
@@ -134,6 +145,16 @@ na_sequence_id,
 location,
 coverage,
 multiple,
+modification_date constant $modDate, 
+user_read constant $userRead, 
+user_write constant $userWrite, 
+group_read constant $groupRead, 
+group_write constant $groupWrite, 
+other_read constant $otherRead, 
+other_write constant $otherWrite, 
+row_user_id constant $userId, 
+row_group_id constant $groupId, 
+row_project_id constant $projectId, 
 row_alg_invocation_id constant $algInvocationId
 )\n";
   close CONFIG;
