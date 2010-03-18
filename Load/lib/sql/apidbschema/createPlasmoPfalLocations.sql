@@ -1,4 +1,5 @@
 CREATE TABLE ApiDB.PlasmoPfalLocations (
+ plasmoPfalLocations_id      NUMBER(10),
  seq_source_id  NUMBER(10) NOT NULL,
  old_location          NUMBER(10)  NOT NULL,
  new_location        NUMBER(10) NOT NULL,
@@ -12,11 +13,15 @@ CREATE TABLE ApiDB.PlasmoPfalLocations (
  ROW_USER_ID           NUMBER(12),
  ROW_GROUP_ID          NUMBER(3),
  ROW_PROJECT_ID        NUMBER(4),
- ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL
+ ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL,
+ PRIMARY KEY (plasmoPfalLocations_id)
 );
+
+CREATE SEQUENCE ApiDB.PlasmoPfalLocations_sq;
 
 GRANT insert, select, update, delete ON ApiDB.PlasmoPfalLocations TO gus_w;
 GRANT select ON ApiDB.PlasmoPfalLocations  TO gus_r;
+GRANT select ON ApiDB.PlasmoPfalLocations_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -25,7 +30,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'PlasmoPfalLocations',
-       'Standard', '',
+       'Standard', 'plasmoPfalLocations_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,

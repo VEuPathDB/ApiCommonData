@@ -24,7 +24,8 @@ create table Apidb.NextGenSeq_Align (
  ROW_USER_ID           NUMBER(12),
  ROW_GROUP_ID          NUMBER(3),
  ROW_PROJECT_ID        NUMBER(4),
-  ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL
+ ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL,
+ PRIMARY KEY (nextgenseq_align_id)
 );
 
 grant select on Apidb.NextGenSeq_Align to gus_r;
@@ -52,7 +53,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'NextGenSeq_Align',
-       'Standard', '',
+       'Standard', 'nextgenseq_align_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
