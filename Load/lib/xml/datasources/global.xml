@@ -166,13 +166,12 @@
  <resource resource="isolateVocabulary" version="2009-06-14" 
         displayName="load isolate vocabulary" 
         category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
+        plugin="ApiCommonData::Load::Plugin::InsertIsolateVocabulary" > 
         <manualGet fileOrDir = "global/ontology/isolate/%RESOURCE_VERSION%/isolateVocabulary.txt" 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
-        <unpack>updateIsolateVocabulary.pl --inFile @dataDir@/isolateVocabulary.txt</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+        <pluginArgs>--isolateVocabularyFile @dataDir@/isolateVocabulary.txt</pluginArgs>
     </resource> 
 
 
@@ -221,7 +220,7 @@ PDB Identifiers
     </resource>
 
 <resource resource="Continents" version="2008-08-26"
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        plugin="ApiCommonData::Load::Plugin::InsertContinents"
         displayName="IsolatesByCountry"
         category="ontology"
         <manualGet fileOrDir="global/ontology/Continents/%RESOURCE_VERSION%/continents.txt"
@@ -229,8 +228,7 @@ PDB Identifiers
             email="jbrestel@pcbi.upenn.edu"
             institution="University of Pennsylvania"
         />
-        <unpack>updateContinents.pl --file @dataDir@/continents.txt </unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+        <pluginArgs>--continentsFile @dataDir@/continents.txt</pluginArgs>
         <description>
             <![CDATA[
 IsolatesByCountry
