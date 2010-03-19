@@ -82,7 +82,7 @@
         category="ignore">
         <manualGet fileOrDir=PlasmoDB/pberghei/dbxref/CorrectGeneAliases/%RESOURCE_VERSION%/aliases.tab" />
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
     </resource> 
     
     <resource resource="WatanabePbANKA_PredictedTranscripts_RSRC" version="@WatanabePbANKA_PredictedTranscripts_VER@"
@@ -211,7 +211,7 @@
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile Female_peptide_list_PlasmoDB.xls --outfile Female_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
         <description>
             <![CDATA[
               Female gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
@@ -231,7 +231,7 @@
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Male_peptide_list_PlasmoDB.xls --outfile @dataDir@/Male_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
         <description>
             <![CDATA[
               Male gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
@@ -251,7 +251,7 @@
             institution="Leiden University"
         />
         <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB.xls --outfile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB_load.tab</unpack>
-        <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "P.berghei_chromosomes|@pbChromosomeVer@"</pluginArgs>
+        <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
         <description>
             <![CDATA[
              Mixed gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
