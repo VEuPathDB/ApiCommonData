@@ -1,4 +1,6 @@
-    <resource resource="Pc_dbEST_RSRC" version="2009-02-23"
+<resources>
+
+    <resource resource="Pc_dbEST_RSRC" version="@Pc_dbEST_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
@@ -16,7 +18,7 @@
         </description>
     </resource>
 
-    <resource resource="P.chabaudi_chromosomes_RSRC" version="@pcChromosomeVer@"
+    <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
        project="PlasmoDB"
         displayName="P. chabaudi (AS) chromosome sequences and annotation"
         category="Genome"
@@ -33,7 +35,7 @@
         </description>
     </resource> 
 
-    <resource resource="Pc_IEDB_Epitopes_RSRC" version="2009-03-18"
+    <resource resource="Pc_IEDB_Epitopes_RSRC" version="@Pc_IEDB_Epitopes_VER@"
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -182,7 +184,7 @@
         </description>
     </resource>
 
-   <resource resource="Pchabaudi_ECNumbers_RSRC" version="2010-02-01"
+   <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
        project="PlasmoDB"
          plugin="GUS::Community::Plugin::InsertECMapping"
          displayName="EC Number Mapping for Plasmodium chabaudi genes"
@@ -200,3 +202,21 @@
          ]]>
         </description>
     </resource>
+
+
+<resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
+          project="PlasmoDB"
+          plugin=""ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+          displayName="GO Association for Plasmodium chabaudi genes"
+          category="Proteome">
+          <manualGet fileOrDir = "PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"
+         />
+         <pluginArgs></pluginArgs>
+         <description>
+            <![CDATA[
+         GO Associations for <i>P. chabaudi</i> genes.  
+         ]]>
+        </description>
+    </resource>
+
+</resources>
