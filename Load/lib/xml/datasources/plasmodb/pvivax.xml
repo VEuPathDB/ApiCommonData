@@ -1,5 +1,5 @@
 <resources>
-    <resource resource="Pv_dbEST_RSRC" version="2009-02-23"
+    <resource resource="Pv_dbEST_RSRC" version="@Pv_dbEST_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
@@ -18,7 +18,7 @@
         </description>
     </resource>
 
-    <resource resource="WatanabePv_PredictedTranscripts_RSRC" version="2006-11-02"
+    <resource resource="WatanabePv_PredictedTranscripts_RSRC" version="@WatanabePv_PredictedTranscripts_VER@"
        project="PlasmoDB"
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax predicted full length transcripts"
         organisms="P. vivax"
@@ -58,7 +58,7 @@
         <publication pmid="17151081"/>
     </resource>
     
-<resource resource="P.vivax_contigsGB_RSRC" version="@pvContigVer@"
+<resource resource="Pvivax_contigsGB_RSRC" version="@Pvivax_contigsGB_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         displayName="P. vivax contig sequence and annotation from Genbank"
@@ -78,7 +78,7 @@
         </description>
        </resource>
 
- <resource resource="P.vivax_mitochondrial_RSRC" version="2005-07-12" parentResource="P.vivax_contigsGB"
+ <resource resource="Pvivax_mitochondrial_RSRC" version="@Pvivax_mitochondrial_VER@" parentResource="Pvivax_contigsGB_RSRC"
        project="PlasmoDB"
         displayName="P. vivax strain Salvador I mitochondrial DNA sequence and annotation"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
@@ -98,14 +98,14 @@
     </resource>
 
 
-<resource resource="PvivaxChromosomeAGP_RSRC" version="2007-09-04"
+<resource resource="PvivaxChromosomeAGP_RSRC" version="@PvivaxChromosomeAGP_VER@"
        project="PlasmoDB"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
          displayName="P. vivax contig to chromosome map"
          category="Genome">
          <manualGet fileOrDir = "PlasmoDB/pvivax/genome/AGP/%RESOURCE_VERSION%/AAKM00000000_20070904_abrev.agp"
          />
-         <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "P.vivax contigs from Genbank" --seqPieceExtDbRlsVer @pvContigVer@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs> 
+         <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "Pvivax_contigsGB_RSRC" --seqPieceExtDbRlsVer @Pvivax_contigsGB_VER@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs> 
          <description>
             <![CDATA[
          Contig to chromosome map for <i>P. vivax</i> SaI-1.
@@ -114,7 +114,7 @@
     </resource>
 
 
-    <resource resource="Pv_IEDB_Epitopes_RSRC" version="2009-03-18"
+    <resource resource="Pv_IEDB_Epitopes_RSRC" version="@Pv_IEDB_Epitopes_VER@"
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -135,7 +135,7 @@
         </description>
     </resource>
     
-    <resource resource="Pv_IEDB_Epitopes_DBxRefs_RSRC" version="2009-03-18"
+    <resource resource="Pv_IEDB_Epitopes_DBxRefs_RSRC" version="@Pv_IEDB_Epitopes_VER@"
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -166,7 +166,7 @@
             email=""
             institution=""/>
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--extDbRelSpecList "P.vivax contigs from Genbank|@pvContigVer@,P. vivax mitochondrial genome|@pvMitoVer@"</pluginArgs>
+        <pluginArgs>--extDbRelSpecList "Pvivax_contigsGB_RSRC|@Pvivax_contigsGB_VER@,Pvivax_mitochondrial_RSRC|@Pvivax_mitochondrial_VER@"</pluginArgs>
     </resource> 
 
 
@@ -274,7 +274,7 @@
     </resource>
 
 
-<resource resource="P.vivax_DBRefs_RSRC" version="2008-07-18"
+<resource resource="Pvivax_DBRefs_RSRC" version="2008-07-18"
        project="PlasmoDB"
         displayName="P. vivax Genbank source_id DBRefs"
         organisms="P.vivax"
@@ -293,7 +293,7 @@
         </description>
     </resource>
 
-<resource resource="P.vivax_sequenceGB_DBRefs_RSRC" version="2008-05-29"
+<resource resource="Pvivax_sequenceGB_DBRefs_RSRC" version="2008-05-29"
        project="PlasmoDB"
         displayName="P. vivax Genbank contigs sequences DBRefs"
         organisms="P.vivax"
@@ -354,7 +354,7 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
   </resource>
 
 
-<resource resource="P.vivax_Clinical_Proteomics_RSRC" version="2009-08-11" 
+<resource resource="Pvivax_Clinical_Proteomics_RSRC" version="2009-08-11" 
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P.vivax proteomics data from clinical samples (Tatu)"
@@ -372,3 +372,4 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
         </description>	
     </resource> 
 </resources>
+
