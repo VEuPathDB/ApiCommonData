@@ -1,5 +1,5 @@
 
-    <resource resource="Pf_dbEST_RSRC" version=@pf_dbESTVersion@
+    <resource resource="Pf_dbEST_RSRC" version="@Pf_dbEST_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
@@ -38,7 +38,7 @@
         </description>
     </resource>
 
-    <resource resource="WatanabePf3D7_PredictedTranscripts_RSRC" version=@PfalciparumPredictedTranscriptsExtDbVersion@
+    <resource resource="WatanabePf3D7_PredictedTranscripts_RSRC" version="@WatanabePf3D7_PredictedTranscripts_VER@"
        project="PlasmoDB"
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. falciparum 3D7 predicted full length transcripts"
         organisms="P. falciparum"
@@ -102,7 +102,7 @@
     </resource> 
  
  
-    <resource resource="P.falciparum_chromosomes_RSRC" version=@PfalciparumChromosomesVersion@
+    <resource resource="Pfalciparum_chromosomes_RSRC" version="@Pfalciparum_chromosomes_VER@"
        project="PlasmoDB"
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         organisms="P.falciparum"
@@ -117,7 +117,7 @@
         </description>
     </resource>
 
-<resource resource="P.falciparum_mito_RSRC" version="2009-02-19" parentResource="P.falciparum_chromosomes"
+<resource resource="Pfalciparum_mito_RSRC" version="2009-02-19" parentResource="Pfalciparum_chromosomes_RSRC"
           plugin="ApiCommonData::Load::Plugin::LoadNothing"
           displayName="P. falicparum mitochondrial sequence and annotation"
           organisms="P.falciparum"
@@ -132,7 +132,7 @@
         </description>
     </resource>
 
-<resource resource="P.falciparum_apicoplast_RSRC" version="2009-02-19" parentResource="P.falciparum_chromosomes"
+<resource resource="Pfalciparum_apicoplast_RSRC" version="2009-02-19" parentResource="Pfalciparum_chromosomes_RSRC"
           plugin="ApiCommonData::Load::Plugin::LoadNothing"
           displayName="P. falicparum apicoplast sequence and annotation"
           organisms="P.falciparum"
@@ -148,7 +148,7 @@
     </resource>
 
 
-<resource resource="P.falciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
+<resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
        project="PlasmoDB"
         displayName="P. falicparum chromosomes DBRefs"
         organisms="P.falciparum"
@@ -185,7 +185,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-<resource resource="Su_P.falciparum_Microsatellite_Markers_RSRC" version="2008-05-29" 
+<resource resource="Su_Pfalciparum_Microsatellite_Markers_RSRC" version="2008-05-29" 
        project="PlasmoDB"
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         category="Genome"
@@ -206,7 +206,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-    <resource resource="P.falciparum_old_annotations_RSRC" version="5.5" parentResource="P.falciparum_chromosomes"
+    <resource resource="Pfalciparum_old_annotations_RSRC" version="5.5" parentResource="Pfalciparum_chromosomes_RSRC"
        project="PlasmoDB"
         displayName="P. falciparum (3D7) chromosomes annotation, PlasmoDB version 5.5"
         organisms="P.falciparum"
@@ -249,7 +249,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
 
-    <resource resource="Pf_IEDB_Epitopes_RSRC" version=@pf_iedbVersion@
+    <resource resource="Pf_IEDB_Epitopes_RSRC" version="@Pf_IEDB_Epitopes_VER@"
        project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
@@ -279,7 +279,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="ignore"
         plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
         <manualGet fileOrDir="common/empty" />
-         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pf_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
+         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../Pf_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
             <![CDATA[
@@ -397,7 +397,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource>
     
-   <resource resource="sangerItGhanaSnps_RSRC" version="2006-10-21"
+   <resource resource="sangerItGhanaSnps_RSRC" version="@sangerItGhanaSnps_VER@"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Ghana1 and IT SNPs, Wellcome Trust Sanger Institute"
@@ -421,7 +421,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 	<publication pmid="17159978"/> 
     </resource> 
 
-  <resource resource="sangerPReichenowiSnps_RSRC" version="2006-10-21"       
+  <resource resource="sangerPReichenowiSnps_RSRC" version="@sangerPReichenowiSnps_VER@"       
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
@@ -446,7 +446,7 @@ Based on whole genome sequence for P. reichenowi_Oscar
     </resource> 
 
          
-    <resource resource="Pf_Su_SNPs_RSRC" version="2006-08-26"
+    <resource resource="Pf_Su_SNPs_RSRC" version="@Pf_Su_SNPs_VER@"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the NIH"
@@ -467,7 +467,7 @@ Based on CDS sequences from strains 3D7, 7G8, D10, Dd2, HB3
         <publication pmid="17159981"/>
     </resource>
     
-    <resource resource="Pf_Broad_SNPs_RSRC" version="2007-08-01"
+    <resource resource="Pf_Broad_SNPs_RSRC" version="@Pf_Broad_SNPs_VER@"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from the Broad Institute"
@@ -491,7 +491,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
     </resource> 
 
 
-    <resource resource="Pf_plasmoDbCombinedSnps_RSRC" version="2007-08-01"
+    <resource resource="Pf_plasmoDbCombinedSnps_RSRC" version="@Pf_plasmoDbCombinedSnps_VER@"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="SNPs from all P. falciparum strains"
@@ -529,7 +529,7 @@ Based on whole genome sequence for strains Dd2 and HB3, and partial genome seque
         <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
-    <resource resource="WinzelerGeneticVariationArray_RSRC" version="2006-10-16"
+    <resource resource="WinzelerGeneticVariationArray_RSRC" version="@WinzelerGeneticVariationArray_VER@"
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::LoadNothing"
         displayName="Microarray CGH on P. falciparum strains"
@@ -549,7 +549,7 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
     </resource>    
     
     
-  <resource resource="DeRisi_oligos_RSRC" version="2.0"
+  <resource resource="DeRisi_oligos_RSRC" version="@DeRisi_oligos_VER@"
        project="PlasmoDB"
             displayName="Oligos on MOS11 and MOS14 (DeRisi)"
             organisms="P.falciparum"
@@ -570,7 +570,7 @@ Based on whole genome arrays for 14 field and laboratory strains of  <i>P. falci
   </resource>
 
 
-    <resource resource="WirthSageTagArrayDesign_RSRC" version="1"
+    <resource resource="WirthSageTagArrayDesign_RSRC" version="@WirthSageTagArrayDesign_VER@"
        project="PlasmoDB"
         displayName="P. falciparum Sage Tags"
         category="Transcriptome"
@@ -593,7 +593,7 @@ Serial analysis of gene expression (SAGE) was applied to the malarial parasite <
         </description>
     </resource>
     
-    <resource resource="WirthSageTagFreqs_RSRC" version="1"
+    <resource resource="WirthSageTagFreqs_RSRC" version="@WirthSageTagArrayDesign_VER@"
        project="PlasmoDB"
         displayName="P. falciparum 3D7 Experimental SAGE tags"
         category="Transcriptome"
@@ -830,7 +830,7 @@ Mappings of PlasmoDB <i>P. falciparum</i> chromosome IDs to GenBank accession nu
         </description>
     </resource>
   
-    <resource resource="Pf_predictedProteinStructures_RSRC" version=@pf_pdbVersion@
+    <resource resource="Pf_predictedProteinStructures_RSRC" version="@Pf_predictedProteinStructures_VER@"
        project="PlasmoDB"
         displayName="Predicted protein structures"
         organisms="P.falciparum"
@@ -1057,7 +1057,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
     </resource> 
 
 
-  <resource resource="Broad_Isolate_Barcode_RSRC" version="2008-06-13"
+  <resource resource="Broad_Isolate_Barcode_RSRC" version="@Broad_Isolate_Barcode_VER@"
        project="PlasmoDB"
         displayName="Isolate barcode data from Broad"
         plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip"
@@ -1655,7 +1655,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         <publication pmid="19376968"/>
   </resource>
 
-<resource resource="P.falciparum_Clinical_Proteomics_RSRC" version="2009-08-11" 
+<resource resource="Pfalciparum_Clinical_Proteomics_RSRC" version="2009-08-11" 
        project="PlasmoDB"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P. falciparum proteomics data from clinical samples (Tatu)"
@@ -1673,7 +1673,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
         </description>	
     </resource> 
 
-    <resource resource="ChIP_Chip_Henk_Stunnenberg_RSRC" version="2009-05-18"
+    <resource resource="ChIP_Chip_Henk_Stunnenberg_RSRC" version="@ChIP_Chip_Henk_Stunnenberg_VER@"
        project="PlasmoDB"
         displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
         category="ignore"
@@ -1694,7 +1694,7 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
     </resource>
 
 
-    <resource resource="ChIP_Chip_Artur_Scherf_RSRC" version="2008-09-23"
+    <resource resource="ChIP_Chip_Artur_Scherf_RSRC" version="@ChIP_Chip_Artur_Scherf_VER@"
        project="PlasmoDB"
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
         category="Genome"
@@ -1715,7 +1715,7 @@ Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactio
     </resource>
 
 
-    <resource resource="ChIP_Chip_Till_Voss_RSRC" version="2009-08"
+    <resource resource="ChIP_Chip_Till_Voss_RSRC" version="@ChIP_Chip_Till_Voss_VER@"
        project="PlasmoDB"
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
         category="Genome"
@@ -1906,7 +1906,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
     </resource>
 
 
-   <resource resource="Pfalciparum_ECNumbers_RSRC" version="2010-02-01"
+   <resource resource="Pfalciparum_ECNumbers_RSRC" version="@Pfalciparum_chromosomes_VER@"
        project="PlasmoDB"
          plugin="GUS::Community::Plugin::InsertECMapping"
          displayName="EC Number Mapping for Plasmodium falciparum genes"
@@ -1925,7 +1925,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
- <resource resource="P.falciparum_anticodons_RSRC" version="2007-06-28"
+ <resource resource="Pfalciparum_anticodons_RSRC" version="2007-06-28"
        project="PlasmoDB"
         displayName="P. falciparum (3D7) anticodons"           
         organisms="P.falciparum"
