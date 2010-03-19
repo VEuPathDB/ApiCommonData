@@ -177,7 +177,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         />
 
         <unpack>makeGoAssocFile --fileOrDir @dataDir@/%RESOURCE_VERSION% --format embl --fileExt embl.gz --output_file @dataDir@/gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
-        <pluginArgs>--externalDatabaseSpec %RESOURCE_NAME%|%RESOURCE_VERSION% --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec %RESOURCE_NAME%|%RESOURCE_VERSION% --inputFile @dataDir@/gene_association.Pfalciparum --goExternalDatabaseSpec "GO_RSRC|@GO_VER@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum 3D7</i> Gene Ontology  associations from GeneDB
@@ -241,7 +241,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="Proteome"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">
         <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
-        <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "Gene Ontology|@goVer@" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
+        <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "GO_RSRC|@GO_VER@" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
         <description>
             <![CDATA[
    <i>P. falciparum</i> Gene Ontology associations assigned by GeneDB.
@@ -295,7 +295,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         category="ignore">
         <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/CorrectGeneAliases/%RESOURCE_VERSION%/aliases.tab" />
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "P.falciparum_chromosomes|@pfChromosomeVer@"</pluginArgs>
+        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@"</pluginArgs>
     </resource> 
 
 <resource resource="Pf_Entrez_DBRefs_RSRC" version="2009-04-29"
@@ -880,7 +880,7 @@ Computationally generated 3-D structure models, seeded with structures from PDB.
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/PEXEL_MOTIF_AND_POSITION --motif "{R,(NOT R,K,E,D),(L,I),(NOT R,K,E,D),(E,D,Q)}" --motifName "secretome-cowman-Motif" --description "motif" --category "secretome" --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/PEXEL_MOTIF_AND_POSITION --motif "{R,(NOT R,K,E,D),(L,I),(NOT R,K,E,D),(E,D,Q)}" --motifName "secretome-cowman-Motif" --description "motif" --category "secretome" --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@"</pluginArgs>
         <description>
             <![CDATA[
 A conserved pentameric sequence was shown to play a central role in protein export into the host cell and used to predict the exported proteome in <i>P. falciparum</i>. 
@@ -900,7 +900,7 @@ A conserved pentameric sequence was shown to play a central role in protein expo
             email = "whetzel@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/final_positions2.txt --motif "RxSRILAExxx" --motifName "secretome-haldar-Motif" --description "motif" --category "secretome" --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@"</pluginArgs>
         <description>
             <![CDATA[
 An 11-amino acid signal required for the secretion of proteins from the <i>P. falciparum</i> vacuole to the human erythrocyte was identified leading to a predicted secretome.
@@ -919,7 +919,7 @@ An 11-amino acid signal required for the secretion of proteins from the <i>P. fa
             email = "jldommer@pcbi.upenn.edu"
             institution = "University of Pennsylvania"
         />
-        <pluginArgs>--inputFile @dataDir@/apFile.txt --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Sanger P. falciparum chromosomes|@pfSangerChrVer@" --category "secretome"</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/apFile.txt --extDbRelSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --seqExtDbRelSpec "Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@" --category "secretome"</pluginArgs>
         <description>
             <![CDATA[
 Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified based on amino acid characteristics of transit peptides that target proteins to the apicoplast.
@@ -958,7 +958,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="S.M.Khan@lumc.nl"
             institution="Leiden University"
         />
-        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Pf_merozoite_peptides_shahid_kahn.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
               This data was provided by the Leiden Malaria Group (prepublication from Dr. Shahid Khan). Mass spec data was generated from <i>P. falciparum</i> merozoites.
@@ -978,7 +978,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito oocysts by Edwin Lasonder lab
@@ -997,7 +997,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre"
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Oocyst-derived.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
               Mass Spec of Mosquito oocyst-derived sporozoites by Edwin Lasonder lab
@@ -1015,7 +1015,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             email="E.Lasonder@ncmls.ru.nl"
             institution= "Radboud University Nijmegen Medical Centre" 
         />
-        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/Lasonder_MOSQUITO_STAGES_Salivary.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
              Mass Spec of Mosquito salivary gland sporozoites by Edwin Lasonder lab
@@ -1043,7 +1043,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
        </resource>   
 
 
- <resource resource="updateEviganSecondaryScore_RSRC" version="1" 
+ <resource resource="updateEviganSecondaryScore_RSRC" version="@Evigan_VER@" 
        project="PlasmoDB"
         displayName="updating secondary score for evigan gene models" 
         category="ignore" 
@@ -1052,7 +1052,7 @@ Putative apicoplast proteins in the <i>P. falciparum</i> genome were identified 
             contact = "Bindu Gajria" 
             email = "bindu@pcbi.upenn.edu" 
             institution = "University of Pennsylvania" />
-        <unpack>updateEviganSecondaryScore.pl --evigan_ext_db_rls_spec "P. falciparum Evigan Gene Models|%RESOURCE_VERSION%" </unpack>
+        <unpack>updateEviganSecondaryScore.pl --evigan_ext_db_rls_spec "Evigan_RSRC|@Evigan_VER@" </unpack>
         <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource> 
 
@@ -1502,7 +1502,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage trophozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@' --developmentalStage trophozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1522,7 +1522,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage merozoites</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@' --developmentalStage merozoites</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1541,7 +1541,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage gametocytes</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@' --developmentalStage gametocytes</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1560,7 +1560,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@' --developmentalStage sporozoite</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@' --developmentalStage sporozoite</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
@@ -1580,7 +1580,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="jbrestel@pcbi.upenn.edu"
             institution="CBIL"
         />
-        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
              Peptides identified in two stages of the <i>P. falciparum</i> life cycle and the iRBC Membrane, identified by multi-dimensional protein identification technology.
@@ -1665,7 +1665,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
             email="oharb@pcbi.upenn.edu"
             institution= "CBIL" 
         />
-        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.falciparum_chromosomes|@pfChromosomeVer@'</pluginArgs>
+        <pluginArgs>--inputFile @dataDir@/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@Pfalciparum_chromosomes_VER@'</pluginArgs>
         <description>
             <![CDATA[
              Data produced by proteomics analysis of clinical isolates of early stages of <i>P. falciparum</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
