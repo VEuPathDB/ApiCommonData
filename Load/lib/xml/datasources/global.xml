@@ -1,5 +1,5 @@
 <resources>
-  <resource resource="taxonomy_RSRC" version="2009-02-23" 
+  <resource resource="taxonomy_RSRC" version="@taxonomy_VER@" 
             displayName="NCBI Taxonomy"
             publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
             category="Ontology"
@@ -16,7 +16,7 @@
     </description>
   </resource>
 
-    <resource resource="SO_RSRC" version="2.3"
+    <resource resource="SO_RSRC" version="@SO_VER@"
         displayName="Sequence Ontology"        
         publicUrl="http://song.sourceforge.net"
         category="Ontology"      
@@ -61,7 +61,7 @@
         </description>
     </resource>
 
-<resource resource="GO_RSRC" version="4.540"
+<resource resource="GO_RSRC" version="@GO_VER@"
             displayName="Gene Ontology"
             publicUrl="http://www.geneontology.org"
             category="Ontology"
@@ -76,7 +76,7 @@
       </description>
   </resource>   
 
- <resource resource="NRDB_RSRC" version="2009-02-22"
+ <resource resource="NRDB_RSRC" version="@NRDB_VER@"
             plugin="ApiCommonData::Load::Plugin::LoadNothing"
             displayName="GenBank NRDB"
             publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
@@ -140,7 +140,7 @@
       <pluginArgs>--externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     </resource>  
    
-        <resource resource="InterproscanData_RSRC" version="19.0"
+        <resource resource="InterproscanData_RSRC" version="@InterproscanData_VER@"
            plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
            displayName="InterPro Database"
            publicUrl="http://www.ebi.ac.uk/interpro"
