@@ -1,4 +1,4 @@
-
+<resources>
     <resource resource="Pv_dbEST_RSRC" version="2009-02-23"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
@@ -58,7 +58,7 @@
         <publication pmid="17151081"/>
     </resource>
     
-<resource resource="P.vivax_contigsGB_RSRC" version=@pvContigVer@
+<resource resource="P.vivax_contigsGB_RSRC" version="@pvContigVer@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         displayName="P. vivax contig sequence and annotation from Genbank"
@@ -119,7 +119,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet fileOrDir="PlasmoDB/pvivax/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPviv.txt" 
             contact="IEDB"
             email=""
@@ -140,7 +140,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir="common/empty" 
             contact="IEDB"
             email=""
@@ -241,7 +241,7 @@
        project="PlasmoDB"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"
             contact=""
             email=""
@@ -259,7 +259,7 @@
        project="PlasmoDB"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pvivax/dbxref/Uniprot/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
             contact=""
             email=""
@@ -367,7 +367,8 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
         <pluginArgs>--inputFile @dataDir@/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'P.vivax contigs from Genbank|@pvContigVer@'</pluginArgs>
         <description>
             <![CDATA[
-             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. vivax</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
+             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. vivax</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach23 using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
           ]]>
         </description>	
     </resource> 
+</resources>
