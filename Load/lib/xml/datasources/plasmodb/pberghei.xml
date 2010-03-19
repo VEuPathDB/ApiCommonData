@@ -1,4 +1,6 @@
-    <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
+ <resources>
+
+   <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="Plasmodium dbEST ESTs"
@@ -442,3 +444,20 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
          ]]>
         </description>
     </resource>
+
+<resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
+          project="PlasmoDB"
+          plugin=""ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+          displayName="GO Association for Plasmodium berghei genes"
+          category="Proteome">
+          <manualGet fileOrDir = "PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/gff"
+         />
+         <pluginArgs></pluginArgs>
+         <description>
+            <![CDATA[
+         GO Associations for <i>P. berghei</i> genes.  
+         ]]>
+        </description>
+    </resource>
+
+</resources>
