@@ -42,7 +42,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet fileOrDir="PlasmoDB/pberghei/epitope/IEDB/%RESOURCE_VERSION%" 
             contact="IEDB"
             email=""
@@ -63,8 +63,8 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        <manualGet fileOrDir="common/empty />
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+        <manualGet fileOrDir="common/empty" />
         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pb_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
         <description>
@@ -80,7 +80,7 @@
         plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
         displayName="CorrectGeneAliases"
         category="ignore">
-        <manualGet fileOrDir=PlasmoDB/pberghei/dbxref/CorrectGeneAliases/%RESOURCE_VERSION%/aliases.tab" />
+        <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/CorrectGeneAliases/%RESOURCE_VERSION%/aliases.tab" />
         <unpack>cleanUpDBRefNaFeature.pl</unpack>
         <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
     </resource> 
@@ -189,7 +189,7 @@
        project="PlasmoDB"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pberghei/dbxref/UniprotGene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
         />
 
@@ -392,7 +392,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
             category="Transcriptome"
             organisms="P. berghei"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-     <manualGet fileOrDir=""PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/" 
+     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/" 
                 contact="Greg Grant"
                 email="ggrant@pcbi.upenn.edu"
                 institution="University of Pennsylvania"
@@ -412,7 +412,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
             organisms="P. berghei"
             category="ignore"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult">
-     <manualGet fileOrDir = ""PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/page/newFormat"
+     <manualGet fileOrDir = "PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/page/newFormat"
             contact="John Brestelli"
             email="jbrestel@pcbi.upenn.edu"
             institution="EuPathDB"
@@ -447,7 +447,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
 
 <resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
           project="PlasmoDB"
-          plugin=""ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
           displayName="GO Association for Plasmodium berghei genes"
           category="Proteome">
           <manualGet fileOrDir = "PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/gff"

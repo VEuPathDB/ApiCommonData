@@ -77,7 +77,7 @@
        project="PlasmoDB"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"
         />
 
@@ -92,7 +92,7 @@
        project="PlasmoDB"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pknowlesi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
         />
 
@@ -108,7 +108,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet fileOrDir="PlasmoDB/pknowlesi/epitope/IEDB/%RESOURCE_VERSION%" 
             contact="IEDB"
             email=""
@@ -129,7 +129,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir="common/empty" /> 
             contact="IEDB"
             email=""
@@ -174,7 +174,7 @@
 
 <resource resource="GOAssociations_Pknowlesi_RSRC" version="@Pknowlesi_chromosomes_VER@"
           project="PlasmoDB"
-          plugin=""ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
           displayName="GO Association for Plasmodium berghei genes"
           category="Proteome">
           <manualGet fileOrDir = "PlasmoDB/knowlesi/genome/P.knowlesi_chromosomes/%RESOURCE_VERSION%/gff"

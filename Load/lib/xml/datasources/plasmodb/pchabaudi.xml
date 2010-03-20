@@ -40,7 +40,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/%RESOURCE_VERSION%" 
             contact="IEDB"
             email=""
@@ -61,7 +61,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir="common/empty" /> 
         <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pc_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
         <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
@@ -152,7 +152,7 @@
        project="PlasmoDB"
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"
             contact=""
             email=""
@@ -170,7 +170,7 @@
        project="PlasmoDB"
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
          <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
             contact=""
             email=""
@@ -206,7 +206,7 @@
 
 <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
           project="PlasmoDB"
-          plugin=""ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
           displayName="GO Association for Plasmodium chabaudi genes"
           category="Proteome">
           <manualGet fileOrDir = "PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"

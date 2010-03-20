@@ -1,3 +1,4 @@
+<resources>
     <resource resource="Py_dbEST_RSRC" version="@Py_dbEST_VER@"
        project="PlasmoDB"
         plugin="GUS::Supported::Plugin::dbEST"
@@ -43,7 +44,7 @@
         organisms="P. yoelii"
         category="Transcriptome"
         plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-        <manualGet fileOrDir=""PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_py.fas"
+        <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_py.fas"
             contact="Junichi Watanabe"
             email="jwatanab@ims.u-tokyo.ac.jp"
             institution="Department of Parasitology, Institute of Medical Science, University of Tokyo"
@@ -101,7 +102,7 @@
        </resource>
 
  
-    <resource resource="Pyoelii_Kappe_Annotation_RSRC" version=@Pyoelii_Kappe_Annotation_VER@
+    <resource resource="Pyoelii_Kappe_Annotation_RSRC" version="@Pyoelii_Kappe_Annotation_VER@"
        project="PlasmoDB"
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         category="Genome"
@@ -129,7 +130,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%RESOURCE_VERSION%/" 
             contact="IEDB"
             email=""
@@ -150,7 +151,7 @@
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
         <manualGet fileOrDir="common/empty" 
             contact="IEDB"
             email=""
@@ -428,3 +429,4 @@ Mutual information, an entropy based, information theoretic measure, was used to
           ]]>
         </description>
     </resource>
+</resources>
