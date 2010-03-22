@@ -1,42 +1,47 @@
-    
 <resources>
-
-
-    <resource resource="Pg_dbEST_RSRC" version="@Pg_dbEST_VER@"
-       project="PlasmoDB"
-        plugin="GUS::Supported::Plugin::dbEST"
+  <resource resource="Pg_dbEST_RSRC" version="@Pg_dbEST_VER@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="common/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @dataDir@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <info
         displayName="Plasmodium dbEST ESTs"
+        project="PlasmoDB"
+        organisms=""
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
-        <manualGet fileOrDir = "common/empty"
-        />
-        <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @dataDir@/taxonIdFile</unpack>
-        <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-        <description>
-            <![CDATA[
-                  Plasmodium ESTs from dbEST.
-          ]]>
-        </description>
-    </resource>
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Plasmodium ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-    <resource resource="Pgallinaceum_Contigs_RSRC" version="@Pgallinaceum_Contigs_VER@" 
-       project="PlasmoDB"
-        url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="P.gallinaceum" 
-        displayName="P. gallinaceum contigs" 
-        category="Genome">
-        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
-        <unpack>mkdir @dataDir@/P.gallinaceum.contigs_fixed</unpack>
-        <unpack>cat @dataDir@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
-        <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>  
-        <description>  
-            <![CDATA[
-                 Contig sequences for <i>P. gallinaceum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.
-          ]]> 
-        </description>
-    </resource>
-
+  <resource resource="Pgallinaceum_Contigs_RSRC" version="@Pgallinaceum_Contigs_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
+    <unpack>mkdir @dataDir@/P.gallinaceum.contigs_fixed</unpack>
+    <unpack>cat @dataDir@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="P. gallinaceum contigs"
+        project="PlasmoDB"
+        organisms="P.gallinaceum"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Contig sequences for <i>P. gallinaceum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute.
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
-

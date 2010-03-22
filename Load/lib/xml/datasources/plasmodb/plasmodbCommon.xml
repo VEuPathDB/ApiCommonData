@@ -1,154 +1,196 @@
 <resources>
-
-    <resource resource="PlasmodiumGenbankIsolates_RSRC" version="@PlasmodiumGenbankIsolates_VER@"
-        project="PlasmoDB"
+  <resource resource="PlasmodiumGenbankIsolates_RSRC" version="@PlasmodiumGenbankIsolates_VER@"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/plasmoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences_fixed_1.gb"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <info
         displayName="Plasmodium isolates from Genbank"
-        category="Genome"
+        project="PlasmoDB"
         organisms="Plasmodium"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-           <manualGet fileOrDir="PlasmoDB/common/isolate/plasmoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences_fixed_1.gb" 
-            contact="GenBank"
-            email="info@ncbi.nlm.nih.gov"
-            institution="NCBI"
-        />
-        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
-        <description>
-            <![CDATA[
-Plasmodium isolates from Genbank
-          ]]>
-        </description>
-    </resource>
+        category="Genome"
+        publicUrl=""
+        contact="GenBank"
+        email="info@ncbi.nlm.nih.gov"
+        institution="NCBI">
+      <description>
+        <![CDATA[
+         Plasmodium isolates from Genbank
+        ]]>
+      </description>
+    </info>
+  </resource>
 
- <resource resource="isolateVocabularyMap_isolation_source_RSRC" version="2009-06-14" 
+  <resource resource="isolateVocabularyMap_isolation_source_RSRC" version="2009-06-14"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/isolationSource.xml"/>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @dataDir@/isolationSource.xml</unpack>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="update isolate vocabulary-isolation_source"
         project="PlasmoDB"
-        displayName="update isolate vocabulary-isolation_source" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/isolationSource.xml" 
-            contact = "Bindu Gajria" 
-            email = "bindu@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-        <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @dataDir@/isolationSource.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    </resource> 
-
- <resource resource="isolateVocabularyMap_specific_host_RSRC" version="2009-06-14" 
-        project="PlasmoDB"
-        displayName="update isolate vocabulary-specific_host" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/specificHost.xml" 
-            contact = "Bindu Gajria" 
-            email = "bindu@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-        <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @dataDir@/specificHost.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    </resource> 
-
-  <resource resource="isolateVocabularyMap_geographic_location_RSRC" version="2009-06-14" 
-        project="PlasmoDB"
-        displayName="update isolate vocabulary-geographic_location" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" > 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/geographicLocation.xml" 
-            contact = "Bindu Gajria" 
-            email = "bindu@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-        <unpack>isolateVocabulary.pl insert  --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/geographicLocation.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource> 
-
- <resource resource="isolateVocabularyMap_product_RSRC" version="2009-06-14" 
-        project="PlasmoDB"
-        displayName="update isolate vocabulary-product" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing"> 
-        <manualGet fileOrDir = "PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/product.xml" 
-            contact = "Bindu Gajria" 
-            email = "bindu@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-        <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/product.xml</unpack>
-        <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    </resource> 
-
-
-
-    <resource resource="BibRefType_RSRC" version="1"
-        project="PlasmoDB"
-        plugin="GUS::Supported::Plugin::LoadGusXml"
-        displayName="Bibliographic Reference Types"
+        organisms=""
         category="ignore"
-        publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html">
-      <manualGet fileOrDir="PlasmoDB/common/misc/BibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml" 
-            contact="John Brestelli"
-            email="jbrestel@pcbi.upenn.edu"
-            institution="University of Pennsylvania"/>	
-      <pluginArgs>--filename @dataDir@/ncbiPublicationTypes.xml</pluginArgs>
-    </resource>  
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-
-    <resource resource="OrthoMCL_Phyletic_RSRC" version="4"
+  <resource resource="isolateVocabularyMap_specific_host_RSRC" version="2009-06-14"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/specificHost.xml"/>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @dataDir@/specificHost.xml</unpack>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="update isolate vocabulary-specific_host"
         project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="isolateVocabularyMap_geographic_location_RSRC" version="2009-06-14"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/geographicLocation.xml"/>
+    <unpack>isolateVocabulary.pl insert  --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/geographicLocation.xml</unpack>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="update isolate vocabulary-geographic_location"
+        project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="isolateVocabularyMap_product_RSRC" version="2009-06-14"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/product.xml"/>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/product.xml</unpack>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="update isolate vocabulary-product"
+        project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="BibRefType_RSRC" version="1"
+      plugin="GUS::Supported::Plugin::LoadGusXml">
+    <manualGet fileOrDir="PlasmoDB/common/misc/BibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml"/>
+    <pluginArgs>--filename @dataDir@/ncbiPublicationTypes.xml</pluginArgs>
+    <info
+        displayName="Bibliographic Reference Types"
+        project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="OrthoMCL_Phyletic_RSRC" version="4"
+      plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile">
+    <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
+    <pluginArgs>--groupsFile @dataDir@/orthomclGroups.txt --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe"</pluginArgs>
+    <info
         displayName="OrthoMCL phyletic profiles"
-        organisms="P.falciparum"
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
-        publicUrl="http://orthomcl.cbil.upenn.edu">
-           <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"
-            email="pinney@pcbi.upenn.edu"
-            contact="Deborah Pinney"
-            institution="PCBI"
-        />
-        <pluginArgs>--groupsFile @dataDir@/orthomclGroups.txt --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe"</pluginArgs>
-        <description>
-            <![CDATA[
-OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
-          ]]>
-        </description>
-        <publication pmid="16381887"/>
-    </resource>
-
-<resource resource="OrthoMCL_RSRC" version="4"
         project="PlasmoDB"
-        displayName="Orthologous groups generated using OrthoMCL"
         organisms="P.falciparum"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
-        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
-        <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"
-            email="pinney@pcbi.upenn.edu"
-            contact="Deborah Pinney"
-            institution="PCBI"
-        />
-        <pluginArgs>--OrthologFile @dataDir@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
-          ]]>
-        </description>
-        <publication pmid="12952885"/>
-    </resource>
+        contact="Deborah Pinney"
+        email="pinney@pcbi.upenn.edu"
+        institution="PCBI">
+      <description>
+        <![CDATA[
+         OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+        ]]>
+      </description>
+    <publication pmid="16381887"/>
+    </info>
+  </resource>
 
-<resource resource="OrthoMCLTree_RSRC" version="4"
+  <resource resource="OrthoMCL_RSRC" version="4"
+      plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
+    <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
+    <pluginArgs>--OrthologFile @dataDir@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+    <info
+        displayName="Orthologous groups generated using OrthoMCL"
         project="PlasmoDB"
-        displayName="OrthoMCL phyletic pattern tree"
         organisms="P.falciparum"
         category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon"
-        publicUrl="http://orthomcl.cbil.upenn.edu">
-        <manualGet fileOrDir="PlasmoDB/common/phylogeny/OrthoMCLTaxon/%RESOURCE_VERSION%/"
-            email="pinney@pcbi.upenn.edu"
-            contact="Deborah Pinney"
-            institution="PCBI"
-        />
-        <pluginArgs>--cladeFile @dataDir@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @dataDir@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
-        <description>
-            <![CDATA[
-    Phyletic pattern tree for the organisms used in OrthoMCL.
-          ]]>
-        </description>
-    </resource>
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        contact="Deborah Pinney"
+        email="pinney@pcbi.upenn.edu"
+        institution="PCBI">
+      <description>
+        <![CDATA[
+         OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+        ]]>
+      </description>
+    <publication pmid="12952885"/>
+    </info>
+  </resource>
 
+  <resource resource="OrthoMCLTree_RSRC" version="4"
+      plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon">
+    <manualGet fileOrDir="PlasmoDB/common/phylogeny/OrthoMCLTaxon/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--cladeFile @dataDir@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @dataDir@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
+    <info
+        displayName="OrthoMCL phyletic pattern tree"
+        project="PlasmoDB"
+        organisms="P.falciparum"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        contact="Deborah Pinney"
+        email="pinney@pcbi.upenn.edu"
+        institution="PCBI">
+      <description>
+        <![CDATA[
+         Phyletic pattern tree for the organisms used in OrthoMCL.
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
-
-

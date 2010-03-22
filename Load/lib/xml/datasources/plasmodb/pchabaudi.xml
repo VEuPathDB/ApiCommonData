@@ -1,120 +1,153 @@
 <resources>
-
-    <resource resource="Pc_dbEST_RSRC" version="@Pc_dbEST_VER@"
-       project="PlasmoDB"
-        plugin="GUS::Supported::Plugin::dbEST"
+  <resource resource="Pc_dbEST_RSRC" version="@Pc_dbEST_VER@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="common/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5825 --outputFile @dataDir@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
+    <info
         displayName="Plasmodium dbEST ESTs"
+        project="PlasmoDB"
+        organisms=""
         category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/">
-        <manualGet fileOrDir = "common/empty"
-        />
-        <unpack>getSubTaxa --ncbiTaxId 5825 --outputFile @dataDir@/taxonIdFile</unpack>
-        <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
-        <description>
-            <![CDATA[
-                  Plasmodium ESTs from dbEST.
-          ]]>
-        </description>
-    </resource>
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Plasmodium ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-    <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
-       project="PlasmoDB"
+  <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%  --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <info
         displayName="P. chabaudi (AS) chromosome sequences and annotation"
-        category="Genome"
+        project="PlasmoDB"
         organisms="P.chabaudi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-         <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%"/>
-        <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%  --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
-        <description>
-            <![CDATA[
-   Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
    The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-           ]]>
-        </description>
-    </resource> 
-
-    <resource resource="Pc_IEDB_Epitopes_RSRC" version="@Pc_IEDB_Epitopes_VER@"
-       project="PlasmoDB"
-        publicUrl="http://www.immuneepitope.org"
+  <resource resource="Pc_IEDB_Epitopes_RSRC" version="@Pc_IEDB_Epitopes_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/%RESOURCE_VERSION%"/>
+    <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
+    <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%RESOURCE_VERSION%  --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
+    <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <info
         displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms=""
         category="Proteome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/%RESOURCE_VERSION%" 
-            contact="IEDB"
-            email=""
-            institution="IEDB"
-        />
-        <unpack>mkdir @dataDir@/IEDB_Epitopes_fixed</unpack>
-        <unpack>createEpitopeFilesFromExcel --excelDir @dataDir@/%RESOURCE_VERSION%  --outDir @dataDir@/IEDB_Epitopes_fixed </unpack>
-        <pluginArgs>--seqFileDir @dataDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
-        <description>
-            <![CDATA[
-   IEDB epitopes.
-          ]]>
-        </description>
-    </resource>
-    
-    <resource resource="Pc_IEDB_Epitopes_DBxRefs_RSRC" version="@Pc_IEDB_Epitopes_VER@"
-       project="PlasmoDB"
         publicUrl="http://www.immuneepitope.org"
-        displayName="IEDB Epitopes"
-        category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir="common/empty" /> 
-        <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pc_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
-        <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
-        <description>
-            <![CDATA[
-   IEDB epitopes.
-          ]]>
-        </description>
-    </resource>
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
+  <resource resource="Pc_IEDB_Epitopes_DBxRefs_RSRC" version="@Pc_IEDB_Epitopes_VER@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="common/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pc_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt </unpack>
+    <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
   <resource resource="Pc_CorrectGeneAliases_RSRC" version="1"
-       project="PlasmoDB"
-        plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases"
+      plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
+    <manualGet fileOrDir="common/empty"/>
+    <unpack>cleanUpDBRefNaFeature.pl</unpack>
+    <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pchabaudi_chromosomes_RSRC|@Pchabaudi_chromosomes_VER@"</pluginArgs>
+    <info
         displayName="CorrectGeneAliases"
-        category="ignore">
-        <manualGet fileOrDir="common/empty" />  
-        <unpack>cleanUpDBRefNaFeature.pl</unpack>
-        <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pchabaudi_chromosomes_RSRC|@Pchabaudi_chromosomes_VER@"</pluginArgs>
-    </resource> 
-
-
-<resource resource="Pc_Entrez_DBRefs_RSRC" version="2009-04-29"
-       project="PlasmoDB"
-        displayName="DBRefs for Entrez gene links"
+        project="PlasmoDB"
+        organisms=""
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Entrez/%RESOURCE_VERSION%/gene2entrez.tab" 
-            contact = "Wei Li"
-            email = "weili1@pcbi.upenn.edu"
-            institution = "University of Pennsylania"
-        />
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-            DBRefs for Entrez gene links.
-            ]]>
-        </description>
-    </resource>
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-<resource resource="Pc_Phenotype_DBRefs_RSRC" version="2009-08-14"
-       project="PlasmoDB"
+  <resource resource="Pc_Entrez_DBRefs_RSRC" version="2009-04-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="DBRefs for Entrez gene links"
+        project="PlasmoDB"
+        organisms=""
+        category="ignore"
+        publicUrl=""
+        contact="Wei Li"
+        email="weili1@pcbi.upenn.edu"
+        institution="University of Pennsylania">
+      <description>
+        <![CDATA[
+         DBRefs for Entrez gene links.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pc_Phenotype_DBRefs_RSRC" version="2009-08-14"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list_08-14-09.txt"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
         displayName="DBRefs for Phenotype db links"
+        project="PlasmoDB"
+        organisms=""
         category="External_links"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs" >
-        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list_08-14-09.txt"
-            contact = "Shahid Kahn"
-            email = "S.M.Khan@lumc.nl"
-        />
-        <pluginArgs>--DbRefMappingFile @dataDir@/geneid_list_08-14-09.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-            Phenotype links from Genetically Modified Rodent Malaria Parasites: 
+        publicUrl=""
+        contact="Shahid Kahn"
+        email="S.M.Khan@lumc.nl"
+        institution="">
+      <description>
+        <![CDATA[
+         Phenotype links from Genetically Modified Rodent Malaria Parasites: 
             <a href="http://www.pberghei.eu/index.php">Pberghei.eu</a>  hosts a database
             containing information on genetically modified rodent malaria parasite
             lines generated by many labs worldwide. Specifically, it contains data
@@ -126,97 +159,116 @@
             information on 'successful' mutants with a clear phenotype, but also
             (un)published mutants without a clear phenotype and (un)published
             negative trials to disrupt genes.
-            ]]>
-        </description>
-    </resource>
+        ]]>
+      </description>
+    </info>
+  </resource>
 
- <resource resource="Pc_Pubmed_DBRefs_RSRC" version="2009-08-14"
-       project="PlasmoDB"
+  <resource resource="Pc_Pubmed_DBRefs_RSRC" version="2009-08-14"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Pubmed/%RESOURCE_VERSION%/gene2pubmed_08_14_09.tab"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
         displayName="DBRefs for pubmed links"
+        project="PlasmoDB"
+        organisms=""
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-        <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Pubmed/%RESOURCE_VERSION%/gene2pubmed_08_14_09.tab"
-            contact = "Wei Li"
-            email = "weili1@pcbi.upenn.edu"
-            institution = "University of Pennsylania"
-        />
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene2pubmed_08_14_09.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-            DBRefs for Entrez pubmed links.
-            ]]>
-        </description>
-    </resource>
+        publicUrl=""
+        contact="Wei Li"
+        email="weili1@pcbi.upenn.edu"
+        institution="University of Pennsylania">
+      <description>
+        <![CDATA[
+         DBRefs for Entrez pubmed links.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-   <resource resource="Pc_Entrez_Gene_dbxref_RSRC" version="2009-12-02"
-       project="PlasmoDB"
+  <resource resource="Pc_Entrez_Gene_dbxref_RSRC" version="2009-12-02"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        project="PlasmoDB"
+        organisms=""
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-         <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"
-            contact=""
-            email=""
-            institution=""
-        />
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-        <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>
-    </resource>
-
-   <resource resource="Pc_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
-       project="PlasmoDB"
+  <resource resource="Pc_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        project="PlasmoDB"
+        organisms=""
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-         <manualGet fileOrDir = "PlasmoDB/pchabaudi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"
-            contact=""
-            email=""
-            institution=""
-        />
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-        <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>
-    </resource>
+  <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
+    <pluginArgs>--ECMappingFile @dataDir@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium chabaudi genes"
+        project="PlasmoDB"
+        organisms=""
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. chabaudi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-   <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
-       project="PlasmoDB"
-         plugin="GUS::Community::Plugin::InsertECMapping"
-         displayName="EC Number Mapping for Plasmodium chabaudi genes"
-         category="Proteome">
-         <manualGet fileOrDir = "PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"
-         />
-        <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
-        <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
-       <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
-   
-        <pluginArgs>--ECMappingFile @dataDir@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-         <description>
-            <![CDATA[
-         EC Number mapping for <i>P. chabaudi</i> genes.  
-         ]]>
-        </description>
-    </resource>
-
-
-<resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
-          project="PlasmoDB"
-          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-          displayName="GO Association for Plasmodium chabaudi genes"
-          category="Proteome">
-          <manualGet fileOrDir = "PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"
-         />
-         <pluginArgs></pluginArgs>
-         <description>
-            <![CDATA[
-         GO Associations for <i>P. chabaudi</i> genes.  
-         ]]>
-        </description>
-    </resource>
-
+  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <pluginArgs></pluginArgs>
+    <info
+        displayName="GO Association for Plasmodium chabaudi genes"
+        project="PlasmoDB"
+        organisms=""
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>P. chabaudi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
