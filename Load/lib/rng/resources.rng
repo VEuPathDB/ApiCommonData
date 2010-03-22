@@ -5,13 +5,9 @@
     <element name="resources">
       <oneOrMore>
         <element name="resource">
-          <attribute name="version"/>
-          <attribute name="displayName"/>
-          <attribute name="category"/>
-          <attribute name="project"/>
-          <attribute name="organisms"/>
-          <attribute name="plugin"/>
           <attribute name="resource"/>
+          <attribute name="version"/>
+          <attribute name="plugin"/>
           <optional>
             <attribute name="parentResource"/>
           </optional>
@@ -25,9 +21,6 @@
             </element>
             <element name="manualGet">
               <attribute name="fileOrDir"/>
-              <attribute name="contact"/>
-              <attribute name="email"/>
-              <attribute name="institution"/>
             </element>
           </choice>
           <zeroOrMore>
@@ -38,14 +31,24 @@
           <element name="pluginArgs">
             <text/>
           </element>
-          <element name="description">
-            <text/>
-          </element>
-          <zeroOrMore>
-            <element name="publication">
-               <attribute name="pmid"/>
+          <element name="info">
+            <attribute name="displayName"/>
+            <attribute name="category"/>
+            <attribute name="project"/>
+            <attribute name="organisms"/>
+            <attribute name="contact"/>
+            <attribute name="email"/>
+            <attribute name="institution"/>
+            <attribute name="publicUrl"/>
+            <element name="description">
+              <text/>
             </element>
-          </zeroOrMore>
+            <zeroOrMore>
+              <element name="publication">
+                 <attribute name="pmid"/>
+              </element>
+            </zeroOrMore>
+          </element>
         </element>
       </oneOrMore>
     </element>
