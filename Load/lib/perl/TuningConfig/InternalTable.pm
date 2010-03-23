@@ -170,7 +170,7 @@ sub getState {
   # check external tuning-table dependencies
   if ($self->getExternalTuningTableDependencies()) {
     foreach my $dependency (@{$self->getExternalTuningTableDependencies()}) {
-      ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external tuning table table " . $dependency->getName());
+      ApiCommonData::Load::TuningConfig::Log::addLog("    depends on external tuning table " . $dependency->getName());
       if ($dependency->getTimestamp() gt $self->{timestamp}) {
 	$needUpdate = 1;
 	ApiCommonData::Load::TuningConfig::Log::addLog("    creation timestamp of $self->{name} ($self->{timestamp}) is older than creation timestamp of " . $dependency->getName() . " (" . $dependency->getTimestamp() . ") -- update needed.");
