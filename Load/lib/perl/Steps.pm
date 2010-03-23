@@ -1501,12 +1501,14 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $organism,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $ncbiTaxId, $taxonName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
-
+  
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+  
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
   my $dbName = join(",", @dbNames);
@@ -1539,9 +1541,12 @@ sub makeTranscriptDownloadFileTransformed {
            FROM apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
+	        sres.taxonname tn,
                 apidb.featurelocation fl
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.external_db_name in ($dbName)
@@ -1550,7 +1555,7 @@ sub makeTranscriptDownloadFileTransformed {
         AND gf.is_deprecated = $deprecated
 EOF
 
-$sql .= " AND organism = '$organism'" if $organism;
+  $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 }
@@ -1619,7 +1624,7 @@ EOF
 }
 
 sub makeInterproDownloadFile {
-  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB, $strain) = @_;
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB, $strain,$ncbiTaxId, $taxonName) = @_;
 
   my $signal = "${species}${name}DownloadFile";
   $signal = "${strain}${name}DownloadFile" if $strain;
@@ -1630,6 +1635,16 @@ sub makeInterproDownloadFile {
   my $release = $propertySet->getProp('projectRelease');
 
   my $siteFileDir = $propertySet->getProp('siteFileDir');
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+
+  my @dbNames = map{"'$_'"} split (/,/,$genomeExtDb);
+
+  my $dbName = join(",", @dbNames);
+
+  my @dbVers = map{"'$_'"} split (/,/,$genomeExtDbVer);
+
+  my $dbVer = join(",", @dbVers);
 
   my $dlDir = "$siteFileDir/downloadSite/$projectDB/release-$release/$species";
 
@@ -1673,16 +1688,19 @@ sub makeInterproDownloadFile {
     dots.genefeature gf,
     dots.transcript t, 
     dots.translatedaafeature taf,
+    sres.taxonname tn,
     dots.translatedaasequence tas 
   WHERE
    gf.external_database_release_id = xdr2.external_database_release_id 
-     AND xdr2.version = '$genomeExtDbVer' 
+     AND xdr2.version in ($dbVer) 
      AND xdr2.external_database_id = xd2.external_database_id 
-     AND xd2.name = '$genomeExtDb'
+     AND xd2.name in ($dbName)
      AND gf.na_feature_id = t.parent_id 
      AND t.na_feature_id = taf.na_feature_id 
      AND taf.aa_sequence_id = tas.aa_sequence_id 
      AND tas.aa_sequence_id = df.aa_sequence_id 
+     AND tas.taxon_id = tn.taxon_id
+     AND tn.name_class = 'scientific name'
      AND df.aa_feature_id = draf.aa_feature_id  
      AND draf.db_ref_id = dr.db_ref_id 
      AND dr.external_database_release_id = xdr1.external_database_release_id 
@@ -1693,6 +1711,7 @@ sub makeInterproDownloadFile {
      AND xdr3.external_database_id = xd3.external_database_id 
      AND xd3.name = '$interproExtDb'
 EOF
+  $sql .= " and tas.taxon_id in ($taxonId)" if $taxonId;
 
    if ($projectDB =~ /ortho/i) {
 
@@ -1736,7 +1755,7 @@ EOF
 
   $mgr->runCmd($cmd);
 
-  $mgr->runCmd("gzip $outFile");
+  #$mgr->runCmd("gzip $outFile");
 
   $mgr->endStep($signal);
 }
@@ -1894,11 +1913,13 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$ncbiTaxId, $taxonName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1935,9 +1956,12 @@ sub makeDerivedCdsDownloadFileTransformed {
                 apidb.geneattributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
+	        sres.taxonname tn,
                 dots.translatedaafeature taaf
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
@@ -1947,6 +1971,8 @@ sub makeDerivedCdsDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+
+  $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2125,11 +2151,13 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$ncbiTaxId,$taxonName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2165,9 +2193,12 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,
+	        sres.taxonname tn,
                 dots.translatedaasequence taas
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
+        AND snas.taxon_id = tn.taxon_id
+        AND tn.name_class = 'scientific name'
         AND gf.na_feature_id = fl.na_feature_id
         AND gf.so_term_name != 'repeat_region'
         AND gf.so_term_name = 'protein_coding'
@@ -2177,6 +2208,8 @@ sub makeAnnotatedProteinDownloadFileTransformed {
         AND fl.is_top_level = 1
         AND gf.is_deprecated = $deprecated
 EOF
+
+  $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2345,11 +2378,13 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2398,6 +2433,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
+  $sql .= " and enas.taxon_id in ($taxonId)" if $taxonId;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2405,11 +2441,13 @@ EOF
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2458,6 +2496,8 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
         AND edr.external_database_id = ed.external_database_id
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
+
+  $sql .= " and enas.taxon_id in ($taxonId)" if $taxonId;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2594,11 +2634,13 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels,$ncbiTaxId, $taxonName) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
+
+  my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2621,13 +2663,19 @@ sub makeMixedGenomicDownloadFile {
                as defline,
                ns.sequence
            FROM dots.nasequence ns,
+	        sres.taxonname tn,
                 apidb.sequenceattributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
+	    AND ns.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
             AND sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
 
 EOF
 
   $sql .= $allLevels ? " AND (sa.is_top_level = 1 OR sa.is_top_level = 0)" : " AND sa.is_top_level = 1";
+
+  $sql .= " and ns.taxon_id in ($taxonId)" if $taxonId;
+
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
@@ -5767,6 +5815,22 @@ sub snpGffToFasta {
   my $outFile = "${subdir}.fasta";
 
   my $cmd = "snpFastaMUMmerGff --gff_file $mgr->{dataDir}/snp/$gffFile --reference_strain $refStrain --output_file $mgr->{dataDir}/snp/$subdir/$outFile --make_fasta_file_only > --gff_format $gffFormat 2>> $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+sub blastToGff {
+  my ($mgr,$gffFile,$blastFile) = @_;
+
+  my $signal = "convert${blastFile}ToGff";
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/${signal}.log";
+
+  return if $mgr->startStep("Converting $blastFile to a Gff formatted file", $signal);
+
+  my $cmd = "perl blastToGff.pl --blastInput $blastFile --outputFile $gffFile 2>> $logfile";
 
   $mgr->runCmd($cmd);
 
