@@ -73,6 +73,8 @@ while(<IN>){
   elsif ($_ =~ /Sum/) {
     my @arr = split(/\:/,$_);
 
+    $arr[1]=~ s/^\s+//;
+
     my $str = "$arr[1]\tPiggyBac_Clones\ttransposable_element_insertion_site\t$arr[4]\t$arr[5]\t.\t$arr[12]\t.\tID=$queryId\n";
 
     my @arr = split(/\t/,$str);
