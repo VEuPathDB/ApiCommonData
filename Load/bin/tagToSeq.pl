@@ -61,7 +61,9 @@ while (my $tag = $tagdb->next_seq) {
   }
 
   if($flag == 1){
-      print STDERR $tag->display_id . " did not find a match against genomic sequence.\n";
+      print STDERR $tag->display_id . " did not find a match against genome.\n";
+  }else{
+      print STDERR $tag->display_id . " found match(es) against genome.\n";
   }
   
 }
