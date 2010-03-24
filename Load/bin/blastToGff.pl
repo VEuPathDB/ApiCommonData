@@ -75,7 +75,9 @@ while(<IN>){
 
     $arr[1]=~ s/^\s+//;
 
-    my $str = "$arr[1]\tPiggyBac_Clones\ttransposable_element_insertion_site\t$arr[4]\t$arr[5]\t.\t$arr[12]\t.\tID=$queryId\n";
+    my $strand = $arr[12] ? '-' : '+';
+
+    my $str = "$arr[1]\tPiggyBac_Clones\ttransposable_element_insertion_site\t$arr[4]\t$arr[5]\t.\t$strand\t.\tID=$queryId\n";
 
     my @arr = split(/\t/,$str);
 
