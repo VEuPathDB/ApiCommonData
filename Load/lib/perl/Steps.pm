@@ -6824,6 +6824,40 @@ EOF
 
 }
 
+
+sub loadTransposableElementFromGff {
+    my ($mgr, $gffFile, $extDbName, $extDbRlsVer, $mapFile, $seqExtDbName,$seqExtDbRlsVer,$soCvsVersion, $subclass, $defaultOrg,$enzymeDB) = @_;
+
+    my $signal = "load_$gffFile";
+
+    my $args = <<"EOF";
+--extDbName '$extDbName'  \\
+--extDbRlsVer '$extDbRlsVer' \\
+--mapFile $mapFile \\
+--inputFileOrDir $gffFile \\
+--fileFormat gff2   \\
+--gff2GroupTag ID \\
+--handlerExternalDbs $enzymeDB \\
+--seqIdColumn source_id \\
+--seqExtDbName $seqExtDbName \\
+--seqExtDbRlsVer $seqExtDbRlsVer \\
+--soCvsVersion $soCvsVersion \\
+--naSequenceSubclass $subclass \\
+EOF
+
+    if ($defaultOrg){
+      $args .= "--defaultOrganism '$defaultOrg'";
+    }
+
+    $mgr->runPlugin(
+        $signal,
+        "GUS::Supported::Plugin::InsertSequenceFeatures",
+        $args, 
+        "Loading $gffFile output");
+
+}
+
+
 sub modifyOrfFileForDownload {
   my ($mgr,$genus,$species,$dbName,$file) = @_;
 
