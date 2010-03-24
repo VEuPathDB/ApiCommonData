@@ -5,10 +5,7 @@ use strict;
 use Bio::SeqIO;
 use List::Util qw(min max);
 
-use lib "/home/pinney/toxo/lib";
-use Suffix::Array;
 
-my $sarr = Suffix::Array->new();
 
 my $db = Bio::SeqIO->new(-file => shift(@ARGV),
 			 -format => "fasta"
@@ -16,13 +13,14 @@ my $db = Bio::SeqIO->new(-file => shift(@ARGV),
 
 # read in the sequence database to be matched against:
 
-my @names; my $i = 0;
+my @names; my @seqs;  my $i = 0;
 while (my $seq = $db->next_seq) {
     $names[$i] = $seq->display_id;
     my $str = uc $seq->seq;
-    $sarr->add(\$str);
+    $seqs[$i] = $str;
     $i++;
 }
+
 
 # OK, now do the actual mapping:
 
@@ -32,16 +30,20 @@ my $outputFile = shift(@ARGV);
 
 open (OUT, ">$outputFile") if ($outputFile);
 
+my $flag = 0;
+
 while (my $tag = $tagdb->next_seq) {
   my $tagseq = uc $tag->seq;
 
+  
   # match against forward strand sequence:
-  for my $match ($sarr->match($tagseq)) {
+  for my $match (&matchArray($tagseq)) {
+      $flag =1;
     my ($pos, $idx) = @$match;
     
     print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n" if ($outputFile);
     
-    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
+#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on forward strand\n";
   }
 
   # reverse complement the SAGE tag:
@@ -49,14 +51,51 @@ while (my $tag = $tagdb->next_seq) {
   $tagseq = reverse $tagseq;
 
   # match against reverse strand sequence:
-  for my $match ($sarr->match($tagseq)) {
+  for my $match (&matchArray($tagseq)) {
+      $flag=1;
     my ($pos, $idx) = @$match;
 
     print OUT $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n" if ($outputFile);
 
-    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
+#    warn $tag->display_id . " matched against $names[$idx] from $pos to " . ($pos + length($tagseq)) . " on reverse strand\n";
   }
 
+  if($flag == 1){
+      print STDERR $tag->display_id . " did not find a match against genomic sequence.\n";
+  }
+  
 }
 
 close OUT;
+
+
+sub matchArray{
+    my($tagSeq) = @_;
+
+    $tagSeq = uc $tagSeq;
+
+ 
+    
+    my @matchArray;
+
+    my $flag = 0;
+
+    my $i=0;
+    foreach my $seq (@seqs){
+	while ($seq =~ /$tagSeq/g){
+	
+	    $flag = 1;
+
+	    push(@matchArray,[$-[0],$i]);
+	     
+	}
+
+	$i++;
+    }
+
+
+    return @matchArray;
+    
+    
+
+}
