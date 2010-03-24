@@ -2652,6 +2652,7 @@ my $blastParams = "-nogaps V=1 E=1e-10 B=1 hspsepQmax=50000 hspsepSmax=50000 -sp
 
 &blastToGff($mgr,"$projectDir/$release/analysis_pipeline/primary/data/similarity/PiggyBac_Clones_Adams-PfalciparumChroms/master/mainresult/PiggyBac_Clones_Adams_blast.gff","$projectDir/$release/analysis_pipeline/primary/data/similarity/PiggyBac_Clones_Adams-PfalciparumChroms/master/mainresult/blastSimilarity.out");
 
+&loadTransposableElementFromGff($mgr,"$projectDir/$release/analysis_pipeline/primary/data/similarity/PiggyBac_Clones_Adams-PfalciparumChroms/master/mainresult/PiggyBac_Clones_Adams_blast.gff","PiggyBac_Clones_Adams","2010-03-23","$ENV{GUS_HOME}/lib/xml/isf/PlasmoDB/plasmoTransposableElementFeature2gus.xml","Sanger P. falciparum chromosomes","2009-02-19","2.3","ExternalNASequence","Plasmodium falciparum 3D7","enzyme:enzymeDB:2009-02-11");
 
 
 $mgr->goodbye("Pipeline complete!\n");
