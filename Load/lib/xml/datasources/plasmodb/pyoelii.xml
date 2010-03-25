@@ -68,7 +68,7 @@
 
   <resource resource="Pyoelii_Contigs_RSRC" version="@Pyoelii_Contigs_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/P.yoelii_contigsGB/%RESOURCE_VERSION%/sequences.gb"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/sequences.gb"/>
     <unpack>filterContaminantsFromGenbankFile --seqFile @dataDir@/sequences.gb --outFile @dataDir@/sequences_fixed.gb --contaminantFile @dataDir@/contaminants.txt</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
@@ -90,9 +90,9 @@
     </info>
   </resource>
 
-  <resource resource="Pyoelii_EC_numbers_RSRC" version="@Pyoelii_EC_numbers_VER@"
+  <resource resource="Pyoelii_EC_numbers_RSRC" version="@Pyoelii_Contigs_VER@"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/P.yoelii_contigsGB/%RESOURCE_VERSION%/ec_numbers.txt"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/ec_numbers.txt"/>
     <pluginArgs>--ECMappingFile @dataDir@/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
     <info
         displayName="P. yoelii, EC Numbers for Annotation"
