@@ -3817,6 +3817,25 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
+ <resource resource = "ChIP_Chip_Winzeler_Smoothed_Score" version="2009-11"
+            displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
+            organisms="P.falciparum"
+            category="Ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Winzeler_Westenberger/working/CallPeaksAndSmootheRatios/SMOOTHED/"
+            contact = "Scott Westenberger / E. Winzeler"
+            email = "scottw@scripps.edu, winzeler@scripps.edu"
+            institution = "The Scripps Research Institute"
+     />
+<pluginArgs>--inputDir @downloadDir@/ChIP_Chip_Winzeler_Smoothed_Score/SMOOTHED --configFile @downloadDir@/ChIP_Chip_Winzeler_Smoothed_Score/SMOOTHED/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
 <resource resource="temp_called_peaks" version="2009-11-11"
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         category="Genome"
@@ -4060,5 +4079,4 @@ Contact Till Voss, till.voss@unibas.ch, for further information
           ]]>
         </description>		
     </resource> 
-
  </resourcesPipeline>
