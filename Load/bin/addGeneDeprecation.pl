@@ -7,16 +7,17 @@ use DBI;
 use DBD::Oracle;
 use CBIL::Util::PropertySet;
 
-my ($help, $gusConfig, $file, $act, $date);
+my ($help, $gusConfig, $file, $act, $date, $reas);
+
 &GetOptions('help|h' => \$help,
             'gus_config=s' => \$gusConfig,
             'file=s' => \$file,
 	    'action=s' => \$act,
+	    'reason=s' => \$reas,
 	    'date=s' => \$date,
             );
-
-unless(-e $file && $act && ($date eq 'deprecated' || $date eq 'undeprecated')) {
-  print STDERR "usage:  perl addGeneDeprecation.pl --file <INPUT_FILE> --action <deprecated|undeprecated> --date <18-November-2008> [--gus_config <FILE>]\n";
+unless(-e $file && $date && ($act eq 'deprecated' || $act eq 'undeprecated')) {
+  print STDERR "usage:  perl addGeneDeprecation.pl --file <INPUT_FILE> --action <deprecated|undeprecated> --date <18-November-2008> [--reason <text>] [--gus_config <FILE>]\n";
   exit;
 }
 
@@ -38,8 +39,8 @@ my $count = 0;
 my $id;
 
 
-my $sql = "INSERT INTO ApiDB.GeneDeprecation (source_id, action, action_date) 
-    VALUES (?, '$act', (SELECT TO_DATE ( '$date', 'DD-MONTH-YYYY') from dual))";
+my $sql = "INSERT INTO ApiDB.GeneDeprecation (source_id, action, action_date, reason) 
+    VALUES (?, '$act', (SELECT TO_DATE ( '$date', 'DD-MONTH-YYYY') from dual), '$reas')";
 my $sh = $dbh->prepare($sql);
 
 
@@ -59,7 +60,8 @@ $dbh->disconnect();
 
 
 ## RUNS on giar-inc:
-## > perl  addGeneDeprecation.pl --file /files/cbil/data/cbil/giardiaDB/manualDelivery/deprecatedGenes/GeneDeprecationTable/deprecated_v11 --action deprecated --date 18-November-2008 --gus_config ~/gusApps/gus_home/config/gus.config
+## > perl  addGeneDeprecation.pl --file /files/cbil/data/cbil/giardiaDB/manualDelivery/deprecatedGenes/GeneDeprecationTable/deprecated_v11  --action deprecated --date 18-November-2008  --gus_config ~/gusApps/gus_home/config/gus.config
 ## Inserted 4778 rows
-## > perl  addGeneDeprecation.pl --file /files/cbil/data/cbil/giardiaDB/manualDelivery/deprecatedGenes/GeneDeprecationTable/undeprecated_v20  --action deprecated --date 16-November-2009 --gus_config ~/gusApps/gus_home/config/gus.config
+
+## > perl  addGeneDeprecation.pl --file /files/cbil/data/cbil/giardiaDB/manualDelivery/deprecatedGenes/GeneDeprecationTable/undeprecated_v20 --action undeprecated --date 16-November-2009  --gus_config ~/gusApps/gus_home/config/gus.config  --reason 'This assemblage A gene has been undeprecated based on synteny to assemblage B and E genomes.'
 ## Inserted 1012 rows
