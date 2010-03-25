@@ -24,7 +24,7 @@
 
   <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%"/>
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%  --inputFileExtension "embl" --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P. chabaudi (AS) chromosome sequences and annotation"
@@ -229,7 +229,7 @@
 
   <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
@@ -253,7 +253,7 @@
 
   <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/P.chabaudi_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <pluginArgs></pluginArgs>
     <info
         displayName="GO Association for Plasmodium chabaudi genes"
