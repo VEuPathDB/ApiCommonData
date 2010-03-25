@@ -115,7 +115,7 @@
 
   <resource resource="Pfalciparum_chromosomes_RSRC" version="@Pfalciparum_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/%RESOURCE_VERSION%/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
@@ -2166,7 +2166,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
 
   <resource resource="Pfalciparum_ECNumbers_RSRC" version="@Pfalciparum_chromosomes_VER@"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/P.falciparum_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pfalciparum.fasta --output_gff @dataDir@/gff/Pfalciparum.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/Pfalciparum.gff3 --output_gff @dataDir@/Pfalciparum.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pfalciparum.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pfalciparum.ec </unpack>
