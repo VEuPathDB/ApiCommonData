@@ -2,7 +2,7 @@
 <resources>
   <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
       plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5821 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
     <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
@@ -69,7 +69,7 @@
 
   <resource resource="Pb_IEDB_Epitopes_DBxRefs_RSRC" version="@Pb_IEDB_Epitopes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pb_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info

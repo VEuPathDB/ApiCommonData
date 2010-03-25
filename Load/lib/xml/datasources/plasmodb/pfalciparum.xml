@@ -1,7 +1,7 @@
 <resources>
   <resource resource="Pf_dbEST_RSRC" version="@Pf_dbEST_VER@"
       plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
     <pluginArgs>--span 500 --taxonFile  @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
@@ -136,7 +136,7 @@
 
   <resource resource="Pfalciparum_mito_RSRC" version="2009-02-19" parentResource="Pfalciparum_chromosomes_RSRC"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. falicparum mitochondrial sequence and annotation"
@@ -157,7 +157,7 @@
 
   <resource resource="Pfalciparum_apicoplast_RSRC" version="2009-02-19" parentResource="Pfalciparum_chromosomes_RSRC"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. falicparum apicoplast sequence and annotation"
@@ -321,7 +321,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pf_IEDB_Epitopes_DBxRefs_RSRC" version="@Pf_IEDB_Epitopes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../Pf_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
@@ -1198,7 +1198,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="updateEviganSecondaryScore_RSRC" version="@Evigan_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>updateEviganSecondaryScore.pl --evigan_ext_db_rls_spec "Evigan_RSRC|@Evigan_VER@" </unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -1305,7 +1305,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pf_loadMAPPWithSqlldr_RSRC" version="2009-05-01"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>sqlLoader.pl --file @dataDir@/../BrickMAPPpromoters/Pfal_MAPP-version3.sql </unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info

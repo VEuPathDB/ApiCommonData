@@ -1,7 +1,7 @@
 <resources>
   <resource resource="Pv_dbEST_RSRC" version="@Pv_dbEST_VER@"
       plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5855 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
     <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
@@ -92,7 +92,7 @@
 
   <resource resource="Pvivax_mitochondrial_RSRC" version="@Pvivax_mitochondrial_VER@" parentResource="Pvivax_contigsGB_RSRC"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. vivax strain Salvador I mitochondrial DNA sequence and annotation"
@@ -159,7 +159,7 @@
 
   <resource resource="Pv_IEDB_Epitopes_DBxRefs_RSRC" version="@Pv_IEDB_Epitopes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>createEpitopeDbRefFile --inputDir @dataDir@/../pv_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @dataDir@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @dataDir@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
@@ -181,7 +181,7 @@
 
   <resource resource="Pv_CorrectGeneAliases_RSRC" version="1"
       plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
-    <manualGet fileOrDir="common/empty"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>cleanUpDBRefNaFeature.pl</unpack>
     <pluginArgs>--extDbRelSpecList "Pvivax_contigsGB_RSRC|@Pvivax_contigsGB_VER@,Pvivax_mitochondrial_RSRC|@Pvivax_mitochondrial_VER@"</pluginArgs>
     <info
