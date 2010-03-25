@@ -4,7 +4,7 @@
     <manualGet fileOrDir="common/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5821 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
@@ -25,7 +25,7 @@
   <resource resource="Pberghei_chromosomes_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei ANKA" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei ANKA" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P.berghei (ANKA) chromosomes sequence and annotation"
         project="PlasmoDB"

@@ -4,7 +4,7 @@
     <manualGet fileOrDir="common/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5855 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
@@ -69,7 +69,7 @@
   <resource resource="Pvivax_contigsGB_RSRC" version="@Pvivax_contigsGB_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/contig/%RESOURCE_VERSION%/sequences.gb.gz"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P. vivax contig sequence and annotation from Genbank"
         project="PlasmoDB"
@@ -116,7 +116,7 @@
   <resource resource="PvivaxChromosomeAGP_RSRC" version="@PvivaxChromosomeAGP_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile">
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/AGP/%RESOURCE_VERSION%/AAKM00000000_20070904_abrev.agp"/>
-    <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "Pvivax_contigsGB_RSRC" --seqPieceExtDbRlsVer @Pvivax_contigsGB_VER@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @soVer@ --sqlVerbose --chromosomesInOrder false</pluginArgs>
+    <pluginArgs>--agpFile @dataDir@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "Pvivax_contigsGB_RSRC" --seqPieceExtDbRlsVer @Pvivax_contigsGB_VER@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @SO_VER@ --sqlVerbose --chromosomesInOrder false</pluginArgs>
     <info
         displayName="P. vivax contig to chromosome map"
         project="PlasmoDB"

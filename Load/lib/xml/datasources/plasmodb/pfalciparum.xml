@@ -4,7 +4,7 @@
     <manualGet fileOrDir="common/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5833 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile  @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
+    <pluginArgs>--span 500 --taxonFile  @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
@@ -116,7 +116,7 @@
   <resource resource="Pfalciparum_chromosomes_RSRC" version="@Pfalciparum_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -226,7 +226,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'P.falciparum_chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = @pfChromosomeVer@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
     <unpack>createSTSFileFromGB --genbank_file_or_dir @dataDir@/sequences.gb.fixed --output_file @dataDir@/sequences.sts </unpack>
     <unpack> ePCRMicrosatelliteForLocations --sts_file @dataDir@/sequences.sts --output_file @dataDir@/Pf_ms.gff --seq_file @dataDir@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
     <info
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         project="PlasmoDB"
@@ -249,7 +249,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/data.exchange">--tries=5 --mirror -r --no-parent --no-host-directories --cut-dirs=5</wgetArgs>
     <unpack>mkdir @dataDir@/fixed</unpack>
     <unpack>for f in `ls @dataDir@/data.exchange`; do cat @dataDir@/data.exchange/$f | adjustPlasmoEmblFile" > @dataDir@/data.exchange/$f.fixed; cat @dataDir@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @dataDir@/fixed/$f.fixed; done</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/fixed --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName %PARENT_EXT_DB_NAME%   --seqExtDbRlsVer %PARENT_EXT_DB_RLS_VER%</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/fixed --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName %PARENT_EXT_DB_NAME%   --seqExtDbRlsVer %PARENT_EXT_DB_RLS_VER%</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes annotation, PlasmoDB version 5.5"
         project="PlasmoDB"
@@ -1177,7 +1177,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genePrediction/EviganModels/%RESOURCE_VERSION%/Evigan_pf_nbest_chr_forImport.gff.gz"/>
     <unpack>gunzip @dataDir@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
     <info
         displayName="P. falciparum Evigan Gene Models"
         project="PlasmoDB"
@@ -1996,7 +1996,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
   <resource resource="Pf_temp_called_peaks_RSRC" version="2009-11-11"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/%RESOURCE_VERSION%/working_dir/PEAK_DATA/All_PEAKs.gff"/>
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @pfChromosomeVer@ --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @pfChromosomeVer@ --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         project="PlasmoDB"

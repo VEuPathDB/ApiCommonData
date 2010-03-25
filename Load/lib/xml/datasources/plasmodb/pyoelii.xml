@@ -4,7 +4,7 @@
     <manualGet fileOrDir="common/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5861 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @soVer@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
@@ -70,7 +70,7 @@
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/sequences.gb"/>
     <unpack>filterContaminantsFromGenbankFile --seqFile @dataDir@/sequences.gb --outFile @dataDir@/sequences_fixed.gb --contaminantFile @dataDir@/contaminants.txt</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pyGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed.gb --fileFormat genbank --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. yoelii (17XNL) genome annotation"
         project="PlasmoDB"
@@ -119,7 +119,7 @@
     <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'P.yoelii_Contigs' AND edr.version = @pyContigVer@ "</unpack>
     <unpack>fixMercatorOffsetsInGFF.pl --f @dataDir@/Pyoelii.fasta --g @dataDir@/PyoeliiKappe.gff --o @dataDir@/PyoeliiKappe_fixed_1.gff</unpack>
     <unpack>fixYoeliiGFF --inputFile @dataDir@/PyoeliiKappe_fixed_1.gff --outputFile @dataDir@/PyoeliiKappe_fixed.gff</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @dataDir@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @soVer@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @pyContigVer@ --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @dataDir@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @pyContigVer@ --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         project="PlasmoDB"
