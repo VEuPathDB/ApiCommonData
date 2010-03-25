@@ -1,3 +1,4 @@
+
 <resources>
   <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
       plugin="GUS::Supported::Plugin::dbEST">
@@ -24,7 +25,7 @@
 
   <resource resource="Pberghei_chromosomes_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei ANKA" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="P.berghei (ANKA) chromosomes sequence and annotation"
@@ -492,7 +493,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
 
   <resource resource="Pberghei_ECNumbers_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pberghei.fasta --output_gff @dataDir@/gff/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/Pberghei.gff3 --output_gff @dataDir@/Pberghei.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pberghei.ec </unpack>
@@ -516,7 +517,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
 
   <resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/P.berghei_chromosomes/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <pluginArgs></pluginArgs>
     <info
         displayName="GO Association for Plasmodium berghei genes"
