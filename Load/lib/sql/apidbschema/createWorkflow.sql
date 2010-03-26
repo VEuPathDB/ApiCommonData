@@ -1,12 +1,12 @@
 create table apidb.Workflow (
-  workflow_id           number(10), 
-  name                  varchar(30),  -- name and version are an alternate key
-  version               varchar(30),
-  state                 varchar(30),
-  process_id            number(10),
-  undo_step_id          number(10),
-  xml_file_digest    	varchar(100),
-  test_mode             number(1)
+  workflow_id              number(10), 
+  name                     varchar(30),  -- name and version are an alternate key
+  version                  varchar(30),
+  state                    varchar(30),
+  process_id               number(10),
+  undo_step_id             number(10),
+  initializing_step_table  number(1),
+  test_mode                number(1)
 );
 
 ALTER TABLE apidb.Workflow
