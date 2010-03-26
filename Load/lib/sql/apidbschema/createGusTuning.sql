@@ -82,4 +82,9 @@ ALTER TABLE sresVer.GoEvidenceCodeVer MODIFY (name VARCHAR2(5));
 ALTER TABLE rad.Analysis ADD name VARCHAR2(200);
 ALTER TABLE radVer.AnalysisVer ADD name VARCHAR2(200);
 
+-- Make manufacturer_id and technology_type_id nullable
+alter table rad.arraydesign modify (MANUFACTURER_ID NUMBER(12) null, 
+                                    TECHNOLOGY_TYPE_ID NUMBER(10) null);
+
+
 exit
