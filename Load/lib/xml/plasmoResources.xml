@@ -4079,4 +4079,27 @@ Contact Till Voss, till.voss@unibas.ch, for further information
           ]]>
         </description>		
     </resource> 
+
+<resource resource="Pf_TransFactorBindingSitestemp_Llinas" version="2009-11-11"
+        displayName="Pfalciparum Trans-factor binding sites from Manuel Llinas"
+        organisms="Pfalciparum"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        category="Ignore"
+        extDbName="Pf_TransFactorBindingSitestemp_Llinas"
+        extDbRlsVer="2009-11-11"
+        extDbRlsDescrip=""
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BindingSites/Llinas_AP2-1-15-10/working_dir/allSites_formated.gff" 
+            contact="Manuel Llinas"
+            email="manuel@genomics.princeton.edu"
+            institution="Princeton univeristy"
+        />
+
+<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile /home/weili1/gusApps/tryp-load/project_home/ApiCommonData/Load/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @downloadDir@/Pf_TransFactorBindingSitestemp_Llinas/allSites_formated.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput @pipelineDir@/logs/Pf_TransFactorBindingSitestemp_Llinas.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
  </resourcesPipeline>
