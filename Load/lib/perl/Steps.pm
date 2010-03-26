@@ -1260,7 +1260,7 @@ sub createEpitopeMapFiles {
 
 
 sub extractNaSeq {
-  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy,$taxonName,$soTermId,$soTermName) = @_;
+  my ($mgr,$dbName,$dbRlsVer,$name,$seqType,$table,$identifier,$ncbiTaxId,$altSql,$taxonHierarchy,$taxonName,$soTermIdsOrNames) = @_;
 
   my $type = ucfirst($seqType);
 
@@ -1300,9 +1300,9 @@ EOF
 
   $sql .= " and taxon_id in ($taxonId)" if $taxonId;
 
-  my $soId = &getSoId($mgr,$soTermId,$soTermName) if ($soTermName||$soTermId);
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames);;
 
-   $sql .= " and so_id in ($soId)" if $soId;
+   $sql .= " and so_id in ($soIds)" if $soIds;
   
 
   $sql = $altSql if $altSql;
@@ -1501,13 +1501,14 @@ EOF
 
 
 sub makeTranscriptDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $ncbiTaxId, $taxonName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated, $ncbiTaxId, $taxonName,$tmpDir,$soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
   
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+  my $soIds =  &getSoId($mgr,$soTermIdsOrNames) if $soTermIdsOrNames;
   
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1542,8 +1543,10 @@ sub makeTranscriptDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
-                apidb.featurelocation fl
+                apidb.featurelocation fl,
+                dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
+        AND gf.na_sequence_id = ns.na_sequence_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
@@ -1556,6 +1559,7 @@ sub makeTranscriptDownloadFileTransformed {
 EOF
 
   $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
+  $sql .= " and ns.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 }
@@ -1624,7 +1628,7 @@ EOF
 }
 
 sub makeInterproDownloadFile {
-  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB, $strain,$ncbiTaxId, $taxonName) = @_;
+  my ($mgr, $species, $name, $genomeExtDb, $genomeExtDbVer, $interproExtDb, $interproExtDbVer, $projectDB, $strain,$ncbiTaxId, $taxonName, $soTermIdsOrNames) = @_;
 
   my $signal = "${species}${name}DownloadFile";
   $signal = "${strain}${name}DownloadFile" if $strain;
@@ -1637,6 +1641,7 @@ sub makeInterproDownloadFile {
   my $siteFileDir = $propertySet->getProp('siteFileDir');
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames) if ($soTermIdsOrNames);
 
   my @dbNames = map{"'$_'"} split (/,/,$genomeExtDb);
 
@@ -1689,13 +1694,15 @@ sub makeInterproDownloadFile {
     dots.transcript t, 
     dots.translatedaafeature taf,
     sres.taxonname tn,
-    dots.translatedaasequence tas 
+    dots.translatedaasequence tas,
+    dots.nasequence ns 
   WHERE
    gf.external_database_release_id = xdr2.external_database_release_id 
      AND xdr2.version in ($dbVer) 
      AND xdr2.external_database_id = xd2.external_database_id 
      AND xd2.name in ($dbName)
      AND gf.na_feature_id = t.parent_id 
+     AND gf.na_sequence_id = ns.na_sequence_id
      AND t.na_feature_id = taf.na_feature_id 
      AND taf.aa_sequence_id = tas.aa_sequence_id 
      AND tas.aa_sequence_id = df.aa_sequence_id 
@@ -1712,6 +1719,8 @@ sub makeInterproDownloadFile {
      AND xd3.name = '$interproExtDb'
 EOF
   $sql .= " and tas.taxon_id in ($taxonId)" if $taxonId;
+
+  $sql .= " and ns.sequence_ontology_id in ($soIds)" if $soIds;
 
    if ($projectDB =~ /ortho/i) {
 
@@ -1913,13 +1922,15 @@ EOF
 
 
 sub makeDerivedCdsDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$ncbiTaxId, $taxonName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource, $project, $deprecated,$ncbiTaxId, $taxonName,$tmpDir,$soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+
+  my $soIds  =   &getSoId($mgr,$soTermIdsOrNames) if $soTermIdsOrNames;
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -1957,9 +1968,11 @@ sub makeDerivedCdsDownloadFileTransformed {
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
-                dots.translatedaafeature taaf
+                dots.translatedaafeature taaf,
+                dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
         AND t.na_sequence_id = snas.na_sequence_id
+        AND gf.na_sequence_id = ns.na_sequence_id
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
         AND gf.na_feature_id = fl.na_feature_id
@@ -1973,6 +1986,8 @@ sub makeDerivedCdsDownloadFileTransformed {
 EOF
 
   $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
+
+  $sql .= " and ns.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2151,13 +2166,15 @@ EOF
 
 
 sub makeAnnotatedProteinDownloadFileTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$ncbiTaxId,$taxonName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers,$dataSource,$project,$deprecated,$ncbiTaxId,$taxonName,$tmpDir,$soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames) if ($soTermIdsOrNames);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2194,8 +2211,10 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,
 	        sres.taxonname tn,
-                dots.translatedaasequence taas
+                dots.translatedaasequence taas,
+                dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
+        AND gf.na_sequence_id = ns.na_sequence_id
         AND t.na_sequence_id = snas.na_sequence_id
         AND snas.taxon_id = tn.taxon_id
         AND tn.name_class = 'scientific name'
@@ -2210,6 +2229,8 @@ sub makeAnnotatedProteinDownloadFileTransformed {
 EOF
 
   $sql .= " and snas.taxon_id in ($taxonId)" if $taxonId;
+
+  $sql .= " and ns.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2378,13 +2399,14 @@ EOF
 
 
 sub makeOrfDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir,$soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames) if ($soTermIdsOrNames);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2434,6 +2456,8 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
         AND ed.name in ($dbName) AND edr.version in ($dbVer)
 EOF
   $sql .= " and enas.taxon_id in ($taxonId)" if $taxonId;
+ 
+  $sql .= " and enas.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2441,13 +2465,15 @@ EOF
 
 
 sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $length,$project,,$ncbiTaxId, $taxonName,$tmpDir,$soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames) if ($soTermIdsOrNames);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2498,6 +2524,8 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
 EOF
 
   $sql .= " and enas.taxon_id in ($taxonId)" if $taxonId;
+
+  $sql .= " and enas.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project,$tmpDir);
 
@@ -2634,13 +2662,15 @@ EOF
 }
 
 sub makeMixedGenomicDownloadFile {
-  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels,$ncbiTaxId, $taxonName) = @_;
+  my ($mgr, $species, $name, $extDbNames, $extDbVers, $dataSource,$project, $allLevels,$ncbiTaxId, $taxonName, $soTermIdsOrNames) = @_;
 
   my $signal = "${name}DownloadFile";
 
   return if $mgr->startStep("Preparing to extract  $name sequences from GUS", $signal);
 
   my $taxonId =  &getTaxonId($mgr,$ncbiTaxId,$taxonName) if ($ncbiTaxId || $taxonName);
+
+  my $soIds = &getSoId($mgr,$soTermIdsOrNames) if ($soTermIdsOrNames);
 
   my @dbNames = map{"'$_'"} split (/,/,$extDbNames);
 
@@ -2676,6 +2706,7 @@ EOF
 
   $sql .= " and ns.taxon_id in ($taxonId)" if $taxonId;
 
+  $sql .= " and ns.sequence_ontology_id in ($soIds)" if $soIds;
 
   makeDownloadFile($mgr, $species, $name, $sql,$project);
 
@@ -6604,15 +6635,25 @@ sub getTaxonId {
 }
 
 sub getSoId {
-  my ($mgr,$soTermId,$soTerm) = @_;
+  my ($mgr,$soTermIdsOrNames) = @_;
 
-  my $sql = $soTermId ? "select sequence_ontology_id from sres.sequenceontology where so_id = '${soTermId}'" : "select sequence_ontology_id from sres.sequenceontology where term_name = '${soTerm}'";
+  my ($soTermIds,$soTerms);
+
+  if($soTermIdsOrNames =~ /SO:/){
+
+      $soTermIds =  join(",", map { "'$_'" } split(',', $soTermIds));
+  }else{
+
+      $soTerms =  join(",", map { "'$_'" } split(',', $soTerms));
+  }
+
+  my $sql = $soTermIds ? "select sequence_ontology_id from sres.sequenceontology where so_id IN (${soTermIds})" : "select sequence_ontology_id from sres.sequenceontology where term_name IN (${soTerms})";
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
 
-  my $soId = $mgr->runCmd($cmd);
+  my $soIds = $mgr->runCmd($cmd);
 
-  return $soId;
+  return $soIds;
 }
 
 sub getTaxonIdList {
