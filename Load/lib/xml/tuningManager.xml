@@ -2460,6 +2460,7 @@ tablespace indx
 
   <tuningTable name="apidb.SageTagAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
+    <internalDependency name="apidb.SageTagAnalysisAttributes"/>
     <internalDependency name="apidb.SageTagGene"/>
     <internalDependency name="apidb.GeneAttributes"/>
     <externalDependency name="dots.NaSequenceImp"/>
@@ -2484,7 +2485,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        gene.gene_source_id, nvl(gene.gene_count, 0) gene_count,
        gene.gene_product
 from dots.SageTagFeature f, apidb.FeatureLocation l, dots.NaSequence s,
-     sres.TaxonName tn, rad.SageTag st,
+     sres.TaxonName tn, rad.SageTag st, apidb.SageTagAnalysisAttributes staa,
      (select a.na_feature_id,
              apidb.tab_to_string(CAST(COLLECT(b.gene_source_id) AS apidb.varchartab),'; ') as gene_source_id,
              apidb.tab_to_string(CAST(COLLECT(ga.product) AS apidb.varchartab),'; ') as gene_product,
@@ -2507,6 +2508,7 @@ where f.na_feature_id = gene.na_feature_id (+)
   and s.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
   and f.source_id = st.composite_element_id
+  and st.composite_element_id = staa.composite_element_id
       ]]>
     </sql>
     <sql>
