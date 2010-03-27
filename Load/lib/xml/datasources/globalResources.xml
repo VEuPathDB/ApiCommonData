@@ -111,6 +111,8 @@
     <wgetArgs url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
     <unpack>gunzip @dataDir@/nr.gz </unpack>
     <unpack>shortenDefLine --inputFile @dataDir@/nr --outputFile @dataDir@/nrdb-short-defline.fsa --taxonIdMappingFile @dataDir@/../taxonomy/gi_taxid_prot.dmp</unpack>
+    <getAndUnpackOutput file="@dataDir@/nrdb-short-defline.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/nr"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="GenBank NRDB"
