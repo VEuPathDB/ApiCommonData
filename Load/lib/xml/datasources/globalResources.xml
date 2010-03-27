@@ -265,6 +265,7 @@
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
     <unpack>gunzip @dataDir@/pdb_seqres.txt.gz</unpack>
     <unpack>filterPdbFile --inputFile @dataDir@/pdb_seqres.txt --outputFile  @dataDir@/pdb.fsa</unpack>
+     <getAndUnpackOutput file="@dataDir@/pdb.fsa"/>   
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile  @dataDir@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
     <info
         displayName="Protein Sequences from PDB"
