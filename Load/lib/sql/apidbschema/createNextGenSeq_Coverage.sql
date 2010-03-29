@@ -3,7 +3,8 @@ nextGenSeq_coverage_id NUMBER(10),
 external_database_release_id number(10) not null,
 sample varchar(30) not null,
 na_sequence_id number(10) not null,
-location number(10) not null,
+mapping_start number(10) not null,
+mapping_end number(10) not null,
 coverage number not null,
 multiple number(1),
  MODIFICATION_DATE     DATE,
@@ -28,7 +29,7 @@ grant select on Apidb.NextGenSeq_Coverage to gus_r;
 GRANT select ON ApiDB.NextGenSeq_Coverage_sq TO gus_w;
 
 create index apidb.nextgenseq_cov_indx
-on Apidb.NextGenSeq_Coverage (external_database_release_id,sample,na_sequence_id,location,coverage,multiple)
+on Apidb.NextGenSeq_Coverage (external_database_release_id,sample,na_sequence_id,mapping_start,mapping_end,coverage,multiple)
 tablespace indx;
 
 INSERT INTO core.TableInfo
