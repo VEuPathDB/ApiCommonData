@@ -26,19 +26,6 @@ sub getArgumentsDeclaration{
                isList         => 0,
              }),
 
-      stringArg({name => 'externalDatabase',
-	      descr => 'External database from whence this data came',
-	      constraintFunc=> undef,
-	      reqd  => 1,
-	      isList => 0
-	     }),
-
-   stringArg({name => 'externalDatabaseRls',
-	      descr => 'Version of external database from whence this data came',
-	      constraintFunc=> undef,
-	      reqd  => 1,
-	      isList => 0
-	     }),
     ];
   return $argsDeclaration;
 }
@@ -118,7 +105,7 @@ sub writeConfigFile {
   my ($self, $configFile, $dataFile) = @_;
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
-  $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
   my $database = $self->getDb();
   my $projectId = $database->getDefaultProjectId();
   my $userId = $database->getDefaultUserId();
@@ -139,10 +126,12 @@ APPEND
 INTO TABLE apidb.nextgenseq_coverage
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
-(external_database_release_id,
+(NEXTGENSEQ_COVERAGE_ID  \"ApiDB.NextGenSeq_Coverage_sq.nextval\",
+external_database_release_id,
 sample,
 na_sequence_id,
-location,
+MAPPING_START,
+MAPPING_END,
 coverage,
 multiple,
 modification_date constant $modDate, 
