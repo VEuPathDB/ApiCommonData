@@ -126,7 +126,7 @@ APPEND
 INTO TABLE apidb.nextgenseq_coverage
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
-(NEXTGENSEQ_COVERAGE_ID  \"ApiDB.NextGenSeq_Coverage_sq.nextval\",
+(
 external_database_release_id,
 sample,
 na_sequence_id,
@@ -144,7 +144,8 @@ other_write constant $otherWrite,
 row_user_id constant $userId, 
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
-row_alg_invocation_id constant $algInvocationId
+row_alg_invocation_id constant $algInvocationId,
+NEXTGENSEQ_COVERAGE_ID  \"ApiDB.NextGenSeq_Coverage_sq.nextval\"
 )\n";
   close CONFIG;
 }
