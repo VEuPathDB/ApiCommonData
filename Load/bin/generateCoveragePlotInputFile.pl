@@ -1,27 +1,46 @@
 #!/usr/bin/perl
-
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
 
-my ($extDbSpecs,$sample,$filename);
-&GetOptions("extDbSpecs|s=s" => \$extDbSpecs,
+my ($RNASeqExtDbSpecs,$genomeExtDbSpecs,$sample,$filename, $verbose);
+&GetOptions("RNASeqExtDbSpecs|s=s" => \$RNASeqExtDbSpecs,
+	    "genomeExtDbSpecs|s=s" => \$genomeExtDbSpecs,
             "sample|t=s" => \$sample,
             "filename|mf=s" => \$filename,
             );
 
 die "usage: generateCoveragePlotInputFile.pl 
       --filename|f <filename> 
-      --extDbSpecs|s <Db Specs for experiment (required)> 
-      --sample <sample name (required)> " unless $extDbSpecs && $sample &&$filename;;
+      --RNASeqExtDbSpecs|s <Db Specs for experiment (required)> 
+      --genomeExtDbSpecs|s <Db Specs for genome (required)> 
+      --sample <sample name (required)> " unless $RNASeqExtDbSpecs && $sample && $filename && $genomeExtDbSpecs ;
 
 #=======================================================================
 
-my ($extDbName,$extDbRlsVer)=split(/\|/,$extDbSpecs);
+my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
-my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
 
-my $extDbRlsId= `getValueFromTable --idSQL \"$sql\"`;
+my $dbh = $db->getQueryHandle();
 
+my $RNASeqExtDbRlsId = &getExtDbRlsId($RNASeqExtDbSpecs);
+my $genomeExtDbRlsId = &getExtDbRlsId($genomeExtDbSpecs);
+my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE where external_database_release_id = '$genomeExtDbRlsId'";
+my %naSeqHash;
+my $sth = $dbh->prepareAndExecute($sqlSeq);
+while (my ($na_seuqnce_id , $source_id) = $sth->fetchrow_array()) {
+    $naSeqHash{$source_id} = $na_seuqnce_id;
+}
+$sth->finish();
+$dbh->disconnect();
 
  open(F,"$filename") || die "unable to open $filename\n";
   
@@ -29,10 +48,21 @@ my $extDbRlsId= `getValueFromTable --idSQL \"$sql\"`;
     next if (/^track/);
     chomp;
     my ($source_id,$location,$coverage) = split("\t",$_);
-    my $sqlSeq = "select na_sequence_id from dots.NASEQUENCE where source_id='$source_id'";
-    my $na_sequence_id=`getValueFromTable --idSQL \"$sqlSeq\"`;
-    print "$extDbRlsId\t$sample\t$na_sequence_id\t$location\t$location\t$coverage\t\t\n";
+
+    if($naSeqHash{$source_id}){
+	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$location\t$location\t$coverage\t\t\n";
+    }
   }
   close F;
+
+sub getExtDbRlsId {
+    my($extDbSpecs) = @_;
+    my ($extDbName,$extDbRlsVer)=split(/\|/,$extDbSpecs);
+    my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
+    my $sth = $dbh->prepareAndExecute($sql);
+    my $extDbRlsId = $sth->fetchrow_array();
+    $sth->finish();
+    return $extDbRlsId;
+}
 
 
