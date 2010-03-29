@@ -4102,4 +4102,48 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
+ <resource resource="RNASeqCoveragePlot_Patrick_Duffy" version="01-04-2010" 
+        displayName="RNA-Seqs from Patrick Duffy" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="RNASeqCoveragePlot_Patrick_Duffy"
+        extDbRlsVer="01-04-2010"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Duffy_9-9-09/1-4-10/dataLoad_dir/plotCov/" 
+            contact = "Patrick Duffy" 
+            email = "patrick.duffy@sbri.org" 
+            institution = "SBRI" />
+
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL01_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_PL01 > @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL01_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_3D7_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_3D7 >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_3D7_NORMALIZED_formated.cov </unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL02_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_PL02 >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL02_NORMALIZED_formated.cov</unpack>
+<unpack>cat @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL01_NORMALIZED_formated.cov @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_PL02_NORMALIZED_formated.cov @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_3D7_NORMALIZED_formated.cov >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_ALL_SAMPLES.cov </unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/plotCov/Duffy_ALL_SAMPLES.cov</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource> 
+
+
+  <resource resource="RNASeq_Intensity_Profiles_Patrick_Duffy" version="01-04-2010"
+            displayName="RNA-Seqs from Patrick Duffy"
+            category="ignore"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="RNASeq_Intensity_Profiles_Patrick_Duffy"
+            extDbRlsVer="01-04-2010"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Duffy_9-9-09/1-4-10/dataLoad_dir/profiles/" 
+            contact = "Patrick Duffy" 
+            email = "patrick.duffy@sbri.org" 
+            institution = "SBRI"/>
+<pluginArgs>--inputDir @downloadDir@/RNASeq_Intensity_Profiles_Patrick_Duffy/profiles --configFile @downloadDir@/RNASeq_Intensity_Profiles_Patrick_Duffy/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
  </resourcesPipeline>
