@@ -2198,6 +2198,11 @@ my $blastParams = "-nogaps E=10 M=1 N=-3 Q=3 R=1","blastn";
 
 &InsertSimpleRadAnalysisFromConfig($mgr, "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Till_Voss/working_dir/", "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Till_Voss/working_dir/config.txt", "DataTransformationResult", "ArrayElementFeature", "ChIP-chip_Till_Voss_Analysis", 1);
 
+&mapTagsToNaSequences($mgr, "/files/cbil/data/cbil/plasmoDB/6.4/analysis_pipeline/primary/data/seqfiles/PfalciparumChroms.fsa", "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Winzeler_Westenberger/working/probes.fsa", "Winzeler_Westenberger_ChIP_RAW");
+
+&loadExpressionFeature($mgr, "mapWinzeler_Westenberger_ChIP_RAWTagsToNaSequences.mapping_unique", "ChIP_Chip_Winzeler_Westenberger|2009-11", "ArrayElementFeature", "Winzeler_Westenberger_ChIP_RAW");
+
+
 
 ######################################################################
 #############make download files####################################
