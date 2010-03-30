@@ -128,7 +128,7 @@ TRAILING NULLCOLS
 strand,
 location,
 value,
-modification_date constant $modDate, 
+modification_date constant  \"$modDate \", 
 user_read constant $userRead, 
 user_write constant $userWrite, 
 group_read constant $groupRead, 
@@ -138,7 +138,8 @@ other_write constant $otherWrite,
 row_user_id constant $userId, 
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
-row_alg_invocation_id constant $algInvocationId
+row_alg_invocation_id constant $algInvocationId,
+PLASMOMAPP_ID  \"ApiDB.PlasmoMapp_sq.nextval\"
 )\n";
   close CONFIG;
 }

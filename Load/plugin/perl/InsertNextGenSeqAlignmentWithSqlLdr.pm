@@ -140,7 +140,7 @@ APPEND
 INTO TABLE apidb.nextgenseq_align
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
-(nextgenseq_align_id \"apidb.nextgenseq_align_sq.nextval\",
+(
 external_database_release_id integer external,
 sample char,
 na_sequence_id integer external,
@@ -152,7 +152,7 @@ start_b integer external,
 end_b integer external,
 intron_size integer external,
 genome_matches integer external,
-modification_date constant $modDate, 
+modification_date constant \"$modDate\", 
 user_read constant $userRead, 
 user_write constant $userWrite, 
 group_read constant $groupRead, 
@@ -162,7 +162,8 @@ other_write constant $otherWrite,
 row_user_id constant $userId, 
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
-row_alg_invocation_id constant $algInvocationId
+row_alg_invocation_id constant $algInvocationId,
+nextgenseq_align_id \"apidb.nextgenseq_align_sq.nextval\"
 )\n";
   close CONFIG;
 }
