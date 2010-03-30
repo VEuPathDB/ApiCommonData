@@ -2887,6 +2887,10 @@ from
     select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
            'TriTrypDB' as project_id
     from dual
+    UNION
+    select 'Profiles of L.major Beverly Steve array data' as profile_name,
+           'TriTrypDB' as project_id
+    from dual
     ) pm, apidb.geneattributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -2978,7 +2982,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
-       'Beverly::LmThreeDevStages' as module,
+       'Beverley::LmThreeDevStages' as module,
        'Leishmania major' as species,
        'Transcription profiling of three developmental stages of Leishmania major - earlylLog, PNA- metacyclics and mouse lesion derived amastigotes' as display_name,
        'Comparison of three developmental stages (Early Log, PNA- metacyclics and Mouse lesion Derived Amastigotes) of L.major FV1.' as description,
