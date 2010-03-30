@@ -91,9 +91,9 @@
 
   <resource resource="Pb_CorrectGeneAliases_RSRC" version="1"
       plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
-    <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/CorrectGeneAliases/%RESOURCE_VERSION%/aliases.tab"/>
+    <manualGet fileOrDir="global/empty"/>
     <unpack>cleanUpDBRefNaFeature.pl</unpack>
-    <pluginArgs>--mappingFiles @dataDir@/aliases.tab --extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
+    <pluginArgs>--extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
     <info
         displayName="CorrectGeneAliases"
         project="PlasmoDB"
