@@ -238,4 +238,28 @@
       </description>
     </info>
   </resource>
+
+<!--Merged from Apirl Release-->
+
+  <resource resource="Pk_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="P. knowlesi ApiLoc and EupathDb links"
+        project="PlasmoDB"
+        organisms="@PkOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne">
+      <description>
+        <![CDATA[
+         <i>P. knowlesi</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>

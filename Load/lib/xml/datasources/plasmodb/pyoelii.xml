@@ -469,4 +469,28 @@
       </description>
     </info>
   </resource>
+
+<!--Merged from Apirl Release-->
+
+  <resource resource="Py_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="P. yoelii ApiLoc and EupathDb links"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne">
+      <description>
+        <![CDATA[
+         <i>P. yoelii</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>

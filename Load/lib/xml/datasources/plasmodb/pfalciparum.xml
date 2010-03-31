@@ -223,10 +223,10 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   <resource resource="Su_Pfalciparum_Microsatellite_Markers_RSRC" version="2008-05-29"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genomeFeature/Su_P.falciparum_Microsatellite_Markers/%RESOURCE_VERSION%/sequences.gb.fixed"/>
-    <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'P.falciparum_chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = @pfChromosomeVer@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
+    <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'P.falciparum_chromosomes' AND ed.external_database_id = edr.external_database_id AND edr.version = @Pfalciparum_chromosomes_VER@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
     <unpack>createSTSFileFromGB --genbank_file_or_dir @dataDir@/sequences.gb.fixed --output_file @dataDir@/sequences.sts </unpack>
     <unpack> ePCRMicrosatelliteForLocations --sts_file @dataDir@/sequences.sts --output_file @dataDir@/Pf_ms.gff --seq_file @dataDir@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         project="PlasmoDB"
@@ -458,7 +458,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     </info>
   </resource>
 
-  <resource resource="Pf_Uniprot_Gene_dbxref_RSRC" version="2009=11=24"
+  <resource resource="Pf_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -483,8 +483,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhana/%RESOURCE_VERSION%/sangerPfalciparumSnps.tar.gz"/>
     <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf sangerPfalciparumSnps.tar.gz ; cd $currDir</unpack>
-    <unpack>sangerSnps2Gff.pl --sf '@dataDir@/WTSI_PFAL.GHANA1.0.dbsnp.new @dataDir@/WTSI_PFAL.IT.0.dbsnp.new' --cf "@dataDir@/IT.uniq.hq.nr3.gff.ORA @dataDir@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @dataDir@/sangerItGhanaSnps.gff</unpack>
+    <unpack>sangerSnps2Gff.pl --sf '@dataDir@/WTSI_PFAL.GHANA1.0.dbsnp.new @dataDir@/WTSI_PFAL.IT.0.dbsnp.new' --cf "@dataDir@/IT.uniq.hq.nr3.gff.ORA @dataDir@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @dataDir@/sangerItGhanaSnps_RSRC.gff</unpack>
     <unpack>rm -f @dataDir@/sangerPfalciparumSnps.tar.gz </unpack>
+    <getAndUnpackOutput file="@dataDir@/sangerItGhanaSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Ghana1 and IT SNPs, Wellcome Trust Sanger Institute"
@@ -508,7 +509,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/sangerPReichenowiSnps.tar.gz"/>
     <unpack>$currDir=`pwd`; cd @dataDir@ ; tar -xzf @dataDir@/sangerPReichenowiSnps.tar.gz; cd $currDir</unpack>
-    <unpack>sangerSnps2Gff.pl --sf @dataDir@/WTSI_PFAL.Preich.0.dbsnp.new --cf @dataDir@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @dataDir@/sangerPreichenowiSnps.gff</unpack>
+    <unpack>sangerSnps2Gff.pl --sf @dataDir@/WTSI_PFAL.Preich.0.dbsnp.new --cf @dataDir@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @dataDir@/sangerPReichenowiSnps_RSRC.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/sangerPReichenowiSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
@@ -531,7 +533,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   <resource resource="Pf_Su_SNPs_RSRC" version="@Pf_Su_SNPs_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Su/%RESOURCE_VERSION%/Pf_snps_allChromosomes.in"/>
-    <unpack>suSnpTabToGffTransform --tab_file @dataDir@/Pf_snps_allChromosomes.in --out_file @dataDir@/Su_SNPs.gff</unpack>
+    <unpack>suSnpTabToGffTransform --tab_file @dataDir@/Pf_snps_allChromosomes.in --out_file @dataDir@/Pf_Su_SNPs_RSRC.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/Pf_Su_SNPs_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="SNPs from the NIH"
@@ -555,7 +558,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad/%RESOURCE_VERSION%/broad_snps.gff.gz"/>
     <unpack>gunzip @dataDir@/broad_snps.gff.gz</unpack>
-    <unpack>mv @dataDir@/broad_snps.gff @dataDir@/Broad_SNPs.gff</unpack>
+    <unpack>mv @dataDir@/broad_snps.gff @dataDir@/Pf_Broad_SNPs_RSRC.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/Pf_Broad_SNPs_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="SNPs from the Broad Institute"
@@ -579,7 +583,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/%RESOURCE_VERSION%/combinedSnps.gff.gz"/>
     <unpack>gunzip @dataDir@/combinedSnps.gff.gz</unpack>
-    <unpack>mv @dataDir@/combinedSnps.gff @dataDir@/plasmoDbCombinedSnps.gff</unpack>
+    <unpack>mv @dataDir@/combinedSnps.gff @dataDir@/Pf_plasmoDbCombinedSnps_RSRC.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/Pf_plasmoDbCombinedSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="SNPs from all P. falciparum strains"
@@ -626,7 +631,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   <resource resource="WinzelerGeneticVariationArray_RSRC" version="@WinzelerGeneticVariationArray_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <wgetArgs url="http://carrier.gnf.org/publications/SFP/Suppl/SFPdata_1.tab.txt">--tries=5 --no-directories --no-host-directories --cut-dirs=3 </wgetArgs>
-    <unpack>convertWinzelerGeneticVarToGff --input_file @dataDir@/SFPdata_1.tab.txt --strain 7G8 --strain D6 --strain W2 --strain HB3 --strain Dd2 --strain FCR3 --strain FCB --strain C188 --strain 18.02 --strain 31.01 --strain 41.02 --strain 48.02 --strain 51.02 --output_file @dataDir@/WinzelerGeneticVariationArray.gff </unpack>
+    <unpack>convertWinzelerGeneticVarToGff --input_file @dataDir@/SFPdata_1.tab.txt --strain 7G8 --strain D6 --strain W2 --strain HB3 --strain Dd2 --strain FCR3 --strain FCB --strain C188 --strain 18.02 --strain 31.01 --strain 41.02 --strain 48.02 --strain 51.02 --output_file @dataDir@/WinzelerGeneticVariationArray_RSRC.gff </unpack>
+    <getAndUnpackOutput file="@dataDir@/WinzelerGeneticVariationArray_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Microarray CGH on P. falciparum strains"
@@ -940,7 +946,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pf_Winzeler_Literature_References_RSRC" version="2009-04-30"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/winzeler_genes_lit.txt"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/winzeler_westenberger/%RESOURCE_VERSION%/winzeler_genes_lit.txt"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/winzeler_genes_lit.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="Literature references from Winzeler and Westenberger"
@@ -1177,7 +1183,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genePrediction/EviganModels/%RESOURCE_VERSION%/Evigan_pf_nbest_chr_forImport.gff.gz"/>
     <unpack>gunzip @dataDir@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @pfChromosomeVer@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="P. falciparum Evigan Gene Models"
         project="PlasmoDB"
@@ -1905,7 +1911,7 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
 
   <resource resource="ChIP_Chip_Henk_Stunnenberg_RSRC" version="@ChIP_Chip_Henk_Stunnenberg_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Henk_Stunnenberg/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Henk_Stunnenberg/%RESOURCE_VERSION%/working_dir/"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
@@ -1928,7 +1934,7 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
 
   <resource resource="ChIP_Chip_Artur_Scherf_RSRC" version="@ChIP_Chip_Artur_Scherf_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Artur_Scherf/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Artur_Scherf/%RESOURCE_VERSION%/working_dir/"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
@@ -1951,7 +1957,7 @@ Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactio
 
   <resource resource="ChIP_Chip_Till_Voss_RSRC" version="@ChIP_Chip_Till_Voss_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Till_Voss/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Till_Voss/%RESOURCE_VERSION%/working_dir/"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
@@ -1996,7 +2002,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
   <resource resource="Pf_temp_called_peaks_RSRC" version="2009-11-11"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/%RESOURCE_VERSION%/working_dir/PEAK_DATA/All_PEAKs.gff"/>
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @pfChromosomeVer@ --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@ --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         project="PlasmoDB"
@@ -2191,7 +2197,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
   <resource resource="Pfalciparum_anticodons_RSRC" version="2007-06-28"
       plugin="ApiCommonData::Load::Plugin::InsertAntiCodon">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/mRNA/anticodon/%RESOURCE_VERSION%/PfAntiCodons"/>
-    <pluginArgs>--data_file $dataDir@/PfAntiCodons --genomeDbName 'P.falciparum_chromosomes' --genomeDbVer @pfChromosomeVer@"</pluginArgs>
+    <pluginArgs>--data_file $dataDir@/PfAntiCodons --genomeDbName 'P.falciparum_chromosomes' --genomeDbVer @Pfalciparum_chromosomes_VER@"</pluginArgs>
     <info
         displayName="P. falciparum (3D7) anticodons"
         project="PlasmoDB"
@@ -2208,4 +2214,51 @@ Contact Till Voss, till.voss@unibas.ch, for further information
       </description>
     </info>
   </resource>
+
+<!--Merged from Apirl Release-->
+
+  <resource resource="Pf_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="P. falicparum ApiLoc and EupathDb links"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne">
+      <description>
+        <![CDATA[
+         <i>P. falciparum</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_TransFactorBindingSitestemp_Llinas_RSRC" version="2009-11-11"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/BindingSites/Llinas_AP2-1-15-10/%RESOURCE_VERSION%/allSites_formated.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
+    <info
+        displayName="Pfalciparum Trans-factor binding sites from Manuel Llinas"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Manuel Llinas"
+        email="manuel@genomics.princeton.edu"
+        institution="University of Princeton">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
+
+
+
+
