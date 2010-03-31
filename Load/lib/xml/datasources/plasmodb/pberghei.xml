@@ -209,7 +209,7 @@
 
   <resource resource="Pb_Entrez_Gene_dbxref_RSRC" version="2009-12-01"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmosDB/common/dbxref/EntrezGene/%RESOURCE_VERSION%/gene_info_plasmo"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/EntrezGene/%RESOURCE_VERSION%/gene_info_plasmo"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
