@@ -1182,6 +1182,29 @@ Data provided by Putignani Lorenza, Microbiology Unit, Children Hospital and Res
           ]]>
         </description>
     </resource>
+
+
+    <resource resource="ApiLoc_EupathDB_Dbrefs" version="2010-03-29"
+        displayName="ApiLoc and EupathDb links"
+        category="ignore"
+        organisms="all"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="ApiLoc_EupathDB_Dbrefs"
+        extDbRlsVer="2010-03-29"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/ApiLoc_dbrefs/2010-03-29/apiLoc_eupathDb_links.tab"
+            contact="Stuart Ralph"
+            email="saralph@unimelb.edu.au"
+            institution="University of Melbourne "
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/ApiLoc_EupathDB_Dbrefs/apiLoc_eupathDb_links.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+           ]]>
+        </description>
+    </resource>
+
+
 </resourcesPipeline>
 
 
