@@ -4161,7 +4161,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
 
 <unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030745_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_36hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030745_NORMALIZED_formated.cov</unpack>
 <unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030744_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_30hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030744_NORMALIZED_formated.cov</unpack>
-<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D_ 24hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D_24hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED_formated.cov</unpack>
 <unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030742_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_18hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030742_NORMALIZED_formated.cov</unpack>
 <unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030741_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_12hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030741_NORMALIZED_formated.cov</unpack>
 <unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030740_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_6hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030740_NORMALIZED_formated.cov</unpack>
@@ -4204,5 +4204,65 @@ Contact Till Voss, till.voss@unibas.ch, for further information
         </description>
     </resource>
 
+<resource resource="Pfalciparum_Lasonder_Proteomics_Blood_Stages" version="2009-07-01" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Lasonder"
+        category="Ignore"
+        publicUrl=""
+        extDbName="Pfalciparum_Lasonder_Proteomics_Blood_Stages"
+        extDbRlsVer="2009-07-01"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/lasonder_edwin/blood_stages/working_dir/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab"
+          contact="Edwin Lasonder"
+            email="E.Lasonder@ncmls.ru.nl"
+            institution= "" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Lasonder_Proteomics_Blood_Stages/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'asexual trophozoites'</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+    </resource> 
+
+<resource resource="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection" version="2010-02-08" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Bowyer"
+        category="Ignore"
+        publicUrl=""
+        extDbName="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection"
+        extDbRlsVer="2010-02-08"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Bowyer_2-8-2010/working_dir/Peptide_identifications_T6.tab"
+          contact="Paul William Bowyer"
+            email="pwbowyer@stanford.edu"
+            institution= "stanford" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection/Peptide_identifications_T6.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'early schizogeny'</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+    </resource> 
+
+ 
+<resource resource="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection" version="2010-02-08" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Bowyer"
+        category="Ignore"
+        publicUrl=""
+        extDbName="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection"
+        extDbRlsVer="2010-02-08"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Bowyer_2-8-2010/working_dir/Peptide_identifications_T0.tab"
+          contact="Paul William Bowyer"
+            email="pwbowyer@stanford.edu"
+            institution= "stanford" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection/Peptide_identifications_T0.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'rupture'</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+    </resource> 
 
  </resourcesPipeline>
