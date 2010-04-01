@@ -47,10 +47,10 @@ $dbh->disconnect();
   while(<F>){
     next if (/^track/);
     chomp;
-    my ($source_id,$location,$coverage) = split("\t",$_);
+    my ($source_id,$start,$end,$coverage) = split("\t",$_);
 
     if($naSeqHash{$source_id}){
-	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$location\t$location\t$coverage\t\t\n";
+	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t\t\n";
     }
   }
   close F;
