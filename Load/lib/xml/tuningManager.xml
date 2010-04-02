@@ -2860,6 +2860,14 @@ from
     select ga.source_id, pm.*
     from
     (
+    -- PlasmoDB --
+    select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
+           'PlasmoDB' as project_id
+    from dual
+
+    UNION
+
+    --TriTrypDB --
     select 'Linfantum promastigote time-course biorep01' as profile_name,
            'TriTrypDB' as project_id
     from dual
@@ -2917,6 +2925,21 @@ tablespace indx
 CREATE TABLE apidb.ExpressionGraphDescrip&1 NOLOGGING AS
 select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts
 from (
+-- PlasmoDB --
+select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
+       'Duffy::PfRnaSeq' as module,
+       'Plasmodium falciparum' as species,
+       '<i>P. falciparum</i> RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       '3D7, PL01 and PL02' as x_axis,
+       'log2 X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+       'coverage,pct' as visible_parts
+from dual
+
+
+UNION
+
+--TriTrypDB --
 select 'Linfantum promastigote time-course biorep01' as profile_name,
        'MylerLinfantum::Ver1' as module,
        'Leishmania infantum' as species,
