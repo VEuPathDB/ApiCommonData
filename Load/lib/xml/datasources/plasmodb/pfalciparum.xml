@@ -1654,16 +1654,6 @@ Contact Till Voss, till.voss@unibas.ch, for further information
       </description>
     </info>
   </resource>
-
-
-
-
-
-
-
-
-
-
   <resource resource="RodentPlasmodiumChromosomes_RSRC" version="2007-09-24"
       plugin="ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/comparativeGenomics/taco_RMP/%RESOURCE_VERSION%/RMP_Pf_fromKooij.txt"/>
@@ -1874,6 +1864,32 @@ Contact Till Voss, till.voss@unibas.ch, for further information
       </description>
     </info>
   </resource>
+
+  <resource resource="Pf_PiggyBac_Clones_Adams_RSRC" version="2010-03-23" 
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/phenotype/piggyBac_clones/%RESOURCE_VERSION%/PiggyBac_Clones_Adams.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/PiggyBac_Clones_Adams.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. falicparum Insertional mutagenesis from John Adams"
+        project=""
+        organisms="@PfOrganismFullName@"
+        category=""
+        publicUrl=""
+        contact="Adams, John"
+        email="jadams3@health.usf.edu"
+        institution="University of South Florida">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+
+
 </resources>
 
 
