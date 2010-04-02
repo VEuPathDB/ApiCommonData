@@ -1727,7 +1727,7 @@ EOF
      $outFile = "$dlDir/iprscan_$projectDB-${release}.txt";
 
      $sql = <<"EOF";
-     SELECT xas.source_id
+     SELECT xas.secondary_identifier
            || chr(9) ||
          xd.name
            || chr(9) ||
