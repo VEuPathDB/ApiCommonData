@@ -1,28 +1,5 @@
-
 <resources>
-  <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
-      plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 5821 --outputFile @dataDir@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-    <info
-        displayName="Plasmodium dbEST ESTs"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Plasmodium ESTs from dbEST.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
+<!--pbergheiISFResource-->
   <resource resource="Pberghei_chromosomes_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/"/>
@@ -44,6 +21,7 @@
     </info>
   </resource>
 
+<!--pbergheiProteomeResource-->
   <resource resource="Pb_IEDB_Epitopes_RSRC" version="@Pb_IEDB_Epitopes_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/epitope/IEDB/%RESOURCE_VERSION%"/>
@@ -89,49 +67,7 @@
     </info>
   </resource>
 
-  <resource resource="Pb_CorrectGeneAliases_RSRC" version="1"
-      plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>cleanUpDBRefNaFeature.pl</unpack>
-    <pluginArgs>--extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
-    <info
-        displayName="CorrectGeneAliases"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="WatanabePbANKA_PredictedTranscripts_RSRC" version="@WatanabePbANKA_PredictedTranscripts_VER@"
-      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-    <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/%RESOURCE_VERSION%/reffull_pf.fas"/>
-    <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_pb.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 5823 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePbANKA' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePbANKA EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
-    <info
-        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. berghei ANKA predicted full length transcripts"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Junichi Watanabe"
-        email="jwatanab@ims.u-tokyo.ac.jp"
-        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
-      <description>
-        <![CDATA[
-         <i>P. berghei</i> ANKA predicted full length transcript sequences.
-        ]]>
-      </description>
-    <publication pmid="17151081"/>
-    </info>
-  </resource>
+<!--pbergheiDbxRefsResource-->
 
   <resource resource="Pb_Entrez_DBRefs_RSRC" version="2009-04-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -249,6 +185,75 @@
     </info>
   </resource>
 
+  <resource resource="Pb_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="P. berghei ApiLoc and EupathDb links"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne">
+      <description>
+        <![CDATA[
+         <i>P. berghei</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--pbergheiESTResource-->
+  <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5821 --outputFile @dataDir@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <info
+        displayName="Plasmodium dbEST ESTs"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Plasmodium ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="WatanabePbANKA_PredictedTranscripts_RSRC" version="@WatanabePbANKA_PredictedTranscripts_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
+    <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/%RESOURCE_VERSION%/reffull_pf.fas"/>
+    <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_pb.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 5823 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePbANKA' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePbANKA EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+    <info
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. berghei ANKA predicted full length transcripts"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Junichi Watanabe"
+        email="jwatanab@ims.u-tokyo.ac.jp"
+        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
+      <description>
+        <![CDATA[
+         <i>P. berghei</i> ANKA predicted full length transcript sequences.
+        ]]>
+      </description>
+    <publication pmid="17151081"/>
+    </info>
+  </resource>
+
+<!--pbergheiMassSpecResource-->
+
   <resource resource="Waters_female_gametes_RSRC" version="2007-09-25"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersFemaleGametes/%RESOURCE_VERSION%/Female_peptide_list_PlasmoDB.xls"/>
@@ -315,6 +320,76 @@
     </info>
   </resource>
 
+<!--pbergheiSpecific-->
+
+  <resource resource="Pb_CorrectGeneAliases_RSRC" version="1"
+      plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>cleanUpDBRefNaFeature.pl</unpack>
+    <pluginArgs>--extDbRelSpecList "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
+    <info
+        displayName="CorrectGeneAliases"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <pluginArgs></pluginArgs>
+    <info
+        displayName="GO Association for Plasmodium berghei genes"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>P. berghei</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pberghei_ECNumbers_RSRC" version="@Pberghei_chromosomes_VER@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pberghei.fasta --output_gff @dataDir@/gff/Pberghei.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@/Pberghei.gff3 --output_gff @dataDir@/Pberghei.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pberghei.ec </unpack>
+    <pluginArgs>--ECMappingFile @dataDir@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium berghei genes"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. berghei</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--ExpressionResource-->
   <resource resource="Pberghei_gss_oligos_RSRC" version="@Pberghei_gss_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSOligos/%RESOURCE_VERSION%/elements.fasta"/>
@@ -358,77 +433,4 @@
     <publication pmid="15637271"/>
     </info>
   </resource>
-
-
-
-
-
-  <resource resource="Pberghei_ECNumbers_RSRC" version="@Pberghei_chromosomes_VER@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pberghei.fasta --output_gff @dataDir@/gff/Pberghei.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @dataDir@/Pberghei.gff3 --output_gff @dataDir@/Pberghei.gff</unpack>
-    <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pberghei.ec </unpack>
-    <pluginArgs>--ECMappingFile @dataDir@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="EC Number Mapping for Plasmodium berghei genes"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>P. berghei</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
-      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <pluginArgs></pluginArgs>
-    <info
-        displayName="GO Association for Plasmodium berghei genes"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         GO Associations for <i>P. berghei</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-<!--Merged from Apirl Release-->
-
-  <resource resource="Pb_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
-    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-    <info
-        displayName="P. berghei ApiLoc and EupathDb links"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="ignore"
-        publicUrl=""
-        contact="Stuart Ralph"
-        email="saralph@unimelb.edu.au"
-        institution="University of Melbourne">
-      <description>
-        <![CDATA[
-         <i>P. berghei</i> ApiLoc and EupathDb DBRefs.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 </resources>
