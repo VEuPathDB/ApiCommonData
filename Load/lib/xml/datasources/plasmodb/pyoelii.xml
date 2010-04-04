@@ -1,70 +1,5 @@
 <resources>
-  <resource resource="Py_dbEST_RSRC" version="@Py_dbEST_VER@"
-      plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 5861 --outputFile @dataDir@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-    <info
-        displayName="Plasmodium dbEST ESTs"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Plasmodium ESTs from dbEST.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="WatanabePy17XL_PredictedTranscripts_RSRC" version="@2WatanabePy17XL_PredictedTranscripts_VER@"
-      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/reffull_py.fas"/>
-    <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_py.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
-    <info
-        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL predicted full length transcripts"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Junichi Watanabe"
-        email="jwatanab@ims.u-tokyo.ac.jp"
-        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
-      <description>
-        <![CDATA[
-         <i>P. yoelii</i> 17XL predicted full length transcript sequences.
-        ]]>
-      </description>
-    <publication pmid="17151081"/>
-    </info>
-  </resource>
-
-  <resource resource="WatanabePy17XL_EstLibrary_RSRC" version="2006-11-02"
-      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_py.fas"/>
-    <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_py.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 352914  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePy17XL' --libraryDesc "P. yoelii 17XL (XPYw) and P. yoelii 17XNL (XPYs) were propagated in vivo in five-week old female ICR mice. Blood was filtrated through Plamsodipur filter to remove white blood cells."</pluginArgs>
-    <info
-        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL EST library"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Junichi Watanabe"
-        email="jwatanab@ims.u-tokyo.ac.jp"
-        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
-      <description>
-        <![CDATA[
-         <i>P. yoelii</i> 17XL EST library.
-        ]]>
-      </description>
-    <publication pmid="17151081"/>
-    </info>
-  </resource>
+<!--pyoeliiISFResource-->
 
   <resource resource="Pyoelii_Contigs_RSRC" version="@Pyoelii_Contigs_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
@@ -87,27 +22,6 @@
       </description>
     <publication pmid="12368865"/>
     <publication pmid="15580778"/>
-    </info>
-  </resource>
-
-  <resource resource="Pyoelii_EC_numbers_RSRC" version="@Pyoelii_Contigs_VER@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/ec_numbers.txt"/>
-    <pluginArgs>--ECMappingFile @dataDir@/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="P. yoelii, EC Numbers for Annotation"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact="Vishal Nayak"
-        email="vishalkn@pcbi.upenn.edu"
-        institution="EuPathDB">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
     </info>
   </resource>
 
@@ -136,6 +50,9 @@
       </description>
     </info>
   </resource>
+
+
+<!--IEDB resource-->
 
   <resource resource="Py_IEDB_Epitopes_RSRC" version="@Py_IEDB_Epitopes_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -182,27 +99,7 @@
     </info>
   </resource>
 
-  <resource resource="Py_CorrectGeneAliases_RSRC" version="1"
-      plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>cleanUpDBRefNaFeature.pl</unpack>
-    <pluginArgs>--extDbRelSpecList "Pyoelii_Contigs_RSRC|@Pyoelii_Contigs_VER@,Pyoelii_Kappe_Annotation_RSRC|@Pyoelii_Kappe_Annotation_VER@"</pluginArgs>
-    <info
-        displayName="CorrectGeneAliases"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
+<!--PyDbxRefResource-->
 
   <resource resource="Py_Entrez_DBRefs_RSRC" version="2009-04-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -288,28 +185,6 @@
     </info>
   </resource>
 
-  <resource resource="PhylogeneticProfiles_Pyoelii_RSRC" version="2005-11-29"
-      plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/phylogeny/phyloProfiles/%RESOURCE_VERSION%"/>
-    <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --headerFile @dataDir@/%RESOURCE_VERSION%/pvPy_TaxonNameHeaders --dataFile @dataDir@/%RESOURCE_VERSION%/pyoelii/pp-any-and-pyoelii.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
-    <info
-        displayName="Phylogenetic profiles for P. yoelii"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact="Shailesh Date"
-        email="svdate@pcbi.upenn.edu"
-        institution="CBIL">
-      <description>
-        <![CDATA[
-         Phylogenetic profiles based on the presence or absence of all known P. yoelii ORFs in 195 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function.
-        ]]>
-      </description>
-    <publication pmid="10200254"/>
-    </info>
-  </resource>
-
   <resource resource="MutualInformationScores_Pyoelii_RSRC" version="2005-11-29"
       plugin="GUS::Community::Plugin::LoadMutualInformationScores">
     <manualGet fileOrDir="PlasmoDB/pyoelii/phylogeny/phyloProfiles/%RESOURCE_VERSION%/"/>
@@ -331,6 +206,98 @@
     <publication pmid="12923548"/>
     </info>
   </resource>
+
+  <resource resource="Py_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="P. yoelii ApiLoc and EupathDb links"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne">
+      <description>
+        <![CDATA[
+         <i>P. yoelii</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--PyESTResource-->
+
+  <resource resource="Py_dbEST_RSRC" version="@Py_dbEST_VER@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5861 --outputFile @dataDir@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <info
+        displayName="Plasmodium dbEST ESTs"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Plasmodium ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="WatanabePy17XL_PredictedTranscripts_RSRC" version="@2WatanabePy17XL_PredictedTranscripts_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/reffull_py.fas"/>
+    <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_py.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
+    <info
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL predicted full length transcripts"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Junichi Watanabe"
+        email="jwatanab@ims.u-tokyo.ac.jp"
+        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
+      <description>
+        <![CDATA[
+         <i>P. yoelii</i> 17XL predicted full length transcript sequences.
+        ]]>
+      </description>
+    <publication pmid="17151081"/>
+    </info>
+  </resource>
+
+  <resource resource="WatanabePy17XL_EstLibrary_RSRC" version="2006-11-02"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_py.fas"/>
+    <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_py.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 352914  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePy17XL' --libraryDesc "P. yoelii 17XL (XPYw) and P. yoelii 17XNL (XPYs) were propagated in vivo in five-week old female ICR mice. Blood was filtrated through Plamsodipur filter to remove white blood cells."</pluginArgs>
+    <info
+        displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. yoelii 17XL EST library"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Junichi Watanabe"
+        email="jwatanab@ims.u-tokyo.ac.jp"
+        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
+      <description>
+        <![CDATA[
+         <i>P. yoelii</i> 17XL EST library.
+        ]]>
+      </description>
+    <publication pmid="17151081"/>
+    </info>
+  </resource>
+
+<!--PyMassSpecResource-->
 
   <resource resource="Pyoelii_LiverStage_LS40_RSRC" version="2008-07-18"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
@@ -376,35 +343,75 @@
     </info>
   </resource>
 
-  <resource resource="Kappe_expressionProfiles_RSRC" version="1.0"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/Kappe/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir/ --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+<!--PyMiscResource-->
+
+  <resource resource="PhylogeneticProfiles_Pyoelii_RSRC" version="2005-11-29"
+      plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/phylogeny/phyloProfiles/%RESOURCE_VERSION%"/>
+    <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. yoelii' --headerFile @dataDir@/%RESOURCE_VERSION%/pvPy_TaxonNameHeaders --dataFile @dataDir@/%RESOURCE_VERSION%/pyoelii/pp-any-and-pyoelii.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
     <info
-        displayName="P. yoelii liver stage expression data"
+        displayName="Phylogenetic profiles for P. yoelii"
         project="PlasmoDB"
         organisms="@PyOrganismFullName@"
-        category="Transcriptome"
+        category="Proteome"
         publicUrl=""
-        contact="Stefan Kappe"
-        email="stefan.kappe@sbri.org"
-        institution="Seattle Biomedical Research Institute">
+        contact="Shailesh Date"
+        email="svdate@pcbi.upenn.edu"
+        institution="CBIL">
       <description>
         <![CDATA[
-         P. yoelii liver stage expression data from Kappe lab.
-     Seattle Biomedical Research Institute
-     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
-     206-256-7205
+         Phylogenetic profiles based on the presence or absence of all known P. yoelii ORFs in 195 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function.
         ]]>
       </description>
-    <publication pmid="18172196"/>
+    <publication pmid="10200254"/>
+    </info>
+  </resource>
+<!--PySpecResource-->
+
+  <resource resource="Py_CorrectGeneAliases_RSRC" version="1"
+      plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>cleanUpDBRefNaFeature.pl</unpack>
+    <pluginArgs>--extDbRelSpecList "Pyoelii_Contigs_RSRC|@Pyoelii_Contigs_VER@,Pyoelii_Kappe_Annotation_RSRC|@Pyoelii_Kappe_Annotation_VER@"</pluginArgs>
+    <info
+        displayName="CorrectGeneAliases"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
     </info>
   </resource>
 
+  <resource resource="Pyoelii_EC_numbers_RSRC" version="@Pyoelii_Contigs_VER@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/ec_numbers.txt"/>
+    <pluginArgs>--ECMappingFile @dataDir@/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="P. yoelii, EC Numbers for Annotation"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact="Vishal Nayak"
+        email="vishalkn@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-
-
+<!--ExpressionResource-->
   <resource resource="Vaidya_Bergman_oligos_RSRC" version="@Vaidya_Bergman_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/vaidyaBergmanOligos/%RESOURCE_VERSION%/PyoeliiVadyiaOligos.fasta"/>
@@ -421,29 +428,6 @@
       <description>
         <![CDATA[
          Version 1 of oligos for <i>P. yoelii</i> from Vaidya/Bergman (Drexel).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-<!--Merged from Apirl Release-->
-
-  <resource resource="Py_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
-    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-    <info
-        displayName="P. yoelii ApiLoc and EupathDb links"
-        project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
-        category="ignore"
-        publicUrl=""
-        contact="Stuart Ralph"
-        email="saralph@unimelb.edu.au"
-        institution="University of Melbourne">
-      <description>
-        <![CDATA[
-         <i>P. yoelii</i> ApiLoc and EupathDb DBRefs.
         ]]>
       </description>
     </info>

@@ -720,4 +720,30 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
       </description>
     </info>
   </resource>
+
+  <resource resource="Kappe_expressionProfiles_RSRC" version="1.0"
+      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/Kappe/%RESOURCE_VERSION%/working_dir/"/>
+    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @dataDir@/working_dir/ --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <info
+        displayName="P. yoelii liver stage expression data"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Stefan Kappe"
+        email="stefan.kappe@sbri.org"
+        institution="Seattle Biomedical Research Institute">
+      <description>
+        <![CDATA[
+         P. yoelii liver stage expression data from Kappe lab.
+     Seattle Biomedical Research Institute
+     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
+     206-256-7205
+        ]]>
+      </description>
+    <publication pmid="18172196"/>
+    </info>
+  </resource>
 </resources>
