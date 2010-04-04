@@ -1,4 +1,6 @@
 <resources>
+
+<!--dbEST-->
   <resource resource="Pc_dbEST_RSRC" version="@Pc_dbEST_VER@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
@@ -22,6 +24,7 @@
     </info>
   </resource>
 
+<!--pchabaudiISFResource-->
   <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%"/>
@@ -43,6 +46,8 @@
       </description>
     </info>
   </resource>
+
+<!--IEDB resource-->
 
   <resource resource="Pc_IEDB_Epitopes_RSRC" version="@Pc_IEDB_Epitopes_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -89,6 +94,8 @@
     </info>
   </resource>
 
+<!--pchabaudiSpecific-->
+
   <resource resource="Pc_CorrectGeneAliases_RSRC" version="1"
       plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
     <manualGet fileOrDir="global/empty"/>
@@ -110,6 +117,53 @@
       </description>
     </info>
   </resource>
+
+  <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
+    <pluginArgs>--ECMappingFile @dataDir@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium chabaudi genes"
+        project="PlasmoDB"
+        organisms="@PcOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. chabaudi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <pluginArgs></pluginArgs>
+    <info
+        displayName="GO Association for Plasmodium chabaudi genes"
+        project="PlasmoDB"
+        organisms="@PcOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>P. chabaudi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--pchabaudiDbxRefsResource-->
 
   <resource resource="Pc_Entrez_DBRefs_RSRC" version="2009-04-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -205,7 +259,6 @@
       </description>
     </info>
   </resource>
-
   <resource resource="Pc_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
@@ -226,54 +279,6 @@
       </description>
     </info>
   </resource>
-
-  <resource resource="Pchabaudi_ECNumbers_RSRC" version="@Pchabaudi_chromosomes_VER@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeFastaFile --input_dir @dataDir@/gff --output_fasta @dataDir@/Pchabaudi.fasta --output_gff @dataDir@/gff/Pchabaudi.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @dataDir@/Pchabaudi.gff3 --output_gff @dataDir@/Pchabaudi.gff</unpack>
-    <unpack>makeECFile --format gff3 --fileOrDir @dataDir@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @dataDir@/Pchabaudi.ec </unpack>
-    <pluginArgs>--ECMappingFile @dataDir@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="EC Number Mapping for Plasmodium chabaudi genes"
-        project="PlasmoDB"
-        organisms="@PcOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>P. chabaudi</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
-      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <pluginArgs></pluginArgs>
-    <info
-        displayName="GO Association for Plasmodium chabaudi genes"
-        project="PlasmoDB"
-        organisms="@PcOrganismFullName@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         GO Associations for <i>P. chabaudi</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-<!--Merged from Apirl Release-->
 
   <resource resource="Pc_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
