@@ -528,7 +528,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pf_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/mapping"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. falicparum ApiLoc and EupathDb links"
@@ -1014,7 +1014,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   </resource>
 
   <resource resource="Pf_Old_GOAssociations_RSRC" version="2008-04-03"
-      plugin="">
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @dataDir@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "GO_RSRC|@GO_VER@" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
     <info
