@@ -38,25 +38,36 @@ and l.is_top_level = 1
 order by l.sequence_source_id, l.start_min";
 
 my %probeFeatureHash;
+my %reversedProbeFeatureHash;
+my %scoreHash;
 my $sh = $dbh->prepareAndExecute($sql);
 
 while(my @ar = $sh->fetchrow_array()) {
   $probeFeatureHash{$ar[0]}="$ar[1]\t$ar[2]";
+  $reversedProbeFeatureHash{"$ar[1]\t$ar[2]"}=$ar[0];
 }
 $sh->finish();
 $dbh->disconnect();
 
 
 open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
-open(FILE, "> $outputFile") or die "Cannot open file for writing:  $!";
+
 while (<TABFILE>){
   chomp;
   my @myArray = split(/\t/, $_);
   if($probeFeatureHash{$myArray[0]}){
-	  print FILE "$probeFeatureHash{$myArray[0]}\t$myArray[1]\n";
-      }
+      push(@{$scoreHash{$probeFeatureHash{$myArray[0]}}}, $myArray[1]);
+  }
 }
 close(TABFILE);
+open(FILE, "> $outputFile") or die "Cannot open file for writing:  $!";
+
+foreach my $k (keys %scoreHash) {
+    my $average = sum(@{$scoreHash{$k}}) / @{$scoreHash{$k}};
+    my $probeId = $reversedProbeFeatureHash{$k};
+    print FILE "$probeId\t$k\t$average\n";
+}
+
 close FILE;
 
 sub getDbRlsId {
