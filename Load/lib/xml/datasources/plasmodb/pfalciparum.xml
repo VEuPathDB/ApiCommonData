@@ -1747,10 +1747,78 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   </resource>
 
 
+  <resource resource="Pf_Probes_Winzeler_Westenberger_RSRC" version="@ChIP_Chip_Winzeler_Westenberger_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Winzeler_Westenberger/%RESOURCE_VERSION%/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact="Scott Westenberger / E. Winzeler"
+        email="scottw@scripps.edu, winzeler@scripps.edu"
+        institution="The Scripps Research Institute">
+      <description>
+        <![CDATA[
+         ChIP-on-chip profiling of H3, H3K4me3, H3K9me3, and H3K9ac of P. falciparum from asynchronous parasites revealed an extensively euchromatic epigenome with heterochromatin restricted to variant surface antigen gene families (VSA) and a number of genes hitherto unlinked to VSA.
+Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
+        ]]>
+      </description>
+    <publication pmid="19497874"/>
+    </info>
+  </resource>
+
+  <resource resource="Pf_Probes_Artur_Scherf_RSRC" version="@ChIP_Chip_Artur_Scherf_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Artur_Scherf/%RESOURCE_VERSION%/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Artur Scherf"
+        email="artur.scherf@pasteur.fr"
+        institution="Unité de Biologie des Interactions Hôte-Parasite">
+      <description>
+        <![CDATA[
+         Chromatin immunoprecipitation to identify histone modifications (H3K9me3, H3K9Ac, H3K4me3, H4K20me3) in Plasmodium falciparum wild type and Sir2 knock-outs.
+Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactions Hôte-Parasite.
+        ]]>
+      </description>
+    <publication pmid="19218088"/>
+    </info>
+  </resource>
+
+  <resource resource="Pf_Probes_Till_Voss_RSRC" version="@ChIP_Chip_Till_Voss_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Till_Voss/%RESOURCE_VERSION%/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Till Voss"
+        email="till.voss@unibas.ch"
+        institution="Swiss Tropical Institute">
+      <description>
+        <![CDATA[
+         Genome-wide association of Pf Heterochromatin protein 1 (Hp-1) with virulence gene clusters. We identified 425 PfHP1-bound genes by ChIP-on-CHIP - almost all of which code for expor
+ted (predicted) virulence genes including all var genes, rifs, stevor, pfmc-2tm and others.
+Contact Till Voss, till.voss@unibas.ch, for further information
+        ]]>
+      </description>
+    </info>
+  </resource>
 
   <resource resource="ChIP_Chip_Winzeler_Westenberger_RSRC" version="@ChIP_Chip_Winzeler_Westenberger_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Winzeler_Westenberger/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Winzeler_Westenberger/%RESOURCE_VERSION%/raw_data"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
@@ -1773,7 +1841,7 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
 
   <resource resource="ChIP_Chip_Artur_Scherf_RSRC" version="@ChIP_Chip_Artur_Scherf_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Artur_Scherf/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Artur_Scherf/%RESOURCE_VERSION%/raw_data"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
@@ -1796,7 +1864,7 @@ Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactio
 
   <resource resource="ChIP_Chip_Till_Voss_RSRC" version="@ChIP_Chip_Till_Voss_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Till_Voss/%RESOURCE_VERSION%/working_dir/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Till_Voss/%RESOURCE_VERSION%/raw_data"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
