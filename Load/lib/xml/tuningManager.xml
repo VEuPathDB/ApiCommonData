@@ -2458,6 +2458,58 @@ tablespace indx
   </tuningTable>
 
 
+  <tuningTable name="apidb.TFBSGene">
+    <internalDependency name="apidb.FeatureLocation"/>
+    <internalDependency name="apidb.GeneAttributes"/>
+    <internalDependency name="apidb.SequenceAttributes"/>
+    <sql>
+      <![CDATA[
+        create table apidb.tfbsgene&1 NOLOGGING AS
+select distinct
+      ga.source_id as gene_source_id,
+      aef.source_id as probe_id,
+      aef.na_feature_id as tfbs_na_feature_id,
+      CASE 
+        WHEN ga.is_reversed = 0 
+        THEN round(abs(ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0)
+        ELSE round(abs(ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)),0) 
+      END as distance,
+      CASE 
+        WHEN -- distance > 0
+          CASE WHEN ga.is_reversed = 0 
+            THEN ga.start_min - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)
+            ELSE ga.end_max - (((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min)
+          END > 0 
+        THEN 
+          CASE 
+            WHEN ga.is_reversed = 0 
+            THEN '-' 
+            ELSE '+'
+          END 
+        ELSE 
+          CASE 
+            WHEN ga.is_reversed = 1 
+            THEN '-' 
+            ELSE '+'
+          END 
+        END as direction
+from  dots.BindingSiteFeature aef,
+      apidb.FeatureLocation arrloc,
+      apidb.geneattributes ga
+where aef.na_feature_id = arrloc.na_feature_id
+and   arrloc.na_sequence_id = ga.na_sequence_id
+and   ( (ga.is_reversed = 0 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.start_min) <= 3000)
+                  or (ga.is_reversed = 1 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.end_max) <= 3000) )
+     ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+       CREATE INDEX apidb.tfbs_geneid_idx&1 ON apidb.tfbsgene&1 (gene_source_id, tfbs_na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
 
   <tuningTable name="apidb.SageTagAttributes">
     <internalDependency name="apidb.FeatureLocation"/>
