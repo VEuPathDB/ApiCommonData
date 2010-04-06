@@ -258,7 +258,7 @@
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersFemaleGametes/%RESOURCE_VERSION%/Female_peptide_list_PlasmoDB.xls"/>
     <unpack>parseWatersExcelProteomics.pl --infile Female_peptide_list_PlasmoDB.xls --outfile Female_peptide_list_PlasmoDB_load.tab</unpack>
-    <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
+    <pluginArgs>--inputFile @dataDir@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@" --developmentalStage 'gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
         project="PlasmoDB"
@@ -280,7 +280,7 @@
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMaleGametes/%RESOURCE_VERSION%/Male_peptide_list_PlasmoDB.xls"/>
     <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Male_peptide_list_PlasmoDB.xls --outfile @dataDir@/Male_peptide_list_PlasmoDB_load.tab</unpack>
-    <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
+    <pluginArgs>--inputFile @dataDir@/Male_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@" --developmentalStage 'gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of Male Gametocytes from Leiden Malaria Group"
         project="PlasmoDB"
@@ -302,7 +302,7 @@
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMixedGametes/%RESOURCE_VERSION%/Mixed_Gams_peptide_list_PlasmoDB.xls"/>
     <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB.xls --outfile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB_load.tab</unpack>
-    <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@"</pluginArgs>
+    <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@" --developmentalStage 'gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
         project="PlasmoDB"
