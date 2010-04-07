@@ -2042,6 +2042,7 @@ SQL
             $virtual_target_start = $distance_from_left + $length - $target_end + 1;
             $virtual_target_end = $distance_from_left + $length - $target_start + 1;
             $virtual_tstarts = &getReversedTstarts($distance_from_left,$length,$tstarts,$blocksizes);
+            $blocksizes = join(',', reverse split(',', $blocksizes));
           } else {
             $virtual_target_start = $target_start + $distance_from_left;
             $virtual_target_end = $target_end + $distance_from_left;
