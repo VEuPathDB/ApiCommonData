@@ -625,13 +625,13 @@ sub readConfigFile {
 
     if($tag eq "extDbSpecA"){
 
-        my @values = split(/,/,$values);
+        my @values = split(/\|\|/,$values);
 	$seqTableA = \@values;
     }
 
     if($tag eq "extDbSpecB"){
 
-        my @values = split(/,/,$values);
+        my @values = split(/\|\|/,$values);
 	$seqTableB = \@values;
     }
 
