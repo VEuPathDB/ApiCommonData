@@ -1497,7 +1497,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="WirthSageTagArrayDesign_RSRC" version="@WirthSageTagArrayDesign_VER@"
       plugin="GUS::Supported::Plugin::LoadArrayDesign">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/WirthSageTagArrayDesign/%RESOURCE_VERSION%/array"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/WirthSageTagArrayDesign/%RESOURCE_VERSION%/array"/>
     <unpack>preLoadArrayDesign --category TechnologyType --value @PlasmoSageTags.OntologyEntryValue@ --manufacturer @PlasmoSageTags.Contact@</unpack>
     <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @dataDir@/array/distinct_sage_tags.txt > @dataDir@/array/distinct_sage_tags_header.txt</unpack>
     <pluginArgs>--cfg_file @dataDir@/array/sageArray.config --data_file @dataDir@/array/distinct_sage_tags_header.txt  --manufacturer @PlasmoSageTags.Contact@ --technology_type @PlasmoSageTags.OntologyEntryValue@</pluginArgs>
