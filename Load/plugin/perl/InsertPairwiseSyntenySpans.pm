@@ -92,58 +92,47 @@ sub run {
   foreach my $subdir (readdir DIR){
   
   
-      my ($inFile, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = $self->readConfigFile("$subdir/config.txt");
+      my ($file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = $self->readConfigFile("$subdir/config.txt");
 
-  my $file = $inFile."-synteny";
-  my $formatCmd = "formatPxSyntenyFile --inputFile $inFile --outputFile $file";
+      my(@extDbRlsIdA, @extDbRlsIdB);
 
+      foreach my $extDbRlsSpecA (@{$specA}){
+	  push(@extDbRlsIdA,$self->getExtDbRlsId($extDbRlsSpecA));
+      }
+      my $extDbRlsIdA = join(",",@extDbRlsIdA);
+      
+      foreach my $extDbRlsSpecB (@{$specB}){
+	  push(@extDbRlsIdB,$self->getExtDbRlsId($extDbRlsSpecB));
+      }
+      my $extDbRlsIdB = join(",",@extDbRlsIdB);
+      
+      my $synDbRlsId = $self->getExtDbRlsId($syntenySpec);
+      
+      my $count = 0;
 
-  if($agpFile){
+      open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
 
-      $formatCmd .= " --agpFile $agpFile";
+      while (<IN>) {
+	  chomp;
+
+	  $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+	  $count++;
+
+	  if($count && $count % 500 == 0) {
+	      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
+	  }
+
+	  $self->undefPointerCache();
+      }
+      close(IN);
+
+      $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
+      $self->insertAnchors($synDbRlsId, $extDbRlsIdB);
+
+      my $anchorCount = $self->getAnchorCount();
+
+      $self->log("inserted $count synteny spans and $anchorCount anchors ");
   }
-
-   system($formatCmd);
-
-  my(@extDbRlsIdA, @extDbRlsIdB);
-
-  foreach my $extDbRlsSpecA (@{$specA}){
-      push(@extDbRlsIdA,$self->getExtDbRlsId($extDbRlsSpecA));
-  }
-  my $extDbRlsIdA = join(",",@extDbRlsIdA);
-
-  foreach my $extDbRlsSpecB (@{$specB}){
-      push(@extDbRlsIdB,$self->getExtDbRlsId($extDbRlsSpecB));
-  }
-  my $extDbRlsIdB = join(",",@extDbRlsIdB);
-
-  my $synDbRlsId = $self->getExtDbRlsId($syntenySpec);
-
-  my $count = 0;
-
-  open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
-
-  while (<IN>) {
-    chomp;
-
-    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
-    $count++;
-
-    if($count && $count % 500 == 0) {
-      $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
-    }
-
-    $self->undefPointerCache();
-  }
-  close(IN);
-
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdB);
-
-  my $anchorCount = $self->getAnchorCount();
-
-  $self->log("inserted $count synteny spans and $anchorCount anchors ");
-}
 }
 #--------------------------------------------------------------------------------
 
