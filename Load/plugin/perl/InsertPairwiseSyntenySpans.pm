@@ -92,7 +92,7 @@ sub run {
   foreach my $subdir (readdir DIR){
   
   
-      my ($file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = $self->readConfigFile("$subdir/config.txt");
+      my ($file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = $self->readConfigFile("$mercatorDir/$subdir/config.txt");
 
       my(@extDbRlsIdA, @extDbRlsIdB);
 
