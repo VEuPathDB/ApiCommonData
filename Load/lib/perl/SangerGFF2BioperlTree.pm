@@ -288,8 +288,11 @@ sub traverseSeqFeatures {
 		    push(@UTRs, $UTR);
 		    
 
-		}else{
+		}elsif($type eq 'coding'){
 		    $exonType = 'coding';
+		}else{
+		    $exonType = 'non_coding';
+
 		}
 		if($subFeature->primary_tag eq 'pseudogenic_exon'){
 		    $subFeature->primary_tag('exon');
