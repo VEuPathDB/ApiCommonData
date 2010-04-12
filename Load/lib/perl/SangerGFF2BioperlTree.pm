@@ -1,4 +1,4 @@
-package ApiCommonData::Load::GenesAndCdsWithUTRs2BioperlTree;
+package ApiCommonData::Load::SangerGFF2BioperlTree;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
