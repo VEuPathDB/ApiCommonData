@@ -40,9 +40,11 @@ foreach my $line(<IN>){
 #    print "$cols[8]\t\t";
     $cols[8] =~ s/=/\$\$\"/g;
 
+    $cols[8] =~ s/\"\"/\"/g;
+
     $cols[8] =~ s/;/\";/g;
     
-    $cols[8] =~ s/\"\"/\"/g;
+
 
  # 
 
