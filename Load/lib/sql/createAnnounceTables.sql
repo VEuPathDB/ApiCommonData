@@ -38,6 +38,7 @@ CREATE TABLE announce.message_projects
   project_id NUMBER(3) NOT NULL,
   CONSTRAINT message_id_fkey FOREIGN KEY (message_id) REFERENCES announce.messages(message_id),
   CONSTRAINT project_id_fkey FOREIGN KEY (project_id) REFERENCES announce.projects(project_id)
+  CONSTRAINT message_project_pkey PRIMARY KEY (message_id, project_id)
 );
 
 DROP SEQUENCE announce.messages_id_pkseq;
