@@ -392,7 +392,7 @@
 <!--ExpressionResource-->
   <resource resource="Pberghei_gss_oligos_RSRC" version="@Pberghei_gss_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSOligos/%RESOURCE_VERSION%/elements.fasta"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSOligos/%RESOURCE_VERSION%/elements.fasta"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
         displayName="P. berghei GSS oligos"
@@ -414,7 +414,7 @@
 
   <resource resource="Pberghei_gss_oligo_gene_mapping_RSRC" version="@Pberghei_gss_oligos_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersOligoMapping/%RESOURCE_VERSION%/gss2genes.tab"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersOligoMapping/%RESOURCE_VERSION%/gss2genes.tab"/>
     <pluginArgs>--inputFile @dataDir@/gss2genes.tab --oligosExternalDatabase "P.berghei GSS oligos"  --oligosExternalDatabaseRls "1.0" </pluginArgs>
     <info
         displayName="P. berghei GSS oligos to genes mapping"

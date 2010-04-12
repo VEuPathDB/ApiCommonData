@@ -1259,7 +1259,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pf_TransFactorBindingSitestemp_Llinas_RSRC" version="2009-11-11"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/BindingSites/Llinas_AP2-1-15-10/%RESOURCE_VERSION%/allSites_formated.gff"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/bindingSites/Llinas_AP2-1-15-10/%RESOURCE_VERSION%/allSites_formated.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "P.falciparum_chromosomes"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="Pfalciparum Trans-factor binding sites from Manuel Llinas"
@@ -1705,7 +1705,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="DeRisi_oligos_RSRC" version="@DeRisi_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/DeRisi_oligos/%RESOURCE_VERSION%/derisi_oligos.fsa"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/DeRisi_oligos/%RESOURCE_VERSION%/derisi_oligos.fsa"/>
     <pluginArgs>--sequenceFile @dataDir@/derisi_oligos.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 36329</pluginArgs>
     <info
         displayName="Oligos on MOS11 and MOS14 (DeRisi)"
@@ -1928,7 +1928,7 @@ Contact Till Voss, till.voss@unibas.ch, for further information
 
   <resource resource="Pf_ChipSeq_Le_Roch_RSRC" version="@Pf_ChipSeq_Le_Roch_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipSeq/Le_Roch/%RESOURCE_VERSION%/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipSeq/Le_Roch/%RESOURCE_VERSION%/processed"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="ChIP-Seqs from Le Roch"
