@@ -1014,14 +1014,17 @@ sub literature {
   my ($self, $tag, $bioperlFeature, $feature) = @_;
 
   my @dbRefNaFeatures;
-  foreach my $tagValue ($bioperlFeature->get_tag_values($tag)) {
-    if ($tagValue =~ /^\s*(PMID:\s*\d+)/) {
-      my $pmid = $1;
-      push(@dbRefNaFeatures, 
-	   GUS::Supported::SpecialCaseQualifierHandlers::buildDbXRef($self->{plugin}, $pmid));
-    } else {
-      next;
-    }
+  foreach my $tagValues ($bioperlFeature->get_tag_values($tag)) {
+      my @tagValues = split(/,/,$tagValues);
+      foreach my $tagValue (@tagValues){
+	  if ($tagValue =~ /^\s*(PMID:\s*\d+)/) {
+	      my $pmid = $1;
+	      push(@dbRefNaFeatures, 
+		   GUS::Supported::SpecialCaseQualifierHandlers::buildDbXRef($self->{plugin}, $pmid));
+	  } else {
+	      next;
+	  }
+      }
   }
   return \@dbRefNaFeatures;
 }
