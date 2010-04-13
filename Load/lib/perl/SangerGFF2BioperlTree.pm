@@ -120,11 +120,14 @@ sub preprocess {
 			
 		    }
 		}       
-		my ($gene,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
+		my ($geneArrayRef,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
 
 		my @UTRs = @{$UTRArrayRef};
-		if($gene){
+		
+		my @genes = @{$geneArrayRef};
 
+		
+		foreach my $gene (@genes){
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
 		
@@ -149,7 +152,7 @@ sub preprocess {
 sub traverseSeqFeatures {
     my ($geneFeature, $bioperlSeq,$polypeptideHashRef) = @_;
     
-    my ($gene,@UTRs);
+    my (@genes,$gene,@UTRs);
 
     my %polypeptide = %{$polypeptideHashRef};
     my @RNAs = $geneFeature->get_SeqFeatures;
@@ -170,6 +173,7 @@ sub traverseSeqFeatures {
     my $transcriptCount = scalar @RNAs;
 
     my $ctr = 0;
+
 
     foreach my $RNA (sort {$a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end} @RNAs){ 
 	my $type = $RNA->primary_tag;
@@ -216,15 +220,15 @@ sub traverseSeqFeatures {
 		$type = 'coding';
 		my($rnaId) = $RNA->get_tag_values('ID');
 		$RNA = &copyQualifiers($polypeptide{$rnaId},$RNA) if $polypeptide{$rnaId};
-		print STDERR "Missing poly: $rnaId\n";
+		#print STDERR "Missing poly: $rnaId\n";
 		$CDSLocation  = $polypeptide{$rnaId}->location;
 	    }
 	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
-	    if($ctr < $transcriptCount){
+	    if($transcriptCount > 1){
 		
-		$geneID .= $suffixes[$ctr];
+		$geneID .= "-".$suffixes[$ctr];
 
 		$ctr++;
 		
@@ -240,6 +244,7 @@ sub traverseSeqFeatures {
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 	    
 	    my $codonStart = 0;
+	    
 	    
 	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
 
@@ -284,12 +289,14 @@ sub traverseSeqFeatures {
 		    $UTR->add_tag_value('Parent',$parent) if $parent;
 		    
 		    
-
+		    $subFeature->primary_tag('exon');
 		    push(@UTRs, $UTR);
 		    
 
 		}elsif($type eq 'coding'){
 		    $exonType = 'coding';
+
+		    $codonStart = $subFeature->frame();
 		}else{
 		    $exonType = 'non_coding';
 
@@ -322,9 +329,6 @@ sub traverseSeqFeatures {
 			$subFeature->add_tag_value('CodingEnd',$codingEnd);
 		    }
 		    $subFeature->add_tag_value('type','coding');
-		}else{
-		    $subFeature->add_tag_value('type',$exonType);
-				
 		}
 
 		if($prevExon){
@@ -336,29 +340,44 @@ sub traverseSeqFeatures {
 			$subFeature->location->start($prevExon->location->start);
 
 			if($prevExonType eq 'coding'){
+			    $subFeature->remove_tag('type') if $subFeature->has_tag('type');
+			    $subFeature->add_tag_value('type','coding');
+
+			    ($codingEnd) = $prevExon->get_tag_values('CodingEnd');
+			    ($codingStart) = $prevExon->get_tag_values('CodingStart');
 			    if($subFeature->location->strand == -1){
-
 				
-				$codingEnd = $subFeature->location->start;
-			
-
-				$subFeature->remove_tag('CodingEnd');
-				$subFeature->add_tag_value('CodingEnd',$codingEnd);
-			    }else{
-			
-				$codingStart = $subFeature->location->start;
-
-				    
-				if($codingStart eq $CDSLocation->start && $codonStart > 0){
-				    $codingStart += $codonStart;
+				if ($subFeature->has_tag('CodingEnd')){
+				    $subFeature->remove_tag('CodingEnd') ;
+				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
+				}else{
+				    my($prevExonId) = $prevExon->get_tag_values('ID');
+				    if ($subFeature->has_tag('ID')){
+					$subFeature->remove_tag('ID') ;
+					$subFeature->add_tag_value('ID',$prevExonId);
+				    }
+				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
+				    $subFeature->add_tag_value('CodingStart',$codingStart);				    
 				}
-				$subFeature->remove_tag('CodingStart');
-				$subFeature->add_tag_value('CodingStart',$codingStart);
+			    }else{
+
+				if($subFeature->has_tag('CodingStart')){
+				    $subFeature->remove_tag('CodingStart');
+				    $subFeature->add_tag_value('CodingStart',$codingStart);
+				}else{
+				    my($prevExonId) = $prevExon->get_tag_values('ID');
+				    if ($subFeature->has_tag('ID')){
+					$subFeature->remove_tag('ID') ;
+					$subFeature->add_tag_value('ID',$prevExonId);
+				    }
+				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
+				    $subFeature->add_tag_value('CodingStart',$codingStart);
+				}
 			    }	    
 			    
 			}
 		       
-			push(@fixedExons,$prevExon);
+
 		    }
 
 
@@ -404,11 +423,12 @@ sub traverseSeqFeatures {
 
 	    
 	    $gene->add_SeqFeature($transcript);
+	    push(@genes,$gene);
 
 
 	}
     }
-    return ($gene,\@UTRs);
+    return (\@genes,\@UTRs);
 }
 
 
