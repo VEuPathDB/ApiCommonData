@@ -32,6 +32,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="Dbxref"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="Note"                 handler="api" method="note"/>
@@ -76,7 +77,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="polypeptide_domain"            ignore="true"/>
     <qualifier name="signal_peptide"            ignore="true"/>
     <qualifier name="transmembrane_polypeptide_region"            ignore="true"/>
-
+    <qualifier name="history"    ignore="true"/>
+    <qualifier name="blastp" ignore="true"/>
   </feature>
   <feature name="pseudo_gene" so="protein_coding">
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
@@ -116,8 +118,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
    <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
    <qualifier name="comment"                 handler="api" method="note"/>
+   <qualifier name="Note"                 handler="api" method="note"/>
    <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
@@ -141,6 +145,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -164,6 +169,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="source" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="isObsolete" ignore="true"/>
   </feature>
 
   <feature name="direct_repeat" table="DoTS::Repeats" so="direct_repeat">
@@ -271,6 +277,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -292,6 +299,7 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -314,6 +322,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
     <qualifier name="feature_id"    ignore="true"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
@@ -331,13 +340,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="embl_qualifier"                 handler="api" method="note"/>
     <qualifier name="eMBL_qualifier"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
+    <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="synonym"         handler="api" method="gene"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
     <qualifier name="Dbxref"              handler="api" method="dbXRef"/>  
- <qualifier name="feature_id"    ignore="true"/>
+    <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="feature_relationship_rank"    ignore="true"/>
+    <qualifier name="literature"       handler="api" method="literature"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
@@ -346,6 +356,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
+    <qualifier name="private" ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -381,7 +392,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
+   <qualifier name="Dbxref"              handler="api" method="dbXRef"/>
+    <qualifier name="literature"       handler="api" method="literature"/> 
    <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -442,6 +454,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastp" ignore="true"/>
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="fasta_file" ignore="true"/>
+    <qualifier name="blastp_file" ignore="true"/>
+    <qualifier name="comment" ignore="true"/>
+    <qualifier name="clustalx_file" ignore="true"/>
+    <qualifier name="tblastx_file" ignore="true"/>
+    <qualifier name="Note"         ignore="true"/>
   </feature>
 
   
@@ -452,6 +469,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="comment" ignore="true"/>
+    <qualifier name="isObsolete" ignore="true"/>
   </feature>
 
   <feature name="splice_acceptor_site" table="DoTS::UTRFeature" so="three_prime_UTR">
@@ -462,6 +481,7 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="Parent"   ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="isObsolete" ignore="true"/>
+   <qualifier name="comment" ignore="true"/>
   </feature>
 
 
@@ -472,6 +492,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="Parent"   ignore="true"/>
+   <qualifier name="comment" ignore="true"/>
+   <qualifier name="isObsolete" ignore="true"/>
  
 
   </feature>
