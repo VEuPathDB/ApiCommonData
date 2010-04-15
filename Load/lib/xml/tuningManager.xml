@@ -4428,14 +4428,14 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
             >= context_gene_attrs.context_start) 
       OR
        (syn.is_reversed = 1 
-        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1) > 0
+        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1) > 0
         AND anch_left.ref_loc
             + ((anch_left.syntenic_loc - syn_fl.end_max) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
             <= context_gene_attrs.context_end 
         AND anch_left.ref_loc
             + ((anch_left.syntenic_loc - syn_fl.start_min) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-               / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+               / (anch_left.syntenic_loc - anch_right.syntenic_loc - 1))
             >= context_gene_attrs.context_start) )
   AND syn_fl.start_min <= syn.b_end
   AND syn_fl.end_max >= syn.b_start
