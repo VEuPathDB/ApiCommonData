@@ -1703,28 +1703,6 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
 <!--Expression-->
 
-  <resource resource="DeRisi_oligos_RSRC" version="@DeRisi_oligos_VER@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/DeRisi_oligos/%RESOURCE_VERSION%/derisi_oligos.fsa"/>
-    <pluginArgs>--sequenceFile @dataDir@/derisi_oligos.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 36329</pluginArgs>
-    <info
-        displayName="Oligos on MOS11 and MOS14 (DeRisi)"
-        project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Manuel Llinas"
-        email="manuel@genomics.princeton.edu"
-        institution="DeRisi Lab UCSF">
-      <description>
-        <![CDATA[
-         Version 2 of microarray oligos printed on MOS11 (HB3 study) and MOS14 (Dd2/3D7 studies) from Joe DeRisi (UCSF). Oligos were obtained from Manuel Llinas (Princeton).
-        ]]>
-      </description>
-    <publication pmid="12929205"/>
-    </info>
-  </resource>
-
   <resource resource="E-MEXP-128_radAnalysis_RSRC" version="1"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/radAnalysis/"/>
@@ -1747,9 +1725,109 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   </resource>
 
 
-  <resource resource="Pf_Probes_Winzeler_Westenberger_RSRC" version="@ChIP_Chip_Winzeler_Westenberger_VER@"
+  <resource resource="Pf_array_A-MEXP-75_RSRC" version="@Pf_array_A-MEXP-75_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Winzeler_Westenberger/%RESOURCE_VERSION%/probes.fsa"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/A-MEXP-75-MTC_KI_Plasmodium_falciparum_33k/%RESOURCE_VERSION%/processed/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_array_Affy-pfsanger_RSRC" version="@Pf_array_Affy-pfsanger_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/Affy-pfsanger/%RESOURCE_VERSION%/processed/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_array_Affy-plasmodiumanopheles_RSRC" version="@Pf_array_Affy-plasmodiumanopheles_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/Affy-plasmodiumanopheles/%RESOURCE_VERSION%/processed/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_array_Affy-scrMalaria_RSRC" version="@Pf_array_Affy-scrMalaria_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/processed/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_array_derisi_RSRC" version="@Pf_array_derisi_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/derisi/%RESOURCE_VERSION%/processed/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pf_array_Affy-Winzeler-Westenberger_RSRC" version="@Pf_array_Affy-Winzeler-Westenberger_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/Affy-Winzeler-Westenberger/%RESOURCE_VERSION%/processed/probes.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
@@ -1770,9 +1848,9 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
     </info>
   </resource>
 
-  <resource resource="Pf_Probes_Artur_Scherf_RSRC" version="@ChIP_Chip_Artur_Scherf_VER@"
+  <resource resource="Pf_array_A-MEXP-1407_RSRC" version="@Pf_array_A-MEXP-1407_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Artur_Scherf/%RESOURCE_VERSION%/probes.fsa"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/A-MEXP-1407-BIHPPf3D7/%RESOURCE_VERSION%/processed/probes.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
@@ -1793,9 +1871,9 @@ Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactio
     </info>
   </resource>
 
-  <resource resource="Pf_Probes_Till_Voss_RSRC" version="@ChIP_Chip_Till_Voss_VER@"
+  <resource resource="Pf_array_GPL8808_RSRC" version="@Pf_array_GPL8808_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Till_Voss/%RESOURCE_VERSION%/probes.fsa"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/arrayPlatform/GPL8808-wg_cgh/%RESOURCE_VERSION%/processed/probes.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
