@@ -30,14 +30,17 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
                                          $gusConfig->getCoreSchemaName()
                                         )->getQueryHandle();
   
-$dbh->do("DROP apidb.GENEGENOMICSEQUENCE_SPLIT");
-$dbh->do(<<EOSQL);
+$dbh->do("DROP TABLE apidb.GENEGENOMICSEQUENCE_SPLIT");
+
+
+my $sqlStatement = <<EOSQL;
   CREATE TABLE apidb.GENEGENOMICSEQUENCE_SPLIT(
     source_id VARCHAR2(255) NOT NULL,
     gene_genomic_sequence CLOB,
     start_min NUMBER(12) NOT NULL
   ) NOLOGGING
 EOSQL
+  $dbh->do($sqlStatement);
 
   $dbh->do(<<EOSQL);
 create index ggss_source_ix
@@ -80,7 +83,7 @@ select gf.source_id,
 
 EOSQL
 
- $sql_statement1.="    and gf.external_database_release_id in ($dbRlsIds))" if $dbRlsIds;
+ $sql_statement1.=" and gf.external_database_release_id in ($dbRlsIds))" if $dbRlsIds;
 
 $dbh->prepareAndExecute($sql_statement1);
 
