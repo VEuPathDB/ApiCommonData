@@ -508,6 +508,13 @@ sub product {
 	$tagValues[0] = $s[1];
     }
 
+    if($tagValues[0] =~ /;evidence=/){
+	my(@s) = split(/;evidence=/,$tagValues[0]);
+	$s[1] =~ s/^\s+//g;
+	$tagValues[0] = $s[0];
+	$feature->set("evidence",$s[1]);
+    }
+
 
 #  print STDERR Dumper $feature->getSourceId();
 
