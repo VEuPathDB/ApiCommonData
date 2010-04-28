@@ -2783,8 +2783,8 @@ EOF
 ##you also need to have in your gus_home config directory the following files or those that correspond to the project:
 ##PlasmoDB/model-config.xml (personalize this with your login and password and authentication login and password) and PlasmoDB/model.prop (make sure projectId is correct)
 ##these files are made from the sample files 
-##If you have run wdk dump for genes previously and want to now rerun it, delete all rows in apidb.genetable with table_name not like 'gff%'
-##If you have run gff dump for genes previously and now want to rerun it, delete all rows in apidb.genetable with table_name like 'gff%'
+##If you have run wdk dump for genes previously and want to now rerun it, delete all rows in apidb.GeneDetail
+##If you have run gff dump for genes previously and now want to rerun it, delete all rows in apidb.GeneGff
 ##clear the wdkCache, if there is no wdkCache (run describe queryinstance and if doesn't exist, run wdkCache -model PlasmoDB -new)
 
 sub clearWdkCache {
