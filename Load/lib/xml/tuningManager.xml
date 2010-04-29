@@ -4595,21 +4595,4 @@ create index apidb.sec_ix&1
     </sql>
   </tuningTable>
 
-  <tuningTable name="apidb.SpeciesSubtaxa">
-    <!-- for each species of interest, holds the species' taxon_id and a comma-separated list of taxon_ids of all its sub-taxa (and sub-sub-taxa, et c.) -->
-    <internalDependency name="apidb.TaxonSpecies"/>
-    <sql>
-      <![CDATA[
-           create table apidb.SpeciesSubtaxa&1 as
-           select distinct ts.species_taxon_id,
-                         (select apidb.tab_to_string(cast(collect(trim(to_char(taxon_id)))
-                                                     as apidb.varchartab), ', ')
-                          from sres.taxon
-                          connect by prior taxon_id = parent_id
-                          start with taxon_id = ts.species_taxon_id) as subtaxa
-           from apidb.TaxonSpecies ts
-      ]]> 
-    </sql>
-  </tuningTable>
-
 </tuningConfig>
