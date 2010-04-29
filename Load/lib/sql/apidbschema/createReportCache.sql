@@ -116,9 +116,9 @@ end;
 /
 
 ------------------------------------------------------------------------------
-CREATE SEQUENCE apidb.wdkTable_pkseq;
+CREATE SEQUENCE apidb.geneGff_pkseq;
 
-GRANT SELECT ON apidb.wdkTable_pkseq TO gus_w;
+GRANT SELECT ON apidb.geneGff_pkseq TO gus_w;
 
 ------------------------------------------------------------------------------
 exit;
