@@ -175,7 +175,7 @@ sub GetGeneQuery {
            FROM   ApiDB.GeneAttributes,
                  
            WHERE  
-                   ns.taxon_id in ($TaxonID)
+                   taxon_id in ($TaxonID)
            ORDER BY chromosome_order_num,sequence_id,start_min,end_max,source_id");
   
 
