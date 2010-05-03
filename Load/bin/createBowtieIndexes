@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use Switch;
+use strict;
+
+my ($inputFile, $outputIndexDir);
+
+&GetOptions("inputFile=s" => \$inputFile,
+	    "outputIndexDir=s"=> \$outputIndexDir,
+	   );
+
+if (!$inputFile || !$outputIndexDir) {
+  die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH>\n";
+}
+
+my $cmd = "/files/cbil/software/bowtie/bowtie-build --offrate 4 $inputFile $outputIndexDir";
+
+&exeCmd($cmd);
+
+print STDERR "Indexing Complete\n";
+
+sub exeCmd{
+  my ($cmd) = @_;
+
+  print STDERR "$cmd\n";
+  system($cmd);
+  my $status = $? >> 8;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}
