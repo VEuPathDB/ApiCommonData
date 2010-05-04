@@ -96,7 +96,7 @@ sub GetGeneQuery {
                   least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
                   greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
                   nl.is_reversed,
-                  SUBSTR(ens.source_id, 1, 50) AS sequence_id,
+                  ens.source_id AS sequence_id,
                   exons.exon_count
              FROM dots.GeneFeature gf, dots.NaLocation nl, dots.ExternalNaSequence ens,
                   (SELECT parent_id, count(*) AS exon_count
