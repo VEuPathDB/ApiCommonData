@@ -411,11 +411,11 @@
     </info>
   </resource>
 
-<!--ExpressionResource-->
-  <resource resource="Vaidya_Bergman_oligos_RSRC" version="@Vaidya_Bergman_oligos_VER@"
+<!--ArrayStudiesResource-->
+  <resource resource="Pyoelii_Vaidya_Bergman_oligos_RSRC" version="@Pyoelii_Vaidya_Bergman_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/vaidyaBergmanOligos/%RESOURCE_VERSION%/PyoeliiVadyiaOligos.fasta"/>
-    <pluginArgs>--sequenceFile @dataDir@/PyoeliiVadyiaOligos.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayPlatform/Vaidya_Bergman_oligos/%RESOURCE_VERSION%/final/PyoeliiVadyiaOligos.fasta"/>
+    <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
         displayName="P. yoelii glass slide array oligos"
         project="PlasmoDB"
@@ -428,6 +428,66 @@
       <description>
         <![CDATA[
          Version 1 of oligos for <i>P. yoelii</i> from Vaidya/Bergman (Drexel).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Py_array_Affy-scrMalaria_RSRC" version="@Py_array_Affy-scrMalaria_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/winzeler_probes.fasta"/>
+    <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
+    <info
+        displayName=""
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Kappe_array_RSRC" version="@Kappe_array_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Kappe/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. yoelii liver stage expression data"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Stefan Kappe"
+        email="stefan.kappe@sbri.org"
+        institution="Seattle Biomedical Research Institute">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="winzeler_py_pf_comparison_array_RSRC" version="@winzeler_py_pf_comparison_array_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/winzeler_yoelii_falciparum_comparison/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Winzeler Pyoelii mixed RMAouput naturalscale expression data"
+        project="PlasmoDB"
+        organisms="@PyOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Greg Grant"
+        email="ggrant@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
         ]]>
       </description>
     </info>
