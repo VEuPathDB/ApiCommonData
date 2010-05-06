@@ -412,4 +412,91 @@
     </info>
   </resource>
 
+<!--ArrayStudiesResource-->
+
+  <resource resource="Pvivax_ZB_oligos_RSRC" version="@Pvivax_ZB_oligos_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/ZB_Oligos/%RESOURCE_VERSION%/final/elements.fasta"/>
+    <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 126793</pluginArgs>
+    <info
+        displayName="P. vivax ZB oligos"
+        project="PlasmoDB"
+        organisms="@PvOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Zbynek Bozdech"
+        email="ZBozdech@ntu.edu.sg"
+        institution="School of Biological Sciences, Nanyang Technological University">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    <publication pmid="18852452"/>
+    </info>
+  </resource>
+
+  <resource resource="ZB_time_series_RSRC" version="@ZB_time_series_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayExpression/ZB_vivax/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Transcriptional profile throughout 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
+        project="PlasmoDB"
+        organisms="@PvOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Zbynek Bozdech"
+        email="ZBozdech@ntu.edu.sg"
+        institution="School of Biological Sciences, Nanyang Technological University">
+      <description>
+        <![CDATA[
+        Transcriptional profile throughout the 48-h intraerythrocytic cycle of three distinct P. vivax isolates.
+        ]]>
+      </description>
+    <publication pmid="18852452"/>
+    </info>
+  </resource>
+
+  <resource resource="Westenberger_Lib520507_RSRC" version="@Westenberger_Lib520507_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/Westenberger_Lib520507/%RESOURCE_VERSION%/final/PvivaxLib520507_probename_x_y_sequence_fixed.fasta"/>
+    <pluginArgs>--sequenceFile @dataDir@/PvivaxLib520507_probename_x_y_sequence_fixed.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 126793</pluginArgs>
+    <info
+        displayName="P. vivax Westenberger probes"
+        project="PlasmoDB"
+        organisms="@PvOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Scott Westenberger"
+        email="scottw@scripps.edu"
+        institution="The Scripps Research Institute">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Westenberger_array_RSRC" version="@Westenberger_array_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayExpression/westenberger_vivax/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Westenberger Pvivax ExpressionData"
+        project="PlasmoDB"
+        organisms="@PvOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Scott Westenberger"
+        email="scottw@scripps.edu"
+        institution="The Scripps Research Institute">
+      <description>
+        <![CDATA[
+Sporozoites were purified from dissected mosquitoes fed on monkeys infected with the genome reference strain Salvador I at the Centers for Disease Control and Prevention, Atlanta, Georgia. Asexual blood stage parasites were obtained from P. vivax-infected patients in Iquitos, Peru. White blood cells were removed by CF-11 cellulose column filtration, asexual parasites were enriched by gradient centrifugation and purified by saponin lysis of RBCs. Total RNA was isolated from purified parasites and subjected to two rounds of RNA amplification for microarray analysis as described previously (Zhou, et al. 2008). Experimental technical replicate hybridizations were performed for the single sporozoite sample and two asexual samples (CM012 and CM013). Gene expression values were calculated using MOID; expression profiles were clustered using OPI as described previously (Zhou, et al. 2008). <br/><br/>
+Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, Jane M Carlton, John W Barnwell, William E Collins, Stephen L Hoffman, Yingyao Zhou, Joseph M Vinetz, Elizabeth A Winzeler. Plasmodium vivax transcriptome analysis reveals divergent in vivo blood stage profiles and species-specific sporozoite gene expression. (in submission)
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>
