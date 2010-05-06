@@ -271,7 +271,6 @@
         institution="Leiden University">
       <description>
         <![CDATA[
-         HASH(0x9fa6d2c)
         ]]>
       </description>
     </info>
@@ -293,7 +292,6 @@
         institution="Leiden University">
       <description>
         <![CDATA[
-         HASH(0xa0076a0)
         ]]>
       </description>
     </info>
@@ -303,7 +301,7 @@
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersMixedGametes/%RESOURCE_VERSION%/Mixed_Gams_peptide_list_PlasmoDB.xls"/>
     <unpack>parseWatersExcelProteomics.pl --infile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB.xls --outfile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB_load.tab</unpack>
-    <pluginArgs>--inputFile Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@" --developmentalStage 'gametocytes'</pluginArgs>
+    <pluginArgs>--inputFile @dataDir@/Mixed_Gams_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@Pberghei_chromosomes_VER@" --developmentalStage 'gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
         project="PlasmoDB"
@@ -315,11 +313,34 @@
         institution="Leiden University">
       <description>
         <![CDATA[
-         HASH(0x9ff582c)
         ]]>
       </description>
     </info>
   </resource>
+
+
+  <resource resource="Pberghei_Protein_Expression_RSRC" version="1.0"
+      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
+    <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/ProteinExpression/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION%/ --configFile @dataDir@/1.0/tableS8.config --tolerateMissingIds --externalDatabase "%RESOURCE_NAME%" --externalDatabaseRls "%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. berghei protein expression"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact="Neil Hall or Robert Sinden"
+        email="nhall@tigr.org, r.sinden@imperial.ac.uk"
+        institution="The Wellcome Trust Sanger Institute">
+      <description>
+        <![CDATA[
+        Summary of <i>P. berghei</i> proteins detected in mixed
+        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 <!--pbergheiSpecific-->
 
@@ -390,10 +411,10 @@
     </info>
   </resource>
 
-<!--ExpressionResource-->
+<!--ArrayStudiesResource-->
   <resource resource="Pberghei_gss_oligos_RSRC" version="@Pberghei_gss_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSOligos/%RESOURCE_VERSION%/elements.fasta"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSOligos/%RESOURCE_VERSION%/fromProvider/elements.fasta"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
         displayName="P. berghei GSS oligos"
@@ -413,12 +434,32 @@
     </info>
   </resource>
 
-  <resource resource="Pberghei_gss_oligo_gene_mapping_RSRC" version="@Pberghei_gss_oligos_VER@"
-      plugin="ApiCommonData::Load::Plugin::InsertGeneOligoSimilarities">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersOligoMapping/%RESOURCE_VERSION%/gss2genes.tab"/>
-    <pluginArgs>--inputFile @dataDir@/gss2genes.tab --oligosExternalDatabase "P.berghei GSS oligos"  --oligosExternalDatabaseRls "1.0" </pluginArgs>
+  <resource resource="Pberghei_DOZI_oligos_RSRC" version="@Pberghei_DOZI_oligos_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersDOZIOligos/%RESOURCE_VERSION%/final/elements.fasta"/>
+    <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
-        displayName="P. berghei GSS oligos to genes mapping"
+        displayName="P. berghei DOZI oligos"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EupathDB">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Waters_gss_time_series_HP_RSRC" version="@Waters_gss_time_series_HP_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSTimeSeries/HP/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. berghei transcript expression - HP"
         project="PlasmoDB"
         organisms="@PbOrganismFullName@"
         category="Transcriptome"
@@ -428,10 +469,70 @@
         institution="Leiden University">
       <description>
         <![CDATA[
-         A mapping of the <i>P. berghei</i> GSS oligos to <i>P. berghei</i> genes.
+         Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
         ]]>
       </description>
     <publication pmid="15637271"/>
+    </info>
+  </resource>
+
+  <resource resource="Waters_gss_time_series_HPE_RSRC" version="@Waters_gss_time_series_HPE_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSTimeSeries/HPE/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. berghei transcript expression - HPE"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Andy Waters"
+        email="A.P.Waters@lumc.nl"
+        institution="Leiden University">
+      <description>
+        <![CDATA[
+         Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
+        ]]>
+      </description>
+    <publication pmid="15637271"/>
+    </info>
+  </resource>
+
+  <resource resource="Waters_DOZI_array_RSRC" version="@Waters_DOZI_array_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_DOZI/%RESOURCE_VERSION%/final"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="P. berghei DOZI array data"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
     </info>
   </resource>
 </resources>
