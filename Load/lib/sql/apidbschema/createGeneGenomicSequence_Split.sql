@@ -24,8 +24,8 @@ create index ggss_source_id_indx  on apidb.GENEGENOMICSEQUENCE_SPLIT(source_id);
 CREATE SEQUENCE ApiDB.GeneGenomicSequence_sq;
 
 GRANT SELECT ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_r;
-GRANT SELECT ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_w;
-GRANT select ON ApiDB.geneGenomicSequence_sq TO gus_w;
+GRANT INSERT, UPDATE, DELETE ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_w;
+GRANT SELECT ON ApiDB.geneGenomicSequence_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
