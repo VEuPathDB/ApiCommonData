@@ -52,7 +52,7 @@ foreach my  $Taxon_ID (keys (%SpeciesHash)) {
   $species = $SpeciesHash{$Taxon_ID};
   $species =~ s/ /_/g;
 
-  if($fileNamePrefix){
+  if($outputFile){
       $GFFFile = "$outputFile";
   }else{
       $GFFFile = "$outputDir/$species.gff";
