@@ -9,13 +9,13 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputDir,$organism,$fileNamePrefix);
+my ($verbose,$gusConfigFile,$outputDir,$organism,$outputFile);
 
 &GetOptions("verbose!" => \$verbose,
             "outputDir=s" => \$outputDir,
             "gusConfigFile=s" => \$gusConfigFile,
             "organism=s" => \$organism,
-	    "file_name_prefix=s" => \$fileNamePrefix);
+	    "outputFile=s" => \$outputFile);
 
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -53,7 +53,7 @@ foreach my  $Taxon_ID (keys (%SpeciesHash)) {
   $species =~ s/ /_/g;
 
   if($fileNamePrefix){
-      $GFFFile = "$outputDir/$fileNamePrefix.gff";
+      $GFFFile = "$outputFile";
   }else{
       $GFFFile = "$outputDir/$species.gff";
   }
