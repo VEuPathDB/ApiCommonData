@@ -169,11 +169,11 @@ sub GetGeneQuery {
                   na_feature_id,
                   start_min -1,
                   end_max,
-                  decode(nl.is_reversed, 1, '-', '+') as strand, 
+                  decode(is_reversed, 1, '-', '+') as strand, 
                   exon_count
 
            FROM   ApiDB.GeneAttributes,
-                 
+                  
            WHERE  
                    taxon_id in ($TaxonID)
            ORDER BY chromosome_order_num,sequence_id,start_min,end_max,source_id");
@@ -197,6 +197,22 @@ sub GetExonQuery {
 
 
 
+sub GetGeneSequenceQuery {
+
+  my ($TaxonID) = @_;
+
+  return ("SELECT source_id||':'||sequence_id||':'||start_min||'-'||end_max||'_'||(decode(nl.is_reversed, 1, '-', '+') as strand) 
+                
+
+           FROM   ApiDB.GeneAttributes
+                 
+           WHERE  
+                   taxon_id in ($TaxonID)
+           ORDER BY chromosome_order_num,sequence_id,start_min,end_max,source_id");
+  
+
+
+}
 
 sub extractGenomeNaSequences {
   my ($taxonId, $table, $sequenceOntology) = @_;

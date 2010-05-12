@@ -97,5 +97,21 @@ close(OUTGFF);
 
 
 sub usage{
+  my ($m) = @_;
 
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl makeCustomFastaAndGffFromGff3 \\
+--input_file_or_dir <input file or dir containing gff3 files (required)> \\
+--output_file <gff file output (required)> \\
+--inputFileExt <input file extension: default gff> \\
+--output_fasta <output fasta file (required)> \\
+--output_gff <output gff file (required)> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
 }
+
+
+1;
