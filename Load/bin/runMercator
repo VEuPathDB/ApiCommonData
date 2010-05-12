@@ -14,7 +14,7 @@ declare -a BASENAMES
 
 usage()
 {
-echo 'runMercator -p <PATH TO MERCATOR DIRECTORY> -t <tree string> -m <MAVID_EXE> -c <CNDSRC_DIR> -d draftGenome1... -d draftGemoneN -n nonDraftGeome1... -n nonDraftGenomeN -r referenceGenome'
+echo 'runMercator -p <PATH TO MERCATOR DIRECTORY> -t <tree string> -m <MAVID_EXE> -c <CNDSRC_DIR> -d draftGenome1... -d draftGemoneN -n nonDraftGeome1... -n nonDraftGenomeN'
 exit 1;
 }
 
@@ -28,8 +28,6 @@ while getopts ":ht:m:c:d:n:p:r:" Option
 do
   case $Option in
     m) MAVID_EXE=$OPTARG;
-       ;;
-    r) REFERENCE_GENOME=$OPTARG;
        ;;
     p) MERCATOR_DIR=$OPTARG;
        ;;
