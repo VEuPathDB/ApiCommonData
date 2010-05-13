@@ -2234,7 +2234,7 @@ tablespace indx
 CREATE TABLE apidb.Polymorphism&1 NOLOGGING AS
   SELECT snp.na_feature_id AS snp_na_feature_id, fl.na_sequence_id,
          fl.start_min AS start_min,
-         substr(snp.source_id, 1, 25) AS snp_source_id,
+         snp.source_id AS snp_source_id,
          snp.position_in_protein,
          sa.na_feature_id as na_feature_id_a,
          sb.na_feature_id as na_feature_id_b,
