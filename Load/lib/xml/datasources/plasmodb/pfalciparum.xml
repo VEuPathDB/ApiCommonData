@@ -1493,6 +1493,30 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     </info>
   </resource>
 
+  <resource resource="Pf_XSuSnps_RSRC" version="@Pf_XSuSnps_VER@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/XSu/%RESOURCE_VERSION%/XSu_1-6-2010.in"/>
+    <unpack>suSnpTabToGffTransform2  --tab_file @dataDir@/XSu_1-6-2010.in --out_file@dataDir@/Pf_XSuSnps_RSRC.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/Pf_XSuSnps_RSRC.gff"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="SNPs from the NIH"
+        project="PlasmoDB"
+        organisms="@PfOrganismFullName@"
+        category="Polymorphisms"
+        publicUrl="http://www.plasmodb.org/"
+        contact = "Jianbing Mu"
+        email = "JMU@NIAID.NIH.GOV"
+        institution = "National Institute of Allergy and Infectious Diseases, National Institutes of Health">
+      <description>
+        <![CDATA[
+         SNPs from X. Su based on 189 parasites 
+        ]]>
+      </description>
+    <publication pmid="17159981"/>
+    </info>
+  </resource>
+
 <!--pfalciparumSpecific-->
 
   <resource resource="WirthSageTagArrayDesign_RSRC" version="@WirthSageTagArrayDesign_VER@"
@@ -1706,6 +1730,9 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   <resource resource="Pf_RNASeq_Duffy_RSRC" version="@Pf_RNASeq_Duffy_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Duffy/%RESOURCE_VERSION%/processed/"/>
+    <getAndUnpackOutput file="@dataDir@/PL01.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/PL02.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/3D7.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="RNA-Seqs from Patrick Duffy"
@@ -1726,6 +1753,20 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
   <resource resource="Pf_ChipSeq_Le_Roch_RSRC" version="@Pf_ChipSeq_Le_Roch_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chipSeq/Le_Roch/%RESOURCE_VERSION%/processed"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE0.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE6.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE12.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE18.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE24.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE30.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/MAINE36.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE0.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE6.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE12.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE18.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE24.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE30.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/FAIRE36.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="ChIP-Seqs from Le Roch"
@@ -1745,7 +1786,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
   <resource resource="Pfalciparum_Newbold_RNASeq_Intensity_Profiles_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold/%RESOURCE_VERSION%/Profiles/"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold/%RESOURCE_VERSION%/fromProvider/Profiles/"/>
     <pluginArgs>--inputDir @dataDir@/Profiles --configFile @dataDir@/Profiles/config.txt --tolerateMissingIds  --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="P.falciparum RNA Sequence Profiles(Newbold)"
