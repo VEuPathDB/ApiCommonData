@@ -30,10 +30,10 @@
     <manualGet fileOrDir="PlasmoDB/pyoelii/genePrediction/From_Kappe/%RESOURCE_VERSION%/"/>
     <unpack>cat @dataDir@/%RESOURCE_VERSION%/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @dataDir@/ReAnnotatedPyoelii_fixed.tab</unpack>
     <unpack>createGffForYoeliiGenes --infile @dataDir@/ReAnnotatedPyoelii_fixed.tab --gfffile @dataDir@/PyoeliiKappe.gff --idmapfile @dataDir@/%RESOURCE_VERSION%/PyoeliiGI.txt</unpack>
-    <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'P.yoelii_Contigs' AND edr.version = @pyContigVer@ "</unpack>
+    <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'P.yoelii_Contigs' AND edr.version = @Pyoelii_Contigs_VER@ "</unpack>
     <unpack>fixMercatorOffsetsInGFF.pl --f @dataDir@/Pyoelii.fasta --g @dataDir@/PyoeliiKappe.gff --o @dataDir@/PyoeliiKappe_fixed_1.gff</unpack>
     <unpack>fixYoeliiGFF --inputFile @dataDir@/PyoeliiKappe_fixed_1.gff --outputFile @dataDir@/PyoeliiKappe_fixed.gff</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @dataDir@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @pyContigVer@ --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @dataDir@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @Pyoelii_Contigs_VER@ --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         project="PlasmoDB"
@@ -253,7 +253,7 @@
     </info>
   </resource>
 
-  <resource resource="WatanabePy17XL_PredictedTranscripts_RSRC" version="@2WatanabePy17XL_PredictedTranscripts_VER@"
+  <resource resource="WatanabePy17XL_PredictedTranscripts_RSRC" version="@WatanabePy17XL_PredictedTranscripts_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
     <manualGet fileOrDir="PlasmoDB/pyoelii/EST/WatanabeESTs/%RESOURCE_VERSION%/reffull_py.fas"/>
     <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @dataDir@/reffull_py.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 352914 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePy17XL' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePy17XL EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
@@ -413,8 +413,8 @@
 
   <resource resource="Py_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_formated.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pyoelii_Contigs_RSRC"   --seqExtDbRlsVer @Pyoelii_Contigs_VER@</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pyoelii_Contigs_RSRC"   --seqExtDbRlsVer @Pyoelii_Contigs_VER@</pluginArgs>
     <info
         displayName="Py Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"

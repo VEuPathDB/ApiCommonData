@@ -394,8 +394,8 @@
 
   <resource resource="Pv_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pvivax/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_formated.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @Pvivax_contigsGB_VER@</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pvivax/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @Pvivax_contigsGB_VER@</pluginArgs>
     <info
         displayName="Pv Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"
@@ -415,7 +415,7 @@
 <!--PvMassSpecResource-->
   <resource resource="Pvivax_Tatu_Clinical_Proteomics_RSRC" version="2009-08-11"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="PlasmoDB/pvivax/massspec/Tatu_clinical/%RESOURCE_VERSION%/working_dir/P.vivax_Clinical_Proteomics.tab"/>
+    <manualGet fileOrDir="PlasmoDB/pvivax/massSpec/Tatu_clinical/%RESOURCE_VERSION%/working_dir/P.vivax_Clinical_Proteomics.tab"/>
     <pluginArgs>--inputFile @dataDir@/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@Pvivax_contigsGB_VER@' --developmentalStage 'early stages'</pluginArgs>
     <info
         displayName="P.vivax proteomics data from clinical samples (Tatu)"
@@ -439,6 +439,7 @@
   <resource resource="Pvivax_ZB_oligos_RSRC" version="@Pvivax_ZB_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/ZB_Oligos/%RESOURCE_VERSION%/final/elements.fasta"/>
+    <getAndUnpackOutput file="@dataDir@/elements.fasta"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 126793</pluginArgs>
     <info
         displayName="P. vivax ZB oligos"
@@ -481,7 +482,8 @@
 
   <resource resource="pvivax_westenberger_lib520507_RSRC" version="@pvivax_westenberger_lib520507_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/Westenberger_Lib520507/%RESOURCE_VERSION%/final/PvivaxLib520507_probename_x_y_sequence_fixed.fasta"/>
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/Westenberger_Lib520507/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/probes.fsa"/>
     <pluginArgs>--sequenceFile @dataDir@/PvivaxLib520507_probename_x_y_sequence_fixed.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 126793</pluginArgs>
     <info
         displayName="P. vivax Westenberger probes"
