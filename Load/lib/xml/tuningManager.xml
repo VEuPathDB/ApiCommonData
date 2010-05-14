@@ -4610,4 +4610,85 @@ create index apidb.sec_ix&1
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.TypeAheadCounts">
+    <internalDependency name="apidb.GeneAttributes"/>
+    <externalDependency name="dots.DbRefAaFeature"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="dots.AaFeature"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.EnzymeClass"/>
+    <externalDependency name="dots.AaSequenceEnzymeClass"/>
+    <externalDependency name="dots.GoAssociation"/>
+    <externalDependency name="sres.GoTerm"/>
+    <externalDependency name="sres.GoRelationship"/>
+    <externalDependency name="sres.GoRelationshipType"/>
+    <externalDependency name="core.TableInfo"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.TypeAheadCounts&1 NOLOGGING AS
+   (SELECT DISTINCT dr.primary_identifier as option_id,
+                   count(distinct aaf.aa_sequence_id) AS gene_count,
+                   gf.project_id
+   FROM dots.DbRefAaFeature draf, sres.DbRef dr, dots.aafeature aaf,
+        sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+        dots.TranslatedAAFeature taf,apidb.geneattributes gf, dots.transcript t
+   WHERE draf.db_ref_id = dr.db_ref_id
+   AND dr.external_database_release_id
+       = edr.external_database_release_id
+   AND edr.external_database_id = ed.external_database_id
+   AND aaf.aa_feature_id = draf.aa_feature_id
+   AND aaf.aa_sequence_id = taf.aa_sequence_id
+   AND taf.na_feature_id = t.na_feature_id
+   AND gf.na_feature_id = t.parent_id
+   GROUP BY gf.project_id,
+            dr.primary_identifier)
+   UNION
+   (SELECT DISTINCT ec.ec_number AS option_id,
+          COUNT(DISTINCT aaf.aa_sequence_id) AS gene_count,
+          gf.project_id
+   FROM sres.enzymeClass ec, apidb.GeneAttributes gf,
+        dots.aaSequenceEnzymeClass asec,
+        dots.translatedAaFeature taf,
+        dots.aafeature aaf, dots.transcript t
+   WHERE gf.na_feature_id = t.parent_id
+   AND t.na_feature_id = taf.na_feature_id
+   AND taf.aa_sequence_id = asec.aa_sequence_id
+   AND aaf.aa_sequence_id = taf.aa_sequence_id
+   AND asec.enzyme_class_id = ec.enzyme_class_id
+   GROUP BY gf.project_id,
+            ec.ec_number)
+   UNION                
+   (SELECT DISTINCT gp.go_id AS option_id,
+           COUNT(DISTINCT aaf.aa_sequence_id) AS gene_count,
+           gf.project_id
+    FROM apidb.geneAttributes gf, dots.Transcript t,
+         dots.TranslatedAaFeature taf, dots.AaFeature aaf,
+         dots.GoAssociation ga, sres.GoTerm gp,
+         sres.GoRelationship gr, core.TableInfo ti,
+         sres.GoRelationshipType grt
+    WHERE gf.na_feature_id = t.parent_id
+    AND t.na_feature_id = taf.na_feature_id
+    AND taf.aa_sequence_id = ga.row_id
+    AND aaf.aa_sequence_id = taf.aa_sequence_id
+    AND ga.table_id = ti.table_id
+    AND ti.name = 'TranslatedAASequence'
+    AND ga.go_term_id = gr.child_term_id
+    AND gr.parent_term_id = gp.go_term_id
+    AND gr.go_relationship_type_id = grt.go_relationship_type_id
+    AND grt.name = 'closure'
+    GROUP BY gf.project_id,
+             gp.go_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.TypeAheadCounts_idx&1 ON apidb.TypeAheadCounts&1 (option_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
