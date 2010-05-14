@@ -390,6 +390,28 @@
     </info>
   </resource>
 
+<!--Misc resource-->
+
+  <resource resource="Pv_TransFactorBindingSitestemp_Llinas_RSRC" version="2010-04-21"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pvivax/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_formated.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @Pvivax_contigsGB_VER@</pluginArgs>
+    <info
+        displayName="Pv Trans-factor binding sites from Manuel Llinas"
+        project="PlasmoDB"
+        organisms="@PvOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Manuel Llinas"
+        email="manuel@genomics.princeton.edu"
+        institution="University of Princeton">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--PvMassSpecResource-->
   <resource resource="Pvivax_Tatu_Clinical_Proteomics_RSRC" version="2009-08-11"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">

@@ -206,6 +206,28 @@
     </info>
   </resource>
 
+<!--misc resources>
+
+  <resource resource="Pb_TransFactorBindingSitestemp_Llinas_RSRC" version="2010-04-21"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pberghei/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_formated.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pberghei_chromosomes_RSRC"   --seqExtDbRlsVer @Pberghei_chromosomes_VER@</pluginArgs>
+    <info
+        displayName="Pb Trans-factor binding sites from Manuel Llinas"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Manuel Llinas"
+        email="manuel@genomics.princeton.edu"
+        institution="University of Princeton">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 <!--pbergheiESTResource-->
   <resource resource="Pb_dbEST_RSRC" version="@Pb_dbEST_VER@"

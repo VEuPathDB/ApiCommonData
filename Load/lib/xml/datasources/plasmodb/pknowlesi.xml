@@ -267,4 +267,26 @@
     </info>
   </resource>
 
+<!--misc resource-->
+
+  <resource resource="Pk_TransFactorBindingSitestemp_Llinas_RSRC" version="2010-04-21"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_formated.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_formated.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pknowlesi_chromosomes_RSRC"   --seqExtDbRlsVer @Pknowlesi_chromosomes_VER@</pluginArgs>
+    <info
+        displayName="Pk Trans-factor binding sites from Manuel Llinas"
+        project="PlasmoDB"
+        organisms="@PkOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact="Manuel Llinas"
+        email="manuel@genomics.princeton.edu"
+        institution="University of Princeton">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>
