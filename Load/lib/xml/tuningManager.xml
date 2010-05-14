@@ -4264,6 +4264,19 @@ sub processChangedGenes {
     $insertStatement->execute($gene, $modDate)
       or die "Can't insert ChangedGene record (gene $gene, lastModified $modDate)";
   }
+
+  # suppress changes for genes whose data-load is newer than the newest change
+    $dbh->do(<<SQL);
+update ChangedGene&1
+set gene = 'old change: ' || gene
+where last_modified < (select to_date(edr.version, 'yyyy-mm-dd')
+                       from apidb.GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
+                       where ga.source_id = ChangedGene&1.gene
+                         and nf.na_feature_id = ga.na_feature_id
+                         and edr.external_database_release_id = nf.external_database_release_id
+                         and edr.version like '____-__-__')
+SQL
+
 }
 
 sub getDbHandle {
