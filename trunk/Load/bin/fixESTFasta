@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+## script for creating removing invalid sequences from fasta file
+
+## NOTE:  This is not a general script.  Many things are hard coded
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+use strict;
+
+my $debug = 0;
+my ($inputFile, $duplicatesFile);
+
+&GetOptions("inputFile=s" => \$inputFile,
+	    "duplicatesFile=s" => \$duplicatesFile,
+	    "debug!" => \$debug,
+            );
+
+unless (-e $inputFile && -e $duplicatesFile){ die "You must provide valid input and duplicates files. Usage: fixESTFasta --inputFile <FILE> --duplicatesFile <FILE> [--debug]";}
+
+
+open(DUPS, "$duplicatesFile");
+
+my %duplicates;
+while(<DUPS>){
+  chomp;
+
+  my $id = $_;
+  $id =~ s/\s//g;
+  $duplicates{$id} = 1;
+}
+
+close(DUPS);
+
+open(FILE, "$inputFile");
+
+my $subjLine;
+my %seqs;
+
+while(<FILE>){
+  chomp;
+
+  if(/\>/){
+    $subjLine = $_;
+  }else{
+    $seqs{$subjLine} .= $_;
+  }
+
+}
+
+close(FILE);
+
+foreach my $seqId (keys %seqs){
+  $seqId =~ /\|(\w+)$/;
+  my $sourceId = $1;
+
+  unless($duplicates{$sourceId}){
+    unless($seqs{$seqId} =~ /SequencecontainstoomuchN/){
+      print "$seqId\n".$seqs{$seqId}."\n";
+    }
+  }
+
+}

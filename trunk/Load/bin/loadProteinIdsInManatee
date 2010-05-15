@@ -1,0 +1,79 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use DBI;
+use Getopt::Long qw(GetOptions);
+
+my ($database, $user, $password, $file);
+
+GetOptions("user:s" => \$user,
+	   "database|db=s" => \$database,
+	   "password|pw=s" => \$password,
+	   "file:s" => \$file,
+	  );
+
+my $dbh = DBI->connect("dbi:mysql:$database", $user, $password)
+  or die $DBI::errstr;
+
+if ($file) {
+  open(IN, "$file") or die "Can't open file $file: $!\n";
+}
+
+my $iCount = 0;
+my %mapping; 
+
+#
+# INPUT LINE EXAMPLE:
+# DS116202	TIGR	gene	2058	2996	.	+	.	ID=EAX83029;Name=conserved hypothetical protein;Alias=80209.t00002,TVAG_000010
+#
+# TO CAPTURE:
+# asmbl_id:    DS116202
+# protein_id:  EAX83029
+# locus_tag:   TVAG_000010
+# gene_id:     80209.t00002
+
+# Read the file, and store data in a hash
+while(<IN>){
+  chomp;
+  if ($_ =~ s/^(\w+)\t.*\tgene\t.+\tID=(\S+)\;.*Alias=(.*),(.*)$/$1\t$2/) {
+    if (!($2 =~/\d+\..\d+/)) {
+      $iCount++;
+      $mapping{$iCount} = { "asmbl_id",  $1,
+		            "prot_id",   $2,
+		            "locus_tag", $3,
+		            "gene_id",   $4}
+    }
+  }
+}
+close (IN);
+
+# create table
+my $sthTable = $dbh->prepare(<<EOSQL);
+  CREATE TABLE GenBankToProtein
+  (asmbl_id  varchar(25),
+   prot_id   varchar(25),
+   locus_tag varchar(25),
+   gene_id   varchar(25)
+)
+EOSQL
+$sthTable->execute() or die $DBI::errstr ;
+
+
+# insert data in table
+my $sth = $dbh->prepare(<<EOSQL);
+  INSERT INTO GenBankToProtein
+  (asmbl_id, prot_id, locus_tag, gene_id)  VALUES (?, ?, ?, ?)
+EOSQL
+
+my @asm_ids = keys(%mapping);
+foreach my $try (keys %mapping) {
+  $sth->execute($mapping{$try}{'asmbl_id'}, $mapping{$try}{'prot_id'}, 
+		$mapping{$try}{'locus_tag'}, $mapping{$try}{'gene_id'});
+}
+$sth->finish();
+
+$dbh->disconnect();
+
+# perl $GUS_HOME/bin/loadProteinIdsInManatee --user root --database tvag --file T_vaginalis_GB_Acc_20070703.gff

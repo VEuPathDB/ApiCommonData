@@ -1,0 +1,36 @@
+#!@perl@
+
+sub usage {
+    chomp($this = `basename $0`);
+    print <<"EOF";
+usage: $this fasta_dataset_1 fasta_dataset_2
+
+Report differences between two FASTA data sets. Def lines are
+reported for sequences in one file that do not have an exact
+match in the other. Only sequences are compared, def lines are
+not.
+Datasets can be a single file or a directory of FASTA files.
+Files may be compressed with gzip or compress.
+EOF
+}
+
+use FindBin qw($Bin);
+use lib "$Bin";
+
+use ApiCommonData::Load::Utility::FastaStats;
+
+usage() and exit(1) if (@ARGV < 2);
+
+unless ( -e $ARGV[0] ){
+    die "No such file or directory. " . $ARGV[0] . "\n";
+}
+unless ( -e $ARGV[1] ){
+    die "No such file or directory. " . $ARGV[1] . "\n";
+}
+
+my $ic = new ApiCommonData::Load::Utility::FastaStats({ dataset=>$ARGV[0], fullstats=>0});
+my $ic2 = new ApiCommonData::Load::Utility::FastaStats({ dataset=>$ARGV[1], fullstats=>1});
+
+$ic->diff($ic2);
+
+exit 0;

@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+use strict;
+
+# sample input:
+# PFD0750w\tnuclear cap-binding protein\thttp://sites.huji.ac.il/malaria/maps/qualityControl.html\tQuality control in mRNA biogenesis\tCBC
+
+# output (tab delimimted):
+# gene_id path_id path_name activity
+
+while (<STDIN>) {
+  next if (/^Pfid/);  # skip header
+  next if (/^\n/);
+  chomp;  #only remove newlines from valid data, otherwise we have problems
+  my @fields = split('\t',$_);
+  if($fields[0] =~ /\S+/){
+    $fields[2] =~ /(\w+)\.html/; # extract pathway id from URL
+    print "$fields[0]\t$1\t$fields[3]\t$fields[4]\n";
+  }
+}

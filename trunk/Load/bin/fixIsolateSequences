@@ -1,0 +1,134 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+
+
+my ($verbose, $help, $inputFile, $outputFile,$excludeFile);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'seq_file=s' => \$inputFile,
+            'fixed_seq_file=s' => \$outputFile,
+	    'removed_seq_file=s' => \$excludeFile,
+ 
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputFile && $outputFile && $excludeFile);
+
+
+
+open(IN,"$inputFile");
+
+open(OUT,">$outputFile");
+
+open(OUT2,">$excludeFile");
+
+
+my(%idCount,%sourceCount, %countryCount, %cloneCount, %isolateCount, %strainCount);
+
+my $currentId = '';
+foreach my $line (<IN>){
+    chomp $line;
+    if($line =~ /^LOCUS/){
+	my @cols = split(/\s+/,$line);
+
+	if($idCount{$cols[1]}){
+	    $idCount{$cols[1]}++;
+	}else{
+	    $idCount{$cols[1]} = 1;
+	}
+	$currentId = $cols[1];
+    }
+
+    if($line =~ /source\s+\d..\d/){
+	if($sourceCount{$currentId}){ 
+	   $sourceCount{$currentId}++; 
+       }else{
+	   $sourceCount{$currentId} = 1;
+       }
+    }
+
+    if($line =~ /\/country=/){
+	if($countryCount{$currentId}){ 
+	   $countryCount{$currentId}++; 
+       }else{
+	   $countryCount{$currentId} = 1;
+       }	
+    }
+
+    if($line =~ /\/clone=/){
+	if($cloneCount{$currentId}){ 
+	   $cloneCount{$currentId}++; 
+       }else{
+	   $cloneCount{$currentId} = 1;
+       }	
+    }
+    if($line =~ /\/isolate=/){
+	if($isolateCount{$currentId}){ 
+	   $isolateCount{$currentId}++; 
+       }else{
+	   $isolateCount{$currentId} = 1;
+       }	
+    }
+    if($line =~ /\/strain=/){
+	if($strainCount{$currentId}){ 
+	   $strainCount{$currentId}++; 
+       }else{
+	   $strainCount{$currentId} = 1;
+       }	
+    }
+
+
+}
+
+close(IN);
+
+open(IN,"$inputFile");
+
+my $flag = 0;
+foreach my $line(<IN>){
+    chomp $line;
+
+    if($line =~ /^LOCUS/){
+	my @cols = split(/\s+/,$line);
+
+	if($idCount{$cols[1]} > 1 || $sourceCount{$cols[1]} > 1 || $countryCount{$cols[1]} > 1 || $cloneCount{$cols[1]} > 1 || $isolateCount{$cols[1]} > 1 || $strainCount{$cols[1]} > 1){
+	    print OUT2 "$line\n";
+	    if($idCount{$cols[1]} > 1){
+		$idCount{$cols[1]}--;
+		$sourceCount{$cols[1]}--;
+		$countryCount{$cols[1]}--;
+		$cloneCount{$cols[1]}--;
+		$isolateCount{$cols[1]}--;
+		$strainCount{$cols[1]}--;
+	    }
+		    
+	    $flag = 1;
+
+	    
+	}else{
+	    print OUT "$line\n";
+
+	    $flag = 0;
+	}
+
+
+    }else{
+	if($flag == 0){
+	    print OUT "$line\n";
+	}else{
+	    print OUT2 "$line\n";
+	}
+
+    }
+}
+
+close(IN);
+close(OUT);
+close(OUT2);

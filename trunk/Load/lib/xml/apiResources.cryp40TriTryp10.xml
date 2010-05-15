@@ -1,0 +1,1150 @@
+<resourcesPipeline repository="login.pcbi.upenn.edu:/files/efr"
+                   downloadDir="@downloadDir@">
+                   
+                   
+    <resource resource="CmurisAnnotatedCDS" version="cryptodb@cryptoVersion@"
+              displayName="C.muris Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Annotated CDS obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisAnnotatedCDS_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisAnnotatedCDS/CmurisAnnotatedCDS_CryptoDB-@cryptoVersion@.fasta --SOTermName CDS --ncbiTaxId 5808 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris Annotated CDS from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CmurisAnnotatedProteins" version="cryptodb@cryptoVersion@"
+              displayName="C.muris Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Annotated Proteins obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisAnnotatedProteins_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisAnnotatedProteins/CmurisAnnotatedProteins_CryptoDB-@cryptoVersion@.fasta --SOTermName protein --ncbiTaxId 5808 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris Annotated Proteins from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="CmurisAnnotatedTranscripts" version="cryptodb@cryptoVersion@"
+              displayName="C.muris Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Annotated Transcripts obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisAnnotatedTranscripts_CryptoDB-@cryptoVersion@.fasta"
+            email="help@cryptodb.org"
+            contact="cryptodb"
+            institution="cryptodb"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisAnnotatedTranscripts/CmurisAnnotatedTranscripts_CryptoDB-@cryptoVersion@.fasta --SOTermName processed_transcript --ncbiTaxId 5808 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris Annotated Transcripts from cryptodb@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="CmurisAssembly" version="cryptodb@cryptoVersion@"
+              displayName="C.muris Assembly"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Assemblies from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisAssembly_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisAssembly/CmurisAssembly_CryptoDB-@cryptoVersion@.fasta --SOTermName assembly --ncbiTaxId 5808 --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris Assemblies from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="CmurisGenomic" version="cryptodb@cryptoVersion@"
+              displayName="C.muris genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Genomics obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisGenomic_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisGenomic/CmurisGenomic_CryptoDB-4.0.fasta --SOTermName supercontig --ncbiTaxId @CmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris Genomics from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="CmurisEST" version="cryptodb@cryptoVersion@"
+              displayName="C.muris ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris ESTs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisEST_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisEST/CmurisEST_CryptoDB-@cryptoVersion@.fasta --SOTermName EST --ncbiTaxId @CmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris ESTs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+<resource resource="CmurisOrfs" version="cryptodb@cryptoVersion@"
+              displayName="C.muris Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris ORFs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisOrfs_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisOrfs/CmurisOrfs_CryptoDB-@cryptoVersion@.fasta --SOTermName ORF --ncbiTaxId @CmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris ORFs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CmurisESTOrfs" version="cryptodb@cryptoVersion@"
+              displayName="C.muris ESTOrfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Orfs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cmuris/CmurisESTOrfs_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CmurisESTOrfs/CmurisESTOrfs_CryptoDB-@cryptoVersion@.fasta --SOTermName ORF --ncbiTaxId @CmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.muris EST-ORFs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+        
+ <resource resource="CparvumAnnotatedCDS" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Annotated CDS obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumAnnotatedCDS_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumAnnotatedCDS/CparvumAnnotatedCDS_CryptoDB-@cryptoVersion@.fasta --SOTermName CDS --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Annotated CDS from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CparvumAnnotatedProteins" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Annotated Proteins obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumAnnotatedProteins_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumAnnotatedProteins/CparvumAnnotatedProteins_CryptoDB-@cryptoVersion@.fasta --SOTermName protein --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Annotated Proteins from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="CparvumAnnotatedTranscripts" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Annotated Transcripts obtained from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumAnnotatedTranscripts_CryptoDB-@cryptoVersion@.fasta"
+            email="help@cryptodb.org"
+            contact="cryptodb"
+            institution="cryptodb"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumAnnotatedTranscripts/CparvumAnnotatedTranscripts_CryptoDB-@cryptoVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Annotated Transcripts from cryptodb@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CparvumGenomic" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.muris Genomics obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumGenomic_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumGenomic/CparvumGenomic_CryptoDB-4.0.fasta --SOTermName supercontig --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Genomics from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+<resource resource="CparvumOrfs" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum ORFs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumOrfs_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumOrfs/CparvumOrfs_CryptoDB-@cryptoVersion@.fasta --SOTermName ORF --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum ORFs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CparvumEST" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum ESTs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumEST_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumEST/CparvumEST_CryptoDB-@cryptoVersion@.fasta --SOTermName EST --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum ESTs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="CparvumESTOrfs" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum ESTOrfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Orfs obtained from cryptodb@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumESTOrfs_CryptoDB-@cryptoVersion@.fasta"
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumESTOrfs/CparvumESTOrfs_CryptoDB-@cryptoVersion@.fasta --SOTermName ORF --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum EST-ORFs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+    <resource resource="CparvumAssembly" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Assembly"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Assemblies from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumAssembly_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumAssembly/CparvumAssembly_CryptoDB-@cryptoVersion@.fasta --SOTermName assembly --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Assemblies from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+    <resource resource="CparvumChr6Assembly" version="cryptodb@cryptoVersion@"
+              displayName="C.parvum Chr6 Assembly"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Chr6 Assemblies from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/CparvumChr6/CparvumChr6Assembly_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumChr6Assembly/CparvumChr6Assembly_CryptoDB-@cryptoVersion@.fasta --SOTermName assembly --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Chr6 Assemblies from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+  <resource resource="CparvumGenomicContigs" version="CryptoDB@cryptoVersion@"
+              displayName="C.parvum Contigs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="CryptoDB"
+              extDbRlsVer="@cryptoVersion@"
+              extDbRlsDescrip="C.parvum Contigs from CryptoDB@cryptoVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/CryptoDB/release-4.0/Cparvum/CparvumGenomicContigs_CryptoDB-@cryptoVersion@.fasta "
+            email="help@CryptoDB.org"
+            contact="CryptoDB"
+            institution="CryptoDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/CparvumGenomicContigs/CparvumGenomicContigs_CryptoDB-@cryptoVersion@.fasta --SOTermName contig --ncbiTaxId @CpTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            C.parvum Contigs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+<resource resource="LbraziliensisAnnotatedCDS" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis Annotated CDS obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisAnnotatedCDS/LbraziliensisAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta --SOTermName CDS --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis Annotated CDS from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="LbraziliensisAnnotatedProteins" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis Annotated Proteins obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisAnnotatedProteins/LbraziliensisAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta --SOTermName protein --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis Annotated Proteins from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="LbraziliensisAnnotatedTranscripts" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis Annotated Transcripts obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisAnnotatedTranscripts/LbraziliensisAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis Annotated Transcripts from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="LbraziliensisAssemblies" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Assemblies"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis Assemblies from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisAssemblies_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisAssemblies/LbraziliensisAssemblies_TriTrypDB-@triTrypVersion@.fasta --SOTermName assembly --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis Assemblies from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="LbraziliensisGenomic" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis Genomics obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisGenomic_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisGenomic/LbraziliensisGenomic_TriTrypDB-1.0.fasta --SOTermName supercontig --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis Genomics from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LbraziliensisEST" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis ESTs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisEST_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisEST/LbraziliensisEST_TriTrypDB-@triTrypVersion@.fasta --SOTermName EST --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis ESTs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LbraziliensisOrfs" version="TriTrypDB@triTrypVersion@"
+              displayName="L.braziliensis Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.brazilienis ORFs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lbraziliensis/LbraziliensisOrfs_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LbraziliensisOrfs/LbraziliensisOrfs_TriTrypDB-@triTrypVersion@.fasta --SOTermName ORF --ncbiTaxId @LbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis ORFs from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="LinfantumAnnotatedCDS" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum Annotated CDS obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumAnnotatedCDS/LinfantumAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta --SOTermName CDS --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantumAnnotated CDS from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="LinfantumAnnotatedProteins" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum Annotated Proteins obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumAnnotatedProteins/LinfantumAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta --SOTermName protein --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantumAnnotated Proteins from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="LinfantumAnnotatedTranscripts" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum Annotated Transcripts obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumAnnotatedTranscripts/LinfantumAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantum Annotated Transcripts from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="LinfantumAssemblies" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Assemblies"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum Assemblies from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumAssemblies_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumAssemblies/LinfantumAssemblies_TriTrypDB-@triTrypVersion@.fasta --SOTermName assembly --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantum Assemblies from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="LinfantumGenomic" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum Genomics obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumGenomic_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumGenomic/LinfantumGenomic_TriTrypDB-1.0.fasta --SOTermName supercontig --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantum Genomics from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LinfantumEST" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.braziliensis ESTs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumEST_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumEST/LinfantumEST_TriTrypDB-@triTrypVersion@.fasta --SOTermName EST --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.braziliensis ESTs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LinfantumOrfs" version="TriTrypDB@triTrypVersion@"
+              displayName="L.infantum Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.infantum ORFs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Linfantum/LinfantumOrfs_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LinfantumOrfs/LinfantumOrfs_TriTrypDB-@triTrypVersion@.fasta --SOTermName ORF --ncbiTaxId @LiTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.infantum ORFs from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="LmajorAnnotatedCDS" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major Annotated CDS obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorAnnotatedCDS/LmajorAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta --SOTermName CDS --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major Annotated CDS from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="LmajorAnnotatedProteins" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major Annotated Proteins obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorAnnotatedProteins/LmajorAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta --SOTermName protein --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major Annotated Proteins from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="LmajorAnnotatedTranscripts" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major Annotated Transcripts obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorAnnotatedTranscripts/LmajorAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major Annotated Transcripts from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="LmajorAssemblies" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Assemblies"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major Assemblies from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorAssemblies_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorAssemblies/LmajorAssemblies_TriTrypDB-@triTrypVersion@.fasta --SOTermName assembly --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major Assemblies from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="LmajorGenomic" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major Genomics obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorGenomic_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorGenomic/LmajorGenomic_TriTrypDB-1.0.fasta --SOTermName supercontig --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major Genomics from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LmajorEST" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major ESTs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorEST_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorEST/LmajorEST_TriTrypDB-@triTrypVersion@.fasta --SOTermName EST --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major ESTs from CryptoDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="LmajorOrfs" version="TriTrypDB@triTrypVersion@"
+              displayName="L.major Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="L.major ORFs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Lmajor/LmajorOrfs_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/LmajorOrfs/LmajorOrfs_TriTrypDB-@triTrypVersion@.fasta --SOTermName ORF --ncbiTaxId @LmTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            L.major ORFs from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="TbruceiAnnotatedCDS" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei Annotated CDS obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiAnnotatedCDS/TbruceiAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta --SOTermName CDS --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei Annotated CDS from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="TbruceiAnnotatedProteins" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei Annotated Proteins obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiAnnotatedProteins/TbruceiAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta --SOTermName protein --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei Annotated Proteins from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="TbruceiAnnotatedTranscripts" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei Annotated Transcripts obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiAnnotatedTranscripts/TbruceiAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei Annotated Transcripts from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="TbruceiAssemblies" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Assemblies"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei Assemblies from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiAssemblies_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiAssemblies/TbruceiAssemblies_TriTrypDB-@triTrypVersion@.fasta --SOTermName assembly --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei Assemblies from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="TbruceiGenomic" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei Genomics obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiGenomic_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiGenomic/TbruceiGenomic_TriTrypDB-1.0.fasta --SOTermName supercontig --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei Genomics from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="TbruceiEST" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei ESTs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiEST_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiEST/TbruceiEST_TriTrypDB-@triTrypVersion@.fasta --SOTermName EST --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei ESTs from TriTrypDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="TbruceiOrfs" version="TriTrypDB@triTrypVersion@"
+              displayName="T.brucei Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.brucei ORFs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tbrucei/TbruceiOrfs_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TbruceiOrfs/TbruceiOrfs_TriTrypDB-@triTrypVersion@.fasta --SOTermName ORF --ncbiTaxId @TbTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.brucei ORFs from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="TcruziAnnotatedCDS" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Annotated CDS"
+              category="CDS"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi Annotated CDS obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziAnnotatedCDS/TcruziAnnotatedCDS_TriTrypDB-@triTrypVersion@.fasta --SOTermName CDS --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi Annotated CDS from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+    <resource resource="TcruziAnnotatedProteins" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Annotated Proteins"
+              category="Proteome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi Annotated Proteins obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziAnnotatedProteins/TcruziAnnotatedProteins_TriTrypDB-@triTrypVersion@.fasta --SOTermName protein --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi Annotated Proteins from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+    
+   <resource resource="TcruziAnnotatedTranscripts" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Annotated Transcripts"
+              category="Transcripts"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi Annotated Transcripts obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+               <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziAnnotatedTranscripts/TcruziAnnotatedTranscripts_TriTrypDB-@triTrypVersion@.fasta --SOTermName processed_transcript --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::SplicedNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi Annotated Transcripts from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource> 
+    
+     <resource resource="TcruziAssemblies" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Assemblies"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi Assemblies from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+             <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziAssemblies_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziAssemblies/TcruziAssemblies_TriTrypDB-@triTrypVersion@.fasta --SOTermName assembly --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi Assemblies from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+                   
+<resource resource="TcruziGenomic" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Genomics"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi Genomics obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziGenomic_TriTrypDB-@triTrypVersion@.fasta "
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziGenomic/TcruziGenomic_TriTrypDB-1.0.fasta --SOTermName supercontig --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi Genomics from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="TcruziEST" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi ESTs"
+              category="Transcriptome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi ESTs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+         <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziEST_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziEST/TcruziEST_TriTrypDB-@triTrypVersion@.fasta --SOTermName EST --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi ESTs from TriTrypDB@cryptoVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="TcruziOrfs" version="TriTrypDB@triTrypVersion@"
+              displayName="T.cruzi Orfs"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TriTrypDB"
+              extDbRlsVer="@triTrypVersion@"
+              extDbRlsDescrip="T.cruzi ORFs obtained from TriTrypDB@triTrypVersion@ downloads"
+              dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/TriTrypDB/release-1.0/Tcruzi/TcruziOrfs_TriTrypDB-@triTrypVersion@.fasta"
+            email="help@TriTrypDB.org"
+            contact="TriTrypDB"
+            institution="TriTrypDB"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziOrfs/TcruziOrfs_TriTrypDB-@triTrypVersion@.fasta --SOTermName ORF --ncbiTaxId @TcTaxid@ --regexSourceId '^>*(?:\w*\|)*(\S+)' --tableName 'DoTS::TranslatedAASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            T.cruzi ORFs from TriTrypDB@triTrypVersion@ downloads.
+            ]]>
+        </description>
+    </resource>
+
+<resource resource="OrthoMCL_3.0" version="3.0"
+        displayName="Orthologous groups generated using OrthoMCL"
+        organisms="C.hominis, C.muris, C.parvum, G.lamblia, P.berghei, P.chabaudi, P.knowlesi, P.falciparum, P.vivax, P.yoelii, T.gondii, N.caninum, T.vaginalis,T.cruzi, T.brucei, L.braziliensis, L.infantum, L.mayor"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="rsync://europa.pcbi.upenn.edu:/files/cbil/data/cbil/apiSiteFiles/downloadSite/orthomcl/3.0/orthomclGroups.txt"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "chom,cur,cpar,glam,pber,pcha,pkno ,pfal,pviv,pyoe,tgon,ncan,tvag,tbru,tcru,lbra,linf,lmaj" --ElementResultTable "DoTS::SplicedNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+    </resource>
+
+
+</resourcesPipeline>
+
+    
+
+
+

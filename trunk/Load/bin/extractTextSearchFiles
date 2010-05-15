@@ -1,0 +1,314 @@
+#!/usr/bin/perl
+
+## unloads flat files for keyword search to grep through
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::ObjRelP::DbiDatabase;
+use CBIL::Bio::SequenceUtils;
+use GUS::Supported::GusConfig;
+
+my ($outDir, $prefix, $commentSchema, $commentDblink, $justComments,
+    $gusConfigFile, $debug, $verbose, $projectId);
+&GetOptions("outputDir=s" => \$outDir,
+            "outputPrefix=s" => \$prefix,
+            "projectId=s" => \$projectId,
+            "commentSchema=s" => \$commentSchema,
+            "commentDblink=s" => \$commentDblink,
+            "justComments!" => \$justComments,
+            "verbose!"=> \$verbose,
+            "debug!" => \$debug,
+            "gusConfigFile=s" => \$gusConfigFile);
+
+if (!$outDir){
+	die "usage: $0 --projectId <projectId> --outputDir <outputDirectory>"
+            . " [--outputPrefix <file-prefix>]"
+            . " [--verbose] [--debug]"
+            . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n";
+}
+
+print "options: --outputDir=\"$outDir\" "
+      . "outputPrefix=\"$prefix\""
+      . "projectId=\"$projectId\""
+      . "commentSchema=\"$commentSchema\""
+      . "commentDblink=\"$commentDblink\""
+      . "justComments=\"$justComments\""
+      . "verbose=\$verbose\""
+      . "debug=\"$debug\""
+      . "gusConfigFile=\"$gusConfigFile\"" if $verbose;
+
+print "Establishing dbi login\n" if $verbose;
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase
+           ->new($gusconfig->getDbiDsn(),
+		 $gusconfig->getReadOnlyDatabaseLogin(),
+		 $gusconfig->getReadOnlyDatabasePassword,
+		 $verbose,0,1,
+		 $gusconfig->getCoreSchemaName,
+		 $gusconfig->getOracleDefaultRollbackSegment());
+
+my $dbh = $db->getQueryHandle();
+
+$dbh->{LongReadLen} = 8192 * 1024;
+my $sql;
+
+# comments -- this gets its own script, because the comments, which are accessed
+#             through a dblink, are now stored in a CLOB.
+#
+#  $sql = <<SQL;
+#  SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+#         gf.source_id, c.content,
+#         u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+#  FROM logins.users${commentDblink} u,
+#       ${commentSchema}.comments${commentDblink} c, dots.GeneFeature gf,
+#       dots.NaSequence ns, sres.TaxonName tn
+#  WHERE u.email(+) = c.email
+#    AND c.comment_target_id='gene'
+#    AND c.stable_id = gf.source_id
+#    AND c.review_status_id != 'rejected'
+#    AND gf.na_sequence_id = ns.na_sequence_id
+#    AND ns.taxon_id = tn.taxon_id
+#    AND tn.name_class = 'scientific name'
+#    AND gf.source_id IN (SELECT source_id
+#                         FROM apidb.GeneAttributes
+#                         WHERE project_id = '${projectId}')
+#  ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+#         gf.source_id,
+#         u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+#  SQL
+#  
+#  &extractFile($dbh, $outDir, "comments.txt", $sql);
+
+die "extractTextSearchFiles can't get comments through db_link.  Use extractCommentFile."
+  if $justComments;
+
+# InterPro domains
+$sql = <<SQL;
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                dr.primary_identifier || ' '
+                || dr.secondary_identifier
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, dots.DomainFeature df,
+     dots.DbRefAaFeature draf, sres.DbRef dr,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     sres.TaxonName tn, core.AlgorithmInvocation ainv,
+     core.AlgorithmImplementation aimp
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas.aa_sequence_id = df.aa_sequence_id
+  AND df.aa_feature_id = draf.aa_feature_id
+  AND draf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND df.row_alg_invocation_id = ainv.algorithm_invocation_id
+  AND ainv.algorithm_implementation_id = aimp.algorithm_implementation_id
+  AND aimp.executable
+      = 'ApiCommonData::Load::Plugin::InsertInterproscanResults'
+  AND tas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY gf.source_id,
+         dr.primary_identifier || ' ' || dr.secondary_identifier
+SQL
+
+&extractFile($dbh, $outDir, "interpro.txt", $sql);
+
+
+# GO terms and definitions
+$sql = <<SQL;
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                gts.go_id || ' ' ||  gts.go_term_name
+FROM apidb.GoTermSummary gts, dots.GeneFeature gf, dots.NaSequence ns, sres.TaxonName tn
+WHERE gts.source_id = gf.source_id
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                gts.go_id || ' ' ||  gts.go_term_name
+SQL
+
+&extractFile($dbh, $outDir, "go.txt", $sql);
+
+
+# metabolic pathways
+$sql = <<SQL;
+-- plasmo uses NaFeatures. . .
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+                AS pathway_name
+FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NaSequence ns, sres.TaxonName tn     
+WHERE gf.na_feature_id = drnf.na_feature_id
+  AND drnf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'Links to Pathway Maps'
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+UNION
+-- . . . and toxo uses AaFeatures
+SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+                gf.source_id,
+                nvl(dr.lowercase_secondary_identifier, dr.primary_identifier)
+                AS pathway_name
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.DbRefAaFeature draf, sres.DbRef dr,
+     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+     dots.NaSequence ns, sres.TaxonName tn     
+WHERE gf.na_feature_id = t.parent_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_feature_id = draf.aa_feature_id
+  AND draf.db_ref_id = dr.db_ref_id
+  AND dr.external_database_release_id = edr.external_database_release_id
+  AND edr.external_database_id = ed.external_database_id
+  AND ed.name = 'Links to Pathway Maps'
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY 2, 3, 4  -- union-style order-by
+SQL
+
+&extractFile($dbh, $outDir, "metpaths.txt", $sql);
+
+# notes
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id,
+       regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1),
+                      '[[:space:]]', ' ')
+FROM dots.naFeatureComment nfc, dots.GeneFeature gf, dots.NaSequence ns,
+     sres.TaxonName tn
+WHERE gf.na_feature_id = nfc.na_feature_id
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY tn.name, gf.source_id,
+         regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1),
+                        '[[:space:]]', ' ')
+SQL
+
+&extractFile($dbh, $outDir, "notes.txt", $sql);
+
+# EC description
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1), gf.source_id, ec.description
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     dots.TranslatedAaSequence tas, dots.aaSequenceEnzymeClass asec,
+     sres.enzymeClass ec, sres.TaxonName tn
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND tas.aa_sequence_id = asec.aa_sequence_id
+  AND asec.enzyme_class_id = ec.enzyme_class_id
+  AND tas.taxon_id = tn.taxon_id(+)
+  AND tn.name_class(+) = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY tn.name, gf.source_id, ec.description
+SQL
+
+&extractFile($dbh, $outDir, "ec.txt", $sql);
+
+# gene product
+$sql = <<SQL;
+SELECT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id, regexp_replace(gf.product, '[[:space:]]', ' ')
+FROM dots.GeneFeature gf, dots.NaSequence ns,
+     sres.TaxonName tn
+WHERE gf.source_id IS NOT NULL
+  AND gf.product IS NOT NULL
+  AND gf.na_sequence_id = ns.na_sequence_id
+  AND ns.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY tn.name, gf.source_id, gf.product
+SQL
+
+&extractFile($dbh, $outDir, "product.txt", $sql);
+
+
+# BLAST files
+$sql = <<SQL;
+SELECT s.pvalue_exp, substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
+       gf.source_id, regexp_replace(eas.description, '[[:space:]]', ' ')
+FROM dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
+     core.tableInfo subject, dots.similarity s, core.tableInfo query,
+     dots.ExternalAaSequence eas, dots.TranslatedAaSequence tas,
+     sres.TaxonName tn
+WHERE t.parent_id = gf.na_feature_id
+  AND t.na_feature_id = taf.na_feature_id
+  AND taf.aa_sequence_id = tas.aa_sequence_id
+  AND s.query_table_id = query.table_id
+  AND s.subject_table_id = subject.table_id
+  AND subject.name = 'ExternalAASequence'
+  AND s.subject_id = eas.aa_sequence_id
+  AND eas.description is not null
+  AND query.name = 'TranslatedAASequence'
+  AND s.query_id = tas.aa_sequence_id
+  AND tas.taxon_id = tn.taxon_id
+  AND tn.name_class = 'scientific name'
+  AND gf.source_id IN (SELECT source_id
+                       FROM apidb.GeneAttributes
+                       WHERE project_id = '${projectId}')
+ORDER BY pvalue_exp, tn.name, gf.source_id, eas.description
+SQL
+
+&extractFile($dbh, $outDir, "blast.txt", $sql);
+
+sub extractFile {
+  my ($dbh, $outDir, $outFile, $sql) = @_;
+
+  print "SQL: $sql\n" if $verbose;
+
+  my $count = 0;
+  my $statement = $dbh->prepare($sql);
+  $statement->execute();
+  my @ids;
+
+  my $tempfile = "${outDir}/keywordQueryFlatfile.$$";
+
+  print "tempfile: $tempfile\n" if $verbose;
+  open(OUT,">$tempfile");
+
+  while(my @row = $statement->fetchrow_array()){
+    $count++;
+    print "Processing record $count\n" if $verbose && $count % 10000 == 0;
+
+    map { s/\s+/ /g } @row;
+    print OUT join("\t", @row), " \n";
+  }
+
+  $statement->finish();
+
+  close(OUT);
+  my $datafile = "${outDir}/${prefix}${outFile}";
+  print "renaming $tempfile to $datafile\n" if $verbose;
+  rename($tempfile, $datafile);
+}
+ 

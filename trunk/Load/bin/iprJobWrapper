@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+
+###################################################
+#           iprJobWrapper 
+#
+#
+#  Intercept commands for iprscan jobs from the
+#  apiDb pipeline and configure and start the
+#  corrsponding iprscan job. 
+#
+#
+#  Ed Robinson, 1/28/2006
+###################################################
+
+use strict;
+
+my $appToRun = $ARGV[0];
+my $sequenceFile = $ARGV[1];
+my $outDir = $ARGV[2];
+my $outFile = $ARGV[3];
+my $iprscanDir = $ARGV[4];
+
+unless ($iprscanDir) {
+   $iprscanDir = "/usr/local/iprscan42-12";
+}
+
+open STDERR, ">>$outDir/$appToRun.$sequenceFile.iprscan.log";
+print STDERR "$iprscanDir\n";
+
+qx"$iprscanDir/ConfigureIprscanJob $sequenceFile 5";
+
+qx"$iprscanDir/bin/iprscan -cli -i $sequenceFile -o $outDir/$outFile -format xml -nocrc -iprlookup -goterms -appl $appToRun";
+     #FUTURE - option flags for iprlookup and goterms
+
+close STDERR;
+
+1;
+

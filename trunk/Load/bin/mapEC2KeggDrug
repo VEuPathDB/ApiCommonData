@@ -1,0 +1,80 @@
+#!/usr/bin/perl -w
+
+# Map genes to KEGG drug targets via EC assignments.
+# Takes as input a KEGG drug file (ftp://ftp.genome.jp/pub/kegg/ligand/drug/drug)
+# and a tab file of 
+# gene_id<tab>EC number (EC description)[; EC number (EC description)]<tab>Organism
+# Chro.10249	2.7.4.3 (Adenylate kinase)	C. hominis
+# Chro.20118	2.7.11.17 (Calcium/calmodulin-dependent protein kinase); 2.7.1.37 (Transferred entry: 2.7.11.1)	<i>C.&nbsp;hominis</i>	
+# This file can generated via EuPathDB's report maker.
+#
+# Script slightly modified from assignDrugId.pl written by Adhemar Neto, azneto@gmail.com
+# 6 Feb 2008
+
+$| = 1;
+
+use strict;
+use CBIL::Bio::KeggDrug::Parser;
+
+my $geneIdPrefix = 'apidb|';
+my %seen;
+
+my $p = CBIL::Bio::KeggDrug::Parser->new({ FilePath => shift @ARGV }) or die "\n\nassignDrugId.pl <keggdrugs file> <gene\tEC file>\n\n";
+
+$p->loadFile;
+$p->parseFile;
+
+my $keggdrugs = $p->getFileCache()->getEntries;
+
+
+open(FILE,shift @ARGV) or die "\n\nassignDrugId.pl <keggdrugs file> <gene\tEC file>\n\n";
+
+print "[Organism]\t[Gene]\t[EC Number]\t[KEGG ID]\t[Drug Name]\t[Drug Synonym]\n";
+
+while(my $line = <FILE>) {
+     chomp($line);
+     next if $line =~ m/^\s*$/;
+     
+     my($geneId, $ecColumn, $organism) = split(/\t/,$line);
+     
+     # split any multiple EC lists and remove (EC description) 
+     my @geneECnumberList = map { s/\s.+//; $_ } split(/;\s/, $ecColumn);
+     
+     $organism =~ s/&nbsp;/ /;
+     $organism =~ s/<[^>]+>//g;
+     
+     for my $geneECnumber (@geneECnumberList) {
+
+         my @ECdrugs = getDrugIdFromECnumber($keggdrugs,$geneECnumber);
+    
+          next if(!@ECdrugs);
+         
+         for my $drug_id (@ECdrugs) {
+             next if $seen{$geneId}{$geneECnumber}++;
+             print $organism."\t".$geneIdPrefix.$geneId."\t".$geneECnumber."\t".$drug_id;
+             print "\t".$keggdrugs->{$drug_id}->getName;
+             print "\t".$keggdrugs->{$drug_id}->getSynonyms if($keggdrugs->{$drug_id}->getSynonyms);
+    #         print "\t".$keggdrugs->{$drug_id}->getTarget if($keggdrugs->{$drug_id}->getTarget);
+             print "\n"; 
+         }
+     }
+
+}
+
+sub getDrugIdFromECnumber {
+
+   my $drugobjs = shift;
+   my $ECnumber = shift;
+   my @drug_ids;
+
+   for my $entry (values %{ $drugobjs }) {
+       if(my $targets = $entry->getTargetDbRef) {
+           for(@{ $targets }) {
+               push @drug_ids, $entry->getId if(($_->getDatabase eq 'EC') && ($_->getPrimaryId eq $ECnumber));
+           }
+       }
+   }
+
+   return @drug_ids;
+
+}

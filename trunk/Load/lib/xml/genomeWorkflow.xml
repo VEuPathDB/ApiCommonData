@@ -1,0 +1,13 @@
+<workflow>
+  <step name="loadEstSequences"
+        class="LoadFastaSequences">
+  </step>
+  <step name="loadArrayElementSequences"
+        class="LoadFastaSequences">
+  </step>
+  <step name="mergeEstsAndArrayElements"
+        class="mergeSequences">
+    <depends name="loadEstSequences">
+    <depends name="loadArrayElementSequences">
+  </step>
+</workflow>

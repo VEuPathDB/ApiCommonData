@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+my ($gusConfigFile,$inFile,$outFile,$filterFile,$verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "verbose!" => \$verbose,
+	    "outfile=s" => \$outFile,
+	    "contaminantfile=s" => \$filterFile,
+            "seqFile=s" => \$inFile,);
+
+
+open(FILE,$filterFile) || die "$filterFile can't be opened for reading\n";
+
+open(SEQFILE,$inFile) || die "$inFile can't be opened for reading\n";
+
+open(OUT,">$outFile") || die "Can't open $outFile for writing\n";
+
+my %contaminant;
+
+while(<FILE>){
+  chomp;
+
+  $contaminant{$_} = $_;
+}
+
+  my($locusLine,$contigId);  
+while(<SEQFILE>){
+  chomp;
+
+  if ($_ =~ /^LOCUS/){$locusLine = $_; undef $contigId;}
+  if($_ =~ /^DEFINITION/){
+      if($_ =~ /contig (\S+)/){
+	  $contigId = $1;
+	  $contigId =~ s/,$//;
+#	  print $contigId;
+      }
+  }
+
+  if($contigId && !($contaminant{$contigId})){
+      if($locusLine){
+	  print OUT "$locusLine\n";
+	  undef $locusLine;
+      }
+      print OUT "$_\n";
+  }
+
+
+
+}
+

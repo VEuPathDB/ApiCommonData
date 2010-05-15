@@ -1,0 +1,92 @@
+<mapping>
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::CdsAndExons2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <feature name="rRNA_gene" so="rRNA_encoding">
+    <qualifier name="GeneType"       column="name"/>
+    <qualifier name="note"           handler="api" method="note"/>
+    <qualifier name="product"        handler="api" method="product"/>
+    <qualifier name="ortholog"       ignore="true"/>
+    <qualifier name="TU"             ignore="true"/>
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Aliases"        handler="api" method="gene"/>
+    <qualifier name="score"    column="score"/>
+  </feature>
+
+  <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="GeneType"       column="name"/>
+    <qualifier name="note"           handler="api" method="note"/>
+    <qualifier name="product"        handler="api" method="product"/>
+    <qualifier name="ortholog"       ignore="true"/>
+    <qualifier name="TU"             ignore="true"/>
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Aliases"        handler="api" method="gene"/>
+    <qualifier name="score"    column="score"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+  </feature>
+
+  <feature name="tRNA_gene" so="tRNA_encoding">
+    <qualifier name="GeneType"       column="name"/>
+    <qualifier name="note"           handler="api" method="note"/>
+    <qualifier name="product"        handler="api" method="product"/>
+    <qualifier name="tblastn_file" ignore="true"/>
+    <qualifier name="ortholog"       ignore="true"/>
+    <qualifier name="TU"             ignore="true"/>
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="Aliases"        handler="api" method="gene"/>
+     <qualifier name="anticodon" handler="api" method="anticodon"/>.
+    <qualifier name="score"    column="score"/>
+  </feature>
+  <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="GeneType"       column="name"/>
+    <qualifier name="note"           handler="api" method="note"/>
+    <qualifier name="product"        handler="api" method="product"/>
+    <qualifier name="ortholog"       ignore="true"/>
+    <qualifier name="TU"             ignore="true"/>
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Aliases"        handler="api" method="gene"/>
+    <qualifier name="score"    column="score"/>
+    <qualifier name="blast_score" ignore="true"/>
+  </feature>
+  <feature name="misc_RNA_gene" so="misc_RNA_encoding">
+    <qualifier name="GeneType"       column="name"/>
+    <qualifier name="note"           handler="api" method="note"/>
+    <qualifier name="product"        handler="api" method="product"/>
+    <qualifier name="ortholog"       ignore="true"/>
+    <qualifier name="TU"             ignore="true"/>
+    <qualifier name="Note"           handler="api" method="product"/>
+    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
+    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
+    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Aliases"        handler="api" method="gene"/>
+    <qualifier name="score"    column="score"/>
+  </feature>
+  <feature name="transcript" so="transcript">
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="exon">
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
+    <qualifier name="GenePrediction" column="source_id"/>
+    <qualifier name="OrderNumber"    column="order_number"/>
+  </feature>
+</mapping>

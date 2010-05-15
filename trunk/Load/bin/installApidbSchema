@@ -1,0 +1,123 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+
+my ($gusConfigFile, $drop, $create, $db);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	   "drop!" => \$drop,
+	   "create!" => \$create,
+	   "db=s" => \$db);
+
+if (!$db || !($drop || $create) || ($drop && $create)) {
+  die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+}
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+
+my @create = qw( enterDbVersion.sql
+                 createApidbSchema.sql
+                 increaseColumnWidth.sql
+                 removeNullConstraintsFromSimilarityTables.sql
+                 fixGusTableCapitalization.sql
+                 createChromosome6Orthology.sql
+                 createDbLinks.sql
+                 createDbRefAaFeature.sql
+                 createDbUser.sql
+                 createDifferentialExpression.sql
+                 createExpressionProfileTables.sql
+                 createGeneInteractionTables.sql
+                 createGeneMappingView.sql
+                 createIsolateFeature.sql
+                 createIsolateSourceTable.sql
+                 createMassSpecSummary.sql
+                 createNaSequenceViews.sql
+                 createGusTuning.sql
+                 createOrthologGroup.sql
+                 createOrthomclEngine.sql
+                 createPhylogeneticProfile.sql
+                 createPhylogeneticTree.sql
+                 createRadExpressionProfile.sql
+                 createRelatedNaFeature.sql
+                 createReportCache.sql
+                 createRodentChrColors.sql
+                 createSequenceAttributeTables.sql
+                 createSeqVariation.sql
+                 createSnpFeature.sql
+                 createStoredProcedures.sql
+                 createSyntenyTables.sql
+                 createToxodbGenesView.sql
+                 createTranscriptView.sql
+                 createTranslatedAaFeature.sql
+                 createTransmembraneTable.sql
+                 2aryStructCallPct.sql
+                 createArrayElementFeature.sql
+                 createTuningManager.sql
+                 createContinents.sql
+		 createWorkflow.sql
+		 createsiRNA.sql
+		 createNextGenSeq_Coverage.sql
+		 createNextGenSeq_Align.sql
+		 createPlasmoPfalLocations.sql
+		 createPlasmoMapp.sql
+                 backwards_fks.sql
+		 createGeneGenomicSequence_Split.sql
+	       );
+
+my @delete = qw( dropTuningManager.sql
+                 dropDbLinks.sql
+                 dropDbRefAaFeature.sql
+                 dropDbUser.sql
+                 dropExpressionProfileTables.sql
+                 dropGeneInteractionTables.sql
+                 dropGeneMappingView.sql
+                 dropMassSpecSummary.sql
+                 dropOrthologGroup.sql
+                 dropOrthomclEngine.sql
+                 dropPhylogeneticProfile.sql
+                 dropSequenceAttributeTables.sql
+                 dropSnpFeature.sql
+                 dropSyntenyTables.sql
+                 dropToxodbGenesView.sql
+                 dropTransmembraneTable.sql
+                 dropArrayElementFeature.sql
+		 dropWorkflow.sql
+		 dropGenegenomicsequence.sql
+                 restoreNullConstraintsFromSimilarityTables.sql
+                 dropGusTuning.sql
+                 dropStoredProcedures.sql
+                 dropApidbSchema.sql
+	       );
+
+if ($create) {
+
+  for my $sql (@create) {
+    &runSql($login, $password, $db, $sql);
+  }
+
+} else {
+
+  for my $sql (@delete) {
+    &runSql($login, $password, $db, $sql);
+  }
+
+}
+
+sub runSql {
+  my ($login, $password, $db, $file) = @_;
+
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
+
+  -e $fullFile || die "File '$fullFile' does not exist";
+
+  my $cmd = "sqlplus $login\@$db/$password \@$fullFile";
+print STDERR "$cmd\n";
+  system($cmd);
+  my $status = $? >> 8;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}

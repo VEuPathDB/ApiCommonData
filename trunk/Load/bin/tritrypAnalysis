@@ -1,0 +1,2114 @@
+#!@perl@
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = shift(@ARGV);
+my $optionalArgs = \@ARGV;
+
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initTrypAnalysis($propertiesFile, $optionalArgs);
+
+&copyPipelineDirToComputeCluster($mgr);
+
+##############################################################################
+########   The Pipeline                                               ########
+##############################################################################
+
+$mgr->addCleanupCommand("updateMaterializedViews --owner apidb");
+
+&updateChromosomeNumberFromMap($mgr,"/files/cbil/data/cbil/TrypDB/manualDelivery/chromosomeNumberMap/tritryp_chromosome_map.txt","ExternalNaSequence");
+
+#clean up dots.nafeaturenagene and dots.nagene for pretender alias
+&cleanUpNaFeatureNaGene($mgr);
+
+#clean up dots.dbrefnafeature and sres.dbref for pretender alias cross species
+&cleanUpDBRefNaFeature($mgr);
+#######################################################
+##### BLASTX #####
+######################################################
+
+my $blastParams = "-cpus=2 -topcomboN=1 W=4 T=18 V=100 B=1000000 -hspmax=1000000 -gi E=1e-3 -wordmask=seg+xnu -hspsepQmax=4000 -span1";
+
+&documentBlast($mgr, 'BLASTX', "Genomic sequence", "NRDB", $blastParams);
+
+&moveDownloadFile($mgr,"NRDB/nr.gz","seqfiles");
+
+&shortenDefLine($mgr,"nr","seqfiles");
+
+# perl -e 'while(<>){if ($_ !~ /^>/){ $_ =~ s/J/X/g;}print "$_";}' nr_bak.fas > nr.fas replace the 'J' in the seq with 'X'; 
+# use xdformat -k to ignore the invalid letter
+
+&copyFilesToComputeCluster($mgr,"nr.fsa","seqfiles");
+
+&renameFile($mgr,"nr.fsa","nr_shortDefs.fsa","seqfiles");
+
+&renameFile($mgr,"nr","nr.fsa","seqfiles");
+
+&moveDownloadFile($mgr,"taxonomy/gi_taxid_prot.dmp.gz","misc");
+
+#regex for nr >gi|2829894|gb|AAC00602.1| Unknown protein [Arabidopsis thaliana]
+
+&createSimilarityDir($mgr,"TbruceiChromosomes","nr","gi\\|(\\d+)\\|","$blastParams Y=27736938","blastx");
+
+&createSimilarityDir($mgr,"TcruziContigs","nr","gi\\|(\\d+)\\|","$blastParams Y=89868513","blastx");
+
+&createSimilarityDir($mgr,"LbraziliensisChromosomes","nr","gi\\|(\\d+)\\|","$blastParams Y=31373798","blastx");
+
+&createSimilarityDir($mgr,"LinfantumChromosomes","nr","gi\\|(\\d+)\\|","$blastParams Y=32055853","blastx");
+
+&createSimilarityDir($mgr,"LmajorChromosomes","nr","gi\\|(\\d+)\\|","$blastParams Y=32855403","blastx");
+
+&copyFilesToComputeCluster($mgr,"TbruceiChromosomes-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"TcruziContigs-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisChromosomes-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LinfantumChromosomes-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LmajorChromosomes-nr","similarity");
+
+&extractNaSeq($mgr,"T.brucei 927 chromosomes and annotations","2008-11-13",'Tbrucei',"chromosomes","ExternalNASequence","source_id"); 
+
+&extractNaSeq($mgr,"T.cruzi contigs and annotations","2008-11-20",'Tcruzi',"contigs","ExternalNASequence","source_id"); 
+
+&extractNaSeq($mgr,"L.braziliensis chromosomes and annotations","2008-11-24",'Lbraziliensis',"chromosomes","ExternalNASequence","source_id"); 
+
+&extractNaSeq($mgr,"L.infantum chromosomes and annotations","2008-11-24",'Linfantum',"chromosomes","ExternalNASequence","source_id"); 
+
+&extractNaSeq($mgr,"L.major chromosomes and annotations","2008-11-12",'Lmajor',"chromosomes","ExternalNASequence","source_id"); 
+
+&copyFilesToComputeCluster($mgr,"TbruceiChromosomes.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TcruziContigs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisChromosomes.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LinfantumChromosomes.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorChromosomes.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"TbruceiChromosomes","nr","apidb",4);
+
+&startProteinBlastOnComputeCluster($mgr,"TcruziContigs","nr","apidb",4);
+
+&startProteinBlastOnComputeCluster($mgr,"LbraziliensisChromosomes","nr","apidb",4);
+
+&startProteinBlastOnComputeCluster($mgr,"LinfantumChromosomes","nr","apidb",4);
+
+&startProteinBlastOnComputeCluster($mgr,"LmajorChromosomes","nr","apidb",4);
+
+$mgr->waitForCluster("TbruceiChromosomes blast similarity to nr", "waitTbruceiChromosomes-nr");
+
+$mgr->waitForCluster("TcruziContigs blast similarity to nr", "waitTcruziContigs-nr");
+
+$mgr->waitForCluster("LbraziliensisChromosomes blast similarity to nr", "waitLbraziliensisChromosomes-nr");
+
+$mgr->waitForCluster("LinfantumChromosomes blast similarity to nr", "waitLinfantumChromosomes-nr");
+
+$mgr->waitForCluster("LmajorChromosomes blast similarity to nr", "waitLmajorChromosomes-nr");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiChromosomes-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"TcruziContigs-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisChromosomes-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumChromosomes-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LmajorChromosomes-nr","similarity");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/TbruceiChromosomes-nr/master/mainresult/");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/TcruziContigs-nr/master/mainresult/");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/LbraziliensisChromosomes-nr/master/mainresult/");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/LinfantumChromosomes-nr/master/mainresult/");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/LmajorChromosomes-nr/master/mainresult/");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Trypanosoma","gi_taxid_prot.dmp","TbruceiChromosomes-nr","blastSimilarity.unfilt.out.gz");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Trypanosoma","gi_taxid_prot.dmp","TcruziContigs-nr","blastSimilarity.unfilt.out.gz");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Leishmania","gi_taxid_prot.dmp","LbraziliensisChromosomes-nr","blastSimilarity.unfilt.out.gz");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Leishmania","gi_taxid_prot.dmp","LinfantumChromosomes-nr","blastSimilarity.unfilt.out.gz");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Leishmania","gi_taxid_prot.dmp","LmajorChromosomes-nr","blastSimilarity.unfilt.out.gz");
+
+&extractIdsFromBlastResult($mgr,"TbruceiChromosomes-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"TcruziContigs-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LbraziliensisChromosomes-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LinfantumChromosomes-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LmajorChromosomes-nr","subject");
+
+&loadNRDBSubset($mgr,"TbruceiChromosomes-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"TcruziContigs-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LbraziliensisChromosomes-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LinfantumChromosomes-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LmajorChromosomes-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "TbruceiChromosomes-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","T.brucei 927 chromosomes and annotations","2008-11-13","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "TcruziContigs-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","T.cruzi contigs and annotations","2008-11-20","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "LbraziliensisChromosomes-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","L.braziliensis chromosomes and annotations","2008-11-24","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "LinfantumChromosomes-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","L.infantum chromosomes and annotations","2008-11-24","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "LmajorChromosomes-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","L.major chromosomes and annotations","2008-11-12","NRDB","2008-10-08");
+
+##################################################
+##### BLASTP #####
+#################################################
+
+$blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1 W=3 T=1000";
+
+&documentBlast($mgr, 'BLASTP', "Protein sequences", "NRDB", $blastParams);
+
+&createSimilarityDir($mgr,"TbruceiAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&createSimilarityDir($mgr,"TcruziAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&createSimilarityDir($mgr,"LbraziliensisAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&createSimilarityDir($mgr,"LinfantumAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&createSimilarityDir($mgr,"LmajorAnnotatedProteins","nr","gi\\|(\\d+)\\|",$blastParams,"blastp");
+
+&copyFilesToComputeCluster($mgr,"TbruceiAnnotatedProteins-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"TcruziAnnotatedProteins-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisAnnotatedProteins-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LinfantumAnnotatedProteins-nr","similarity");
+
+&copyFilesToComputeCluster($mgr,"LmajorAnnotatedProteins-nr","similarity");
+
+&extractAnnotatedProteinsBySpecies($mgr, "Tbrucei","T.brucei 927 chromosomes and annotations","2008-11-13",185431);
+
+&extractAnnotatedProteinsBySpecies($mgr, "Tcruzi","T.cruzi contigs and annotations","2008-11-20",353153);
+
+&extractAnnotatedProteinsBySpecies($mgr, "Lbraziliensis","L.braziliensis chromosomes and annotations","2008-11-24",5660);
+
+&extractAnnotatedProteinsBySpecies($mgr, "Linfantum","L.infantum chromosomes and annotations","2008-11-24",5671);
+
+&extractAnnotatedProteinsBySpecies($mgr, "Lmajor","L.major chromosomes and annotations","2008-11-12",5664);
+
+&copyFilesToComputeCluster($mgr,"TbruceiAnnotatedProteins.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TcruziAnnotatedProteins.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisAnnotatedProteins.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LinfantumAnnotatedProteins.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorAnnotatedProteins.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"TbruceiAnnotatedProteins","nr","apidb", 4);
+
+&startProteinBlastOnComputeCluster($mgr,"TcruziAnnotatedProteins","nr","apidb", 4);
+
+&startProteinBlastOnComputeCluster($mgr,"LbraziliensisAnnotatedProteins","nr","apidb", 4);
+
+&startProteinBlastOnComputeCluster($mgr,"LinfantumAnnotatedProteins","nr","apidb", 4);
+
+&startProteinBlastOnComputeCluster($mgr,"LmajorAnnotatedProteins","nr","apidb", 4);
+
+$mgr->waitForCluster("TbruceiAnnotatedProteins blast similarity to nr", "waitTbruceiAnnotatedProteins-nr");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiAnnotatedProteins-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"TcruziAnnotatedProteins-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisAnnotatedProteins-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumAnnotatedProteins-nr","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LmajorAnnotatedProteins-nr","similarity");
+
+&extractIdsFromBlastResult($mgr,"TbruceiAnnotatedProteins-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"TcruziAnnotatedProteins-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LbraziliensisAnnotatedProteins-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LinfantumAnnotatedProteins-nr","subject");
+
+&extractIdsFromBlastResult($mgr,"LmajorAnnotatedProteins-nr","subject");
+
+&loadNRDBSubset($mgr,"TbruceiAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"TcruziAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LbraziliensisAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LinfantumAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadNRDBSubset($mgr,"LmajorAnnotatedProteins-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "TbruceiAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","T.brucei 927 chromosomes and annotations","2008-11-13","NRDB","2008-10-08","--subjectsLimit 50");
+
+&loadProteinBlast($mgr, "TcruziAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","T.cruzi contigs and annotations","2008-11-20","NRDB","2008-10-08","--subjectsLimit 50");
+
+&loadProteinBlast($mgr, "LbraziliensisAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","L.braziliensis chromosomes and annotations","2008-11-24","NRDB","2008-10-08","--subjectsLimit 50");
+
+&loadProteinBlast($mgr, "LinfantumAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","L.infantum chromosomes and annotations","2008-11-24","NRDB","2008-10-08","--subjectsLimit 50");
+
+&loadProteinBlast($mgr, "LmajorAnnotatedProteins-nr","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id","L.major chromosomes and annotations","2008-11-12","NRDB","2008-10-08","--subjectsLimit 50");
+
+
+#####################################################
+############# BLASTP PDB          ############
+#####################################################
+
+#find Seq identities to NRDB
+&findProteinXRefs($mgr,"TbruceiAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"TcruziAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"LbraziliensisAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"LinfantumAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+&findProteinXRefs($mgr,"LmajorAnnotatedProteins.fsa","nr.fsa","^\\|\\d+\\|(?:emb|gb|dbj|ref|sp|pdb)\\|([\\w\\.]+)\\|","^([\\w\\.]+)");
+
+#load NRDB xrefs
+&loadDbXRefs($mgr, "TbruceiAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-11-13");
+
+&loadDbXRefs($mgr, "TcruziAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-11-21");
+
+&loadDbXRefs($mgr, "LbraziliensisAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-11-25");
+
+&loadDbXRefs($mgr, "LinfantumAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-11-25");
+
+&loadDbXRefs($mgr, "LmajorAnnotatedProteins.fsa", "emb,gb,dbj,ref,sp,pdb", "2008-11-13");
+
+#BLASTP PDB
+$blastParams = "-cpus=2 -topcomboN=1 V=100 B=20 -hspmax=1000000 -gi E=1e-3 -wordmask=seg -hspsepQmax=4000 -span1";
+
+&documentBlast($mgr, 'BLASTP', "Protein sequences", "PDB", $blastParams);
+
+&createSimilarityDir($mgr,"TbruceiAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"TcruziAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"LbraziliensisAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"LinfantumAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&createSimilarityDir($mgr,"LmajorAnnotatedProteins","pdb","(\\w+)\\s+mol:protein", $blastParams, "blastp");
+
+&copyFilesToComputeCluster($mgr,"TbruceiAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"TcruziAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"LinfantumAnnotatedProteins-pdb","similarity");
+
+&copyFilesToComputeCluster($mgr,"LmajorAnnotatedProteins-pdb","similarity");
+
+&moveDownloadFile($mgr,"PDBProteinSequences/pdb.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"pdb.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"TbruceiAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"TcruziAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"LbraziliensisAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"LinfantumAnnotatedProteins","pdb","apidb");
+
+&startProteinBlastOnComputeCluster($mgr,"LmajorAnnotatedProteins","pdb","apidb");
+
+$mgr->waitForCluster("TbruceiAnnotatedProteins blast similarity to pdb", "waitTbruceiAnnotatedProteins-pdb"); 
+
+&copyFilesFromComputeCluster($mgr,"TbruceiAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"TcruziAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumAnnotatedProteins-pdb","similarity");
+
+&copyFilesFromComputeCluster($mgr,"LmajorAnnotatedProteins-pdb","similarity");
+
+&loadProteinBlast($mgr, "TbruceiAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'T.brucei 927 chromosomes and annotations','2008-11-13',"PDB protein sequences","2008-10-31","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "TcruziAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'T.cruzi contigs and annotations','2008-11-20',"PDB protein sequences","2008-10-31","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "LbraziliensisAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'L.braziliensis chromosomes and annotations','2008-11-24',"PDB protein sequences","2008-10-31","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "LinfantumAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'L.infantum chromosomes and annotations','2008-11-24',"PDB protein sequences","2008-10-31","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+&loadProteinBlast($mgr, "LmajorAnnotatedProteins-pdb","DoTS::TranslatedAASequence", "DoTS::ExternalAASequence","source_id","source_id",'L.major chromosomes and annotations','2008-11-12',"PDB protein sequences","2008-10-31","--noHSPs --subjectPvalue 1e-05 --subjectPctIdent 30");
+
+
+########################################################
+##### Calculate Protein Wt and Isoelectric point #####
+########################################################
+
+&calculateTranslatedProteinSequence($mgr,"T.brucei 927 chromosomes and annotations","2008-11-13","2.3");
+
+&calculateTranslatedProteinSequence($mgr,"L.infantum chromosomes and annotations","2008-11-24","2.3");
+
+&calculateTranslatedProteinSequence($mgr,"L.braziliensis chromosomes and annotations","2008-11-24","2.3");
+
+&calculateTranslatedProteinSequence($mgr,"L.major chromosomes and annotations","2008-11-12","2.3");
+
+&calculateProteinMolWt($mgr,"Tbrucei","T.brucei 927 chromosomes and annotations","2008-11-13","DoTS.TranslatedAASequence");
+
+&calculateProteinMolWt($mgr,"Tcruzi","T.cruzi contigs and annotations","2008-11-20","DoTS.TranslatedAASequence");
+
+&calculateProteinMolWt($mgr,"Linfantum","L.infantum chromosomes and annotations","2008-11-24","DoTS.TranslatedAASequence");
+
+&calculateProteinMolWt($mgr,"Lbraziliensis","L.braziliensis chromosomes and annotations","2008-11-24","DoTS.TranslatedAASequence");
+
+&calculateProteinMolWt($mgr,"Lmajor","L.major chromosomes and annotations","2008-11-12","DoTS.TranslatedAASequence");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","T.brucei 927 chromosomes and annotations","2008-11-13");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","T.cruzi contigs and annotations","2008-11-20");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","L.infantum chromosomes and annotations","2008-11-24");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","L.braziliensis chromosomes and annotations","2008-11-24");
+
+&insertAASeqMWMinMax($mgr,"DoTS.TranslatedAASequence","L.major chromosomes and annotations","2008-11-12");
+
+&documentAAip($mgr);
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","T.brucei 927 chromosomes and annotations","2008-11-13");
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","T.cruzi contigs and annotations","2008-11-20");
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","L.infantum chromosomes and annotations","2008-11-24");
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","L.braziliensis chromosomes and annotations","2008-11-24");
+
+&insertAAiP($mgr,"DoTS.TranslatedAASequence","L.major chromosomes and annotations","2008-11-12");
+
+
+######################################################
+####### TMHMM steps #######
+######################################################
+
+&createTmhmmDir($mgr);
+
+&documentTMHMM($mgr,"2.0");
+
+&runTMHmm($mgr,"Tbrucei");
+
+&runTMHmm($mgr,"Tcruzi");
+
+&runTMHmm($mgr,"Linfantum");
+
+&runTMHmm($mgr,"Lbraziliensis");
+
+&runTMHmm($mgr,"Lmajor");
+
+&loadTMHmmData($mgr,"Tbrucei","T.brucei 927 chromosomes and annotations","2008-11-13");
+
+&loadTMHmmData($mgr,"Tcruzi","T.cruzi contigs and annotations","2008-11-20");
+
+&loadTMHmmData($mgr,"Linfantum","L.infantum chromosomes and annotations","2008-11-24");
+
+&loadTMHmmData($mgr,"Lbraziliensis","L.braziliensis chromosomes and annotations","2008-11-24");
+
+&loadTMHmmData($mgr,"Lmajor","L.major chromosomes and annotations","2008-11-12");
+
+
+####################################################
+####### signalP steps #######
+###################################################
+&createSignalPDir($mgr);
+
+my $signalPParams = "-t euk -f short -m nn+hmm -q -trunc 70";
+
+&documentSignalP($mgr, "3.0", $signalPParams);
+
+&runSignalP($mgr,"Tbrucei", $signalPParams);
+
+&runSignalP($mgr,"Tcruzi", $signalPParams);
+
+&runSignalP($mgr,"Linfantum", $signalPParams);
+
+&runSignalP($mgr,"Lbraziliensis", $signalPParams);
+
+&runSignalP($mgr,"Lmajor", $signalPParams);
+
+&loadSignalPData($mgr,"Tbrucei","T.brucei 927 chromosomes and annotations","2008-11-13");
+
+&loadSignalPData($mgr,"Tcruzi","T.cruzi contigs and annotations","2008-11-20");
+
+&loadSignalPData($mgr,"Linfantum","L.infantum chromosomes and annotations","2008-11-24");
+
+&loadSignalPData($mgr,"Lbraziliensis","L.braziliensis chromosomes and annotations","2008-11-24");
+
+&loadSignalPData($mgr,"Lmajor","L.major chromosomes and annotations","2008-11-12");
+
+
+####################################################
+##### low complexity steps #####
+####################################################
+&documentLowComplexity($mgr, 'seg', 'Protein', 'x');
+
+&filterSequences($mgr,"TbruceiAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"TcruziAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"LinfantumAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"LbraziliensisAnnotatedProteins.fsa","filter","seg","-x");
+
+&filterSequences($mgr,"LmajorAnnotatedProteins.fsa","filter","seg","-x");
+
+&loadLowComplexitySequences($mgr,"TbruceiAnnotatedProteins.fsa.seg","T.brucei 927 chromosomes and annotations","2008-11-13","protein","x");
+
+&loadLowComplexitySequences($mgr,"TcruziAnnotatedProteins.fsa.seg","T.cruzi contigs and annotations","2008-11-20","protein","x");
+
+&loadLowComplexitySequences($mgr,"LinfantumAnnotatedProteins.fsa.seg","L.infantum chromosomes and annotations","2008-11-24","protein","x");
+
+&loadLowComplexitySequences($mgr,"LbraziliensisAnnotatedProteins.fsa.seg","L.braziliensis chromosomes and annotations","2008-11-24","protein","x");
+
+&loadLowComplexitySequences($mgr,"LmajorAnnotatedProteins.fsa.seg","L.major chromosomes and annotations","2008-11-12","protein","x");
+
+&documentLowComplexity($mgr, 'dust', 'Genomic', 'N');
+
+&filterSequences($mgr,"TbruceiChromosomes.fsa","filter","dust");
+
+&filterSequences($mgr,"TcruziContigs.fsa","filter","dust");
+
+&filterSequences($mgr,"LinfantumChromosomes.fsa","filter","dust");
+
+&filterSequences($mgr,"LbraziliensisChromosomes.fsa","filter","dust");
+
+&filterSequences($mgr,"LmajorChromosomes.fsa","filter","dust");
+
+&loadLowComplexitySequences($mgr,"TbruceiChromosomes.fsa.dust","T.brucei 927 chromosomes and annotations","2008-11-13","dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"TcruziContigs.fsa.dust","T.cruzi contigs and annotations","2008-11-20","dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"LinfantumChromosomes.fsa.dust","L.infantum chromosomes and annotations","2008-11-24","dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"LbraziliensisChromosomes.fsa.dust","L.braziliensis chromosomes and annotations","2008-11-24","dna","N","--LowComplexityName 'dust'");
+
+&loadLowComplexitySequences($mgr,"LmajorChromosomes.fsa.dust","L.major chromosomes and annotations","2008-11-12","dna","N","--LowComplexityName 'dust'");
+
+##################################################
+###### ORFs ######
+##################################################
+&makeOrfFile($mgr, "TbruceiChromosomes.fsa", 50);
+
+&makeOrfFile($mgr, "TcruziContigs.fsa", 50);
+
+&makeOrfFile($mgr, "LinfantumChromosomes.fsa", 50);
+
+&makeOrfFile($mgr, "LbraziliensisChromosomes.fsa", 50);
+
+&makeOrfFile($mgr, "LmajorChromosomes.fsa", 50);
+
+&loadOrfFile($mgr, "TbruceiChromosomes_orf50.gff","T.brucei 927 chromosomes and annotations","2008-11-13", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Trypanosoma brucei TREU927");
+
+&loadOrfFile($mgr, "TcruziContigs_orf50.gff","T.cruzi contigs and annotations","2008-11-20", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Trypanosoma cruzi strain CL Brener");
+
+&loadOrfFile($mgr, "LinfantumChromosomes_orf50.gff","L.infantum chromosomes and annotations","2008-11-24", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Leishmania infantum");
+
+&loadOrfFile($mgr, "LbraziliensisChromosomes_orf50.gff","L.braziliensis chromosomes and annotations","2008-11-24", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Leishmania braziliensis");
+
+&loadOrfFile($mgr, "LmajorChromosomes_orf50.gff","L.major chromosomes and annotations","2008-11-12", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Leishmania major");
+
+
+#####################################################
+##### tandem repeat steps #####
+#####################################################
+
+my $repeatFinderArgs = "2 7 7 80 20 50 500";
+
+&documentTandemRepeatFinder($mgr,"3.21",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"TbruceiChromosomes.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"TcruziContigs.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"LinfantumChromosomes.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"LbraziliensisChromosomes.fsa","seqfiles",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"LmajorChromosomes.fsa","seqfiles",$repeatFinderArgs);
+
+&loadTandemRepeats($mgr,"TbruceiChromosomes.fsa",$repeatFinderArgs,"T.brucei 927 chromosomes and annotations","2008-11-13");
+
+&loadTandemRepeats($mgr,"TcruziContigs.fsa",$repeatFinderArgs,"T.cruzi contigs and annotations","2008-11-20");
+
+&loadTandemRepeats($mgr,"LinfantumChromosomes.fsa",$repeatFinderArgs,"L.infantum chromosomes and annotations","2008-11-24");
+
+&loadTandemRepeats($mgr,"LbraziliensisChromosomes.fsa",$repeatFinderArgs,"L.braziliensis chromosomes and annotations","2008-11-24");
+
+&loadTandemRepeats($mgr,"LmajorChromosomes.fsa",$repeatFinderArgs,"L.major chromosomes and annotations","2008-11-12");
+
+
+
+
+####################################################################
+######## Psipred ########
+####################################################################
+&documentPsipred($mgr,"2.4");
+
+&createPsipredDirWithFormattedDb($mgr,"nr_shortDefs.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"TbruceiAnnotatedProteins.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"TcruziAnnotatedProteins.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"LinfantumAnnotatedProteins.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"LbraziliensisAnnotatedProteins.fsa","seqfiles");
+
+&fixProteinIdsForPsipred($mgr,"LmajorAnnotatedProteins.fsa","seqfiles");
+
+&createPsipredSubdir($mgr,"TbruceiAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&createPsipredSubdir($mgr,"TcruziAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&createPsipredSubdir($mgr,"LinfantumAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&createPsipredSubdir($mgr,"LbraziliensisAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&createPsipredSubdir($mgr,"LmajorAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa");
+
+&copyFilesToComputeCluster($mgr, "psipred");
+
+&copyFilesToComputeCluster($mgr,"TbruceiAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TcruziAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LinfantumAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorAnnotatedProteinsPsipred.fsa","seqfiles");
+
+&startPsipredOnComputeCluster($mgr,"TbruceiAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+&startPsipredOnComputeCluster($mgr,"TcruziAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+&startPsipredOnComputeCluster($mgr,"LinfantumAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+&startPsipredOnComputeCluster($mgr,"LbraziliensisAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+&startPsipredOnComputeCluster($mgr,"LmajorAnnotatedProteinsPsipred.fsa","nr_shortDefs.fsa","apidb");
+
+$mgr->waitForCluster("TbruceiAnnotatedProteinsPsipred vs nr_shortDefs.fsaFilt psipred", "TbruceiAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&copyFilesFromComputeCluster($mgr, "TbruceiAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&copyFilesFromComputeCluster($mgr, "TcruziAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&copyFilesFromComputeCluster($mgr, "LinfantumAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&copyFilesFromComputeCluster($mgr, "LbraziliensisAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&copyFilesFromComputeCluster($mgr, "LmajorAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt", "psipred");
+
+&fixPsipredFileNames($mgr, "psipred/TbruceiAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&fixPsipredFileNames($mgr, "psipred/TcruziAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&fixPsipredFileNames($mgr, "psipred/LinfantumAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&fixPsipredFileNames($mgr, "psipred/LbraziliensisAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+&fixPsipredFileNames($mgr, "psipred/LmajorAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt");
+
+### !!!!NEED TO UPDATE THE START AND END DATES BEFORE WE RUN THIS STEP!!!!! ###
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-11-14","2008-11-15","Secondary Structure prediction for all Tbrucei annotated proteins","Tbrucei"); 
+
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-10-10","2008-10-15","Secondary Structure prediction for all Lmajor annotated proteins","Lmajor"); 
+
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-11-23","2008-11-23","Secondary Structure prediction for all Tcruzi annotated proteins","Tcruzi"); 
+
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-11-23","2008-11-23","Secondary Structure prediction for all Linfantum annotated proteins","Linfantum"); 
+
+
+&makeAlgInv($mgr,"Psipred","Psipred method for protein secondary structure prediction","2.5","2008-11-23","2008-11-23","Secondary Structure prediction for all Lbraziliensis annotated proteins","Lbraziliensis"); 
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-10-10","2008-10-15", "TbruceiAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1,"Secondary Structure prediction for all Tbrucei annotated proteins");
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-11-23","2008-11-23", "TcruziAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1,"Secondary Structure prediction for all Lmajor annotated proteins");
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-11-23","2008-11-23", "LinfantumAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1,"Secondary Structure prediction for all Linfantum annotated proteins");
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-11-23","2008-11-23", "LbraziliensisAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1,"Secondary Structure prediction for all Lbraziliensis annotated proteins");
+
+&loadSecondaryStructures($mgr,"Psipred","2.5","2008-10-10","2008-10-15", "LmajorAnnotatedProteinsPsipred.fsa-nr_shortDefs.fsaFilt",1,"Secondary Structure prediction for all Lmajor annotated proteins");
+
+#################################################################################
+###### InterPro ######
+################################################################################
+
+&documentIPRScan($mgr,"v4.3.1");
+
+&createIprscanDir($mgr, "TbruceiAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "TcruziAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "LinfantumAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "LbraziliensisAnnotatedProteins.fsa");
+
+&createIprscanDir($mgr, "LmajorAnnotatedProteins.fsa");
+
+&copyFilesToComputeCluster($mgr,"iprscan");
+
+&startIprScanOnComputeCluster($mgr,"TbruceiAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"TcruziAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"LinfantumAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"LbraziliensisAnnotatedProteins.fsa","apidb", 1);
+
+&startIprScanOnComputeCluster($mgr,"LmajorAnnotatedProteins.fsa","apidb", 1);
+
+my $insertInterproConfig = "$projectDir/$release/resources_pipeline/primary/downloads/InterproscanData/iprscan18.0/18.0/iprscan/data/insertInterpro-config.xml";
+
+$mgr->waitForCluster("Iprscan of TbruceiAnnotatedProteins", "waitTbruceiAnnotatedProteins-iprscan");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"TcruziAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisAnnotatedProteins.fsa","iprscan");
+
+&copyFilesFromComputeCluster($mgr,"LmajorAnnotatedProteins.fsa","iprscan");
+
+&loadIprscanResults($mgr,"TbruceiAnnotatedProteins.fsa", "INTERPRO", "18.0", $insertInterproConfig);
+
+&loadIprscanResults($mgr,"TcruziAnnotatedProteins.fsa", "INTERPRO", "18.0", $insertInterproConfig);
+
+&loadIprscanResults($mgr,"LinfantumAnnotatedProteins.fsa", "INTERPRO", "18.0", $insertInterproConfig);
+
+&loadIprscanResults($mgr,"LbraziliensisAnnotatedProteins.fsa", "INTERPRO", "18.0", $insertInterproConfig);
+
+&loadIprscanResults($mgr,"LmajorAnnotatedProteins.fsa", "INTERPRO", "18.0", $insertInterproConfig);
+
+
+################################################################################
+##### Make and map ESTs to genome #####
+###############################################################################
+
+&documentBLATAlignment($mgr,"v. 31","-minIntron 500,-minScore 30,-minIdentity 90");
+
+&makeTranscriptSeqs($mgr,"Tbrucei",5691,1);
+
+&makeTranscriptSeqs($mgr,"Tcruzi",5693,1);
+
+&makeTranscriptSeqs($mgr,"Linfantum",5671,1);
+
+&makeTranscriptSeqs($mgr,"Lbraziliensis",5660,1);
+
+&makeTranscriptSeqs($mgr,"Lmajor",5664,1);
+
+&extractTranscriptSeqs($mgr,"TbruceiESTSeqs",5691,1);
+
+&extractTranscriptSeqs($mgr,"TcruziESTSeqs",5693,1);
+
+&extractTranscriptSeqs($mgr,"LinfantumESTSeqs",5671,1);
+
+&extractTranscriptSeqs($mgr,"LbraziliensisESTSeqs",5660,1);
+
+&extractTranscriptSeqs($mgr,"LmajorESTSeqs",5664,1);
+
+&extractIndividualNaSeq ($mgr,"T.brucei 927 chromosomes and annotations","2008-11-13","Tbrucei","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,"T.cruzi contigs and annotations","2008-11-20","Tcruzi","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,"L.infantum chromosomes and annotations","2008-11-24","Linfantum","genome","ExternalNASequence","source_id");
+
+&extractIndividualNaSeq ($mgr,"L.braziliensis chromosomes and annotations","2008-11-24","Lbraziliensis","genome","ExternalNASequence","source_id");
+
+&fixIndividualNaSeqFileNames($mgr,'seqfiles/LinfantumGenome_test');
+
+&extractIndividualNaSeq ($mgr,"L.major chromosomes and annotations","2008-11-12","Lmajor","genome","ExternalNASequence","source_id");
+
+&fixIndividualNaSeqFileNames($mgr,'seqfiles/LbraziliensisGenome');
+
+&copyFilesToComputeCluster($mgr,"TbruceiGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TcruziGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LinfantumGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorGenome","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TbruceiESTSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TcruziESTSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LinfantumESTSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LbraziliensisESTSeqs.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorESTSeqs.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr,"TbruceiESTSeqs", "TbruceiGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr,"TcruziESTSeqs", "TcruziGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr,"LinfantumESTSeqs", "LinfantumGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr,"LbraziliensisESTSeqs", "LbraziliensisGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr,"LmajorESTSeqs", "LmajorGenome",2000,4,1);
+
+&copyFilesToComputeCluster($mgr,"genome");
+
+&createRepeatMaskDir_new($mgr,"TbruceiESTSeqs",4);
+
+&createRepeatMaskDir_new($mgr,"TcruziESTSeqs",4);
+
+&createRepeatMaskDir_new($mgr,"LinfantumESTSeqs",4);
+
+&createRepeatMaskDir_new($mgr,"LbraziliensisESTSeqs",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorESTSeqs",4);
+
+&copyFilesToComputeCluster($mgr,"repeatmask");
+
+&startGenomeAlignOnComputeCluster($mgr,"TbruceiESTSeqs","TbruceiGenome","apidb", 4);
+
+&startGenomeAlignOnComputeCluster($mgr,"TcruziESTSeqs","TcruziGenome","apidb", 4);
+
+&startGenomeAlignOnComputeCluster($mgr,"LinfantumESTSeqs","LinfantumGenome","apidb", 4);
+
+&startGenomeAlignOnComputeCluster($mgr,"LbraziliensisESTSeqs","LbraziliensisGenome","apidb", 4);
+
+&startGenomeAlignOnComputeCluster($mgr,"LmajorESTSeqs","LmajorGenome","apidb", 4);
+
+$mgr->waitForCluster("TbruceiESTSeqs BLAT alignment to TbruceiGenome", "waitTbruceiESTSeqs-TbruceiGenome");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiESTSeqs-TbruceiGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"TcruziESTSeqs-TcruziGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumESTSeqs-LinfantumGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisESTSeqs-LbraziliensisGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LmajorESTSeqs-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiESTSeqs","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"TcruziESTSeqs","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LinfantumESTSeqs","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LbraziliensisESTSeqs","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LmajorESTSeqs","repeatmask");
+
+&UpdateGusTableWithXml($mgr,"$ENV{PROJECT_HOME}/ApiCommonData/Load/lib/xml/blatalignmentquality.xml","BlatAlignmentQuality");
+
+&loadContigAlignments($mgr, 185431, "TbruceiESTSeqs","TbruceiGenome","","","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","load","","","",5691);
+
+&loadContigAlignments($mgr, 185431, "TbruceiESTSeqs","TbruceiGenome","","","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","setbest","","",100,5691);
+
+&loadContigAlignments($mgr, 353153, "TcruziESTSeqs","TcruziGenome","","","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","load","","","",5693);
+
+&loadContigAlignments($mgr, 353153, "TcruziESTSeqs","TcruziGenome","","","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","setbest","","",100,5693);
+
+&loadContigAlignments($mgr, 5664, "LmajorESTSeqs","LmajorGenome","","","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","","","",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorESTSeqs","LmajorGenome","","","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","","",100,5664);
+
+&loadContigAlignments($mgr, 5660, "LbraziliensisESTSeqs","LbraziliensisGenome","","","L.braziliensis chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","load");
+
+&loadContigAlignments($mgr, 5660, "LbraziliensisESTSeqs","LbraziliensisGenome","","","L.braziliensis chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","setbest","","",100);
+
+&loadContigAlignments($mgr, 5671, "LinfantumESTSeqs","LinfantumGenome","","","L.infantum chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","load");
+
+&loadContigAlignments($mgr, 5671, "LinfantumESTSeqs","LinfantumGenome","","","L.infantum chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","setbest","","",100);
+
+
+##########################################################################
+######## DoTS assemblies ########
+##########################################################################
+
+&documentCAP4($mgr);
+
+&documentRepeatMasker($mgr,"open-3-1-5");
+
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Tbrucei", "T.brucei 927 chromosomes and annotations","2008-11-13", 5691, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Tbrucei",5691,1,185431,"/repeatmask/TbruceiESTSeqs/master/mainresult","/cluster/TbruceiESTs");
+
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Lmajor", "L.major chromosomes and annotations","2008-11-12", 5664, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Lmajor",5664,1,5664,"/repeatmask/LmajorESTSeqs/master/mainresult","/cluster/LmajorESTs");
+
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Tcruzi", "T.cruzi contigs and annotations","2008-11-20", 5693, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Tcruzi",5693,1,353153,"/repeatmask/TcruziESTSeqs/master/mainresult","/cluster/TcruziESTs");
+
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Lbraziliensis", "L.braziliensis chromosomes and annotations","2008-11-24", 5660, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Lbraziliensis",5660,1,5660,"/repeatmask/LbraziliensisESTSeqs/master/mainresult","/cluster/LbraziliensisESTs");
+
+&clusterMultiEstSourcesByAlign($mgr, "ESTs", "Linfantum", "L.infantum chromosomes and annotations","2008-11-24", 5671, "ExternalNASequence",20000);
+
+&getNotAlignedEstAndAddOneCluster($mgr,"Linfantum",5671,1,5671,"/repeatmask/LinfantumESTSeqs/master/mainresult","/cluster/LinfantumESTs");
+
+
+&splitCluster($mgr, "Tbrucei", "ESTs");
+
+&splitCluster($mgr, "Tcruzi", "ESTs");
+
+&splitCluster($mgr, "Lbraziliensis", "ESTs");
+
+&splitCluster($mgr, "Linfantum", "ESTs");
+
+&splitCluster($mgr, "Lmajor", "ESTs");
+
+&assembleTranscripts($mgr, "Tbrucei", "", "", "ESTs", 185431);
+
+&assembleTranscripts($mgr, "Tcruzi", "", "", "ESTs", 353153);
+
+&assembleTranscripts($mgr, "Lbraziliensis", "", "", "ESTs", 5660);
+
+&assembleTranscripts($mgr, "Linfantum", "", "", "ESTs", 5671);
+
+&assembleTranscripts($mgr, "Lmajor", "", "", "ESTs",5664);
+
+
+
+&extractAssemblies($mgr, "Tbrucei", "Assemblies", 185431);
+
+&extractAssemblies($mgr, "Tcruzi", "Assemblies", 353153);
+
+&extractAssemblies($mgr, "Lbraziliensis", "Assemblies", 5660);
+
+&extractAssemblies($mgr, "Linfantum", "Assemblies", 5671);
+
+&extractAssemblies($mgr, "Lmajor", "Assemblies", 5664);
+
+&copyFilesToComputeCluster($mgr, "TbruceiAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "TcruziAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "LbraziliensisAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "LinfantumAssemblies.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr, "LmajorAssemblies.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr, "TbruceiAssemblies","TbruceiGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr, "TcruziAssemblies","TcruziGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr, "LbraziliensisAssemblies","LbraziliensisGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr, "LinfantumAssemblies","LinfantumGenome",2000,4,1);
+
+&createGenomeDirForGfClient($mgr, "LmajorAssemblies","LmajorGenome",2000,4,1);
+
+&copyFilesToComputeCluster($mgr, "TbruceiAssemblies-TbruceiGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "TcruziAssemblies-TcruziGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "LbraziliensisAssemblies-LbraziliensisGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "LinfantumAssemblies-LinfantumGenome","genome");
+
+&copyFilesToComputeCluster($mgr, "LmajorAssemblies-LmajorGenome","genome");
+
+&createRepeatMaskDir_new($mgr,"TbruceiAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"TcruziAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"LbraziliensisAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"LinfantumAssemblies",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorAssemblies",4);
+
+&copyFilesToComputeCluster($mgr, "TbruceiAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "TcruziAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "LbraziliensisAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "LinfantumAssemblies","repeatmask");
+
+&copyFilesToComputeCluster($mgr, "LmajorAssemblies","repeatmask");
+
+&startGenomeAlignOnComputeCluster($mgr,"TbruceiAssemblies","TbruceiGenome","apidb");
+
+&startGenomeAlignOnComputeCluster($mgr,"TcruziAssemblies","TcruziGenome","apidb");
+
+&startGenomeAlignOnComputeCluster($mgr,"LbraziliensisAssemblies","LbraziliensisGenome","apidb");
+
+&startGenomeAlignOnComputeCluster($mgr,"LinfantumAssemblies","LinfantumGenome","apidb");
+
+&startGenomeAlignOnComputeCluster($mgr,"LmajorAssemblies","LmajorGenome","apidb");
+
+$mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitTbruceiAssemblies-TbruceiGenome");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiAssemblies-TbruceiGenome","genome");
+
+&copyFilesFromComputeCluster($mgr, "TcruziAssemblies-TcruziGenome","genome");
+
+&copyFilesFromComputeCluster($mgr, "LbraziliensisAssemblies-LbraziliensisGenome","genome");
+
+&copyFilesFromComputeCluster($mgr, "LinfantumAssemblies-LinfantumGenome","genome");
+
+&copyFilesFromComputeCluster($mgr, "LmajorAssemblies-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr, "TcruziAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr, "LbraziliensisAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr, "LinfantumAssemblies","repeatmask");
+
+&copyFilesFromComputeCluster($mgr, "LmajorAssemblies","repeatmask");
+
+&loadContigAlignments($mgr,185431 , "TbruceiAssemblies","TbruceiGenome","","","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 185431, "TbruceiAssemblies","TbruceiGenome","","","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr, 353153, "TcruziAssemblies","TcruziGenome","","","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 353153, "TcruziAssemblies","TcruziGenome","","","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr, 5660, "LbraziliensisAssemblies","LbraziliensisGenome","","","L.braziliensis chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 5660, "LbraziliensisAssemblies","LbraziliensisGenome","","","L.braziliensis chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr, 5671, "LinfantumAssemblies","LinfantumGenome","","","L.infantum chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 5671, "LinfantumAssemblies","LinfantumGenome","","","L.infantum chromosomes and annotations","2008-11-24","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&loadContigAlignments($mgr, 5664, "LmajorAssemblies","LmajorGenome","","","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","Assembly","",100);
+
+&loadContigAlignments($mgr, 5664, "LmajorAssemblies","LmajorGenome","","","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","Assembly","",100);
+
+&updateAssemblySourceId($mgr,"Tbrucei",185431);
+
+&updateAssemblySourceId($mgr,"Tcruzi",353153);
+
+&updateAssemblySourceId($mgr,"Lbraziliensis",5660);
+
+&updateAssemblySourceId($mgr,"Linfantum",5671);
+
+&updateAssemblySourceId($mgr,"Lmajor",5664);
+
+##########################################################################
+################## BAC and Cosmid Ends ###################################
+#########################################################################
+&extractNaSeq($mgr,"T.cruzi CHORI105 BAC End","2008-12-04",'Tcruzi',"BACEnds","ExternalNASequence","na_sequence_id");
+
+&extractNaSeq($mgr,"L.major Cosmid Ends from Sanger","2002-08-13",'Lmajor',"CosmidEnds","ExternalNASequence","na_sequence_id");
+
+&extractNaSeq($mgr,"L.major FV1 random Ends from Sanger","2002-08-13",'Lmajor',"FV1Ends","ExternalNASequence","na_sequence_id");
+
+&extractNaSeq($mgr,"L.major PAC Ends from Sanger","2002-08-13",'Lmajor',"PACEnds","ExternalNASequence","na_sequence_id");
+
+&extractNaSeq($mgr,"L.major BAC Ends from Sanger","2002-08-13",'Lmajor',"BACEnds","ExternalNASequence","na_sequence_id");
+
+&extractNaSeq($mgr,"T.brucei RPCI93 BAC Ends","2008-12-08",'Tbrucei',"BACEnds","ExternalNASequence","na_sequence_id");
+
+&copyFilesToComputeCluster($mgr,"TcruziBACEnds.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorCosmidEnds.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorFV1Ends.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorPACEnds.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"LmajorBACEnds.fsa","seqfiles");
+
+&copyFilesToComputeCluster($mgr,"TbruceiBACEnds.fsa","seqfiles");
+
+&createGenomeDirForGfClient($mgr,"TcruziBACEnds", "TcruziGenome",100,4,1);
+
+&createGenomeDirForGfClient($mgr,"LmajorCosmidEnds", "LmajorGenome",100,4,1);
+
+&createGenomeDirForGfClient($mgr,"LmajorFV1Ends", "LmajorGenome",100,4,1);
+
+&createGenomeDirForGfClient($mgr,"LmajorPACEnds", "LmajorGenome",100,4,1);
+
+&createGenomeDirForGfClient($mgr,"LmajorBACEnds", "LmajorGenome",100,4,1);
+
+&createGenomeDirForGfClient($mgr,"TbruceiBACEnds", "TbruceiGenome",100,4,1);
+
+&copyFilesToComputeCluster($mgr,"TcruziBACEnds-TcruziGenome","genome");
+
+&copyFilesToComputeCluster($mgr,"LmajorCosmidEnds-LmajorGenome","genome");
+
+&copyFilesToComputeCluster($mgr,"LmajorFV1Ends-LmajorGenome","genome");
+
+&copyFilesToComputeCluster($mgr,"LmajorPACEnds-LmajorGenome","genome");
+
+&copyFilesToComputeCluster($mgr,"LmajorBACEnds-LmajorGenome","genome");
+
+&copyFilesToComputeCluster($mgr,"TbruceiBACEnds-TbruceiGenome","genome");
+
+&createRepeatMaskDir_new($mgr,"TcruziBACEnds",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorFV1Ends",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorPACEnds",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorBACEnds",4);
+
+&createRepeatMaskDir_new($mgr,"LmajorCosmidEnds",4);
+
+&createRepeatMaskDir_new($mgr,"TbruceiBACEnds",4);
+
+&copyFilesToComputeCluster($mgr,"TcruziBACEnds","repeatmask");
+
+&copyFilesToComputeCluster($mgr,"LmajorFV1Ends","repeatmask");
+
+&copyFilesToComputeCluster($mgr,"LmajorPACEnds","repeatmask");
+
+&copyFilesToComputeCluster($mgr,"LmajorBACEnds","repeatmask");
+
+&copyFilesToComputeCluster($mgr,"LmajorCosmidEnds","repeatmask");
+
+&copyFilesToComputeCluster($mgr,"TbruceiBACEnds","repeatmask");
+
+&startRepeatMaskOnComputeCluster($mgr, 'TcruziBACEnds', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorFV1Ends', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorPACEnds', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorBACEnds', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorCosmidEnds', 'apidb');
+
+&startRepeatMaskOnComputeCluster($mgr, 'TbruceiBACEnds', 'apidb');
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"TcruziBACEnds","TcruziGenome","apidb");
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"LmajorFV1Ends","LmajorGenome","apidb");
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"LmajorPACEnds","LmajorGenome","apidb");
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"LmajorBACEnds","LmajorGenome","apidb");
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"LmajorCosmidEnds","LmajorGenome","apidb");
+
+&startGfClientWORepMaskOnComputeCluster($mgr,"TbruceiBACEnds","TbruceiGenome","apidb");
+
+&copyFilesFromComputeCluster($mgr,"TcruziBACEnds","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LmajorFV1Ends","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LmajorPACEnds","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LmajorBACEnds","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"LmajorCosmidEnds","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiBACEnds","repeatmask");
+
+&copyFilesFromComputeCluster($mgr,"TcruziBACEnds-TcruziGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LmajorFV1Ends-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LmajorPACEnds-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LmajorBACEnds-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"LmajorCosmidEnds-LmajorGenome","genome");
+
+&copyFilesFromComputeCluster($mgr,"TbruceiBACEnds-TbruceiGenome","genome");
+
+&loadContigAlignments($mgr, 353153, "TcruziBACEnds","TcruziGenome","T.cruzi CHORI105 BAC End","2008-12-04","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",353153);
+
+&loadContigAlignments($mgr, 353153, "TcruziBACEnds","TcruziGenome","T.cruzi CHORI105 BAC End","2008-12-04","T.cruzi contigs and annotations","2008-11-20","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",353153);
+
+&loadContigAlignments($mgr, 5664, "LmajorCosmidEnds","LmajorGenome","L.major Cosmid Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorCosmidEnds","LmajorGenome","L.major Cosmid Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorFV1Ends","LmajorGenome","L.major FV1 random Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorFV1Ends","LmajorGenome","L.major FV1 random Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorPACEnds","LmajorGenome","L.major PAC Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorPACEnds","LmajorGenome","L.major PAC Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorBACEnds","LmajorGenome","L.major BAC Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",5664);
+
+&loadContigAlignments($mgr, 5664, "LmajorBACEnds","LmajorGenome","L.major BAC Ends from Sanger","2002-08-13","L.major chromosomes and annotations","2008-11-12","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",5664);
+
+&loadContigAlignments($mgr, 185431, "TbruceiBACEnds","TbruceiGenome","T.brucei RPCI93 BAC Ends","2008-12-08","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","load","ExternalNASequence","","",185431);
+
+&loadContigAlignments($mgr, 185431, "TbruceiBACEnds","TbruceiGenome","T.brucei RPCI93 BAC Ends","2008-12-08","T.brucei 927 chromosomes and annotations","2008-11-13","ExternalNASequence",">(\\d+)","setbest","ExternalNASequence","","100",185431);
+##################################################################
+######## IEDB Epitopes ######
+##################################################################
+
+&copyDirectory($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/IEDB_Epitopes_fixed","$projectDir/$release/analysis_pipeline/primary/data/iedb/input","$projectDir/$release/analysis_pipeline/primary/data/iedb");
+
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Tbrucei", "TbruceiAnnotatedProteins", 'T.brucei 927 chromosomes and annotations','2008-11-13',"ExternalNASequence","Tbrucei_sanger");
+
+#Tc defline is too long, which will impact the blast result parsing, need to shorten the defline (replace the first |Try.....| with |Tcruzi|)
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Tcruzi", "TcruziAnnotatedProteins", 'T.cruzi contigs and annotations','2008-11-20',"ExternalNASequence","Tcruzi_gb");
+
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Lbraziliensis", "LbraziliensisAnnotatedProteins", 'L.braziliensis chromosomes and annotations','2008-11-24',"ExternalNASequence","Lbraziliensis_sanger");
+
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Linfantum", "LinfantumAnnotatedProteins", 'L.infantum chromosomes and annotations','2008-11-24',"ExternalNASequence","Linfantum_sanger");
+
+&makeAnnotatedProteinDownloadFileForncbiBlast($mgr, "Lmajor", "LmajorAnnotatedProteins", 'L.major chromosomes and annotations','2008-11-12',"ExternalNASequence","Lmajor_sanger");
+
+&formatncbiBlastFile($mgr,"TbruceiAnnotatedProteins_TriTrypDB-1.1.fasta","Tbrucei","Tbrucei_proteins","T");
+
+&formatncbiBlastFile($mgr,"TcruziAnnotatedProteins_TriTrypDB-1.1.fasta","Tbrucei","Tcruzi_proteins","T");
+
+&formatncbiBlastFile($mgr,"LinfantumAnnotatedProteins_TriTrypDB-1.1.fasta","Tbrucei","Linfantum_proteins","T");
+
+&formatncbiBlastFile($mgr,"LbraziliensisAnnotatedProteins_TriTrypDB-1.1.fasta","Tbrucei","Lbraziliensis_proteins","T");
+
+&formatncbiBlastFile($mgr,"LmajorAnnotatedProteins_TriTrypDB-1.1.fasta","Tbrucei","Lmajor_proteins","T");
+
+#pass a regex for source_id
+&createEpitopeMapFiles($mgr, "input", "$projectDir/$release/analysis_pipeline/primary/data/blastSite", "$projectDir/$release/analysis_pipeline/primary/data/seqfiles");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Tb", "Tbrucei", "Links to IEDB epitopes|05-28-2009", "T.brucei 927 chromosomes and annotations|2008-11-13", "out");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Tc", "Tcruzi", "Links to IEDB epitopes|05-28-2009", "T.cruzi contigs and annotations|2008-11-20", "out");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Lb", "Lbraziliensis", "Links to IEDB epitopes|05-28-2009", "L.braziliensis chromosomes and annotations|2008-11-24", "out");
+
+&loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Lm", "Lmajor", "Links to IEDB epitopes|05-28-2009", "L.major chromosomes and annotations|2008-11-12", "out");
+
+######################################################################
+### gives AASequences a taxon id ###
+#######################################################################
+&updateTaxonIdField($mgr,"gi_taxid_prot.dmp","^(\\d+)","--ncbiTaxIdRegex \'^\\d+\\s(\\d+)\'","select source_id, aa_sequence_id from dots.externalaasequence","NRDB|2008-10-08","DoTS::ExternalAASequence"); 
+&copy($mgr,"$projectDir/$release/resources_pipeline/primary/downloads/FetchPDBidx/source.idx.processed","$projectDir/$release/analysis_pipeline/primary/data/misc","$projectDir/$release/analysis_pipeline/primary/data/misc");
+
+&updateTaxonIdField($mgr,"source.idx.processed","^(\\w+)","--taxonNameRegex \'^\\w+\\s+(.+)\'","select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence","PDB protein sequences|2008-10-31","DoTS::ExternalAASequence");
+
+
+##################################################################################
+### This will calc the ACTG content for all seqs in ExternalNASequence ###
+##################################################################################
+&calculateACGT($mgr);
+
+##################################################################################
+#############ChIP-chip##############################
+#################################################################################
+
+&mapTagsToNaSequences($mgr, "$dataDir/seqfiles/LmajorChromosomes.fsa", "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/data_repository/From_Geo/GSE13415_RAW/probes.fsa", "Peter_Myler_ChIP_RAW");
+
+&loadExpressionFeature($mgr, "mapPeter_Myler_ChIP_RAWTagsToNaSequences.mapping", "ChIP Chip Peter Myler|2008-11-07", "ArrayElementFeature", "Peter_Myler_ChIP_RAW");
+
+&InsertSimpleRadAnalysisFromConfig($mgr, "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/working_dir/data_files/", "/files/cbil/data/cbil/TrypDB/manualDelivery/ChIP-chip/Myler_Lmajor_promoters/working_dir/data_files/config.txt", "DataTransformationResult", "ArrayElementFeature", "ChIP-chip_Peter_Myler_Analysis", 1);
+
+
+#####################################################################
+####### make download files steps#######
+####################################################################
+
+&makeESTDownloadFileFromAllSources($mgr,"Tbrucei", 5691, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Tcruzi", 5693, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Tcongolense", 5692, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Lbraziliensis", 5660, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Linfantum", 5671, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Lmajor", 5664, 1, "TriTrypDB");
+
+&makeESTDownloadFileFromAllSources($mgr,"Lmexicana", 5665, 1, "TriTrypDB");
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedCDS","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedCDS","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldo-LikeAnnotatedCDS","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedCDS","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedCDS","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedCDS","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedCDS","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedCDS","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedCDS","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedTranscripts","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedTranscripts","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldo-LikeAnnotatedTranscripts","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedTranscripts","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedTranscripts","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedTranscripts","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedTranscripts","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedTranscripts","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedTranscripts","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Ltarentolae", "LtarentolaeAnnotatedTranscripts","L. tarentolae contig sequences","2009-04-07","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedTranscripts","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedProteins","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedProteins","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcruzi", "TcruziEsmeraldo-LikeAnnotatedProteins","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedProteins","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tcongolense", "TcongolenseAnnotatedProteins","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Tvivax", "TvivaxAnnotatedProteins","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lbraziliensis", "LbraziliensisAnnotatedProteins","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedProteins","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedProteins","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiTreu927Genomic","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiGambienseGenomic","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Tcruzi", "TcruziEsmeraldo-LikeGenomic","Sanger T.cruzi Esmeraldo chromosomes","2009-09-07","psu","TriTrypDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeGenomic","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Tcongolense", "TcongolenseGenomic","Sanger T. congolense contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Tvivax", "TvivaxGenomic","Sanger T. vivax contigs and chromosomes","2009-09-14","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Lbraziliensis", "LbraziliensisGenomic","Sanger L. braziliensis chromosomes","2009-10-06","psu","TriTrypDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Linfantum", "LinfantumGenomic","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Lmajor", "LmajorGenomic","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB");
+
+&makeMixedGenomicDownloadFile($mgr, "Ltarentolae", "LtarentolaeGenomic","L. tarentolae contig sequences","2009-04-07","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Lmexicana", "LmexicanaGenomic","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tbrucei', 'assemblies',185431, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tcruzi', 'assemblies',366581, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Tcongolense', 'assemblies',5692, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lbraziliensis', 'assemblies',5660, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Linfantum', 'assemblies',5671, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lmajor', 'assemblies',5664, 'TriTrypDB');
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Lmexicana', 'assemblies',5665, 'TriTrypDB');
+
+&makeInterproDownloadFile ($mgr, 'Tbrucei', "Interpro", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", "INTERPRO", "19.0", "TriTrypDB","TbruceiTreu927");
+
+&makeInterproDownloadFile ($mgr, 'Tbrucei', "Interpro", "Sanger T. brucei gambiense chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB","TbruceiGambiense");
+
+&makeInterproDownloadFile ($mgr, 'Tcruzi', "Interpro", "Sanger T.cruzi Esmeraldo chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB","TcruziEsmeraldo-Like");
+
+&makeInterproDownloadFile ($mgr, 'Tcruzi', "Interpro", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes","2009-09-10", "INTERPRO", "19.0", "TriTrypDB","TcruziEsmeraldo-Like");
+
+&makeInterproDownloadFile ($mgr, 'Tcongolense', "Interpro", "Sanger T. congolense contigs and chromosomes","2009-09-14", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Tvivax', "Interpro", "Sanger T. vivax contigs and chromosomes","2009-09-14", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Lbraziliensis', "Interpro", "Sanger L. braziliensis chromosomes","2009-10-06", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Linfantum', "Interpro", "Sanger L. infantum chromosomes","2009-09-07", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeInterproDownloadFile ($mgr, 'Lmajor', "Interpro", "Sanger L. major chromosomes","2009-09-10", "INTERPRO", "19.0", "TriTrypDB");
+
+&makeCodonUsage($mgr, "Tbrucei", "AnnotatedCDS", "TbruceiTreu927");
+
+&makeCodonUsage($mgr, "Tbrucei", "AnnotatedCDS", "TbruceiGambiense");
+
+&makeCodonUsage($mgr, "Tcruzi", "AnnotatedCDS", "TcruziEsmeraldo-Like");
+
+&makeCodonUsage($mgr, "Tcruzi", "AnnotatedCDS", "TcruziNonEsmeraldo-Like");
+
+&makeCodonUsage($mgr, "Tcongolense", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Tvivax", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Lbraziliensis", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Linfantum", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Lmajor", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Ltarentolae", "AnnotatedCDS");
+
+&makeCodonUsage($mgr, "Lmexicana", "AnnotatedCDS");
+
+&writeGeneAliasFile($mgr,'Sanger T. brucei 927 contigs and chromosomes','2009-10-06',"TriTrypDB","Tbrucei","TbruceiTreu927");
+
+&writeGeneAliasFile($mgr,'Sanger T. brucei gambiense chromosomes','2009-09-07',"TriTrypDB","Tbrucei","TbruceiGambiense");
+
+&writeGeneAliasFile($mgr,'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07',"TriTrypDB","Tcruzi","TcruziEsmeraldo-Like");
+
+&writeGeneAliasFile($mgr,'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10',"TriTrypDB","Tcruzi","TcruziNonEsmeraldo-Like");
+
+&writeGeneAliasFile($mgr,'Sanger T. congolense contigs and chromosomes','2009-09-14',"TriTrypDB","Tcongolense");
+
+&writeGeneAliasFile($mgr,'Sanger T. vivax contigs and chromosomes','2009-09-14',"TriTrypDB","Tvivax");
+
+&writeGeneAliasFile($mgr,'Sanger L. braziliensis chromosomes','2009-10-06',"TriTrypDB","Lbraziliensis");
+
+&writeGeneAliasFile($mgr,'Sanger L. infantum chromosomes','2009-09-07',"TriTrypDB","Linfantum");
+
+&writeGeneAliasFile($mgr,'Sanger L. major chromosomes','2009-09-10',"TriTrypDB","Lmajor");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziEsmeraldo-LikeORFs", 'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeORFs", 'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tcongolense", "TcongolenseORFs","Sanger T. congolense contigs and chromosomes","2009-09-14",50,"TriTrypDB",0);
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Tvivax", "TvivaxORFs","Sanger T. vivax contigs and chromosomes","2009-09-14",50,"TriTrypDB",0);
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisORFs", 'Sanger L. braziliensis chromosomes','2009-10-06', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumORFs", 'Sanger L. infantum chromosomes','2009-09-07', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorORFs", 'Sanger L. major chromosomes','2009-09-10', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Ltarentolae", "LtarentolaeORFs", 'L. tarentolae contig sequences','2009-04-07', 50, "TriTrypDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFNAs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFNAs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziEsmeraldo-LikeORFNAs", 'Sanger T.cruzi Esmeraldo chromosomes','2009-09-07', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcruzi", "TcruziNonEsmeraldo-LikeORFNAs", 'Sanger T.cruzi Non-Esmeraldo contigs and chromosomes','2009-09-10', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tcongolense", "TcongolenseORFNAs", 'Sanger T. congolense contigs and chromosomes','2009-09-14', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tvivax", "TvivaxORFNAs", 'Sanger T. vivax contigs and chromosomes','2009-09-14', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmajor", "LmajorORFNAs", 'Sanger L. major chromosomes','2009-09-10', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lbraziliensis", "LbraziliensisORFNAs", 'Sanger L. braziliensis chromosomes','2009-10-06', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Linfantum", "LinfantumORFNAs", 'Sanger L. infantum chromosomes','2009-09-07', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Ltarentolae", "LtarentolaeORFNAs", 'L. tarentolae contig sequences','2009-04-07', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFNAs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedCDS","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedTranscripts","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedProteins","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeInterproDownloadFile ($mgr, 'Lmexicana', "Interpro", "Sanger L. mexicana contigs and chromosomes","2009-11-03", "INTERPRO", "19.0", "TriTrypDB","Lmexicana");
+
+&makeCodonUsage($mgr, "Lmexicana", "AnnotatedCDS");
+
+&writeGeneAliasFile($mgr,'Sanger L. mexicana contigs and chromosomes|2009-11-03',"TriTrypDB","Lmexicana");
+
+&writeSequenceAliasFile($mgr,'Sanger T.cruzi Esmeraldo chromosomes|2009-09-07,Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10,T.cruzi_Unassigned_Contigs|2010-01-15',"TriTrypDB","Tcruzi","Tcruzi",'T.cruzi_genome_id_mappings|2010-01-19');
+
+# ##################################################################################
+# ###### Format BLAST Files ######
+# #################################################################################
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiEST_TriTrypDB-2.0.fasta","TbruceiEST","-n -t release-2.0/TbruceiEST");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiAssemblies_TriTrypDB-2.0.fasta","TbruceiAssemblies","-n -t release-2.0/TbruceiAssemblies");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedTranscripts_TriTrypDB-2.0.fasta","TbruceiTreu927Transcripts","-n -t release-2.0/TbruceiTreu927Transcripts");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedProteins_TriTrypDB-2.0.fasta","TbruceiTreu927Proteins","-p -C X -t release-2.0/TbruceiTreu927Proteins");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei","TbruceiTreu927ORFs_TriTrypDB-2.0.fasta","TbruceiTreu927ORF","-p -C X -t release-2.0/TbruceiTreu927ORF");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927Genomic_TriTrypDB-2.0.fasta","TbruceiTreu927Genomics","-n -t release-2.0/TbruceiTreu927Genomics");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiTreu927AnnotatedCDS_TriTrypDB-2.0.fasta","TbruceiTreu927CDS","-n -t release-2.0/TbruceiTreu927CDS");
+
+&xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedTranscripts_TriTrypDB-2.0.fasta","TbruceiGambienseTranscripts","-n -t release-2.0/TbruceiGambienseTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedProteins_TriTrypDB-2.0.fasta","TbruceiGambienseProteins","-p -C X -t release-2.0/TbruceiGambienseProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei","TbruceiGambienseORFs_TriTrypDB-2.0.fasta","TbruceiGambienseORF","-p -C X -t release-2.0/TbruceiGambienseORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseGenomic_TriTrypDB-2.0.fasta","TbruceiGambienseGenomics","-n -t release-2.0/TbruceiGambienseGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tbrucei", "TbruceiGambienseAnnotatedCDS_TriTrypDB-2.0.fasta","TbruceiGambienseCDS","-n -t release-2.0/TbruceiGambienseCDS");
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEST_TriTrypDB-2.0.fasta","TcruziEST","-n -t release-2.0/TcruziEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziAssemblies_TriTrypDB-2.0.fasta","TcruziAssemblies","-n -t release-2.0/TcruziAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldo-LikeAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcruziEsmeraldo-LikeTranscripts","-n -t release-2.0/TcruziEsmeraldo-LikeTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldo-LikeAnnotatedProteins_TriTrypDB-2.0.fasta","TcruziEsmeraldo-LikeProteins","-p -C X -t release-2.0/TcruziEsmeraldo-LikeProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi","TcruziEsmeraldo-LikeORFs_TriTrypDB-2.0.fasta","TcruziEsmeraldo-LikeORF","-p -C X -t release-2.0/TcruziEsmeraldo-LikeORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldo-LikeGenomic_TriTrypDB-2.0.fasta","TcruziEsmeraldo-LikeGenomics","-n -t release-2.0/TcruziEsmeraldo-LikeGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziEsmeraldo-LikeAnnotatedCDS_TriTrypDB-2.0.fasta","TcruziEsmeraldo-LikeCDS","-n -t release-2.0/TcruziEsmeraldo-LikeCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcruziNonEsmeraldo-LikeTranscripts","-n -t release-2.0/TcruziNonEsmeraldo-LikeTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedProteins_TriTrypDB-2.0.fasta","TcruziNonEsmeraldo-LikeProteins","-p -C X -t release-2.0/TcruziNonEsmeraldo-LikeProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi","TcruziNonEsmeraldo-LikeORFs_TriTrypDB-2.0.fasta","TcruziNonEsmeraldo-LikeORF","-p -C X -t release-2.0/TcruziNonEsmeraldo-LikeORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldo-LikeGenomic_TriTrypDB-2.0.fasta","TcruziNonEsmeraldo-LikeGenomics","-n -t release-2.0/TcruziNonEsmeraldo-LikeGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcruzi", "TcruziNonEsmeraldo-LikeAnnotatedCDS_TriTrypDB-2.0.fasta","TcruziNonEsmeraldo-LikeCDS","-n -t release-2.0/TcruziNonEsmeraldo-LikeCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseEST_TriTrypDB-2.0.fasta","TcongolenseEST","-n -t release-2.0/TcongolenseEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAssemblies_TriTrypDB-2.0.fasta","TcongolenseAssemblies","-n -t release-2.0/TcongolenseAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedTranscripts_TriTrypDB-2.0.fasta","TcongolenseTranscripts","-n -t release-2.0/TcongolenseTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedProteins_TriTrypDB-2.0.fasta","TcongolenseProteins","-p -C X -t release-2.0/TcongolenseProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense","TcongolenseORFs_TriTrypDB-2.0.fasta","TcongolenseORF","-p -C X -t release-2.0/TcongolenseORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseGenomic_TriTrypDB-2.0.fasta","TcongolenseGenomics","-n -t release-2.0/TcongolenseGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tcongolense", "TcongolenseAnnotatedCDS_TriTrypDB-2.0.fasta","TcongolenseCDS","-n -t release-2.0/TcongolenseCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedTranscripts_TriTrypDB-2.0.fasta","TvivaxTranscripts","-n -t release-2.0/TvivaxTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedProteins_TriTrypDB-2.0.fasta","TvivaxProteins","-p -C X -t release-2.0/TvivaxProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax","TvivaxORFs_TriTrypDB-2.0.fasta","TvivaxORF","-p -C X -t release-2.0/TvivaxORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxGenomic_TriTrypDB-2.0.fasta","TvivaxGenomics","-n -t release-2.0/TvivaxGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Tvivax", "TvivaxAnnotatedCDS_TriTrypDB-2.0.fasta","TvivaxCDS","-n -t release-2.0/TvivaxCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisEST_TriTrypDB-2.0.fasta","LbraziliensisEST","-n -t release-2.0/LbraziliensisEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAssemblies_TriTrypDB-2.0.fasta","LbraziliensisAssemblies","-n -t release-2.0/LbraziliensisAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedTranscripts_TriTrypDB-2.0.fasta","LbraziliensisTranscripts","-n -t release-2.0/LbraziliensisTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedProteins_TriTrypDB-2.0.fasta","LbraziliensisProteins","-p -C X -t release-2.0/LbraziliensisProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis","LbraziliensisORFs_TriTrypDB-2.0.fasta","LbraziliensisORF","-p -C X -t release-2.0/LbraziliensisORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisGenomic_TriTrypDB-2.0.fasta","LbraziliensisGenomics","-n -t release-2.0/LbraziliensisGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lbraziliensis", "LbraziliensisAnnotatedCDS_TriTrypDB-2.0.fasta","LbraziliensisCDS","-n -t release-2.0/LbraziliensisCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumEST_TriTrypDB-2.0.fasta","LinfantumEST","-n -t release-2.0/LinfantumEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAssemblies_TriTrypDB-2.0.fasta","LinfantumAssemblies","-n -t release-2.0/LinfantumAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedTranscripts_TriTrypDB-2.0.fasta","LinfantumTranscripts","-n -t release-2.0/LinfantumTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedProteins_TriTrypDB-2.0.fasta","LinfantumProteins","-p -C X -t release-2.0/LinfantumProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum","LinfantumORFs_TriTrypDB-2.0.fasta","LinfantumORF","-p -C X -t release-2.0/LinfantumORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumGenomic_TriTrypDB-2.0.fasta","LinfantumGenomics","-n -t release-2.0/LinfantumGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Linfantum", "LinfantumAnnotatedCDS_TriTrypDB-2.0.fasta","LinfantumCDS","-n -t release-2.0/LinfantumCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorEST_TriTrypDB-2.0.fasta","LmajorEST","-n -t release-2.0/LmajorEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAssemblies_TriTrypDB-2.0.fasta","LmajorAssemblies","-n -t release-2.0/LmajorAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedTranscripts_TriTrypDB-2.0.fasta","LmajorTranscripts","-n -t release-2.0/LmajorTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedProteins_TriTrypDB-2.0.fasta","LmajorProteins","-p -C X -t release-2.0/LmajorProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor","LmajorORFs_TriTrypDB-2.0.fasta","LmajorORF","-p -C X -t release-2.0/LmajorORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorGenomic_TriTrypDB-2.0.fasta","LmajorGenomics","-n -t release-2.0/LmajorGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Lmajor", "LmajorAnnotatedCDS_TriTrypDB-2.0.fasta","LmajorCDS","-n -t release-2.0/LmajorCDS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeGenomic_TriTrypDB-2.0.fasta","LtarentolaeGenomics","-n -t release-2.0/LtarentolaeGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeORFs_TriTrypDB-2.0.fasta","LtarentolaeORF","-p -C X -t release-2.0/LtarentolaeORF");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaEST_TriTrypDB-2.1.fasta","LmexicanaEST","-n -t release-2.1/LmexicanaEST");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAssemblies_TriTrypDB-2.1.fasta","LmexicanaAssemblies","-n -t release-2.1/LmexicanaAssemblies");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaGenomic_TriTrypDB-2.1.fasta","LmexicanaGenomics","-n -t release-2.1/LmexicanaGenomics");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana","LmexicanaORFs_TriTrypDB-2.1.fasta","LmexicanaORF","-p -C X -t release-2.1/LmexicanaORF");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedTranscripts_TriTrypDB-2.1.fasta","LmexicanaTranscripts","-n -t release-2.1/LmexicanaTranscripts");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedProteins_TriTrypDB-2.1.fasta","LmexicanaProteins","-p -C X -t release-2.1/LmexicanaProteins");
+
+  &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaAnnotatedCDS_TriTrypDB-2.1.fasta","LmexicanaCDS","-n -t release-2.1/LmexicanaCDS");
+
+#################################################################################
+############### Make Brc Download Files ######################
+################################################################################
+
+&makeBrcSeqXmlFile($mgr);
+
+&makeBrcGOAssociationFile($mgr);
+
+
+################################################################################
+# Mercator
+################################################################################
+
+&documentMercatorAndMavid ($mgr,"2.4");
+my $dataDir = $mgr->{dataDir};
+
+# NOTES #####################
+# Don't get the fasta from the download site... use dumpSequence.pl
+&dumpNaSequence($mgr,"$dataDir/mercator/Tryp_species/seqfiles","LbraziliensisGenomic_trypDB-1.0","L.braziliensis chromosomes and
+ annotations","2008-11-24");
+&dumpNaSequence($mgr,"$dataDir/mercator/Tryp_species/seqfiles","LinfantumGenomic_trypDB-1.0","L.infantum chromosomes and annotat
+ions","2008-11-24");
+&dumpNaSequence($mgr,"$dataDir/mercator/Tryp_species/seqfiles","LmajorGenomic_trypDB-1.0","L.major chromosomes and annotations",
+"2008-11-12");
+&dumpNaSequence($mgr,"$dataDir/mercator/Tryp_species/seqfiles","Tbrucei927Chr6Genomic_trypDB-1.0","T.brucei 927 chromosomes and 
+annotations", "2008-11-13");
+
+
+# Should be fine... but maybe
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&copyFilesToComputeCluster($mgr,'mercator');
+#&copyFilesToComputeCluster($mgr, 'TgondiiGT1Genomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+#&copyFilesToComputeCluster($mgr, 'TgondiiME49Genomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+#&copyFilesToComputeCluster($mgr, 'CparvumGenomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+#&copyFilesToComputeCluster($mgr, 'PknowlesiGenomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+#&copyFilesToComputeCluster($mgr, 'PvivaxGenomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+#&copyFilesToComputeCluster($mgr, 'PyoeliiGenomic_trypDB-1.0.fsa', 'mercator/seqfiles');
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&createRepeatMaskDir_new($mgr, 'LbraziliensisGenomic_trypDB-1.0', 4,'-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'LinfantumGenomic_trypDB-1.0', 4,'-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'LmajorGenomic_trypDB-1.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'Tbrucei927Genomic_trypDB-1.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+
+
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&copyFilesToComputeCluster($mgr, 'repeatmask','mercator/Tryp_species');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LbraziliensisGenomic_trypDB-1.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'LinfantumGenomic_trypDB-1.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorGenomic_trypDB-1.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'Tbrucei927Genomic_trypDB-1.0', 'apidb','mercator/Tryp_species');
+
+$mgr->waitForCluster("Repeat Mask LbraziliensisGenomic_trypDB-1.0", "LbraziliensisGenomic_trypDB-1.0");
+$mgr->waitForCluster("Repeat Mask LinfantumGenomic_trypDB-1.0", "LinfantumGenomic_trypDB-1.0");
+$mgr->waitForCluster("Repeat Mask LmajorGenomic_trypDB-1.0", "LmajorGenomic_trypDB-1.0");
+$mgr->waitForCluster("Repeat Mask Tbrucei927Genomic_trypDB-1.0", "Tbrucei927Genomic_trypDB-1.0");
+
+#&runMercatorMavid($mgr, "$dataDir/mercator/Tryp_species/mercator/tcruzi_esmeraldo-tcruzi_nonesmeraldo/", "mercatorMavid-HomologousChromosomes");
+&runMercatorMavid($mgr, "$dataDir/mercator/Tryp_species/mercator2/", "mercatorMavid-6Genomes");
+
+&createExtDbAndDbRls($mgr, 'Tbruce-Lmajor synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Linfantum-Lmajor synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Linfantum-Tbrucei synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Lbraziliensis-Lmajor synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Lbraziliensis-Tbrucei synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Lbraziliensis-Linfantum synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_nonesmeraldo-Lmajor synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_nonesmeraldo-Tbrucei synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_nonesmeraldo-Linfantum synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_nonesmeraldo-Lbraziliensis synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_esmeraldo-Lmajor synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_esmeraldo-Tbrucei synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_esmeraldo-Linfantum synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_esmeraldo-Lbraziliensis synteny from Mercator', '2008-12-18', '');
+
+&createExtDbAndDbRls($mgr, 'Tcruzi_esmeraldo-Tcruzi_nonesmeraldo synteny from Mercator', '2008-12-18', '');
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/t_brucei-l_major.align",  "DoTS.NASequence", "DoTS.NASequence", "L.major chromosomes and annotations|2008-11-12","T.brucei 927 chromosomes and annotations|2008-11-13", "Tbruce-Lmajor synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/l_infantum-l_major.align",  "DoTS.NASequence", "DoTS.NASequence", "L.major chromosomes and annotations|2008-11-12","L.infantum chromosomes and annotations|2008-11-24", "Linfantum-Lmajor synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/l_infantum-t_brucei.align",  "DoTS.NASequence", "DoTS.NASequence", "T.brucei 927 chromosomes and annotations|2008-11-13","L.infantum chromosomes and annotations|2008-11-24", "Linfantum-Tbrucei synteny from Mercator|2008-12-18","","TriTryp");
+
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/l_braziliensis-l_major.align",  "DoTS.NASequence", "DoTS.NASequence", "L.major chromosomes and annotations|2008-11-12","L.braziliensis chromosomes and annotations|2008-11-24", "Lbraziliensis-Lmajor synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/l_braziliensis-t_brucei.align",  "DoTS.NASequence", "DoTS.NASequence", "T.brucei 927 chromosomes and annotations|2008-11-13","L.braziliensis chromosomes and annotations|2008-11-24", "Lbraziliensis-Tbrucei synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/l_braziliensis-l_infantum.align",  "DoTS.NASequence", "DoTS.NASequence", "L.infantum chromosomes and annotations|2008-11-24","L.braziliensis chromosomes and annotations|2008-11-24", "Lbraziliensis-Linfantum synteny from Mercator|2008-12-18","","TriTryp");
+
+
+
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_nonesmeraldo-l_major.align",  "DoTS.NASequence", "DoTS.NASequence", "L.major chromosomes and annotations|2008-11-12","Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_nonesmeraldo-Lmajor synteny from Mercator|2008-12-18","","TriTryp");
+
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_nonesmeraldo-t_brucei.align",  "DoTS.NASequence", "DoTS.NASequence", "T.brucei 927 chromosomes and annotations|2008-11-13","Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_nonesmeraldo-Tbrucei synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_nonesmeraldo-l_infantum.align",  "DoTS.NASequence", "DoTS.NASequence", "L.infantum chromosomes and annotations|2008-11-24", "Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_nonesmeraldo-Linfantum synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_nonesmeraldo-l_braziliensis.align",  "DoTS.NASequence", "DoTS.NASequence", "L.braziliensis chromosomes and annotations|2008-11-24", "Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20","Tcruzi_nonesmeraldo-Lbraziliensis synteny from Mercator|2008-12-18","","TriTryp");
+
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-l_major.align",  "DoTS.NASequence", "DoTS.NASequence", "L.major chromosomes and annotations|2008-11-12","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Lmajor synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-t_brucei.align",  "DoTS.NASequence", "DoTS.NASequence", "T.brucei 927 chromosomes and annotations|2008-11-13","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Tbrucei synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-l_infantum.align",  "DoTS.NASequence", "DoTS.NASequence", "L.infantum chromosomes and annotations|2008-11-24","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Linfantum synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-l_braziliensis.align",  "DoTS.NASequence", "DoTS.NASequence", "L.braziliensis chromosomes and annotations|2008-11-24","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Lbraziliensis synteny from Mercator|2008-12-18","","TriTryp");
+
+&insertMercatorSyntenySpans($mgr, "/files/cbil/data/cbil/TrypDB/1.0/analysis_pipeline/primary/data/mercator/Tryp_species/mercator/tcruzi_esmeraldo-tcruzi_nonesmeraldo.align",  "DoTS.NASequence", "DoTS.NASequence", "Tcruzi NonEsmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20","Tcruzi Esmeraldo-like Chromosome Map - Rick Tarleton|2008-12-05,T.cruzi contigs and annotations|2008-11-20", "Tcruzi_esmeraldo-Tcruzi_nonesmeraldo synteny from Mercator|2008-12-18","","TriTryp");
+
+#############l_mexicana################
+
+&createExtDbAndDbRls($mgr, 'l_braziliensis-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 'l_major-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_cruzinonesmeraldo-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_bruceigambiense-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_congolense-l_mexicana synteny from Mercator', '2009-12-24', '');
+&createExtDbAndDbRls($mgr, 't_vivax-l_mexicana synteny from Mercator', '2009-12-24', '');
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_mexicana/l_braziliensis-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_mexicana/l_infantum-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-l_mexicana/l_major-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger L. major chromosomes|2009-09-10", "l_major-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-l_mexicana/t_brucei927-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-l_mexicana/t_cruziesmeraldo-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-l_mexicana/t_cruzinonesmeraldo-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "t_cruzinonesmeraldo-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-l_mexicana/t_bruceigambiense-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. brucei gambiense chromosomes|2009-09-07", "t_bruceigambiense-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_congolense-l_mexicana/t_congolense-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. congolense contigs and chromosomes|2009-09-14", "t_congolense-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_vivax-l_mexicana/t_vivax-l_mexicana.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. mexicana contigs and chromosomes|2009-11-03", "Sanger T. vivax contigs and chromosomes|2009-09-14", "t_vivax-l_mexicana synteny from Mercator|2009-12-24",'',"TriTryp");
+
+#####################################################################################
+#######Microarray
+####################################################################################
+
+&mapTagsToNaSequences($mgr,"$projectDir/$release/analysis_pipeline/primary/data/seqfiles/LinfantumChromosomes.f
+sa","$projectDir/manualDelivery/Microarray/Myler_Linfantum/INF_expr.fasta","Linfantum");
+
+&loadExpressionFeature($mgr,"mapLinfantumTagsToNaSequences.mapping", "Myler Linfantum array element feature|200
+9-04-09","ArrayElementFeature","Linfantum");
+
+&calculateExpressionStats($mgr,"Expression profiling of the Linfantum promastigote time-course|1.0","Lmajor pro
+mastigote time-course biorep01","","Percents of the Lmajor promastigote time-course biorep01");
+
+&calculateExpressionStats($mgr,"Expression profiling of the Linfantum promastigote time-course|1.0","Lmajor pro
+mastigote time-course biorep02","","Percents of the Lmajor promastigote time-course biorep02");
+##################################
+####L. tarentolae
+##################################
+&createSimilarityDir($mgr,"LtarentolaeContigs","nr","gi\\|(\\d+)\\|","$blastParams Y=31598840","blastx");
+
+&copyFilesToComputeCluster($mgr,"LtarentolaeContigs-nr","similarity");
+
+&extractNaSeq($mgr,"L. tarentolae contig sequences","2009-04-07",'Ltarentolae',"contigs","ExternalNASequence","source_id"); 
+
+&copyFilesToComputeCluster($mgr,"LtarentolaeContigs.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"LtarentolaeContigs","nr","apidb",4);
+
+# $mgr->waitForCluster("LtarentolaeContigs blast similarity to nr", "waitLtarentolaeContigs-nr");
+
+&copyFilesFromComputeCluster($mgr,"LtarentolaeContigs-nr","similarity");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/LtarentolaeContigs-nr/master/mainresult/");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Leishmania","gi_taxid_prot.dmp","LtarentolaeContigs-nr","blastSimilarity.unfilt.out.gz");
+
+&extractIdsFromBlastResult($mgr,"LtarentolaeContigs-nr","subject");
+
+&loadNRDBSubset($mgr,"LtarentolaeContigs-nr","blastSimIds.out","NRDB","2008-10-08");
+
+&loadProteinBlast($mgr, "LtarentolaeContigs-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","L. tarentolae contig sequences","2009-04-07","NRDB","2008-10-08");
+
+&makeOrfFile($mgr, "LtarentolaeContigs.fsa", 50);
+
+&loadOrfFile($mgr, "LtarentolaeContigs_orf50.gff","L. tarentolae contig sequences","2009-04-07", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Leishmania tarentolae");
+
+
+##################################
+####Mercator
+##################################
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","LbraziliensisGenomic_trypDB-2.0","Sanger L. braziliensis chromosomes","2009-10-06");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","LinfantumGenomic_trypDB-2.0","Sanger L. infantum chromosomes","2009-09-07");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","LmajorGenomic_trypDB-2.0","Sanger L. major chromosomes","2009-09-10");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","Tbrucei927Genomic_trypDB-2.0","Sanger T. brucei 927 contigs and chromosomes", "2009-10-06");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","TcruziEsmeraldoGenomic_trypDB-2.0","Sanger T.cruzi Esmeraldo chromosomes", "2009-09-07");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","TcruziNonEsmeraldoGenomic_trypDB-2.0","Sanger T.cruzi Non-Esmeraldo contigs and chromosomes", "2009-09-10");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","TbruceigambienseGenomic_trypDB-2.0","Sanger T. brucei gambiense chromosomes", "2009-09-07");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","TcongolenseGenomic_trypDB-2.0","Sanger T. congolense contigs and chromosomes", "2009-09-14");
+&dumpNaSequence($mgr,"mercator/Tryp_species/seqfiles","TvivaxGenomic_trypDB-2.0","Sanger T. vivax contigs and chromosomes", "2009-09-14");
+
+
+# Should be fine... but maybe
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&copyFilesToComputeCluster($mgr,'mercator');
+
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&createRepeatMaskDir_new($mgr, 'LbraziliensisGenomic_trypDB-2.0', 4,'-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'LinfantumGenomic_trypDB-2.0', 4,'-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'LmajorGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'Tbrucei927Genomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'TbruceigambienseGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'TcruziEsmeraldoGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'TcruziNonEsmeraldoGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'TcongolenseGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+&createRepeatMaskDir_new($mgr, 'TvivaxGenomic_trypDB-2.0', 4, '-xsmall', 150,'mercator/Tryp_species');
+
+
+
+#**** These steps use the same repeatmask dir used in the main pipeline which causes a conflict!! ****
+&copyFilesToComputeCluster($mgr, 'repeatmask','mercator/Tryp_species');
+
+&startRepeatMaskOnComputeCluster($mgr, 'LbraziliensisGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'LinfantumGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'LmajorGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species')
+&startRepeatMaskOnComputeCluster($mgr, 'Tbrucei927Genomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'TbruceigambienseGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'TcruziEsmeraldoGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'TcruziNonEsmeraldoGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'TcongolenseGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+&startRepeatMaskOnComputeCluster($mgr, 'TvivaxGenomic_trypDB-2.0', 'apidb','mercator/Tryp_species');
+
+
+$mgr->waitForCluster("Repeat Mask LbraziliensisGenomic_trypDB-2.0", "LbraziliensisGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask LinfantumGenomic_trypDB-2.0", "LinfantumGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask LmajorGenomic_trypDB-2.0", "LmajorGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask Tbrucei927Genomic_trypDB-2.0", "Tbrucei927Genomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask TbruceigambienseGenomic_trypDB-2.0", "TbruceigambienseGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask TcruziEsmeraldoGenomic_trypDB-2.0", "TcruziEsmeraldoGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask TcruziNonEsmeraldoGenomic_trypDB-2.0", "TcruziNonEsmeraldoGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask TcongolenseGenomic_trypDB-2.0", "TcongolenseGenomic_trypDB-2.0");
+$mgr->waitForCluster("Repeat Mask TvivaxGenomic_trypDB-2.0", "TvivaxGenomic_trypDB-2.0");
+
+
+&copyFilesFromComputeCluster($mgr, 'LbraziliensisGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'LinfantumGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'LmajorGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'Tbrucei927Genomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'TbruceigambienseGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'TcruziEsmeraldoGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'TcruziNonEsmeraldoGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'TcongolenseGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+&copyFilesFromComputeCluster($mgr, 'TvivaxGenomic_trypDB-2.0', 'mercator/Tryp_species/repeatmask');
+
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/fasta/l_braziliensis.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/fasta")
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/fasta/l_infantum.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/fasta/l_major.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/fasta/t_brucei927.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/fasta/t_cruziesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/fasta/t_cruzinonesmeraldo.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/fasta/t_bruceigambiense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/fasta/t_congolense.fasta", "$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/fasta/t_vivax.fasta", "$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/fasta");
+
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LbraziliensisGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Leishmania_braziliensis.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LinfantumGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Leishmania_infantum.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/LmajorGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Leishmania_major.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/Tbrucei927Genomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_brucei_TREU927.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_cruzi_strain_Esmeraldo.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcruziNonEsmeraldoGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_cruzi_strain_NonEsmeraldo.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TbruceigambienseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_brucei_gambiense.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TcongolenseGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_congolense.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+&copy($mgr,"$dataDir/mercator/Tryp_species/repeatmask/TvivaxGenomic_trypDB-2.0/master/mainresult/blocked.seq","$dataDir/mercator/Tryp_species/training_dir/fasta/Trypanosoma_vivax.fasta", "$dataDir/mercator/Tryp_species/training_dir/fasta");
+
+
+
+&fixMercatorOffsetsInGFF($mgr,"Leishmania_braziliensis.fasta","Leishmania_braziliensis.gff","Lbraziliensis.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Leishmania_infantum.fasta","Leishmania_infantum.gff","Linfantum.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Leishmania_major.fasta","Leishmania_major.gff","Lmajor.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_brucei_TREU927.fasta","Trypanosoma_brucei_TREU927.gff","Tbrucei927.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_cruzi_strain_Esmeraldo.fasta","Trypanosoma_cruzi_strain_Esmeraldo.gff","TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_cruzi_strain_NonEsmeraldo.fasta","Trypanosoma_cruzi_strain_NonEsmeraldo.gff","TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_brucei_gambiense.fasta","Trypanosoma_brucei_gambiense.gff","Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_congolense.fasta","Trypanosoma_congolense.gff","Tcongolense.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+&fixMercatorOffsetsInGFF($mgr,"Trypanosoma_vivax.fasta","Trypanosoma_vivax.gff","Tvivax.gff","$dataDir/mercator/Tryp_species/training_dir","^>(\S+)","^(\S+)");
+
+
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/gff");&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lbraziliensis.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/gff/l_braziliensis.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/gff")
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Linfantum.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/gff/l_infantum.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Lmajor.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/gff/l_major.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbrucei927.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/gff/t_brucei927.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/gff/t_cruziesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/TcruziNonEsmeraldo.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/gff/t_cruzinonesmeraldo.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tbruceigambiense.gff","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/gff/t_bruceigambiense.gff", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tcongolense.gff","$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/gff/t_congolense.gff", "$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/gff");
+&copy($mgr,"$dataDir/mercator/Tryp_species/training_dir/gff/Tvivax.gff","$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/gff/t_vivax.gff", "$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/gff");
+
+
+&runPairwiseMercatorMavid($mgr, "$dataDir/mercator/Tryp_species/mercator/", "mercatorMavid-Pairwise-9Genomes");
+
+
+&createExtDbAndDbRls($mgr, 'l_braziliensis-l_infantum synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-l_major synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_brucei927 synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_cruziesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_cruzinonesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_braziliensis-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-l_major synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_brucei927 synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_cruziesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_cruzinonesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_infantum-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_brucei927 synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_cruziesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_cruzinonesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 'l_major-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-t_cruziesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-t_cruzinonesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_brucei927-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-t_cruzinonesmeraldo synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruziesmeraldo-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruzinonesmeraldo-t_bruceigambiense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruzinonesmeraldo-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_cruzinonesmeraldo-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_bruceigambiense-t_congolense synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_bruceigambiense-t_vivax synteny from Mercator', '2009-12-06', '');
+&createExtDbAndDbRls($mgr, 't_congolense-t_vivax synteny from Mercator', '2009-12-06', '');
+
+
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_infantum/l_braziliensis-l_infantum.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. infantum chromosomes|2009-09-07", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-l_infantum synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-l_major/l_braziliensis-l_major.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. major chromosomes|2009-09-10", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-l_major synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_brucei927/l_braziliensis-t_brucei927.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_brucei927 synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruziesmeraldo/l_braziliensis-t_cruziesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_cruziesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_cruzinonesmeraldo/l_braziliensis-t_cruzinonesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_cruzinonesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_bruceigambiense/l_braziliensis-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_congolense/l_braziliensis-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_braziliensis-t_vivax/l_braziliensis-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger L. braziliensis chromosomes|2009-10-06", "l_braziliensis-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-l_major/l_infantum-l_major.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger L. major chromosomes|2009-09-10", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-l_major synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_brucei927/l_infantum-t_brucei927.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_brucei927 synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruziesmeraldo/l_infantum-t_cruziesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_cruziesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_cruzinonesmeraldo/l_infantum-t_cruzinonesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_cruzinonesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_bruceigambiense/l_infantum-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_congolense/l_infantum-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_infantum-t_vivax/l_infantum-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger L. infantum chromosomes|2009-09-07", "l_infantum-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_brucei927/l_major-t_brucei927.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "Sanger L. major chromosomes|2009-09-10", "l_major-t_brucei927 synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruziesmeraldo/l_major-t_cruziesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "Sanger L. major chromosomes|2009-09-10", "l_major-t_cruziesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_cruzinonesmeraldo/l_major-t_cruzinonesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "Sanger L. major chromosomes|2009-09-10", "l_major-t_cruzinonesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_bruceigambiense/l_major-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger L. major chromosomes|2009-09-10", "l_major-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_congolense/l_major-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger L. major chromosomes|2009-09-10", "l_major-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/l_major-t_vivax/l_major-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger L. major chromosomes|2009-09-10", "l_major-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruziesmeraldo/t_brucei927-t_cruziesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-t_cruziesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_cruzinonesmeraldo/t_brucei927-t_cruzinonesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-t_cruzinonesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_bruceigambiense/t_brucei927-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_congolense/t_brucei927-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_brucei927-t_vivax/t_brucei927-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger T. brucei 927 contigs and chromosomes|2009-10-06", "t_brucei927-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_cruzinonesmeraldo/t_cruziesmeraldo-t_cruzinonesmeraldo.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-t_cruzinonesmeraldo synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_bruceigambiense/t_cruziesmeraldo-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_congolense/t_cruziesmeraldo-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruziesmeraldo-t_vivax/t_cruziesmeraldo-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger T.cruzi Esmeraldo chromosomes|2009-09-07", "t_cruziesmeraldo-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_bruceigambiense/t_cruzinonesmeraldo-t_bruceigambiense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. brucei gambiense chromosomes|2009-09-07", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "t_cruzinonesmeraldo-t_bruceigambiense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_congolense/t_cruzinonesmeraldo-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "t_cruzinonesmeraldo-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_cruzinonesmeraldo-t_vivax/t_cruzinonesmeraldo-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger T.cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10", "t_cruzinonesmeraldo-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_congolense/t_bruceigambiense-t_congolense.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. congolense contigs and chromosomes|2009-09-14", "Sanger T. brucei gambiense chromosomes|2009-09-07", "t_bruceigambiense-t_congolense synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_bruceigambiense-t_vivax/t_bruceigambiense-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger T. brucei gambiense chromosomes|2009-09-07", "t_bruceigambiense-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+&insertMercatorSyntenySpans($mgr, "$dataDir/mercator/Tryp_species/mercator/t_congolense-t_vivax/t_congolense-t_vivax.align", "DoTS.ExternalNASequence", "DoTS.ExternalNASequence", "Sanger T. vivax contigs and chromosomes|2009-09-14", "Sanger T. congolense contigs and chromosomes|2009-09-14", "t_congolense-t_vivax synteny from Mercator|2009-12-06",'',"TriTryp");
+
+
+
+$mgr->goodbye("Pipeline complete!\n");
+
