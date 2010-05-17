@@ -460,6 +460,8 @@ begin
            then return 'AmoebaDB';
          when 'encephalitozoon'
            then return 'MicrosporidiaDB';
+         when 'enterocytozoon'
+           then return 'MicrosporidiaDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
