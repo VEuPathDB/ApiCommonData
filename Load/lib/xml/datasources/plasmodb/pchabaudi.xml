@@ -1,4 +1,72 @@
 <resources>
+<!--pchabaudiISFResource-->
+  <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @dataDir@/P.chabaudi.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
+    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31271 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
+        project="PlasmoDB"
+        organisms="@PcOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Sequence data from GeneDB for <i>P. chabaudi chabaudi</i> chromosomes in gff3 (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. chabaudi chabaudi genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+        ]]>
+      </description>
+    </info>
+  </resource>
+  <resource resource="Pchabaudi_annotations_RSRC" version="@Pchabaudi_chromosomes_VER@" parentResource="Pchabaudi_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3 --output_gff @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%/P.chabaudi.chromosomes_fixed/Pchabaudi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlP.chabaudi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
+        project="PlasmoDB"
+        organisms="@PcOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Sequence data from GeneDB for <i>P. chabaudi chabaudi</i> chromosomes in gff3 (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. chabaudi chabaudi genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+        ]]>
+      </description>
+    </info>
+  </resource>
+  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pchabaudi_chromosomes_VER@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <pluginArgs></pluginArgs>
+    <info
+        displayName="GO Association for Plasmodium chabaudi genes"
+        project="PlasmoDB"
+        organisms="@PcOrganismFullName@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>P. chabaudi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--dbEST-->
   <resource resource="Pc_dbEST_RSRC" version="@Pc_dbEST_VER@"
@@ -19,29 +87,6 @@
       <description>
         <![CDATA[
          Plasmodium ESTs from dbEST.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-<!--pchabaudiISFResource-->
-  <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%  --inputFileExtension "embl" --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
-    <info
-        displayName="P. chabaudi (AS) chromosome sequences and annotation"
-        project="PlasmoDB"
-        organisms="@PcOrganismFullName@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
-   The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
         ]]>
       </description>
     </info>
@@ -142,7 +187,7 @@
     </info>
   </resource>
 
-  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pberghei_chromosomes_VER@"
+  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <pluginArgs></pluginArgs>

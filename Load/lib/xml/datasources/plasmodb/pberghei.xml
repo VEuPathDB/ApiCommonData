@@ -1,5 +1,52 @@
 <resources>
-
+<!--pbergheiISFResource-->
+  <resource resource="Pberghei_chromosomes_RSRC" version="@Pberghei_chromosomes_VER@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @dataDir@/P.berghei.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5823 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="P. berghei (ANKA) chromosomes sequence and annotation"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Sequence data from GeneDB for <i>P. berghei</i> ANKA chromosomes in gff3 (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. berghei ANKA genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+        ]]>
+      </description>
+    </info>
+  </resource>
+  <resource resource="Pberghei_annotations_RSRC" version="@Pberghei_chromosomes_VER@" parentResource="Pberghei_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff3 --output_gff @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff</unpack>
+    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%/P.berghei.chromosomes_fixed/Pberghei.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei strain ANKA"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlP.berghei.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="P. berghei (ANKA) chromosomes sequence and annotation"
+        project="PlasmoDB"
+        organisms="@PbOrganismFullName@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Sequence data from GeneDB for <i>P. berghei</i> ANKA chromosomes in gff3 (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. berghei ANKA genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+        ]]>
+      </description>
+    </info>
+  </resource>
   <resource resource="GOAssociations_Pberghei_RSRC" version="@Pberghei_chromosomes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
@@ -16,28 +63,6 @@
       <description>
         <![CDATA[
          GO Associations for <i>P. berghei</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-<!--pbergheiISFResource-->
-  <resource resource="Pberghei_chromosomes_RSRC" version="@Pberghei_chromosomes_VER@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION% --inputFileExtension "embl"  --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei ANKA" --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
-    <info
-        displayName="P.berghei (ANKA) chromosomes sequence and annotation"
-        project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Sequence data from GeneDB for <i>P. berghei</i> ANKA chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. berghei ANKA genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
         ]]>
       </description>
     </info>
