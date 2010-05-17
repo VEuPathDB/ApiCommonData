@@ -434,7 +434,8 @@
 <!--ArrayStudiesResource-->
   <resource resource="Pyoelii_Vaidya_Bergman_oligos_RSRC" version="@Pyoelii_Vaidya_Bergman_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayPlatform/Vaidya_Bergman_oligos/%RESOURCE_VERSION%/final/PyoeliiVadyiaOligos.fasta"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayPlatform/Vaidya_Bergman_oligos/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/probes.fsa"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
         displayName="P. yoelii glass slide array oligos"
@@ -453,9 +454,10 @@
     </info>
   </resource>
 
-  <resource resource="Py_array_Affy-scrMalaria_RSRC" version="@Py_array_Affy-scrMalaria_VER@"
+  <resource resource="Py_array_Affy_scrMalaria_RSRC" version="@Py_array_Affy_scrMalaria_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/winzeler_probes.fasta"/>
+    <getAndUnpackOutput file="@dataDir@/winzeler_probes.fasta"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
         displayName=""
@@ -476,6 +478,7 @@
   <resource resource="Py_Kappe_array_RSRC" version="@Py_Kappe_array_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Kappe/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput file="@dataDir@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. yoelii liver stage expression data"

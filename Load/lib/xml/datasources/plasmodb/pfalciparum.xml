@@ -3,10 +3,9 @@
   <resource resource="Pfalciparum_chromosomes_RSRC" version="@Pfalciparum_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>mkdir @dataDir@/P.falciparum.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff3</unpack>
-    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36329 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <unpack>mkdir @dataDir@/Pfalciparum_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36329 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -23,14 +22,14 @@
       </description>
     </info>
   </resource>
+
   <resource resource="Pfalciparum_annotations_RSRC" version="@Pfalciparum_chromosomes_VER@" parentResource="Pfalciparum_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>mkdir @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff --inputFileExt gff --output_fasta @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.fasta --output_gff  @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @dataDir@%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff3 --output_gff @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff</unpack>
-    <getAndUnpackOutput file="@dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/%RESOURCE_VERSION%/P.falciparum.chromosomes_fixed/Pfalciparum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperlP.falciparum.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <unpack>mkdir @dataDir@/Pfalciparum_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3 --output_gff @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperl Pfalciparum_chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -94,8 +93,7 @@
   <resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/P.falciparum_chromosomes_aliases/%RESOURCE_VERSION%/mapping"/>
-    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,l
-owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @dataDir@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     <info
         displayName="P. falicparum chromosomes DBRefs"
         project="PlasmoDB"

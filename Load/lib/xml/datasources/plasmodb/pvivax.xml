@@ -4,7 +4,7 @@
   <resource resource="Pvivax_contigsGB_RSRC" version="@Pvivax_contigsGB_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/contig/%RESOURCE_VERSION%/sequences.gb.gz"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. vivax contig sequence and annotation from Genbank"
         project="PlasmoDB"
@@ -16,9 +16,7 @@
         institution="">
       <description>
         <![CDATA[
-         <i>P. vivax</i> , Salvador I isolate, contig sequence and annotation obtained 
-                              from Genbank (modification date 2007-06-13) and 
-                              submitted by Jane Carlton at The Institute for Genomic Research.
+         <i>P. vivax</i> , Salvador I isolate, contig sequence and annotation obtained from Genbank (modification date 2007-06-13) and submitted by Jane Carlton at The Institute for Genomic Research.
         ]]>
       </description>
     <publication pmid="18843361"/>
@@ -40,8 +38,7 @@
         institution="">
       <description>
         <![CDATA[
-         <i>P. vivax</i> mitochondrial sequence and annotation obtained from Genbank (modification date 2005-07-12)
-         and submitted by Parasitology, Faculty of Medicine, Chulalongkorn University,  Thailand.
+         <i>P. vivax</i> mitochondrial sequence and annotation obtained from Genbank (modification date 2005-07-12) and submitted by Parasitology, Faculty of Medicine, Chulalongkorn University,  Thailand.
         ]]>
       </description>
     <publication pmid="15901839"/>
@@ -142,7 +139,7 @@
 
 <!--PvDbxRefResource-->
 
-  <resource resource="Pv_Entrez_DBRefs_RSRC" version="2009-04-29"
+  <resource resource="Pv_Entrez_DBRefs_RSRC" version="2009-08-14"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
@@ -415,7 +412,7 @@
 <!--PvMassSpecResource-->
   <resource resource="Pvivax_Tatu_Clinical_Proteomics_RSRC" version="2009-08-11"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="PlasmoDB/pvivax/massSpec/Tatu_clinical/%RESOURCE_VERSION%/working_dir/P.vivax_Clinical_Proteomics.tab"/>
+    <manualGet fileOrDir="PlasmoDB/pvivax/massSpec/Tatu_clinical/%RESOURCE_VERSION%/P.vivax_Clinical_Proteomics.tab"/>
     <pluginArgs>--inputFile @dataDir@/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@Pvivax_contigsGB_VER@' --developmentalStage 'early stages'</pluginArgs>
     <info
         displayName="P.vivax proteomics data from clinical samples (Tatu)"
@@ -438,8 +435,8 @@
 
   <resource resource="Pvivax_ZB_oligos_RSRC" version="@Pvivax_ZB_oligos_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/ZB_Oligos/%RESOURCE_VERSION%/final/elements.fasta"/>
-    <getAndUnpackOutput file="@dataDir@/elements.fasta"/>
+    <manualGet fileOrDir="PlasmoDB/pvivax/microarrayPlatform/ZB_Oligos/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <getAndUnpackOutput file="@dataDir@/probes.fsa"/>
     <pluginArgs>--sequenceFile @dataDir@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 126793</pluginArgs>
     <info
         displayName="P. vivax ZB oligos"
@@ -504,6 +501,7 @@
   <resource resource="Pv_Westenberger_array_RSRC" version="@Pv_Westenberger_array_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pvivax/microarrayExpression/westenberger_vivax/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput file="@dataDir@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Westenberger Pvivax ExpressionData"
