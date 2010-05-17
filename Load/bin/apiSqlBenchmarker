@@ -3,13 +3,18 @@
 use strict;
 use DBI;
 use Data::Dumper;
+use Getopt::Long qw(GetOptions);
 
 my $sqlDelim = '===';
 my $eofDelim = '###';
 
-usage() unless scalar(@ARGV) == 1;
+my ($configFile, $planOnly);
 
-my $configFile = $ARGV[0];
+GetOptions("configFile=s" => \$configFile,
+           "planOnly!" => \$planOnly,
+	  );
+
+usage() unless $configFile && scalar(@ARGV) < 3;
 
 open(F, $configFile) || die "Can't open config file '$configFile'\n";
 my $config = {trackingInstance=> "",
@@ -85,43 +90,44 @@ my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 			 )
   or die "Can't connect to the app database: $DBI::errstr\n";
 
+my ($fetchTime, $totalTime, $prepareTime, $executeTime, $statistics, $consistentGets, $rowCount);
+
+if (!$planOnly) {
 # execute query to get timing and row count
-my $startTime = time;
-my $query = $appDbh->prepare($config->{sql});
-my $finishedPrepare = time;
-$query->execute();
-my $finishedExecute = time;
-my $rowCount = 0;
-while (my @row = $query->fetchrow_array()) {
-  $rowCount++;
-}
-$query->finish();
+  my $startTime = time;
+  my $query = $appDbh->prepare($config->{sql});
+  my $finishedPrepare = time;
+  $query->execute();
+  my $finishedExecute = time;
+  $rowCount = 0;
+  while (my @row = $query->fetchrow_array()) {
+    $rowCount++;
+  }
+  $query->finish();
 
-my $fetchTime = time - $finishedExecute;
-my $totalTime = time - $startTime;
-my $prepareTime = $finishedPrepare - $startTime;
-my $executeTime = $finishedExecute - $finishedPrepare;
+  $fetchTime = time - $finishedExecute;
+  $totalTime = time - $startTime;
+  $prepareTime = $finishedPrepare - $startTime;
+  $executeTime = $finishedExecute - $finishedPrepare;
 
-# get statistics
-my $statistics;
-my $consistentGets;
-
-my $statQ = $appDbh->prepare(<<SQL);
-select ms.value, sn.name
-from v\$mystat ms, v\$statname sn
-where ms.statistic# = sn.statistic#
-  and sn.name in ('recursive calls', 'db block gets', 'consistent gets', 
-                  'physical reads', 'redo size', 'bytes sent via SQL*Net to client', 
-                  'bytes received via SQL*Net from client', 
-                  'SQL*Net roundtrips to/from client', 'sorts (memory)', 
-                  'sorts (disk)')
+  # get statistics
+  my $statQ = $appDbh->prepare(<<SQL);
+  select ms.value, sn.name
+  from v\$mystat ms, v\$statname sn
+  where ms.statistic# = sn.statistic#
+    and sn.name in ('recursive calls', 'db block gets', 'consistent gets', 
+                    'physical reads', 'redo size', 'bytes sent via SQL*Net to client', 
+                    'bytes received via SQL*Net from client', 
+                    'SQL*Net roundtrips to/from client', 'sorts (memory)', 
+                    'sorts (disk)')
 SQL
-$statQ->execute();
-while (my ($value, $statistic) = $statQ->fetchrow_array()) {
-  $statistics .= sprintf('%10d %s', $value, $statistic) . "\n";
-  $consistentGets = $value if $statistic eq 'consistent gets';
+  $statQ->execute();
+  while (my ($value, $statistic) = $statQ->fetchrow_array()) {
+    $statistics .= sprintf('%10d %s', $value, $statistic) . "\n";
+    $consistentGets = $value if $statistic eq 'consistent gets';
+  }
+  $statQ->finish();
 }
-$statQ->finish();
 
 # get plan
 my $plan;
@@ -182,7 +188,7 @@ sub usage {
 qq{
 Usage:
 
-apiSqlBenchmarker config_file
+apiSqlBenchmarker -configFile config_file [-planOnly]
 
 Config file format:
 
