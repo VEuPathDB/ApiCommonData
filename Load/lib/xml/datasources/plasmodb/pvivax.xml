@@ -458,6 +458,7 @@
   <resource resource="Pv_ZB_time_series_RSRC" version="@Pv_ZB_time_series_VER@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pvivax/microarrayExpression/ZB_vivax/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput file="@dataDir@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Transcriptional profile throughout 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
