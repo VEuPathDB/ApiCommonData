@@ -2934,6 +2934,12 @@ from
     select ga.source_id, pm.*
     from
     (
+    -- GiardiaDB --
+    select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
+           'GiardiaDB' as project_id
+    from dual
+    UNION
+
     -- PlasmoDB --
 --    select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
 --          'PlasmoDB' as project_id
@@ -2998,6 +3004,19 @@ tablespace indx
 CREATE TABLE apidb.ExpressionGraphDescrip&1 NOLOGGING AS
 select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts
 from (
+-- GiardiaDB --
+select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
+       'Ringqvist::WbClone' as module,
+       'Giardia Assemblage A isolate WB' as species,
+       'Transcriptional changes in <i>G. intestinalis</i> during host-parasite interactions ' as display_name,
+       'FILL' as description,
+       'FILL' as x_axis,
+       'RMA Normalized Values (log base 2) in upper graph or expression percentile value in lower graph.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+
 -- PlasmoDB --
 select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'Duffy::PfRnaSeq' as module,
@@ -3008,7 +3027,6 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
        'coverage,pct' as visible_parts
 from dual
-
 
 UNION
 
