@@ -428,6 +428,18 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneId&1 NOLOGGING AS
+SELECT distinct lower(ng.name) as id,
+                ng.name as alias,
+                gf.source_id as gene,
+                'lower(nagene.name)' as union_member,
+                d.name as database_name
+FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
+     sres.externaldatabase d, sres.externaldatabaserelease r
+WHERE gf.na_feature_id = nfng.na_feature_id
+ AND nfng.na_gene_id = ng.na_gene_id
+ AND gf.external_database_release_id = r.external_database_release_id
+ AND r.external_database_id = d.external_database_id
+UNION  
 SELECT lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) AS id,
        substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS alias,
        gf.source_id AS gene,
