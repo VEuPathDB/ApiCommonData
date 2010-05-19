@@ -49,24 +49,21 @@ my ($species,$indexFile,$geneFastaFile,$seqFastaFile);
 
   my $GeneQuery = &GetGeneQuery($taxonId);
 
-      my $handle;
-  my $sth = $$handle->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $$handle->errstr;  
+  my $sth = $dbh->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
   $sth->execute ||  die "Couldn't execute statement: " . $sth->errstr;
 
 
-  while (my  $resultset = $sth->fetchrow_hashref) {
+  while (my  $resultset = $sth->fetchrow_array()) {
 
       print OUTINDX $resultset->{SEQUENCE_ID}."\t".$resultset->{STRAND}."\t".$resultset->{START_MIN}."\t".$resultset->{END_MAX}."\t".$resultset->{EXON_COUNT}."\t";
 
       my $ExonQuery = &GetExonQuery($resultset->{NA_FEATURE_ID});
   
-      my $handle2;
-       my $sth2 = $$handle2->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $$handle2->errstr;  
+      my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
       $sth2->execute ||  die "Couldn't execute statement: " . $sth2->errstr;
 
-
       my ($exonStarts,$exonEnds);
-      while (my  $resultset2 = $sth2->fetchrow_hashref) {
+      while (my  $resultset2 = $sth2->fetchrow_array()) {
 	  $exonStarts .= $resultset2->{START_MIN}.",";
 	  $exonEnds .= $resultset2->{END_MAX}.",";
       }
