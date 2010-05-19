@@ -29,7 +29,7 @@
     <unpack>mkdir @dataDir@/Pfalciparum_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3 --output_gff @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff</unpack>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperl Pfalciparum_chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperl Pfalciparum_chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -968,7 +968,7 @@
     <unpack>dumpSequencesFromTable.pl --outputFile @dataDir@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Pfalciparum_chromosomes_RSRC' AND ed.external_database_id = edr.external_database_id AND edr.version = @Pfalciparum_chromosomes_VER@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
     <unpack>createSTSFileFromGB --genbank_file_or_dir @dataDir@/sequences.gb.fixed --output_file @dataDir@/sequences.sts </unpack>
     <unpack> ePCRMicrosatelliteForLocations --sts_file @dataDir@/sequences.sts --output_file @dataDir@/Pf_ms.gff --seq_file @dataDir@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/MicrosatelliteGff2gus.xml --inputFileOrDir @dataDir@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="Su P. falciparum Microsatellite Markers From Genbank"
         project="PlasmoDB"
@@ -991,7 +991,7 @@
     <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/data.exchange">--tries=5 --mirror -r --no-parent --no-host-directories --cut-dirs=5</wgetArgs>
     <unpack>mkdir @dataDir@/fixed</unpack>
     <unpack>for f in `ls @dataDir@/data.exchange`; do cat @dataDir@/data.exchange/$f | adjustPlasmoEmblFile > @dataDir@/data.exchange/$f.fixed; cat @dataDir@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @dataDir@/fixed/$f.fixed; done</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/fixed --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName %PARENT_EXT_DB_NAME%   --seqExtDbRlsVer %PARENT_EXT_DB_RLS_VER%</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @dataDir@/fixed --fileFormat embl --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName %PARENT_EXT_DB_NAME%   --seqExtDbRlsVer %PARENT_EXT_DB_RLS_VER%</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes annotation, PlasmoDB version 5.5"
         project="PlasmoDB"
@@ -1196,7 +1196,7 @@
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genePrediction/EviganModels/%RESOURCE_VERSION%/Evigan_pf_nbest_chr_forImport.gff.gz"/>
     <unpack>gunzip @dataDir@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @dataDir@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="P. falciparum Evigan Gene Models"
         project="PlasmoDB"
@@ -1285,7 +1285,7 @@
   <resource resource="Pf_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@</pluginArgs>
     <info
         displayName="Pfalciparum Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"

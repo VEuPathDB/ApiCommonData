@@ -4,7 +4,7 @@
   <resource resource="Pvivax_contigsGB_RSRC" version="@Pvivax_contigsGB_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/contig/%RESOURCE_VERSION%/sequences.gb.gz"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. vivax contig sequence and annotation from Genbank"
         project="PlasmoDB"
@@ -392,7 +392,7 @@
   <resource resource="Pv_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @Pvivax_contigsGB_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @Pvivax_contigsGB_VER@</pluginArgs>
     <info
         displayName="Pv Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"

@@ -30,7 +30,7 @@
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @dataDir@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/P.berghei.chromosomes_fixed/Pberghei.gff3 --output_gff @dataDir@/P.berghei.chromosomes_fixed/Pberghei.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.berghei.chromosomes_fixed/Pberghei.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei strain ANKA"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.berghei.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.berghei.chromosomes_fixed/Pberghei.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium berghei strain ANKA"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.berghei.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. berghei (ANKA) chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -258,7 +258,7 @@
   <resource resource="Pb_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pberghei/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pberghei_chromosomes_RSRC"   --seqExtDbRlsVer @Pberghei_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pberghei_chromosomes_RSRC"   --seqExtDbRlsVer @Pberghei_chromosomes_VER@</pluginArgs>
     <info
         displayName="Pb Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"

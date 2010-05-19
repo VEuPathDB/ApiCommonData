@@ -31,7 +31,7 @@
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3 --output_gff @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.chabaudi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.chabaudi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -352,7 +352,7 @@
   <resource resource="Pc_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pchabaudi_chromosomes_RSRC"   --seqExtDbRlsVer @Pchabaudi_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pchabaudi_chromosomes_RSRC"   --seqExtDbRlsVer @Pchabaudi_chromosomes_VER@</pluginArgs>
     <info
         displayName="Pc Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"

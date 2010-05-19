@@ -30,7 +30,7 @@
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --output_gff  @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3 --output_gff @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.knowlesi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.knowlesi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. knowlesi strain H chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -78,7 +78,7 @@
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.fasta --output_gff  @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.gff3 --output_gff @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.knowlesi.contigs_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.knowlesi.contigs_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperl @dataDir@/P.knowlesi.contigs_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. knowlesi strain H contigs sequence and annotation"
         project="PlasmoDB"
@@ -346,7 +346,7 @@
   <resource resource="Pk_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pknowlesi/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pknowlesi_chromosomes_RSRC"   --seqExtDbRlsVer @Pknowlesi_chromosomes_VER@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @dataDir@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @SO_VER@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pknowlesi_chromosomes_RSRC"   --seqExtDbRlsVer @Pknowlesi_chromosomes_VER@</pluginArgs>
     <info
         displayName="Pk Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"
