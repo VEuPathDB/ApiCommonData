@@ -18,7 +18,7 @@ my $argsDeclaration =
       stringArg({name => 'dbRlsIds',
               descr => 'genome external database release id',
               reqd => 1,
-              isList => 1,
+              isList => 0,
               constraintFunc => undef,
              }),
 ];
@@ -118,6 +118,8 @@ sub run {
 		   });
 	  $profile->submit();
   }
+
+  $self->log("Done inserted sequences");
 }
 
 sub undoTables {
@@ -126,5 +128,6 @@ sub undoTables {
   return ('ApiDB.GeneGenomicSequence_Split',
 	 );
 }
+
 1;
 
