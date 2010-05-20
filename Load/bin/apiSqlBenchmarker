@@ -8,10 +8,11 @@ use Getopt::Long qw(GetOptions);
 my $sqlDelim = '===';
 my $eofDelim = '###';
 
-my ($configFile, $planOnly);
+my ($configFile, $noRun, $optimizerStatsTables);
 
 GetOptions("configFile=s" => \$configFile,
-           "planOnly!" => \$planOnly,
+           "optimizerStats=s" => \$optimizerStatsTables,
+           "noRun!" => \$noRun,
 	  );
 
 usage() unless $configFile && scalar(@ARGV) < 3;
@@ -92,7 +93,9 @@ my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 
 my ($fetchTime, $totalTime, $prepareTime, $executeTime, $statistics, $consistentGets, $rowCount);
 
-if (!$planOnly) {
+my $optimizerStats = getOptimizerStats($optimizerStatsTables, $appDbh);
+
+if (!$noRun) {
 # execute query to get timing and row count
   my $startTime = time;
   my $query = $appDbh->prepare($config->{sql});
@@ -146,8 +149,8 @@ my $insert = $trackingDbh->prepare(<<SQL);
   insert into apidb.BenchmarkedQuery
               (bqid, run_date, project, query, trace, plan, instance, login, hide, nickname,
                description, rows_returned, prepare_time, execute_time, fetch_time,
-               total_time, consistent_gets)
-  values (apidb.BenchmarkedQuery_sq.nextval, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               total_time, consistent_gets, optimizer_stats)
+  values (apidb.BenchmarkedQuery_sq.nextval, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 $insert->bind_param(1, $config->{project});
 $insert->bind_param(2, $config->{sql});
@@ -164,6 +167,7 @@ $insert->bind_param(12, $executeTime);
 $insert->bind_param(13, $fetchTime);
 $insert->bind_param(14, $totalTime);
 $insert->bind_param(15, $consistentGets);
+$insert->bind_param(16, $optimizerStats);
 
 $insert->execute();
 $insert->finish();
@@ -188,7 +192,11 @@ sub usage {
 qq{
 Usage:
 
-apiSqlBenchmarker -configFile config_file [-planOnly]
+apiSqlBenchmarker -configFile config_file [-noRun] [-optimizerStats {table_list}]
+
+options:
+-noRun           don't execute the query
+-optimizerStats  capture optimizer stats for tables in (comma-delimited list)
 
 Config file format:
 
@@ -216,4 +224,102 @@ Junk below the above delimiter is ignored.
 
 });
   exit(1);
+}
+
+###############################################################################
+
+sub getOptimizerStats {
+  my ($optimizerStatsTables, $dbh) = @_;
+
+  return '' if !$optimizerStatsTables;
+
+  my ($stats, $tableSeparator);
+
+  foreach my $tableFullName (split(/,/, $optimizerStatsTables)) {
+
+    $stats .= $tableSeparator . "table: $tableFullName\n\n";
+    $tableSeparator = "-----------------------------\n";
+
+    my ($schema, $table) = split(/\./, $tableFullName);
+
+    $stats .= "dba_tab_statistics:\n";
+    my $query = $dbh->prepare(<<SQL);
+      select * from dba_tab_statistics
+      where owner = upper('$schema')
+        and table_name
+              in (
+                  select table_name from all_tables where owner = upper('$schema') and table_name = upper('$table')
+                 union
+                  select table_name from all_synonyms where owner = upper('$schema') and synonym_name = upper('$table'))
+      order by owner, table_name
+SQL
+
+    $query->execute();
+    while (my @row = $query->fetchrow_array()) {
+      $stats .= join(' ', @row);
+      $stats .= "\n";
+    }
+    $query->finish();
+
+    $stats .= "\ndba_tab_col_statistics:\n";
+    my $query = $dbh->prepare(<<SQL);
+select * from dba_tab_col_statistics
+where owner = upper('$schema')
+  and table_name
+        in (
+            select table_name from all_tables where owner = upper('$schema') and table_name = upper('$table')
+           union
+            select table_name from all_synonyms where owner = upper('$schema') and synonym_name = upper('$table'))
+order by owner, table_name, column_name
+SQL
+
+    $query->execute();
+    while (my @row = $query->fetchrow_array()) {
+      $stats .= join(' ', @row);
+      $stats .= "\n";
+    }
+    $query->finish();
+
+    $stats .= "\ndba_histograms:\n";
+    my $query = $dbh->prepare(<<SQL);
+select * from dba_histograms
+where owner = upper('$schema')
+  and table_name
+        in (
+            select table_name from all_tables where owner = upper('$schema') and table_name = upper('$table')
+           union
+            select table_name from all_synonyms where owner = upper('$schema') and synonym_name = upper('$table'))
+order by owner, table_name, column_name, endpoint_number
+SQL
+
+    $query->execute();
+    while (my @row = $query->fetchrow_array()) {
+      $stats .= join(' ', @row);
+      $stats .= "\n";
+    }
+    $query->finish();
+
+    $stats .= "\ndba_ind_statistics:\n";
+    my $query = $dbh->prepare(<<SQL);
+select * from dba_ind_statistics
+where owner = upper('$schema')
+  and table_name
+        in (
+            select table_name from all_tables where owner = upper('$schema') and table_name = upper('$table')
+           union
+            select table_name from all_synonyms where owner = upper('$schema') and synonym_name = upper('$table'))
+order by owner, table_name, index_name
+SQL
+
+    $query->execute();
+    while (my @row = $query->fetchrow_array()) {
+      $stats .= join(' ', @row);
+      $stats .= "\n";
+    }
+    $query->finish();
+
+  }
+
+  print "stats>>>>" . $stats . "<<<<stats";
+  return $stats;
 }
