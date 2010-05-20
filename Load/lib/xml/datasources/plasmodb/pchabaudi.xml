@@ -75,7 +75,7 @@
     <manualGet fileOrDir="global/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5825 --outputFile @dataDir@/taxonIdFile</unpack>
     <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
+    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect @dbestConnect@ </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
