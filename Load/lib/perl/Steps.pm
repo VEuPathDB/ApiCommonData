@@ -1523,6 +1523,7 @@ sub makeTranscriptDownloadFileTransformed {
                 ||'|'||
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
+                || decode(gf.is_pseudo, 1, ' | is_pseudo=true', '')
                 ||' | organism='||
             replace( gf.organism, ' ', '_')
                 ||' | product='||
@@ -1945,6 +1946,7 @@ sub makeDerivedCdsDownloadFileTransformed {
                 ||'|'||
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
+                || decode(gf.is_pseudo, 1, ' | is_pseudo=true', '')
                 ||' | organism='||
            replace( gf.organism, ' ', '_') 
                 ||' | product='||
@@ -2189,6 +2191,7 @@ sub makeAnnotatedProteinDownloadFileTransformed {
                 ||'|'||
             gf.source_id
                 || decode(gf.is_deprecated, 1, ' | deprecated=true', '')
+                || decode(gf.is_pseudo, 1, ' | is_pseudo=true', '')
                 ||' | organism='||
              replace( gf.organism, ' ', '_')
                 ||' | product='||
@@ -2739,7 +2742,7 @@ sub makeIsolateDownloadFile {
             AND enas.na_sequence_id = i.na_sequence_id
 EOF
 
-  $sql .= " and i.is_reference=1" if $isRef;
+  $sql .= " and i.is_reference=$isRef";
 
   makeDownloadFile($mgr, $species, $name, $sql);
 
@@ -6639,17 +6642,26 @@ sub getSoId {
 
   my ($soTermIds,$soTerms);
 
+
   if($soTermIdsOrNames =~ /SO:/){
 
-      $soTermIds =  join(",", map { "'$_'" } split(',', $soTermIds));
+    my @soIds = map{"'$_'"} split(/,/, $soTermIdsOrNames);
+    $soTermIds =  join(",",@soIds);
+
+    #$soTermIds =  join(",", map { "'$_'" } split(/,/, $soTermIdsOrNames));
   }else{
 
-      $soTerms =  join(",", map { "'$_'" } split(',', $soTerms));
+    my @soTerms = map{"'$_'"} split(/,/, $soTermIdsOrNames);
+    $soTerms =  join(",",@soTerms);
+
+    #$soTerms =  join(",", map { "'$_'" } split(/,/, $soTermIdsOrNames));
   }
 
   my $sql = $soTermIds ? "select sequence_ontology_id from sres.sequenceontology where so_id IN (${soTermIds})" : "select sequence_ontology_id from sres.sequenceontology where term_name IN (${soTerms})";
 
   my $cmd = "getValueFromTable --idSQL \"$sql\"";
+
+  print STDERR "This is the command: $cmd\n";
 
   my $soIds = $mgr->runCmd($cmd);
 
