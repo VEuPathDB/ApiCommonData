@@ -33,15 +33,21 @@ print STDERR "idSQL: $idSQL\n" if $verbose;
 
 my $sth = $dbh->prepareAndExecute($idSQL);
 
-my $value = $sth->fetchrow_array();
+my @arr;
+
+while (my ($value) = $sth->fetchrow_array()) {
+  push (@arr, $value);
+}
 
 $sth->finish();
 
 $dbh->disconnect();
 
-die "there is no value returned for the query:\n\t$idSQL\n" unless $value;
+my $result = join(',', @arr);
 
-print $value;
+die "there is no value returned for the query:\n\t$idSQL\n" unless $result;
+
+print $result;
 
  
 
