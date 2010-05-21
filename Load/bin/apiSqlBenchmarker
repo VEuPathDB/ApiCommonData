@@ -93,7 +93,10 @@ my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 
 my ($fetchTime, $totalTime, $prepareTime, $executeTime, $statistics, $consistentGets, $rowCount);
 
-my $optimizerStats = getOptimizerStats($optimizerStatsTables, $appDbh);
+my $dbaTabStatistics = getDbaTabStatistics($optimizerStatsTables, $appDbh);
+my $dbaTabColStatistics = getDbaTabColStatistics($optimizerStatsTables, $appDbh);
+my $dbaHistograms = getDbaHistograms($optimizerStatsTables, $appDbh);
+my $dbaIndStatistics = getDbaIndStatistics($optimizerStatsTables, $appDbh);
 
 if (!$noRun) {
 # execute query to get timing and row count
@@ -149,8 +152,9 @@ my $insert = $trackingDbh->prepare(<<SQL);
   insert into apidb.BenchmarkedQuery
               (bqid, run_date, project, query, trace, plan, instance, login, hide, nickname,
                description, rows_returned, prepare_time, execute_time, fetch_time,
-               total_time, consistent_gets, optimizer_stats)
-  values (apidb.BenchmarkedQuery_sq.nextval, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               total_time, consistent_gets,
+               dba_tab_statistics, dba_tab_col_statistics, dba_histograms, dba_ind_statistics)
+  values (apidb.BenchmarkedQuery_sq.nextval, sysdate, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 $insert->bind_param(1, $config->{project});
 $insert->bind_param(2, $config->{sql});
@@ -167,7 +171,10 @@ $insert->bind_param(12, $executeTime);
 $insert->bind_param(13, $fetchTime);
 $insert->bind_param(14, $totalTime);
 $insert->bind_param(15, $consistentGets);
-$insert->bind_param(16, $optimizerStats);
+$insert->bind_param(16, $dbaTabStatistics);
+$insert->bind_param(17, $dbaTabColStatistics);
+$insert->bind_param(18, $dbaHistograms);
+$insert->bind_param(19, $dbaIndStatistics);
 
 $insert->execute();
 $insert->finish();
@@ -178,7 +185,8 @@ select apidb.BenchmarkedQuery_sq.currval from dual
 SQL
 $bqidQ->execute();
 my ($bqid) = $bqidQ->fetchrow_array();
-print "created new BenchmarkedQuery record with bqid $bqid\n";
+print "created new BenchmarkedQuery record in instance  " . $config->{trackingInstance} . " with bqid $bqid\n";
+print "select * from apidb.BenchmarkedQuery where bqid = $bqid;\n";
 $bqidQ->finish();
 
 $appDbh->disconnect();
@@ -228,23 +236,20 @@ Junk below the above delimiter is ignored.
 
 ###############################################################################
 
-sub getOptimizerStats {
+sub getDbaTabStatistics {
   my ($optimizerStatsTables, $dbh) = @_;
 
   return '' if !$optimizerStatsTables;
 
-  my ($stats, $tableSeparator);
+  my $stats = "owner\ttable_name\tpartition_name\tpartition_position\tsubpartition_name\tsubpartition_position\tobject_type\tnum_rows\tblocks\tempty_blocks\tavg_space\tchain_cnt\tavg_row_len\tavg_space_freelist_blocks\tnum_freelist_blocks\tavg_cached_blocks\tavg_cache_hit_ratio\tsample_size\tlast_analyzed\tglobal_stats\tuser_stats\tstattype_locked\tstale_stats\n";
 
   foreach my $tableFullName (split(/,/, $optimizerStatsTables)) {
 
-    $stats .= $tableSeparator . "table: $tableFullName\n\n";
-    $tableSeparator = "-----------------------------\n";
-
     my ($schema, $table) = split(/\./, $tableFullName);
 
-    $stats .= "dba_tab_statistics:\n";
     my $query = $dbh->prepare(<<SQL);
-      select * from dba_tab_statistics
+      select owner, table_name, partition_name, partition_position, subpartition_name, subpartition_position, object_type, num_rows, blocks, empty_blocks, avg_space, chain_cnt, avg_row_len, avg_space_freelist_blocks, num_freelist_blocks, avg_cached_blocks, avg_cache_hit_ratio, sample_size, last_analyzed, global_stats, user_stats, stattype_locked, stale_stats
+      from dba_tab_statistics
       where owner = upper('$schema')
         and table_name
               in (
@@ -256,14 +261,28 @@ SQL
 
     $query->execute();
     while (my @row = $query->fetchrow_array()) {
-      $stats .= join(' ', @row);
-      $stats .= "\n";
+      $stats .= join("\t", @row) . "\n";
     }
     $query->finish();
+  }
 
-    $stats .= "\ndba_tab_col_statistics:\n";
+  return $stats;
+}
+
+sub getDbaTabColStatistics {
+  my ($optimizerStatsTables, $dbh) = @_;
+
+  return '' if !$optimizerStatsTables;
+
+  my $stats = "owner\ttable_name\tcolumn_name\tnum_distinct\tlow_value\thigh_value\tdensity\tnum_nulls\tnum_buckets\tlast_analyzed\tsample_size\tglobal_stats\tuser_stats\tavg_col_len\thistogram\n";
+
+  foreach my $tableFullName (split(/,/, $optimizerStatsTables)) {
+
+    my ($schema, $table) = split(/\./, $tableFullName);
+
     my $query = $dbh->prepare(<<SQL);
-select * from dba_tab_col_statistics
+select owner, table_name, column_name, num_distinct, low_value, high_value, density, num_nulls, num_buckets, last_analyzed, sample_size, global_stats, user_stats, avg_col_len, histogram
+ from dba_tab_col_statistics
 where owner = upper('$schema')
   and table_name
         in (
@@ -275,14 +294,27 @@ SQL
 
     $query->execute();
     while (my @row = $query->fetchrow_array()) {
-      $stats .= join(' ', @row);
-      $stats .= "\n";
+      $stats .= join("\t", @row) . "\n";
     }
     $query->finish();
+  }
+  return $stats;
+}
 
-    $stats .= "\ndba_histograms:\n";
+sub getDbaHistograms {
+  my ($optimizerStatsTables, $dbh) = @_;
+
+  return '' if !$optimizerStatsTables;
+
+  my $stats = "owner\ttable_name\tcolumn_name\tendpoint_number\tendpoint_value\tendpoint_actual_value\n";
+
+  foreach my $tableFullName (split(/,/, $optimizerStatsTables)) {
+
+    my ($schema, $table) = split(/\./, $tableFullName);
+
     my $query = $dbh->prepare(<<SQL);
-select * from dba_histograms
+select owner, table_name, column_name, endpoint_number, endpoint_value, endpoint_actual_value
+from dba_histograms
 where owner = upper('$schema')
   and table_name
         in (
@@ -294,14 +326,28 @@ SQL
 
     $query->execute();
     while (my @row = $query->fetchrow_array()) {
-      $stats .= join(' ', @row);
-      $stats .= "\n";
+      $stats .= join("\t", @row) . "\n";
     }
     $query->finish();
 
-    $stats .= "\ndba_ind_statistics:\n";
+  }
+  return $stats;
+}
+
+sub getDbaIndStatistics {
+  my ($optimizerStatsTables, $dbh) = @_;
+
+  return '' if !$optimizerStatsTables;
+
+  my $stats = "owner\tindex_name\ttable_owner\ttable_name\tpartition_name\tpartition_position\tsubpartition_name\tsubpartition_position\tobject_type\tblevel\tleaf_blocks\tdistinct_keys\tavg_leaf_blocks_per_key\tavg_data_blocks_per_key\tclustering_factor\tnum_rows\tavg_cached_blocks\tavg_cache_hit_ratio\tsample_size\tlast_analyzed\tglobal_stats\tuser_stats\tstattype_locked\tstale_stats\n";
+
+  foreach my $tableFullName (split(/,/, $optimizerStatsTables)) {
+
+    my ($schema, $table) = split(/\./, $tableFullName);
+
     my $query = $dbh->prepare(<<SQL);
-select * from dba_ind_statistics
+select owner, index_name, table_owner, table_name, partition_name, partition_position, subpartition_name, subpartition_position, object_type, blevel, leaf_blocks, distinct_keys, avg_leaf_blocks_per_key, avg_data_blocks_per_key, clustering_factor, num_rows, avg_cached_blocks, avg_cache_hit_ratio, sample_size, last_analyzed, global_stats, user_stats, stattype_locked, stale_stats
+from dba_ind_statistics
 where owner = upper('$schema')
   and table_name
         in (
@@ -313,13 +359,10 @@ SQL
 
     $query->execute();
     while (my @row = $query->fetchrow_array()) {
-      $stats .= join(' ', @row);
-      $stats .= "\n";
+      $stats .= join("\t", @row) . "\n";
     }
     $query->finish();
 
   }
-
-  print "stats>>>>" . $stats . "<<<<stats";
   return $stats;
 }
