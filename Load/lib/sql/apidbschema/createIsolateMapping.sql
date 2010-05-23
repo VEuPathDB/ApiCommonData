@@ -1,4 +1,5 @@
 CREATE TABLE ApiDB.IsolateMapping (
+ isolate_mapping_id NUMBER(10),
  na_sequence_id              NUMBER(10) NOT NULL,
  isolate_vocabulary_id       NUMBER(10) NOT NULL,
  MODIFICATION_DATE     DATE,
@@ -12,10 +13,12 @@ CREATE TABLE ApiDB.IsolateMapping (
  ROW_GROUP_ID          NUMBER(3),
  ROW_PROJECT_ID        NUMBER(4),
  ROW_ALG_INVOCATION_ID NUMBER(12),
+ PRIMARY KEY (isolate_mapping_id),
  FOREIGN KEY (na_sequence_id) REFERENCES DoTS.NaSequenceImp (na_sequence_id),
  FOREIGN KEY (isolate_vocabulary_id) REFERENCES ApiDB.IsolateVocabulary (isolate_vocabulary_id)
 );
 
+CREATE SEQUENCE ApiDB.IsolateMapping_sq;
 
 GRANT insert, select, update, delete ON ApiDB.IsolateMapping TO gus_w;
 GRANT select ON ApiDB.IsolateMapping TO gus_r;
@@ -27,7 +30,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'IsolateMapping',
-       'Standard', '',
+       'Standard', 'isolate_mapping_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
