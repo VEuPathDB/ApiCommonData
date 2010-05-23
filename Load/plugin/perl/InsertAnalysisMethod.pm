@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertAnalyisMethod;
+package ApiCommonData::Load::Plugin::InsertAnalysisMethod;
 @ISA = qw(GUS::PluginMgr::Plugin);
  
 use strict;
@@ -59,7 +59,7 @@ my $argsDeclaration =
  stringArg({name => 'parameters',
 	    descr => '',
 	    constraintFunc => undef,
-	    reqd => ,
+	    reqd => 0,
 	    isList => 0
 	   }),
 
@@ -73,28 +73,28 @@ my $argsDeclaration =
  stringArg({name => 'pubmedId',
 	    descr => '',
 	    constraintFunc => undef,
-	    reqd => ,
+	    reqd => 0,
 	    isList => 0
 	   }),
 
  stringArg({name => 'citation',
 	    descr => 'the citation provided by ncbi for the pubmed_id',
 	    constraintFunc => undef,
-	    reqd => ,
+	    reqd => 0,
 	    isList => 0
 	   }),
 
  stringArg({name => 'url',
 	    descr => '',
 	    constraintFunc => undef,
-	    reqd => ,
+	    reqd => 0,
 	    isList => 0
 	   }),
 
  stringArg({name => 'credits',
 	    descr => '',
 	    constraintFunc => undef,
-	    reqd => ,
+	    reqd => 0,
 	    isList => 0
 	   }),
 
@@ -158,7 +158,7 @@ sub run {
     my $name = $self->getArg('name');
     my $tool = $self->getArg('tool');
     my $version = $self->getArg('version');
-    my $version = $self->getArg('category');
+    my $category = $self->getArg('category');
     my $input = $self->getArg('input');
     my $output = $self->getArg('output');
     my $parameters = $self->getArg('parameters');
@@ -185,9 +185,11 @@ sub run {
 	);
 
     $am->submit();
-   }
    return "Inserted 1 method into AnalysisMethod";
-}
+   }
+
+
+
 
 sub undoTables {
   my ($self) = @_;
