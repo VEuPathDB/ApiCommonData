@@ -3,6 +3,7 @@ create table apidb.Workflow (
   name                     varchar(30),  -- name and version are an alternate key
   version                  varchar(30),
   state                    varchar(30),
+  host_machine             varchar(30),
   process_id               number(10),
   undo_step_id             number(10),
   initializing_step_table  number(1),
