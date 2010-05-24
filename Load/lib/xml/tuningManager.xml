@@ -414,6 +414,12 @@ on apidb.FeatureLocation&1
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc6_ix&1 on apidb.FeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.GeneId">
