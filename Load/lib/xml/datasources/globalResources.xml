@@ -42,7 +42,7 @@
     </info>
   </resource>
 
-  <resource resource="PDBProteinSequences_RSRC" version="2009-03-06"
+  <resource resource="PDBProteinSequences_RSRC" version="@PDBProteinSequences_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=@dataDir@/pdb_seqres.txt.gz</wgetArgs>
     <unpack>gunzip @dataDir@/pdb_seqres.txt.gz</unpack>

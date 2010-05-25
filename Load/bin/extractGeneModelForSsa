@@ -53,22 +53,22 @@ my ($species,$indexFile,$geneFastaFile,$seqFastaFile);
   $sth->execute ||  die "Couldn't execute statement: " . $sth->errstr;
 
 
-  while (my  $resultset = $sth->fetchrow_array()) {
+  while (my ($SOURCE_ID, $NA_FEATURE_ID,$START_MIN,$END_MAX, $STRAND, $SEQUENCE_ID,$EXON_COUNT ) = $sth->fetchrow_array()) {
 
-      print OUTINDX $resultset->{SEQUENCE_ID}."\t".$resultset->{STRAND}."\t".$resultset->{START_MIN}."\t".$resultset->{END_MAX}."\t".$resultset->{EXON_COUNT}."\t";
+      print OUTINDX $SEQUENCE_ID."\t".$STRAND."\t".$START_MIN."\t".$END_MAX."\t".$EXON_COUNT."\t";
 
-      my $ExonQuery = &GetExonQuery($resultset->{NA_FEATURE_ID});
+      my $ExonQuery = &GetExonQuery($NA_FEATURE_ID);
   
       my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
       $sth2->execute ||  die "Couldn't execute statement: " . $sth2->errstr;
 
       my ($exonStarts,$exonEnds);
-      while (my  $resultset2 = $sth2->fetchrow_array()) {
-	  $exonStarts .= $resultset2->{START_MIN}.",";
-	  $exonEnds .= $resultset2->{END_MAX}.",";
+      while (my  ($START_MIN,$END_MAX) = $sth2->fetchrow_array()) {
+	  $exonStarts .= $START_MIN.",";
+	  $exonEnds .= $END_MAX.",";
       }
 
-      print OUTINDX "$exonStarts\t$exonEnds\t".$resultset->{SOURCE_ID}."\n";
+      print OUTINDX "$exonStarts\t$exonEnds\t".$SOURCE_ID."\n";
 
   }
 
@@ -117,7 +117,7 @@ sub GetExonQuery {
   my ($parentID) = @_;
 
   return ("SELECT least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
-                  greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
+                  greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max
              FROM dots.NaLocation nl, dots.NaFeature nf
             WHERE nf.subclass_view = 'ExonFeature'
               AND nf.parent_id in ($parentID)

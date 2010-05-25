@@ -4,6 +4,7 @@
   <resource resource="Pvivax_contigsGB_RSRC" version="@Pvivax_contigsGB_VER@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/contig/%RESOURCE_VERSION%/sequences.gb.gz"/>
+    <unpack>gunzip @dataDir@/sequences.gb.gz</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @dataDir@/sequences.gb --fileFormat genbank --soCvsVersion @SO_VER@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. vivax contig sequence and annotation from Genbank"
@@ -234,7 +235,7 @@
     </info>
   </resource>
 
-  <resource resource="Pv_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
+  <resource resource="Pv_Uniprot_Gene_dbxref_RSRC" version="@Pv_Uniprot_Gene_dbxref_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/Uniprot/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
     <pluginArgs>--DbRefMappingFile @dataDir@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -368,7 +369,8 @@
   <resource resource="WatanabePv_EstLibrary_RSRC" version="2006-11-02"
       plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
     <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_pv.fas"/>
-    <pluginArgs>HASH(0x9307b98)</pluginArgs>
+    <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @dataDir@/onepass_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter (Eurodiagnostica) to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
+  </pluginArgs>
     <info
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax EST library"
         project="PlasmoDB"
