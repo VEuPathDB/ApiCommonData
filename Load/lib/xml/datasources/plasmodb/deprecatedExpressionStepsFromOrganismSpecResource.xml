@@ -3,16 +3,16 @@
   <resource resource="Pberghei_Protein_Expression_Survey_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/ProteinExpressionSurvey/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/tableS8.config --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/tableS8.config --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="P. berghei protein expression"
         project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
+        organisms="@@PbOrganismFullName@@"
         category="proteome"
         publicUrl="http://www.sciencemag.org/content/vol307/issue5706/images/data/82/DC1/hall-SOM-tables.zip"
         contact="Neil Hall or Robert Sinden"
-        email="nhall@tigr.org, r.sinden@imperial.ac.uk"
+        email="nhall@@tigr.org, r.sinden@@imperial.ac.uk"
         institution="The Wellcome Trust Sanger Institute">
       <description>
         <![CDATA[
@@ -27,16 +27,16 @@
   <resource resource="berghei_gss_time_series_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HP/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="P. berghei transcript expression - HP"
         project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
+        organisms="@@PbOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Andy Waters"
-        email="A.P.Waters@lumc.nl"
+        email="A.P.Waters@@lumc.nl"
         institution="Leiden University">
       <description>
         <![CDATA[
@@ -60,16 +60,16 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="berghei_gss_time_seriesHPE_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarray/WatersGSSTimeSeries/HPE/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="P. berghei transcript expression - HPE"
         project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
+        organisms="@@PbOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Andy Waters"
-        email="A.P.Waters@lumc.nl"
+        email="A.P.Waters@@lumc.nl"
         institution="Leiden University">
       <description>
         <![CDATA[
@@ -92,15 +92,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="derisi_Dd2_time_series_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/derisiDd2TimeSeries/%RESOURCE_VERSION%/Dd2"/>
-    <pluginArgs>--inputDir @dataDir@/Dd2 --configFile @dataDir@/Dd2/config.txt --dudProfilesFile @dataDir@/Dd2/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/Dd2 --configFile @@dataDir@@/Dd2/config.txt --dudProfilesFile @@dataDir@@/Dd2/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="DD2 erythrocytic expression time series (DeRisi)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://malaria.ucsf.edu/comparison/comp_SupplementalData.php"
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -116,15 +116,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="derisi_3D7_time_series_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/derisi3D7TimeSeries/%RESOURCE_VERSION%/3D7"/>
-    <pluginArgs>--inputDir @dataDir@/3D7 --configFile @dataDir@/3D7/config.txt --dudProfilesFile @dataDir@/3D7/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/3D7 --configFile @@dataDir@@/3D7/config.txt --dudProfilesFile @@dataDir@@/3D7/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="3D7 erythrocytic expression time series (DeRisi)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://malaria.ucsf.edu/comparison/comp_SupplementalData.php"
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -139,15 +139,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="derisi_HB3_time_series_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/derisiHB3TimeSeries/%RESOURCE_VERSION%/HB3/"/>
-    <pluginArgs>--inputDir @dataDir@/HB3 --configFile @dataDir@/HB3/config.txt --dudProfilesFile @dataDir@/HB3/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% --tolerateMissingIds</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/HB3 --configFile @@dataDir@@/HB3/config.txt --dudProfilesFile @@dataDir@@/HB3/dud_oligos.txt --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% --tolerateMissingIds</pluginArgs>
     <info
         displayName="HB3 erythrocytic expression time series (DeRisi)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -161,16 +161,16 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="winzeler_cell_cycle_RSRC" version="2009-05-14"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/WinzelerCellCycleExpressionProfiles/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="3D7 cell cycle expression data (Winzeler)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://carrier.gnf.org/publications/CellCycle/"
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -184,16 +184,16 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="winzeler_gametocyte_expression_RSRC" version="2009-10-19"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/WinzelerWBCGametocyteExpressionProfiles/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="3D7 gametocyte expression data (Winzeler)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.scripps.edu/cb/winzeler/"
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -207,15 +207,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="CowmanStubbs_arrayData_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanStubbsArrayData/%RESOURCE_VERSION%"/>
-    <pluginArgs>--studyName 'Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes' --headerMappingFile @dataDir@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory %RESOURCE_VERSION% </pluginArgs>
+    <pluginArgs>--studyName 'Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes' --headerMappingFile @@dataDir@@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="P. falciparum invasion pathways - array data"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2878"
         contact="Alan Cowman"
-        email="cowman@wehi.edu.au"
+        email="cowman@@wehi.edu.au"
         institution="The Walter and Eliza Hall Institute of Medical Research">
       <description>
         <![CDATA[
@@ -229,15 +229,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="CowmanDuraisingh_arrayData_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanDuraisinghArrayData/%RESOURCE_VERSION%"/>
-    <pluginArgs>--studyName 'P.falciparum strain 3D7, SIR2 knockout' --headerMappingFile @dataDir@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @dataDir@/%RESOURCE_VERSION%</pluginArgs>
+    <pluginArgs>--studyName 'P.falciparum strain 3D7, SIR2 knockout' --headerMappingFile @@dataDir@@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @@dataDir@@/%RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="P. falciparum strain 3D7, SIR2 knockout - array data"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=1350"
         contact="Alan Cowman"
-        email="cowman@wehi.edu.au"
+        email="cowman@@wehi.edu.au"
         institution="The Walter and Eliza Hall Institute of Medical Research">
       <description>
         <![CDATA[
@@ -251,15 +251,15 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="CowmanBaum_arrayData_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/CowmanBaumArrayData/%RESOURCE_VERSION%"/>
-    <pluginArgs>--studyName 'Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions' --headerMappingFile @dataDir@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @dataDir@/%RESOURCE_VERSION%</pluginArgs>
+    <pluginArgs>--studyName 'Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions' --headerMappingFile @@dataDir@@/%RESOURCE_VERSION%/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @@dataDir@@/%RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="Invasion by P. falciparum merozoites - array data"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=2346"
         contact="Alan Cowman"
-        email="cowman@wehi.edu.au"
+        email="cowman@@wehi.edu.au"
         institution="The Walter and Eliza Hall Institute of Medical Research">
       <description>
         <![CDATA[
@@ -278,11 +278,11 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
     <info
         displayName="Comparison of Various P. falciparum Knock outs - Invasion Pathways"
         project=""
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="Alan Cowman"
-        email="cowman@wehi.edu.au"
+        email="cowman@@wehi.edu.au"
         institution="The Walter and Eliza Hall Institute of Medical Research">
       <description>
         <![CDATA[
@@ -294,16 +294,16 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="daily_expressionProfiles_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/DailyExpressionArrayStudies/%RESOURCE_VERSION%/working_dir/profiles"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/profiles/ --configFile @@dataDir@@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients - expression profiles"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Johanna Daily"
-        email="jdaily@partners.org"
+        email="jdaily@@partners.org"
         institution="Harvard">
       <description>
         <![CDATA[
@@ -316,16 +316,16 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="daily_correlations_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/DailyExpressionArrayStudies/%RESOURCE_VERSION%/working_dir/analysis/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config.txt --analysisResultView 'DataTransformationResult'</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/analysis --configFile @@dataDir@@/analysis/config.txt --analysisResultView 'DataTransformationResult'</pluginArgs>
     <info
         displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="Johanna Daily"
-        email="jdaily@partners.org"
+        email="jdaily@@partners.org"
         institution="Harvard">
       <description>
         <![CDATA[
@@ -343,11 +343,11 @@ om made Affy array (Scrmalaria) based on the laboratory strain 3D7.
     <info
         displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - array data"
         project=""
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128"
         contact="Bobo Mok"
-        email="bobo.mok@mtc.ki.se"
+        email="bobo.mok@@mtc.ki.se"
         institution="Parasitology, Karolinska Institutet, MTC">
       <description>
         <![CDATA[
@@ -361,15 +361,15 @@ om made Affy array (Scrmalaria) based on the laboratory strain 3D7.
   <resource resource="e-mexp-128_percentiles_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/E-MEXP128/working_dir/%RESOURCE_VERSION%/profiles"/>
-    <pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/profiles/ --configFile @@dataDir@@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName=""
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="Bobo Mok"
-        email="bobo.mok@mtc.ki.se"
+        email="bobo.mok@@mtc.ki.se"
         institution="Parasitology, Karolinska Institutet, MTC">
       <description>
         <![CDATA[
@@ -394,16 +394,16 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
   <resource resource="Pvivax_ZB_Time_Series_ExpressionData_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pvivax/microarray/ZB_vivax/%RESOURCE_VERSION%/data/working_dir/profiles"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/profiles/ --configFile @dataDir@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/profiles/ --configFile @@dataDir@@/profiles/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="Transcriptional profile throughout 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
         project="PlasmoDB"
-        organisms="@PvOrganismFullName@"
+        organisms="@@PvOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Zbynek Bozdech"
-        email="ZBozdech@ntu.edu.sg"
+        email="ZBozdech@@ntu.edu.sg"
         institution="School of Biological Sciences, Nanyang Technological University">
       <description>
         <![CDATA[
@@ -417,16 +417,16 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
   <resource resource="winzeler_yoelii_falciparum_comparison_expression_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/winzeler_yoelii_falciparum_comparison/%RESOURCE_VERSION%/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION%/ --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION%/ --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="Winzeler Pyoelii mixed RMAouput naturalscale expression data"
         project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
+        organisms="@@PyOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.scripps.edu/cb/winzeler/"
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -439,16 +439,16 @@ tional differences between closely related isogenic <i>P. falciparum</i> of dist
   <resource resource="Westenberger_vivax_ExpressionData_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pvivax/microarray/westenberger_vivax/%RESOURCE_VERSION%"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/%RESOURCE_VERSION% --configFile @dataDir@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/%RESOURCE_VERSION% --configFile @@dataDir@@/%RESOURCE_VERSION%/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="Westenberger Pvivax ExpressionData"
         project="PlasmoDB"
-        organisms="@PvOrganismFullName@"
+        organisms="@@PvOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Scott Westenberger"
-        email="scottw@scripps.edu"
+        email="scottw@@scripps.edu"
         institution="The Scripps Research Institute">
       <description>
         <![CDATA[
@@ -462,15 +462,15 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
   <resource resource="Kappe_foldChange_RSCR" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/Kappe/%RESOURCE_VERSION%/working_dir/analysis/"/>
-    <pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/analysis --configFile @@dataDir@@/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
     <info
         displayName="P. yoelii liver stage expression data fold change"
         project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
+        organisms="@@PyOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="Stefan Kappe"
-        email="stefan.kappe@sbri.org"
+        email="stefan.kappe@@sbri.org"
         institution="Seattle Biomedical Research Institute">
       <description>
         <![CDATA[
@@ -486,16 +486,16 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
   <resource resource="Pfalciparum_newbold_Gene_Expression_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Newbold/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds  --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/working_dir --configFile @@dataDir@@/working_dir/config.txt --tolerateMissingIds  --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="P.falciparum gene expression profiles (Newbold)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Chris I. Newbold"
-        email="cnewbold@hammer.imm.ox.ac.uk"
+        email="cnewbold@@hammer.imm.ox.ac.uk"
         institution="Weatherall Institute of Molecular Medicine">
       <description>
         <![CDATA[
@@ -506,23 +506,23 @@ Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, J
     </info>
   </resource>
 
-  <resource resource="ChIP_Chip_Henk_Stunnenberg_RSRC" version="@ChIP_Chip_Henk_Stunnenberg_VER@"
+  <resource resource="ChIP_Chip_Henk_Stunnenberg_RSRC" version="@@ChIP_Chip_Henk_Stunnenberg_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/Henk_Stunnenberg/%RESOURCE_VERSION%/working_dir/"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="Henk Stunnenberg"
-        email="h.stunnenberg@ncmls.ru.nl"
+        email="h.stunnenberg@@ncmls.ru.nl"
         institution="NCMLS Radboud Universiteit">
       <description>
         <![CDATA[
          ChIP-on-chip profiling of H3, H3K4me3, H3K9me3, and H3K9ac of P. falciparum from asynchronous parasites revealed an extensively euchromatic epigenome with heterochromatin restricted to variant surface antigen gene families (VSA) and a number of genes hitherto unlinked to VSA.
-Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
+Contact Henk Stunnenberg, h.stunnenberg@@ncmls.ru.nl, NCMLS Radboud Universiteit.
         ]]>
       </description>
     <publication pmid="19497874"/>
@@ -533,15 +533,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
    <resource resource="Pf_temp_called_peaks_RSRC" version="2009-11-11"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/%RESOURCE_VERSION%/working_dir/PEAK_DATA/All_PEAKs.gff"/>
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @dataDir@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @Pfalciparum_chromosomes_VER@ --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
+    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @@dataDir@@/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.falciparum_chromosomes" --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@ --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"   --bioperlTreeOutput bioperlTree.out</pluginArgs>
     <info
         displayName="Pfalciparum ChIP-on-chip Peak Identifications"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Genome"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -554,15 +554,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="Pfalciparum_ChIP_PEAKs_RSRC" version="2009-11-11"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/%RESOURCE_VERSION%/working_dir/PEAK_DATA/"/>
-    <pluginArgs>--inputDir @dataDir@/PEAK_DATA --configFile @dataDir@/PEAK_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature'</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/PEAK_DATA --configFile @@dataDir@@/PEAK_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature'</pluginArgs>
     <info
         displayName="Pfalciparum ChIP-on-chip Identifications"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -575,15 +575,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="Pfalciparum_ChIP_SMOOTHED_RSRC" version="2009-11-11"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chip_chip/temp_called_peaks/%RESOURCE_VERSION%/working_dir/SMOOTHED_DATA/"/>
-    <pluginArgs>--inputDir @dataDir@/SMOOTHED_DATA --configFile @dataDir@/SMOOTHED_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/SMOOTHED_DATA --configFile @@dataDir@@/SMOOTHED_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
     <info
         displayName="Pfalciparum ChIP-on-chip Identifications"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -596,16 +596,16 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="New_Cowman_Sir2_KO_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/working_dir --configFile @@dataDir@@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="affymetrix array data on two Sir2 KO lines(Cowman)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -618,16 +618,16 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="E-GEOD-10022_array_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/GSE10022_CQstudy/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/working_dir --configFile @@dataDir@@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="E-GEOD-10022 array data(Su lab)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -639,15 +639,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="E-GEOD-10022_page_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/GSE10022_CQstudy/%RESOURCE_VERSION%/working_dir/page/newFormat"/>
-    <pluginArgs>--inputDir @dataDir@/newFormat --configFile @dataDir@/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/newFormat --configFile @@dataDir@@/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
     <info
         displayName="E-GEOD-10022 array data(Su lab) page analysis"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -661,15 +661,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="New_Cowman_foldChange_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/E-TABM-438_Cowman/%RESOURCE_VERSION%/working_dir/analysis/"/>
-    <pluginArgs>--inputDir @dataDir@/analysis --configFile @dataDir@/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/analysis --configFile @@dataDir@@/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
     <info
         displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -681,16 +681,16 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="DOZI_array_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/working_dir --configFile @@dataDir@@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="P. berghei DOZI array data"
         project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
+        organisms="@@PbOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Greg Grant"
-        email="ggrant@pcbi.upenn.edu"
+        email="ggrant@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -703,15 +703,15 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="DOZI_page_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarray/Waters_DOZI/%RESOURCE_VERSION%/working_dir/page/newFormat"/>
-    <pluginArgs>--inputDir @dataDir@/newFormat --configFile @dataDir@/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+    <pluginArgs>--inputDir @@dataDir@@/newFormat --configFile @@dataDir@@/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
     <info
         displayName="P. berghei DOZI array data page analysis"
         project="PlasmoDB"
-        organisms="@PbOrganismFullName@"
+        organisms="@@PbOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="EuPathDB">
       <description>
         <![CDATA[
@@ -724,16 +724,16 @@ Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
   <resource resource="Kappe_expressionProfiles_RSRC" version="1.0"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarray/Kappe/%RESOURCE_VERSION%/working_dir/"/>
-    <unpack>doTranscriptExpression.pl --xml_file @dataDir@/transcript_expression_config.xml</unpack>
-    <pluginArgs>--inputDir @dataDir@/working_dir/ --configFile @dataDir@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
+    <unpack>doTranscriptExpression.pl --xml_file @@dataDir@@/transcript_expression_config.xml</unpack>
+    <pluginArgs>--inputDir @@dataDir@@/working_dir/ --configFile @@dataDir@@/working_dir/config.txt --tolerateMissingIds --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION%</pluginArgs>
     <info
         displayName="P. yoelii liver stage expression data"
         project="PlasmoDB"
-        organisms="@PyOrganismFullName@"
+        organisms="@@PyOrganismFullName@@"
         category="Transcriptome"
         publicUrl=""
         contact="Stefan Kappe"
-        email="stefan.kappe@sbri.org"
+        email="stefan.kappe@@sbri.org"
         institution="Seattle Biomedical Research Institute">
       <description>
         <![CDATA[

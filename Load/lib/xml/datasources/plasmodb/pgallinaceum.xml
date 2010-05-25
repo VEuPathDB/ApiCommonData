@@ -1,14 +1,14 @@
 <resources>
-  <resource resource="Pg_dbEST_RSRC" version="@Pg_dbEST_VER@"
+  <resource resource="Pg_dbEST_RSRC" version="@@Pg_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @dataDir@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @dataDir@/dbest.prop --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @dataDir@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @SO_VER@ --dbestLoginFile @dataDir@/dbest.prop --dbestConnect @dbestConnect@ </pluginArgs>
+    <unpack>getSubTaxa --ncbiTaxId 5849 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
     <info
         displayName="Plasmodium dbEST ESTs"
         project="PlasmoDB"
-        organisms="@PgOrganismFullName@"
+        organisms="@@PgOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
@@ -22,16 +22,16 @@
     </info>
   </resource>
 
-  <resource resource="Pgallinaceum_Contigs_RSRC" version="@Pgallinaceum_Contigs_VER@"
+  <resource resource="Pgallinaceum_Contigs_RSRC" version="@@Pgallinaceum_Contigs_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
-    <unpack>mkdir @dataDir@/P.gallinaceum.contigs_fixed</unpack>
-    <unpack>cat @dataDir@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <unpack>mkdir @@dataDir@@/P.gallinaceum.contigs_fixed</unpack>
+    <unpack>cat @@dataDir@@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @@dataDir@@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="P. gallinaceum contigs"
         project="PlasmoDB"
-        organisms="@PgOrganismFullName@"
+        organisms="@@PgOrganismFullName@@"
         category="Genome"
         publicUrl=""
         contact=""

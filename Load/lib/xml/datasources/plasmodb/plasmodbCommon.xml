@@ -1,16 +1,16 @@
 <resources>
-  <resource resource="PlasmodiumGenbankIsolates_RSRC" version="@PlasmodiumGenbankIsolates_VER@"
+  <resource resource="PlasmodiumGenbankIsolates_RSRC" version="@@PlasmodiumGenbankIsolates_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/common/isolate/plasmoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences_fixed_1.gb"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @dataDir@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @dataDir@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/plasmoIsolatesGenbank2gus.xml --inputFileOrDir @@dataDir@@/sequences_fixed_1.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum"  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     <info
         displayName="Plasmodium isolates from Genbank"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="Genome"
         publicUrl=""
         contact="GenBank"
-        email="info@ncbi.nlm.nih.gov"
+        email="info@@ncbi.nlm.nih.gov"
         institution="NCBI">
       <description>
         <![CDATA[
@@ -23,16 +23,16 @@
   <resource resource="isolateVocabularyMap_isolation_source_RSRC" version="2009-06-14"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/isolationSource.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @dataDir@/isolationSource.xml</unpack>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type isolation_source --xml_file @@dataDir@@/isolationSource.xml</unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="update isolate vocabulary-isolation_source"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="ignore"
         publicUrl=""
         contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
+        email="bindu@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -45,16 +45,16 @@
   <resource resource="isolateVocabularyMap_specific_host_RSRC" version="2009-06-14"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/specificHost.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @dataDir@/specificHost.xml</unpack>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type specific_host --xml_file @@dataDir@@/specificHost.xml</unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="update isolate vocabulary-specific_host"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="ignore"
         publicUrl=""
         contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
+        email="bindu@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -67,16 +67,16 @@
   <resource resource="isolateVocabularyMap_geographic_location_RSRC" version="2009-06-14"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/geographicLocation.xml"/>
-    <unpack>isolateVocabulary.pl insert  --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/geographicLocation.xml</unpack>
+    <unpack>isolateVocabulary.pl insert  --gus_config_file @@gusHome@@/config/gus.config --type geographic_location --xml_file @@dataDir@@/geographicLocation.xml</unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="update isolate vocabulary-geographic_location"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="ignore"
         publicUrl=""
         contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
+        email="bindu@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -89,16 +89,16 @@
   <resource resource="isolateVocabularyMap_product_RSRC" version="2009-06-14"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/product.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @dataDir@/product.xml</unpack>
+    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type geographic_location --xml_file @@dataDir@@/product.xml</unpack>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="update isolate vocabulary-product"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="ignore"
         publicUrl=""
         contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
+        email="bindu@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -111,15 +111,15 @@
   <resource resource="BibRefType_RSRC" version="1"
       plugin="GUS::Supported::Plugin::LoadGusXml">
     <manualGet fileOrDir="PlasmoDB/common/misc/BibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml"/>
-    <pluginArgs>--filename @dataDir@/ncbiPublicationTypes.xml</pluginArgs>
+    <pluginArgs>--filename @@dataDir@@/ncbiPublicationTypes.xml</pluginArgs>
     <info
         displayName="Bibliographic Reference Types"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="ignore"
         publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
         contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
+        email="jbrestel@@pcbi.upenn.edu"
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
@@ -132,15 +132,15 @@
   <resource resource="OrthoMCL_Phyletic_RSRC" version="4"
       plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile">
     <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
-    <pluginArgs>--groupsFile @dataDir@/orthomclGroups.txt --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe"</pluginArgs>
+    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe"</pluginArgs>
     <info
         displayName="OrthoMCL phyletic profiles"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
-        email="pinney@pcbi.upenn.edu"
+        email="pinney@@pcbi.upenn.edu"
         institution="PCBI">
       <description>
         <![CDATA[
@@ -154,15 +154,15 @@
   <resource resource="OrthoMCL_RSRC" version="4"
       plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
     <manualGet fileOrDir="PlasmoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
-    <pluginArgs>--OrthologFile @dataDir@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "pber,pcha,pfal,pkno,pviv,pyoe" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
     <info
         displayName="Orthologous groups generated using OrthoMCL"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
-        email="pinney@pcbi.upenn.edu"
+        email="pinney@@pcbi.upenn.edu"
         institution="PCBI">
       <description>
         <![CDATA[
@@ -176,15 +176,15 @@
   <resource resource="OrthoMCLTree_RSRC" version="4"
       plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon">
     <manualGet fileOrDir="PlasmoDB/common/phylogeny/OrthoMCLTaxon/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--cladeFile @dataDir@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @dataDir@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
+    <pluginArgs>--cladeFile @@dataDir@@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @@dataDir@@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
     <info
         displayName="OrthoMCL phyletic pattern tree"
         project="PlasmoDB"
-        organisms="@PlasmoOrganismNames@"
+        organisms="@@PlasmoOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
-        email="pinney@pcbi.upenn.edu"
+        email="pinney@@pcbi.upenn.edu"
         institution="PCBI">
       <description>
         <![CDATA[
@@ -197,11 +197,11 @@
   <resource resource="RodentPlasmodiumChromosomes_RSRC" version="2007-09-24"
       plugin="ApiCommonData::Load::Plugin::UpdateRodentPlasmodiumChromosomes">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/comparativeGenomics/taco_RMP/%RESOURCE_VERSION%/RMP_Pf_fromKooij.txt"/>
-    <pluginArgs>--mappingFile @dataDir@/RMP_Pf_fromKooij.txt --extDbNames "yoelii-falciparum synteny from Mercator,berghei-falciparum synteny from Mercator" --addChrColorTable 1 </pluginArgs>
+    <pluginArgs>--mappingFile @@dataDir@@/RMP_Pf_fromKooij.txt --extDbNames "yoelii-falciparum synteny from Mercator,berghei-falciparum synteny from Mercator" --addChrColorTable 1 </pluginArgs>
     <info
         displayName="Assignment of chromosome numbers to rodent malaria parasite contigs"
         project="PlasmoDB"
-        organisms="@PfOrganismFullName@"
+        organisms="@@PfOrganismFullName@@"
         category="Genome"
         publicUrl=""
         contact=""
