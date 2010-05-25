@@ -1,16 +1,15 @@
 <resources>
 <!--pchabaudiISFResource-->
-
-  <resource resource="Pchabaudi_chromosomes_RSRC" version="@@Pchabaudi_chromosomes_VER@@"
+  <resource resource="Pchabaudi_chromosomes_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>mkdir @@dataDir@@/P.chabaudi.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31271 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <unpack>mkdir @dataDir@/P.chabaudi.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31271 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
         project="PlasmoDB"
-        organisms="@@PcOrganismFullName@@"
+        organisms="@PcOrganismFullName@"
         category="Genome"
         publicUrl=""
         contact=""
@@ -24,18 +23,18 @@
     </info>
   </resource>
 
-  <resource resource="Pchabaudi_annotations_RSRC" version="@@Pchabaudi_chromosomes_VER@@" parentResource="Pchabaudi_chromosomes_RSRC"
+  <resource resource="Pchabaudi_annotations_RSRC" version="@Pchabaudi_chromosomes_VER@" parentResource="Pchabaudi_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>mkdir @@dataDir@@/P.chabaudi.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3 --output_gff @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff</unpack>
+    <unpack>mkdir @dataDir@/P.chabaudi.chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @dataDir@/gff --inputFileExt gff --output_fasta @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3 --output_gff @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @@dataDir@@/P.chabaudi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @dataDir@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @SO_VER@ --defaultOrganism "Plasmodium chabaudi chabaudi"  --seqSoTerm "chromosome" --validationLog @dataDir@/validation.log --bioperlTreeOutput @dataDir@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
         project="PlasmoDB"
-        organisms="@@PcOrganismFullName@@"
+        organisms="@PcOrganismFullName@"
         category="Genome"
         publicUrl=""
         contact=""
@@ -48,14 +47,14 @@
       </description>
     </info>
   </resource>
-  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@@Pchabaudi_chromosomes_VER@@"
+  <resource resource="GOAssociations_Pchabaudi_RSRC" version="@Pchabaudi_chromosomes_VER@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <pluginArgs></pluginArgs>
     <info
         displayName="GO Association for Plasmodium chabaudi genes"
         project="PlasmoDB"
-        organisms="@@PcOrganismFullName@@"
+        organisms="@PcOrganismFullName@"
         category="Proteome"
         publicUrl=""
         contact=""
