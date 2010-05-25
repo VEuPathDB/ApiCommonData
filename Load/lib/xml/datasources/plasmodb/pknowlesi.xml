@@ -4,7 +4,7 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/P.knowlesi.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --output_gff  @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --output_gff  @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3</unpack>
 
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5851 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
@@ -27,10 +27,10 @@
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/P.knowlesi.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --output_gff  @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.fasta --output_gff  @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff3 --output_gff @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "chromosome" --validationLog validation.log --bioperlTreeOutput bioperl @@dataDir@@/P.knowlesi.chromosomes_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.knowlesi.chromosomes_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. knowlesi strain H chromosomes sequence and annotation"
         project="PlasmoDB"
@@ -78,7 +78,7 @@
     <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.fasta --output_gff  @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.gff3 --output_gff @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.gff</unpack>
 
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "contig" --validationLog validation.log --bioperlTreeOutput bioperl @@dataDir@@/P.knowlesi.contigs_fixedTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.knowlesi.contigs_fixed/Pknowlesi.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium knowlesi strain H"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="P. knowlesi strain H contigs sequence and annotation"
         project="PlasmoDB"
@@ -95,6 +95,8 @@
       </description>
     </info>
   </resource>
+
+
   <resource resource="GOAssociations_Pknowlesi_RSRC" version="@@Pknowlesi_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
