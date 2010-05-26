@@ -96,11 +96,34 @@
     </info>
   </resource>
 
+  <resource resource="Pknowlesi_ECNumbers_RSRC" version="@@Pknowlesi_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pknowlesi.fasta --output_gff @@dataDir@@/gff/Pknowlesi.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pknowlesi.gff3 --output_gff @@dataDir@@/Pknowlesi.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pknowlesi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pknowlesi.ec </unpack>
+    <pluginArgs>--ECMappingFile @@dataDir@@/Pknowlesi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium knowlesi genes"
+        project="PlasmoDB"
+        organisms="@@PkOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. knowlesi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
   <resource resource="GOAssociations_Pknowlesi_RSRC" version="@@Pknowlesi_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <pluginArgs></pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/function/@@Pknowlesi_chromosomes_VER@@/GOAssociations_Pknowlesi/Pknowlesi.GO"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Pknowlesi.GO --goExternalDatabaseSpec "Gene Ontology|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
     <info
         displayName="GO Association for Plasmodium knowlesi genes"
         project="PlasmoDB"
