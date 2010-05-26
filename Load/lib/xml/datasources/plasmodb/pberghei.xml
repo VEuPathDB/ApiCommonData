@@ -47,10 +47,35 @@
       </description>
     </info>
   </resource>
+
+  <resource resource="Pberghei_ECNumbers_RSRC" version="@@Pberghei_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/gff/Pberghei.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pberghei.gff3 --output_gff @@dataDir@@/Pberghei.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pberghei.ec </unpack>
+    <pluginArgs>--ECMappingFile @@dataDir@@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium berghei genes"
+        project="PlasmoDB"
+        organisms="@@PbOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. berghei</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
   <resource resource="GOAssociations_Pberghei_RSRC" version="@@Pberghei_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <pluginArgs></pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pberghei/function/@@Pberghei_chromosomes_VER@@/GOAssociations_Pberghei/Pberghei.GO"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Pberghei.GO --goExternalDatabaseSpec "Gene Ontology|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
     <info
         displayName="GO Association for Plasmodium berghei genes"
         project="PlasmoDB"
@@ -435,50 +460,7 @@
     </info>
   </resource>
 
-  <resource resource="GOAssociations_Pberghei_RSRC" version="@@Pberghei_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <pluginArgs></pluginArgs>
-    <info
-        displayName="GO Association for Plasmodium berghei genes"
-        project="PlasmoDB"
-        organisms="@@PbOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         GO Associations for <i>P. berghei</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
 
-  <resource resource="Pberghei_ECNumbers_RSRC" version="@@Pberghei_chromosomes_VER@@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeFastaFile --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/gff/Pberghei.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pberghei.gff3 --output_gff @@dataDir@@/Pberghei.gff</unpack>
-    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pberghei.ec </unpack>
-    <pluginArgs>--ECMappingFile @@dataDir@@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="EC Number Mapping for Plasmodium berghei genes"
-        project="PlasmoDB"
-        organisms="@@PbOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>P. berghei</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
 
 <!--ArrayStudiesResource-->
   <resource resource="Pberghei_gss_oligos_RSRC" version="@@Pberghei_gss_oligos_VER@@"
