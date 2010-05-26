@@ -4,7 +4,7 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/P.berghei.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
 
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5823 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
@@ -27,7 +27,7 @@
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/P.berghei.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_file_or_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3 --output_gff @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff</unpack>
 
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium berghei strain ANKA"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>

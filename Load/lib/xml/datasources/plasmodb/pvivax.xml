@@ -373,7 +373,6 @@
       plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
     <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_pv.fas"/>
     <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @@dataDir@@/onepass_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter (Eurodiagnostica) to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
-  </pluginArgs>
     <info
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax EST library"
         project="PlasmoDB"
@@ -397,7 +396,7 @@
   <resource resource="Pv_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pvivax/bindingSites/Llinas/%RESOURCE_VERSION%/final/allSites_reformat.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @@dataDir@@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @@Pvivax_contigsGB_VER@@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @@dataDir@@/allSites_reformat.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@  --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --seqExtDbName "Pvivax_contigsGB_RSRC"   --seqExtDbRlsVer @@Pvivax_contigsGB_VER@@</pluginArgs>
     <info
         displayName="Pv Trans-factor binding sites from Manuel Llinas"
         project="PlasmoDB"
