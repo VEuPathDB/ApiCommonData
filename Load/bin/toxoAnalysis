@@ -1426,6 +1426,8 @@ $mgr->waitForCluster("Repeat Mask TgondiiVEGGenomic_toxoDB-4.4", "TgondiiVEGGeno
 ####### make download files########
 #########################################################################
 
+### Add all strains to download files##########################
+
 &makeESTDownloadFileFromAllSources($mgr,"Tgondii", 5811, 1, "ToxoDB");
 
 &makeESTDownloadFileFromAllSources($mgr,"NeosporaCaninum", 29176, 1, "ToxoDB");
@@ -1527,6 +1529,8 @@ $mgr->waitForCluster("Repeat Mask TgondiiVEGGenomic_toxoDB-4.4", "TgondiiVEGGeno
 
 &copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/ToxoDB/release-4.4/Tgondii/TgondiiOrfs_ToxoDB-4.4.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-5.0/motif/TgondiiOrfs_ToxoDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-5.0/motif");
 
+&copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/ToxoDB/release-6.1/Tgondii/TgondiiGenomic_ToxoDB-6.1.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-6.1/motif/TgondiiGenomic_ToxoDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-6.1/motif");
+### Add all strains to download files##########################
 &copy($mgr, "/files/cbil/data/cbil/apiSiteFiles/downloadSite/ToxoDB/release-4.4/Tgondii/TgondiiAnnotatedProteins_ToxoDB-4.4.fasta",  "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-5.0/motif/TgondiiAnnotatedProteins_ToxoDB.fasta", "/files/cbil/data/cbil/apiSiteFiles/webServices/ToxoDB/release-5.0/motif");
 &makeIsolateDownloadFile($mgr, "", "ToxoSibleyIsolate", "Toxoplasma isolates From David Sibley","2009-05-04", "ExternalNASequence");
 &makeIsolateDownloadFile($mgr, "", "ToxoGenbankIsolate", "Toxoplasma isolates From Genbank","2009-05-04", "ExternalNASequence");
