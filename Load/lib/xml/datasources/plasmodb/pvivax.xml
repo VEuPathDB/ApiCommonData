@@ -123,7 +123,7 @@
       plugin="ApiCommonData::Load::Plugin::CorrectGeneAliases">
     <manualGet fileOrDir="global/empty"/>
     <unpack>cleanUpDBRefNaFeature.pl</unpack>
-    <pluginArgs>--extDbRelSpecList "Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@,Pvivax_mitochondrial_RSRC|@@Pvivax_mitochondrial_VER@@"</pluginArgs>
+    <pluginArgs>--extDbRelSpecList "Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@</pluginArgs>
     <info
         displayName="CorrectGeneAliases"
         project="PlasmoDB"
@@ -304,7 +304,7 @@
   <resource resource="Pv_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/apiLoc_eupathDb_links.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. vivax ApiLoc and EupathDb links"
         project="PlasmoDB"
@@ -372,7 +372,7 @@
   <resource resource="WatanabePv_EstLibrary_RSRC" version="2006-11-02"
       plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
     <manualGet fileOrDir="PlasmoDB/pvivax/EST/WatanabeESTs/%RESOURCE_VERSION%/onepass_pv.fas"/>
-    <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @@dataDir@@/onepass_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter (Eurodiagnostica) to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
+    <pluginArgs>--sourceIdRegex "\|(\w+)$" --fastaFile  @@dataDir@@/onepass_pv.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'EST' --ncbiTaxId 5855  --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabePv' --libraryDesc "Blood samples were collected from the Indonesian patients with <i>P. vivax</i> who were diagnosed by Giemsa staining of the blood smear and gave the written informed consent. Heparinized whole blood was filtrated through Plasmodipur filter to remove white blood cells. Parasites were homogenized using the Polytron Homogenizer, frozen in liquid nitrogen and sent to Japan with dry ice."</pluginArgs>
     <info
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. vivax EST library"
         project="PlasmoDB"
