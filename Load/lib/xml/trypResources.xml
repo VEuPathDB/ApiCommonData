@@ -2442,6 +2442,47 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>T. bruc
     </resource>
 
 
+<resource resource="Additional_ChIPSeqCoveragePlot_George_Cross" version="2010-03-09" 
+        displayName="ChIP-Seqs from George Cross" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="ChIP-Seqs from George Cross"
+        extDbRlsVer="2010-03-09"
+        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_3-9-10/working_dir/bowtie/"
+ 
+            contact = "Brian Brunk" 
+            email = "brunkb@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+
+<unpack>generateCoveragePlot.pl --m 14 --sample BDF3 --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000 
+ --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/BDF3_HA_tagsonly_080723.txt.bt >  @downloadDir@/Addit
+ional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H3v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
+--nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3v_runBoth_tagsonly.txt.bt >  @downloadDir@/Additiona
+l_ChIPSeqCoveragePlot_George_Cross/H3v_runBoth_tagsonly.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H4v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
+--nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H4v_tagsonly_080920.txt.bt >  @downloadDir@/Additional
+_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H3K4me3 --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 30000
+00  --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3K4me3_tagsequences.txt.bt >  @downloadDir@/Addit
+ional_ChIPSeqCoveragePlot_George_Cross/H3K4me3_tagsequences.cov </unpack>
+
+
+
+<unpack>cat @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov @downloadDir@/Additional_ChIPSeqCo
+veragePlot_George_Cross/H3v_runBoth_tagsonly.cov @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov @
+downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/> @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIP
+SeqCoveragePlot_George_Cross.cov/H3K4me3_tagsequences.cov</unpack>
+<pluginArgs>--dataFile @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIPSeqCoveragePlot_George_Cross.cov</pl
+uginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>    
+
  <categoryOrder>
    <categoryRef name="Genome"/>
    <categoryRef name="Organellar"/>
