@@ -29,7 +29,7 @@
     <manualGet fileOrDir="PlasmoDB/pvivax/genome/mitochondrial/%RESOURCE_VERSION%/sequences.gb"/>
         <unpack>mkdir @@dataDir@@/P.vivax_mitochondrial_fixed</unpack>
         <unpack>cat @@dataDir@@/sequences.gb | perl -pe 's/protein_id=/secondary_id=/g' > @@dataDir@@/P.vivax_mitochondrial_fixed/sequences_fixed.gb</unpack>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/organellarFeatures2gus.xml --inputFileOrDir @@dataDir@@/P.vivax_mitochondrial_fixed/sequences_fixed.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium vivax SaI-1"  --seqSoTerm "mitochondrial_chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/organellarFeatures2gus.xml --inputFileOrDir @@dataDir@@/P.vivax_mitochondrial_fixed/sequences_fixed.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism "Plasmodium vivax SaI-1"  --seqSoTerm "mitochondrial_chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. vivax strain Salvador I mitochondrial DNA sequence and annotation"
         project="PlasmoDB"
