@@ -86,7 +86,7 @@ foreach my $subdir (readdir(DIR)){
 	      ($fivePFlanking,$threePFlanking) = &getFlankingSeqs($chr,$cols[0]);
 	  }
 
-	  print OUT "$chr\tLindstrom\tSNP\t$cols[0]\t$cols[0]\t.\t.\t.\tID \"Tg_${subdir}_$cols[0]\" ; Allele \"Me49:$cols[4]\" \"454:$cols[5]\" ; FivePrimeFlank $fivePFlanking ; ThreePrimeFlank $threePFlanking\n";
+	  print OUT "$chr\tLindstrom\tSNP\t$cols[0]\t$cols[0]\t.\t.\t.\tID \"Tg_${subdir}_$cols[0]\" ; Allele \"ME49:$cols[4]\" \"TgCkUg2:$cols[5]\" ; FivePrimeFlank $fivePFlanking ; ThreePrimeFlank $threePFlanking\n";
 	}
 	close(FILE);
       }
