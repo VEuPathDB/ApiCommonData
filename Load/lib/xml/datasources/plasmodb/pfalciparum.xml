@@ -89,6 +89,51 @@
     </info>
   </resource>
 
+  <resource resource="Pfalciparum_ECNumbers_RSRC" version="@@Pfalciparum_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pfalciparum.fasta --output_gff @@dataDir@@/gff/Pfalciparum.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pfalciparum.gff3 --output_gff @@dataDir@@/Pfalciparum.gff</unpack>
+    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pfalciparum.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pfalciparum.ec </unpack>
+    <pluginArgs>--ECMappingFile @@dataDir@@/Pfalciparum.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium falciparum genes"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. falciparum</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Pfalciparum_RSRC" version="@@Pfalciparum_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/function/@@Pfalciparum_chromosomes_VER@@/GOAssociations_Pfalciparum/Pfalciparum.GO"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Pfalciparum.GO --goExternalDatabaseSpec "Gene Ontology|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for Plasmodium falciparum genes"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>P. falciparum</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--pfalciparumDbxRefsResource-->
 
   <resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
@@ -1617,51 +1662,6 @@
     </info>
   </resource>
 
-  <resource resource="GOAssociations_Pfalciparum_RSRC" version="2009-02-19"
-      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/function/GOAssociations_Pfalciparum/%RESOURCE_VERSION%/"/>
-    <unpack>makeGoAssocFile --fileOrDir @@dataDir@@/%RESOURCE_VERSION% --format embl --fileExt embl.gz --output_file @@dataDir@@/gene_association.Pfalciparum --db PlasmoDB --taxon_id 17882 --evidence_code IEA --annotation_basis GeneDB_Pfalciparum </unpack>
-    <pluginArgs>--externalDatabaseSpec %RESOURCE_NAME%|%RESOURCE_VERSION% --inputFile @@dataDir@@/gene_association.Pfalciparum --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms badGOTerms.log</pluginArgs>
-    <info
-        displayName="P. falciparum 3D7 protein GO Associations"
-        project="PlasmoDB"
-        organisms="@@PfOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         <i>P. falciparum 3D7</i> Gene Ontology  associations from GeneDB
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="Pfalciparum_ECNumbers_RSRC" version="@@Pfalciparum_chromosomes_VER@@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeFastaFile --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pfalciparum.fasta --output_gff @@dataDir@@/gff/Pfalciparum.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pfalciparum.gff3 --output_gff @@dataDir@@/Pfalciparum.gff</unpack>
-    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pfalciparum.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pfalciparum.ec </unpack>
-    <pluginArgs>--ECMappingFile @@dataDir@@/Pfalciparum.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="EC Number Mapping for Plasmodium falciparum genes"
-        project="PlasmoDB"
-        organisms="@@PfOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>P. falciparum</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
 
   <resource resource="Pfalciparum_anticodons_RSRC" version="2007-06-28"
       plugin="ApiCommonData::Load::Plugin::InsertAntiCodon">
