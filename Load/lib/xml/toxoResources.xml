@@ -2740,7 +2740,28 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
         </description>
     </resource>
 
-
+<resource resource="T.gondii_MWhite_CellCycle_Array_Profiles" version="2010-03-03"
+            displayName="T.gondii M. White Cell Cycle Array Profiles"
+            category="ignore"
+            organisms="Toxoplasma gondii"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="T.gondii_MWhite_CellCycle_Array_Profiles"
+            extDbRlsVer="2010-03-03"
+            extDbRlsDescrip="T.gondii cell cycle microarray profiles from Michael White"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Tgondii_cellCycle_MWhite/workspace/analysis" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+      />
+<pluginArgs>--inputDir @downloadDir@/T.gondii_MWhite_CellCycle_Array_Profiles/analysis --configFile @downloadDir@/T.gondii_MWhite_CellCycle_Array_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+           
+         Cell cycle expression profiles from Behnke MS, Wootton JC, Lehmann M, Radke JB, Lucas O, Nawas J, Sibley DL, White MW - PROFILES
+          ]]>
+    </description>
+  </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>
