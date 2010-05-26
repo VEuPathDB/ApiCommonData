@@ -21,7 +21,7 @@ ALTER TABLE apidb.GENEGENOMICSEQUENCE_SPLIT
 ADD CONSTRAINT source_id_pk PRIMARY KEY (source_id);
 
 create index ggss_source_id_indx  on apidb.GENEGENOMICSEQUENCE_SPLIT(source_id);
-CREATE SEQUENCE ApiDB.GeneGenomicSequence_sq;
+CREATE SEQUENCE ApiDB.GeneGenomicSequence_Split_sq;
 
 GRANT SELECT ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_w;
