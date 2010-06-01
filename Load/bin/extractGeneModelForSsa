@@ -90,7 +90,7 @@ sub GetGeneQuery {
   my ($TaxonID) = @_;
 
   return ("SELECT gf.source_id, gf.na_feature_id,
-                  least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
+                  least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
                   decode(nl.is_reversed, 1, '-', '+') as strand,
                   ens.source_id AS sequence_id,
@@ -116,7 +116,7 @@ sub GetExonQuery {
 
   my ($parentID) = @_;
 
-  return ("SELECT least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as start_min,
+  return ("SELECT least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max
              FROM dots.NaLocation nl, dots.NaFeature nf
             WHERE nf.subclass_view = 'ExonFeature'
