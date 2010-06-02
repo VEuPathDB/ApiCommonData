@@ -4125,10 +4125,13 @@ createEmptyTable();
 
 my $genomeListRef = getGenomeList();
 my @genomeList = @$genomeListRef;
+my $totalChangedGenes;
 
 foreach my $genome (@genomeList) {
-  processChangedGenes($genome->{'taxonomyId'}, $genome->{'sinceDate'});
+  $totalChangedGenes += processChangedGenes($genome->{'taxonomyId'}, $genome->{'sinceDate'});
 }
+
+ApiCommonData::Load::TuningConfig::Log::addLog("Saved $totalChangedGenes total changed genes from web service");
 
 sub getGenomeList {
 
@@ -4290,6 +4293,8 @@ sub processChangedGenes {
       or die "Can't insert ChangedGene record (gene $gene, lastModified $modDate)";
   }
 
+  ApiCommonData::Load::TuningConfig::Log::addLog("Saved " . keys(%geneLastChange) . " changed genes from web service for taxonomy ID $taxonomyId");
+
   # suppress changes for genes whose data-load is newer than the newest change
     $dbh->do(<<SQL);
 update ChangedGene&1
@@ -4301,6 +4306,8 @@ where last_modified < (select to_date(edr.version, 'yyyy-mm-dd')
                          and edr.external_database_release_id = nf.external_database_release_id
                          and edr.version like '____-__-__')
 SQL
+
+  return keys(%geneLastChange);
 
 }
 
