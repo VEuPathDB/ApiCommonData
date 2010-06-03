@@ -4401,7 +4401,8 @@ partition by list (organism)
   )
 nologging
 as
-select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
+select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_attrs) */
+       syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
        substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
        substr(context_gene_attrs.project_id, 1, 10) project_id,
@@ -4459,9 +4460,9 @@ select syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
                                   WHEN syn_fl.start_min < syn.b_start THEN syn.b_start 
                                   END || ';;' ||
               'Taxon=' || syntenic_gene_attrs.organism, 1, 400) atts
-FROM apidb.GeneAttributes context_gene_attrs,
-     apidb.Synteny syn, apidb.SyntenyAnchor anch_left, apidb.SyntenyAnchor anch_right,
-     apidb.GeneAttributes syntenic_gene_attrs, apidb.FeatureLocation syn_fl
+FROM apidb.Synteny syn, apidb.GeneAttributes context_gene_attrs,
+     apidb.SyntenyAnchor anch_left, apidb.SyntenyAnchor anch_right,
+     apidb.FeatureLocation syn_fl, apidb.GeneAttributes syntenic_gene_attrs
 WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
   AND syn.a_start <= context_gene_attrs.context_end
   AND syn.a_end >= context_gene_attrs.context_start 
@@ -4553,7 +4554,7 @@ partition by list (organism)
   )
 nologging
 as
-SELECT
+SELECT /*+ ordered no_expand use_hash(syn exfloc) use_hash(exfloc syntenic_gene_attrs) */
        syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        exfloc.na_feature_id feature_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
@@ -4598,9 +4599,10 @@ SELECT
             END end,
        CASE WHEN (exfloc.is_reversed = syn.is_reversed) THEN 1 ELSE -1 END strand,
        'isDeprecated=' ||  syntenic_gene_attrs.is_deprecated atts 
-FROM apidb.synteny syn, apidb.syntenyAnchor anch_left, apidb.syntenyAnchor anch_right,
-     apidb.featurelocation exfloc, apidb.geneattributes syntenic_gene_attrs,
-     apidb.geneattributes context_gene_attrs
+FROM
+     apidb.synteny syn, apidb.geneattributes context_gene_attrs,
+     apidb.syntenyAnchor anch_left, apidb.syntenyAnchor anch_right,
+     apidb.featurelocation exfloc, apidb.geneattributes syntenic_gene_attrs
 WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   AND syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
   AND syn.a_start <= context_gene_attrs.context_end 
