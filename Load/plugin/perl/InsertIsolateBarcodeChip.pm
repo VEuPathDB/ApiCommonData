@@ -91,7 +91,7 @@ my $argsDeclaration =
            }), 
  stringArg({  name           => 'SOTermName',
 	      descr          => 'The Sequence Ontology term for the sequence type',
-	      reqd           => 1,
+	      reqd           => 0,
 	      constraintFunc => undef,
 	      isList         => 0 }),
    ];
