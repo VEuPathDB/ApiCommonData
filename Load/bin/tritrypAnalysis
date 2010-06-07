@@ -1210,6 +1210,29 @@ $mgr->waitForCluster("TbruceiAssemblies BLAT alignment to TbruceiGenome", "waitT
 
 &loadEpitopes($mgr, "$projectDir/$release/analysis_pipeline/primary/data/iedb/results/Lm", "Lmajor", "Links to IEDB epitopes|05-28-2009", "L.major chromosomes and annotations|2008-11-12", "out");
 
+##############################################################################
+########   Tbrucei927 SAGE Tags                                             ########
+##############################################################################
+$mgr->{sageTagArrays} = ({Tbrucei927 => [{ name => "T.brucei gambiense SAGE Tags", ver => 1 }]});
+
+&extractSageTags($mgr,"Tbrucei927", 'CATG');
+
+$mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 contigs and chromosomes", ver=> "2009-10-06" }]});
+
+&extractGenomeNaSequences($mgr, "Tbrucei927", "ExternalNASequence", "chromosome", 185431);
+&extractGenomeNaSequences($mgr, "Tbrucei927", "ExternalNASequence", "contig", 185431);
+
+&mapSageTagsToNaSequences($mgr,"Tbrucei927");
+
+&loadExpressionFeature($mgr,"T.brucei_gambiense_SAGETagsToSanger_T.brucei_927_chromosomes","RAD.SAGETag|continuous","SAGETagFeature","T.brucei927");
+&loadSageTagMap($mgr,"Tbrucei927");
+
+&createSageTagNormFiles ($mgr,"Transcriptome analysis of two life stages of Trypanosoma brucei gambiense", 3952450);
+
+&insertNormSageTagFreqs ($mgr,"Transcriptome analysis of two life stages of Trypanosoma brucei gambiense");
+
+
+
 ######################################################################
 ### gives AASequences a taxon id ###
 #######################################################################
