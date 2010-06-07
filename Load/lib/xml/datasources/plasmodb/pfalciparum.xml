@@ -139,7 +139,7 @@
   <resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/P.falciparum_chromosomes_aliases/%RESOURCE_VERSION%/mapping"/>
-    <pluginArgs>--DbRefMappingFile @@@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
     <info
         displayName="P. falicparum chromosomes DBRefs"
         project="PlasmoDB"
@@ -553,6 +553,28 @@
     </info>
   </resource>
 
+  <resource resource="PhylogeneticProfiles_Pfalciparum_RSRC" version="2005-11-29"
+      plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/phylogeny/PhylogeneticProfiles/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. falciparum' --headerFile @@dataDir@@/%RESOURCE_VERSION%/pf_TaxonNameHeaders --dataFile @@dataDir@@/%RESOURCE_VERSION%/pfalciparum/pp-any-and-pfal.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
+    <info
+        displayName="Phylogenetic profiles for P. falciparum"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Shailesh Date"
+        email="svdate@@pcbi.upenn.edu"
+        institution="CBIL">
+      <description>
+        <![CDATA[
+         Phylogenetic profiles based on the presence or absence of all known <i>P. falciparum</i> ORFs in 164 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function.
+        ]]>
+      </description>
+    <publication pmid="10200254"/>
+    </info>
+  </resource>
+
   <resource resource="MutualInformationScores_Pfalciparum_RSRC" version="2005-11-29"
       plugin="GUS::Community::Plugin::LoadMutualInformationScores">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/phylogeny/PhylogeneticProfiles/%RESOURCE_VERSION%/pfalciparum/pp-any-and-pfal.noHomologs.mi"/>
@@ -600,7 +622,7 @@
   <resource resource="Pf_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/apiLoc_eupathDb_links.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. falicparum ApiLoc and EupathDb links"
         project="PlasmoDB"
@@ -1128,28 +1150,6 @@
     </info>
   </resource>
 
-  <resource resource="PhylogeneticProfiles_Pfalciparum_RSRC" version="2005-11-29"
-      plugin="GUS::Community::Plugin::InsertPhylogeneticProfiles">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/phylogeny/PhylogeneticProfiles/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--ProfileSetDescription 'The phylogenetic profiles for P. falciparum' --headerFile @@dataDir@@/%RESOURCE_VERSION%/pf_TaxonNameHeaders --dataFile @@dataDir@@/%RESOURCE_VERSION%/pfalciparum/pp-any-and-pfal.gz --tolerateMissingIds 1 --dontLoadScores</pluginArgs>
-    <info
-        displayName="Phylogenetic profiles for P. falciparum"
-        project="PlasmoDB"
-        organisms="@@PfOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact="Shailesh Date"
-        email="svdate@@pcbi.upenn.edu"
-        institution="CBIL">
-      <description>
-        <![CDATA[
-         Phylogenetic profiles based on the presence or absence of all known <i>P. falciparum</i> ORFs in 164 completely sequenced genomes were calculated. Similarity between profiles is a good indicator of functional linkages between proteins (see Pellegrini et al., 1999). Data on ORFs with the most similar profiles to a given query ORF is also available, and can be used to establish the function of uncharacterized ORFs, based on the similarity of their profiles (see Date and Marcotte, 2003) with ORFs of known function.
-        ]]>
-      </description>
-    <publication pmid="10200254"/>
-    </info>
-  </resource>
-
   <resource resource="Cowman_Subcellular_motifs_RSRC" version="2004"
       plugin="ApiCommonData::Load::Plugin::InsertSingleMotifMultMappings">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/cellularLocation/Cowman/%RESOURCE_VERSION%/PEXEL_MOTIF_AND_POSITION"/>
@@ -1543,7 +1543,7 @@
   <resource resource="Pf_XSuSnps_RSRC" version="@@Pf_XSuSnps_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/XSu/%RESOURCE_VERSION%/XSu_1-6-2010.in"/>
-    <unpack>suSnpTabToGffTransform  --tab_file @@dataDir@@/XSu_1-6-2010.in --out_file@@dataDir@@/Pf_XSuSnps_RSRC.gff</unpack>
+    <unpack>suSnpTabToGffTransform2  --tab_file @@dataDir@@/XSu_1-6-2010.in --out_file @@dataDir@@/Pf_XSuSnps_RSRC.gff</unpack>
     <getAndUnpackOutput file="@@dataDir@@/Pf_XSuSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -1568,7 +1568,7 @@
 
   <resource resource="WirthSageTagArrayDesign_RSRC" version="@@WirthSageTagArrayDesign_VER@@"
       plugin="GUS::Supported::Plugin::LoadArrayDesign">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/WirthSageTagArrayDesign/%RESOURCE_VERSION%/array"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/sageTag/WirthSageTagArrayDesign/%RESOURCE_VERSION%/array"/>
     <unpack>preLoadArrayDesign --category TechnologyType --value @@PlasmoSageTags.OntologyEntryValue@@ --manufacturer @@PlasmoSageTags.Contact@@</unpack>
     <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @@dataDir@@/array/distinct_sage_tags.txt > @@dataDir@@/array/distinct_sage_tags_header.txt</unpack>
     <pluginArgs>--cfg_file @@dataDir@@/array/sageArray.config --data_file @@dataDir@@/array/distinct_sage_tags_header.txt  --manufacturer @@PlasmoSageTags.Contact@@ --technology_type @@PlasmoSageTags.OntologyEntryValue@@</pluginArgs>
@@ -1733,10 +1733,10 @@
   <resource resource="Pf_RNASeq_Duffy_RSRC" version="@@Pf_RNASeq_Duffy_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Duffy/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/PL01.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/PL02.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/3D7.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PL01.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PL02.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/3D7.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="RNA-Seqs from Patrick Duffy"
@@ -1757,20 +1757,20 @@
   <resource resource="Pf_ChipSeq_Le_Roch_RSRC" version="@@Pf_ChipSeq_Le_Roch_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/chipSeq/Le_Roch/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE0.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE6.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE12.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE18.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE24.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE30.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/MAINE36.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE0.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE6.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE12.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE18.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE24.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE30.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/FAIRE36.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE0.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE6.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE12.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE18.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE24.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE30.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/MAINE36.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE0.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE6.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE12.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE18.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE24.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE30.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/FAIRE36.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="ChIP-Seqs from Le Roch"
@@ -1791,14 +1791,14 @@
   <resource resource="Pf_RNASeq_Newbold_RSRC" version="@@Pf_RNASeq_Newbold_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour48.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour40.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour32.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour24.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour16.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour8.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/hour0.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour48.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour40.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour32.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour24.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour16.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour8.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/hour0.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
     <pluginArgs>--inputDir @@dataDir@@/Profiles --configFile @@dataDir@@/Profiles/config.txt --tolerateMissingIds  --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
     <info
         displayName="P.falciparum RNA Sequence Profiles(Newbold)"

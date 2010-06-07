@@ -15,7 +15,7 @@ if (!$inputFile || !$outputIndexDir) {
   die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH>\n";
 }
 
-my $cmd = "/files/software/bowtie/bowtie-build $inputFile $outputIndexDir";
+my $cmd = "/files/software/bowtie/current/bowtie-build $inputFile $outputIndexDir";
 
 &exeCmd($cmd);
 

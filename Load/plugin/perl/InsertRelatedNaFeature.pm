@@ -146,7 +146,7 @@ sub run {
 sub undoTables {
   my ($self) = @_;
 
-  return ('ApiDB::RelatedNaFeature');
+  return ('ApiDB.RelatedNaFeature');
 }
 
 
