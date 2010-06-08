@@ -139,7 +139,7 @@ stringArg({ name            => 'checkSQL',
 
  integerArg({  name           => 'ncbiTaxId',
 	       descr          => 'The taxon id from NCBI for these sequences.',
-	       reqd           => 1,
+	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
