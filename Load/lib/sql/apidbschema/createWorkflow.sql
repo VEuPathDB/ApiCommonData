@@ -1,3 +1,9 @@
+---
+--- IMPORTANT: 
+--- Any changes to Workflow or WorkflowStep must also be made in
+--- ReFlow/Controller/lib/sql/reflowSchema.sql
+---
+
 create table apidb.Workflow (
   workflow_id              number(10), 
   name                     varchar(30),  -- name and version are an alternate key
