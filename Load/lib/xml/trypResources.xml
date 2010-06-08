@@ -2461,6 +2461,26 @@ Frequencies of SAGE tags that were observed in studies using RNA from <i>T. bruc
         </description>
     </resource>
 
+    <resource resource="FernanAgueroTcSNPDbxRefs" version="2009-11-23"
+        displayName="External DbxRefs to TcSNP database for Tcruzi"
+        category="Genome"
+        extDbName="TcSNP dbxrefs"
+        extDbRlsVer="2009-11-23"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Fernan_Aguero_11-23-09/TcSNP_dbxrefs.txt"
+            contact = "Fernan Aguero"
+            email = "fernan.aguero@gmail.com"
+            institution = "University of San Martin, Argentina"
+        />
+        <pluginArgs>--DBRefMappingFile @downloadDir@/FernanAgueroTcSNPDbxRefs/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
+
+        <description>
+            <![CDATA[
+TcSNP is an online resource/database with information on genetic variation(polymorphisms,mutations) for different stocks,strains and isolates of <i>Trypanosoma cruzi</i>, the causative agent of Chagas diseases. 
+         ]]>
+        </description>
+    </resource>
 
 <resource resource="Additional_ChIPSeqCoveragePlot_George_Cross" version="2010-03-09" 
         displayName="ChIP-Seqs from George Cross" 
