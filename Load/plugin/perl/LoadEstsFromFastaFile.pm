@@ -57,6 +57,12 @@ my $argsDeclaration =
              constraintFunc  => undef,
              isList          => 0 }),
 
+stringArg({ name            => 'taxonNameRegex',
+             descr           => 'regex for taxonname.name from defline to get taxon_id',
+             reqd            => 1,
+             constraintFunc  => undef,
+             isList          => 0 }),
+
 stringArg({ name            => 'checkSQL',
              descr           => 'sql statement used to query for na_sequence_id of an EST that is already in the database',
              reqd            => 0,
@@ -204,7 +210,7 @@ stringArg({   name           => 'contactFax',
 	       isList         => 0 }),
 
  stringArg({   name           => 'libraryStage',
-	       descr          => 'vector used for the creation of the library clones',
+	       descr          => 'stage used for the creation of the library clones',
 	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
@@ -226,6 +232,12 @@ stringArg({   name           => 'contactFax',
 	       reqd           => 0,
 	       constraintFunc   => undef,
 	       default        => 0 }),
+ stringArg({   name           =>  'taxonName',
+               descr          => 'Description of the sequence from the defline for comment_string field of library table',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 })
+
 ];
 
 
@@ -264,6 +276,10 @@ sub run {
 
   if ($self->getArg('ncbiTaxId')) {
     $self->fetchTaxonId();
+  }
+
+  if ($self->getArg('taxonName')) {
+    $self->fetchTaxonIdFromName();
   }
 
   $self->makeLibraryRow();
@@ -350,6 +366,10 @@ sub processFile{
 	      $secondary_id = $1;
 	    }
 
+            my $taxonNameRegex = $self->getArg('taxonNameRegex') if $self->getArg('taxonNameRegex');
+	    if ($taxonNameRegex && /$taxonNameRegex/) {
+	      $self->fetchTaxonIdFromName($1);
+	    }
 
 	    my $regexDescrip = $self->getArg('regexDesc') if $self->getArg('regexDesc');
 	    if ($regexDescrip && /$regexDescrip/) {
@@ -626,6 +646,19 @@ sub fetchTaxonId {
     || $self->userError ("The NCBI tax ID '$ncbiTaxId' provided on the command line is not found in the database");
 
   $self->{taxonId} = $taxon->getTaxonId();
+}
+
+sub fetchTaxonIdFromName {
+  my ($self,$name) = @_;
+
+  my $taxonName = $name ? $name : $self->getArg('taxonName');
+
+  my $taxonName = GUS::Model::SRes::TaxonName->new({name=>$taxonName,name_class=>'scientific name'});
+
+  $taxonName->retrieveFromDB 
+    || $self->userError ("The NCBI tax ID '$taxonName' provided on the command line or as a regex is not found in the database");
+
+  $self->{taxonId} = $taxonName->getTaxonId();
 }
 
 sub undoTables {
