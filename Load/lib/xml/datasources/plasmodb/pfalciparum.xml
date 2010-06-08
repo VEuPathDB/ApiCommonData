@@ -1033,7 +1033,7 @@
   <resource resource="Su_Pfalciparum_Microsatellite_Markers_RSRC" version="2008-05-29"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genomeFeature/Su_P.falciparum_Microsatellite_Markers/%RESOURCE_VERSION%/sequences.gb.fixed"/>
-    <unpack>dumpSequencesFromTable.pl --outputFile @@dataDir@@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Pfalciparum_chromosomes_RSRC' AND ed.external_database_id = edr.external_database_id AND edr.version = @@Pfalciparum_chromosomes_VER@@ and ns.external_database_release_id = edr.external_database_release_id"</unpack>
+    <unpack>dumpSequencesFromTable.pl --outputFile @@dataDir@@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Pfalciparum_chromosomes_RSRC' AND ed.external_database_id = edr.external_database_id AND edr.version = '@@Pfalciparum_chromosomes_VER@@' and ns.external_database_release_id = edr.external_database_release_id"</unpack>
     <unpack>createSTSFileFromGB --genbank_file_or_dir @@dataDir@@/sequences.gb.fixed --output_file @@dataDir@@/sequences.sts </unpack>
     <unpack> ePCRMicrosatelliteForLocations --sts_file @@dataDir@@/sequences.sts --output_file @@dataDir@@/Pf_ms.gff --seq_file @@dataDir@@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/ --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/MicrosatelliteGff2gus.xml --inputFileOrDir @@dataDir@@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
@@ -1129,10 +1129,9 @@
 
 
   <resource resource="loadPfLocationMapWithSqlldr_RSRC" version="2007-08-01"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+      plugin="ApiCommonData::Load::Plugin::InsertPlasmoPfalLocationsWithSqlLdr">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/combined_Su_Broad_Sanger/%RESOURCE_VERSION%/map_v6.0.sql"/>
-    <unpack>sqlLoader.pl --file @@dataDir@@/map_v6.0.sql</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <pluginArgs>--dataFile @@dataDir@@/map_v6.0.sql</pluginArgs>
     <info
         displayName="load Pf location map With Sqlldr"
         project="PlasmoDB"
@@ -1242,7 +1241,7 @@
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genePrediction/EviganModels/%RESOURCE_VERSION%/Evigan_pf_nbest_chr_forImport.gff.gz"/>
     <unpack>gunzip @@dataDir@@/Evigan_pf_nbest_chr_forImport.gff.gz</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @@dataDir@@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @@dataDir@@/Evigan_pf_nbest_chr_forImport.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
     <info
         displayName="P. falciparum Evigan Gene Models"
         project="PlasmoDB"
@@ -1306,10 +1305,9 @@
   </resource>
 
   <resource resource="Pf_loadMAPPWithSqlldr_RSRC" version="2009-05-01"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+      plugin="ApiCommonData::Load::Plugin::InsertPlasmoMappWithSqlLdr">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>sqlLoader.pl --file @@dataDir@@/../BrickMAPPpromoters/Pfal_MAPP-version3.sql </unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <pluginArgs>--dataFile @@dataDir@@/../BrickMAPPpromoters/Pfal_MAPP-version3.sql</pluginArgs>
     <info
         displayName="load MAPP With Sqlldr"
         project="PlasmoDB"
@@ -1642,7 +1640,7 @@
   <resource resource="Pfalciparum_anticodons_RSRC" version="2007-06-28"
       plugin="ApiCommonData::Load::Plugin::InsertAntiCodon">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/mRNA/anticodon/%RESOURCE_VERSION%/PfAntiCodons"/>
-    <pluginArgs>--data_file $dataDir@@/PfAntiCodons --genomeDbName 'Pfalciparum_chromosomes_RSRC' --genomeDbVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
+    <pluginArgs>--data_file @@dataDir@@/PfAntiCodons --genomeDbName 'Pfalciparum_chromosomes_RSRC' --genomeDbVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
     <info
         displayName="P. falciparum (3D7) anticodons"
         project="PlasmoDB"
