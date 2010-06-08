@@ -406,8 +406,8 @@ sub processFile{
 
 	    my $libraryNameRegex = $self->getArg('libraryNameRegex') if  $self->getArg('libraryNameRegex');
             if ($libraryNameRegex && /$libraryNameRegex/) {
-	      $self->makeLibraryRow($1)
-
+	      $self->makeLibraryRow($1);
+	    }
 
 	    my $putativeFullLengthRegex = $self->getArg('putativeFullLengthRegex') if $self->getArg('putativeFullLengthRegex');
 	    if ($putativeFullLengthRegex && /$putativeFullLengthRegex/) {
