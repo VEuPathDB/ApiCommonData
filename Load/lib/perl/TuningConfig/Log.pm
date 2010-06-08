@@ -1,5 +1,8 @@
 package ApiCommonData::Load::TuningConfig::Log;
 
+use ApiCommonData::Load::TuningConfig::TuningRegistry;
+use ApiCommonData::Load::TuningConfig::TableSuffix;
+
 BEGIN {
 
   # These variables are declared inside a BEGIN block.  This makes them behave
@@ -15,6 +18,7 @@ BEGIN {
   my $partialUpdateFlag;
   my $debugFlag;
   my $indentString;
+  my $instance;
 
   sub addLog {
     my ($message) = @_;
@@ -90,6 +94,15 @@ BEGIN {
     return $partialUpdatedFlag;
   }
 
+  sub setInstance {
+    my ($givenInstance) = @_;
+    $instance = $givenInstance;
+  }
+
+  sub getInstance {
+    return $instance;
+  }
+
 }
 
 sub addErrorLog {
@@ -138,6 +151,21 @@ sub getProcessInfo {
   my $nodename = `uname -n`;
   chomp($nodename);
   return("process $$ on $nodename");
+}
+
+sub logRebuild {
+  my ($dbh, $name, $buildDuration, $instanceName, $dblink) = @_;
+
+  my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
+  my $updater = getProcessInfo();
+
+  $dbh->do(<<SQL) or addErrorLog("\n" . $dbh->errstr . "\n");
+insert into apidb_r.TuningTableLog\@$dblink
+(instance_nickname, name, suffix, updater, timestamp, row_count, build_duration)
+select '$instanceName', '$name', '$suffix', '$updater', sysdate, count(*), '$buildDuration'
+from $name
+SQL
+
 }
 
 1;

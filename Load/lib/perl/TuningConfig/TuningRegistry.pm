@@ -168,4 +168,9 @@ sub getDblinkSuffix {
   }
 }
 
+sub getDblink {
+  my ($self) = @_;
+  return $self->{dblink};
+}
+
 1;

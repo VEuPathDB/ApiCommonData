@@ -118,7 +118,7 @@ sub getTimestamp {
 }
 
 sub getState {
-  my ($self, $doUpdate, $dbh, $purgeObsoletes) = @_;
+  my ($self, $doUpdate, $dbh, $purgeObsoletes, $registry) = @_;
 
   return $self->{state} if defined $self->{state};
 
@@ -146,7 +146,7 @@ sub getState {
 
     # increase log-file indentation for recursive call
     ApiCommonData::Load::TuningConfig::Log::increaseIndent();
-    my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes);
+    my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes, $registry);
     ApiCommonData::Load::TuningConfig::Log::decreaseIndent();
 
     if ($childState eq "neededUpdate" || $dependency->getTimestamp() gt $self->getTimestamp()) {
@@ -184,7 +184,7 @@ sub getState {
   }
 
   if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate}) {
-    my $updateResult = $self->update($dbh, $purgeObsoletes);
+    my $updateResult = $self->update($dbh, $purgeObsoletes, $registry);
     $broken = 1 if $updateResult eq "broken";
   }
 
@@ -206,13 +206,12 @@ sub getState {
 }
 
 sub update {
-  my ($self, $dbh, $purgeObsoletes) = @_;
+  my ($self, $dbh, $purgeObsoletes, $registry) = @_;
 
   my $startTime = time;
 
   ApiCommonData::Load::TuningConfig::Log::setUpdatePerformedFlag()
       unless $self->{alwaysUpdate};
-
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
 
@@ -279,9 +278,11 @@ sub update {
 
   $self->publish($suffix, $dbh, $purgeObsoletes) or return "broken";
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("    " . (time - $startTime) .
-						 " seconds to rebuild tuning table " .
-						 $self->{name});
+  my $buildDuration = time - $startTime;
+  ApiCommonData::Load::TuningConfig::Log::addLog("    $buildDuration seconds to rebuild tuning table "
+                                                 . $self->{name});
+
+  ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink());
 
   return "neededUpdate"
 }

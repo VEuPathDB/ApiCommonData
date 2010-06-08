@@ -215,7 +215,7 @@ eval {
     }
 
     $tableCount++;
-    my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge);
+    my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge, $tuningRegistry);
 
     if ($state eq "broken") {
       $brokenCount++;
