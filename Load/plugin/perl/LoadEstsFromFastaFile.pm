@@ -59,7 +59,7 @@ my $argsDeclaration =
 
 stringArg({ name            => 'taxonNameRegex',
              descr           => 'regex for taxonname.name from defline to get taxon_id',
-             reqd            => 1,
+             reqd            => 0,
              constraintFunc  => undef,
              isList          => 0 }),
 
@@ -163,19 +163,19 @@ stringArg({ name            => 'checkSQL',
 
  stringArg({   name           => 'contactName',
 	       descr          => 'Name of contact, used to create row in contact table',
-	       reqd           => 1,
+	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
 stringArg({   name           => 'contactAddress1',
 	       descr          => 'First line of address for contact, used to create row in contact table',
-	       reqd           => 1,
+	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
 stringArg({   name           => 'contactAddress2',
 	       descr          => 'Second line of address for contact, used to create row in contact table',
-	       reqd           => 1,
+	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
