@@ -223,7 +223,13 @@ stringArg({   name           => 'contactFax',
 
  stringArg({   name           => 'libraryName',
 	       descr          => 'name of library for dbest_name field of library table',
-	       reqd           => 1,
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
+
+ stringArg({   name           => 'libraryNameRegex',
+	       descr          => 'regex for name of library for dbest_name field of library table',
+	       reqd           => 0,
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
@@ -282,7 +288,7 @@ sub run {
     $self->fetchTaxonIdFromName();
   }
 
-  $self->makeLibraryRow();
+  $self->makeLibraryRow() if $self->getArg('libraryName');
 
   $self->makeContactRow();
 
@@ -384,7 +390,7 @@ sub processFile{
 
 	    my $regexQualityStart = $self->getArg('qualityStartRegex') if $self->getArg('qualityStartRegex');
 	    if ($regexQualityStart && /$regexQualityStart/) {
-		$qualityStart = $1;
+	      $qualityStart = $1;
 	    }
 
 	    my $possiblyReversedRegex = $self->getArg('possiblyReversedRegex') if $self->getArg('possiblyReversedRegex');
@@ -397,6 +403,10 @@ sub processFile{
 	    else {
 	      $possiblyReversed = 0;
 	    }
+
+	    my $libraryNameRegex = $self->getArg('libraryNameRegex') if  $self->getArg('libraryNameRegex');
+            if ($libraryNameRegex && /$libraryNameRegex/) {
+	      $self->makeLibraryRow($1)
 
 
 	    my $putativeFullLengthRegex = $self->getArg('putativeFullLengthRegex') if $self->getArg('putativeFullLengthRegex');
@@ -433,9 +443,9 @@ sub processFile{
 ##SUBS
 
 sub makeLibraryRow {
-  my($self) = @_;
+  my($self,$lib) = @_;
 
-  my $name = $self->getArg('libraryName');
+  my $name = $lib ? $lib : $self->getArg('libraryName');
 
   my $taxonId = $self->{taxonId};
 
