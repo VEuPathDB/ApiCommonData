@@ -12,7 +12,7 @@ use GUS::Model::SRes::Taxon;
 use GUS::Model::SRes::SequenceOntology;
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
-
+use GUS::Model::SRes::TaxonName;
 
 
 my $argsDeclaration =[];
