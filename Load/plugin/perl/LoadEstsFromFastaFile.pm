@@ -221,6 +221,18 @@ stringArg({   name           => 'contactFax',
 	       constraintFunc => undef,
 	       isList         => 0 }),
 
+stringArg({   name           => 'libraryStageRegex',
+	       descr          => 'regex for the stage used for the creation of the library clones',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
+
+ stringArg({   name           => 'libraryDescRegex',
+	       descr          => 'regex for the description of the sequence from the defline for comment_string field of library table',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
+
  stringArg({   name           => 'libraryName',
 	       descr          => 'name of library for dbest_name field of library table',
 	       reqd           => 0,
@@ -324,6 +336,9 @@ sub processFile{
     my $poorQuality;
     my $seqLength;
     my $qualityStart;
+    my $libName;
+    my $libStage;
+    my $libDesc;
 
     my $sql = $self->getArg('checkSQL') ? $self->getArg('checkSQL') : "select na_sequence_id from dots.externalnasequence where source_id = ? and external_database_release_id = $self->{external_database_release_id}";
 
@@ -404,9 +419,23 @@ sub processFile{
 	      $possiblyReversed = 0;
 	    }
 
+	     my $libraryDescRegex = $self->getArg('libraryDescRegex') if  $self->getArg('libraryDescRegex');
+            if ($libraryDescRegex && /$libraryDescRegex/) {
+	      $libDesc = $1;
+	    }
+
+	     my $libraryStageRegex = $self->getArg('libraryStageRegex') if  $self->getArg('libraryStageRegex');
+            if ($libraryStageRegex && /$libraryStageRegex/) {
+	      $libStage = $1;
+	    }
+
 	    my $libraryNameRegex = $self->getArg('libraryNameRegex') if  $self->getArg('libraryNameRegex');
             if ($libraryNameRegex && /$libraryNameRegex/) {
-	      $self->makeLibraryRow($1);
+	      $libName = $1;
+	    }
+
+	    if ($libName){
+	      $self->makeLibraryRow($libName,$libStage,$libDesc);
 	    }
 
 	    my $putativeFullLengthRegex = $self->getArg('putativeFullLengthRegex') if $self->getArg('putativeFullLengthRegex');
@@ -443,7 +472,7 @@ sub processFile{
 ##SUBS
 
 sub makeLibraryRow {
-  my($self,$lib) = @_;
+  my($self,$lib,$libStage,$libDesc) = @_;
 
   my $name = $lib ? $lib : $self->getArg('libraryName');
 
@@ -462,12 +491,14 @@ sub makeLibraryRow {
       my $vector = $self->getArg('libraryVector');
       $library->setVector($vector);
     }
-    if ($self->getArg('libraryStage')) {
-      my $stage = $self->getArg('libraryStage');
+
+    my $stage = $libStage ? $libStage : $self->getArg('libraryStage');
+    if ($stage) {
       $library->setStage($stage);
     }
-    if ($self->getArg('libraryDesc')) {
-      my $description = $self->getArg('libraryDesc');
+
+    my $description = $libDesc ? $libDesc : $self->getArg('libraryDesc');
+    if ($description) {
       $library->setCommentString($description);
     }
     $library->submit();
