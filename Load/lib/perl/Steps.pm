@@ -166,6 +166,32 @@ sub initOrphAnalysis{
   return ($mgr, $projectDir, $release, $allSpecies);
 }
 
+sub initMicroAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = "Ebieneusi,Eintestinalis,Ecuniculi";
+
+  my $taxId = ["Ebieneusi:481877","Eintestinalis:58839","Ecuniculi:284813"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
+sub initAmoebAnalysis {
+  my ($propertyFile, $optionalArgs) = @_;
+
+  my $allSpecies = "Edispar,Einvadens,Ehistolytica";
+
+  my $taxId = ["Edispar:370354","Einvadens:370355","Ehistolytica:294381"];
+
+  my ($mgr, $projectDir, $release)
+    = &init($propertyFile, $optionalArgs,$allSpecies, $taxId);
+
+  return ($mgr, $projectDir, $release, $allSpecies);
+}
+
 sub UpdateGusTableWithXml {
   my ($mgr,$file,$table) = @_;
   my $signal = "Load${table}WithXml";
@@ -1412,6 +1438,47 @@ EOF
     makeDownloadFile($mgr, $species, $fileName, $sql,$project);
 
 }
+
+sub makeGSSDownloadFile {
+  my ($mgr, $species, $name, $soTerm,$ncbiTaxIdList, $dbName, $dbVer, $project) = @_;
+
+  my $sql = <<"EOF";
+    SELECT x.source_id
+           ||' | organism='||
+           replace(tn.name, ' ', '_')
+           ||' | libraryName='||
+           l.dbest_name
+           ||' | length='||
+           x.length as defline,
+           x.sequence
+           FROM dots.externalnasequence x,
+                sres.taxonname tn,
+                sres.taxon t,
+                sres.sequenceontology so,
+                sres.externaldatabase ed,
+                sres.externaldatabaserelease edr,
+                dots.library l,
+                dots.est e
+           WHERE t.taxon_id in ($ncbiTaxIdList)
+            AND t.taxon_id = tn.taxon_id
+            AND tn.name_class = 'scientific name'
+            AND t.taxon_id = x.taxon_id
+            AND x.sequence_ontology_id = so.sequence_ontology_id
+            AND so.term_name = '$soTerm'
+            AND l.library_id = e.library_id
+            AND e.na_sequence_id = x.na_sequence_id
+            AND x.external_database_release_id = edr. external_database_release_id
+            AND edr.version = '$dbVer'
+            AND edr.external_database_id = ed.external_database_id
+            AND ed.name = '$dbName'
+EOF
+
+    my $fileName = $species . ucfirst($name);
+
+    makeDownloadFile($mgr, $species, $fileName, $sql,$project);
+
+}
+
 
 sub makeAllESTDownloadFile {
   my ($mgr, $species, $name, $project) = @_;
@@ -6674,7 +6741,7 @@ sub getTaxonIdList {
   my $returnValue;
 
   if ($hierarchy) {
-    $returnValue = $mgr->runCmd("getSubTaxaList --taxon_id $taxonId");
+    $returnValue = $mgr->runCmd("getSubNCBITaxaList --taxon_id $taxonId");
     chomp $returnValue;
   } else {
     $returnValue = $taxonId;
