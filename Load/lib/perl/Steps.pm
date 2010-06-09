@@ -1459,7 +1459,7 @@ sub makeGSSDownloadFile {
                 sres.externaldatabaserelease edr,
                 dots.library l,
                 dots.est e
-           WHERE t.taxon_id in ($ncbiTaxIdList)
+           WHERE t.ncbi_tax_id in ($ncbiTaxIdList)
             AND t.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'
             AND t.taxon_id = x.taxon_id
