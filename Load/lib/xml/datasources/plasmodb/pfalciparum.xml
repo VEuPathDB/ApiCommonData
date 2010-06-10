@@ -510,7 +510,7 @@
 
   <resource resource="Pf_EcMappings_Hagai_RSRC" version="2009-07"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <wgetArgs url="http://sites.huji.ac.il/malaria/download/Annotated_Table/Annotated_table_JUly_2009.txt">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=ecMappings.txt</wgetArgs>
+    <wgetArgs url="http://sites.huji.ac.il/malaria/download/Annotated_Table/Annotated_table_JUly_2009.txt">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/ecMappings.txt</wgetArgs>
     <unpack><![CDATA[cut -s -f 1,6 @@dataDir@@/ecMappings.txt &> @@dataDir@@/Pfid.txt]]></unpack>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pfid.txt --evidenceCode "Hagai Ginsburg" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" </pluginArgs>
     <info
@@ -1108,7 +1108,7 @@
 
   <resource resource="Pf_Old_GOAssociations_RSRC" version="2008-04-03"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
+    <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=6 --output-document=@@dataDir@@/gene_association.GeneDB_Pfalciparum.20080403</wgetArgs>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/gene_association.GeneDB_Pfalciparum.20080403 --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT regexp_replace(g.source_id,'_v5.5$',''), taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id and g.source_id like '%v5.5'" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "Annotation Center" --inputIdColumn id --tolerateMissingSeqs</pluginArgs>
     <info
         displayName="P. falciparum protein GO associations"
@@ -1684,9 +1684,9 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPfal.xls"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
-    <unpack>extractFromExcel --inputFile @@dataDir@@/IEDBExportPfal.xls --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt </unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPfal.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPfal.fsa </unpack>
-    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="PlasmoDB"
@@ -1787,7 +1787,7 @@
   </resource>
 
   <resource resource="Pf_RNASeq_Newbold_RSRC" version="@@Pf_RNASeq_Newbold_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles">
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Newbold/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput file="@@dataDir@@/final/hour48.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/hour40.fsa"/>
@@ -1797,7 +1797,7 @@
     <getAndUnpackOutput file="@@dataDir@@/final/hour8.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/hour0.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
-    <pluginArgs>--inputDir @@dataDir@@/final --configFile @@dataDir@@/final/config.txt --tolerateMissingIds  --externalDatabase %RESOURCE_NAME% --externalDatabaseRls %RESOURCE_VERSION% </pluginArgs>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P.falciparum RNA Sequence Profiles(Newbold)"
         project="PlasmoDB"
@@ -1982,7 +1982,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Winzeler_CellCycle_RSRC" version="@@Pf_Winzeler_CellCycle_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Winzeler_CellCycle/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Pfalciparum 3D7 cell cycle expression data (Winzeler)"
@@ -2005,7 +2005,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Winzeler_WBCGametocyte_RSRC" version="@@Pf_Winzeler_WBCGametocyte_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Winzeler_WBCGametocyte/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Pfalciparum 3D7 gametocyte expression data (Winzeler)"
@@ -2028,7 +2028,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Cowman_Sir2_KO_RSRC" version="@@Pf_Cowman_Sir2_KO_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/E-TABM-438_sir2KO/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="affymetrix array data on two Sir2 KO lines(Cowman)"
@@ -2050,7 +2050,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Cowman_Invasion_KO_RSRC" version="@@Pf_Cowman_Invasion_KO_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Cowman_InvasionKOs/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="affymetrix array data on Cowman InvasionKOs"
@@ -2071,7 +2071,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Daily_ArrayExpression_RSRC" version="@@Pf_Daily_ArrayExpression_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Daily_Patients/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients - expression profiles"
@@ -2115,7 +2115,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Derisi_Dd2_TimeSeries_RSRC" version="@@Pf_Derisi_Dd2_TimeSeries_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_Dd2_TimeSeries/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="DD2 erythrocytic expression time series (DeRisi)."
@@ -2139,7 +2139,7 @@ Expression data for the <i>P. falciparum</i> DD2 strain during the erythocytic s
   <resource resource="Pf_Derisi_3D7_TimeSeries_RSRC" version="@@Pf_Derisi_3D7_TimeSeries_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_3D7_TimeSeries/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="3D7 erythrocytic expression time series (DeRisi)."
@@ -2163,7 +2163,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_Derisi_HB3_TimeSeries_RSRC" version="@@Pf_Derisi_HB3_TimeSeries_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HB3_TimeSeries/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="HB3 erythrocytic expression time series (DeRisi)."
@@ -2209,7 +2209,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_E_MEXP_128_ArrayExpression_RSRC" version="@@Pf_E_MEXP_128_ArrayExpression_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/E-MEXP-128_IsogenicClonesStages/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="S8.4 vs. AH1S2 (Ring, Schizont, Trophozite) Expression Analysis"
@@ -2253,7 +2253,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_Newbold_ArrayExpression_RSRC" version="@@Pf_Newbold_ArrayExpression_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Newbold_Patients/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P.falciparum gene expression profiles (Newbold)."
@@ -2298,7 +2298,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_GSE10022_CQstudy_RSRC" version="@@Pf_GSE10022_CQstudy_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/GSE10022_CQ/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="E-GEOD-10022 array data(Su lab)."
