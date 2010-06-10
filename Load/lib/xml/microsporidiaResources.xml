@@ -225,6 +225,45 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
           ]]>
         </description>
     </resource>
+    <resource resource="E.bieneusi_Genbank_contigs_and_annotations" version="2009-01-13"
+        displayName="E. bieneusi contig sequences and annotations"
+        organisms="Enterocytozoon bieneusi"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E.bieneusi_Genbank_contigs_and_annotations"
+        extDbRlsVer="2009-01-13"
+        extDbRlsDescrip="E.bieneusi_Genbank_contigs_and_annotations|2009-01-13"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Enterocytozoon_bieneusi/2010-04-15/sequences.gb"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/MicrosporidiaDB/EbieneusiGenbank2Gus.xml --inputFileOrDir @downloadDir@/E.bieneusi_Genbank_contigs_and_annotations/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Enterocytozoon bieneusi H348" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "contig" --bioperlTreeOutput @pipelineDir@/logs/Ebieneusi.bioperl --validationLog @pipelineDir@/logs/Ebieneusi.validation.log</pluginArgs>
+        <description>
+            <![CDATA[
+   Sequence and annotations from Genbank for <i>Enterocytozoon bieneusi H348</i> contigs (PMID:18060071, PMID:19132089). 
+          ]]>
+        </description>
+      </resource>
+
+<resource resource="EbieneusiScaffolds" version="2007-12-12"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="E. bieneusi contig to scaffold map"
+         category="Genome"
+         extDbName="E.bieneusi_Genbank_scaffolds"
+         extDbRlsVer="2007-12-12"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/EbieneusiAgpFile/Ebieneusi.agp"
+         />
+         <pluginArgs>--agpFile @downloadDir@/EbieneusiScaffolds/Ebieneusi.agp --seqPieceExtDbName "E.bieneusi_Genbank_contigs_and_annotations" --seqPieceExtDbRlsVer "2009-01-13" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "481877" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <description>
+            <![CDATA[
+         Contig to scaffold map for<i>Enterocytozoon bieneusi H348</i> .
+         ]]>
+        </description>
+    </resource>
    <resource resource="IEDB_Epitopes" version="2009-12-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
