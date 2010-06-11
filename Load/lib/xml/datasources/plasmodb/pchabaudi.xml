@@ -121,10 +121,11 @@
 
   <resource resource="Pc_IEDB_Epitopes_RSRC" version="@@Pc_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/%RESOURCE_VERSION%"/>
-    <unpack>mkdir @@dataDir@@/IEDB_Epitopes_fixed</unpack>
-    <unpack>createEpitopeFilesFromExcel --excelDir @@dataDir@@/%RESOURCE_VERSION%  --outDir @@dataDir@@/IEDB_Epitopes_fixed </unpack>
-    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPcha.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPcha.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPcha.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPcha.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPcha.fsa </unpack>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="PlasmoDB"

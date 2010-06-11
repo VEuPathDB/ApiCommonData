@@ -74,7 +74,7 @@
 <!--IEDB Resource-->
   <resource resource="Pv_IEDB_Epitopes_RSRC" version="@@Pv_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pvivax/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPviv.xls"/>
+    <manualGet fileOrDir="PlasmoDB/pvivax/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPviv.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPviv.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPviv.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPviv.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPviv.fsa </unpack>

@@ -169,7 +169,7 @@
 
   <resource resource="Pk_IEDB_Epitopes_RSRC" version="@@Pk_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPkno.xls"/>
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPkno.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPkno.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPkno.fsa </unpack>
