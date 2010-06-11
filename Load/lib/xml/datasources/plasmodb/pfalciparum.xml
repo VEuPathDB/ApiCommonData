@@ -1054,12 +1054,12 @@
     </info>
   </resource>
 
-  <resource resource="Pfalciparum_old_annotations_RSRC" version="5.5" parentResource="Pfalciparum_chromosomes_RSRC"
+  <resource resource="Pfalciparum_old_annotations_RSRC" version="5.5"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/data.exchange">--tries=5 --mirror -r --no-parent --no-host-directories --cut-dirs=5</wgetArgs>
     <unpack>mkdir @@dataDir@@/fixed</unpack>
     <unpack>for f in `ls @@dataDir@@/data.exchange`; do cat @@dataDir@@/data.exchange/$f | adjustPlasmoEmblFile > @@dataDir@@/data.exchange/$f.fixed; cat @@dataDir@@/data.exchange/$f.fixed | perl -pe 's/MAL(\d+ standard)/Pf3D7_0$1/' | perl -pe 's/Pf3D7_01([01234] standard)/Pf3D7_1$1/'  | perl -pe 's/(\/systematic_id="[^"]+)/$1_v5.5/' > @@dataDir@@/fixed/$f.fixed; done</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @@dataDir@@/fixed --fileFormat embl --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName %PARENT_EXT_DB_NAME%   --seqExtDbRlsVer %PARENT_EXT_DB_RLS_VER%</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/sangerFeatures2gus.xml --inputFileOrDir @@dataDir@@/fixed --fileFormat embl --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
     <info
         displayName="P. falciparum (3D7) chromosomes annotation, PlasmoDB version 5.5"
         project="PlasmoDB"
