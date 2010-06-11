@@ -30,12 +30,12 @@ my $dbh = $db->getQueryHandle(0);
 my $extDbRlsId = getDbRlsId($extDbSpec);
 
 
-my $sql = "select aef.source_id,l.sequence_source_id, l.start_min
-from apidb.featurelocation l,DoTS.ArrayElementFeature aef
+my $sql = "select aef.source_id,ns.source_id, nl.start_min
+from dots.nalocation nl, dots.nasequence ns, DoTS.ArrayElementFeature aef
 where aef.external_database_release_id=$extDbRlsId
-and aef.na_feature_id=l.na_feature_id
-and l.is_top_level = 1
-order by l.sequence_source_id, l.start_min";
+and aef.na_feature_id=nl.na_feature_id
+and aef.na_sequence_id= ns.na_sequence_id
+order by ns.sequence_source_id, ns.start_min";
 
 my %probeFeatureHash;
 my %reversedProbeFeatureHash;
