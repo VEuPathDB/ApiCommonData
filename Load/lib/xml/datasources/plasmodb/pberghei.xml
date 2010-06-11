@@ -121,7 +121,7 @@
   <resource resource="Pb_IEDB_Epitopes_DBxRefs_RSRC" version="@@Pb_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../pb_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Pb_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
@@ -542,7 +542,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
 
   <resource resource="Pb_Waters_gss_time_series_HPE_RSRC" version="@@Pb_Waters_gss_time_series_HPE_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSTimeSeries/HPE/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/HPE/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info

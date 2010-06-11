@@ -146,7 +146,7 @@
   <resource resource="Pc_IEDB_Epitopes_DBxRefs_RSRC" version="@@Pc_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../pc_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt </unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Pc_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt </unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
