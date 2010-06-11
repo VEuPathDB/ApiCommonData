@@ -261,7 +261,7 @@
   <resource resource="Pb_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pberghei/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/apiLoc_eupathDb_links.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. berghei ApiLoc and EupathDb links"
         project="PlasmoDB"
@@ -510,7 +510,7 @@
 
   <resource resource="Pb_Waters_gss_time_series_HP_RSRC" version="@@Pb_Waters_gss_time_series_HP_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/WatersGSSTimeSeries/HP/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -542,7 +542,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
 
   <resource resource="Pb_Waters_gss_time_series_HPE_RSRC" version="@@Pb_Waters_gss_time_series_HPE_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/HPE/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
