@@ -117,6 +117,7 @@ sub run {
 		   start_min => $start_min
 		   });
 	  $profile->submit();
+          $self->undefPointerCache();
   }
 
   $self->log("Done inserted sequences");
