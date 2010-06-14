@@ -78,13 +78,13 @@ sub getMetaData {
 #  print STDERR "getting metadata from $row->[$map{tigr_final_match}]\n";
   my $h = { 'source_id' => $id,
             'description' => &getDescription($rows),
-            'percentCoverage' => &getPercentCoverage($rows),
+            'percentCoverage' => '',
             'sequenceCount' => &getSequenceCount($rows),
             'spectrumCount' => &getSpectrumCount($rows),
             'sourcefile' => $infile,
             'seqMolWt' => &getMolWt($rows),
             'score' => '',
-	    'seqPI' => &getSeqPI($rows),
+	    'seqPI' => '',
           };
   return $h;
 }
@@ -140,7 +140,7 @@ sub getSeqPI{
 sub getSpectrumCount {
   my($rows) = @_;
  foreach my $row (@$rows){
-    return $row->[$map{'spectral count'}] if $row->[$map{'spectral count'}]; 
+    return $row->[$map{'# peptides'}] if $row->[$map{'spectral count'}]; 
   }
 }
 
@@ -151,9 +151,7 @@ sub getPeptideData {
      
       my $processed_sequence =  $p->[$map{Sequence}];
       $processed_sequence=~ s/\[\d+\]//g;
-    my $pep = {'start' =>  $p->[$map{'Residue Start'}],
-               'end' =>  $p->[$map{'Residue End'}],
-               'sequence' => $processed_sequence,
+    my $pep = {'sequence' => $processed_sequence,
                'ions_score' => $p->[$map{'score'}],
                'delta' => $p->[$map{'Peptide delta score'}],
                'mr_calc' => $p->[$map{'MCR (Mass charge ratio)'}],
