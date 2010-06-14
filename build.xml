@@ -128,7 +128,8 @@
                                             DoTS-Installation,
                                             WDK-Installation,
                                             ApiCommonShared-Installation,
-                                            ApiCommonData/Load-Installation">
+                                            ApiCommonData/Load-Installation"
+                                            ApiCommonData/Dump-Installation">
 
     <ant target="defaultProjectInstall"/>
   </target>  
@@ -154,6 +155,14 @@
     <ant target="defaultComponentInstall">
       <property name="project" value="ApiCommonData"/>
       <property name="component" value="Load"/>
+    </ant>
+  </target>  
+
+
+  <target name="ApiCommonData/Dump-Installation" depends="ProjectTree">
+    <ant target="defaultComponentInstall">
+      <property name="project" value="ApiCommonData"/>
+      <property name="component" value="Dump"/>
     </ant>
   </target>  
 
