@@ -121,7 +121,7 @@
   <resource resource="Pb_IEDB_Epitopes_DBxRefs_RSRC" version="@@Pb_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Pb_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Pb_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
@@ -353,7 +353,7 @@
   <resource resource="Waters_female_gametes_RSRC" version="2007-09-25"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pberghei/massSpec/WatersFemaleGametes/%RESOURCE_VERSION%/Female_peptide_list_PlasmoDB.xls"/>
-    <unpack>parseWatersExcelProteomics.pl --infile Female_peptide_list_PlasmoDB.xls --outfile Female_peptide_list_PlasmoDB_load.tab</unpack>
+    <unpack>parseWatersExcelProteomics.pl --infile @@dataDir@@/Female_peptide_list_PlasmoDB.xls --outfile @@dataDir@@/Female_peptide_list_PlasmoDB_load.tab</unpack>
     <pluginArgs>--inputFile @@dataDir@@/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@@Pberghei_chromosomes_VER@@" --developmentalStage 'gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
@@ -468,7 +468,7 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayPlatform/WatersGSSOligos/%RESOURCE_VERSION%/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-    <pluginArgs>--sequenceFile @@dataDir@@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
+    <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
         displayName="P. berghei GSS oligos"
         project="PlasmoDB"
@@ -491,7 +491,7 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayPlatform/WatersDOZIOligos/%RESOURCE_VERSION%/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-    <pluginArgs>--sequenceFile @@dataDir@@/elements.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
+    <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
         displayName="P. berghei DOZI oligos"
         project="PlasmoDB"
