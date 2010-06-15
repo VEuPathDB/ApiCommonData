@@ -328,7 +328,7 @@
 
   <resource resource="WatanabePbANKA_PredictedTranscripts_RSRC" version="@@WatanabePbANKA_PredictedTranscripts_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile">
-    <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/%RESOURCE_VERSION%/reffull_pf.fas"/>
+    <manualGet fileOrDir="PlasmoDB/pberghei/EST/WatanabePbANKA/%RESOURCE_VERSION%/reffull_pb.fas"/>
     <pluginArgs>--sourceIdRegex "\|(\w+\(\S+\))$" --fastaFile  @@dataDir@@/reffull_pb.fas --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId 5823 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryName 'derivedFromWatanabePbANKA' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabePbANKA EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
     <info
         displayName="J.Watanabe, H.Wakaguri1, M.Sasaki1, Y.Suzuki1, S.Sugano1 P. berghei ANKA predicted full length transcripts"
@@ -468,7 +468,7 @@
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayPlatform/WatersGSSOligos/%RESOURCE_VERSION%/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-    <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId "gb|\S+\|(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
+    <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
         displayName="P. berghei GSS oligos"
         project="PlasmoDB"
