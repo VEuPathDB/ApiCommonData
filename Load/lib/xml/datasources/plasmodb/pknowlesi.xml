@@ -343,30 +343,6 @@
     </info>
   </resource>
 
-  <resource resource="Pknowlesi_ECNumbers_RSRC" version="@@Pknowlesi_chromosomes_VER@@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeFastaFile --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pknowlesi.fasta --output_gff @@dataDir@@/gff/Pknowlesi.gff3</unpack>
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pknowlesi.gff3 --output_gff @@dataDir@@/Pknowlesi.gff</unpack>
-    <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pknowlesi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pknowlesi.ec </unpack>
-    <pluginArgs>--ECMappingFile @@dataDir@@/Pknowlesi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <info
-        displayName="EC Number Mapping for Plasmodium knowlesi genes"
-        project="PlasmoDB"
-        organisms="@@PkOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>P. knowlesi</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 <!--misc resource-->
 
   <resource resource="Pk_TransFactorBindingSites_Llinas_RSRC" version="2010-04-21"
