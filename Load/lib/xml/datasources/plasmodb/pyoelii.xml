@@ -77,10 +77,11 @@
 
   <resource resource="Py_IEDB_Epitopes_RSRC" version="@@Py_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%RESOURCE_VERSION%/"/>
-    <unpack>mkdir @@dataDir@@/IEDB_Epitopes_fixed</unpack>
-    <unpack>createEpitopeFilesFromExcel --excelDir @@dataDir@@/%RESOURCE_VERSION%/ --outDir @@dataDir@@/IEDB_Epitopes_fixed </unpack>
-    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexTaxonName "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPyoe.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa </unpack>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="PlasmoDB"
@@ -101,7 +102,7 @@
   <resource resource="Py_IEDB_Epitopes_DBxRefs_RSRC" version="@@Py_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../py_IEDB_Epitopes/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Py_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
@@ -122,10 +123,10 @@
 
 <!--PyDbxRefResource-->
 
-  <resource resource="Py_Entrez_DBRefs_RSRC" version="2009-04-29"
+  <resource resource="Py_Entrez_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2EntrezUrl/%RESOURCE_VERSION%/final/gene2Url.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="DBRefs for Entrez gene links"
         project="PlasmoDB"
@@ -143,10 +144,10 @@
     </info>
   </resource>
 
-  <resource resource="Py_Pubmed_DBRefs_RSRC" version="2009-08-14"
+  <resource resource="Py_Pubmed_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/entrez/%RESOURCE_VERSION%/gene2pubmed_08_14_09.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed_08_14_09.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/gene2pubmed.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="DBRefs for pubmed links"
         project="PlasmoDB"
@@ -164,10 +165,10 @@
     </info>
   </resource>
 
-  <resource resource="Py_Entrez_Gene_dbxref_RSRC" version="2009-12-01"
+  <resource resource="Py_Entrez_Gene_dbxref_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -185,10 +186,10 @@
     </info>
   </resource>
 
-  <resource resource="Py_Uniprot_Gene_dbxref_RSRC" version="2009-11-24"
+  <resource resource="Py_Uniprot_Gene_dbxref_RSRC" version="@@Py_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/Uniprot/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -198,6 +199,48 @@
         contact=""
         email=""
         institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Py_Winzeler_Westenberger_Dbrefs_RSRC" version="2010-06-17"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2OPIAndlit/%RESOURCE_VERSION%/final/gene2OPI.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2OPI.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="DbRefs from Winzeler and Westenberger"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact="Elizabeth Winzeler"
+        email="winzeler@@scripps.edu"
+        institution="The Scripps Research Institute">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Py_Winzeler_Literature_References_RSRC" version="2010-06-17"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2OPIAndlit/%RESOURCE_VERSION%/final/gene2lit.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2lit.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="Literature references from Winzeler and Westenberger"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact="Elizabeth Winzeler"
+        email="winzeler@@scripps.edu"
+        institution="The Scripps Research Institute">
       <description>
         <![CDATA[
          
@@ -228,10 +271,10 @@
     </info>
   </resource>
 
-  <resource resource="Py_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+  <resource resource="Py_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/gene2apiloc.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. yoelii ApiLoc and EupathDb links"
         project="PlasmoDB"

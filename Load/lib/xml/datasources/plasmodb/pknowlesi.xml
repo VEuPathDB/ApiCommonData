@@ -214,10 +214,10 @@
   </resource>
 
 <!--PkDbxrefResource-->
-  <resource resource="Pk_Entrez_DBRefs_RSRC" version="2009-04-29"
+  <resource resource="Pk_Entrez_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2EntrezUrl/%RESOURCE_VERSION%/final/gene2Url.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="DBRefs for Entrez gene links"
         project="PlasmoDB"
@@ -235,10 +235,10 @@
     </info>
   </resource>
 
-  <resource resource="Pk_Pubmed_DBRefs_RSRC" version="2009-08-14"
+  <resource resource="Pk_Pubmed_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Pubmed/%RESOURCE_VERSION%/gene2pubmed_08_14_09.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed_08_14_09.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/gene2pubmed.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="DBRefs for pubmed links"
         project="PlasmoDB"
@@ -256,10 +256,10 @@
     </info>
   </resource>
 
-  <resource resource="Pk_Entrez_Gene_dbxref_RSRC" version="2009-12-01"
+  <resource resource="Pk_Entrez_Gene_dbxref_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Entrez_Gene/%RESOURCE_VERSION%/gene_info_plasmo"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene_info_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -279,8 +279,8 @@
 
   <resource resource="Pk_Uniprot_Gene_dbxref_RSRC" version="@@Pk_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Uniprot_Gene/%RESOURCE_VERSION%/Uniprot_Gene_plasmo"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Uniprot_Gene_plasmo --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -298,10 +298,10 @@
     </info>
   </resource>
 
-  <resource resource="Pk_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-03-29"
+  <resource resource="Pk_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/apiLoc_eupathDb_links.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/gene2apiloc.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="P. knowlesi ApiLoc and EupathDb links"
         project="PlasmoDB"
