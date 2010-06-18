@@ -5042,4 +5042,152 @@ SQL
     </perl>
   </tuningTable>
 
+  <tuningTable name="apidb.ChangedGeneProduct" alwaysUpdate="true">
+    <internalDependency name="apidb.GeneAttributes"/>
+    <perl>
+      <![CDATA[
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use LWP::UserAgent;
+use HTTP::Request;
+use HTTP::Response;
+use ApiCommonData::Load::TuningConfig::Log;
+use XML::Simple;
+
+# my $dbh = getDbHandle();
+
+createEmptyTable($dbh);
+storeProducts($dbh);
+createIndex($dbh);
+
+
+################################################################################
+
+sub storeProducts {
+
+    my ($dbh) = @_;
+
+    # get list of genes with changes
+    my $stmt = $dbh->prepare(<<SQL) or die "preparing to get changed-gene list from AnnotationChange";
+      select distinct gene
+      from apidb.AnnotationChange
+      order by gene
+SQL
+
+  $stmt->execute() or die "getting changed-gene list from AnnotationChange";
+  my $request = new HTTP::Request('POST', "http://www.genedb.org/testservice/features/heirarchy.json");
+  $request->content_type('application/x-www-form-urlencoded');
+  my @params;
+  while (my ($gene) = $stmt->fetchrow_array()) {
+      push(@params, "features=$gene");
+  }
+  $request->content(join('&', @params));
+
+    # use web service to find polypeptides for given genes
+    my $ua = new LWP::UserAgent;
+    my $response;
+    my $MAX_ATTEMPTS = 30;
+    for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
+	$response = $ua->request($request);
+	last if $response->is_success;
+        die "getting polypeptides from web service" if $attempt == $MAX_ATTEMPTS;
+        ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
+    }
+
+    # parse response
+    my %genePeps;
+    foreach my $geneDescription (split(/"parents": \[\]/, $response->content)) {
+        $geneDescription =~ /"name": "(.*)",\s*$/;
+        my $gene = $1;
+        foreach my $genePart (split(/}/, $geneDescription)) {
+            if ($genePart =~ /name": "(.*)", \n.*\n.*"type": "polypeptide"/) {
+		my $polypeptide = $1;
+                $genePeps{$polypeptide} = $gene;
+	    }
+        }
+    }
+
+  # use web service to find products for polypeptides
+  my $request = new HTTP::Request('POST', "http://www.genedb.org/testservice/features/terms.json");
+  $request->content_type('application/x-www-form-urlencoded');
+  $request->content("controlled_vocabularies=genedb_products");
+  my @params;
+  foreach my $pep (keys(%genePeps)) {
+      push(@params, "features=$pep");
+  }
+  $request->content(join('&', @params));
+  for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
+       $response = $ua->request($request);
+       last if $response->is_success;
+       die "getting product names from web service" if $attempt == $MAX_ATTEMPTS;
+       ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
+    }
+
+  my $insertStatement = $dbh->prepare(<<SQL);
+      insert into apidb.ChangedGeneProduct&1 (gene, polypeptide, product) values (?, ?, ?)
+SQL
+
+  my $products;
+  foreach my $polypepInfo (split(/ "feature": "/, $response->content)) {
+      $polypepInfo =~ /^([^"]*)"/;
+      my $pep = $1;
+      if ($polypepInfo =~ /"accession": "(.*)",\s*\n\s*"cv": "genedb_products",\s*\n\s*"cvterm": "(.*)", \s*\n/) {
+          my $accession = $1;
+          my $cvterm = $2;
+          $insertStatement->execute($genePeps{$pep}, $pep, $accession) or die("inserting a ChangedGeneProduct record");
+          $products++;
+          ApiCommonData::Load::TuningConfig::Log::addLog("mismatch: accession \"$accession\" CV term \"$cvterm\"") if (lc($accession) ne lc($cvterm));
+      }
+    }
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
+}
+
+sub createEmptyTable {
+    my ($dbh) = @_;
+
+    $dbh->do(<<SQL) or die "creating ChangedGeneProductXXXX table";
+      create table apidb.ChangedGeneProduct&1 (
+         gene        varchar2(50),
+         polypeptide varchar2(60),
+         product     varchar2(300)
+      )
+SQL
+
+}
+
+sub createIndex {
+
+# index ChangedGeneProduct table
+    my ($dbh) = @_;
+    $dbh->do(<<SQL) or die "indexing ChangedGeneProductXXXX table";
+      create index cgp_ix&1 -- should use &1 macro
+      on apidb.ChangedGeneProduct&1 (gene, polypeptide, product) tablespace INDX
+SQL
+
+}
+
+sub getDbHandle {
+
+  my $username = 'apidb';
+  my $password = '<password>';
+  my $instance = '<instance>';
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  return $dbh;
+}
+      ]]> 
+    </perl>
+  </tuningTable>
+
 </tuningConfig>
