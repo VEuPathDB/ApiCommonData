@@ -93,6 +93,28 @@
     </info>
   </resource>
 
+  <resource resource="Pc_previous_aliases_RSRC" version="2009-03-24"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+    <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/previousAliases/%RESOURCE_VERSION%/previousAliases.tab"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/previousAliasesWithTwoCols.tab</pluginArgs>
+    <info
+        displayName="insert old gene aliases from previous versions"
+        project="PlasmoDB"
+        organisms="@@PcOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--dbEST-->
   <resource resource="Pc_dbEST_RSRC" version="@@Pc_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">

@@ -134,6 +134,28 @@
     </info>
   </resource>
 
+  <resource resource="Pfalciparum_previous_aliases_RSRC" version="2009-02-19"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/previousAliases/%RESOURCE_VERSION%/previousAliases.tab"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/previousAliasesWithTwoCols.tab</pluginArgs>
+    <info
+        displayName="insert old gene aliases from previous versions"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--pfalciparumDbxRefsResource-->
 
   <resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
@@ -1082,27 +1104,6 @@
     <publication pmid="10448855"/>
     <publication pmid="12368869"/>
     <publication pmid="15580778"/>
-    </info>
-  </resource>
-
-  <resource resource="Pf_Old_Gene_Aliases_RSRC" version="6.0"
-      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/PfGeneAliases/%RESOURCE_VERSION%/pfGeneAlias.tab"/>
-    <pluginArgs>--MappingFile @@dataDir@@/pfGeneAlias.tab</pluginArgs>
-    <info
-        displayName="insert P. falciparum old gene aliases from version 5.5"
-        project="PlasmoDB"
-        organisms="@@PfOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
     </info>
   </resource>
 

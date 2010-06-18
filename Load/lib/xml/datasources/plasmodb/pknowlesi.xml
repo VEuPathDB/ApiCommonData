@@ -141,6 +141,29 @@
     </info>
   </resource>
 
+
+  <resource resource="Pk_previous_aliases_RSRC" version="2007-10-03"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+    <manualGet fileOrDir="PlasmoDB/pknowlesi/genome/previousAliases/%RESOURCE_VERSION%/previousAliases.tab"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/previousAliasesWithTwoCols.tab</pluginArgs>
+    <info
+        displayName="insert old gene aliases from previous versions"
+        project="PlasmoDB"
+        organisms="@@PkOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--dbEST-->
   <resource resource="Pk_dbEST_RSRC" version="@@Pk_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
