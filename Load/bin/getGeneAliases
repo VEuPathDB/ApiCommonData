@@ -63,7 +63,12 @@ my $stmt2 = $dbh->prepare($sql);
 
 
 foreach my $sourceId (keys %genes) {
-  $stmt2->execute($genes{$sourceId}->{'nafeat'},$genes{$sourceId}->{'nafeat'});
+    
+    if ($dbRefNAFeatureExtDbRls){
+	$stmt2->execute($genes{$sourceId}->{'nafeat'},$genes{$sourceId}->{'nafeat'});
+    }else{
+	$stmt2->execute($genes{$sourceId}->{'nafeat'});
+    }
 
   while(my ($name) = $stmt2->fetchrow_array()){
     push(@{$genes{$sourceId}->{'aliases'}},$name);
