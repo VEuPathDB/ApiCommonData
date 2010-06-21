@@ -3165,6 +3165,426 @@ from dual
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.MassSpecTerms">
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.MassSpecTerms&1 NOLOGGING AS
+SELECT project_id, extDB_name, display_term FROM (
+select 'CryptoDB' as project_id,
+       '1D Gel LC-MS/MS ' as display_term,
+       'Wastling MassSpec 1D Gel LC-MS/MS' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       '2D Gel LC-MS/MS ' as display_term,
+       'Wastling MassSpec 2D Gel LC-MS/MS' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'MudPit Soluble fractions ' as display_term,
+       'Wastling MassSpec MudPit Soluble' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'MudPit Insoluble fractions ' as display_term,
+       'Wastling MassSpec MudPit Insoluble' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Insoluble Excysted Fraction LC-MS/MS ' as display_term,
+       'Lowery MassSpec LC-MS/MS Insoluble Excysted Fraction' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Insoluble Non-excysted Fraction LC-MS/MS ' as display_term,
+       'Lowery MassSpec LC-MS/MS Insoluble Non-excysted fraction' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Soluble Excysted and Non-excysted Fraction LC-MS/MS ' as display_term,
+       'Lowery MassSpec LC-MS/MS Soluble Excysted and Non-excysted fractions' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       '1D Gel 14Aug2006 ' as display_term,
+       'Fiser_Proteomics_14Aug2006_1D_gel' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       '1D Gel 16May2006 ' as display_term,
+       'Fiser_Proteomics_16May2006_1D_gel' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       '1D Gel 24Jun2006 ' as display_term,
+       'Fiser_Proteomics_24Jun2006_1D_gel' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Oocyst walls ' as display_term,
+       'Ferrari_Proteomics_LTQ_Oocyst_walls' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Intact Oocysts ' as display_term,
+       'Ferrari_Proteomics_LTQ_intact_oocysts_merged' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Sporozoites ' as display_term,
+       'Ferrari_Proteomics_LTQ_Sporozoites_merged' as extDB_name
+from dual
+UNION
+select 'CryptoDB' as project_id,
+       'Mitochondrial Fraction' as display_term,
+       'C. parvum mass spec data from Lorenza Putignani' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Merozoite ' as display_term,
+       'Florens Life Cycle MassSpec-Merozoites' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Trophozoite ' as display_term,
+       'Florens Life Cycle MassSpec-Trophozoites ' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Gametocyte ' as display_term,
+       'Florens Life Cycle MassSpec-Gametocytes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Sporozoite ' as display_term,
+       'Florens Life Cycle MassSpec-Sporozoite' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Merozoite Peptides ' as display_term,
+       'Kahn Pfalciparum merozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Oocyst Peptides ' as display_term,
+       'Lasonder Mosquito oocyst peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Oocyst-derived Sporozoite Peptides ' as display_term,
+       'Lasonder Mosquito oocyst-derived sporozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Salivary Gland Sporozoite Peptides ' as display_term,
+       'Lasonder Mosquito salivary gland sporozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'iRBC Membrane (PIESPs) / Schizont  ' as display_term,
+       'Florens PIESPs MassSpec' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'P.falciparum Clinical Proteomics ' as display_term,
+       'P.falciparum Clinical Proteomics' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'P.falciparum Proteome 42 hrs Post Infection' as display_term,
+       'Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'P.falciparum Proteome 48 hrs Post Infection' as display_term,
+       'Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Female Gametocytes ' as display_term,
+       'Waters Female Gametes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Male Gametocytes ' as display_term,
+       'Waters Male Gametes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mixed Gametocytes ' as display_term,
+       'Waters Mixed Gametes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'P.vivax Clinical Proteomics' as display_term,
+       'P.vivax Clinical Proteomics' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Liver Stage LS40 ' as display_term,
+       'Pyoelii LiverStage LS40' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Liver Stage LS50 ' as display_term,
+       'Pyoelii LiverStage LS50' as extDB_name
+from dual
+UNION
+select 'TrichDB' as project_id,
+       'T. vaginalis subcellular fraction' as display_term,
+       'Hayes-Johnson_Tvag_Proteomics' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '1-D SDS PAGE' as display_term,
+       'Wastling 1-D SDS PAGE' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '1-D SDS PAGE Soluble Fraction' as display_term,
+       'Wastling 1-D SDS PAGE Soluble' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '1-D SDS PAGE Insoluble Fraction' as display_term,
+       'Wastling 1-D SDS PAGE Insoluble' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MudPIT Soluble Fraction' as display_term,
+       'Wastling MudPIT Soluble' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MudPIT Insoluble Fraction' as display_term,
+       'Wastling MudPIT Insoluble' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Rhoptry Fraction' as display_term,
+       'Wastling Rhoptry' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Conoid-enriched Fraction' as display_term,
+       'Murray Conoid-enriched Fraction' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Conoid-depleted Fraction' as display_term,
+       'Murray Conoid-depleted Fraction' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '1D Gel Tachyzoite Membrane fraction 12-2006' as display_term,
+       '1D Gel Tachyzoite Membrane fraction 12-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '1D Gel Tachyzoite Membrane fraction 10-2006' as display_term,
+       '1D Gel Tachyzoite Membrane fraction 10-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       '2DLC MS/MS Tachyzoite Membrane fraction' as display_term,
+       '2DLC MS/MS Tachyzoite Membrane fraction' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Cytosolic fraction 05-2007' as display_term,
+       'MS Tachyzoite Cytosolic Protein Fractions 05-2007' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Membrane fraction 05-02-2006' as display_term,
+       'MS Tachyzoite Membrane fraction 05-02-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Membrane fraction 06-2006' as display_term,
+       'MS Tachyzoite Membrane fraction 06-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Membrane fraction 05-10-2006' as display_term,
+       'MS Tachyzoite Membrane fraction 05-10-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Membrane fraction 02-03-2006' as display_term,
+       'MS Tachyzoite Membrane fraction 02-03-2006' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS Tachyzoite Membrane Protein with  Biotinlyation Purification 05-22-2007' as display_term,
+       'MS Tachyzoite Membrane Protein with  Biotinlyation Purification 05-22-2007' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS RH Secretome fraction 2destinct peptides' as display_term,
+       'MS Carruthers 2destinct peptides' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'MS RH Secretome fraction MudPIT Twinscan hits' as display_term,
+       'MS Carruthers MudPIT Twinscan hits' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'RH Mass Spec Data (sample A)' as display_term,
+       'Moreno DTASelect filter sample A' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'RH Mass Spec Data (sample G)' as display_term,
+       'Moreno DTASelect filter sample G' as extDB_name
+from dual
+UNION
+select 'GiardiaDB' as project_id,
+       'DTA-Select Filter ' as display_term,
+       'DTASelect-filter_032108_Proteomics' as extDB_name
+from dual
+UNION
+select 'GiardiaDB' as project_id,
+       'G. intestinalis mitosome enriched fraction - nanoLC/MALDI TOF/TOF ' as display_term,
+       'Giardia proteomics data from Tachezy lab' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>Trypanosoma cruzi</i> Amastigote ' as display_term,
+       'Tcruzi Proteomics-Amastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Epimastigote ' as display_term,
+       'Tcruzi Proteomics-Epimastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Metacyclic ' as display_term,
+       'Tcruzi Proteomics-Metacyclic' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Trypomastigote ' as display_term,
+       'Tcruzi Proteomics-Trypomastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C ' as display_term,
+       'Tcruzi reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> reservosomes-B1 fraction digested with trypsin ' as display_term,
+       'Tcruzi reservosomes-B1 fraction digested with trypsin' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> reservosomes-B1M fraction digested with trypsin ' as display_term,
+       'Tcruzi reservosomes-B1M fraction digested with trypsin' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms ' as display_term,
+       'Tcruzi Proteomics-Membrane Protein' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. brucei</i> Procyclic Form ' as display_term,
+       'Tbrucei Proteomics Procyclic Form' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       'Amastigote' as display_term,
+       'Amastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       'Promastigote' as display_term,
+       'Promastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       'Post translational modification' as display_term,
+       'ptl' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> - glycosylated ' as display_term,
+       'Linfantum Proteomics PTM-glycosylation' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> - acetylated ' as display_term,
+       'Linfantum Proteomics PTM-acetylation' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> - methylated ' as display_term,
+       'Linfantum Proteomics PTM-methylation' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> - phosphorylated' as display_term,
+       'Linfantum Proteomics PTM-phosphorylation' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Amastigote (1DGel) ' as display_term,
+       'Linfantum Proteomics SDS Amastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Amastigote (2DGel pH6-9) ' as display_term,
+       'Linfantum Proteomics 2DGel 6-9 Amastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i>  Amastigote (2DGel pH6-11) ' as display_term,
+       'Linfantum Proteomics 2DGel 6-11 Amastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Promastigote (2DGel pH6-9) ' as display_term,
+       'Linfantum Proteomics 2DGel 6-9 Promastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Promastigote (2DGel pH6-11) ' as display_term,
+       'Linfantum Proteomics 2DGel 6-11 Promastigote' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       'Metacyclogenesis (pH 5-6)' as display_term,
+       'Linfantum Proteomics data from Marc Ouellette' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i>  Promastigote temperature and pH Control ' as display_term,
+       'Linfantum Proteomics Promastigote temperature and pH non-stressed' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i>  Promastigote temperature and pH stressed ' as display_term,
+       'Linfantum Proteomics Promastigote temperature and pH stressed' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Amastigote (Secreted) ' as display_term,
+       'Linfantum Proteomics Amastigote Secreted Protein' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. infantum</i> Promastigote (Secreted) ' as display_term,
+       'Linfantum Proteomics Promastigote Secreted Protein' as extDB_name
+from dual
+)
+      ]]>
+    </sql>
+  </tuningTable>
+
+
   <tuningTable name="apidb.NaSynteny">
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.NaSequenceImp"/>
