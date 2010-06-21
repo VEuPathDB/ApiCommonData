@@ -3052,8 +3052,8 @@ select 'EhistolyticaAffyProfiles' as profile_name,
        '<i>E. histolytica</i> Intestinal Colonization/Invasion Affymetrix array Profiles' as display_name,
        'Gene Expression data shown as Fold Induction compared to a common reference (upper graph). Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same time point.The mocroarray profiles were generated as a part of studies on the Impact of intestinal colonization and invasion on the Entamoeba histolytica transcriptome' as description,
        'Strain and lifecycle stage' as x_axis,
-       'Fold Induction in upper graph and percentile in lower graph.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
 from dual
 UNION
 select 'EhistolyticaNugenProfiles' as profile_name,
@@ -3062,8 +3062,8 @@ select 'EhistolyticaNugenProfiles' as profile_name,
        '<i>E. histolytica</i> Nugen array profiles (Stage Conversion)' as display_name,
        'Gene Expression data shown as Fold Induction compared to a common reference (upper graph). Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same time point.The mocroarray profiles were generated as a part of studies geared towards identification of developmentally regulated genes in Entamoeba histolytica, so as to obtain insights into mechanisms of stage conversion' as description,
        'Strain and lifecycle stage' as x_axis,
-       'Fold Induction in upper graph and percentile in lower graph.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
 from dual
 UNION
 --TriTrypDB --
