@@ -2940,6 +2940,12 @@ from
     select ga.source_id, pm.*
     from
     (
+    -- ToxoDB --
+    select 'M.White Cell Cycle Microarray profiles' as profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+
     -- AmoebaDB --
     select 'EhistolyticaAffyProfiles' as profile_name,
            'AmoebaDB' as project_id
@@ -3020,6 +3026,19 @@ tablespace indx
 CREATE TABLE apidb.ExpressionGraphDescrip&1 NOLOGGING AS
 select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts
 from (
+-- ToxoDB
+select 'M.White Cell Cycle Microarray profiles' as profile_name,
+       'White::CellCycle' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Cell Cycle' as display_name,
+       'TODO: Add Description' as description,
+       'Time point in hours' as x_axis,
+       'RMA Value in upper graph or expression percentile value in lower graph.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+
 -- GiardiaDB --
 select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
        'Ringqvist::WbClone' as module,
