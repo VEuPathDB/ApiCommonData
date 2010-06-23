@@ -267,8 +267,7 @@
         email=""
         institution="">
       <description>
-        <![CDATA[
-         
+        <![CDATA[         
         ]]>
       </description>
     </info>
@@ -1687,6 +1686,9 @@
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPfal.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPfal.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.fsa"/>
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
@@ -1732,6 +1734,7 @@
   <resource resource="Pf_RNASeq_Duffy_RSRC" version="@@Pf_RNASeq_Duffy_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Duffy/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/PL01.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/PL02.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/3D7.fsa"/>
@@ -2317,9 +2320,6 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
       <publication pmid="18575593"/>
     </info>
   </resource>
-
-
-
 </resources>
 
 

@@ -196,6 +196,9 @@
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPkno.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPkno.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPkno.fsa"/>
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
@@ -260,7 +263,7 @@
 
   <resource resource="Pk_Pubmed_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/gene2pubmed.tab"/>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/final/gene2pubmed.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="DBRefs for pubmed links"
@@ -302,7 +305,7 @@
 
   <resource resource="Pk_Uniprot_Gene_dbxref_RSRC" version="@@Pk_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/pknowlesi/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
