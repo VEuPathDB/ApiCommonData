@@ -2961,6 +2961,14 @@ from
            'GiardiaDB' as project_id
     from dual
     UNION
+    select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
+           'GiardiaDB' as project_id
+    from dual
+    UNION
+    select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
+           'GiardiaDB' as project_id
+    from dual
+    UNION
 
     -- PlasmoDB --
 --    select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
@@ -3040,6 +3048,30 @@ select 'M.White Cell Cycle Microarray profiles' as profile_name,
     UNION
 
 -- GiardiaDB --
+select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
+       'Hehl::Stress1' as module,
+       'Giardia Assemblage A isolate WB' as species,
+       'Stress response in Trophozoites - Varying DTT Concentrations and Temperature' as display_name,
+       '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated for 30min with varying concentrations of DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
+       'Incubation Condition' as x_axis,
+       'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
+       'expr_val,pct' as visible_parts
+    from dual
+
+    UNION
+
+select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
+       'Hehl::Stress1' as module,
+       'Giardia Assemblage A isolate WB' as species,
+       'Stress response in Trophozoites - Varying Incubation Time' as display_name,
+       '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated 30min, 60min, 120min at 14.2mM DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
+       'Incubation Time' as x_axis,
+       'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
+       'expr_val,pct' as visible_parts
+    from dual
+
+    UNION
+
 select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
        'Ringqvist::WbClone' as module,
        'Giardia Assemblage A isolate WB' as species,
@@ -3047,10 +3079,12 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
        '' as description,
        'Time point in hours' as x_axis,
        'Fold Change in upper graph or expression percentile value in lower graph.' as y_axis,
-       'fold_change,pct' as visible_parts
+       'expr_val,pct' as visible_parts
     from dual
 
     UNION
+
+
 
 -- PlasmoDB --
 select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
@@ -3093,7 +3127,7 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
        'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.  Values in the data table are log2(R/G)' as description,
        'Time point in hours' as x_axis,
        'Fold Induction (vs. 0 hour) or expression percentile value for raw red and green values.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'expr_val,pct' as visible_parts
 from dual
 UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
@@ -3106,7 +3140,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
 				Values in the data table (above) are log2(sample/reference) and were used to generate the values in the fold change graph' as description,
        'High and low density blood forms (hd-bf represents the 0 hour in the time series); Time points are in hours' as x_axis,
        'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'expr_val,pct' as visible_parts
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -3120,7 +3154,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
 				The data table above contains RMA values in log2 scale.' as description,
        'Time points are in hours (sl = slender forms)' as x_axis,
        'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'expr_val,pct' as visible_parts
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -3147,7 +3181,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
 				The data table above contains are log2(Red/green) expression values' as description,
        'Average of 3 biological replicates from each Life cycle stage: trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET).' as x_axis,
        'Fold Induction or percentile.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'expr_val,pct' as visible_parts
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -3157,7 +3191,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'Comparison of three developmental stages (Early Log, PNA- metacyclics and Mouse lesion Derived Amastigotes) of L.major FV1.' as description,
        'The bars represent a direct comparison of <i>Mouse Lesion Derived Amastigotes vs. Early Log Procyclic Promastigotes (A v P)</i> <b>OR</b> <i>PNA - Metacyclic Promastigotes vs. Early Log Procyclic Promastigotes (M v P)</i>.  Data for each biologial replicate (3) for each comparison are shown.  The expression values provided in the data table are log2(A/P) and log2(M/P) for each of the replicates.' as x_axis,
        'Fold Induction or percentile.  The percentile was calculated for each channel/sample to give an indication of the expression level of this gene compared to all others on that array.' as y_axis,
-       'fold_induction,pct' as visible_parts
+       'expr_val,pct' as visible_parts
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
