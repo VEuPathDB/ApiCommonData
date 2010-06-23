@@ -121,6 +121,11 @@ foreach my $line(<IN>){
 
     }else{
 	if($flag == 0){
+
+	    if($line =~ /^\s+ORGANISM/){
+		
+		$line =~ s/^\s+//;
+	    }
 	    print OUT "$line\n";
 	}else{
 	    print OUT2 "$line\n";
