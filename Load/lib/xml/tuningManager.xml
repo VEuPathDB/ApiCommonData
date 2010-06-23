@@ -2945,6 +2945,22 @@ from
            'ToxoDB' as project_id
     from dual
     UNION
+    select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
 
     -- AmoebaDB --
     select 'EhistolyticaAffyProfiles' as profile_name,
@@ -3036,6 +3052,51 @@ CREATE TABLE apidb.ExpressionGraphDescrip&1 NOLOGGING AS
 select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts
 from (
 -- ToxoDB
+select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
+       'Roos::TzBz' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Bradyzoite Differentiation (Multiple 6-hr Time Points)' as display_name,
+       'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type I RH lacking HXGPRT and UPRT. A total of three experimental conditions were used to promote in vitro bradyzoite differentiation: Alkaline conditions (D10 media adjusted to pH 8.2), CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2), and sodium nitroprusside (SNP) exposure (D10 with 100uM SNP). All conditions were applied 6hr post-inoculation and each media was exchanged every twelve hours post-inoculation.' as description,
+       'Time in hours' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
+       'Boothroyd::TzBz' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Bradyzoite Differentiation (3-day time series)' as display_name,
+       'T. gondii Type II Prugniaud parasites lacking HXGPRT were inoculated at and MOI of 2 and differentiated in RPMI 1640 lacking sodium bicarbonate, low FCS, and high pH (8.1). RNA was collected from either tachyzoite (2 days post inoculation before monolayer lysis) or bradyzoite cultures (2-days, 3-days and 4-days of induction). ' as description,
+       'Time in days' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
+       'Dzierszinski::TzBz' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Bradyzoite Differentiation (Extended time series)' as display_name,
+       'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type III VEG. CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2) was used to induce in vitro bradyzoite differentiation. ' as description,
+       'Time in days' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
+       'White::TzBz' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Bradyzoite Differentiation (Single Time-Point)' as display_name,
+       'Bradyzoite genes were induced following a 48 hour treatment with compound 1 or alkaline condition. Strains used in this study: Type I-GT1, Type II-Me49B7 and Type III-CTG.' as description,
+       'Treatment/Condition' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts
+    from dual
+
+    UNION
+
 select 'M.White Cell Cycle Microarray profiles' as profile_name,
        'White::CellCycle' as module,
        'Toxoplasma gondii ME49' as species,
