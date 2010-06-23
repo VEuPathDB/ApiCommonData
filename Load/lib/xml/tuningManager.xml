@@ -2957,10 +2957,6 @@ from
     UNION
   
     -- GiardiaDB --
-    select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
     select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
            'GiardiaDB' as project_id
     from dual
@@ -2969,6 +2965,11 @@ from
            'GiardiaDB' as project_id
     from dual
     UNION
+    select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
+           'GiardiaDB' as project_id
+    from dual
+    UNION
+
 
     -- PlasmoDB --
 --    select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
@@ -3061,7 +3062,7 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
     UNION
 
 select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
-       'Hehl::Stress1' as module,
+       'Hehl::Stress2' as module,
        'Giardia Assemblage A isolate WB' as species,
        'Stress response in Trophozoites - Varying Incubation Time' as display_name,
        '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated 30min, 60min, 120min at 14.2mM DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
