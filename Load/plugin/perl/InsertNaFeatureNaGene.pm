@@ -105,7 +105,7 @@ sub run {
     my $alias = $vals[1];
 
     my $naFeatureNaGene = $self->makeNaFeatureNaGene($sourceId, $alias);
-    $naFeatureNaGene->submit();
+    $naFeatureNaGene->submit() if $naFeatureNaGene;
 
     $lineCt++;
   }
@@ -122,16 +122,16 @@ sub makeNaFeatureNaGene {
 
   my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId});
 
-  unless($geneFeature->retrieveFromDB()) {
-    $self->userError("No Dots.GeneFeature retrieved from source_id: $sourceId");
+  if ($geneFeature->retrieveFromDB()){
+       my $naFeatureNaGene = GUS::Model::DoTS::NAFeatureNAGene->new();
+      $naFeatureNaGene->setParent($geneFeature);
+      $naFeatureNaGene->setParent($naGene);
+      return $naFeatureNaGene
+  }else{
+    print STDERR "No Dots.GeneFeature retrieved from source_id: $sourceId\n";
+    return 0;
   }
 
-  my $naFeatureNaGene = GUS::Model::DoTS::NAFeatureNAGene->new();
-
-  $naFeatureNaGene->setParent($geneFeature);
-  $naFeatureNaGene->setParent($naGene);
-
-  return $naFeatureNaGene
 }
 
 
