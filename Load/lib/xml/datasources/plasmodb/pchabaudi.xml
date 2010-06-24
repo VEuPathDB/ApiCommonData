@@ -51,7 +51,7 @@
   <resource resource="Pchabaudi_ECNumbers_RSRC" version="@@Pchabaudi_chromosomes_VER@@"
       plugin="GUS::Community::Plugin::InsertECMapping">
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pchabaudi.fasta --output_gff @@dataDir@@/gff/Pchabaudi.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pchabaudi.fasta --output_gff @@dataDir@@/Pchabaudi.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pchabaudi.gff3 --output_gff @@dataDir@@/Pchabaudi.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pchabaudi.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pchabaudi.ec </unpack>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pchabaudi.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
