@@ -25,7 +25,7 @@ CREATE SEQUENCE ApiDB.GeneGenomicSequence_Split_sq;
 
 GRANT SELECT ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_r;
 GRANT INSERT, UPDATE, DELETE ON apidb.GENEGENOMICSEQUENCE_SPLIT TO gus_w;
-GRANT SELECT ON ApiDB.geneGenomicSequence_sq TO gus_w;
+GRANT SELECT ON ApiDB.geneGenomicSequence_SPLIT_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
