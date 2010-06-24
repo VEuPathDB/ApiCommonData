@@ -93,7 +93,7 @@
       plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/source.idx</wgetArgs>
     <unpack>processSourceIdxFile --inFile @@dataDir@@/source.idx --outFile @@dataDir@@/source.idx.processed</unpack>
-    <pluginArgs>--fileName @@dataDir@@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec '%RESOURCE_NAME%|%RESOURCE_VERSION%'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+    <pluginArgs>--fileName @@dataDir@@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDBProteinSequences_RSRC|@@PDBProteinSequences_VER@@%'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
     <info
         displayName=""
         project=""

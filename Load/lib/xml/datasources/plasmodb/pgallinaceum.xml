@@ -24,7 +24,7 @@
 
   <resource resource="Pgallinaceum_Contigs_RSRC" version="@@Pgallinaceum_Contigs_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=P_gallinaceum.contigs.123106</wgetArgs>
+    <wgetArgs url="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/gallinaceum/P_gallinaceum.contigs.123106">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/P_gallinaceum.contigs.123106</wgetArgs>
     <unpack>mkdir @@dataDir@@/P.gallinaceum.contigs_fixed</unpack>
     <unpack>cat @@dataDir@@/P_gallinaceum.contigs.123106 | perl -pe 's/>/>Pg_/' > @@dataDir@@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106</unpack>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5849 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.gallinaceum.contigs_fixed/P_gallinaceum.contigs.123106 --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
