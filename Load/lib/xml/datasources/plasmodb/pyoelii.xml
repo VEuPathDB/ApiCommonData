@@ -1,4 +1,4 @@
-<resources>
+resources>
 <!--pyoeliiISFResource-->
 
   <resource resource="Pyoelii_Contigs_RSRC" version="@@Pyoelii_Contigs_VER@@"
@@ -54,7 +54,7 @@
 
   <resource resource="Pyoelii_ECNumbers_RSRC" version="@@Pyoelii_Contigs_VER@@"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="PlasmoDB/pchabaudi/function/@@Pyoelii_Contigs_VER@@/ECNumbers_Pyoelii/ec_numbers.txt"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/function/@@Pyoelii_Contigs_VER@@/ECNumbers_Pyoelii/ec_numbers.txt"/>
     <pluginArgs>--ECMappingFile @@dataDir@@/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
     <info
         displayName="EC Number Mapping for Plasmodium yoelii genes"
