@@ -51,7 +51,7 @@
   <resource resource="Pberghei_ECNumbers_RSRC" version="@@Pberghei_chromosomes_VER@@"
       plugin="GUS::Community::Plugin::InsertECMapping">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/gff/Pberghei.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pberghei.gff3 --output_gff @@dataDir@@/Pberghei.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pberghei.ec </unpack>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
