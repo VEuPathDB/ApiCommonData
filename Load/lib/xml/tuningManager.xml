@@ -1442,7 +1442,7 @@ tablespace indx
                           abs(rightLoc.start_min - leftLoc.end_max) as len
                   from dots.ExonFeature left, apidb.FeatureLocation leftLoc,
                        dots.ExonFeature right, apidb.FeatureLocation rightLoc,
-                       apidb.geneattributes ga
+                       apidb.geneattributes&1 ga
                   where left.parent_id = right.parent_id
                     and left.parent_id = ga.na_feature_id
                     and (left.order_number = right.order_number - 1
