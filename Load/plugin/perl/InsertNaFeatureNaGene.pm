@@ -120,10 +120,17 @@ sub makeNaFeatureNaGene {
 
   my $naGene = $self->_getNAGeneId($alias);
 
-  my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId});
+  my @geneFeatureIds;
 
-  if ($geneFeature->retrieveFromDB()){
-       my $naFeatureNaGene = GUS::Model::DoTS::NAFeatureNAGene->new();
+  my $geneFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
+
+  push @geneFeatureIds, $geneFeatureId;
+
+  my $naFeatureId = shift @geneFeatureIds;
+
+  if ($naFeatureId){
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $naFeatureId});
+      my $naFeatureNaGene = GUS::Model::DoTS::NAFeatureNAGene->new();
       $naFeatureNaGene->setParent($geneFeature);
       $naFeatureNaGene->setParent($naGene);
       return $naFeatureNaGene
