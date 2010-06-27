@@ -5613,13 +5613,18 @@ sub storeProducts {
 SQL
 
   $stmt->execute() or die "getting changed-gene list from AnnotationChange";
-  my $request = new HTTP::Request('POST', "http://www.genedb.org/testservice/features/heirarchy.json");
+  my $requestUrl = "http://www.genedb.org/testservice/features/heirarchy.json";
+  my $request = new HTTP::Request('POST', $requestUrl);
   $request->content_type('application/x-www-form-urlencoded');
+  my $exampleUrl;
   my @params;
   while (my ($gene) = $stmt->fetchrow_array()) {
       push(@params, "features=$gene");
+      $exampleUrl = $requestUrl . '?' . "features=$gene";
   }
-  $request->content(join('&', @params));
+  my $requestContent = join('&', @params);
+  $request->content($requestContent);
+  $request->content_length(length($requestContent));
 
     # use web service to find polypeptides for given genes
     my $ua = new LWP::UserAgent;
@@ -5628,7 +5633,8 @@ SQL
     for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
 	$response = $ua->request($request);
 	last if $response->is_success;
-        die "getting polypeptides from web service" if $attempt == $MAX_ATTEMPTS;
+        ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
+        die "getting polypeptides from web service (example URL: $exampleUrl)" if $attempt == $MAX_ATTEMPTS;
         ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
     }
 
@@ -5646,18 +5652,25 @@ SQL
     }
 
   # use web service to find products for polypeptides
-  my $request = new HTTP::Request('POST', "http://www.genedb.org/testservice/features/terms.json");
+  my $requestUrl = "http://www.genedb.org/testservice/features/terms.json";
+  my $request = new HTTP::Request('POST', $requestUrl);
   $request->content_type('application/x-www-form-urlencoded');
-  $request->content("controlled_vocabularies=genedb_products");
+  my $cvParm = "controlled_vocabularies=genedb_products";
+  $request->content($cvParm);
   my @params;
   foreach my $pep (keys(%genePeps)) {
       push(@params, "features=$pep");
+      $exampleUrl = $requestUrl . '?' . "features=$pep" . '&' . $cvParm;
   }
-  $request->content(join('&', @params));
+  my $requestContent = join('&', @params);
+  $request->content($requestContent);
+  $request->content_length(length($requestContent));
+
   for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
        $response = $ua->request($request);
        last if $response->is_success;
-       die "getting product names from web service" if $attempt == $MAX_ATTEMPTS;
+       ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
+       die "getting product names from web service (example URL: $exampleUrl)" if $attempt == $MAX_ATTEMPTS;
        ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
     }
 
