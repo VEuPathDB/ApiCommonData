@@ -59,155 +59,157 @@ if ($propFile) {
   $props = $simple->XMLin($propFile);
 }
 
-my $dbh = getDbHandle($instance, $props, $password);
-
-my $tuningRegistry =
-  ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
-
-$configFile = getConfigFileName($configFile, $tuningRegistry);
-ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
-my ($config) = &parseConfigFile($configFile);
-
-# create an object for each <tuningTable> entity
-my %tuningTables;
-my %externalTables;
-my %externalTuningTables;
-foreach my $tuningTable (@{$config->{tuningTable}}) {
-
-  $tuningTables{$tuningTable->{name}}
-    = ApiCommonData::Load::TuningConfig::InternalTable->
-      new($tuningTable->{name},
-	  $tuningTable->{internalDependency},
-	  $tuningTable->{externalDependency},
-	  $tuningTable->{externalTuningTableDependency},
-	  $tuningTable->{intermediateTable},
-	  $tuningTable->{sql},
-	  $tuningTable->{perl},
-          $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate});
-}
-
-if ($doUpdate) {
-  $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
-}
-
-# validate config / check external files
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
-my $undefinedInternal;
-my $nonexistentExternal;
-my $nonexistentExternalTuningTable;
-my $dependencyCycle;
-foreach my $tableName (keys(%tuningTables)) {
-
-  # check for internalDependencies that aren't in the list of tuningTables
-  if ($tuningTables{$tableName}->getInternalDependencyNames()) {
-    foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
-      if (!$tuningTables{$dependency->{name}}) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
-	$undefinedInternal = 1;
-      } else {
-	# add object to list of internal dependencies
-	$tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
-      }
-    }
-  }
-
-  # check for externalDependencies that aren't in the database
-  if ($tuningTables{$tableName}->getExternalDependencyNames()) {
-    foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
-
-      # new ExternalTable instance in the hash, if we haven't seen this
-      my $key = $dependency->{name} . '@' . $dependency->{dblink};
-      $externalTables{$key}
-	= ApiCommonData::Load::TuningConfig::ExternalTable->
-	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
-	      $tuningRegistry->getDblinkSuffix())
-	    unless ($externalTables{$key});
-
-      # add external-table object to list of external dependencies
-      $tuningTables{$tableName}->addExternalDependency($externalTables{$key});
-
-      if (!$externalTables{$key}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
-	$nonexistentExternal = 1;
-      }
-    }
-  }
-
-  # check for externalTuningTableDependencies that aren't in the database
-  if ($tuningTables{$tableName}->getExternalTuningTableDependencyNames()) {
-    foreach my $dependency (@{$tuningTables{$tableName}->getExternalTuningTableDependencyNames()}) {
-
-      # new ExternalTuningTable instance in the hash, if we haven't seen this
-      my $key = $dependency->{name} . '@' . $dependency->{dblink};
-      $externalTuningTables{$key}
-	= ApiCommonData::Load::TuningConfig::ExternalTuningTable->
-	  new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
-	      $tuningRegistry->getDblinkSuffix())
-	    unless ($externalTuningTables{$key});
-
-      # add externalTuning-table object to list of externalTuning dependencies
-      $tuningTables{$tableName}->addExternalTuningTableDependency($externalTuningTables{$key});
-
-      if (!$externalTuningTables{$key}->exists()) {
-	ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalTuningDependency on $key, but no such table exists");
-	$nonexistentExternalTuningTable = 1;
-      }
-    }
-  }
-}
-
-# check for cycles in graph of dependencies
-foreach my $table (keys(%tuningTables)) {
-  $dependencyCycle = 1
-    if $tuningTables{$table}->hasDependencyCycle([]);
-}
-
-if ($undefinedInternal || $nonexistentExternal || $nonexistentExternalTuningTable || $dependencyCycle) {
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
-  $doUpdate = 0;
-} else {
-  ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
-}
-
-# indexes
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
-my $indexesConfigured;
-my $missingIndexes;
-foreach my $tuningIndex (@{$config->{tuningIndex}}) {
-
-  $indexesConfigured++;
-  my $indexObject =
-    ApiCommonData::Load::TuningConfig::TuningIndex->
-	new($tuningIndex->{name},
-	    $tuningIndex->{table},
-	    $tuningIndex->{content},
-	    $dbh);
-
-  if (!$indexObject->exists()) {
-    $missingIndexes++;
-    ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
-
-    $indexObject->create($dbh)
-      if $doUpdate;
-  }
-}
-
-# tables
-my $tableCount = 0;
-my $brokenCount = 0;
-my $neededUpdateCount = 0;
-my $upToDateCount = 0;
-
-ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking whether tuning tables are up to date");
-# check (and potentially update) every tuning table
-my @tableList;
-if ($tables) {
-  @tableList = split(/,/, $tables);
-} else {
-  @tableList = keys(%tuningTables);
-}
+my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
 eval {
+  $dbh = getDbHandle($instance, $props, $password);
+
+  $tuningRegistry =
+    ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
+
+  $configFile = getConfigFileName($configFile, $tuningRegistry);
+  ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
+  my ($config) = &parseConfigFile($configFile);
+
+  # create an object for each <tuningTable> entity
+  my %tuningTables;
+  my %externalTables;
+  my %externalTuningTables;
+  foreach my $tuningTable (@{$config->{tuningTable}}) {
+
+    $tuningTables{$tuningTable->{name}}
+      = ApiCommonData::Load::TuningConfig::InternalTable->
+	new($tuningTable->{name},
+	    $tuningTable->{internalDependency},
+	    $tuningTable->{externalDependency},
+	    $tuningTable->{externalTuningTableDependency},
+	    $tuningTable->{intermediateTable},
+	    $tuningTable->{sql},
+	    $tuningTable->{perl},
+	    $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate});
+  }
+
+  if ($doUpdate) {
+    $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
+  }
+
+  # validate config / check external files
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
+  my $undefinedInternal;
+  my $nonexistentExternal;
+  my $nonexistentExternalTuningTable;
+  my $dependencyCycle;
+  foreach my $tableName (keys(%tuningTables)) {
+
+    # check for internalDependencies that aren't in the list of tuningTables
+    if ($tuningTables{$tableName}->getInternalDependencyNames()) {
+      foreach my $dependency (@{$tuningTables{$tableName}->getInternalDependencyNames()}) {
+	if (!$tuningTables{$dependency->{name}}) {
+	  ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an InternalDependency on $dependency->{name}, for which no description is supplied");
+	  $undefinedInternal = 1;
+	} else {
+	  # add object to list of internal dependencies
+	  $tuningTables{$tableName}->addInternalDependency($tuningTables{$dependency->{name}});
+	}
+      }
+    }
+
+    # check for externalDependencies that aren't in the database
+    if ($tuningTables{$tableName}->getExternalDependencyNames()) {
+      foreach my $dependency (@{$tuningTables{$tableName}->getExternalDependencyNames()}) {
+
+	# new ExternalTable instance in the hash, if we haven't seen this
+	my $key = $dependency->{name} . '@' . $dependency->{dblink};
+	$externalTables{$key}
+	  = ApiCommonData::Load::TuningConfig::ExternalTable->
+	    new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
+		$tuningRegistry->getDblinkSuffix())
+	      unless ($externalTables{$key});
+
+	# add external-table object to list of external dependencies
+	$tuningTables{$tableName}->addExternalDependency($externalTables{$key});
+
+	if (!$externalTables{$key}->exists()) {
+	  ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalDependency on $dependency->{name}, but no such table exists");
+	  $nonexistentExternal = 1;
+	}
+      }
+    }
+
+    # check for externalTuningTableDependencies that aren't in the database
+    if ($tuningTables{$tableName}->getExternalTuningTableDependencyNames()) {
+      foreach my $dependency (@{$tuningTables{$tableName}->getExternalTuningTableDependencyNames()}) {
+
+	# new ExternalTuningTable instance in the hash, if we haven't seen this
+	my $key = $dependency->{name} . '@' . $dependency->{dblink};
+	$externalTuningTables{$key}
+	  = ApiCommonData::Load::TuningConfig::ExternalTuningTable->
+	    new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
+		$tuningRegistry->getDblinkSuffix())
+	      unless ($externalTuningTables{$key});
+
+	# add externalTuning-table object to list of externalTuning dependencies
+	$tuningTables{$tableName}->addExternalTuningTableDependency($externalTuningTables{$key});
+
+	if (!$externalTuningTables{$key}->exists()) {
+	  ApiCommonData::Load::TuningConfig::Log::addErrorLog("$tableName has an ExternalTuningDependency on $key, but no such table exists");
+	  $nonexistentExternalTuningTable = 1;
+	}
+      }
+    }
+  }
+
+  # check for cycles in graph of dependencies
+  foreach my $table (keys(%tuningTables)) {
+    $dependencyCycle = 1
+      if $tuningTables{$table}->hasDependencyCycle([]);
+  }
+
+  if ($undefinedInternal || $nonexistentExternal || $nonexistentExternalTuningTable || $dependencyCycle) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("INVALID CONFIGURATION -- NOT UPDATING DATABASE");
+    $doUpdate = 0;
+  } else {
+    ApiCommonData::Load::TuningConfig::Log::addLog("Configuration file OK");
+  }
+
+  # indexes
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking indexes");
+  my $indexesConfigured;
+  my $missingIndexes;
+  foreach my $tuningIndex (@{$config->{tuningIndex}}) {
+
+    $indexesConfigured++;
+    my $indexObject =
+      ApiCommonData::Load::TuningConfig::TuningIndex->
+	  new($tuningIndex->{name},
+	      $tuningIndex->{table},
+	      $tuningIndex->{content},
+	      $dbh);
+
+    if (!$indexObject->exists()) {
+      $missingIndexes++;
+      ApiCommonData::Load::TuningConfig::Log::addLog("must " . $indexObject->getCreateStatement());
+
+      $indexObject->create($dbh)
+	if $doUpdate;
+    }
+  }
+
+  # tables
+  my $tableCount = 0;
+  $brokenCount = 0;
+  $neededUpdateCount = 0;
+  my $upToDateCount = 0;
+
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking whether tuning tables are up to date");
+  # check (and potentially update) every tuning table
+  my @tableList;
+  if ($tables) {
+    @tableList = split(/,/, $tables);
+  } else {
+    @tableList = keys(%tuningTables);
+  }
+
   foreach my $table (@tableList) {
     if (!$tuningTables{$table}) {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("unknown tuning table $table");
@@ -278,50 +280,51 @@ eval {
 						   . $indexesConfigured
 						   . " indexes were found to exist.");
   }
+
+  releaseLockForUpdate();
+
+  # set last updater in registry if we did a successful full update (and made changes)
+  $tuningRegistry->setLastUpdater()
+    if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
+
+  # set last checker
+  $tuningRegistry->setLastChecker()
+    if !$tables && !$doUpdate;
+  $tuningRegistry->setLastUpdater()
+    if !$tables && !$doUpdate;
+
+  # set OK if: we looked at everything, nothing was broken, and if updates were needed, we did them.
+  $tuningRegistry->setOk()
+    if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate);
+
+  # set outdated if: something was broken, or needed an update but didn't get it
+  $tuningRegistry->setOutdated()
+    if ($neededUpdateCount && !$doUpdate) || $brokenCount;
+
+  # if a temporary config-file dir was checked out from svn, delete it now
+  if ($configDir) {
+    my @cmdLine = ("rm", "-rf", $configDir);
+    system(@cmdLine) == 0
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
+  }
 };
 
 # log any errors inside eval
 ApiCommonData::Load::TuningConfig::Log::addErrorLog($@)
   if $@;
 
-
-releaseLockForUpdate();
-
-# set last updater in registry if we did a successful full update (and made changes)
-$tuningRegistry->setLastUpdater()
-  if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
-
-# set last checker
-$tuningRegistry->setLastChecker()
-  if !$tables && !$doUpdate;
-$tuningRegistry->setLastUpdater()
-  if !$tables && !$doUpdate;
-
-# set OK if: we looked at everything, nothing was broken, and if updates were needed, we did them.
-$tuningRegistry->setOk()
-  if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate);
-
-# set outdated if: something was broken, or needed an update but didn't get it
-$tuningRegistry->setOutdated()
-  if ($neededUpdateCount && !$doUpdate) || $brokenCount;
-
-# if a temporary config-file dir was checked out from svn, delete it now
-if ($configDir) {
-  my @cmdLine = ("rm", "-rf", $configDir);
-  system(@cmdLine) == 0
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
-}
-
 my $elapsed = time - $startTime;
 my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
 
 ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
 					       " seconds to run tuningManager ($hms)");
+my $instance_name = $instanceName || $instance;
+if ($tuningRegistry) {
+  $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
+  $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
+}
 
-$notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-my $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
-
 
 die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 
