@@ -1278,7 +1278,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      (select sf.parent_id,count(*) as total_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-            'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+            'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
       and d.external_database_id = rel.external_database_id
       and sf.external_database_release_id = rel.external_database_release_id
       and sf.parent_id is not null
@@ -1286,7 +1286,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
       (select sf.parent_id,count(*) as nonsyn_snps
        from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
        where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-             'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+             'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
        and d.external_database_id = rel.external_database_id
        and sf.external_database_release_id = rel.external_database_release_id
        and sf.parent_id is not null
@@ -1295,7 +1295,7 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
       (select sf.parent_id,count(*) as syn_snps
        from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
        where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-             'Winzeler Array - Plasmodium Genetic Variation','Su SNPs','Sanger reichenowi SNPs')
+             'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
        and d.external_database_id = rel.external_database_id
        and sf.external_database_release_id = rel.external_database_release_id
        and sf.parent_id is not null
@@ -1647,9 +1647,9 @@ CREATE TABLE apidb.SnpAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
-       CASE WHEN ed.name = 'Su SNPs' THEN 'NIH SNPs'
+       CASE WHEN ed.name = 'X.Su SNPs' THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
-       CASE WHEN ed.name = 'Su SNPs' THEN 'Su_SNPs'
+       CASE WHEN ed.name = 'X.Su SNPs' THEN 'Su_SNPs'
        WHEN ed.name = 'Broad SNPs' THEN 'Broad_SNPs'
        WHEN ed.name = 'Sanger falciparum SNPs' THEN 'sangerItGhanaSnps'
        WHEN ed.name = 'Sanger reichenowi SNPs' THEN 'sangerReichenowiSnps'
@@ -3888,7 +3888,7 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
             dots.TranslatedAaFeature taf, sres.ExternalDatabase ed,
             sres.ExternalDatabaseRelease edr
        WHERE ed.name NOT IN ('Broad SNPs', 'Sanger falciparum SNPs',
-                             'Su SNPs')
+                             'X.Su SNPs')
          AND sva.strain  < svb.strain
          AND sva.allele != svb.allele
          AND sva.parent_id = svb.parent_id
