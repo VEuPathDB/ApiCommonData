@@ -62,6 +62,9 @@ if ($propFile) {
 my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
 eval {
+  $SIG{INT} = \&catch_signal;
+  $SIG{TERM} = \&catch_signal;
+
   $dbh = getDbHandle($instance, $props, $password);
 
   $tuningRegistry =
@@ -661,3 +664,8 @@ sub clearDeadLock {
 
   return;
 }
+
+sub catch_signal {
+        my $signame = shift;
+        die "caught signal $signame";
+    }
