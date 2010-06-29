@@ -5461,7 +5461,8 @@ sub processChangedGenes {
     $request = new HTTP::Request('GET', $url);
     $response = $ua->request($request);
 
-      if (!$response->is_success) {
+      if (!$response->is_success # request failed
+         || $response->content =~ /^<response>\n.*<error / ) {  # response was an error message
         ApiCommonData::Load::TuningConfig::Log::addLog("unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
             . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
       }
