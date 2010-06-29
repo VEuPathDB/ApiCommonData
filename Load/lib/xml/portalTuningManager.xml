@@ -441,6 +441,60 @@
     </unionization>
   </tuningTable>
 
+  <tuningTable name="apidb.GeneGFF">
+    <externalDependency name="apidb.GeneGFF" dblink="giardia"/>
+    <externalDependency name="apidb.GeneGFF" dblink="plasmo"/>
+    <externalDependency name="apidb.GeneGFF" dblink="toxo"/>
+    <externalDependency name="apidb.GeneGFF" dblink="tritryp"/>
+    <intermediateTable name="apidb.GeneGFFGiardia"/>
+    <intermediateTable name="apidb.GeneGFFPlasmo"/>
+    <intermediateTable name="apidb.GeneGFFToxo"/>
+    <intermediateTable name="apidb.GeneGFFTriTryp"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFGiardia nologging as
+        select * from apidb.GeneGFF@giardia
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFPlasmo nologging as
+        select * from apidb.GeneGFF@plasmo
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFToxo nologging as
+        select * from apidb.GeneGFF@toxo
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFTriTryp nologging as
+        select * from apidb.GeneGFF@tritryp
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFF&1 nologging as
+        (
+        select * from apidb.GeneGFFGiardia
+        union all
+        select * from apidb.GeneGFFPlasmo
+        union all
+        select * from apidb.GeneGFFToxo
+        union all
+        select * from apidb.GeneGFFTritryp
+        )
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.GeneDetail">
     <internalDependency name="apidb.ProteinSequence"/>
     <externalDependency name="apidb.GeneDetail" dblink="crypto"/>
