@@ -324,8 +324,8 @@ sub getDefString {
   my $perls = $self->getPerls();
   $defString .= join(" ", @{$perls}) if $perls;
 
-  $defString .= Dumper($self->getUnionizations())
-    if $self->getUnionizations();
+  my $unionizations = $self->getUnionizations();
+  $defString = join(" ", @{$unionizations}) if $unionizations;
 
   $self->{defString} = $defString;
 
