@@ -199,8 +199,8 @@ WHERE nfng.na_gene_id = nag.na_gene_id
 			     \@pretenderAliases, 1);
   $self->deleteNAFeatureNAGene("superceded by files ",
 			      \@duplicatedWithFileAliases, 1);
-  $self->deleteNAFeatureNAGene("duplicates ", 
-			       \@duplicatedAliases, 1);
+  #$self->deleteNAFeatureNAGene("duplicates ", 
+  #			       \@duplicatedAliases, 1);
 
   # and now delete from NAGene
   $self->deleteNAGene();
