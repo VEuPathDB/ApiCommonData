@@ -306,9 +306,15 @@ SQL
 SQL
 
   my $stmt = $dbh->prepare($sql);
-  $stmt->execute($self->{name}, $self->getDefString())
-    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
+  if (!$stmt->execute($self->{name}, $self->getDefString())) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    return "fail";
+  }
+
   $stmt->finish();
+
+  return;
 }
 
 sub getDefString {
@@ -325,7 +331,7 @@ sub getDefString {
   $defString .= join(" ", @{$perls}) if $perls;
 
   my $unionizations = $self->getUnionizations();
-  $defString = join(" ", @{$unionizations}) if $unionizations;
+  $defString .= join(" ", @{$unionizations}) if $unionizations;
 
   $self->{defString} = $defString;
 
@@ -423,7 +429,7 @@ SQL
     $stmt->finish();
 
   # store definition
-  $self->storeDefinition($dbh);
+  return if $self->storeDefinition($dbh);
 
   # get name of old table (for subsequenct purging). . .
   my $oldTable;
