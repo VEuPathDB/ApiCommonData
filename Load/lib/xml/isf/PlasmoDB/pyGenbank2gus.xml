@@ -18,7 +18,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <qualifier name="gene"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -42,7 +42,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="pseudo_gene" so="pseudogene">
 
    <qualifier name="gene"     handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -72,7 +72,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
   </feature>
@@ -80,7 +80,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
   </feature>
@@ -103,7 +103,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -134,7 +134,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA_gene" so="tRNA_encoding">
 
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifer name="locus_tag"  ignore="true"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -181,6 +181,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_feature_gene" so="sequence_feature">
     <qualifier name="gene" column="source_id"/>
+    <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
   </feature>
