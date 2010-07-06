@@ -472,7 +472,9 @@ begin
            then return 'OrphanDB';
          when 'babesia'
            then return 'OrphanDB';
-         else return 'ERROR: project_id()';
+         else raise_application_error(-20101,
+                                      'project_id() function called with unknown organism "'
+                                      || organism || '"' );
       end case;
 end project_id;
 /
