@@ -1,4 +1,4 @@
-resources>
+<resources>
 <!--pyoeliiISFResource-->
 
   <resource resource="Pyoelii_Contigs_RSRC" version="@@Pyoelii_Contigs_VER@@"
@@ -28,12 +28,12 @@ resources>
   <resource resource="Pyoelii_Kappe_Annotation_RSRC" version="@@Pyoelii_Kappe_Annotation_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pyoelii/genePrediction/From_Kappe/%RESOURCE_VERSION%/"/>
-    <unpack>cat @@dataDir@@/%RESOURCE_VERSION%/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @@dataDir@@/ReAnnotatedPyoelii_fixed.tab</unpack>
-    <unpack>createGffForYoeliiGenes --infile @@dataDir@@/ReAnnotatedPyoelii_fixed.tab --gfffile @@dataDir@@/PyoeliiKappe.gff --idmapfile @@dataDir@@/%RESOURCE_VERSION%/PyoeliiGI.txt</unpack>
+    <unpack>cat @@dataDir@@/@@Pyoelii_Kappe_Annotation_VER@@/ReAnnotatedPyoelii.tab | perl -pe 's/PY_PFF0395c\t23480141\t21\t46\t-/PY_PFF0395c\t23480141\t21\t46\t+/' > @@dataDir@@/ReAnnotatedPyoelii_fixed.tab</unpack>
+    <unpack>createGffForYoeliiGenes --infile @@dataDir@@/ReAnnotatedPyoelii_fixed.tab --gfffile @@dataDir@@/PyoeliiKappe.gff --idmapfile @@dataDir@@/@@Pyoelii_Kappe_Annotation_VER@@/PyoeliiGI.txt</unpack>
     <unpack>dumpSequencesFromTable.pl --outputFile @@dataDir@@/Pyoelii.fasta --idSQL "SELECT enas.source_id, enas.sequence FROM dots.externalnasequence enas, sres.externaldatabase ed, sres.externaldatabaserelease edr where enas.external_database_release_id = edr.external_database_release_id AND edr.external_database_id = ed.external_database_id AND ed.name = 'P.yoelii_Contigs' AND edr.version = @@Pyoelii_Contigs_VER@@ "</unpack>
     <unpack>fixMercatorOffsetsInGFF.pl --f @@dataDir@@/Pyoelii.fasta --g @@dataDir@@/PyoeliiKappe.gff --o @@dataDir@@/PyoeliiKappe_fixed_1.gff</unpack>
     <unpack>fixYoeliiGFF --inputFile @@dataDir@@/PyoeliiKappe_fixed_1.gff --outputFile @@dataDir@@/PyoeliiKappe_fixed.gff</unpack>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @@dataDir@@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "P.yoelii_Contigs" --seqExtDbRlsVer @@Pyoelii_Contigs_VER@@ --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/PyoeliiGffFeatures2gus.xml --inputFileOrDir @@dataDir@@/PyoeliiKappe_fixed.gff --fileFormat gff2  --gff2GroupTag "GenePrediction"  --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium yoelii yoelii str. 17XNL" --seqSoTerm "contig" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Pyoelii_Contigs_RSRC" --seqExtDbRlsVer @@Pyoelii_Contigs_VER@@ --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. yoelii (17XNL) provisional annotations from Stephen Kappe"
         project="PlasmoDB"
@@ -544,7 +544,7 @@ resources>
 
   <resource resource="Py_Kappe_array_RSRC" version="@@Py_Kappe_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Kappe/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Kappe_LiverStage/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -565,7 +565,7 @@ resources>
 
   <resource resource="winzeler_py_pf_comparison_array_RSRC" version="@@winzeler_py_pf_comparison_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/winzeler_yoelii_falciparum_comparison/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Winzeler_sporozoite/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
