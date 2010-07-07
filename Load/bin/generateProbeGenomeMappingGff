@@ -7,8 +7,9 @@ use Getopt::Long;
 use Data::Dumper;
 use List::Util qw(sum);
 
-my ($outputFile,$inputFile,$verbose);
+my ($outputFile,$inputFile,$verbose, $allowedMismatches);
 &GetOptions("inputFile=s" => \$inputFile,
+	    "allowedMismatches=s" => \$allowedMismatches,
             "verbose!" => \$verbose,
             "outputFile=s" => \$outputFile);
 
@@ -29,7 +30,9 @@ open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
 foreach my $k (keys %featureHash){
     my @arr = split(/\t/, $k);
     my ($start,$end) = split (/-/,$arr[2]);
-    print OUT "$arr[1]\tProbe_Mappings\tProbes\t$start\t$end\t.\t+\t.\tID \"$arr[0]_$arr[1]_$arr[2]\"\n";
+    my $trand=$arr[3];
+    my $mismatches=$arr[4];
+    print OUT "$arr[1]\tProbe_Mappings\tProbes\t$start\t$end\t.\t$trand\t.\tID \"$arr[0]_$arr[1]_$arr[2]\"\n" if ($allowedMismatches >= $mismatches);
 }
 
 close(OUT);
