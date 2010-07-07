@@ -679,7 +679,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <pluginArgs>--ECMappingFile @downloadDir@/Pyoelii_EC_numbers/ec_numbers.txt --evidenceCode "Annotation Center" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
         <description>
             <![CDATA[
-   
+EC annotation obtained from Jane Carlton.    
           ]]>
         </description>
        </resource>
@@ -3856,8 +3856,13 @@ A high-density oligonucleotide microarray to map the position and enrichment of 
 <pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile /home/weili1/gusApps/plas-load/gus_home/lib/xml/isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @downloadDir@/temp_called_peaks/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput @pipelineDir@/logs/temp_called_peaks.bioperl</pluginArgs>
         <description>
             <![CDATA[
+Cell Host Microbe. 2009 Feb 19;5(2):179-90.
+Genome-wide analysis of heterochromatin associates clonally variant gene regulation with perinuclear repressive centers in malaria parasites.
+
+Lopez-Rubio JJ, Mancio-Silva L, Scherf A.
           ]]>
         </description>
+        <publication pmid="19218088"/>
     </resource>
 
  <resource resource = "Pfalciparum_ChIP_PEAKs" version="2009-11-11"
@@ -4038,9 +4043,14 @@ A high-density oligonucleotide microarray to map the position and enrichment of 
 <pluginArgs>--inputDir @downloadDir@/DOZI_array/working_dir --configFile @downloadDir@/DOZI_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
    <description>
          <![CDATA[
+ Data (series GSE5889) obtained from Gene Expression Omnibus (GEO).
 
+Data contributed by Gunnar,R,Mair, Joanna,A,Braks, Lindsey,S,Garver, Joop,C,Wiegant, Neil,,Hall, Roeland,W,Dirks, Shahid,M,Khan, George,,Dimopoulos, Chris,J,Janse, and Andrew,P,Waters
+
+mRNA abundance was compared between  DOZI (development of zygote inhibited) mutant and wt parasite strains.
           ]]>
     </description>
+      <publication pmid="16888139"/>
   </resource>
 
  <resource resource = "DOZI_page" version="1.0"
