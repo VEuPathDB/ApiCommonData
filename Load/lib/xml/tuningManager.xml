@@ -3056,7 +3056,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ExpressionGraphDescrip&1 NOLOGGING AS
-select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts
+select rownum as order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts,attribution
 from (
 -- ToxoDB
 select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
@@ -3066,7 +3066,8 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type I RH lacking HXGPRT and UPRT. A total of three experimental conditions were used to promote in vitro bradyzoite differentiation: Alkaline conditions (D10 media adjusted to pH 8.2), CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2), and sodium nitroprusside (SNP) exposure (D10 with 100uM SNP). All conditions were applied 6hr post-inoculation and each media was exchanged every twelve hours post-inoculation.' as description,
        'Time in hours' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'Brady_Time_Series' as attribution
     from dual
 
     UNION
@@ -3077,7 +3078,8 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
        'T. gondii Type II Prugniaud parasites lacking HXGPRT were inoculated at and MOI of 2 and differentiated in RPMI 1640 lacking sodium bicarbonate, low FCS, and high pH (8.1). RNA was collected from either tachyzoite (2 days post inoculation before monolayer lysis) or bradyzoite cultures (2-days, 3-days and 4-days of induction). ' as description,
        'Time in days' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'Matt_Tz-Bz_Time_Series' as attribution
     from dual
 
     UNION
@@ -3088,7 +3090,8 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type III VEG. CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2) was used to induce in vitro bradyzoite differentiation. ' as description,
        'Time in days' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'Brady_Time_Series' as attribution
     from dual
 
     UNION
@@ -3099,7 +3102,8 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
        'Bradyzoite genes were induced following a 48 hour treatment with compound 1 or alkaline condition. Strains used in this study: Type I-GT1, Type II-Me49B7 and Type III-CTG.' as description,
        'Treatment/Condition' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'Compound1_pH_avg_pct' as attribution
     from dual
 
     UNION
@@ -3111,7 +3115,8 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
        'TODO: Add Description' as description,
        'Time point in hours' as x_axis,
        'RMA Value in upper graph or expression percentile value in lower graph.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
     from dual
 
     UNION
@@ -3124,7 +3129,8 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
        '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated for 30min with varying concentrations of DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
        'Incubation Condition' as x_axis,
        'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'GL_Spycher_metaData' as attribution
     from dual
 
     UNION
@@ -3136,7 +3142,8 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
        '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated 30min, 60min, 120min at 14.2mM DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
        'Incubation Time' as x_axis,
        'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'GL_Spycher_metaData_2' as attribution
     from dual
 
     UNION
@@ -3148,7 +3155,8 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
        'Interaction experiments were performed between G. intestinalis GL50803 and 21-day differentiated Caco-2 cells. Trophozoites were separated and collected from the interaction cultures at 1.5 h, 6 h and 18 h time points.  In addition, trophozoites of the same time points were harvested from standard TYI-S-33 cultures and from cultures in only interaction medium (DMEM).  Microarrays of all samples and time points were performed with a common reference, a pool of trophozoites from the 0 hr  time point of three replicate experiments. At least two 2-channel arrays were performed for each time point.' as description,
        'Time point in hours' as x_axis,
        'Fold Change in upper graph or expression percentile value in lower graph.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'G.intestinalis_Troell_Svard_Array_Profiles' as attribution
     from dual
 
     UNION
@@ -3160,7 +3168,8 @@ select 'giar sage tag frequencies sense' as profile_name,
        'Serial Analysis of Gene Expression (SAGE) was used to monitor gene expression throughout the Giardia life cycle in vitro.  This data is based on the original raw SAGE tag data and was extensively manually curated.' as description,
        'Time points post excystation or encystation are indicated in hours.<br />S1 (stage 1) = acidic condition to mimic the stomach.<br />S2 (Stage 2) = trypsin and slight alkaline conditions to mimic the small intestine.' as x_axis,
        'Percent of sense and antisense transcripts within individual SAGE libraries.' as y_axis,
-       'sage' as visible_parts
+       'sage' as visible_parts,
+        'Giardia_SageTag_Count_percentages' as attribution
     from dual
 
     UNION
@@ -3172,7 +3181,8 @@ select 'giar sage tag frequencies antisense' as profile_name,
        'Serial Analysis of Gene Expression (SAGE) was used to monitor gene expression throughout the Giardia life cycle in vitro.  This data is based on the original raw SAGE tag data and was extensively manually curated.' as description,
        'Time points post excystation or encystation are indicated in hours.<br />S1 (stage 1) = acidic condition to mimic the stomach.<br />S2 (Stage 2) = trypsin and slight alkaline conditions to mimic the small intestine.' as x_axis,
        'Percent antisense transcripts within individual SAGE libraries.' as y_axis,
-       'sage' as visible_parts
+       'sage' as visible_parts,
+        'Giardia_SageTag_Count_percentages' as attribution
     from dual
 
     UNION
@@ -3191,7 +3201,8 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        '' as description,
        '3D7, PL01 and PL02' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
-       'coverage,pct' as visible_parts
+       'coverage,pct' as visible_parts,
+        'RNASeq_Intensity_Profiles_Patrick_Duffy' as attribution
 from dual
 
 UNION
@@ -3203,7 +3214,8 @@ select 'EhistolyticaAffyProfiles' as profile_name,
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Gene expression in Entamoeba histolytica cysts and trophozoites:</b><br>RNA was isolated from <i>E. histolytica</i> parasites recently derived from human patients and grown in xenic culture (Robinson''s media) for 1-8 weeks. These cultures contained a mixture of trophozoites and cysts (as assayed by staining with calcofluor). Two different strains, isolated from different patients, were used. Gene expression in these strains was compared to gene expression in multiple <i>E. histolytica</i> strains (HMI:IMSS, Rahman and 200:NIH)  of pure trophozoites, which had been grown in axenic culture (TYI-S-33)for > 10 years, using a full genome Affymetrix-platform microarray. Multiple lines of evidence suggest that many genes differentially expressed between these two conditions (recent isolates vs. long term lab growth) are developmentally regulated.<br><br>All samples were isolated using Trizol and all except the clinical/cyst samples were cleaned up with the Qiagen RNAeasy kit (those samples had very low RNA levels). Samples GSM154008 (HM1-rep 3) and GSM154011 (Rahman Rep 3) were amplified using the SPIA protocol (these were also hybed and scanned at VBI- other samples were processed entirely by Stanford PAN facility). Samples GSM154022, GSM154023, and GSM154024 (the clinical/cyst samples) were amplified 2 rounds using the standard affy T7 procedure. All others had sufficient RNA and only underwent the standard affy in vitro transcription labeling protocol.' as description,
        'Strain and lifecycle stage' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
 select 'EhistolyticaNugenProfiles' as profile_name,
@@ -3213,7 +3225,8 @@ select 'EhistolyticaNugenProfiles' as profile_name,
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Impact of intestinal colonization and invasion on the Entamoeba histolytica  transcriptome:</b><br>An Affymetrix platform gene expression array was designed for this analysis that included probe sets for 9435 open reading frames (ORFs) and 9066 5'' and 3'' flanking regions. Transcripts were detected for > 80% of all ORFs. A total of 523 transcripts (5.2% of all <i>E. histolytica</i> genes) were significantly changed in amebae isolated from the intestine on Days 1 and 29 after infection: 326 and 109 solely on Days 1 and 29, and 88 on both days. Quantitative real-time reverse transcriptase PCR confirmed these changes in 11/12 genes tested using mRNA isolated from an additional six mice.<br><br>HM-1:IMSS and Rahman were not part of this study but have been inlcuded here for comparison' as description,
        'Strain and lifecycle stage' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
 --TriTrypDB --
@@ -3224,7 +3237,8 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
        'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.  Values in the data table are log2(R/G)' as description,
        'Time point in hours' as x_axis,
        'Fold Induction (vs. 0 hour) or expression percentile value for raw red and green values.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'Linfantum_promastigote_ExpressionData' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
@@ -3237,7 +3251,8 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
 				Values in the data table (above) are log2(sample/reference) and were used to generate the values in the fold change graph' as description,
        'High and low density blood forms (hd-bf represents the 0 hour in the time series); Time points are in hours' as x_axis,
        'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
-       'expr_val' as visible_parts
+       'expr_val' as visible_parts,
+        'Tbrucei_Expression_Profiles_From_Christine_Clayton' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -3251,7 +3266,8 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
 				The data table above contains RMA values in log2 scale.' as description,
        'Time points are in hours (sl = slender forms)' as x_axis,
        'Fold Induction in upper graph or percentile in lower graph.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'Tbrucei_Matthews_differentiation_series' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -3265,7 +3281,8 @@ The data table above contains the actual expression values.  <b>For this experim
 ' as description,
        'Average value from three independent biological replicates from five different life cycle stages.' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
-       'rma,pct' as visible_parts
+       'rma,pct' as visible_parts,
+        'Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles' as attribution
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
@@ -3278,7 +3295,8 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
 				The data table above contains are log2(Red/green) expression values' as description,
        'Average of 3 biological replicates from each Life cycle stage: trypomastigotes(TRP), amastigotes (AMA), epimastigotes (EPI), and metacyclic trypomastigotes (MET).' as x_axis,
        'Fold Induction or percentile.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'T.cruzi_Tarleton_Rick_Array_Profiles' as attribution
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -3288,7 +3306,8 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'Comparison of three developmental stages (Early Log, PNA- metacyclics and Mouse lesion Derived Amastigotes) of L.major FV1.' as description,
        'The bars represent a direct comparison of <i>Mouse Lesion Derived Amastigotes vs. Early Log Procyclic Promastigotes (A v P)</i> <b>OR</b> <i>PNA - Metacyclic Promastigotes vs. Early Log Procyclic Promastigotes (M v P)</i>.  Data for each biologial replicate (3) for each comparison are shown.  The expression values provided in the data table are log2(A/P) and log2(M/P) for each of the replicates.' as x_axis,
        'Fold Induction or percentile.  The percentile was calculated for each channel/sample to give an indication of the expression level of this gene compared to all others on that array.' as y_axis,
-       'expr_val,pct' as visible_parts
+       'expr_val,pct' as visible_parts,
+        'L.major_Beverley_Steve_Array_Profiles' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
@@ -3298,7 +3317,8 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
        'In order to analyze whether TbDRBD3 has a role in the regulation of mRNA turnover, the transcriptome of procyclic trypanosomes depleted of TbDRBD3 was compared to that of uninduced cells using hybridizations of genomic microarrays. RNA samples were isolated from cells harvested after 48 hours of induction with tetracycline. At this point, cell growth was barely affected and trypanosomes remained highly motile. 15 microg of RNA were reverse-transcribed in the presence of 100 ng of oligo(dT)12-18, 0.25 mM dATP, 0.25 mM dTTP, 0.25 mM dGTP, 0.05 mM dCTP, 0.05 mM Cy3- or Cy5-dCTP, 50 mM Tris-HCl, pH 8.3, 75 mM KCl, 3 mM MgCl2, 5 mM DTT, 40 U of RNaseOUT (Invitrogen) and 400 U of Superscript III reverse transcriptase (Invitrogen). Reactions were incubated for 3 hours at 50 degrees C, stopped by heating at 70 degrees C for 15 min and treated with 5 U of RNase H for 20 min at 37 degrees C. cDNA was purified using the MinElute kit (Qiagen), ethanol precipitated and resuspended in hybridization buffer. Genomic T. brucei microarray glass slides containing ca. 24,000 independent random genomic clones (Brems et al., 2005) were pre-hybridized and hybridized as described (Diehl et al., 2002). Four hybridizations (two biological replicates with a dye swap each) were analyzed.' as description,
        'Direct comparison; 2 biological replicates' as x_axis,
        'Fold Induction or percentile.' as y_axis,
-       '' as visible_parts
+       '' as visible_parts,
+        'Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles' as attribution
 from dual
 UNION
 select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
@@ -3308,7 +3328,8 @@ select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
        'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
        'log2 X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
-       'coverage,pct' as visible_parts
+       'coverage,pct' as visible_parts,
+        'George_Cross_RNA_Seq_Profiles' as attribution
 from dual
 )
       ]]>
