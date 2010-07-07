@@ -102,6 +102,7 @@ sub run {
 #--------------------------------------------------------------------------------
 sub writeConfigFile {
   my ($self, $configFile, $dataFile) = @_;
+  my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
   $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
   my $database = $self->getDb();
