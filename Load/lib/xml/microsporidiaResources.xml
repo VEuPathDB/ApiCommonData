@@ -181,6 +181,7 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
     </resource>
      <resource resource="EcuniculiChromosomesAndAnnotations" version="2008-06-19"
         displayName="E. cuniculi chromosomes sequence and annotation"
+        publicUrl="http://www.ncbi.nlm.nih.gov/sites/nuccore?Db=genomeprj&amp;DbFrom=nuccore&amp;Cmd=Link&amp;LinkName=nuccore_genomeprj&amp;IdsFromResult=17158050"
         organisms="Encephalitozoon cuniculi"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -200,6 +201,8 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
    Sequence and annotations from BioHealthBase for <i>Encephalitozoon cuniculi GB-M1</i> chromosomes in Genbank (sequence and annotated features) format. 
           ]]>
         </description>
+	<publication pmid="11719806"/>
+        <publication pmid="18060071"/>
       </resource>
 
 
@@ -221,12 +224,13 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/MicrosporidiaDB/EintestinalisEmbl2gus.xml --inputFileOrDir @downloadDir@/EintestinalisChromosomesAndAnnotations/EMBL --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Encephalitozoon intestinalis" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "chromosome" --bioperlTreeOutput @pipelineDir@/logs/Eintestinalis.bioperl --validationLog @pipelineDir@/logs/Eintestinalis.validation.log </pluginArgs>
         <description>
             <![CDATA[
-   Sequence and annotations from Patrick Keeling(pkeeling@interchange.ubc.ca)at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia for <i>Encephalitozoon intestinalis</i> chromosomes in EMBL (sequence and annotated features) format. 
+   Sequence and annotations from Patrick Keeling (pkeeling@interchange.ubc.ca) at Canadian Institute for Advanced Research, Evolutionary Biology Program, Department of Botany, University of British Columbia for <i>Encephalitozoon intestinalis</i> chromosomes in EMBL (sequence and annotated features) format. 
           ]]>
         </description>
     </resource>
     <resource resource="E.bieneusi_Genbank_contigs_and_annotations" version="2009-01-13"
         displayName="E. bieneusi contig sequences and annotations"
+        publicUrl="http://www.ncbi.nlm.nih.gov/sites/entrez?db=genomeprj&amp;cmd=Retrieve&amp;dopt=Overview&amp;list_uids=28163"
         organisms="Enterocytozoon bieneusi"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -243,9 +247,11 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/MicrosporidiaDB/EbieneusiGenbank2Gus.xml --inputFileOrDir @downloadDir@/E.bieneusi_Genbank_contigs_and_annotations/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --defaultOrganism "Enterocytozoon bieneusi H348" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "contig" --bioperlTreeOutput @pipelineDir@/logs/Ebieneusi.bioperl --validationLog @pipelineDir@/logs/Ebieneusi.validation.log</pluginArgs>
         <description>
             <![CDATA[
-   Sequence and annotations from Genbank for <i>Enterocytozoon bieneusi H348</i> contigs (PMID:18060071, PMID:19132089). 
+   Sequence and annotations from Genbank for <i>Enterocytozoon bieneusi H348</i> contigs.
           ]]>
         </description>
+        <publication pmid="19132089"/>
+        <publication pmid="18060071"/>
       </resource>
 
 <resource resource="EbieneusiScaffolds" version="2007-12-12"
@@ -260,7 +266,7 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
          <pluginArgs>--agpFile @downloadDir@/EbieneusiScaffolds/Ebieneusi.agp --seqPieceExtDbName "E.bieneusi_Genbank_contigs_and_annotations" --seqPieceExtDbRlsVer "2009-01-13" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "481877" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
          <description>
             <![CDATA[
-         Contig to scaffold map for<i>Enterocytozoon bieneusi H348</i> .
+         Contig to scaffold map for <i>Enterocytozoon bieneusi H348</i> .
          ]]>
         </description>
     </resource>
