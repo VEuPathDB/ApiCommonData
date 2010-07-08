@@ -1389,6 +1389,13 @@ tablespace indx
     </sql>
     <sql>
       <![CDATA[
+CREATE UNIQUE INDEX apidb.GeneAttr_srcPrj&1
+       ON apidb.GeneAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
 CREATE INDEX apidb.GeneAttr_exon_ix&1
        ON apidb.GeneAttributes&1 (exon_count, source_id)
 tablespace indx
