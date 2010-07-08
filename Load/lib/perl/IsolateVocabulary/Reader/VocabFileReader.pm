@@ -30,13 +30,13 @@ sub setType {
 }
 
 sub new {
-  my ($class, $flatFile, $gusConfigFile, $type) = @_;
+  my ($class, $vocabFile, $gusConfigFile, $type) = @_;
 
   my $args = {};
 
   my $self = bless $args, $class; 
 
-  $self->setFlatFile($flatFile);
+  $self->setVocabFile($vocabFile);
   $self->setGusConfigFile($gusConfigFile);
 
   my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
@@ -46,28 +46,28 @@ sub new {
   return $self;
 }
 
-sub getFlatFile {$_[0]->{flatFile}}
-sub setFlatFile {
-  my ($self, $flatFile) = @_;
+sub getVocabFile {$_[0]->{vocabFile}}
+sub setVocabFile {
+  my ($self, $vocabFile) = @_;
 
-  if(-e $flatFile) {
-    $self->{flatFile} = $flatFile;
+  if(-e $vocabFile) {
+    $self->{vocabFile} = $vocabFile;
   }
   else {
-    croak "flatFile $flatFile Does not exist";
+    croak "vocabFile $vocabFile Does not exist";
   }
 }
 
 sub extract {
   my ($self) = @_;
 
-  # make hash of vocab terms found in flat file
+  # make hash of vocab terms found in vocab file
   my $vocab;
   my @types = ('geographic_location', 'isolation_source', 'specific_host', 'product');
-  open(F, $self->getFlatFile()) || die "Can't open flat file for reading";
+  open(F, $self->getVocabFile()) || die "Can't open vocab file for reading";
   while(<F>) {
       my @line = split(//);
-      scalar(@line) == 3 || die "invalid line in flat file";
+      scalar(@line) == 3 || die "invalid line in vocab file";
       my $type = $line[2];
       grep(/$type/,@types) || die "illegal type '$type'";
       $vocab->{$type}->{$line[0]} = 1;
