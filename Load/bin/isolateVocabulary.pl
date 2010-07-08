@@ -43,7 +43,7 @@ sub usage {
   my ($m) = @_;
 
   print STDERR "$m\n\n" if($m);
-  print STDERR "perl isolateVocabulary.pl --gus_config_file=s --type=s --xml_file=f --vocab_file=f\n";
+  print STDERR "perl isolateVocabulary.pl --type=geographic_location|specific_host|product|isolation_source --xml_file=xmlfile --vocab_file=vocabfile <--gus_config_file=gusconfigfile> \n";
   print STDERR "
 
 Report terms used in isolates loaded into the database but not found in the provided vocabulary file.

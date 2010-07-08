@@ -4,15 +4,9 @@ use base qw(ApiCommonData::Load::IsolateVocabulary::Reader);
 use strict;
 use Carp;
 
-use CBIL::Util::PropertySet;
 use ApiCommonData::Load::IsolateVocabulary::VocabularyTerm;
 
 use ApiCommonData::Load::IsolateVocabulary::Utils;
-
-sub getGusConfigFile {$_[0]->{gusConfigFile}}
-sub setGusConfigFile {$_[0]->{gusConfigFile} = $_[1]}
-
-sub disconnect {$_[0]->{dbh}->disconnect()}
 
 sub setDbh {$_[0]->{dbh} = $_[1]}
 sub getDbh {$_[0]->{dbh}}
@@ -30,15 +24,12 @@ sub setType {
 }
 
 sub new {
-  my ($class, $gusConfigFile, $type) = @_;
+  my ($class, $dbh, $type) = @_;
 
   my $args = {};
 
   my $self = bless $args, $class; 
 
-  $self->setGusConfigFile($gusConfigFile);
-
-  my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
   $self->setDbh($dbh);
   $self->setType($type);
 
@@ -74,7 +65,6 @@ SQL
     push @sqlTerms, $term;
   }
   $sh->finish();
-  $self->disconnect();
 
   return \@sqlTerms;
 }

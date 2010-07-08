@@ -21,6 +21,9 @@ sub setDbh {$_[0]->{dbh} = $_[1]}
 sub new {
   my ($class, $gusConfigFile, $xmlMapTerms, $sqlTerms, $type) = @_;
 
+  unless(ApiCommonData::Load::IsolateVocabulary::Utils::isValidType($type)) {
+    croak "Type $type is not supported";
+  }
 
   my $args = {_sql_terms => $sqlTerms,
               _xml_map_terms => $xmlMapTerms,

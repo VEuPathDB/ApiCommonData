@@ -7,15 +7,13 @@ use Data::Dumper;
 
 use ApiCommonData::Load::IsolateVocabulary::Utils;
 use ApiCommonData::Load::IsolateVocabulary::VocabularyTerm;
+use GUS::Model::ApiDB::IsolateMapping;
 
 sub getSqlTerms {$_[0]->{_sql_terms}}
 sub setSqlTerms {$_[0]->{_sql_terms} = $_[1]}
 
 sub getXmlMapTerms {$_[0]->{_xml_map_terms}}
 sub setXmlMapTerms {$_[0]->{_xml_map_terms} = $_[1]}
-
-sub getGusConfigFile {$_[0]->{gusConfigFile}}
-sub setGusConfigFile {$_[0]->{gusConfigFile} = $_[1]}
 
 sub disconnect {$_[0]->{dbh}->disconnect()}
 
@@ -36,15 +34,11 @@ sub setType {
 
 
 sub new {
-  my ($class, $gusConfigFile, $type, $xmlTerms, $sqlTerms) = @_;
+  my ($class, $dbh, $type, $xmlTerms, $sqlTerms) = @_;
 
   my $args = {};
 
   my $self = bless $args, $class; 
-
-  $self->setGusConfigFile($gusConfigFile);
-
-  my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
 
   $self->setDbh($dbh);
   $self->setType($type);
@@ -66,29 +60,23 @@ sub insert {
   #    $isolateVocabularyId = $hash->{$type}->{$term}
   my $isolateVocabularyIds =  ApiCommonData::Load::IsolateVocabulary::Utils::getAllOntologies($dbh);
 
-  my $insertSql = "insert into apidb.isolatemapping (na_sequence_id, isolate_vocabulary_id) values (?,?)";
-  my $insert = $dbh->prepare($insertSql);
-
   # insert mapping for terms which don't require manual mapping (ie. the value in the dots table == value in apidb table)
-  my $automaticCounts = $self->insertAutomaticTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
+  my $automaticCounts = $self->insertAutomaticTerms($dotsIsolatesNaSequences, $isolateVocabularyIds);
 
   # insert mapping for manual terms (from xml mapping file)
-  my $manualCounts = $self->insertManuallyMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
+  my $manualCounts = $self->insertManuallyMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds);
 
   # insert mapping for null/unknown terms
-  my $nullCounts = $self->insertNullMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds, $insert);
-
-  $insert->finish();
-
-  $self->disconnect();
+  my $nullCounts = $self->insertNullMappedTerms($dotsIsolatesNaSequences, $isolateVocabularyIds);
 
   my $mappingTotalCount = $automaticCounts + $manualCounts + $nullCounts;
 
-  print STDERR "Inserted $mappingTotalCount  rows into apidb.isolateMapping\n";
+  return ($mappingTotalCount, "Inserted $automaticCounts automatic counts, $manualCounts manual counts and $nullCounts null counts (total=$mappingTotalCount)";
 }
 
+# for terms where original is null, map to the term "unkown"
 sub insertNullMappedTerms {
-  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds) = @_;
 
   my $count;
 
@@ -101,7 +89,7 @@ sub insertNullMappedTerms {
 
   my $naSequenceIds = $self->queryForNullNaSequences($type);
 
-  $count = $count + $self->doMappingInsert($vocabTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+  $count = $count + $self->doMappingInsert($vocabTerm, $isolateVocabularyId, $naSequenceIds);
 
   return $count;
 }
@@ -135,10 +123,8 @@ where im.na_sequence_id is null";
 }
 
 
-
-
 sub insertManuallyMappedTerms {
-  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds) = @_;
 
   my $count;
 
@@ -154,13 +140,13 @@ sub insertManuallyMappedTerms {
     my $isolateVocabularyId = $isolateVocabularyIds->{$mapTerm}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
 
-    $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+    $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $naSequenceIds);
   }
   return $count;
 }
 
 sub insertAutomaticTerms {
-  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds, $insert) = @_;
+  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds) = @_;
 
   my $count;
 
@@ -178,13 +164,13 @@ sub insertAutomaticTerms {
     my $isolateVocabularyId = $isolateVocabularyIds->{$term}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
 
-    $count = $count + $self->doMappingInsert($sqlTerm, $isolateVocabularyId, $naSequenceIds, $insert);
+    $count = $count + $self->doMappingInsert($sqlTerm, $isolateVocabularyId, $naSequenceIds);
   }
   return $count;
 }
 
 sub doMappingInsert {
-  my ($self, $term, $isolateVocabularyId, $naSequenceIds, $insert) = @_;
+  my ($self, $term, $isolateVocabularyId, $naSequenceIds) = @_;
 
   my $count;
 
@@ -197,8 +183,9 @@ sub doMappingInsert {
   }
 
   foreach my $naSequenceId (@$naSequenceIds) {
-    $insert->execute($naSequenceId, $isolateVocabularyId);
-    $count++;
+      my $mapping = new GUS::Model::ApiDB::IsolateMapping($naSequenceId, $isolateVacabularyId);
+      $mapping->submit();
+      $count++;
   }
 
   return $count;
@@ -216,12 +203,15 @@ Sql
              'IsolateSource' => <<Sql,
 select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
 Sql
-             'ExternalNaSequence' => <<Sql,
-select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
-Sql
+# probably not needed anymore
+#             'ExternalNaSequence' => <<Sql,
+#select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
+#Sql
             );
 
-  my @tables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
+  my @tables = ('IsolateFeature', 'IsolateSource',
+#		'ExternalNaSequence'
+      );
 
   my $dbh = $self->getDbh();
 
