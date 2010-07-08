@@ -318,7 +318,7 @@ sub _addMajorMinorInfo {
   my $numbers = scalar(keys %counts);
 
   if(scalar(@sortedAlleleKeys) == 1 && !$nullAllele) {
-    $self->userError("No Variation for source_id [$sourceId]");
+    $self->log("WARNING","No Variation for source_id [$sourceId]");
   }
 
   my $majorAllele = @sortedAlleleKeys[0];
