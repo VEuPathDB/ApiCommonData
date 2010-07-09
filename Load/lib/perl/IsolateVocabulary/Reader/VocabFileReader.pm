@@ -1,11 +1,18 @@
 package ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader;
 use base qw(ApiCommonData::Load::IsolateVocabulary::Reader);
 
+# create VocabularyTerm objects for all terms found in loaded isolates.
+# use provided vocab file to determine which terms are already known.
+
 use strict;
 use Carp;
 
 use ApiCommonData::Load::IsolateVocabulary::VocabularyTerm;
+
 use ApiCommonData::Load::IsolateVocabulary::Utils;
+
+sub setDbh {$_[0]->{dbh} = $_[1]}
+sub getDbh {$_[0]->{dbh}}
 
 sub getType {$_[0]->{_type}}
 
@@ -16,18 +23,18 @@ sub setType {
     croak "Type $type is not supported";
   }
 
-  $self->{_type} = $type;
+  $self->{_type} = $type;  
 }
 
 sub new {
-  my ($class, $vocabFile, $type) = @_;
+  my ($class, $dbh, $vocabFile, $type) = @_;
 
   my $args = {};
 
-  my $self = bless $args, $class;
+  my $self = bless $args, $class; 
 
   $self->setVocabFile($vocabFile);
-
+  $self->setDbh($dbh);
   $self->setType($type);
 
   return $self;
@@ -48,21 +55,47 @@ sub setVocabFile {
 sub extract {
   my ($self) = @_;
 
-  my $queryField = $self->getType() eq 'geographic_location' ? 'country' : $self->getType();
 
-  my @vocabTerms;
   open(F, $self->getVocabFile()) || die "Can't open vocab file for reading";
+  my $vocabFromFile;
   while(<F>) {
     chomp;
     my @line = split(/\t/);
     scalar(@line) == 3 || die "invalid line in vocab file";
     my $term = $line[0];
     my $type = $line[2];
-    my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($term, '', undef, $queryField, $type, 1);
-    push @vocabTerms, $vocabTerm;
+    die "duplicate ($type, $term) in vocab file line $.\n" if $vocabFromFile->{$type}->{$term};
+    $vocabFromFile->{$type}->{$term} = 1;
   }
 
-  return \@vocabTerms;
+  my $dbh = $self->getDbh();
+
+  my $queryField = $self->getType() eq 'geographic_location' ? 'country' : $self->getType();
+  my $type = $self->getType();
+
+  my $table = $type eq 'product' ? 'IsolateFeature' : 'IsolateSource';
+
+  my $sql = <<SQL;
+select distinct $queryField as term
+from dots.$table
+where $queryField is not null
+SQL
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+
+  my @sqlTerms;
+  my $count;
+  while(my ($term) = $sh->fetchrow_array()) {
+
+    my $term = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($term, '', $table, $queryField, $type, $vocabFromFile->{$type}->{$term});
+    push @sqlTerms, $term;
+    $count++
+  }
+  $sh->finish();
+  print STDERR "Found $count unique terms used by isolates in the database for type '$type'\n";
+
+  return \@sqlTerms;
 }
 
 

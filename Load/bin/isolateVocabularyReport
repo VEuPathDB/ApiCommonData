@@ -7,6 +7,7 @@ use Getopt::Long;
 use ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader;
 use ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader;
 use ApiCommonData::Load::IsolateVocabulary::Reporter;
+use ApiCommonData::Load::IsolateVocabulary::Utils;
 
 my ($help, $gusConfigFile, $type, $xmlFile, $vocabFile);
 
@@ -25,11 +26,13 @@ if(!$gusConfigFile || !$type || !$xmlFile || !$vocabFile) {
   &usage("Error: Required Argument omitted");
 }
 
+my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
+
 my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader->new($xmlFile);
 print STDERR "\nextracting terms from xml file\n";
 my $xmlTerms = $xmlReader->extract();
 
-my $vocabFileReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($vocabFile, $type);
+my $vocabFileReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($dbh, $vocabFile, $type);
 print STDERR "\nextracting terms from vocab file\n";
 my $vocabTerms = $vocabFileReader->extract();
 
