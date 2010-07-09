@@ -101,7 +101,7 @@ my $dbaIndStatistics = getDbaIndStatistics($optimizerStatsTables, $appDbh);
 if (!$noRun) {
 # execute query to get timing and row count
   my $startTime = time;
-  my $query = $appDbh->prepare($config->{sql});
+  my $query = $appDbh->prepare($config->{sql} . ' -- timestamp: ' . `date`);
   my $finishedPrepare = time;
   $query->execute();
   my $finishedExecute = time;
