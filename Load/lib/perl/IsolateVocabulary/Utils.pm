@@ -4,6 +4,7 @@ use strict;
 
 use DBI;
 use DBD::Oracle;
+use CBIL::Util::PropertySet;
 
 sub createDbh {
   my ($gusConfigFile) = @_;
