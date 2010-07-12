@@ -1191,7 +1191,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        last_exon.coding_end,
        nl.is_reversed,
        sns.length AS transcript_length,
-       GREATEST(0, least(nl.start_min, nl.end_max) - 15000)
+       GREATEST(1, least(nl.start_min, nl.end_max) - 15000)
            AS context_start,
        LEAST(sequence.length, greatest(nl.start_min, nl.end_max) + 15000)
            AS context_end,
