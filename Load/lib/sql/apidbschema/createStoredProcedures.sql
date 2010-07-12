@@ -482,5 +482,52 @@ end project_id;
 show errors;
 
 GRANT execute ON apidb.project_id TO public;
+
+-------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION apidb.url_escape (url varchar2)
+RETURN varchar2
+IS
+    rslt varchar2(4000);
+begin
+    rslt := utl_url.escape(url, FALSE, 'UTF-8');
+    return rslt;
+end url_escape;
+/
+
+GRANT execute ON apidb.url_escape TO gus_r;
+GRANT execute ON apidb.url_escape TO gus_w;
+
+-------------------------------------------------------------------------------
+/* ========================================================================== *
+ * gff_format_sequence function
+ * format sequence strings for GFF3 report format
+ * ========================================================================== */
+CREATE OR REPLACE FUNCTION apidb.gff_format_sequence (id varchar2, seq clob)
+RETURN clob
+IS
+    rslt clob;
+    idx  number;
+begin
+    if regexp_like(id, '^apidb\|')
+    then rslt := '>' || id;
+    else rslt := '>apidb|' || id;
+    end if;
+
+    if seq is not null
+    then
+        idx := 1;
+        while idx <= length(seq)
+        loop
+           rslt := rslt || substr(seq, idx, 60) || chr(13);
+           idx := idx + 60;
+        end loop;
+    end if;
+    return rslt;
+end gff_format_sequence;
+/
+
+GRANT execute ON apidb.gff_format_sequence TO gus_r;
+GRANT execute ON apidb.gff_format_sequence TO gus_w;
+
 -------------------------------------------------------------------------------
 exit;
