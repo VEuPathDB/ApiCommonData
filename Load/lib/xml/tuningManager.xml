@@ -2941,10 +2941,13 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.ExpressionGraphs&1 NOLOGGING AS
-select all_gg.*, case when pr.name is null then 0 ELSE 1 END as has_profile
+select all_gg.source_id, 
+       all_gg.main_profile_name as profile_name, 
+       all_gg.project_id, 
+       max(case when pr.name is null then 0 ELSE 1 END) as has_profile
 from 
   (
-    select ga.source_id, pm.*
+    select ga.source_id, pm.profile_name, nvl(pm.main_profile_name, pm.profile_name) as main_profile_name, pm.project_id
     from
     (
     -- ToxoDB --
@@ -2953,90 +2956,110 @@ from
     from dual
     UNION
     */ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
+           '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
     UNION
     select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
+           '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
     UNION
     select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
+           '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
     UNION
     select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
+           '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
     UNION
 
     -- AmoebaDB --
     select 'EhistolyticaAffyProfiles' as profile_name,
+           '' as main_profile_name,
            'AmoebaDB' as project_id
     from dual
     UNION
     select 'EhistolyticaNugenProfiles' as profile_name,
+           '' as main_profile_name,
            'AmoebaDB' as project_id
     from dual
     UNION
   
     -- GiardiaDB --
     select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
+           '' as main_profile_name,
            'GiardiaDB' as project_id
     from dual
     UNION
     select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
+           '' as main_profile_name,
            'GiardiaDB' as project_id
     from dual
     UNION
     select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
+           '' as main_profile_name,
            'GiardiaDB' as project_id
     from dual
     UNION
     select 'giar sage tag frequencies sense' as profile_name,
+           '' as main_profile_name,
            'GiardiaDB' as project_id
     from dual
     UNION
     select 'giar sage tag frequencies antisense' as profile_name,
+           'giar sage tag frequencies sense' as main_profile_name,
            'GiardiaDB' as project_id
     from dual
     UNION
 
     -- PlasmoDB --
 --    select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
+--           '' as main_profile_name,
 --          'PlasmoDB' as project_id
 --    from dual
 --    UNION
 
     --TriTrypDB --
     select 'Linfantum promastigote time-course biorep01' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of T. brucei differentiation series' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     UNION
     select 'Profiles of L.major Beverly Steve array data' as profile_name,
+           '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
     ) pm, apidb.geneattributes ga
@@ -3048,6 +3071,7 @@ from
    ) pr
   where  all_gg.source_id = pr.source_id (+)
   and all_gg.profile_name = pr.name (+)
+group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id
       ]]>
     </sql>
     <sql>
