@@ -40,7 +40,7 @@ sub _createDir {
 
 sub makeRMDir {
     my ($datasetName, $localDataDir, $clusterDataDir,
-	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClasss, $numNodes, $trimDangling) = @_;
+	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes, $trimDangling) = @_;
     $numNodes ||= 1;
     &_createDir("$localDataDir/repeatmask");
     my $inputDir = "$localDataDir/repeatmask/$datasetName/input";
