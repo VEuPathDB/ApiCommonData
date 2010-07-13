@@ -1964,8 +1964,10 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
 
   <resource resource="Pf_array_Affy_scrMalaria_RSRC" version="@@Pf_array_Affy_scrMalaria_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/probes.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+    <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/affyArray.cdf"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
@@ -2235,8 +2237,10 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
 
   <resource resource="Pf_array_Affy_pf_sanger_RSRC" version="@@Pf_array_Affy_pf_sanger_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/Affy-pfsanger/%RESOURCE_VERSION%/final/probes.fsa"/>
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/Affy-pfsanger/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/affyArray.cdf"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
