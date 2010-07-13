@@ -40,7 +40,7 @@ sub _createDir {
 
 sub makeRMDir {
     my ($datasetName, $localDataDir, $clusterDataDir,
-	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes) = @_;
+	$nodePath,$taskSize, $rmOptions, $dangleMax, $rmPath, $nodeClasss, $numNodes, $trimDangling) = @_;
     $numNodes ||= 1;
     &_createDir("$localDataDir/repeatmask");
     my $inputDir = "$localDataDir/repeatmask/$datasetName/input";
@@ -51,7 +51,7 @@ sub makeRMDir {
 			    "DJob::DistribJobTasks::RepeatMaskerTask",
 			    $nodeClass);
     my $seqFileName = "$clusterDataDir/seqfiles/$datasetName.fsa"; 
-    &makeRMTaskPropFile($inputDir, $seqFileName, $rmOptions, $rmPath,$dangleMax);
+    &makeRMTaskPropFile($inputDir, $seqFileName, $rmOptions, $rmPath,$dangleMax,$trimDangling);
     &runCmd("chmod -R g+w $localDataDir/repeatmask/$datasetName");
 }
 
@@ -270,15 +270,16 @@ restart=no
 }
 
 sub makeRMTaskPropFile {
-    my ($inputDir, $seqFileBasename, $rmOptions, $rmPath, $dangleMax) = @_;
+    my ($inputDir, $seqFileBasename, $rmOptions, $rmPath, $dangleMax,$trimDangling) = @_;
 
     open(F, ">$inputDir/task.prop") 
 	|| die "Can't open $inputDir/task.prop for writing";
 
+    $trimDangling = 'y' unless $trimDangling;
     print F 
 "rmPath=$rmPath
 inputFilePath=$seqFileBasename
-trimDangling=y
+trimDangling=$trimDangling
 rmOptions=$rmOptions
 dangleMax=$dangleMax
 ";
