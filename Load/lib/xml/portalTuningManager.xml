@@ -39,6 +39,13 @@
       </source>
 
     </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
+ON apidb.AssemblyAttributes&1 (source_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.EstAttributes">
@@ -91,6 +98,20 @@
       </source>
 
     </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source_id, source_id)
+tablespace indx
+      ]]>
+    </sql>
+
   </tuningTable>
 
   <tuningTable name="apidb.GeneAttributes">
@@ -142,6 +163,15 @@
       </source>
 
     </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.GeneAttr_srcPrj&1
+       ON apidb.GeneAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
   </tuningTable>
 
   <tuningTable name="apidb.GeneId">
@@ -199,8 +229,19 @@
           ]]>
         </query>
       </source>
-
     </unionization>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.IsolateAttributes">
@@ -217,6 +258,12 @@
       <source dblink="toxo"/>
       <source dblink="orphan"/>
     </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.OrfAttributes">
@@ -267,6 +314,20 @@
         </query>
       </source>
     </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.OrfAttr_location_idx&1 ON apidb.OrfAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+tablespace indx
+      ]]>
+    </sql>
+
   </tuningTable>
 
   <tuningTable name="apidb.SageTagAttributes">
@@ -282,6 +343,20 @@
       <source dblink="plasmo"/>
       <source dblink="toxo"/>
     </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
+             (source_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
+             (na_sequence_id, start_min, end_max, is_reversed, source_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.SequenceAttributes">
@@ -331,7 +406,15 @@
       </source>
 
     </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SeqAttr_source_id&1 ON apidb.SequenceAttributes&1 (source_id)
+      ]]>
+    </sql>
+
   </tuningTable>
+
 
   <tuningTable name="apidb.SequenceId">
     <externalTuningTableDependency name="apidb.SequenceId" dblink="crypto"/>
@@ -388,7 +471,19 @@
           ]]>
         </query>
       </source>
-    </unionization>
+   </unionization>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SequenceId_sequence_idx&1 ON apidb.SequenceId&1 (sequence)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SequenceId_id_idx&1 ON apidb.SequenceId&1 (id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.SnpAttributes">
@@ -439,45 +534,99 @@
         </query>
       </source>
     </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id)
+      ]]>
+    </sql>
+
   </tuningTable>
 
+ 
   <tuningTable name="apidb.GeneGFF">
     <externalDependency name="apidb.GeneGFF" dblink="giardia"/>
     <externalDependency name="apidb.GeneGFF" dblink="plasmo"/>
     <externalDependency name="apidb.GeneGFF" dblink="toxo"/>
+    <externalDependency name="apidb.GeneGFF" dblink="crypto"/>
     <externalDependency name="apidb.GeneGFF" dblink="tritryp"/>
+    <externalDependency name="apidb.GeneGFF" dblink="trich"/>
+<!--    <externalDependency name="apidb.GeneGFF" dblink="micro"/>
+    <externalDependency name="apidb.GeneGFF" dblink="amoeba"/> -->
     <intermediateTable name="apidb.GeneGFFGiardia"/>
     <intermediateTable name="apidb.GeneGFFPlasmo"/>
     <intermediateTable name="apidb.GeneGFFToxo"/>
+    <intermediateTable name="apidb.GeneGFFCrypto"/>
     <intermediateTable name="apidb.GeneGFFTriTryp"/>
+    <intermediateTable name="apidb.GeneGFFTrich"/>
+<!--    <intermediateTable name="apidb.GeneGFFAmoeba"/>
+    <intermediateTable name="apidb.GeneGFFMicro"/> -->
 
     <sql>
       <![CDATA[
         create table apidb.GeneGFFGiardia nologging as
-        select * from apidb.GeneGFF@giardia
+        select SOURCE_ID,PROJECT_ID as PROJECT_ID,TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@giardia
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneGFFPlasmo nologging as
-        select * from apidb.GeneGFF@plasmo
-      ]]>
+        select SOURCE_ID,PROJECT_id, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@plasmo
+       ]]>
     </sql>
 
     <sql>
       <![CDATA[
         create table apidb.GeneGFFToxo nologging as
-        select * from apidb.GeneGFF@toxo
-      ]]>
+        select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
+        CONTENT, MODIFICATION_DATE from apidb.GeneGFF@toxo
+       ]]>
     </sql>
 
       <sql>
       <![CDATA[
         create table apidb.GeneGFFTriTryp nologging as
-        select * from apidb.GeneGFF@tritryp
+        select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@tritryp
       ]]>
     </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFCrypto nologging as
+        select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@crypto
+      ]]>
+    </sql>
+
+     <sql>
+      <![CDATA[
+        create table apidb.GeneGFFTrich nologging as
+        select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@trich where project_id = 'TrichDB'
+      ]]>
+    </sql>
+<!--
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFAmoeba nologging as
+        select SOURCE_ID,'EuPathDB' as PROJECT_ID,
+               TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@amoeba where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFMicro nologging as
+        select SOURCE_ID,'EuPathDB' as PROJECT_ID,
+               TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@micro where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+-->
+
 
       <sql>
       <![CDATA[
@@ -490,11 +639,20 @@
         select * from apidb.GeneGFFToxo
         union all
         select * from apidb.GeneGFFTritryp
+        union all
+        select * from apidb.GeneGFFTrich
+        union all
+        select * from apidb.GeneGFFCrypto
+/*        union all
+        select * from apidb.GeneGFFAmoeba
+        union all
+        select * from apidb.GeneGFFMicro */
         )
       ]]>
     </sql>
   </tuningTable>
 
+ 
   <tuningTable name="apidb.GeneDetail">
     <internalDependency name="apidb.ProteinSequence"/>
     <externalDependency name="apidb.GeneDetail" dblink="crypto"/>
