@@ -884,6 +884,7 @@ sub createRepeatMaskDir {
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
 
+
   my $rmTaskSize = $taskSizeOpt ? $taskSizeOpt : $propertySet->getProp('repeatmask.taskSize');
 
   $rmOptions .= " $addOpt" if($addOpt);
@@ -921,11 +922,12 @@ sub createRepeatMaskDir_new {
   my $rmPath = $propertySet->getProp('repeatmask.path');
   my $rmOptions = $propertySet->getProp('repeatmask.options');
   my $dangleMax = $propertySet->getProp('repeatmask.dangleMax');
+  my $trimDangling = $propertySet->getProp('repeatmask.trimDangling');
 
   $rmOptions .= " $addOpt" if($addOpt);
 
   &makeRMDir($file, $dataDir, $clusterDataDir,
-	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes);
+	     $nodePath, $rmTaskSize, $rmOptions, $dangleMax, $rmPath, $nodeClass, $numNodes, $trimDangling);
 
   $mgr->endStep($signal);
 }
