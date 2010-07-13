@@ -209,6 +209,7 @@ sub dumpNaSequence {
 
   my $signal = "dumpSequence-$shortName";
 
+  my $sql = '';
   return if $mgr->startStep("Dumping NASequence [$shortName]..", $signal);
   unless(-e $mercatorDir) {
     $mgr->runCmd("mkdir -p $mgr->{dataDir}/$mercatorDir");
@@ -235,13 +236,14 @@ sub dumpNaSequence {
         $virtualExtDbRls .=&getDbRlsId($mgr,$virtualDbName,$virtualDbRlsVer);
    }    
 	$virtualExtDbRls =~ s/(,)$//g;
+	$sql = "select source_id, sequence from Dots.VIRTUALSEQUENCE vs,  SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and vs.external_database_release_id = r.external_database_release_id and r.external_database_release_id in($virtualExtDbRls)";
+
+	$mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
   }
  
       
 
-  my $sql = "select source_id, sequence from Dots.VIRTUALSEQUENCE vs,  SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and vs.external_database_release_id = r.external_database_release_id and r.external_database_release_id in($virtualExtDbRls)";
 
-  $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
   $sql = "select source_id, sequence from Dots.EXTERNALNASEQUENCE es, SRes.EXTERNALDATABASE e, SRes.EXTERNALDATABASERELEASE r  where e.external_database_id = r.external_database_id and es.external_database_release_id = r.external_database_release_id and r.external_database_release_id in '$extDbRls' and es.na_sequence_id NOT IN (select sp.piece_na_sequence_id from dots.SEQUENCEPIECE sp, dots.VIRTUALSEQUENCE vs, Sres.EXTERNALDATABASE e, Sres.EXTERNALDATABASERELEASE r  where vs.na_sequence_id = sp.virtual_na_sequence_id AND vs.external_database_release_id = r.external_database_release_id AND r.external_database_id = e.external_database_id AND r.external_database_release_id in '$virtualExtDbRls')";
   $mgr->runCmd("dumpSequencesFromTable.pl --outputfile $outputFile --idSQL \"$sql\"");
   $mgr->endStep($signal);
