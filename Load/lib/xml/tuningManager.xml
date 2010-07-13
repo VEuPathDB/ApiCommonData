@@ -3195,7 +3195,7 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
 select 'giar sage tag frequencies sense' as profile_name,
        'Sage::McArthur' as module,
        'Giardia Assemblage A isolate WB' as species,
-       'Curated SAGE Data (Sense Tags)' as display_name,
+       'Curated SAGE Data (Sense and Antisense Tags)' as display_name,
        'Serial Analysis of Gene Expression (SAGE) was used to monitor gene expression throughout the Giardia life cycle in vitro.  This data is based on the original raw SAGE tag data and was extensively manually curated.' as description,
        'Time points post excystation or encystation are indicated in hours.<br />S1 (stage 1) = acidic condition to mimic the stomach.<br />S2 (Stage 2) = trypsin and slight alkaline conditions to mimic the small intestine.' as x_axis,
        'Percent of sense and antisense transcripts within individual SAGE libraries.' as y_axis,
@@ -3204,24 +3204,6 @@ select 'giar sage tag frequencies sense' as profile_name,
     from dual
 
     UNION
-
-select 'giar sage tag frequencies antisense' as profile_name,
-       'Sage::McArthurAntisense' as module,
-       'Giardia Assemblage A isolate WB' as species,
-       'Curated SAGE Data (Anti-Sense Tags)' as display_name,
-       'Serial Analysis of Gene Expression (SAGE) was used to monitor gene expression throughout the Giardia life cycle in vitro.  This data is based on the original raw SAGE tag data and was extensively manually curated.' as description,
-       'Time points post excystation or encystation are indicated in hours.<br />S1 (stage 1) = acidic condition to mimic the stomach.<br />S2 (Stage 2) = trypsin and slight alkaline conditions to mimic the small intestine.' as x_axis,
-       'Percent antisense transcripts within individual SAGE libraries.' as y_axis,
-       'sage' as visible_parts,
-        'GiardiaSageTagArrayDesign,GiardiaSageTagFreqs' as attribution
-    from dual
-
-    UNION
-
-
-
-
-
 
 
 -- PlasmoDB --
