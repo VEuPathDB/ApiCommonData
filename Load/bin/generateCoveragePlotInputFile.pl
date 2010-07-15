@@ -5,10 +5,11 @@ use Getopt::Long;
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 
-my ($RNASeqExtDbSpecs,$genomeExtDbSpecs,$sample,$filename, $verbose);
+my ($RNASeqExtDbSpecs,$genomeExtDbSpecs,$sample,$filename, $multiple,$verbose);
 &GetOptions("RNASeqExtDbSpecs|s=s" => \$RNASeqExtDbSpecs,
 	    "genomeExtDbSpecs|s=s" => \$genomeExtDbSpecs,
             "sample|t=s" => \$sample,
+            "multiple|t=s" => \$multiple,
             "filename|mf=s" => \$filename,
             );
 
@@ -16,7 +17,8 @@ die "usage: generateCoveragePlotInputFile.pl
       --filename|f <filename> 
       --RNASeqExtDbSpecs|s <Db Specs for experiment (required)> 
       --genomeExtDbSpecs|s <Db Specs for genome (required)> 
-      --sample <sample name (required)> " unless $RNASeqExtDbSpecs && $sample && $filename && $genomeExtDbSpecs ;
+      --sample <sample name (required)> 
+      --multiple <unique mappings or non-unique mappings (required)>" unless $RNASeqExtDbSpecs && $sample && $filename && $genomeExtDbSpecs && $multiple;
 
 #=======================================================================
 
@@ -43,6 +45,12 @@ $sth->finish();
 $dbh->disconnect();
 
  open(F,"$filename") || die "unable to open $filename\n";
+  my $multipleVal;
+  if (lc $multiple eq 'false'){
+      $multipleVal= 0;
+  }else{
+      $multipleVal= 1;
+  }
   
   while(<F>){
     next if (/^track/);
@@ -50,7 +58,7 @@ $dbh->disconnect();
     my ($source_id,$start,$end,$coverage) = split("\t",$_);
 
     if($naSeqHash{$source_id}){
-	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t\t\n";
+	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal\t\n";
     }
   }
   close F;
