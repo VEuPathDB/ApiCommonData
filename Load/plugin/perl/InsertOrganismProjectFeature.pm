@@ -20,7 +20,7 @@ use GUS::Model::ApiDB::OrganismProject;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'project',
+     stringArg({ name => 'projectName',
 		 descr => 'project name',
 		 constraintFunc=> undef,
 		 reqd  => 1,
@@ -91,7 +91,7 @@ sub run {
 
   my $organism = $self->getArg('organism');
 
-  my $project = $self->getArg('project');
+  my $project = $self->getArg('projectName');
 
   my $organismProject =  GUS::Model::ApiDB::OrganismProject->new({'organism' => $organism,
 					     'project' => $project,});
