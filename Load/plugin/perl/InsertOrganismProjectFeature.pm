@@ -5,9 +5,6 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
-
-
-use GUS::Model::DoTS::Transcript;
 use GUS::Model::ApiDB::OrganismProject;
 
 
@@ -15,32 +12,26 @@ use GUS::Model::ApiDB::OrganismProject;
 # Load Arguments
 # ----------------------------------------------------------
 
-sub getArgsDeclaration {
   my $argsDeclaration  =
     [
      stringArg({ name => 'organism',
-		 descr => 'organism name                                     ',
+		 descr => 'organism name',
 		 constraintFunc=> undef,
 		 reqd  => 1,
-		 isList => 0
+		 isList => 0,
 	       }),
      stringArg({ name => 'project',
-		 descr => 'project name                                                     ',
+		 descr => 'project name',
 		 constraintFunc=> undef,
 		 reqd  => 1,
-		 isList => 0
-	       })
+		 isList => 0,
+	       }),
     ];
-
-  return $argsDeclaration;
-}
 
 
 # ----------------------------------------------------------
 # Documentation
 # ----------------------------------------------------------
-
-sub getDocumentation {
 
   my $description = <<DESCR;
 Plugin to load organism and project mappings
@@ -79,34 +70,24 @@ FAIL
 			notes            => $notes
 		      };
 
-  return ($documentation);
-
-}
-
 
 sub new {
-  my $class = shift;
+  my ($class) = @_;
   my $self = {};
   bless($self, $class);
 
-  my $documentation = &getDocumentation();
-
-  my $args = &getArgsDeclaration();
-
-  my $configuration = { requiredDbVersion => 3.5,
+  $self->initialize ({ requiredDbVersion => 3.5,
 			cvsRevision => '$Revision$',
 			name => ref($self),
-			argsDeclaration => $args,
+			argsDeclaration => $argsDeclaration,
 			documentation => $documentation
-		      };
-
-  $self->initialize($configuration);
+		      });
 
   return $self;
 }
 
 sub run {
-  my $self = shift;
+  my ($self) = @_;
 
   my $organism = $self->getArg('organism');
 
@@ -115,9 +96,9 @@ sub run {
   my $organismProject =  GUS::Model::ApiDB::OrganismProject->new({'organism' => $organism,
 					     'project' => $project,});
 
-  $organismProject->submit() (unless $organismProject->retrieveFromDB());
+  $organismProject->submit() unless $organismProject->retrieveFromDB();
 
-  my $msg = "$projec -> $organism added to apidb.OrganismProject.";
+  my $msg = "$project -> $organism added to apidb.OrganismProject.";
 
   $self->log("$msg \n");
 
