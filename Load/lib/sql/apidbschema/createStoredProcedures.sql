@@ -489,7 +489,7 @@ RETURN varchar2
 IS
     rslt varchar2(4000);
 begin
-    rslt := utl_url.escape(url, FALSE, 'UTF-8');
+    rslt := replace(utl_url.escape(url, FALSE, 'UTF-8'),'%20','+');
     return rslt;
 end url_escape;
 /
@@ -508,17 +508,19 @@ IS
     rslt clob;
     idx  number;
 begin
-    if regexp_like(id, '^apidb\|')
-    then rslt := '>' || id;
-    else rslt := '>apidb|' || id;
-    end if;
-
     if seq is not null
     then
+        if regexp_like(id, '^apidb\|')
+        then rslt := '>';
+        else rslt := '>apidb|';
+        end if;
+
+        rslt := rslt || id || chr(10);
+
         idx := 1;
         while idx <= length(seq)
         loop
-           rslt := rslt || substr(seq, idx, 60) || chr(13);
+           rslt := rslt || substr(seq, idx, 60) || chr(10);
            idx := idx + 60;
         end loop;
     end if;
