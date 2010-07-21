@@ -1819,6 +1819,39 @@
     </info>
   </resource>
 
+
+  <resource resource="Pf_RNASeq_Stunnenberg_RSRC" version="@@Pf_RNASeq_Stunnenberg_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/rnaSeq/Stunnenberg/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/35h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/5h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/40h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/30h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/25h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/20h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/15h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/10h.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNA-Seqs from Henk Stunnenberg"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Henk Stunnenberg"
+        email="H.Stunnenberg@ncmls.ru.nl"
+        institution="Radboud University Nijmegen, The Netherlands">
+      <description>
+        <![CDATA[
+   RNA-Seq coverage of RBC time study from the laboratory of Henk Stunnenberg
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 <!--arrayStudies-->
 
   <resource resource="Pf_array_Affy_Winzeler_Westenberger_RSRC" version="@@Pf_array_Affy_Winzeler_Westenberger_VER@@"
