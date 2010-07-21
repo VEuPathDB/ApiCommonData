@@ -5556,4 +5556,25 @@ sub getDbHandle {
     </perl>
   </tuningTable>
 
+  <tuningTable name="apidb.ExpressionElement">
+    <internalDependency name="apidb.FeatureLocation"/>
+    <externalDependency name="rad.DataTransformationResult"/>
+    <sql>
+      <![CDATA[
+      create table apidb.ExpressionElement&1 nologging as
+      select fl.na_feature_id, fl.na_sequence_id, fl.start_min, fl.end_max,
+             dtr.analysis_id, dtr.float_value as score
+      from rad.DataTransformationResult dtr, apidb.FeatureLocation fl
+      where dtr.row_id = fl.na_feature_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+      create index apidb.ee_track_ix&1
+      on apidb.ExpressionElement&1 (na_sequence_id, analysis_id, start_min, end_max, na_feature_id, score)
+      tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
