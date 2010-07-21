@@ -16,10 +16,10 @@ CREATE TABLE apidb.OrganismProject (
 );
 
 ALTER TABLE apidb.OrganismProject
-ADD CONSTRAINT og_pk PRIMARY KEY (organism_project_id);
+ADD CONSTRAINT organism_project_pk PRIMARY KEY (organism_project_id);
 
 ALTER TABLE apidb.OrganismProject
-ADD CONSTRAINT workflow_uniq
+ADD CONSTRAINT organism_project_uniq
 UNIQUE (organism, project);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrganismProject TO gus_w;
