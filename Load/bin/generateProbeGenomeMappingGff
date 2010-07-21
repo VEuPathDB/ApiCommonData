@@ -21,21 +21,21 @@ while (<TABFILE>){
   chomp;
   next if /^#/; 
   my @arr = split(/\t/, $_);
-  $featureHash{"$arr[0]\t$arr[1]\t$arr[2]\t$arr[4]"}=1;
+  $featureHash{"$arr[0]\t$arr[1]\t$arr[2]\t$arr[3]\t$arr[5]"}=1;
 }
 
 close(TABFILE);
 
 open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
 foreach my $k (keys %featureHash){
-    my ($probeId, $genomeId, $locations,$mismatches) = split(/\t/, $k);
+    my ($probeId, $genomeId, $locations,$strand, $mismatches) = split(/\t/, $k);
     my @exons = split (/,/,$locations) ;
     map(s/\s//g,@exons) ;
     my $exonOrder=0;
     foreach (@exons) {
 	my ($start,$end) = split (/-/,$_);
 	$exonOrder++;
-	print OUT "$genomeId\tProbe_Mappings\tProbes\t$start\t$end\t.\t+\t.\tID \"$probeId\"ExonOrder \"$exonOrder\"\n" if ($allowedMismatches >= $mismatches);
+	print OUT "$genomeId\tProbe_Mappings\tProbes\t$start\t$end\t.\t$strand\t.\tID \"$probeId"."_"."$exonOrder\"ExonOrder \"$exonOrder\"Name \"$probeId\"\n" if ($allowedMismatches >= $mismatches);
     }
 
 }
