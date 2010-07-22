@@ -35,7 +35,7 @@ foreach my $k (keys %featureHash){
     foreach (@exons) {
 	my ($start,$end) = split (/-/,$_);
 	$exonOrder++;
-	print OUT "$genomeId\tProbe_Mappings\tProbes\t$start\t$end\t.\t$strand\t.\tID \"$probeId"."_"."$exonOrder\"ExonOrder \"$exonOrder\"Name \"$probeId\"\n" if ($allowedMismatches >= $mismatches);
+	print OUT "$genomeId\tProbe_Mappings\tProbes\t$start\t$end\t.\t$strand\t.\tID \"$probeId"."-"."$exonOrder\"ExonOrder \"$exonOrder\"Name \"$probeId\"\n" if ($allowedMismatches >= $mismatches);
     }
 
 }
