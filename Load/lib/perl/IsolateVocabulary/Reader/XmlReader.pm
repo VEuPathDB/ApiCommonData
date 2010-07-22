@@ -42,7 +42,7 @@ sub extract {
   my @vocabularyTerms;
 
   foreach my $node (@{$root->{initial}}) {
-    my $original = $node->{original};
+    my $original = $node->{original}->[0];
     my $table = $node->{table};
     my $field = $node->{field};
 
