@@ -23,6 +23,7 @@ my $soTerms = ({stop_codon_redefinition_as_selenocysteine => 1,
 		GC_rich_promoter_region => 1,
 		tandem_repeat => 1,
 		exon => 1,
+		ORF => 1,
 	       });
 sub new {
   my ($class) = @_;
@@ -882,8 +883,9 @@ sub setProvidedOrfTranslation {
 
   my $translatedAaFeature = $orfFeature->getChild('DoTS::TranslatedAAFeature');
   my $translatedAaSequence = $translatedAaFeature->getParent('DoTS::TranslatedAASequence');
-
+  my $soId = $self->_getSOPrimaryKey('ORF');
   $translatedAaSequence->setSequence($aaSequence);
+  $translatedAaSequence->setSequenceOntologyId($soId);
 
   return [];
 }
