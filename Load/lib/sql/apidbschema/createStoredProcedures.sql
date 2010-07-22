@@ -450,6 +450,8 @@ begin
            then return 'TriTrypDB';
          when 'trypanosoma'
            then return 'TriTrypDB';
+         when 'crithidia'
+           then return 'TriTrypDB';
          when 'trichomonas'
            then return 'TrichDB';
          when 'phytomonas'
