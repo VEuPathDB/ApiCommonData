@@ -5563,7 +5563,7 @@ sub getDbHandle {
       <![CDATA[
       create table apidb.ExpressionElement&1 nologging as
       select fl.na_feature_id, fl.na_sequence_id, fl.start_min, fl.end_max,
-             dtr.analysis_id, dtr.float_value as score
+             fl.feature_source_id, dtr.analysis_id, dtr.float_value as score
       from rad.DataTransformationResult dtr, apidb.FeatureLocation fl
       where dtr.row_id = fl.na_feature_id
       ]]>
