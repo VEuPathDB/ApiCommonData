@@ -13,33 +13,62 @@ my ($outputFile,$inputFile,$verbose, $allowedMismatches);
             "verbose!" => \$verbose,
             "outputFile=s" => \$outputFile);
 
-my %featureHash;
+my (%featureHash,$feature);
 
 open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
 
 while (<TABFILE>){
   chomp;
+
   next if /^#/; 
-  my @arr = split(/\t/, $_);
-  $featureHash{"$arr[0]\t$arr[1]\t$arr[2]\t$arr[3]\t$arr[5]"}=1;
+
+  my ($probeId, $genomeId, $locations,$strand, $probeSeq, $mismatches)= split(/\t/, $_);
+
+  $feature = {probeId => $probeId,
+	      genomeId => $genomeId,
+	      strand => $strand,
+	      mismatches => $mismatches,
+             };
+   my @exons = split (/,/,$locations);
+   map(s/\s//g,@exons) ;
+   my $exonOrder=0;
+   foreach(@exons){
+       	my ($start,$end) = split (/-/,$_);
+	$exonOrder++;
+	push(@{$feature->{exon}},{start=>$start,
+				   end=>$end,
+				   exonOrder=>$exonOrder,});
+  }
+  push(@{$featureHash{$probeId}}, $feature);
 }
 
 close(TABFILE);
 
-open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
-foreach my $k (keys %featureHash){
-    my ($probeId, $genomeId, $locations,$strand, $mismatches) = split(/\t/, $k);
-    my @exons = split (/,/,$locations) ;
-    map(s/\s//g,@exons) ;
-    my $exonOrder=0;
-    foreach (@exons) {
-	my ($start,$end) = split (/-/,$_);
-	$exonOrder++;
-	print OUT "$genomeId\tProbe_Mappings\tProbes\t$start\t$end\t.\t$strand\t.\tID \"$probeId"."-"."$exonOrder\"ExonOrder \"$exonOrder\"Name \"$probeId\"\n" if ($allowedMismatches >= $mismatches);
-    }
+#print Dumper (\%featureHash);
 
+open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
+
+foreach my $probeId (keys %featureHash){
+
+    my @features = @{$featureHash{$probeId}};
+
+    my $featureCount=0;
+ 
+    foreach my $probeFeature (@features){
+
+	$featureCount++;
+
+	my @exonFeatures = @{$probeFeature->{exon}};
+	
+	foreach my $exonfeature (@exonFeatures){
+	    
+             print OUT "$probeFeature->{genomeId}\tProbe_Mappings\tProbes\t$exonfeature->{start}\t$exonfeature->{end}\t.\t$probeFeature->{strand}\t.\tID \"$probeFeature->{probeId}"."-"."$featureCount\"; ExonOrder \"$exonfeature->{exonOrder}\"; Name \"$probeFeature->{probeId}\"\n" if ($probeFeature->{mismatches} >= $allowedMismatches);
+	    
+	}
+    }
 }
 
 close(OUT);
+
 
 
