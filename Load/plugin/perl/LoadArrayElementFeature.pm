@@ -177,7 +177,7 @@ sub processFile {
 
   my $processedFeatures = 0;
 
-  my $prevSourceId = '';
+  my %prevSourceIds;
 
   my $row;
   my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('fileName'),
@@ -212,12 +212,12 @@ sub processFile {
 
     $processedLines++;
 
-    if($sourceId ne $prevSourceId){
+    if(!($prevSourceIds{$sourceId})){
 	$processedFeatures++;
 
     }
 
-    $prevSourceId = $sourceId;
+    $prevSourceIds{$sourceId} = $sourceId;
     $feature->undefPointerCache();
 
     if($processedLines % 500 == 0) {
