@@ -62,7 +62,7 @@ foreach my $probeId (keys %featureHash){
 	
 	foreach my $exonfeature (@exonFeatures){
 	    
-             print OUT "$probeFeature->{genomeId}\tProbe_Mappings\tProbes\t$exonfeature->{start}\t$exonfeature->{end}\t.\t$probeFeature->{strand}\t.\tID \"$probeFeature->{probeId}"."-"."$featureCount\"; ExonOrder \"$exonfeature->{exonOrder}\"; Name \"$probeFeature->{probeId}\"\n" if ($probeFeature->{mismatches} >= $allowedMismatches);
+             print OUT "$probeFeature->{genomeId}\tProbe_Mappings\tProbes\t$exonfeature->{start}\t$exonfeature->{end}\t.\t$probeFeature->{strand}\t.\tID \"$probeFeature->{probeId}"."-"."$featureCount\"; ExonOrder \"$exonfeature->{exonOrder}\"; Name \"$probeFeature->{probeId}\"\n" if ($probeFeature->{mismatches} <= $allowedMismatches);
 	    
 	}
     }
