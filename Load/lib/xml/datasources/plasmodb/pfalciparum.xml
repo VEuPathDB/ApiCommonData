@@ -1873,6 +1873,44 @@
     </info>
   </resource>
 
+  <resource resource="Pf_ChipSeq_Stunnenberg_RSRC" version="@@Pf_ChipSeq_Stunnenberg_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipSeq/Stunnenberg/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2AZ_10hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2AZ_20hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2AZ_30hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2AZ_40hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K4me3_10hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K4me3_20hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K4me3_30hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K4me3_40hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K9ac_10hp.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K9ac_20hp.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K9ac_30hp.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K9ac_40hp.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_10hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_20hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_30hpi.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_40hpi.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chip-Seqs from Henk Stunnenberg"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Henk Stunnenberg"
+        email="H.Stunnenberg@ncmls.ru.nl"
+        institution="Radboud University Nijmegen, The Netherlands">
+      <description>
+        <![CDATA[
+   ChIP-seq coverage of a time-study from the laboratory of Henk Stunnenberg
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--arrayStudies-->
 
