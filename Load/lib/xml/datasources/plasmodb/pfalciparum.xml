@@ -1398,6 +1398,7 @@
   <resource resource="Broad_Isolate_Barcode_RSRC" version="@@Broad_Isolate_Barcode_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/BroadIsolateBarcode/%RESOURCE_VERSION%/broad_barcode_plasmodb.txt"/>
+   <unpack>dos2unix @@dataDir@@/PlasmoDB/pfalciparum/SNP/BroadIsolateBarcode/%RESOURCE_VERSION%/broad_barcode_plasmodb.txt</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --inputFile @@dataDir@@/broad_barcode_plasmodb.txt </pluginArgs>
     <info
         displayName="Isolate barcode data from Broad"
@@ -1419,6 +1420,7 @@
   <resource resource="Broad_3K_Genotyping_RSRC" version="2008-06-13"
       plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad3KGenotyping/%RESOURCE_VERSION%/3K_plasmo.txt"/>
+    <unpack>dos2unix @@dataDir@@/PlasmoDB/pfalciparum/SNP/Broad3KGenotyping/%RESOURCE_VERSION%/3K_plasmo.txt</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --inputFile  @@dataDir@@/3K_plasmo.txt</pluginArgs>
     <info
         displayName="Isolate genotyping data generated from a 3k snp chip from Broad"
