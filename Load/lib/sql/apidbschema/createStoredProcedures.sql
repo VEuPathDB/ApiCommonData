@@ -464,6 +464,14 @@ begin
            then return 'MicrosporidiaDB';
          when 'enterocytozoon'
            then return 'MicrosporidiaDB';
+         when 'anncaliia'
+           then return 'MicrosporidiaDB';
+         when 'edhazardia'
+           then return 'MicrosporidiaDB';
+         when 'nosema'
+           then return 'MicrosporidiaDB';
+         when 'vittaforma'
+           then return 'MicrosporidiaDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
