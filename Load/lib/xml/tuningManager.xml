@@ -1626,7 +1626,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence')
+  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
   AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+)
