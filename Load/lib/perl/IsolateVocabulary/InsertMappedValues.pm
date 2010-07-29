@@ -32,9 +32,11 @@ sub setType {
   $self->{_type} = $type;  
 }
 
+sub getPlugin {$_[0]->{Plugin}}
+sub setPlugin {$_[0]->{Plugin} = $_[1]}
 
 sub new {
-  my ($class, $dbh, $type, $xmlTerms, $sqlTerms) = @_;
+  my ($class, $plugin, $dbh, $type, $xmlTerms, $sqlTerms) = @_;
 
   my $args = {};
 
@@ -44,6 +46,7 @@ sub new {
   $self->setType($type);
   $self->setXmlMapTerms($xmlTerms);
   $self->setSqlTerms($sqlTerms);
+  $self->setPlugin($plugin);
 
   return $self;
 }
@@ -71,7 +74,7 @@ sub insert {
 
   my $mappingTotalCount = $automaticCounts + $manualCounts + $nullCounts;
 
-  return ($mappingTotalCount, "Inserted $automaticCounts automatic counts, $manualCounts manual counts and $nullCounts null counts (total=$mappingTotalCount)";
+  return ($mappingTotalCount, "Inserted $automaticCounts automatic counts, $manualCounts manual counts and $nullCounts null counts (total=$mappingTotalCount)");
 }
 
 # for terms where original is null, map to the term "unkown"
@@ -165,6 +168,7 @@ sub insertAutomaticTerms {
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
 
     $count = $count + $self->doMappingInsert($sqlTerm, $isolateVocabularyId, $naSequenceIds);
+
   }
   return $count;
 }
@@ -173,6 +177,8 @@ sub doMappingInsert {
   my ($self, $term, $isolateVocabularyId, $naSequenceIds) = @_;
 
   my $count;
+
+  my $plugin=$self->getPlugin();
 
   unless($naSequenceIds) {
     die "ERROR:  No NA_SEQUENCE_ID for Term " . $term->toString();
@@ -183,9 +189,11 @@ sub doMappingInsert {
   }
 
   foreach my $naSequenceId (@$naSequenceIds) {
-      my $mapping = new GUS::Model::ApiDB::IsolateMapping($naSequenceId, $isolateVacabularyId);
+      my $mapping = GUS::Model::ApiDB::IsolateMapping -> new({NA_SEQUENCE_ID => $naSequenceId, 
+							      ISOLATE_VOCABULARY_ID => $isolateVocabularyId});
       $mapping->submit();
       $count++;
+      $plugin->undefPointerCache();
   }
 
   return $count;
