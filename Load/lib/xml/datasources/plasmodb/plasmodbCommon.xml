@@ -21,79 +21,12 @@
     </info>
   </resource>
 
-  <resource resource="isolateVocabularyMap_isolation_source_RSRC" version="2009-06-14"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/isolationSource.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type isolation_source --xml_file @@dataDir@@/isolationSource.xml</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  <resource resource="isolateVocabularyMap_RSRC" version="2010-07-26"
+      plugin="ApiCommonData::Load::Plugin::InsertIsolateVocabMapping">
+    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--geographicXmlFile @@dataDir@@/%RESOURCE_VERSION%/geographicLocation.xml  --sourceXmlFile @@dataDir@@/%RESOURCE_VERSION%/isolationSource.xml --hostXmlFile @@dataDir@@/%RESOURCE_VERSION%/specificHost.xml --productXmlFile @@dataDir@@/%RESOURCE_VERSION%/products.xml</pluginArgs>
     <info
-        displayName="update isolate vocabulary-isolation_source"
-        project="PlasmoDB"
-        organisms="@@PlasmoOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="isolateVocabularyMap_specific_host_RSRC" version="2009-06-14"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/specificHost.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type specific_host --xml_file @@dataDir@@/specificHost.xml</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="update isolate vocabulary-specific_host"
-        project="PlasmoDB"
-        organisms="@@PlasmoOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="isolateVocabularyMap_geographic_location_RSRC" version="2009-06-14"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/geographicLocation.xml"/>
-    <unpack>isolateVocabulary.pl insert  --gus_config_file @@gusHome@@/config/gus.config --type geographic_location --xml_file @@dataDir@@/geographicLocation.xml</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="update isolate vocabulary-geographic_location"
-        project="PlasmoDB"
-        organisms="@@PlasmoOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="isolateVocabularyMap_product_RSRC" version="2009-06-14"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/common/isolate/isolate_ontology/%RESOURCE_VERSION%/product.xml"/>
-    <unpack>isolateVocabulary.pl insert --gus_config_file @@gusHome@@/config/gus.config --type geographic_location --xml_file @@dataDir@@/product.xml</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="update isolate vocabulary-product"
+        displayName="Insert mappings between isolates and controlled vocabularies"
         project="PlasmoDB"
         organisms="@@PlasmoOrganismNames@@"
         category="ignore"
