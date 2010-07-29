@@ -87,7 +87,7 @@ my $trackingDbh = DBI->connect('dbi:Oracle:' . $config->{trackingInstance},
 my $appDbh = DBI->connect('dbi:Oracle:' . $config->{appInstance},
 			  $config->{appLogin},
 			  $config->{appPassword},
-			  { PrintError => 1, RaiseError => 0}
+			  { PrintError => 1, RaiseError => 0, LongTruncOk => 1}
 			 )
   or die "Can't connect to the app database: $DBI::errstr\n";
 
