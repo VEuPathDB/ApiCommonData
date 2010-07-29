@@ -112,7 +112,7 @@ sub run {
 
     my $sourceXmlFile = $self->getArg('sourceXmlFile');
     my $productXmlFile = $self->getArg('productXmlFile');
-    my $locationXmlFile = $self->getArg('locationXmlFile');
+    my $locationXmlFile = $self->getArg('geographicXmlFile');
     my $hostXmlFile = $self->getArg('hostXmlFile');
 
     my $count;
@@ -132,10 +132,10 @@ sub insert {
     my $sqlTerms = $sqlReader->extract();
 
 
-    my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self->getDbHandle(), $type, $xmlTerms, $sqlTerms);
+    my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $self->getDbHandle(), $type, $xmlTerms, $sqlTerms);
     my ($count, $msg) = $inserter->insert();
     $self->log("$type: $msg");
-    $return $count;
+    return $count;
 }
 
 
