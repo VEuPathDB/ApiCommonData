@@ -1316,6 +1316,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 
 &makeTranscriptDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedTranscripts","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
 
+&makeTranscriptDownloadFileTransformed($mgr, "Cfasciculata", "CfasciculataAnnotatedTranscripts","C.fasciculata genome v9.1 from WUSTL","9.1","wustl","TriTrypDB",0);
+
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedProteins","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
 
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedProteins","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
@@ -1355,6 +1357,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &makeMixedGenomicDownloadFile($mgr, "Ltarentolae", "LtarentolaeGenomic","L. tarentolae contig sequences","2009-04-07","psu","TriTrypDB",0);
 
 &makeMixedGenomicDownloadFile($mgr, "Lmexicana", "LmexicanaGenomic","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Cfasciculata", "CfasciculataGenomic","C.fasciculata genome v9.1 from WUSTL","9.1","wustl","TriTrypDB",0);
 
 &makeDoTSAssemblyDownloadFile ($mgr, 'Tbrucei', 'assemblies',185431, 'TriTrypDB');
 
@@ -1450,6 +1454,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 
 &makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
 
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Cfasciculata", "CfasciculataORFs", 'C.fasciculata genome v9.1 from WUSTL','9.1', 50, "TriTrypDB");
+
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFNAs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
 
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFNAs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
@@ -1471,6 +1477,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Ltarentolae", "LtarentolaeORFNAs", 'L. tarentolae contig sequences','2009-04-07', 50, "TriTrypDB");
 
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFNAs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Cfasciculata", "CfasciculataORFNAs", 'C.fasciculata genome v9.1 from WUSTL','9.1', 50, "TriTrypDB");
 
 &makeDerivedCdsDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedCDS","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
 
@@ -1606,6 +1614,11 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
  &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeGenomic_TriTrypDB-2.0.fasta","LtarentolaeGenomics","-n -t release-2.0/LtarentolaeGenomics");
 
  &xdformatDownloadFileForBlastSite($mgr,"Ltarentolae","LtarentolaeORFs_TriTrypDB-2.0.fasta","LtarentolaeORF","-p -C X -t release-2.0/LtarentolaeORF");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Cfasciculata","CfasciculataGenomic_TriTrypDB-2.4.fasta","CfasciculataGenomics","-n -t release-2.4/CfasciculataGenomics");
+
+&xdformatDownloadFileForBlastSite($mgr,"Cfasciculata","CfasciculataORFs_TriTrypDB-2.4.fasta","CfasciculataORF","-p -C X -t release-2.4/CfasciculataORF");
 
   &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaEST_TriTrypDB-2.1.fasta","LmexicanaEST","-n -t release-2.1/LmexicanaEST");
 
@@ -1816,6 +1829,55 @@ mastigote time-course biorep02","","Percents of the Lmajor promastigote time-cou
 
 &loadOrfFile($mgr, "LtarentolaeContigs_orf50.gff","L. tarentolae contig sequences","2009-04-07", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "2.3","ExternalNASequence","Leishmania tarentolae");
 
+&filterSequences($mgr,"LtarentolaeContigs.fsa","filter","dust");
+
+&loadLowComplexitySequences($mgr,"LtarentolaeContigs.fsa.dust","L. tarentolae contig sequences","2009-04-07","dna","N","--LowComplexityName 'dust'");
+
+&findTandemRepeats($mgr,"LtarentolaeContigs.fsa","seqfiles",$repeatFinderArgs);
+
+&loadTandemRepeats($mgr,"LtarentolaeContigs.fsa",$repeatFinderArgs,"L. tarentolae contig sequences","2009-04-07");
+
+
+##################################
+####C. fasciculata
+##################################
+&createSimilarityDir($mgr,"CfasciculataScaffolds","nr","gi\\|(\\d+)\\|","$blastParams Y=35386209","blastx");
+
+&copyFilesToComputeCluster($mgr,"CfasciculataScaffolds-nr","similarity");
+
+&extractNaSeq($mgr,"C.fasciculata genome v9.1 from WUSTL","9.1",'Cfasciculata',"scaffolds","ExternalNASequence","source_id"); 
+
+&extractNaSeq($mgr,"L. tarentolae contig sequences","2009-04-07",'Ltarentolae',"contigs","ExternalNASequence","source_id");
+
+&copyFilesToComputeCluster($mgr,"CfasciculataScaffolds.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"CfasciculataScaffolds","nr","apidb",4);
+
+$mgr->waitForCluster("CfasciculataScaffolds blast similarity to nr", "waitCfasciculataScaffolds-nr");
+
+&copyFilesFromComputeCluster($mgr,"CfasciculataScaffolds-nr","similarity");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/CfasciculataScaffolds-nr/master/mainresult/");
+
+&filterBLASTResults($mgr,"Eukaryota, Trypanosomatidae, Crithidia","gi_taxid_prot.dmp","CfasciculataScaffolds-nr","blastSimilarity.unfilt.out.gz");
+
+&extractIdsFromBlastResult($mgr,"CfasciculataScaffolds-nr","subject");
+
+&loadNRDBSubset($mgr,"CfasciculataScaffolds-nr","blastSimIds.out","NRDB","2009-08-04");
+
+&loadProteinBlast($mgr, "CfasciculataScaffolds-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","C.fasciculata genome v9.1 from WUSTL","9.1","NRDB","2009-08-04");
+
+&makeOrfFile($mgr, "CfasciculataScaffolds.fsa", 50);
+
+&loadOrfFile($mgr, "CfasciculataScaffolds_orf50.gff","C.fasciculata genome v9.1 from WUSTL","9.1", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "1.226","ExternalNASequence","Crithidia fasciculata");
+
+&filterSequences($mgr,"CfasciculataScaffolds.fsa","filter","dust");
+
+&loadLowComplexitySequences($mgr,"CfasciculataScaffolds.fsa.dust","C.fasciculata genome v9.1 from WUSTL","9.1","dna","N","--LowComplexityName 'dust'");
+
+&findTandemRepeats($mgr,"CfasciculataScaffolds.fsa","seqfiles",$repeatFinderArgs);
+
+&loadTandemRepeats($mgr,"LtarentolaeContigs.fsa",$repeatFinderArgs,"L. tarentolae contig sequences","2009-04-07");
 
 ##################################
 ####Mercator
