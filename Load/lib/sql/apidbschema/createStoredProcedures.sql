@@ -499,7 +499,7 @@ RETURN varchar2
 IS
     rslt varchar2(4000);
 begin
-    rslt := replace(utl_url.escape(url, TRUE, 'UTF-8'),'%20','+');
+    rslt := replace(replace(replace(replace(utl_url.escape(url, TRUE, 'UTF-8'),'%20','+'),'(','%28'),')','%29'),'''','%27');
     return rslt;
 end url_escape;
 /
