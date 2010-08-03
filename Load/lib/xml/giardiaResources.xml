@@ -1359,4 +1359,46 @@ _VER% </pluginArgs>
     </description>
   </resource>
 
+ <resource resource="G.lamblia_Hehl_encystation_Array_Profiles" version="2010-05-10"
+            displayName="G.lamblia encystation Array Profiles"
+            category="ignore"
+            organisms="Giardia lamblia"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="G.lamblia_Hehl_encystation_Array_Profiles"
+            extDbRlsVer="2010-05-10"
+            extDbRlsDescrip="G.lamblia Hehl encystation Array Profiles"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_encystation/newData/results/profiles" 
+            contact="Bindu Gajria"
+            email="bindu@pcbi.upenn.edu"
+            institution="EuPathDB"
+      />
+<pluginArgs>--inputDir @downloadDir@/G.lamblia_Hehl_encystation_Array_Profiles/profiles --configFile @downloadDir@/G.lamblia_Hehl_encystation_Array_Profiles/profiles/config_profiles.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+           
+         Transcriptional expression in Giardia during encystation - PROFILES
+          ]]>
+    </description>
+  </resource>
+
+<resource resource = "G.lamblia_Hehl_encystation_Array_Page" version="2010-05-10"
+            displayName="G.lamblia Hehl_encystation page analysis"
+            organisms="Giardia lamblia"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrayStudies/hehl_encystation/newData/results/page"
+            contact="Bindu Gajria"
+            email="bindu@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/G.lamblia_Hehl_encystation_Array_Page/page --configFile @downloadDir@/G.lamblia_Hehl_encystation_Array_Page/page/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+        Transcriptional expression in Giardia during encystation by microarray PaGE  
+         ]]>
+    </description>
+  </resource>
+
 </resourcesPipeline>
