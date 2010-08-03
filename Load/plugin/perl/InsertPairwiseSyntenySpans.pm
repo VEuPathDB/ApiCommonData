@@ -91,7 +91,8 @@ sub run {
 
   foreach my $subdir (readdir DIR){
   
-  
+      next if ($subdir eq '.') or ($subdir eq '..');
+
       my ($file, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = $self->readConfigFile("$mercatorDir/$subdir/config.txt");
 
       my(@extDbRlsIdA, @extDbRlsIdB);
