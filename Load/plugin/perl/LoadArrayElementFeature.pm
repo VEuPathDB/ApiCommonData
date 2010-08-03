@@ -269,6 +269,22 @@ sub makeFeature {
 }
 
 
+sub makeNaLoc {
+  my ($self, $feature, $args) = @_;
+
+  my $start = $args->{'start'};
+
+  my $end = $args->{'end'};
+
+  my $isReversed = $args->{'tagOrient'};
+
+  my $exonOrder = $args->('exonOrder');
+
+  my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'is_reversed'=>$isReversed,'loc_order'=>$exonOrder});
+
+  $naLoc->setParent($feature);
+}
+
 
 sub undoTables {
   my ($self) = @_;
