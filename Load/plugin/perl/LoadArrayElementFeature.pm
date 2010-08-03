@@ -191,7 +191,7 @@ sub processFile {
     next if ($processedLines >= $row);
 
 
-    my $orient = $feature->strand;
+    my $orient = $feature->strand == -1 ? 1 : 0;
 
     my $naSeqId = $naSequenceIds->{$feature->seq_id};
     $self->error("No NaSequenceId found for ".$feature->seq_id) unless($naSeqId);
