@@ -278,7 +278,7 @@ sub makeNaLoc {
 
   my $isReversed = $args->{'tagOrient'};
 
-  my $exonOrder = $args->('exonOrder');
+  my $exonOrder = $args->{'exonOrder'};
 
   my $naLoc = GUS::Model::DoTS::NALocation->new({'start_min'=>$start,'start_max'=>$start,'end_min'=>$end,'end_max'=>$end,'is_reversed'=>$isReversed,'loc_order'=>$exonOrder});
 
