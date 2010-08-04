@@ -71,7 +71,7 @@ sub new {
     bless($self,$class);
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 36282 $', # cvs fills this in!
+		       cvsRevision => '$Revision: 36284 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -113,6 +113,7 @@ sub run {
 
       open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
 
+      $self->log("Inserting synteny anchors from $file....\n");
       while (<IN>) {
 	  chomp;
 
@@ -616,13 +617,13 @@ sub readConfigFile {
     if($tag eq "extDbSpecA"){
 
         my @values = split(/\|\|/,$values);
-	$seqTableA = \@values;
+	$specA = \@values;
     }
 
     if($tag eq "extDbSpecB"){
 
         my @values = split(/\|\|/,$values);
-	$seqTableB = \@values;
+	$specB = \@values;
     }
 
     if($tag eq "syntenySpec"){
