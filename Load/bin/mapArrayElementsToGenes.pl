@@ -9,7 +9,7 @@ use CBIL::Util::PropertySet;
 
 
 #----Usage/Example----
-# perl    mapArrayElementsToGenes.pl    --aefExtDbRlsId 681    --geneExtDbRlsId 321    --aefSense "sense"
+# perl    mapArrayElementsToGenes.pl    --aefExtDbSpec 681    --geneExtDbSpec 321    --aefSense "sense"
 #---------------------
 
 
@@ -37,19 +37,21 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 #----------------------------------------------------------------------
 
 
-my ($geneExtDbRlsId,$aefExtDbRlsId,$aefSense);
+my ($geneExtDbSpec,$aefExtDbSpec,$aefSense,$outputFile);
 
-&GetOptions('aefExtDbRlsId=s' => \$aefExtDbRlsId,
-            'geneExtDbRlsId=s' => \$geneExtDbRlsId,
+&GetOptions('aefExtDbSpec=s' => \$aefExtDbSpec,
+            'geneExtDbSpec=s' => \$geneExtDbSpec,
             'aefSense=s' =>\$aefSense,
+            'outputFile=s' =>\$outputFile,
            );
 
-die "ERROR: Please provide a valid External Database Release ID for the Array Element Features"  unless ($aefExtDbRlsId);
-die "ERROR: Please provide a valid External Database Release ID for Gene Features" unless ($geneExtDbRlsId);
+die "ERROR: Please provide a valid External Database Spec ('name|version') for the Array Element Features"  unless ($aefExtDbSpec);
+die "ERROR: Please provide a valid External Database Spec ('name|version') for Gene Features" unless ($geneExtDbSpec);
 die "ERROR: Please provide a valid sense/direction ('sense','anitsense' or 'either') for the Array Element Features" unless (lc($aefSense) eq 'sense' || lc($aefSense) eq 'antisense' || lc($aefSense) eq 'either' );
 
 
-
+my $geneExtDbRlsId = getDbRlsId($geneExtDbSpec);
+my $aefExtDbRlsId = getDbRlsId($aefExtDbSpec);
 print("Extracting Array Element Features.....\n");
 
 my $aefSql = "select aef.na_sequence_id,
@@ -124,7 +126,7 @@ $sth->execute || die "Could not execute SQL statement!";
 
 print("Mapping Array Element Feature to Genes.....\n");
 
-open (mapFile, ">ArrayElementGeneMapping");
+open (mapFile, ">$outputFile");
 
 while( my ($geneSourceId,$geneSeqId,$geneReverse,$geneFeatureId) = $sth->fetchrow_array() ){
         
@@ -150,5 +152,30 @@ while( my ($geneSourceId,$geneSeqId,$geneReverse,$geneFeatureId) = $sth->fetchro
     print (mapFile "$geneSourceId\t".join ("\t",@aefList)."\n");
 }
 
+sub getDbRlsId {
+
+  my ($extDbRlsSpec) = @_;
+
+  my ($extDbName, $extDbRlsVer) = &getExtDbInfo($extDbRlsSpec);
+
+  my $stmt = $dbh->prepare("select dbr.external_database_release_id from sres.externaldatabaserelease dbr,sres.externaldatabase db where db.name = ? and db.external_database_id = dbr.external_database_id and dbr.version = ?");
+
+  $stmt->execute($extDbName,$extDbRlsVer);
+
+  my ($extDbRlsId) = $stmt->fetchrow_array();
+
+  return $extDbRlsId;
+}
+
+sub getExtDbInfo {
+  my ($extDbRlsSpec) = @_;
+  if ($extDbRlsSpec =~ /(.+)\|(.+)/) {
+    my $extDbName = $1;
+    my $extDbRlsVer = $2;
+    return ($extDbName, $extDbRlsVer);
+  } else {
+    die("Database specifier '$extDbRlsSpec' is not in 'name|version' format");
+  }
+}
 #my $endTime = time();
 #print("Done. Time: $endTime\n");
