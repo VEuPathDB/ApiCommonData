@@ -7,6 +7,12 @@ use DBI;
 use CBIL::Util::PropertySet;
 
 
+
+#----Usage/Example----
+# perl    mapArrayElementsToGenes.pl    --aefExtDbRlsId 681    --geneExtDbRlsId 321    --aefSense "sense"
+#---------------------
+
+
 #my $startTime = time();
 #print ("Started. Time: $startTime\n");
 
