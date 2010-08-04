@@ -71,7 +71,7 @@ sub new {
     bless($self,$class);
 
     $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 36281 $', # cvs fills this in!
+		       cvsRevision => '$Revision: 36282 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -116,7 +116,7 @@ sub run {
       while (<IN>) {
 	  chomp;
 
-	  $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+	  $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId,$seqTableA,$seqTableB);
 	  $count++;
 
 	  if($count && $count % 500 == 0) {
@@ -170,15 +170,15 @@ B<Return Type:> ARRAY
 =cut
 
 sub _handleSyntenySpan {
-  my ($self, $line, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId) = @_;
+  my ($self, $line, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId,$seqTableA,$seqTableB) = @_;
 
   my ($a_id, $b_id,
       $a_start, $a_len,
       $b_start, $b_len,
       $strand) = split(" ", $line);
 
-  my $a_pk = $self->getNaSequenceId($a_id, $extDbRlsIdA, $self->getArg('seqTableA'));
-  my $b_pk = $self->getNaSequenceId($b_id, $extDbRlsIdB, $self->getArg('seqTableB'));
+  my $a_pk = $self->getNaSequenceId($a_id, $extDbRlsIdA, $seqTableA);
+  my $b_pk = $self->getNaSequenceId($b_id, $extDbRlsIdB, $seqTableB);
 
   my $a_end = $a_start + $a_len - 1;
   my $b_end = $b_start + $b_len - 1;
