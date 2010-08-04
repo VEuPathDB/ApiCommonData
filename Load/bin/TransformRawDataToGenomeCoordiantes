@@ -7,6 +7,8 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
+use List::Util qw(sum);
+
 
 my ($gusConfigFile,$extDbSpec,$outputFile,$inputFile,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
@@ -30,12 +32,12 @@ my $dbh = $db->getQueryHandle(0);
 my $extDbRlsId = getDbRlsId($extDbSpec);
 
 
-my $sql = "select aef.source_id,ns.source_id, nl.start_min
+my $sql = "select aef.name,ns.source_id, nl.start_min
 from dots.nalocation nl, dots.nasequence ns, DoTS.ArrayElementFeature aef
 where aef.external_database_release_id=$extDbRlsId
 and aef.na_feature_id=nl.na_feature_id
 and aef.na_sequence_id= ns.na_sequence_id
-order by ns.sequence_source_id, ns.start_min";
+order by ns.source_id, nl.start_min";
 
 my %probeFeatureHash;
 my %reversedProbeFeatureHash;
@@ -56,6 +58,7 @@ while (<TABFILE>){
   chomp;
   my @myArray = split(/\t/, $_);
   if($probeFeatureHash{$myArray[0]}){
+    #print STDERR "$probeFeatureHash{$myArray[0]}\t$myArray[1]\n";
       push(@{$scoreHash{$probeFeatureHash{$myArray[0]}}}, $myArray[1]);
   }
 }
