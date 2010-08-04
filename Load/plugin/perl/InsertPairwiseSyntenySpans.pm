@@ -616,13 +616,13 @@ sub readConfigFile {
 
     if($tag eq "extDbSpecA"){
 
-        my @values = split(/\|\|/,$values);
+        my @values = split(/,/,$values);
 	$specA = \@values;
     }
 
     if($tag eq "extDbSpecB"){
 
-        my @values = split(/\|\|/,$values);
+        my @values = split(/,/,$values);
 	$specB = \@values;
     }
 
