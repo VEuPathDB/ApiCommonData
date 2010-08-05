@@ -68,7 +68,7 @@ open(FILE, "> $outputFile") or die "Cannot open file for writing:  $!";
 foreach my $k (keys %scoreHash) {
     my $average = sum(@{$scoreHash{$k}}) / @{$scoreHash{$k}};
     my $probeId = $reversedProbeFeatureHash{$k};
-    print FILE "$probeId\t$k\t$average\n";
+    print FILE "$k\t$average\n";
 }
 
 close FILE;

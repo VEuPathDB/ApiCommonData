@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+my ($descripString, $outputFile);
+
+&GetOptions("descripString=s" => \$descripString,
+	    "outputFile=s" => \$outputFile,
+	    );
+
+die "USAGE: writeDownloadFileDescripWithDescripString --desscripString --outputFile\n" if (!$descripString || !$outputFile);
+
+  open(F,">$outputFile");
+  print F "$descripString\n";
+  close F;
+
