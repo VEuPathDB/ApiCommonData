@@ -17,6 +17,7 @@ use ApiCommonData::Load::TuningConfig::TableSuffix;
 my $configDir;
 my $props;
 my $startTime = time;
+my $maxRebuildMinutes = 0;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
@@ -26,7 +27,7 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $comment);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -40,7 +41,7 @@ GetOptions("configFile=s" => \$configFile,
            "debug!" => \$debug,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
-           "comment=s" => \$comment,
+           "maxWait=s" => \$maxWait,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::setDebugFlag()
@@ -58,6 +59,8 @@ if ($propFile) {
   my $simple = XML::Simple->new();
   $props = $simple->XMLin($propFile);
 }
+
+$maxRebuildMinutes = $props->{maxRebuildMinutes};
 
 my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
@@ -93,6 +96,8 @@ eval {
   }
 
   if ($doUpdate) {
+    clearDeadLock();
+    checkLockout($maxWait) if $maxWait;
     $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
   }
 
@@ -355,6 +360,7 @@ options:
   cleanupWarnOnly name but don't drop obsolete tuning tables
   cleanupAge      specify how long (in days) tuning table must be obsolete before dropping (default 0)
   forceUpdate     perform update even if current_updater flag is set
+  maxWait         limit, in hours, to wait if another tuning manager is updating the database
   debug           print debugging info
 
 
@@ -411,6 +417,7 @@ Sample prop file:
 <tuningProps>
   <password>JoeSentMe</password>
   <username>apidb</username>
+  <maxRebuildMinutes>180</maxRebuildMinutes>
 </tuningProps>
 });
 }
@@ -591,13 +598,11 @@ SQL
 sub lockForUpdate {
   my ($forceUpdate) = @_;
 
-  clearDeadLock() unless $forceUpdate;
-
   my $processInfo  = ApiCommonData::Load::TuningConfig::Log::getProcessInfo();
 
   my $sql = <<SQL;
     update apidb.InstanceMetaInfo
-    set current_updater = '$processInfo'
+    set current_updater = '$processInfo', update_start = sysdate
 SQL
 
   $sql .= " where current_updater is null"
@@ -623,7 +628,7 @@ MSG
 
 sub releaseLockForUpdate {
 
-  $dbh->do("update apidb.InstanceMetaInfo set current_updater = null where current_updater = '"
+  $dbh->do("update apidb.InstanceMetaInfo set current_updater = null, update_start = null where current_updater = '"
 	   . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
 	   . "'")
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
@@ -658,7 +663,7 @@ sub clearDeadLock {
   if (!$pid_test) {
     # named process no longer exists; null out CURRENT_UPDATER
     ApiCommonData::Load::TuningConfig::Log::addLog("CURRENT_UPDATER process (" . $updater . ") no longer exists; updating InstanceMetaInfo.");
-    $dbh->do("update apidb.InstanceMetaInfo set current_updater = null")
+    $dbh->do("update apidb.InstanceMetaInfo set current_updater = null, update_start = null")
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
@@ -668,4 +673,29 @@ sub clearDeadLock {
 sub catch_signal {
         my $signame = shift;
         die "caught signal $signame";
+}
+
+sub checkLockout {
+
+  my ($maxWait) = @_;
+  my $wait = 0;
+
+  until ($wait > $maxWait) {
+
+    my $stmt = $dbh->prepare(<<SQL);
+        select nvl((sysdate - update_start) * 24, $maxWait + 1) -- if we are not locked out, force the wait value to greater than maxWait
+        from InstanceMetaInfo
+SQL
+
+    $stmt->execute();
+    ($wait) = $stmt->fetchrow_array();
+
+    if ($wait < $maxWait) {
+      my $dateString = `date`;
+      chomp($dateString);
+      ApiCommonData::Load::TuningConfig::Log::addLog("Waiting for another tuning manager at $dateString");
+      sleep (300);
     }
+  }
+
+}
