@@ -34,22 +34,7 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 
 my $aefExtDbRlsId = getDbRlsId($aefExtDbSpec);
 
-print("Processing input file.....\n");
-
-my %profileHash;
-
-open (IN, "$inputFile") or die "Cannot open file for reading:  $!";;
-
-while (<IN>){
-    chomp;
-    next if /^\n/;
-    my @arr = split (/\t/, $_);
-    my ($mapStart, $mapEnd) = split (/-/,$arr[1]);
-    my $key = $arr[0]."_".$mapStart;
-    $profileHash{$key} = $arr[2];
-}
-
-print("Extracting Array Element Features.....\n");
+my %myHash;
 
 my $aefSql = "select aef.source_id,
                      ns.source_id,
@@ -68,11 +53,23 @@ $sth->execute || die "Could not execute SQL statement!";
 
 while( my ($aefSourceId,$naSeqSourceId,$aefStartMin) = $sth->fetchrow_array() ){
     my $key=$naSeqSourceId."_".$aefStartMin;
-    if ($profileHash{$key}){
-	print "$aefSourceId\t$profileHash{$key}\n"
-    }
+    $myHash{$key} = $aefSourceId;
 } 
 
+
+
+open (IN, "$inputFile") or die "Cannot open file for reading:  $!";;
+print("ID_REF\tfloat_value\n");
+while (<IN>){
+    chomp;
+    next if /^\n/;
+    my @arr = split (/\t/, $_);
+    my ($mapStart, $mapEnd) = split (/-/,$arr[1]);
+    my $key = $arr[0]."_".$mapStart;
+    if ($myHash{$key}){
+	print "$myHash{$key}\t$arr[2]\n"
+    }
+}
 
 1;
 
