@@ -29,7 +29,7 @@ close(TABFILE);
 open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
 foreach my $k (keys %featureHash){
     my @arr = split(/\t/, $k);
-    print OUT "$arr[0]\tChIP_PEAKS\tPEAKS\t$arr[1]\t$arr[2]\t.\t+\t.\tID \"$arr[0]_$arr[1]_$arr[2]\"\n";
+    print OUT "$arr[0]\tChIP_PEAKS\tPEAKS\t$arr[1]\t$arr[2]\t.\t+\t.\tID \"$arr[0]_$arr[1]_$arr[2]\";IS_PREDICTED \"0\"\n";
 }
 
 close(OUT);

@@ -17,7 +17,7 @@ my %featureHash;
 
 open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
 open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
-
+print OUT "ID_REF\tfloat_value\tint_value\n";
 while (<TABFILE>){
   chomp;
   next if /^#/; 
