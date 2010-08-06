@@ -66,7 +66,7 @@ sub getArgumentsDeclaration{
                isList         => 0,
                reqd           => 1,
                constraintFunc => undef,
-               enum           => "ArrayElementFeature,GeneFeature", 
+               enum           => "ArrayElementFeature,GeneFeature,BindingSiteFeature", 
              }),
 
      stringArg({name => 'profileSetName',
