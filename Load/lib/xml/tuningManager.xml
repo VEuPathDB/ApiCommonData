@@ -2999,6 +2999,11 @@ from
            'GiardiaDB' as project_id
     from dual
     UNION
+    select 'Hehl encystation expression profile' as profile_name,
+           '' as main_profile_name,
+           'GiardiaDB' as project_id
+    from dual
+    UNION
     select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
            '' as main_profile_name,
            'GiardiaDB' as project_id
@@ -3175,6 +3180,19 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
        'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
        'expr_val,pct' as visible_parts,
         'GL_Spycher_metaData_2' as attribution
+    from dual
+
+    UNION
+
+select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
+       'Hehl::Encystation' as module,
+       'Giardia Assemblage A isolate WB' as species,
+       'Encystation in Trophozoites' as display_name,
+       'FILL' as description,
+       'Encystation Time' as x_axis,
+       'log(2) ratio in upper graph or expression percentile value in lower graph.' as y_axis,
+       'expr_val,pct' as visible_parts,
+        'G.lamblia_Hehl_encystation_Array_Profiles' as attribution
     from dual
 
     UNION
