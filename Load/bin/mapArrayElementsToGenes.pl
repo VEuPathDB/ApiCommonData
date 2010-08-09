@@ -149,7 +149,7 @@ while( my ($geneSourceId,$geneSeqId,$geneReverse,$geneFeatureId) = $sth->fetchro
             }
         }
     }
-    print (mapFile "$geneSourceId\t".join ("\t",@aefList)."\n");
+    print (mapFile "$geneSourceId\t".join ("\t",@aefList)."\n") unless (scalar @aefList <1);
 }
 
 sub getDbRlsId {
