@@ -8,9 +8,10 @@ use Getopt::Long;
 use Data::Dumper;
 use List::Util qw(sum);
 
-my ($outputFile,$inputFile,$verbose);
+my ($outputFile,$inputFile,$verbose, $sampleName);
 &GetOptions("inputFile=s" => \$inputFile,
             "verbose!" => \$verbose,
+	    "sampleName=s" => \$sampleName,
             "outputFile=s" => \$outputFile);
 
 my %featureHash;
@@ -22,7 +23,7 @@ while (<TABFILE>){
   chomp;
   next if /^#/; 
   my @arr = split(/\t/, $_);
-  print OUT "$arr[0]_$arr[1]_$arr[2]\t$arr[4]\t$arr[3]\n";
+  print OUT "$arr[0]_$arr[1]_$arr[2]-$sampleName\t$arr[4]\t$arr[3]\n";
 }
 
 close(TABFILE);
