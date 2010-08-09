@@ -9,7 +9,7 @@ use CBIL::Util::PropertySet;
 
 
 #----Usage/Example----
-# perl    mapArrayElementsToGenes.pl    --aefExtDbSpec 681    --geneExtDbSpec 321    --aefSense "sense"
+# perl    mapArrayElementsToGenes.pl    --aefExtDbSpec     --geneExtDbSpec     --aefSense "sense"
 #---------------------
 
 
@@ -52,7 +52,7 @@ die "ERROR: Please provide a valid sense/direction ('sense','anitsense' or 'eith
 
 my $geneExtDbRlsId = getDbRlsId($geneExtDbSpec);
 my $aefExtDbRlsId = getDbRlsId($aefExtDbSpec);
-print("Extracting Array Element Features.....\n");
+print STDERR "Extracting Array Element Features.....\n";
 
 my $aefSql = "select aef.na_sequence_id,
                      aef.source_id,
@@ -78,11 +78,11 @@ while( my ($aefSeqId,$aefSourceId,$aefName,$aefStartMin,$aefEndMax,$reversed) = 
        $nameHash{$aefSourceId} = $aefName; 
 } 
 
-print("Done extracting Array Element Features.\n");
+print STDERR "Done extracting Array Element Features.\n";
 
 
 
-print("Extracting Exon Features.....\n");
+print STDERR "Extracting Exon Features.....\n";
  
 my $exonSql = "select ef.na_sequence_id,
                       ef.parent_id,
@@ -104,7 +104,7 @@ while( my ($exonSeqId,$exonParentId,$exonSourceId,$exonStart,$exonEnd) = $sth->f
     push @{ $geneExonHash{$exonParentId} },$exonSourceId;
 }
 
-print("Done extracting Exon Features.\n");
+print STDERR "Done extracting Exon Features.\n";
 
 
 
@@ -124,7 +124,7 @@ my $sth = $dbh->prepare($geneSql);
 
 $sth->execute || die "Could not execute SQL statement!";
 
-print("Mapping Array Element Feature to Genes.....\n");
+print STDERR "Mapping Array Element Feature to Genes.....\n";
 
 open (mapFile, ">$outputFile");
 
