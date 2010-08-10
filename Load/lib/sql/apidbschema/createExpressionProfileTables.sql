@@ -64,7 +64,7 @@ create table ApiDB.Profile (
  subject_table_id      NUMBER(10),
  subject_row_id        NUMBER(10),
  source_id             VARCHAR2(30),
- profile_as_string     VARCHAR2(800),
+ profile_as_string     VARCHAR2(4000),
  no_evidence_of_expr   NUMBER(1),
  equiv_min             NUMBER(2),
  equiv_max             NUMBER(2),
