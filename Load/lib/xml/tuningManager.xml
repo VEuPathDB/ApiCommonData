@@ -3237,6 +3237,18 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
 from dual
 
 UNION
+select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
+       'Stunnenberg::PfRBCRnaSeq' as module,
+       'Plasmodium falciparum' as species,
+       '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
+       '' as description,
+       'Time Point post infection' as x_axis,
+       'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+       'coverage,pct' as visible_parts,
+        'RNASeqCoveragePlot_Stunnenberg' as attribution
+from dual
+
+UNION
 -- AmoebaDB --
 select 'EhistolyticaAffyProfiles' as profile_name,
        'Singh::SinghEhTimeSeries' as module,
