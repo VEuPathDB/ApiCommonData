@@ -30,7 +30,9 @@ FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'dots') d,
      (SELECT table_id FROM core.TableInfo WHERE name = 'NAFeatureImp') t,
-     (SELECT table_id FROM core.TableInfo WHERE name = 'NAFeature') s;
-
+     (SELECT table_id FROM core.TableInfo WHERE name = 'NAFeature') s
+WHERE 'arrayelementfeature' NOT IN (SELECT lower(name) FROM core.TableInfo
+                                    where database_id = d.database_id)
 ------------------------------------------------------------------------------
 exit;
+

@@ -36,7 +36,7 @@ SELECT core.tableinfo_sq.nextval, 'RodentChrColors',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'RodentChrColors' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'rodentchrcolors' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where database_id = d.database_id);
 
 exit;
