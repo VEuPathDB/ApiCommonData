@@ -37,17 +37,19 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 #----------------------------------------------------------------------
 
 
-my ($geneExtDbSpec,$aefExtDbSpec,$aefSense,$outputFile);
+my ($geneExtDbSpec,$aefExtDbSpec,$aefSense,$outputFile,$delimiter);
 
 &GetOptions('aefExtDbSpec=s' => \$aefExtDbSpec,
             'geneExtDbSpec=s' => \$geneExtDbSpec,
             'aefSense=s' =>\$aefSense,
             'outputFile=s' =>\$outputFile,
+            'delimiter=s' => \$delimiter,
            );
 
 die "ERROR: Please provide a valid External Database Spec ('name|version') for the Array Element Features"  unless ($aefExtDbSpec);
 die "ERROR: Please provide a valid External Database Spec ('name|version') for Gene Features" unless ($geneExtDbSpec);
 die "ERROR: Please provide a valid sense/direction ('sense','anitsense' or 'either') for the Array Element Features" unless (lc($aefSense) eq 'sense' || lc($aefSense) eq 'antisense' || lc($aefSense) eq 'either' );
+die "ERROR: Please provide a valid delimiter ('\\t', ',') for the Array Element Features" unless $delimiter eq '\t' || $delimiter eq ',';
 
 
 my $geneExtDbRlsId = getDbRlsId($geneExtDbSpec);
@@ -128,6 +130,8 @@ print STDERR "Mapping Array Element Feature to Genes.....\n";
 
 open (mapFile, ">$outputFile");
 
+$delimiter = "\t" if ($delimiter ne ",");
+
 while( my ($geneSourceId,$geneSeqId,$geneReverse,$geneFeatureId) = $sth->fetchrow_array() ){
         
     my ($aefFeatureCount,@aefList,$exon,$aef);
@@ -149,7 +153,7 @@ while( my ($geneSourceId,$geneSeqId,$geneReverse,$geneFeatureId) = $sth->fetchro
             }
         }
     }
-    print (mapFile "$geneSourceId\t".join ("\t",@aefList)."\n") unless (scalar @aefList <1);
+    print (mapFile "$geneSourceId\t".join ("$delimiter",@aefList)."\n") unless (scalar @aefList <1);
 }
 
 sub getDbRlsId {
