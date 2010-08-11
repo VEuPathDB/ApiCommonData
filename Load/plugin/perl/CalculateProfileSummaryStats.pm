@@ -314,12 +314,16 @@ sub calculateSummaryStats {
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
 
-
     if($self->getArg('isLogged')) {
       $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
     }
     else {
-      $resultHash{'ind_ratio'} = $max/$min;
+      if($min == 0) {
+        $resultHash{'ind_ratio'} = $max;
+      }
+      else {
+        $resultHash{'ind_ratio'} = $max/$min;
+      }
     }
 
     if ($timePointMappingRef) {
