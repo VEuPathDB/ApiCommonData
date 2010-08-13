@@ -110,17 +110,15 @@ print STDERR "Done extracting Exon Features.\n";
 
 
 
-my $geneSql = "select ga.source_id, 
-                      ga.na_sequence_id,
-                      ga.is_reversed,
-                      ga.na_feature_id 
-               from   apidb.geneattributes ga,
-                      sres.externaldatabase ed,
-                      sres.externaldatabaserelease edr 
-               where  ga.external_db_name = ed.name 
-               and    ed.external_database_id = edr.external_database_id 
-               and    edr.external_database_release_id = $geneExtDbRlsId";
-#quicktest     and    ga.source_id = 'PF13_0333'";
+my $geneSql = "select gf.source_id, 
+                      gf.na_sequence_id,
+                      nl.is_reversed,
+                      gf.na_feature_id 
+               from   dots.genefeature gf,
+                      dots.nalocation nl
+               where  gf.na_feature_id = nl.na_feature_id
+               and    gf.external_database_release_id = $geneExtDbRlsId";
+#quicktest     and    gf.source_id = 'PF13_0333'";
 
 my $sth = $dbh->prepare($geneSql);
 
