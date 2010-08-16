@@ -185,10 +185,19 @@ AND p.profile_set_id = ps.profile_set_id
     $sourceId2profileId{$sourceId} = $profileId;
 
     my @profile = split(/\t/, $profileString);
+
+    my $naCount;
+    foreach(@profile) {
+      $naCount++ if($_ eq 'NA');
+    }
+
+    next if($naCount == scalar(@profile));
+
     my $profileHash = $self->makeProfileHash($sourceId,\@profile, $header);
     my $percentHash = $self->makeProfileHash($sourceId,
 					     $percentsHash->{$sourceId},
 					     $header) if $self->getArg('percentProfileSet');
+
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
 				   $timePointMap, $sourceId);
