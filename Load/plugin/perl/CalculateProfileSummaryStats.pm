@@ -309,6 +309,8 @@ sub calculateSummaryStats {
     my $maxKey = $key1;
     my $minKey = $key1;
     foreach my $key (keys %profileHash) {
+      next if($profileHash{$key} eq 'NA');
+
 	if($max < $profileHash{$key}) {
 	    $max = $profileHash{$key};
 	    $maxKey = $key;
