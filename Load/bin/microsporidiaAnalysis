@@ -76,7 +76,11 @@ my $dataDir=$mgr->{dataDir};
 
 &makeCodonUsage($mgr, "Ebieneusi", "AnnotatedCDS");
 
+&makeGSSDownloadFile($mgr, "Microsporidia", "GSS", "cloned_genomic", "70536,27978,42399,723287", "GSS", "2010-06-07", "MicrosporidiaDB");
 
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Microsporidia", "MicrosporidiaGSS_MicrosporidiaDB-1.2.fasta","MicrosporidiaGSS","-n -t release-1.2/MicrosporidiaGSS");
 
  &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis", "EintestinalisAnnotatedTranscripts_MicrosporidiaDB-1.1.fasta","EintestinalisTranscripts","-n -t release-1.1/EintestinalisTranscripts");
 
