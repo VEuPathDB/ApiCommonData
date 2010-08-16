@@ -379,4 +379,27 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         <publication pmid="12952885"/>
 </resource>
 
+
+    <resource resource="GSSSeqs" version="2010-06-07"
+        displayName="Microsporidia GSS seqs"
+        organisms="Microsporidia"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        extDbName="GSS"
+        extDbRlsVer="2010-06-07"
+        extDbRlsDescrip="Bulk downloaded GSS seqs for Microsporidia from Genbank"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/GSS/2010-06-07/final/parsedSequences"
+            contact = "Deborah Pinney"
+            email = "pinney@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+        <pluginArgs>--SOTermName "cloned_genomic" --taxonNameRegex "org=([\S\s]+)\|desc" --sourceIdRegex "^>(\S+)" --libraryNameRegex "lib=([\S\s]+)\|org" --libraryDescRegex "desc=([\S\s]+)\|stage" --libraryStageRegex "stage=([\w\s]+)" --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --fastaFile "@downloadDir@/GSSSeqs/parsedSequences" </pluginArgs>
+        <description>
+            <![CDATA[
+   Microsporidia sequences from the Genome Survey Sequences Database (GSS) division of Genbank  
+          ]]>
+        </description>
+      </resource>
+
 </resourcesPipeline>
