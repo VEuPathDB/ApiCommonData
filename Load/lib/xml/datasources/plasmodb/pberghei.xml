@@ -621,7 +621,8 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="Pb_Waters_DOZI_array_RSRC" version="@@Pb_Waters_DOZI_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_DOZI/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/analysis_result_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. berghei DOZI array data"
