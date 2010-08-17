@@ -54,7 +54,7 @@ SELECT DISTINCT pairs.alias, pairs.gene, pairs.union_member, pairs.database_name
     AND dr.external_database_release_id
           = edr.external_database_release_id
     AND edr.external_database_id = ed.external_database_id
-    AND ed.name = 'P.vivax Genbank source_Id DBRefs') pairs,
+    AND ed.name in ('Pvivax_DBRefs_RSRC','P.vivax Genbank source_Id DBRefs')) pairs,
        dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
        sres.ExternalDatabase ed
  WHERE pairs.gene = gf.source_id
@@ -62,9 +62,9 @@ SELECT DISTINCT pairs.alias, pairs.gene, pairs.union_member, pairs.database_name
    AND edr.external_database_id = ed.external_database_id
    AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
                        'TigrScan', 'TwinScan predictions',
-                       'TwinScanEt predictions', 'P. falciparum Evigan Gene Models',
+                       'TwinScanEt predictions', 'P. falciparum Evigan Gene Models','Evigan_RSRC',
                        'Pfalciparum workshop annotations reviewed and changed',
-                       'Sanger P. falciparum old annotations',
+                       'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                        'Old annotation for ME49')
       ]]>
     </sql>
@@ -198,7 +198,7 @@ WHERE taf.aa_sequence_id = tas.aa_sequence_id
   AND eas.external_database_release_id
       = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name = 'PDB protein sequences'
+  AND ed.name in ('PDBProteinSequences_RSRC','PDB protein sequences')
   AND eas.taxon_id = tn.taxon_id
   AND t.na_feature_id = taf.na_feature_id
   AND gf.na_feature_id = t.parent_id
@@ -270,9 +270,9 @@ select case
               and db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                               'TigrScan', 'TwinScan predictions',
                               'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                              'P. falciparum Evigan Gene Models',
+                              'P. falciparum Evigan Gene Models','Evigan_RSRC',
                               'Pfalciparum workshop annotations reviewed and changed',
-                              'Sanger P. falciparum old annotations',
+                              'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                               'Old annotation for ME49')
            then 'GenePrediction'
          else nf.subclass_view
@@ -300,7 +300,7 @@ select -- virtual feature locations mapped through SequencePiece
               and  db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                           'TigrScan', 'TwinScan predictions',
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                          'P. falciparum Evigan Gene Models',
+                          'P. falciparum Evigan Gene Models','Evigan_RSRC',
                           'Pfalciparum workshop annotations reviewed and changed',
                           'Old annotation for ME49')
            then 'GenePrediction'
@@ -469,10 +469,12 @@ WHERE dr.primary_identifier IS NOT NULL
   AND dr.external_database_release_id
         = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
+  AND ed.name not in ('Pf_Phenotype_DBRefs_RSRC','Pb_RMgm_Phenotype_DBRefs_RSRC','Pc_Phenotype_DBRefs_RSRC','Pv_Phenotype_DBRefs_RSRC')
+  AND ed.name != 'Pf_PathwayMappings_Hagai_RSRC'
   AND ed.name != 'Links to Pathway Maps'
   AND ed.name != 'Phenotype DBRefs'
-  AND ed.name != 'Pubmed DBRefs'
-  AND ed.name != 'Entrez DBRefs'
+  AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
+  AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC')
   AND ed.name != 'PMID'
 UNION
 SELECT LOWER(dr.secondary_identifier) AS id, 
@@ -492,7 +494,7 @@ WHERE dr.secondary_identifier IS NOT NULL
                   'NRDB_pdb_dbXRefBySeqIdentity',
                   'NRDB_ref_dbXRefBySeqIdentity',
                   'NRDB_sp_dbXRefBySeqIdentity',
-                  'Predicted protein structures',
+                  'Predicted protein structures','Pf_predictedProteinStructures_RSRC',
                   'GenBank')
 UNION
 SELECT lower(dr.primary_identifier) AS id, 
@@ -557,7 +559,7 @@ FROM (
   SELECT lower(source_id) as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence')
+    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic')
 UNION
   SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
   FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
@@ -627,7 +629,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND ef.external_database_release_id
       = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name = 'Links to IEDB epitopes'
+  AND ed.name in ('Pf_IEDB_Epitopes_RSRC','Pb_IEDB_Epitopes_RSRC','Pc_IEDB_Epitopes_RSRC','Pk_IEDB_Epitopes_RSRC','Pv_IEDB_Epitopes_RSRC','Py_IEDB_Epitopes_RSRC','Links to IEDB epitopes')
       ]]>
     </sql>
     <sql>
@@ -1277,16 +1279,16 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
         and ed.name = 'deprecated genes') deprecated,
      (select sf.parent_id,count(*) as total_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-      where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-            'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
+      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+            'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
       and d.external_database_id = rel.external_database_id
       and sf.external_database_release_id = rel.external_database_release_id
       and sf.parent_id is not null
       group by sf.parent_id) totsnps,
       (select sf.parent_id,count(*) as nonsyn_snps
        from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-             'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
+       where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+             'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
        and d.external_database_id = rel.external_database_id
        and sf.external_database_release_id = rel.external_database_release_id
        and sf.parent_id is not null
@@ -1294,8 +1296,8 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
        group by sf.parent_id) nssnps,
       (select sf.parent_id,count(*) as syn_snps
        from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-       where d.name not in ('Broad SNPs','Sanger falciparum SNPs',
-             'Winzeler Array - Plasmodium Genetic Variation','X.Su SNPs','Sanger reichenowi SNPs')
+       where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+             'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
        and d.external_database_id = rel.external_database_id
        and sf.external_database_release_id = rel.external_database_release_id
        and sf.parent_id is not null
@@ -1373,9 +1375,9 @@ WHERE gf.source_id is not null
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Old annotation for ME49','P. falciparum Evigan Gene Models',
-                      'P. yoelii Provisional Annotations from Kappe',
-                      'Sanger P. falciparum old annotations',
+                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
+                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
+                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01')
       ]]>
@@ -1654,14 +1656,15 @@ CREATE TABLE apidb.SnpAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
-       CASE WHEN ed.name = 'X.Su SNPs' THEN 'NIH SNPs'
+       CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
-       CASE WHEN ed.name = 'X.Su SNPs' THEN 'Su_SNPs'
+       CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'Su_SNPs'
+       WHEN ed.name = 'Pf_Broad_SNPs_RSRC' THEN 'Broad_SNPs'
        WHEN ed.name = 'Broad SNPs' THEN 'Broad_SNPs'
-       WHEN ed.name = 'Sanger falciparum SNPs' THEN 'sangerItGhanaSnps'
-       WHEN ed.name = 'Sanger reichenowi SNPs' THEN 'sangerReichenowiSnps'
-       WHEN ed.name = 'PlasmoDB combined SNPs' THEN 'plasmoDbCombinedSnps'
-       WHEN ed.name = 'Winzeler Array - Plasmodium Genetic Variation' THEN 'WinzelerGeneticVariationArray'
+       WHEN ed.name in ('sangerItGhanaSnps_RSRC','Sanger falciparum SNPs') THEN 'sangerItGhanaSnps'
+       WHEN ed.name in ('Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC') THEN 'sangerReichenowiSnps'
+       WHEN ed.name in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs') THEN 'plasmoDbCombinedSnps'
+       WHEN ed.name in ('Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC') THEN 'WinzelerGeneticVariationArray'
        WHEN ed.name = 'Genomic Sequence SNPs' THEN 'AmitAlignmentSnps'
        WHEN ed.name = 'Genetic Markers - David Sibley' THEN 'GeneticMarkers_Sibley'
        WHEN ed.name = 'John Boothroyd lab at Stanford' THEN 'ME49_SNPs'
@@ -2323,7 +2326,10 @@ FROM (
         edr.version as external_db_version, src.na_feature_id,
         edb.name as external_db_name,
         CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
+        'Broad_75K_Genotyping_RSRC', 'CPHD.'||etn.na_sequence_id,
         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
+        'Broad_3K_Genotyping_RSRC', 'CP3.'||etn.na_sequence_id,
+        'Broad_Isolate_Barcode_RSRC','BC.'||etn.na_sequence_id,etn.source_id,
         'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
         ELSE etn.source_id END as source_id,
         tn.name as organism,
@@ -2338,8 +2344,11 @@ FROM (
         src.is_reference,
         src.collected_by,
         decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
+        'Broad_75K_Genotyping_RSRC', 'HD_Array',
         'Broad 3K genotyping chip', '3kChip',
+        'Broad_3K_Genotyping_RSRC', '3kChip',
         'Toxoplasma RFLPs from Chunlei Su', 'RFLP Typed',
+        'Broad_Isolate_Barcode_RSRC','Barcode','Sequencing Typed',
         'Isolate barcode data from Broad','Barcode','Sequencing Typed') as data_type,
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
              WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
@@ -2735,7 +2744,7 @@ FROM apidb.geneattributes gf,
      (SELECT p1.source_id, 1 AS pf_rna_seq
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name = 'P.falciparum RNA Sequence Profiles') pfrnaseq, 
+        AND ps1.name in('Pf_RNASeq_Newbold_RSRC', 'P.falciparum RNA Sequence Profiles')) pfrnaseq, 
      (SELECT p1.source_id, 1 AS winzeler
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
@@ -3246,7 +3255,7 @@ UNION
 select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
        'Stunnenberg::PfRBCRnaSeq' as module,
        'Plasmodium falciparum' as species,
-       '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
+       '<i>P. falciparum</i> post infection (RBC) RNA Seq (time series)' as display_name,
        '' as description,
        'Time Point post infection' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
@@ -3462,6 +3471,11 @@ from dual
 UNION
 select 'PlasmoDB' as project_id,
        'Merozoite ' as display_term,
+       'Florens_Life_Cycle_MassSpec_Mrz_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Merozoite ' as display_term,
        'Florens Life Cycle MassSpec-Merozoites' as extDB_name
 from dual
 UNION
@@ -3471,8 +3485,23 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'Trophozoite ' as display_term,
+       'Florens_Life_Cycle_MassSpec_Tpz_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Gametocyte ' as display_term,
+       'Florens_Life_Cycle_MassSpec_Gmt_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'Gametocyte ' as display_term,
        'Florens Life Cycle MassSpec-Gametocytes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Sporozoite ' as display_term,
+       'Florens_Life_Cycle_MassSpec_Spz_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3482,7 +3511,17 @@ from dual
 UNION
 select 'PlasmoDB' as project_id,
        'Merozoite Peptides ' as display_term,
+       'Pf_Merozoite_Peptides_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Merozoite Peptides ' as display_term,
        'Kahn Pfalciparum merozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Oocyst Peptides ' as display_term,
+       'Lasonder_Mosquito_Oocysts_Mass_Spec_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3492,12 +3531,27 @@ from dual
 UNION
 select 'PlasmoDB' as project_id,
        'Mosquito Oocyst-derived Sporozoite Peptides ' as display_term,
+       'Lasonder_Mosquito_oocyst_derived_sporozoites_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Oocyst-derived Sporozoite Peptides ' as display_term,
        'Lasonder Mosquito oocyst-derived sporozoite peptides' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
        'Mosquito Salivary Gland Sporozoite Peptides ' as display_term,
+       'Lasonder_Mosquito_salivary_gland_sporozoites_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mosquito Salivary Gland Sporozoite Peptides ' as display_term,
        'Lasonder Mosquito salivary gland sporozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'iRBC Membrane (PIESPs) / Schizont  ' as display_term,
+       'Florens_PIESPs_MassSpec_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3511,8 +3565,18 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'P.falciparum Clinical Proteomics ' as display_term,
+       'Pfalciparum_Tatu_Clinical_Proteomics_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'P.falciparum Proteome 42 hrs Post Infection' as display_term,
        'Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'P.falciparum Proteome 42 hrs Post Infection' as display_term,
+       'Pf_Bowyer_Proteomics_42hrs_Post_Infection_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3521,8 +3585,18 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'P.falciparum Proteome 48 hrs Post Infection' as display_term,
+       'Pf_Bowyer_Proteomics_48hrs_Post_Infection_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'Female Gametocytes ' as display_term,
        'Waters Female Gametes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Female Gametocytes ' as display_term,
+       'Waters_female_gametes_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3531,8 +3605,18 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'Male Gametocytes ' as display_term,
+       'Waters_male_gametes_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'Mixed Gametocytes ' as display_term,
        'Waters Mixed Gametes' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Mixed Gametocytes ' as display_term,
+       'Waters_mixed_gametes_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3541,13 +3625,28 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'P.vivax Clinical Proteomics' as display_term,
+       'Pvivax_Tatu_Clinical_Proteomics_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'Liver Stage LS40 ' as display_term,
        'Pyoelii LiverStage LS40' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
+       'Liver Stage LS40 ' as display_term,
+       'Pyoelii_LiverStage_LS40_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
        'Liver Stage LS50 ' as display_term,
        'Pyoelii LiverStage LS50' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Liver Stage LS50 ' as display_term,
+       'Pyoelii_LiverStage_LS50_RSRC' as extDB_name
 from dual
 UNION
 select 'TrichDB' as project_id,
@@ -3893,21 +3992,21 @@ tablespace indx
 CREATE TABLE apidb.Subcellular&1 NOLOGGING AS
 select ga.source_id, 'ht' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
-where ed.name = 'subcellular motif from Haldar'
+where ed.name in ('subcellular motif from Haldar','Haldar_Subcellular_motifs_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
 union
 select ga.source_id, 'pexel' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
-where ed.name = 'subcellular motif from Cowman'
+where ed.name in ('subcellular motif from Cowman','Cowman_Subcellular_motifs_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
 union
 select ga.source_id, 'apicoplast' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, apidb.GeneAttributes ga
-where ed.name = 'apicoplast targeting data from 4.4'
+where ed.name in ('apicoplast targeting data from 4.4','Pf_ApicoplastTargeting_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
@@ -3992,8 +4091,8 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
             dots.SplicedNaSequence cds, dots.Transcript, dots.GeneFeature gf,
             dots.TranslatedAaFeature taf, sres.ExternalDatabase ed,
             sres.ExternalDatabaseRelease edr
-       WHERE ed.name NOT IN ('Broad SNPs', 'Sanger falciparum SNPs',
-                             'X.Su SNPs')
+       WHERE ed.name NOT IN ('Pf_Broad_SNPs_RSRC','Broad SNPs', 'Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+                             'X.Su SNPs','Pf_XSuSnps_RSRC')
          AND sva.strain  < svb.strain
          AND sva.allele != svb.allele
          AND sva.parent_id = svb.parent_id
@@ -4233,7 +4332,7 @@ where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
 and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
-and sa.dataset in ('PlasmoDB combined SNPs','Broad SNPs')
+and sa.dataset in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs','Broad SNPs','Pf_Broad_SNPs_RSRC')
       ]]>
     </sql>
     <sql>
