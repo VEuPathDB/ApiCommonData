@@ -312,11 +312,11 @@ sub calculateSummaryStats {
 
       next if($profileHash{$key} eq 'NA');
 
-	if($max < $profileHash{$key} && $profileHash{$key} ne 'NA') {
+	if($max < $profileHash{$key}) {
 	    $max = $profileHash{$key};
 	    $maxKey = $key;
 	}
-	if($min > $profileHash{$key} && $profileHash{$key} ne 'NA') {
+	if($min > $profileHash{$key}) {
 	    $min = $profileHash{$key};
 	    $minKey = $key;
 	}
