@@ -2815,7 +2815,7 @@ FROM apidb.geneattributes gf,
        AND p1.profile_set_id = ps1.profile_set_id) kappe,
     (SELECT p1.source_id, 1 AS daily
       FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'daily_age_percents'
+      WHERE ps1.name = 'daily_patient-number_percents'
        AND p1.profile_set_id = ps1.profile_set_id) daily,
     (SELECT p1.source_id, 1 AS newbold
       FROM apidb.profile p1, apidb.profileSet ps1
