@@ -309,19 +309,20 @@ sub calculateSummaryStats {
     my $maxKey = $key1;
     my $minKey = $key1;
     foreach my $key (keys %profileHash) {
+
       next if($profileHash{$key} eq 'NA');
 
-	if($max < $profileHash{$key}) {
+	if($max < $profileHash{$key} && $profileHash{$key} ne 'NA') {
 	    $max = $profileHash{$key};
 	    $maxKey = $key;
 	}
-	if($min > $profileHash{$key}) {
+	if($min > $profileHash{$key} && $profileHash{$key} ne 'NA') {
 	    $min = $profileHash{$key};
 	    $minKey = $key;
 	}
     }    
-    $resultHash{'max_expression'} = $max;
-    $resultHash{'min_expression'} = $min;
+    $resultHash{'max_expression'} = $max unless ($max eq 'NA');
+    $resultHash{'min_expression'} = $min  unless ($min eq 'NA');
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
 
