@@ -8,6 +8,7 @@ use ApiCommonData::Load::TuningConfig::Utils;
 
 use strict;
 use Data::Dumper;
+my $maxRebuildMinutes;
 
 sub new {
     my ($class,
@@ -17,10 +18,11 @@ sub new {
         $externalTuningTableDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate)
+        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate, $mrm)
 	= @_;
 
     my $self = {};
+    $maxRebuildMinutes = $mrm;
 
     bless($self, $class);
     $self->{name} = $name;
@@ -281,6 +283,11 @@ sub update {
   my $buildDuration = time - $startTime;
   ApiCommonData::Load::TuningConfig::Log::addLog("    $buildDuration seconds to rebuild tuning table "
                                                  . $self->{name});
+
+  if ($maxRebuildMinutes) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("table rebuild took longer than $maxRebuildMinutes minute maximum.")
+      if ($buildDuration > $maxRebuildMinutes * 60)
+  }
 
   ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink());
 
