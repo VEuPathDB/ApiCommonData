@@ -3,11 +3,12 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use strict;
 
-my ($config,$sqlDir,$downloadFileDir,$restartOrg);
-&GetOptions("configFile=s"=> \$config,
-            "sqlDir=s"=> \$sqlDir,
-            "downloadFileDir=s"=> \$downloadFileDir,
-	    "restartOrg=s"=> \$restartOrg);
+my ($config,$sqlDir,$downloadFileDir,$restartOrg,$verbose);
+&GetOptions("configFile=s" => \$config,
+            "sqlDir=s" => \$sqlDir,
+            "downloadFileDir=s" => \$downloadFileDir,
+	    "restartOrg=s" => \$restartOrg,
+	    "verbose!" => \$verbose);
 
 $| = 1;
 
@@ -36,7 +37,11 @@ $| = 1;
 
 sub parseConfig {
 
-  open (CONFIG,$config);
+  open (CONFIG,$config) || die "Can't open $config for reading\n";
+
+  my $date = `date`; chomp($date);
+
+  print STDERR "Parsing config file, ,$config. $date\n";
 
   my $project;
 
@@ -57,6 +62,8 @@ sub parseConfig {
 
     s/\s*=\s*/=/g;
 
+    s/\s*$//g;
+
     if ($_ =~ /project=(\S+)/){
 
       $project = $1;
@@ -65,16 +72,10 @@ sub parseConfig {
 
       if ($_ =~ /loadDetailTable=(\S+)/){$config{$project}{'loadDetailTable'}=$1;}
 
-      if ($_ =~ /createFiles=(\S+)/){$config{$project}{'createFile'}=$1;}
+      if ($_ =~ /createFile=(\S+)/){$config{$project}{'createFile'}=$1;}
 
     }
-    elsif ($_ =~ /org=(.*)/) {
-
-      $_ =~ s/^\s*//g;
-
-      $_ =~ s/\s*$//g;
-
-      $organism = "";
+    elsif ($_ =~ /org=(.+)/) {
 
       $organism = $1;
 
@@ -91,7 +92,9 @@ sub parseConfig {
       push (@{$config{$project}{'organisms'}}, $organism);
 
     }
-    elsif (my $type =~ /type=(\S+)/) {
+    elsif ($_  =~ /type=(\S+)/) {
+
+      my $type = $1;
 
       if ($organism) {
 
@@ -108,7 +111,7 @@ sub parseConfig {
 
       my %copy = %config;
 
-      push (@confArr,%copy);
+      push (@confArr,\%copy);
 
       %config = ();
 
@@ -118,10 +121,18 @@ sub parseConfig {
       die "There is an unacceptable line in the config file:\n $_\n";
     }
   }
+  my $date = `date`; chomp($date);
+  print STDERR "Finished parsing config file, $config\n Will validate the contents of the config file. $date\n";
 
   &validate(\@confArr, \%orgHsh);
 
+  my $date = `date`; chomp($date);
+  print STDERR "Finished validating the config file key/value pairs\n Processing. $date\n";
+
   &processConfig(\@confArr, \%orgHsh);
+
+  my $date = `date`; chomp($date);
+  print STDERR "Finished processing the projects and orgs\n DONE. $date\n"; 
 
 }
 
@@ -132,17 +143,22 @@ sub validate {
   my @errors;
 
   foreach my $projectHsh ( @{$confArr}) {
-    foreach my $project (keys %$projectHsh) {
-      push (@errors, "$project : project name") if ($project !~ /\w+DB/);
-      push (@errors, "$project : release") if ($confArr->{$project}->{'release'} !~ /[\d\.]+/);
-      push (@errors, "$project : loadDetailTable") if ($confArr->{$project}->{'loadDetailTable'} !~ /yes|no/);
-      push (@errors, "$project : createFile") if ($confArr->{$project}->{'createfile'} !~ /yes|no/);
 
-      foreach my $org ($confArr->{$project}->{'organisms'}) {
+    foreach my $project (keys %{$projectHsh}) {
+
+      push (@errors, "$project : project name") if ($project !~ /\w+DB/);
+      push (@errors, "$project : release") if ($projectHsh->{$project}->{'release'} !~ /[\d\.]+/);
+
+      push (@errors, "$project : loadDetailTable") if ($projectHsh->{$project}->{'loadDetailTable'} !~ /yes|no/);
+
+      push (@errors, "$project : createFile") if ($projectHsh->{$project}->{'createFile'} !~ /yes|no/);
+
+      foreach my $org (@{$projectHsh->{$project}->{'organisms'}}) {
 	push(@errors,"$project : orgs : $org") if ($org != /\w+\s*\|\s*[\w\s]+/);
 
 	foreach my $type (keys %{$orgHsh->{$org}}) {
 	  push (@errors,"$project : $org : $type : type name") if ($type != /\w+/);
+
 	  push (@errors, "$project : $org : $type : detailTable") if ( $orgHsh->{$org}->{$type}->{'table'} !~ /\w+\.*/);
 	  push (@errors, "$project : $org : $type : fields") if ( $orgHsh->{$org}->{$type}->{'fields'} !~ /\w+\,*/);
 	}
@@ -166,12 +182,12 @@ sub processConfig {
   my ($confArr,$orgHsh) = @_;
 
   foreach my $projectHsh (@{$confArr}) {
-    foreach my $project (keys %$projectHsh) {
-      foreach my $org ($projectHsh->{$project}->{'organisms'}) {
+    foreach my $project (keys %{$projectHsh}) {
+      foreach my $org (@{$projectHsh->{$project}->{'organisms'}}) {
 
-	&runLoadDetailTable($project,$org, $orgHsh) if $config->{$project}->{'loadDetailTable'} eq 'yes';
+	&runLoadDetailTable($project,$org, $orgHsh,$projectHsh) if $projectHsh->{$project}->{'loadDetailTable'} eq 'yes';
 
-	&runFullRecordFile($project, $org, $orgHsh, $projectHsh->{$project}->{'release'} ) if ($config->{$project}->{'createFile'} eq 'yes');
+	&runFullRecordFile($project, $org, $orgHsh, $projectHsh->{$project}->{'release'} ) if ($projectHsh->{$project}->{'createFile'} eq 'yes');
       }
     }
   }
@@ -179,6 +195,10 @@ sub processConfig {
 
 
 sub runFullRecordFile{
+
+  my $date = `date`; chomp($date);
+
+  print "Writing text files. $date\n";
 
   my ($project,$org, $orgHsh,$release) = @_;
 
@@ -196,9 +216,13 @@ sub runFullRecordFile{
 
     my $ucType = ucfirst($lcType);
 
-    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -cacheTable apidb.${ucType}Detail -model $project  --dumpFile $downloadFileDir/$project/release-${release}/${organism}/${organism}${ucType}_${project}-${release}.txt 2>> ${organism}${ucType}File.err";
+    `mkdir -p $downloadFileDir/$project/release-${release}/${organism}`;
+
+    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -cacheTable $table -model $project  --dumpFile $downloadFileDir/$project/release-${release}/${organism}/${organism}${ucType}_${project}-${release}.txt 2>> ${organism}${ucType}File.err";
 
     `$cmd`;
+
+    print STDERR "CMD: $cmd\n" if $verbose;
 
     my $retCode = $?>>8;
 
@@ -206,12 +230,21 @@ sub runFullRecordFile{
 
     unlink("$sqlFile");
   }
+
+  my $date = `date`; chomp($date);
+
+  print "Writing text files. $date\n";
 }
 
 
 sub runLoadDetailTable {
 
-  my ($project,$org, $orgHsh,$release) = @_;
+
+  my $date = `date`; chomp($date);
+
+  print "Loading detail tables. $date\n";
+
+  my ($project,$org, $orgHsh,$release, $config) = @_;
 
   foreach my $type (keys %{$orgHsh->{$org}}) {
 
@@ -223,13 +256,19 @@ sub runLoadDetailTable {
 
     my $sqlFile = &writeTmpSql($type, $taxonName);
 
-    my $ucType = ucfirst($type);
+    my $lcType = lc($type);
 
-    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -cacheTable $table -model $project 2>> ${ucType}Cache.err";
+    my $ucType = ucfirst($lcType);
+
+    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -detailTable $table -model $project ";
 
     $cmd .= " -field $config->{$project}->{'fieldList'}" if ($config->{$project}->{'fieldList'} &&  $config->{$project}->{'fieldList'} ne 'all');
 
+    $cmd .= "2>> ${organism}${ucType}Details.err";
+
     `$cmd`;
+
+    print STDERR "CMD: $cmd\n" if $verbose;
 
     my $retCode = $?>>8;
 
@@ -237,6 +276,10 @@ sub runLoadDetailTable {
 
     unlink("$sqlFile");
   }
+
+  my $date = `date`; chomp($date);
+
+  print "Finished loading detail tables. $date\n";
 }
 
 sub writeTmpSql {
@@ -252,9 +295,11 @@ sub writeTmpSql {
   #substitute for the macro $ORGANISM$ in the sql
   $sql =~ s/\$ORGANISM\$/$taxonName/g;
 
+  print STDERR "SQL after substitution of org:\n    $sql\n" if $verbose;
+
   open (TMP, ">$sqlDir/tmp_org_${type}.sql") or die ("Can not open $sqlDir/tmp_org_${type}.sql for writing\n");
 
-  print TMP "$sql";
+  print TMP "$sql" if $verbose;
 
   close TMP;
 
@@ -265,7 +310,7 @@ sub writeTmpSql {
 
 sub usage {
 
-  print "runFullRecordDump.pl --configFile  --sqlDir --downloadFileDir --restart\n
+  print "detailTablesMgr --configFile  --sqlDir --downloadFileDir --restart --verbose\n
          config file = file with the following key/value pairs in the following arrangement of lines:\n
                        project=XXXXDB release=xxxx(integers and decimal only)  loadDetailTable=yes/no createFiles=yes/no
                        org=(pipe separated name as used in download files and appropriate taxon name)
@@ -285,34 +330,6 @@ sub usage {
                                  org=CparvumChr6|Cryptosporidium parvum
                                  type=Gene detailTable=apidb.GeneDetail fields=InterPro
                                  type=Sequence detailTable=apidb.SequenceDetail fields=all
-                                 //
-
-
-
->CryptoDB 4.3 s|g|i detailTable InterPro wdkCache\n
-                          Chominis Cryptosporidium hominis
-                          Cparvum Cryptosporidium parvum Iowa II
-                          CparvumChr6 Cryptosporidium parvum
-                          Cmuris Cryptosporidium muris
-         sqlDir = directory for the gene, sequence, and isolate sql files used by fulRecordCache and fulRecordFile\n
-         fileDir = download file dir path, Ex: /files/cbil/data/cbil/apiSiteFiles/downloadSite\n";
+                                 //";
 }
 
-
-
- 
-#config Ex:
-#project=CryptoDB release=6.6 loadDetailTable=yes createFiles=yes
-#org=Chominis|Cryptosporidium hominis
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
-#org=Cmuris|Cryptosporidium muris
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
-#org=Cparvum|Cryptosporidium parvum Iowa II
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
-#org=CparvumChr6|Cryptosporidium parvum
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
-#//
