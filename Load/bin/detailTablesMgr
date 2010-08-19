@@ -30,6 +30,9 @@ $| = 1;
 #org=CparvumChr6|Cryptosporidium parvum
 #type=Gene detailTable=apidb.GeneDetail fields=InterPro
 #type=Sequence detailTable=apidb.SequenceDetail fields=all
+#type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=0'
+#org=Cryptosporidium_reference
+#type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1'
 #//
 
 
@@ -41,7 +44,7 @@ sub parseConfig {
 
   my $date = `date`; chomp($date);
 
-  print STDERR "Parsing config file, ,$config. $date\n";
+  print STDERR "Parsing config file,$config. $date\n";
 
   my $project;
 
@@ -102,6 +105,8 @@ sub parseConfig {
 
 	if($_ =~ /fields=(\S+)/){$orgHsh{$organism}{$type}{'fields'} = $1;}
 
+	if($_ =~ /otherSql=(\S+)/){$orgHsh{$organism}{$type}{'otherSql'} = $1;}
+
       }
       else {
 	die "each organism line should be followed by type lines Ex:org=Cmuris|Cryptosporidium muris\ntype=Gene detailTable=apidb.GeneDetail fields=InterPro\ntype=Sequence detailTable=apidb.SequenceDetail fields=all\n";
@@ -161,6 +166,8 @@ sub validate {
 
 	  push (@errors, "$project : $org : $type : detailTable") if ( $orgHsh->{$org}->{$type}->{'table'} !~ /\w+\.*/);
 	  push (@errors, "$project : $org : $type : fields") if ( $orgHsh->{$org}->{$type}->{'fields'} !~ /\w+\,*/);
+
+	  push (@errors, "$project : $org : $type : otherSql") if (defined($orgHsh->{$org}->{$type}->{'otherSql'}) && $orgHsh->{$org}->{$type}->{'otherSql'} !~ /\w*/);
 	}
       }
     }
@@ -187,7 +194,7 @@ sub processConfig {
 
 	&runLoadDetailTable($project,$org, $orgHsh,$projectHsh) if $projectHsh->{$project}->{'loadDetailTable'} eq 'yes';
 
-	&runFullRecordFile($project, $org, $orgHsh, $projectHsh->{$project}->{'release'} ) if ($projectHsh->{$project}->{'createFile'} eq 'yes');
+	&runFullRecordFile($project, $org, $orgHsh, $projectHsh->{$project}->{'release'}) if ($projectHsh->{$project}->{'createFile'} eq 'yes');
       }
     }
   }
@@ -210,15 +217,19 @@ sub runFullRecordFile{
 
     my ($organism,$taxonName) = split(/\|/,$org);
 
-    my $sqlFile = &writeTmpSql($type, $taxonName);
+    my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
+
+    my $sqlFile = &writeTmpSql($type, $taxonName,$otherSql);
 
     my $lcType = lc($type);
 
     my $ucType = ucfirst($lcType);
 
-    `mkdir -p $downloadFileDir/$project/release-${release}/${organism}`;
+    my $dir = "$downloadFileDir/$project/release-${release}/${organism}/txt";
 
-    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -cacheTable $table -model $project  --dumpFile $downloadFileDir/$project/release-${release}/${organism}/${organism}${ucType}_${project}-${release}.txt 2>> ${organism}${ucType}File.err";
+    `mkdir -p $dir`;
+
+    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt 2>> ${organism}${ucType}File.err";
 
     `$cmd`;
 
@@ -244,7 +255,7 @@ sub runLoadDetailTable {
 
   print "Loading detail tables. $date\n";
 
-  my ($project,$org, $orgHsh,$release, $config) = @_;
+  my ($project,$org, $orgHsh,$projectHsh) = @_;
 
   foreach my $type (keys %{$orgHsh->{$org}}) {
 
@@ -254,15 +265,17 @@ sub runLoadDetailTable {
 
     my ($organism,$taxonName) = split(/\|/,$org);
 
-    my $sqlFile = &writeTmpSql($type, $taxonName);
+    my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
+
+    my $sqlFile = &writeTmpSql($type, $taxonName,$otherSql);
 
     my $lcType = lc($type);
 
     my $ucType = ucfirst($lcType);
 
-    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_org_${type}.sql -detailTable $table -model $project ";
+    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -detailTable $table -model $project ";
 
-    $cmd .= " -field $config->{$project}->{'fieldList'}" if ($config->{$project}->{'fieldList'} &&  $config->{$project}->{'fieldList'} ne 'all');
+    $cmd .= " -field $projectHsh->{$project}->{'fieldList'}" if ($projectHsh->{$project}->{'fieldList'} &&  $projectHsh->{$project}->{'fieldList'} ne 'all');
 
     $cmd .= "2>> ${organism}${ucType}Details.err";
 
@@ -283,9 +296,9 @@ sub runLoadDetailTable {
 }
 
 sub writeTmpSql {
-  my ($type,$taxonName) = @_;
+  my ($type,$taxonName,$otherSql) = @_;
 
-  open(SQL, "$sqlDir/org_${type}.sql") or die "$sqlDir/org_${type}.sql  can not be opened for reading\n";
+  open(SQL, "$sqlDir/${type}.sql") or die "$sqlDir/${type}.sql  can not be opened for reading\n";
 
   undef $/;
 
@@ -293,17 +306,18 @@ sub writeTmpSql {
 
   close (SQL);
   #substitute for the macro $ORGANISM$ in the sql
-  $sql =~ s/\$ORGANISM\$/$taxonName/g;
+  $sql =~ s/\$ORGANISM\$/$taxonName/g if $taxonName;
+
+  $sql =~ s/\$OTHER\$/$otherSql/g if defined($otherSql);
 
   print STDERR "SQL after substitution of org:\n    $sql\n" if $verbose;
 
-  open (TMP, ">$sqlDir/tmp_org_${type}.sql") or die ("Can not open $sqlDir/tmp_org_${type}.sql for writing\n");
-
+  open (TMP, ">$sqlDir/tmp_${type}.sql") or die ("Can not open $sqlDir/tmp_${type}.sql for writing\n");
   print TMP "$sql" if $verbose;
 
   close TMP;
 
-  return "$sqlDir/tmp_org_${type}.sql";
+  return "$sqlDir/tmp_${type}.sql";
 
 }
 
@@ -330,6 +344,9 @@ sub usage {
                                  org=CparvumChr6|Cryptosporidium parvum
                                  type=Gene detailTable=apidb.GeneDetail fields=InterPro
                                  type=Sequence detailTable=apidb.SequenceDetail fields=all
+                                 type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=0'
+                                 org=Cryptosporidium_reference
+                                 type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1'
                                  //";
 }
 
