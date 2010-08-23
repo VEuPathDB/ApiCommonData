@@ -224,7 +224,7 @@ sub runFullRecordFile{
 
     my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
 
-    my $sqlFile = &writeTmpSql($type, $taxonName,$otherSql);
+    my $sqlFile = &writeTmpSql($project, $type, $taxonName,$otherSql);
 
     my $lcType = lc($type);
 
@@ -274,7 +274,7 @@ sub runLoadDetailTable {
 
     my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
 
-    my $sqlFile = &writeTmpSql($type, $taxonName,$otherSql);
+    my $sqlFile = &writeTmpSql($project, $type, $taxonName,$otherSql);
 
     my $lcType = lc($type);
 
@@ -303,7 +303,7 @@ sub runLoadDetailTable {
 }
 
 sub writeTmpSql {
-  my ($type,$taxonName,$otherSql) = @_;
+  my ($project, $type,$taxonName,$otherSql) = @_;
 
   open(SQL, "$sqlDir/${type}.sql") or die "$sqlDir/${type}.sql  can not be opened for reading\n";
 
@@ -316,6 +316,8 @@ sub writeTmpSql {
   $sql =~ s/\$ORGANISM\$/$taxonName/g if $taxonName;
 
   $sql =~ s/\$OTHER\$/$otherSql/g if defined($otherSql);
+
+  $sql =~ s/\$PROJECT\$/$project/g;
 
   print STDERR "SQL after substitution of org:\n    $sql\n" if $verbose;
 
