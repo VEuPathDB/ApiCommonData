@@ -19,20 +19,20 @@ $| = 1;
 #config Ex:
 #project=CryptoDB release=6.6 loadDetailTable=yes createFiles=yes
 #org=Chominis|Cryptosporidium hominis
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
+#type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Chominis
+#type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Chominis
 #org=Cmuris|Cryptosporidium muris
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
+#type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Cmuris
+#type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Cmuris
 #org=Cparvum|Cryptosporidium parvum Iowa II
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
+#type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Cparvum
+#type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Cparvum
 #org=CparvumChr6|Cryptosporidium parvum
-#type=Gene detailTable=apidb.GeneDetail fields=InterPro
-#type=Sequence detailTable=apidb.SequenceDetail fields=all
+#type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=CparvumChr6
+#type=Sequence detailTable=apidb.SequenceDetail fields=all dir=CparvumChr6
 #type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=0'
 #org=Cryptosporidium_reference
-#type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1'
+#type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1' dir=none
 #//
 
 
@@ -107,6 +107,8 @@ sub parseConfig {
 
 	if($_ =~ /otherSql=(\S+)/){$orgHsh{$organism}{$type}{'otherSql'} = $1;}
 
+	if($_ =~ /dir=(\S+)/){$orgHsh{$organism}{$type}{'dir'} = $1;}
+
       }
       else {
 	die "each organism line should be followed by type lines Ex:org=Cmuris|Cryptosporidium muris\ntype=Gene detailTable=apidb.GeneDetail fields=InterPro\ntype=Sequence detailTable=apidb.SequenceDetail fields=all\n";
@@ -168,6 +170,8 @@ sub validate {
 	  push (@errors, "$project : $org : $type : fields") if ( $orgHsh->{$org}->{$type}->{'fields'} !~ /\w+\,*/);
 
 	  push (@errors, "$project : $org : $type : otherSql") if (defined($orgHsh->{$org}->{$type}->{'otherSql'}) && $orgHsh->{$org}->{$type}->{'otherSql'} !~ /\w*/);
+
+	  push (@errors, "$project : $org : $type : dir") if ( $orgHsh->{$org}->{$type}->{'dir'} !~ /\w+/); 
 	}
       }
     }
@@ -225,7 +229,9 @@ sub runFullRecordFile{
 
     my $ucType = ucfirst($lcType);
 
-    my $dir = "$downloadFileDir/$project/release-${release}/${organism}/txt";
+    my $subDir =  $orgHsh->{$org}->{$type}->{'dir'} =~ /none/i ? '' : $orgHsh->{$org}->{$type}->{'dir'};
+
+    my $dir = "$downloadFileDir/$project/release-${release}/$subDir/txt";
 
     `mkdir -p $dir`;
 
@@ -331,22 +337,23 @@ sub usage {
                        type=(such as Gene or Sequence) detailTable=(detail table) fields=(comma delimted list of specific fields to be recached or all)
                        type=Sequence detailTable=apidb.SequenceDetail fields=all
                        Ex:config Ex:
+
                                  project=CryptoDB release=6.6 loadDetailTable=yes createFiles=yes
                                  org=Chominis|Cryptosporidium hominis
-                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro
-                                 type=Sequence detailTable=apidb.SequenceDetail fields=all
+                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Chominis
+                                 type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Chominis
                                  org=Cmuris|Cryptosporidium muris
-                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro
-                                 type=Sequence detailTable=apidb.SequenceDetail fields=all
+                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Cmuris
+                                 type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Cmuris
                                  org=Cparvum|Cryptosporidium parvum Iowa II
-                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro
-                                 type=Sequence detailTable=apidb.SequenceDetail fields=all
+                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=Cparvum
+                                 type=Sequence detailTable=apidb.SequenceDetail fields=all dir=Cparvum
                                  org=CparvumChr6|Cryptosporidium parvum
-                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro
-                                 type=Sequence detailTable=apidb.SequenceDetail fields=all
+                                 type=Gene detailTable=apidb.GeneDetail fields=InterPro dir=CparvumChr6
+                                 type=Sequence detailTable=apidb.SequenceDetail fields=all dir=CparvumChr6
                                  type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=0'
                                  org=Cryptosporidium_reference
-                                 type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1'
+                                 type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql='=1' dir=none
                                  //";
 }
 
