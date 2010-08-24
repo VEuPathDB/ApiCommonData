@@ -5713,6 +5713,7 @@ sub getDbHandle {
   </tuningTable>
 
   <tuningTable name="apidb.OrthologousPair">
+    <!-- each record contains a pair of genes that are orthologous to each other -->
     <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
@@ -5745,6 +5746,7 @@ sub getDbHandle {
   </tuningTable>
 
   <tuningTable name="apidb.OrthologGeneTable">
+    <!-- each record contains a record from OrthologousPair, augmented by the IS_SYNTENIC column -->
     <internalDependency name="apidb.OrthologousPair"/>
     <externalDependency name="apidb.Synteny"/>
     <sql>
