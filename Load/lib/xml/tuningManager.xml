@@ -5744,4 +5744,39 @@ sub getDbHandle {
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.OrthologGeneTable">
+    <internalDependency name="apidb.OrthologousPair"/>
+    <externalDependency name="apidb.Synteny"/>
+    <sql>
+      <![CDATA[
+      create table apidb.OrthologGeneTable&1 nologging as
+      select
+       op.ortho_source_id,
+       op.organism,
+       op.product, op.source_id,
+       nvl(synteny.is_syntenic, 'no') as is_syntenic,
+       op.comment_count,
+       op.project_id
+      from apidb.OrthologousPair op,
+       (select distinct
+               'yes' as is_syntenic,
+               a_na_sequence_id, b_na_sequence_id, a_start, a_end, b_start, b_end
+        from apidb.synteny s) synteny
+        where synteny.a_na_sequence_id(+) = op.na_sequence_id
+          AND synteny.b_na_sequence_id(+) = op.na_sequence_id
+          AND synteny.a_start(+) < op.start_min
+          AND synteny.a_end(+) > op.start_min
+          AND synteny.b_start(+) < op.start_min
+          AND synteny.b_end(+) > op.start_min
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+      create index apidb.ogt_ix&1
+      on apidb.OrthologGeneTable&1 (source_id, project_id)
+      tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
