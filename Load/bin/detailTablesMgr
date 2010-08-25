@@ -14,7 +14,12 @@ $| = 1;
 
 
 
-&usage unless (-s $config && -d $sqlDir && -d $downloadFileDir);
+&usage unless ($config && $sqlDir && $downloadFileDir);
+
+die ("$config doesn't exist or is empty") unless (-s $config);
+
+die ("$sqlDir doesn't exist or is empty") unless (-s $sqlDir);
+
 
 #config Ex:
 #project=CryptoDB release=6.6 loadDetailTable=yes createFiles=yes
@@ -45,7 +50,7 @@ sub parseConfig {
 
   my $date = `date`; chomp($date);
 
-  print STDERR "Parsing config file,$config. $date\n";
+  print STDERR "$date\tParsing config file,$config.\n\n";
 
   my $project;
 
@@ -60,6 +65,7 @@ sub parseConfig {
   my $restartFlag = 0;
 
   while(<CONFIG>) {
+
     chomp;
     s/#.*//;
     next if ($_ =~ /^\s*$/);
@@ -119,6 +125,8 @@ sub parseConfig {
 
       my %copy = %config;
 
+      print STDERR 
+
       push (@confArr,\%copy);
 
       %config = ();
@@ -130,17 +138,17 @@ sub parseConfig {
     }
   }
   my $date = `date`; chomp($date);
-  print STDERR "Finished parsing config file, $config\n Will validate the contents of the config file. $date\n";
+  print STDERR "$date\tFinished parsing config file, $config\n Will validate the contents of the config file.\n\n";
 
   &validate(\@confArr, \%orgHsh);
 
   my $date = `date`; chomp($date);
-  print STDERR "Finished validating the config file key/value pairs\n Processing. $date\n";
+  print STDERR "$date\tFinished validating the config file key/value pairs\n Processing.\n\n";
 
   &processConfig(\@confArr, \%orgHsh);
 
   my $date = `date`; chomp($date);
-  print STDERR "Finished processing the projects and orgs\n DONE. $date\n"; 
+  print STDERR "$date\tFinished processing the projects and orgs\n DONE.\n\n"; 
 
 }
 
@@ -195,6 +203,7 @@ sub processConfig {
 
   foreach my $projectHsh (@{$confArr}) {
     foreach my $project (keys %{$projectHsh}) {
+
       foreach my $org (@{$projectHsh->{$project}->{'organisms'}}) {
 
 	&runLoadDetailTable($project,$org, $orgHsh,$projectHsh) if $projectHsh->{$project}->{'loadDetailTable'} eq 'yes';
@@ -236,11 +245,13 @@ sub runFullRecordFile{
 
     `mkdir -p $dir`;
 
-    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt 2>> ${organism}${ucType}File.err";
+    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt >${organism}${ucType}File.out  2> ${organism}${ucType}File.err";
+
+     my $date = `date`; chomp($date);
+
+    print STDERR "$date\tCMD: $cmd\n\n";
 
     `$cmd`;
-
-    print STDERR "CMD: $cmd\n" if $verbose;
 
     my $retCode = $?>>8;
 
@@ -249,9 +260,6 @@ sub runFullRecordFile{
     unlink("$sqlFile");
   }
 
-  my $date = `date`; chomp($date);
-
-  print "Writing text files. $date\n";
 }
 
 
@@ -282,13 +290,15 @@ sub runLoadDetailTable {
 
     my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -detailTable $table -model $project ";
 
-    $cmd .= " -field $projectHsh->{$project}->{'fieldList'}" if ($projectHsh->{$project}->{'fieldList'} &&  $projectHsh->{$project}->{'fieldList'} ne 'all');
+    $cmd .= " -field  $orgHsh->{$org}->{$type}->{'fields'}" if ($orgHsh->{$org}->{$type}->{'fields'} &&  $orgHsh->{$org}->{$type}->{'fields'} ne 'all');
 
-    $cmd .= "2>> ${organism}${ucType}Details.err";
+    $cmd .= " > ${organism}${ucType}Details.out 2> ${organism}${ucType}Details.err";
+
+    my $date = `date`; chomp($date);
+
+    print STDERR "$date\tCMD: $cmd\n\n";
 
     `$cmd`;
-
-    print STDERR "CMD: $cmd\n" if $verbose;
 
     my $retCode = $?>>8;
 
@@ -297,9 +307,6 @@ sub runLoadDetailTable {
     unlink("$sqlFile");
   }
 
-  my $date = `date`; chomp($date);
-
-  print "Finished loading detail tables. $date\n";
 }
 
 sub writeTmpSql {
@@ -310,6 +317,8 @@ sub writeTmpSql {
   undef $/;
 
   my $sql = <SQL>;
+
+  die "Empty sql\n" unless $sql;
 
   close (SQL);
   #substitute for the macro $ORGANISM$ in the sql
@@ -322,7 +331,7 @@ sub writeTmpSql {
   print STDERR "SQL after substitution of org:\n    $sql\n" if $verbose;
 
   open (TMP, ">$sqlDir/tmp_${type}.sql") or die ("Can not open $sqlDir/tmp_${type}.sql for writing\n");
-  print TMP "$sql" if $verbose;
+  print TMP "$sql";
 
   close TMP;
 
@@ -359,5 +368,7 @@ sub usage {
                                  org=Cryptosporidium_reference
                                  type=Isolate detailTable=pinney.IsolateDetail fields=all otherSql=1 dir=none
                                  //";
+
+  exit(1);
 }
 
