@@ -18,6 +18,7 @@ my $configDir;
 my $props;
 my $startTime = time;
 my $maxRebuildMinutes = 0;
+my $dbaEmail;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
@@ -61,6 +62,13 @@ if ($propFile) {
 }
 
 $maxRebuildMinutes = $props->{maxRebuildMinutes};
+
+if ($props->{dbaEmail}) {
+  $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+} else {
+  $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+}
+
 
 my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
@@ -334,6 +342,9 @@ if ($tuningRegistry) {
 
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
+ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance_name, $dbaEmail)
+  if ApiCommonData::Load::TuningConfig::Log::getOutOfSpaceMessage();
+
 die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 
 ###############################################################################
@@ -418,6 +429,7 @@ Sample prop file:
   <password>JoeSentMe</password>
   <username>apidb</username>
   <maxRebuildMinutes>180</maxRebuildMinutes>
+  <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
 </tuningProps>
 });
 }

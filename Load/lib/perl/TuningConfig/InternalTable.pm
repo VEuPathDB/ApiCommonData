@@ -18,11 +18,11 @@ sub new {
         $externalTuningTableDependencyNames,
 	$intermediateTables,
         $sqls, # reference to array of SQL statements
-        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate, $mrm)
+        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate, $maxRebuildMinutesParam)
 	= @_;
 
     my $self = {};
-    $maxRebuildMinutes = $mrm;
+    $maxRebuildMinutes = $maxRebuildMinutesParam;
 
     bless($self, $class);
     $self->{name} = $name;
@@ -217,7 +217,9 @@ sub update {
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
 
-  ApiCommonData::Load::TuningConfig::Log::addLog("    Rebuilding tuning table " . $self->{name});
+  my $dateString = `date`;
+  chomp($dateString);
+  ApiCommonData::Load::TuningConfig::Log::addLog("    Rebuilding tuning table " . $self->{name} . " on $dateString");
 
   $self->dropIntermediateTables($dbh);
 
@@ -255,6 +257,10 @@ sub update {
 	if $self->{debug};
 
     $updateError = 1 if !ApiCommonData::Load::TuningConfig::Utils::sqlBugWorkaroundDo($dbh, $sqlCopy);;
+
+    if ($dbh->errstr =~ /ORA-01652/) {
+      ApiCommonData::Load::TuningConfig::Log::setOutOfSpaceMessage($dbh->errstr);
+    }
 
   }
 

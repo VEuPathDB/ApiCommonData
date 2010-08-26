@@ -19,6 +19,7 @@ BEGIN {
   my $debugFlag;
   my $indentString;
   my $instance;
+  my $outOfSpaceMessage;
 
   sub addLog {
     my ($message) = @_;
@@ -103,6 +104,15 @@ BEGIN {
     return $instance;
   }
 
+  sub setOutOfSpaceMessage {
+    my ($message) = @_;
+    $outOfSpaceMessage = $message;
+  }
+
+  sub getOutOfSpaceMessage {
+    return $outOfSpaceMessage;
+  }
+
 }
 
 sub addErrorLog {
@@ -166,6 +176,32 @@ select '$instanceName', '$name', '$suffix', '$updater', sysdate, count(*), '$bui
 from $name
 SQL
 
+}
+
+sub mailOutOfSpaceReport {
+
+  my ($instance, $dbaEmail) = @_;
+
+  my $errstr = getOutOfSpaceMessage();
+  $errstr =~ /ORA-01652: unable to extend temp segment by .* in tablespace (\S*) /
+    or addErrorLog("unsuccessful parsing error message for tablespace name.");
+  my $tablespace = $1;
+
+  my $subject = "out of space in instance $instance, tablespace $tablespace";
+
+  open(MAIL, "|mail -s '$subject' $dbaEmail");
+
+  print MAIL <<EMAIL;
+Dear DBAs,
+
+The tuning manager encountered the error "$errstr" in the instance $instance.
+
+Can that tablespace ($tablespace) be made bigger?
+
+Thanks!
+EMAIL
+
+  close(MAIL);
 }
 
 1;
