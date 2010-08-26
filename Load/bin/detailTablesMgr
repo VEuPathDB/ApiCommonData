@@ -16,9 +16,9 @@ $| = 1;
 
 &usage unless ($config && $sqlDir && $downloadFileDir);
 
-die ("$config doesn't exist or is empty") unless (-s $config);
+die ("The config file $config doesn't exist or is empty") unless (-s $config);
 
-die ("$sqlDir doesn't exist or is empty") unless (-s $sqlDir);
+die ("The sql directory $sqlDir doesn't exist or is empty") unless (-s $sqlDir);
 
 
 #config Ex:
@@ -215,6 +215,52 @@ sub processConfig {
 }
 
 
+sub runLoadDetailTable {
+
+
+  my $date = `date`; chomp($date);
+
+  print "Loading detail tables. $date\n";
+
+  my ($project,$org, $orgHsh,$projectHsh) = @_;
+
+  foreach my $type (keys %{$orgHsh->{$org}}) {
+
+    my $table = $orgHsh->{$org}->{$type}->{'table'};
+
+    my $fields = $orgHsh->{$org}->{$type}->{'fields'};
+
+    my ($organism,$taxonName) = split(/\|/,$org);
+
+    my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
+
+    my $sqlFile = &writeTmpSql($project, $type, $taxonName,$otherSql);
+
+    my $lcType = lc($type);
+
+    my $ucType = ucfirst($lcType);
+
+    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -detailTable $table -model $project ";
+
+    $cmd .= " -field  $orgHsh->{$org}->{$type}->{'fields'}" if ($orgHsh->{$org}->{$type}->{'fields'} &&  $orgHsh->{$org}->{$type}->{'fields'} ne 'all');
+
+    $cmd .= " > ${organism}${ucType}Details.out 2> ${organism}${ucType}Details.err";
+
+    my $date = `date`; chomp($date);
+
+    print STDERR "$date\tCMD: $cmd\n\n";
+
+    `$cmd`;
+
+    my $retCode = $?>>8;
+
+    die("Failed with status $retCode running") if ($retCode);
+
+    unlink("$sqlFile");
+  }
+
+}
+
 sub runFullRecordFile{
 
   my $date = `date`; chomp($date);
@@ -262,52 +308,6 @@ sub runFullRecordFile{
 
 }
 
-
-sub runLoadDetailTable {
-
-
-  my $date = `date`; chomp($date);
-
-  print "Loading detail tables. $date\n";
-
-  my ($project,$org, $orgHsh,$projectHsh) = @_;
-
-  foreach my $type (keys %{$orgHsh->{$org}}) {
-
-    my $table = $orgHsh->{$org}->{$type}->{'table'};
-
-    my $fields = $orgHsh->{$org}->{$type}->{'fields'};
-
-    my ($organism,$taxonName) = split(/\|/,$org);
-
-    my $otherSql = $orgHsh->{$org}->{$type}->{'otherSql'};
-
-    my $sqlFile = &writeTmpSql($project, $type, $taxonName,$otherSql);
-
-    my $lcType = lc($type);
-
-    my $ucType = ucfirst($lcType);
-
-    my $cmd = "loadDetailTable -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -detailTable $table -model $project ";
-
-    $cmd .= " -field  $orgHsh->{$org}->{$type}->{'fields'}" if ($orgHsh->{$org}->{$type}->{'fields'} &&  $orgHsh->{$org}->{$type}->{'fields'} ne 'all');
-
-    $cmd .= " > ${organism}${ucType}Details.out 2> ${organism}${ucType}Details.err";
-
-    my $date = `date`; chomp($date);
-
-    print STDERR "$date\tCMD: $cmd\n\n";
-
-    `$cmd`;
-
-    my $retCode = $?>>8;
-
-    die("Failed with status $retCode running") if ($retCode);
-
-    unlink("$sqlFile");
-  }
-
-}
 
 sub writeTmpSql {
   my ($project, $type,$taxonName,$otherSql) = @_;
