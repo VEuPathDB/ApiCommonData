@@ -5593,13 +5593,17 @@ SQL
 
     # parse response
     my %genePeps;
-    foreach my $geneDescription (split(/"parents": \[\]/, $response->content)) {
-        $geneDescription =~ /"name": "(.*)",\s*$/;
+    my %geneNames;
+    foreach my $geneDescription (split(/\n                    \{/, $response->content)) {
+        $geneDescription =~ /\n                "uniquename": "(.*)"/;
         my $gene = $1;
+        $geneDescription =~ /\n                "name": "(.*)"/;
+        my $geneName = $1;
         foreach my $genePart (split(/}/, $geneDescription)) {
-            if ($genePart =~ /name": "(.*)", \n.*\n.*"type": "polypeptide"/) {
+            if ($genePart =~ /"type": "polypeptide", \n.*uniquename": "(.*)"/) {
 		my $polypeptide = $1;
                 $genePeps{$polypeptide} = $gene;
+                $geneNames{$polypeptide} = $geneName;
 	    }
         }
     }
@@ -5621,6 +5625,8 @@ SQL
 
   for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
        $response = $ua->request($request);
+       ApiCommonData::Load::TuningConfig::Log::addErrorLog("error message from web service: " . $response->content)
+         if $response->content =~ /"error": \{/;
        last if $response->is_success;
        ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
        die "getting product names from web service (example URL: $exampleUrl)" if $attempt == $MAX_ATTEMPTS;
@@ -5628,23 +5634,27 @@ SQL
     }
 
   my $insertStatement = $dbh->prepare(<<SQL);
-      insert into apidb.ChangedGeneProduct&1 (gene, polypeptide, product) values (?, ?, ?)
+      insert into apidb.ChangedGeneProduct&1 (gene, gene_name, polypeptide, product) values (?, ?, ?, ?)
 SQL
 
-  my $products;
+  my $products = 0;
   foreach my $polypepInfo (split(/ "feature": "/, $response->content)) {
       $polypepInfo =~ /^([^"]*)"/;
       my $pep = $1;
       if ($polypepInfo =~ /"accession": "(.*)",\s*\n\s*"cv": "genedb_products",\s*\n\s*"cvterm": "(.*)", \s*\n/) {
           my $accession = $1;
           my $cvterm = $2;
-          $insertStatement->execute($genePeps{$pep}, $pep, $accession) or die("inserting a ChangedGeneProduct record");
+          $insertStatement->execute($genePeps{$pep}, $geneNames{$pep}, $pep, $accession) or die("inserting a ChangedGeneProduct record");
           $products++;
           ApiCommonData::Load::TuningConfig::Log::addLog("mismatch: accession \"$accession\" CV term \"$cvterm\"") if (lc($accession) ne lc($cvterm));
       }
     }
 
   ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
+
+  my $noProd = changedGenesWithoutProduct($dbh);
+  ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: " . $noProd . " genes have changed annotation but no gene product stored")
+    if $noProd;
 }
 
 sub createEmptyTable {
@@ -5653,11 +5663,28 @@ sub createEmptyTable {
     $dbh->do(<<SQL) or die "creating ChangedGeneProductXXXX table";
       create table apidb.ChangedGeneProduct&1 (
          gene        varchar2(50),
+         gene_name   varchar2(50),
          polypeptide varchar2(60),
          product     varchar2(300)
       )
 SQL
 
+}
+
+sub changedGenesWithoutProduct {
+    my ($dbh) = @_;
+
+    my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
+      select count(*)
+      from ( select gene from apidb.AnnotationChange
+            minus
+             select gene from apidb.ChangedGeneProduct&1)
+SQL
+
+  $stmt->execute() or die "checking for changed genes without product";
+  my ($gwp) = $stmt->fetchrow_array();
+
+  return $gwp;
 }
 
 sub createIndex {
