@@ -256,6 +256,8 @@ sub runLoadDetailTable {
 
     $cmd .= " > ${organism}${ucType}Details.out 2> ${organism}${ucType}Details.err";
 
+    print STDERR "Running cmd:\t$cmd\n\n";
+
     `$cmd`;
 
     my $retCode = $?>>8;
@@ -268,7 +270,7 @@ sub runLoadDetailTable {
 
     my $totTime = $endTime - $startTime;
 
-    print STDERR "DONE:\t${$org}${type}Details\t$totTime sec\n\n";
+    print STDERR "DONE:\t${organism}${type}Details\t$totTime sec\n\n";
   }
 
 }
@@ -279,7 +281,7 @@ sub runFullRecordFile{
 
   foreach my $type (keys %{$orgHsh->{$org}}) {
 
-     my $startTime = time;
+    my $startTime = time;
 
     my $table = $orgHsh->{$org}->{$type}->{'table'};
 
@@ -303,6 +305,8 @@ sub runFullRecordFile{
 
     my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt >${organism}${ucType}File.out  2> ${organism}${ucType}File.err";
 
+    print STDERR "Running cmd:\t$cmd\n\n";
+
     `$cmd`;
 
     my $retCode = $?>>8;
@@ -315,7 +319,7 @@ sub runFullRecordFile{
 
     my $totTime = $endTime - $startTime;
 
-    print STDERR "DONE:\t${$org}${type}File\t$totTime sec\n\n"; 
+    print STDERR "DONE:\t${organism}${type}File\t$totTime sec\n\n"; 
   }
 
 }
