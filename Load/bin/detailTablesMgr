@@ -52,6 +52,8 @@ sub parseConfig {
 
   print STDERR "$date\tParsing config file,$config.\n\n";
 
+  my $startTime = time;
+
   my $project;
 
   my %config;
@@ -125,8 +127,6 @@ sub parseConfig {
 
       my %copy = %config;
 
-      print STDERR 
-
       push (@confArr,\%copy);
 
       %config = ();
@@ -137,24 +137,30 @@ sub parseConfig {
       die "There is an unacceptable line in the config file:\n $_\n";
     }
   }
-  my $date = `date`; chomp($date);
-  print STDERR "$date\tFinished parsing config file, $config\n Will validate the contents of the config file.\n\n";
+
+  my $endTime = time;
+
+  my $totTime = $endTime - $startTime;
+
+  print STDERR "DONE:\tParse config file $config\t$totTime sec\n\n";
 
   &validate(\@confArr, \%orgHsh);
 
-  my $date = `date`; chomp($date);
-  print STDERR "$date\tFinished validating the config file key/value pairs\n Processing.\n\n";
-
   &processConfig(\@confArr, \%orgHsh);
 
-  my $date = `date`; chomp($date);
-  print STDERR "$date\tFinished processing the projects and orgs\n DONE.\n\n"; 
+  $endTime = time;
+
+  $totTime = $endTime - $startTime;
+
+  print STDERR "DONE: Total run time\t$totTime sec\n";
 
 }
 
 
 sub validate {
   my ($confArr, $orgHsh ) = @_;
+
+  my $startTime = time;
 
   my @errors;
 
@@ -186,6 +192,12 @@ sub validate {
     }
   }
 
+  my $endTime = time;
+
+  my $totTime = $endTime - $startTime;
+
+  print STDERR "DONE: Validate\t$totTime sec\n\n";
+
   if (scalar @errors >= 1) {
 
     foreach my $error (@errors) {
@@ -194,6 +206,7 @@ sub validate {
 
     die "Please fix the config file error(s) before running\n";
   }
+
 }
 
 
@@ -217,14 +230,11 @@ sub processConfig {
 
 sub runLoadDetailTable {
 
-
-  my $date = `date`; chomp($date);
-
-  print "Loading detail tables. $date\n";
-
   my ($project,$org, $orgHsh,$projectHsh) = @_;
 
   foreach my $type (keys %{$orgHsh->{$org}}) {
+
+    my $startTime = time;
 
     my $table = $orgHsh->{$org}->{$type}->{'table'};
 
@@ -246,10 +256,6 @@ sub runLoadDetailTable {
 
     $cmd .= " > ${organism}${ucType}Details.out 2> ${organism}${ucType}Details.err";
 
-    my $date = `date`; chomp($date);
-
-    print STDERR "$date\tCMD: $cmd\n\n";
-
     `$cmd`;
 
     my $retCode = $?>>8;
@@ -257,19 +263,23 @@ sub runLoadDetailTable {
     die("Failed with status $retCode running") if ($retCode);
 
     unlink("$sqlFile");
+
+    my $endTime = time;
+
+    my $totTime = $endTime - $startTime;
+
+    print STDERR "DONE:\t${$org}${type}Details\t$totTime sec\n\n";
   }
 
 }
 
 sub runFullRecordFile{
 
-  my $date = `date`; chomp($date);
-
-  print "Writing text files. $date\n";
-
   my ($project,$org, $orgHsh,$release) = @_;
 
   foreach my $type (keys %{$orgHsh->{$org}}) {
+
+     my $startTime = time;
 
     my $table = $orgHsh->{$org}->{$type}->{'table'};
 
@@ -293,10 +303,6 @@ sub runFullRecordFile{
 
     my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt >${organism}${ucType}File.out  2> ${organism}${ucType}File.err";
 
-     my $date = `date`; chomp($date);
-
-    print STDERR "$date\tCMD: $cmd\n\n";
-
     `$cmd`;
 
     my $retCode = $?>>8;
@@ -304,6 +310,12 @@ sub runFullRecordFile{
     die("Failed with status $retCode running") if ($retCode);
 
     unlink("$sqlFile");
+
+    my $endTime = time;
+
+    my $totTime = $endTime - $startTime;
+
+    print STDERR "DONE:\t${$org}${type}File\t$totTime sec\n\n"; 
   }
 
 }
