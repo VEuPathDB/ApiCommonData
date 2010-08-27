@@ -2733,9 +2733,9 @@ FROM apidb.geneattributes gf,
         AND p1.source_id = p3.source_id
         AND p1.source_id = p5.source_id
         AND p1.source_id = p7.source_id
-        AND ps1.name = 'DeRisi HB3 Smoothed Averaged'
-        AND ps3.name = 'DeRisi 3D7 Smoothed Averaged'
-        AND ps5.name = 'DeRisi Dd2 Smoothed Averaged'
+        AND ps1.name = 'DeRisi HB3 Smoothed'
+        AND ps3.name = 'DeRisi 3D7 Smoothed'
+        AND ps5.name = 'DeRisi Dd2 Smoothed'
         AND ps7.name = 'winzeler_cc_sorbExp') combo,
      (SELECT p1.source_id, 1 AS zb_pvivax
       FROM apidb.profile p1, apidb.profileSet ps1
@@ -2744,7 +2744,7 @@ FROM apidb.geneattributes gf,
      (SELECT p1.source_id, 1 AS pf_rna_seq
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name in('Pf_RNASeq_Newbold_RSRC', 'P.falciparum RNA Sequence Profiles')) pfrnaseq, 
+        AND ps1.name in('Profiles of P.falciparum Newbold mRNA Seq data', 'P.falciparum RNA Sequence Profiles')) pfrnaseq, 
      (SELECT p1.source_id, 1 AS winzeler
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
@@ -2758,9 +2758,9 @@ FROM apidb.geneattributes gf,
         AND p3.profile_set_id = ps3.profile_set_id
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi 3D7 Smoothed Averaged'
+        AND ps1.name = 'DeRisi 3D7 Smoothed'
         AND ps2.name = 'DeRisi 3D7 Normalized repsCollapsed Averaged'
-         AND ps3.name = 'DeRisi 3D7 Percents Averaged') threeD7,
+         AND ps3.name = 'Percentiles of DeRisi 3D7 Red') threeD7,
      (SELECT p1.source_id, 1 AS HB3
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p2, apidb.profileSet ps2,
@@ -2770,9 +2770,9 @@ FROM apidb.geneattributes gf,
         AND p3.profile_set_id = ps3.profile_set_id
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi HB3 Smoothed Averaged'
+        AND ps1.name = 'DeRisi HB3 Smoothed'
         AND ps2.name = 'DeRisi HB3 Normalized repsCollapsed Averaged'
-         AND ps3.name = 'DeRisi HB3 Percents Averaged') HB3,
+         AND ps3.name = 'Percentiles of DeRisi HB3 Red') HB3,
      (SELECT p1.source_id, 1 AS Dd2
       FROM apidb.profile p1, apidb.profileSet ps1,
            apidb.profile p2, apidb.profileSet ps2,
@@ -2782,9 +2782,9 @@ FROM apidb.geneattributes gf,
         AND p3.profile_set_id = ps3.profile_set_id
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi Dd2 Smoothed Averaged'
+        AND ps1.name = 'DeRisi Dd2 Smoothed'
         AND ps2.name = 'DeRisi Dd2 Normalized repsCollapsed Averaged'
-         AND ps3.name = 'DeRisi Dd2 Percents Averaged') Dd2,
+         AND ps3.name = 'Percentiles of DeRisi Dd2 Red') Dd2,
      (SELECT p1.source_id, 1 AS waters
       FROM apidb.profile p1, apidb.profileSet ps1
       WHERE p1.profile_set_id = ps1.profile_set_id
@@ -2803,7 +2803,7 @@ FROM apidb.geneattributes gf,
         AND p.profile_set_id = ps.profile_set_id) cowman,
     (SELECT p.source_id, 1 AS mexp128
       FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4 at ring, trophozite and schizont stages.-Averaged'
+      WHERE ps.name = 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4 at ring, trophozite and schizont stages.'
         AND p.profile_set_id = ps.profile_set_id) mexp128,
     (SELECT p.source_id, 1 AS mexp494
       FROM apidb.profile p, apidb.profileSet ps
@@ -2811,7 +2811,7 @@ FROM apidb.geneattributes gf,
         AND p.profile_set_id = ps.profile_set_id) mexp494,
     (SELECT p1.source_id, 1 AS kappe
       FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'kappe_fold_changes'
+      WHERE ps1.name = 'kappe_all_comparisons_profiles'
        AND p1.profile_set_id = ps1.profile_set_id) kappe,
     (SELECT p1.source_id, 1 AS daily
       FROM apidb.profile p1, apidb.profileSet ps1
