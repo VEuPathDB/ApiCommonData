@@ -259,6 +259,7 @@ sub update {
     $updateError = 1 if !ApiCommonData::Load::TuningConfig::Utils::sqlBugWorkaroundDo($dbh, $sqlCopy);;
 
     if ($dbh->errstr =~ /ORA-01652/) {
+    ApiCommonData::Load::TuningConfig::Log::addLog("Setting out-of-space flag, so notification email is sent.");
       ApiCommonData::Load::TuningConfig::Log::setOutOfSpaceMessage($dbh->errstr);
     }
 

@@ -189,6 +189,8 @@ sub mailOutOfSpaceReport {
 
   my $subject = "out of space in instance $instance, tablespace $tablespace";
 
+  ApiCommonData::Load::TuningConfig::Log::addLog("Sending out-of-space notification to \"$dbaEmail\" with subject \"$subject\"");
+
   open(MAIL, "|mail -s '$subject' $dbaEmail");
 
   print MAIL <<EMAIL;
