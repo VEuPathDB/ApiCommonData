@@ -5571,10 +5571,15 @@ SQL
   $request->content_type('application/x-www-form-urlencoded');
   my $exampleUrl;
   my @params;
+  my $geneCount = 0;
   while (my ($gene) = $stmt->fetchrow_array()) {
+      $geneCount++;
       push(@params, "features=$gene");
       $exampleUrl = $requestUrl . '?' . "features=$gene";
   }
+
+  return if !$geneCount;
+
   my $requestContent = join('&', @params);
   $request->content($requestContent);
   $request->content_length(length($requestContent));
