@@ -554,13 +554,13 @@
     </info>
   </resource>
 
-  <resource resource="Pb_Waters_gss_time_series_HP_RSRC" version="@@Pb_Waters_gss_time_series_HP_VER@@"
+  <resource resource="Pb_Waters_gss_time_series_HP_HPE_RSRC" version="@@Pb_Waters_gss_time_series_HP_HPE_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
-        displayName="P. berghei transcript expression - HP"
+        displayName="P. berghei transcript expression - HP-HPE"
         project="PlasmoDB"
         organisms="@@PbOrganismFullName@@"
         category="Transcriptome"
@@ -586,37 +586,6 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
     </info>
   </resource>
 
-  <resource resource="Pb_Waters_gss_time_series_HPE_RSRC" version="@@Pb_Waters_gss_time_series_HPE_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="P. berghei transcript expression - HPE"
-        project="PlasmoDB"
-        organisms="@@PbOrganismFullName@@"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Andy Waters"
-        email="A.P.Waters@@lumc.nl"
-        institution="Leiden University">
-      <description>
-        <![CDATA[
-         Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
-<p>
-There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
-and HPE is High Producer "E".  HP was mechanically
-passaged on a weekly basis from mouse to mouse and 10 independent
-experiments were set up (HPA-HPJ).  The parasites were observed, waiting
-for non-producing parasites to appear.  HPE was the chosen one.
-A deletion in HP was assumed to have created HPE (they are otherwise
-isogenic) and KO'd the production of gametocytes.  In such a scenario
-the non-producer would quickly overgrow the producer.  Both are cloned.
-        ]]>
-      </description>
-    <publication pmid="15637271"/>
-    </info>
-  </resource>
 
   <resource resource="Pb_Waters_DOZI_array_RSRC" version="@@Pb_Waters_DOZI_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">

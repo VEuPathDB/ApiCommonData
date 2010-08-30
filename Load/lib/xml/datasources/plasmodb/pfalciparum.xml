@@ -359,12 +359,10 @@
     </info>
   </resource>
 
-  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="2009-07"
+  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="08-2010"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <wgetArgs url="http://sites.huji.ac.il/malaria/download/Annotated_Table/Annotated_table_JUly_2009.txt">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=ecMappings.txt</wgetArgs>
-    <unpack>mkdir @@dataDir@@/pathwayMappings_Hagai_fixed/</unpack>
-    <unpack>cat @@dataDir@@/ecMappings.txt | unpackHagaiPathwayFile > @@dataDir@@/pathways.txt</unpack>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/pathways.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/pathwayMappings.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/pathwayMappings.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
         displayName="Pathways mapping from Ginsburg"
         project="PlasmoDB"
@@ -551,10 +549,9 @@
     </info>
   </resource>
 
-  <resource resource="Pf_EcMappings_Hagai_RSRC" version="2009-07"
+  <resource resource="Pf_EcMappings_Hagai_RSRC" version="08-2010"
       plugin="GUS::Community::Plugin::InsertECMapping">
-    <wgetArgs url="http://sites.huji.ac.il/malaria/download/Annotated_Table/Annotated_table_JUly_2009.txt">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/ecMappings.txt</wgetArgs>
-    <unpack><![CDATA[cut -s -f 1,6 @@dataDir@@/ecMappings.txt &> @@dataDir@@/Pfid.txt]]></unpack>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/ecMapping.txt"/>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pfid.txt --evidenceCode "Hagai Ginsburg" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" </pluginArgs>
     <info
         displayName="EC mappings from Ginsburg"
