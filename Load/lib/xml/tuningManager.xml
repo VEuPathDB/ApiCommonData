@@ -2759,7 +2759,7 @@ FROM apidb.geneattributes gf,
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
         AND ps1.name = 'DeRisi 3D7 Smoothed'
-        AND ps2.name = 'DeRisi 3D7 Normalized repsCollapsed Averaged'
+        AND ps2.name = 'DeRisi 3D7 non-smoothed'
          AND ps3.name = 'Percentiles of DeRisi 3D7 Red') threeD7,
      (SELECT p1.source_id, 1 AS HB3
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2771,7 +2771,7 @@ FROM apidb.geneattributes gf,
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
         AND ps1.name = 'DeRisi HB3 Smoothed'
-        AND ps2.name = 'DeRisi HB3 Normalized repsCollapsed Averaged'
+        AND ps2.name = 'DeRisi HB3 non-smoothed'
          AND ps3.name = 'Percentiles of DeRisi HB3 Red') HB3,
      (SELECT p1.source_id, 1 AS Dd2
       FROM apidb.profile p1, apidb.profileSet ps1,
@@ -2783,7 +2783,7 @@ FROM apidb.geneattributes gf,
         AND p1.source_id = p2.source_id
         AND p1.source_id = p3.source_id
         AND ps1.name = 'DeRisi Dd2 Smoothed'
-        AND ps2.name = 'DeRisi Dd2 Normalized repsCollapsed Averaged'
+        AND ps2.name = 'DeRisi Dd2 non-smoothed'
          AND ps3.name = 'Percentiles of DeRisi Dd2 Red') Dd2,
      (SELECT p1.source_id, 1 AS waters
       FROM apidb.profile p1, apidb.profileSet ps1
@@ -2815,7 +2815,7 @@ FROM apidb.geneattributes gf,
        AND p1.profile_set_id = ps1.profile_set_id) kappe,
     (SELECT p1.source_id, 1 AS daily
       FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'daily_patient-number_percents'
+      WHERE ps1.name = 'daily_patient-number_percents_percentiles'
        AND p1.profile_set_id = ps1.profile_set_id) daily,
     (SELECT p1.source_id, 1 AS newbold
       FROM apidb.profile p1, apidb.profileSet ps1
