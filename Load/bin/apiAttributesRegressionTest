@@ -8,6 +8,7 @@ use DBI;
 
 my $outputDir = $ARGV[0];
 my $dblinkName = $ARGV[1];
+my $summaryOnly = $ARGV[2];
 
 # SKIP THESE ATTRIBUTE TABLES
 my $tableExceptions = {'ARRAYELEMENTATTRIBUTES' => 1,
@@ -16,7 +17,12 @@ my $tableExceptions = {'ARRAYELEMENTATTRIBUTES' => 1,
 
 $| = 1;
 
-usage() unless $dblinkName;
+usage() unless $outputDir && $dblinkName;
+
+if ($summaryOnly) {
+  makeSummaryFile($outputDir);
+  exit(0);
+}
 
 die "Error: output dir '$outputDir' not found\n" unless -d $outputDir;
 
@@ -35,11 +41,16 @@ my $dbh = DBI->connect($dsn,
 
 my @tables = getAttributeTables();
 
+print STDERR "\n\n\n================================================================ \n";
+print STDERR localtime().  "Starting test on $dsn \n";
+print STDERR "================================================================ \n";
+
+
 for my $table (@tables) {
-  print STDERR "\nprocessing table $table\n";
+  print STDERR "\n" . localtime() . "processing table $table\n";
   my @organisms = getTableOrganisms($table);
   for my $org (@organisms) {
-    print STDERR "  $org\n";
+    print STDERR localtime() . "  $org\n";
     my $org_dir_name = $org;
     $org_dir_name =~ s/ /_/g;
     if (! -d "$outputDir/$org_dir_name") {
@@ -48,7 +59,7 @@ for my $table (@tables) {
     }
     my $outfile = "$outputDir/$org_dir_name/$table.out";
     if (-e $outfile && `grep "TEST COMPLETE" $outfile`) {
-      print STDERR "    Found completed test file.  Skipping test...\n";
+      print STDERR localtime() . "    Found completed test file.  Skipping test...\n";
       next;
     }
     open(OUT, ">$outfile")
@@ -57,6 +68,8 @@ for my $table (@tables) {
     runTest($table, $org, \*OUT);
   }
 }
+makeSummaryFile($outputDir);
+
 
 ##################################################################
 
@@ -198,16 +211,58 @@ sub getColumnExceptions {
 			 'PROJECT_ID' => 1,
 			 'SOURCE_ID' => 1,
 			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
 			 'SO_VERSION' => 1,
 			 'EXTERNAL_DB_VERSION' => 1,
-			 'NA_SEQUENCE_ID' => 1,
 			 'TAXON_ID' => 1,
-			}
+			},
+     'SNPATTRIBUTES' => {
+			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'SAGETAGATTRIBUTES' => {
+			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'ORFATTRIBUTES' => {
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'SEQUENCEATTRIBUTES' => {
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'ESTATTRIBUTES' => {
+			 'ASSEMBLY_NA_SEQUENCE_ID' => 1,
+			},
     };
 
   return $columnExceptions->{$tableName} if ($columnExceptions->{$tableName});
   return {};
 }
+
+sub makeSummaryFile {
+  my ($outputDir) = @_;
+
+  open(SUM, ">$outputDir/summary.txt") || die "Can't open summary file '$outputDir/summary.txt' for writing\n";
+  my $fh;
+  opendir($fh, $outputDir);
+  my @d = readdir($fh);
+  my $dir;
+  foreach $dir (@d) {
+    next if $dir =~ /^\./;
+    next unless -d $dir;
+    my $org_fh;
+    opendir($org_fh, $dir);
+    my @orgDir = readdir($org_fh);
+    foreach my $testfile (@orgDir) {
+      next if $testfile =~ /^\./;
+      print SUM "$dir/$testfile\n";
+      print SUM `grep DIFFS $dir/$testfile` . "\n";
+    }
+    closedir($org_fh);
+  }
+  close(SUM);
+}
+
 
 sub detailCols {
   return (
@@ -246,7 +301,7 @@ sub detailCols {
 sub usage {
 
   print STDERR "
-Usage:  apiGeneRegressionTest outputDir dblinkName
+Usage:  apiGeneRegressionTest outputDir dblinkName [-summaryOnly]
 
 Example:  apiGeneRegressionTest your_home/regressionTests plasrbld
 
@@ -270,6 +325,10 @@ the phrase TEST COMPLETED.
 
 If the tester finds an existing result file that contains the phrase 
 TEST COMPLETED it skips that test.
+
+The summary.txt file contains a concise report of differences.
+
+The -summaryOnly option prints only the summary file, and does not run any tests.
 
 ";
 
