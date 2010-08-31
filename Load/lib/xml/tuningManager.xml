@@ -1022,12 +1022,12 @@ FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
                             p.ind_ratio as max_fold_induction,
                             row_number() over (partition by p.source_id order by p.ind_ratio desc) row_number
                      FROM apidb.Profile p, apidb.ProfileSet ps
-                     WHERE ps.name like 'DeRisi % Smoothed Averaged'
+                     WHERE ps.name like 'DeRisi % Smoothed'
                        AND p.profile_set_id = ps.profile_set_id)
       WHERE row_number = 1) expn,
      (SELECT p.source_id, max(p.max_percentile) as derisi_max_pct
       FROM apidb.Profile p, apidb.ProfileSet ps
-      WHERE ps.name like 'DeRisi % Smoothed Averaged'
+      WHERE ps.name like 'DeRisi % Smoothed'
         AND p.profile_set_id = ps.profile_set_id
       GROUP BY p.source_id) percentile
 WHERE gene.source_id = expn.source_id(+)
@@ -3031,6 +3031,20 @@ from
     UNION
 
     -- PlasmoDB --
+
+
+    select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'Profiles of E-TABM-438 from Cowman' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
     select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
@@ -3245,6 +3259,39 @@ select 'giar sage tag frequencies sense' as profile_name,
 
 
 -- PlasmoDB --
+
+
+
+
+
+select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
+       'Su::CQTreatment' as module,
+       'Plasmodium falciparum' as species,
+       'Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in <i>P. falciparum</i>' as display_name,
+       'Mutations in PfCRT confer chloroquine (CQ) resistance in P. falciparum. Point mutations in the homolog of the mammalian multidrug resistance gene (pfmdr1) can also modulate the levels of CQ response. However, parasites with the same pfcrt and pfmdr1 alleles exhibit a wide range of drug sensitivity, suggesting that additional genes contribute to levels of CQ resistance (CQR).<br>3 isogenic lines which have different drug resistance profiles corresponding to unique mutations in the pfcrt gene (106/1K76, 106/176I, and 106/76I-352K) were used to study changes in gene expression with and without chloroquine  and genomic variations, i.e. copy number (CN) changes.' as description,
+       'isogenic line' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+       'rma,pct' as visible_parts,
+       'E-GEOD-10022_array' as attribution
+from dual
+
+UNION
+
+select 'Profiles of E-TABM-438 from Cowman' as profile_name,
+       'Cowman::Sir2KO' as module,
+       'Plasmodium falciparum' as species,
+       'Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out <i>P. falciparum</i> intra-erythrocytic stages' as display_name,
+       'Pfsir2A and Pfsir2B KOs expression profiling in intra-erythrocytic stages' as description,
+       'intra-erythrocytic stage' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress) or expression percentile value. ' as y_axis,
+       'rma,pct' as visible_parts,
+       'New_Cowman_Sir2_KO' as attribution
+from dual
+
+UNION
+
+
+
 
 select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
        'PfRNASeq::Ver1' as module,
