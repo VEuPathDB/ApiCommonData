@@ -3031,6 +3031,11 @@ from
     UNION
 
     -- PlasmoDB --
+    select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
     select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
@@ -3240,6 +3245,20 @@ select 'giar sage tag frequencies sense' as profile_name,
 
 
 -- PlasmoDB --
+
+select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
+       'PfRNASeq::Ver1' as module,
+       'Plasmodium falciparum' as species,
+       '<i>P.falciparum</i> RNA Sequence Profiles - Intraerythrocytic Cycle' as display_name,
+       'Illumina-based massively parallel sequencing was used to gain new insight into the transcriptome (RNA-Seq) of the human malaria parasite, <i>P. falciparum</i>. Using data collected at seven time points during the intraerythrocytic developmental cycle, we (i) detect novel gene transcripts; (ii) correct hundreds of gene models; (iii) propose alternative splicing events; and (iv) predict 5 prime and 3 prime untranslated regions.' as description,
+       'Hours in the intraerythrocytic developmental cycle' as x_axis,
+       'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+       'coverage,pct' as visible_parts,
+        'Pfalciparum_RNA_Seq' as attribution
+from dual
+
+UNION
+
 select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'Duffy::PfRnaSeq' as module,
        'Plasmodium falciparum' as species,
