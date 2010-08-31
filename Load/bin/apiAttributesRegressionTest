@@ -9,6 +9,11 @@ use DBI;
 my $outputDir = $ARGV[0];
 my $dblinkName = $ARGV[1];
 
+# SKIP THESE ATTRIBUTE TABLES
+my $tableExceptions = {'ARRAYELEMENTATTRIBUTES' => 1,
+		       'SAGETAGANALYSISATTRIBUTES' => 1};
+
+
 $| = 1;
 
 usage() unless $dblinkName;
@@ -31,7 +36,7 @@ my $dbh = DBI->connect($dsn,
 my @tables = getAttributeTables();
 
 for my $table (@tables) {
-  print STDERR "processing table $table\n";
+  print STDERR "\nprocessing table $table\n";
   my @organisms = getTableOrganisms($table);
   for my $org (@organisms) {
     print STDERR "  $org\n";
@@ -42,6 +47,10 @@ for my $table (@tables) {
 	|| die "Can't make output dir '$outputDir/$org_dir_name'\n";
     }
     my $outfile = "$outputDir/$org_dir_name/$table.out";
+    if (-e $outfile && `grep "TEST COMPLETE" $outfile`) {
+      print STDERR "    Found completed test file.  Skipping test...\n";
+      next;
+    }
     open(OUT, ">$outfile")
       || die "Can't make open output file '$outfile'\n";
 
@@ -52,8 +61,6 @@ for my $table (@tables) {
 ##################################################################
 
 sub getAttributeTables {
-
-  my $tableExceptions = {'ARRAYELEMENTATTRIBUTES' => 1};
 
   my $sql = 
 "select synonym_name from all_synonyms
@@ -99,28 +106,30 @@ sub runTest {
   }
   my $idCount = compareSourceIds($oldCount, $newCount, $tableName, $organism, $out);
 
-  return unless $idCount;
+  if ($idCount) {
 
-  my @attrCols = getAttrCols($tableName);
-  foreach my $column (@attrCols) {
-    my $sql = "
+    my @attrCols = getAttrCols($tableName);
+    foreach my $column (@attrCols) {
+      my $sql = "
 select old.source_id, old.$column as old$column, new.$column as new$column
 from apidb.$tableName old, apidb.${tableName}\@$dblinkName new
 where old.source_id = new.source_id
 and old.$column != new.$column
 and old.organism = '$organism'";
 
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute();
-    print $out "Checking $column\n";
-    my $diffCount = 0;
-    while (my @row = $stmt->fetchrow_array()) {
-      print $out "\t" . join("\t",@row) . "\n";
-      $diffCount++;
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+      print $out "Checking $column\n";
+      my $diffCount = 0;
+      while (my @row = $stmt->fetchrow_array()) {
+	print $out "\t" . join("\t",@row) . "\n";
+	$diffCount++;
+      }
+      print $out "DIFFS: Column $column has $diffCount differences\n\n" if $diffCount;
+      print $out "Column $column OK\n\n" unless $diffCount;
     }
-    print $out "DIFFS: Column $column has $diffCount differences\n\n" if $diffCount;
-    print $out "Column $column OK\n\n" unless $diffCount;
   }
+  print $out "TEST COMPLETE\n";
 }
 
 sub getIdCount {
@@ -132,7 +141,6 @@ sub getIdCount {
   $stmt->execute();
   my ($idCnt) = $stmt->fetchrow_array();
 
-  die "Invalid organism name '$organism' (no IDs found in apidb.$tableName$dbl)\n" unless $idCnt;
   return $idCnt;
 }
 
@@ -191,7 +199,6 @@ sub getColumnExceptions {
 			 'SOURCE_ID' => 1,
 			 'NA_FEATURE_ID' => 1,
 			 'SO_VERSION' => 1,
-			 'EXTERNAL_DB_NAME' => 1,
 			 'EXTERNAL_DB_VERSION' => 1,
 			 'NA_SEQUENCE_ID' => 1,
 			 'TAXON_ID' => 1,
@@ -239,15 +246,30 @@ sub detailCols {
 sub usage {
 
   print STDERR "
-Usage:  apiGeneRegressionTest dblinkName
+Usage:  apiGeneRegressionTest outputDir dblinkName
 
-Example:  apiGeneRegressionTest 'Plasmodium vivax' plasrbld
+Example:  apiGeneRegressionTest your_home/regressionTests plasrbld
 
-Compares the apidb.GeneAttributes table in an old and new database for the specified species.
+Uses meta information in the database to discover all the synonyms that end in
+'ATTRIBUTES'.  Treats these as testable tables.  The perl code file has a 
+place to put the names of such tables that should not be tested (look for
+\$tableExceptions).  For each of these tables, it discovers the organisms in
+that table and iterates over those.  It also discovers the columns in the
+tables, and, for each organism iterates over those, and tests them.  There
+is also a spot in the code to specify columns to exclude from a particular
+table.
 
 The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
 
-The 'new' database is accessed from the old via the dblink whose name is provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+The 'new' database is accessed from the old via the dblink whose name is
+provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+
+Writes the results to the provided outputDir.  Each organism gets its own
+subdir there, with each test getting its own result file.  The last line has 
+the phrase TEST COMPLETED.
+
+If the tester finds an existing result file that contains the phrase 
+TEST COMPLETED it skips that test.
 
 ";
 
