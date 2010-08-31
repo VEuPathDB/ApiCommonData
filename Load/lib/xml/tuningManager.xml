@@ -3302,7 +3302,7 @@ select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
        'isogenic line' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
         110 as order_num,
-        'TRUE' as mainOpen,
+        'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
        'E-GEOD-10022_array' as attribution
@@ -3318,7 +3318,7 @@ select 'Profiles of E-TABM-438 from Cowman' as profile_name,
        'intra-erythrocytic stage' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress) or expression percentile value. ' as y_axis,
         120 as order_num,
-        'TRUE' as mainOpen,
+        'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
        'New_Cowman_Sir2_KO' as attribution
@@ -3343,21 +3343,6 @@ select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
         'Pfalciparum_RNA_Seq' as attribution
 from dual
 
-UNION
-
-select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
-       'Duffy::PfRnaSeq' as module,
-       'Plasmodium falciparum' as species,
-       '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
-       '' as description,
-       '3D7, PL01: Parasites from mothers and, PL02:Parasites from children' as x_axis,
-       'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
-        140 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
-        'RNASeq_Intensity_Profiles_Patrick_Duffy' as attribution
-from dual
 
 UNION
 select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
@@ -3367,12 +3352,29 @@ select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
        '' as description,
        'Time Point post infection' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
-        150 as order_num,
+        140 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
         'RNASeqCoveragePlot_Stunnenberg' as attribution
 from dual
+
+UNION
+
+select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
+       'Duffy::PfRnaSeq' as module,
+       'Plasmodium falciparum' as species,
+       '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
+       '' as description,
+       '3D7, PL01: Parasites from mothers and, PL02:Parasites from children' as x_axis,
+       'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+        150 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        'RNASeq_Intensity_Profiles_Patrick_Duffy' as attribution
+from dual
+
 
 UNION
 -- AmoebaDB --
@@ -3513,7 +3515,7 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
         240 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       '' as visible_parts,
+        null as visible_parts,
         'Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles' as attribution
 from dual
 UNION
