@@ -5956,4 +5956,29 @@ sub getDbHandle {
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.nextgenseq_stats">
+    <externalDependency name="apidb.nextgenseq_coverage"/>
+    <sql>
+      <![CDATA[
+      create table apidb.nextgenseq_stats&1 nologging as
+      select sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length,sum_span_length 
+      from (
+      select sample,count(*) as num_spans,
+      sum(coverage * (mapping_end - mapping_start)) as sum_coverage,
+      sum(mapping_end - mapping_start) as sum_span_length
+      from APIDB.nextgenseq_coverage
+      where multiple = 0
+      group by sample
+      )
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+      create index apidb.ngss_sple_idx&1
+      on apidb.nextgenseq_stats&1 (sample)
+      tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
