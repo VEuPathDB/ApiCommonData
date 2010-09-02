@@ -2478,15 +2478,15 @@ select distinct
             ELSE '+'
           END 
         END as direction
-from  dots.ArrayElementFeature aef,
+from  apidb.ExpressionElement aef,
       apidb.FeatureLocation arrloc,
       apidb.geneattributes ga,
-      sres.externaldatabase ed,
-      sres.externaldatabaserelease edr
+      rad.analysis a,
+      rad.protocol p
 where aef.na_feature_id = arrloc.na_feature_id
-and   arrloc.external_database_release_id = edr.external_database_release_id
-and   edr.external_database_id = ed.external_database_id
-and   lower(ed.name) like '%peak%'
+and   aef.analysis_id = a.analysis_id
+and   a.protocol_id = p.protocol_id
+and   p.name in ('NimbleGen_ChIP_Artur_Scherf_Peak_Calls','NimbleGen_ChIP_Till_Voss_Peak_Calls')
 and   arrloc.na_sequence_id = ga.na_sequence_id
 and   ( (ga.is_reversed = 0 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.start_min) <= 3000)
                   or (ga.is_reversed = 1 and abs((((arrloc.end_max - arrloc.start_min) / 2) + arrloc.start_min) - ga.end_max) <= 3000) )
