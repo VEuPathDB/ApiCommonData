@@ -337,7 +337,7 @@ sub makeVirtualSequence {
   my $virDbRlsId = $self->getVirDbRlsId($self->getArg('virSeqExtDbName'),$self->getArg('virSeqExtDbRlsVer'));
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
-  my $chromosome="chromosome $chromosomeOrderNum" if $chromosomeOrderNum;
+  my $chromosome="$chromosomeOrderNum" if $chromosomeOrderNum;
 
   my $virtualSeq;
 
