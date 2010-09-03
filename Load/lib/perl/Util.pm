@@ -34,10 +34,11 @@ sub getGeneFeatureId {
 
     $plugin->{_sourceIdGeneFeatureIdMap} = {};
 
-    my $sql = "
+    my $sql_preferred = "
 SELECT source_id, na_feature_id
 FROM Dots.GeneFeature
-UNION
+";
+    my $sql = "
 SELECT g.name, gf.na_feature_id
 FROM Dots.GeneFeature gf, Dots.NAFeatureNAGene nfng, Dots.NAGene g
 WHERE nfng.na_feature_id = gf.na_feature_id
@@ -52,6 +53,12 @@ where ga.gene = gf.source_id
       $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
     }
     $stmt->finish();
+
+    my $prefStmt = $plugin->prepareAndExecute($sql_preferred);
+    while ( my($source_id, $na_feature_id) = $prefStmt->fetchrow_array()) {
+      $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
+    }
+    $prefStmt->finish();
   }
 
   return $plugin->{_sourceIdGeneFeatureIdMap}->{$sourceId};
