@@ -1395,7 +1395,6 @@
   <resource resource="Broad_Isolate_Barcode_RSRC" version="@@Broad_Isolate_Barcode_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/BroadIsolateBarcode/%RESOURCE_VERSION%/broad_barcode_plasmodb.txt"/>
-   <unpack>dos2unix @@dataDir@@/PlasmoDB/pfalciparum/SNP/BroadIsolateBarcode/%RESOURCE_VERSION%/broad_barcode_plasmodb.txt</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --inputFile @@dataDir@@/broad_barcode_plasmodb.txt </pluginArgs>
     <info
         displayName="Isolate barcode data from Broad"
@@ -1417,7 +1416,6 @@
   <resource resource="Broad_3K_Genotyping_RSRC" version="2008-06-13"
       plugin="ApiCommonData::Load::Plugin::InsertIsolateBarcodeChip">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Broad3KGenotyping/%RESOURCE_VERSION%/3K_plasmo.txt"/>
-    <unpack>dos2unix @@dataDir@@/PlasmoDB/pfalciparum/SNP/Broad3KGenotyping/%RESOURCE_VERSION%/3K_plasmo.txt</unpack>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --inputFile  @@dataDir@@/3K_plasmo.txt</pluginArgs>
     <info
         displayName="Isolate genotyping data generated from a 3k snp chip from Broad"
@@ -1459,11 +1457,7 @@
 
   <resource resource="sangerItGhanaSnps_RSRC" version="@@sangerItGhanaSnps_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhana/%RESOURCE_VERSION%/sangerPfalciparumSnps.tar.gz"/>
-    <unpack>$currDir=`pwd`; cd @@dataDir@@ ; tar -xzf sangerPfalciparumSnps.tar.gz ; cd $currDir</unpack>
-    <unpack>sangerSnps2Gff.pl --sf '@@dataDir@@/WTSI_PFAL.GHANA1.0.dbsnp.new @@dataDir@@/WTSI_PFAL.IT.0.dbsnp.new' --cf "@@dataDir@@/IT.uniq.hq.nr3.gff.ORA @@dataDir@@/GHANA1.uniq.hq.nr3.gff.ORA" --s Sanger --r 3D7 > @@dataDir@@/sangerItGhanaSnps_RSRC.gff</unpack>
-    <unpack>rm -f @@dataDir@@/sangerPfalciparumSnps.tar.gz </unpack>
-    <getAndUnpackOutput file="@@dataDir@@/sangerItGhanaSnps_RSRC.gff"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhana/%RESOURCE_VERSION%/final/sangerItGhanaSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Ghana1 and IT SNPs, Wellcome Trust Sanger Institute"
@@ -1485,10 +1479,7 @@
 
   <resource resource="sangerPReichenowiSnps_RSRC" version="@@sangerPReichenowiSnps_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/sangerPReichenowiSnps.tar.gz"/>
-    <unpack>$currDir=`pwd`; cd @@dataDir@@ ; tar -xzf @@dataDir@@/sangerPReichenowiSnps.tar.gz; cd $currDir</unpack>
-    <unpack>sangerSnps2Gff.pl --sf @@dataDir@@/WTSI_PFAL.Preich.0.dbsnp.new --cf @@dataDir@@/Preich.uniq.hq.nr3.gff.ORA --s Sanger --r 3D7 > @@dataDir@@/sangerPReichenowiSnps_RSRC.gff</unpack>
-    <getAndUnpackOutput file="@@dataDir@@/sangerPReichenowiSnps_RSRC.gff"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/final/sangerPReichenowiSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
