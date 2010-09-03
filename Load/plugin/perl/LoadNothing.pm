@@ -79,4 +79,12 @@ sub run {
 return "Successfully did nothing\n";
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('core.algorithminvocation',
+	 );
+}
+
+
 1;

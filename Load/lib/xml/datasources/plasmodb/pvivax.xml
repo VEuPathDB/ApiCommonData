@@ -52,8 +52,8 @@
 
   <resource resource="PvivaxChromosomeAGP_RSRC" version="@@PvivaxChromosomeAGP_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile">
-    <manualGet fileOrDir="PlasmoDB/pvivax/genome/AGP/%RESOURCE_VERSION%/AAKM00000000_20070904_abrev.agp"/>
-    <pluginArgs>--agpFile @@dataDir@@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "Pvivax_contigsGB_RSRC" --seqPieceExtDbRlsVer @@Pvivax_contigsGB_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @@SO_VER@@ --sqlVerbose --chromosomesInOrder true</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pvivax/genome/AGP/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--agpFile @@dataDir@@/@@PvivaxChromosomeAGP_VER@@/AAKM00000000_20070904_abrev.agp --seqPieceExtDbName "Pvivax_contigsGB_RSRC" --seqPieceExtDbRlsVer @@Pvivax_contigsGB_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "chromosome" --ncbiTaxId "126793" --soVer @@SO_VER@@ --chromosomeOrderMappingFile @@dataDir@@/@@PvivaxChromosomeAGP_VER@@/chromosomeOrderMapping.txt</pluginArgs>
     <info
         displayName="P. vivax contig to chromosome map"
         project="PlasmoDB"
