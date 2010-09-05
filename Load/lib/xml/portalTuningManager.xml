@@ -42,7 +42,7 @@
     <sql>
       <![CDATA[
 CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
-ON apidb.AssemblyAttributes&1 (source_id)
+ON apidb.AssemblyAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -101,7 +101,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id)
+CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -260,7 +260,7 @@ tablespace indx
     </unionization>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id)
+CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -317,7 +317,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id)
+CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -346,7 +346,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
-             (source_id)
+             (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -537,7 +537,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id)
+CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id, project_id)
       ]]>
     </sql>
 
