@@ -2452,7 +2452,7 @@ tablespace indx
         create table apidb.chipchipgene&1 NOLOGGING AS
 select distinct
       ga.source_id as gene_source_id,
-      aef.source_id as probe_id,
+      aef.feature_source_id as probe_id,
       aef.na_feature_id as chip_na_feature_id,
       CASE 
         WHEN ga.is_reversed = 0 
