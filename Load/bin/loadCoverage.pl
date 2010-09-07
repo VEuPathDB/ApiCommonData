@@ -13,7 +13,7 @@ foreach my $file (@ARGV){
   print C "LOAD DATA
 INFILE '$file'
 APPEND
-INTO TABLE apidb.nextgenseq_coverage
+INTO TABLE apidb.NextGenSeqCoverage
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
 (external_database_release_id,
