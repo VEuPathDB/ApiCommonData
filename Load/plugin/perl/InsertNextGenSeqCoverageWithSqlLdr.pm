@@ -35,11 +35,11 @@ sub getArgumentsDeclaration{
 # ----------------------------------------------------------------------
 
 sub getDocumentation {
-  my $purpose = "Inserts apidb.nextgenseq_coverage.";
+  my $purpose = "Inserts apidb.NextGenSeqCoverage.";
 
   my $purposeBrief = "";
 
-  my $tablesAffected = [['apidb.nextgenseq_coverage', 'One Row to Identify sequence coverage']];
+  my $tablesAffected = [['apidb.NextGenSeqCoverage', 'One Row to Identify sequence coverage']];
 
   my $tablesDependedOn = [];
 
@@ -123,7 +123,7 @@ sub writeConfigFile {
   print CONFIG "LOAD DATA
 INFILE '$dataFile'
 APPEND
-INTO TABLE apidb.nextgenseq_coverage
+INTO TABLE apidb.NextGenSeqCoverage
 FIELDS TERMINATED BY '\\t'
 TRAILING NULLCOLS
 (
@@ -145,7 +145,7 @@ row_user_id constant $userId,
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
 row_alg_invocation_id constant $algInvocationId,
-NEXTGENSEQ_COVERAGE_ID  \"ApiDB.NextGenSeq_Coverage_sq.nextval\"
+next_gen_seq_coverage_id  \"apidb.NextGenSeqCoverage_sq.nextval\"
 )\n";
   close CONFIG;
 }
@@ -164,7 +164,7 @@ sub getConfig {
 sub undoTables {
   my ($self) = @_;
 
-  return ('apidb.nextgenseq_coverage');
+  return ('apidb.NextGenSeqCoverage');
 }
 
 1;
