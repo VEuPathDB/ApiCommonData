@@ -5,7 +5,7 @@
   </cleanups>
 
 
-  <resource resource="taxonomy" version="2009-02-23" 
+  <resource resource="taxonomy" version="2010-06-14" 
             displayName="NCBI Taxonomy"
             publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
             category="Ontology"
@@ -25,7 +25,7 @@
     </description>
   </resource>
 
-    <resource resource="SO" version="2.3"
+    <resource resource="SO" version="2.4.3"
         displayName="Sequence Ontology"        
         publicUrl="http://song.sourceforge.net"
         category="Ontology"      
@@ -41,7 +41,7 @@
      </description>
     </resource>
 
-  <resource resource="enzymeDB" version="2009-02-11" 
+  <resource resource="enzymeDB" version="2010-06-15" 
             displayName="Enzyme nomenclature database"
             publicUrl="http://www.expasy.org/enzyme"
             category="Ontology"
@@ -59,7 +59,7 @@
      </description>
   </resource>
  
-<resource resource="GO_evidence_codes" version="1.17"
+<resource resource="GO_evidence_codes" version="1.21"
         displayName="Gene Ontology evidence codes"        
         publicUrl="http://song.sourceforge.net"
         category="Ontology"   
@@ -75,7 +75,7 @@
         </description>
     </resource>
 
-<resource resource="GO" version="4.540"
+<resource resource="GO" version="1.1300"
             displayName="Gene Ontology"
             publicUrl="http://www.geneontology.org"
             category="Ontology"
@@ -94,7 +94,7 @@
       </description>
   </resource>   
 
- <resource resource="NRDB" version="2009-02-22"
+ <resource resource="NRDB" version="2010-06-14"
             plugin="ApiCommonData::Load::Plugin::LoadNothing"
             displayName="GenBank NRDB"
             publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
@@ -113,7 +113,7 @@
       </description>
  </resource>
 
-    <resource resource="dbEST" version="2009-02-23"
+    <resource resource="dbEST" version="200-06-17"
         plugin="GUS::Supported::Plugin::dbEST"
         displayName="dbEST ESTs"
         category="Transcriptome"
@@ -417,7 +417,7 @@
         <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
     </resource>  
    
-        <resource resource="InterproscanData" version="19.0"
+        <resource resource="InterproscanData" version="27.0"
         plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
         displayName="InterPro Database"
         publicUrl="http://www.ebi.ac.uk/interpro"
@@ -441,7 +441,7 @@
     </resource>    
 
 
-    <resource resource="P.falciparum_chromosomes" version="2009-02-19"
+    <resource resource="P.falciparum_chromosomes" version="2010-06-01"
         displayName="P. falciparum (3D7) chromosomes sequence and annotation"
         organisms="P.falciparum"
         category="Genome"
@@ -506,7 +506,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
        </resource>
 
-    <resource resource="P.chabaudi_chromosomes" version="2009.03.24"
+    <resource resource="P.chabaudi_chromosomes" version="2010-06-01"
         displayName="P. chabaudi (AS) chromosomes annotation"
         category="Genome"
         organisms="P.chabaudi"
@@ -520,13 +520,13 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_chromosomes/chromosomes/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudichr.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudichr.bioperl</pluginArgs>
         <description>
             <![CDATA[
-   Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models. 
+   Annotation of the <i>P. chabaudi</i> AS chromosomes obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Includes sequence and gene models. 
    The Wellcome Trust Sanger Institute plans on publishing the completed and annotated sequences (i.e. 8X assembly and updated annotation) of P. chabaudi AS in a peer-reviewed journal as soon as possible. Permission of the principal investigator should be obtained before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
 
            ]]>
         </description>
     </resource> 
-
+<!--
     <resource resource="P.chabaudi_unmapped_contigs" version="2009.03.24"
         displayName="P. chabaudi (AS) unmapped contigs annotation"
         category="ignore"
@@ -546,7 +546,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource> 
 
-
+-->
 
 
  <resource resource="P.vivax_mitochondrial" version="2005-07-12"
@@ -575,11 +575,11 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
 
  
 
-    <resource resource="P.knowlesi_chromosomes" version="2007-10-03"
+    <resource resource="P.knowlesi_chromosomes" version="2010-06-01"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_knowlesi/PK4.annotation"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         organisms="P.knowlesi"
-        displayName="P. knowlesi (H) chromosomes sequence and annotation" 
+        displayName="P. knowlesi (H) chromosomes and unmapped contigs sequence and annotation" 
         category="Genome" 
         extDbName="Sanger P. knowlesi chromosomes"
         extDbRlsVer="2007-10-03"
@@ -596,8 +596,8 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         </description>
     </resource> 
 
-    <resource resource="P.berghei_wholeGenomeShotgunSequence" version="2006-02-27"
-        displayName="P. berghei (ANKA) genome"
+    <resource resource="P.berghei_wholeGenomeShotgunSequence" version="2010-06-01"
+        displayName="P. berghei (ANKA) chromosomes sequence and annotations"
         category="Genome"
         organisms="P.berghei"
         url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/pb.fasta.gz"
@@ -611,11 +611,11 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5823 --sequenceFile @downloadDir@/P.berghei_wholeGenomeShotgunSequence/pb.fasta --soTermName "contig" --regexSourceId "(PB_[A-Z]{2}\d+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
             <![CDATA[
-   Whole genome shotgun sequence for <i>P. berghei</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute (February 2006).
+    Chromosome sequences and annotation for <i>P. berghei</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute..
           ]]>
         </description>
     </resource>
-    
+ <!--   
     <resource resource="P.berghei_Annotation" version="2006-02-27"
         displayName="P. berghei (ANKA) genome annotation"
         category="Genome"
@@ -638,7 +638,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
            ]]>
         </description>
     </resource>
-    
+-->    
     <resource resource="P.yoelii_Annotation" version="2005-09-01"
         displayName="P. yoelii (17XNL) genome annotation"
         category="Genome"
@@ -746,7 +746,7 @@ EC annotation obtained from Jane Carlton.
         </description>
     </resource>
 
-    <resource resource="GOAssociations_Pfalciparum" version="2009-02-19"
+    <resource resource="GOAssociations_Pfalciparum" version="2010-06-01"
         displayName="P. falciparum 3D7 protein GO Associations"        
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
@@ -818,7 +818,7 @@ EC annotation obtained from Jane Carlton.
         </description>
     </resource>
 
-    <resource resource="PlasmodiumIsolates" version="2009-04-13"
+    <resource resource="PlasmodiumIsolates" version="2010-06-18"
         displayName="Plasmodium isolates from Genbank"
         category="Genome"
         organisms="Plasmodium"
@@ -873,7 +873,7 @@ Plasmodium isolates from Genbank
         </description>
     </resource>
 
-    <resource resource="GOAssociations" version="2008-04-03"
+    <resource resource="GOAssociations" version="2010-06-01"
         displayName="P. falciparum protein GO associations"
         organisms="P.genefalciparum"
         publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/Plasmodium/falciparum/3D7/gene_association_file/gene_association.GeneDB_Pfalciparum.20080403"
