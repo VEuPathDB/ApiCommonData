@@ -3365,14 +3365,14 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'Duffy::PfRnaSeq' as module,
        'Plasmodium falciparum' as species,
        '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
-       '' as description,
-       '3D7, PL01: Parasites from pregnant women and, PL02:Parasites from children' as x_axis,
+       'NSR-seq was used to analyze the transcriptome of an unsynchronized in vitro culture of human malaria parasite P. falciparum reference strain 3D7, and two pools of field isolates from malaria-infected pregnant women and children adapted to short-term in vitro culture and matched by the percentage of rings, trophozoites and schizonts.' as description,
+       'Parasites from pregnant women, Parasites from children, 3D7' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene; Values plotted are log base 2' as y_axis,
         150 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
-        'RNASeq_Intensity_Profiles_Patrick_Duffy' as attribution
+       'coverage' as visible_parts,
+        'RNASeqCoveragePlot_Patrick_Duffy' as attribution
 from dual
 
 
