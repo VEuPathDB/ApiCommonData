@@ -526,27 +526,6 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
            ]]>
         </description>
     </resource> 
-<!--
-    <resource resource="P.chabaudi_unmapped_contigs" version="2009.03.24"
-        displayName="P. chabaudi (AS) unmapped contigs annotation"
-        category="ignore"
-        organisms="P.chabaudi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. chabaudi genome and annotation"
-        extDbRlsVer="2009-03-24"
-        extDbRlsDescrip="P. chabaudi genome and annotation|2009-03-24"
-        dbCommit="@dbcommit@">
-         <manualGet
-           fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/P.chabaudi_genome_Sanger/unmapped_contigs/"/>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PchabaudiEmbl2gus.xml --inputFileOrDir @downloadDir@/P.chabaudi_unmapped_contigs/unmapped_contigs/ --inputFileExtension "embl" --fileFormat embl --soCvsVersion @soVer@ --defaultOrganism "Plasmodium chabaudi chabaudi" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "chromosome" --validationLog @pipelineDir@/logs/Pchabaudicontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pchabaudicontigs.bioperl</pluginArgs>
-        <description>
-            <![CDATA[
-   Annotation of the <i>P. chabaudi</i> AS unmapped contigs obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute, 2009-03-24. Includes sequence and gene models.    
-           ]]>
-        </description>
-    </resource> 
-
--->
 
 
  <resource resource="P.vivax_mitochondrial" version="2005-07-12"
@@ -615,30 +594,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
           ]]>
         </description>
     </resource>
- <!--   
-    <resource resource="P.berghei_Annotation" version="2006-02-27"
-        displayName="P. berghei (ANKA) genome annotation"
-        category="Genome"
-        organisms="P.berghei"
-        url="ftp://ftp.sanger.ac.uk/pub/pathogens/P_berghei/"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="P. berghei genome"
-        extDbRlsVer="2006-02-27"
-        extDbRlsDescrip="P. berghei genome|2006-02-27"
-        dbCommit="@dbcommit@">
-        <publication pmid="15637271"/>
-        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=pb.gff.gz,P_berghei.GeneDB.pep</wgetArgs>
-        <unpack>gunzip @downloadDir@/P.berghei_Annotation/pb.gff.gz</unpack>
-        <unpack>sangerGff2TranscriptGff @downloadDir@/P.berghei_Annotation/pb.gff > @downloadDir@/P.berghei_Annotation/pb_fixed1.gff</unpack>
-        <unpack>addProteinsToGff @downloadDir@/P.berghei_Annotation/P_berghei.GeneDB.pep @downloadDir@/P.berghei_Annotation/pb_fixed1.gff > @downloadDir@/P.berghei_Annotation/pb_fixed2.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/P.berghei_Annotation/pb_fixed2.gff --fileFormat gff2 --gff2GroupTag "GenePrediction" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium berghei strain ANKA" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Pberghei.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pberghei.bioperl</pluginArgs>
-        <description>
-            <![CDATA[
-   Annotation of the <i>P. berghei</i> ANKA genome obtained from the Pathogen Sequencing Unit at the Welcome Trust Sanger Institute, 2006-02-27. Includes gene models and predicted protein translations.    
-           ]]>
-        </description>
-    </resource>
--->    
+
     <resource resource="P.yoelii_Annotation" version="2005-09-01"
         displayName="P. yoelii (17XNL) genome annotation"
         category="Genome"
