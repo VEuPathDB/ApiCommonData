@@ -1008,10 +1008,10 @@
     </info>
   </resource>
 
-  <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_RSRC" version="2009-07-01"
+  <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC" version="2009-07-01"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab"/>
-    <pluginArgs>--inputFile @@dataDir@@/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'asexual trophozoites'</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_early_gametocytes_I-II.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/lasonder_early_gametocytes_I-II.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'early gametocytes'</pluginArgs>
     <info
         displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
         project="PlasmoDB"
@@ -1020,11 +1020,54 @@
         publicUrl=""
         contact="Edwin Lasonder"
         email="E.Lasonder@@ncmls.ru.nl"
-        institution="">
+        institution="Radboud University Nijmegen Medical Centre">
       <description>
         <![CDATA[
         ]]>
       </description>
+    <publication pmid="20332084"/>
+    </info>
+  </resource>
+
+  <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC" version="2009-07-01"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_late_gametocytes_V.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/lasonder_late_gametocytes_V.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'late gametocytes'</pluginArgs>
+    <info
+        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Ignore"
+        publicUrl=""
+        contact="Edwin Lasonder"
+        email="E.Lasonder@@ncmls.ru.nl"
+        institution="Radboud University Nijmegen Medical Centre">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    <publication pmid="20332084"/>
+    </info>
+  </resource>
+
+  <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC" version="2009-07-01"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_trophozoites.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/lasonder_trophozoites.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophozoites'</pluginArgs>
+    <info
+        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Ignore"
+        publicUrl=""
+        contact="Edwin Lasonder"
+        email="E.Lasonder@@ncmls.ru.nl"
+        institution="Radboud University Nijmegen Medical Centre">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    <publication pmid="20332084"/>
     </info>
   </resource>
 
