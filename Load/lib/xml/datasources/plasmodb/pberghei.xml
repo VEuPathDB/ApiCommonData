@@ -6,7 +6,7 @@
     <unpack>mkdir @@dataDir@@/P.berghei.chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
 
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5823 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5823 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\w+)'</pluginArgs>
     <info
         displayName="P. berghei (ANKA) chromosomes sequence and annotation"
         project="PlasmoDB"

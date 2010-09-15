@@ -5,7 +5,7 @@
     <manualGet fileOrDir="PlasmoDB/pchabaudi/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/P.chabaudi.chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --output_gff  @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31271 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31271 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.chabaudi.chromosomes_fixed/Pchabaudi.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\w+)'</pluginArgs>
     <info
         displayName="P. chabaudi chabaudi chromosomes sequence and annotation"
         project="PlasmoDB"
