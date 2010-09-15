@@ -60,6 +60,11 @@ if(-d $inputFileOrDir){
       if($line =~ /##FASTA/){
 	$flag = 1;
       }elsif($flag == 1){
+	if($line=~/0*(\d+)$/){
+	    $line = $line."|".$1;
+	}elsif($line=~/bin$/){
+	    	    $line = $line."|un";
+	}  
 	print OUT "$line\n";
       }else{
 	print OUTGFF "$line\n";
