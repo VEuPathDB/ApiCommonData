@@ -150,7 +150,7 @@
   <resource resource="Pv_Entrez_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2EntrezUrl/%RESOURCE_VERSION%/final/gene2Url.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Entrez gene links"
         project="PlasmoDB"
@@ -171,7 +171,7 @@
   <resource resource="Pv_Phenotype_DBRefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Phenotype db links"
         project="PlasmoDB"
@@ -203,7 +203,7 @@
   <resource resource="Pv_Pubmed_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/final/gene2pubmed.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for pubmed links"
         project="PlasmoDB"
@@ -224,7 +224,7 @@
   <resource resource="Pv_Entrez_Gene_dbxref_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -245,7 +245,7 @@
   <resource resource="Pv_Uniprot_Gene_dbxref_RSRC" version="@@Pv_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -266,7 +266,7 @@
   <resource resource="Pvivax_DBRefs_RSRC" version="2008-07-18"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/P.vivax_contigsGB_DBRefs/%RESOURCE_VERSION%/pv_fea_match"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/pv_fea_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/pv_fea_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="P. vivax Genbank source_id DBRefs"
         project="PlasmoDB"
@@ -287,7 +287,7 @@
   <resource resource="Pvivax_sequenceGB_DBRefs_RSRC" version="2008-05-29"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/P.vivax_contigSeqs_GB_DBRefs/%RESOURCE_VERSION%/pv_seq_match"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/pv_seq_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/pv_seq_match --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="P. vivax Genbank contigs sequences DBRefs"
         project="PlasmoDB"
@@ -308,7 +308,7 @@
   <resource resource="Pv_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pvivax/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/gene2apiloc.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="P. vivax ApiLoc and EupathDb links"
         project="PlasmoDB"

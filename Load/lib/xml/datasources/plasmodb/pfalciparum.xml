@@ -183,7 +183,7 @@
   <resource resource="Pfalciparum_chromosomes_xRefs_RSRC" version="2009-06-01"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/P.falciparum_chromosomes_aliases/%RESOURCE_VERSION%/mapping"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence" </pluginArgs>
     <info
         displayName="P. falicparum chromosomes DBRefs"
         project="PlasmoDB"
@@ -204,7 +204,7 @@
   <resource resource="Pf_Entrez_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2EntrezUrl/%RESOURCE_VERSION%/final/gene2Url.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Entrez gene links"
         project="PlasmoDB"
@@ -225,7 +225,7 @@
    <resource resource="Pf_Phenotype_DBRefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Phenotype db links"
         project="PlasmoDB"
@@ -257,7 +257,7 @@
   <resource resource="Pf_Pubmed_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Pubmed/%RESOURCE_VERSION%/final/gene2pubmed.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2pubmed.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for pubmed links"
         project="PlasmoDB"
@@ -278,7 +278,7 @@
   <resource resource="Pf_Entrez_Gene_dbxref_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -298,7 +298,7 @@
   <resource resource="Pf_Uniprot_Gene_dbxref_RSRC" version="@@Pf_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PlasmoDB"
@@ -341,7 +341,7 @@
   <resource resource="Pf_PASA_DBRefs_RSRC" version="2009-05-12"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/PASA/%RESOURCE_VERSION%/2009-05-12.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/2009-05-12.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/2009-05-12.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="PASA alignments of EST sequences"
         project="PlasmoDB"
@@ -384,7 +384,7 @@
   <resource resource="Pf_Winzeler_Westenberger_Dbrefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2OPIAndlit/%RESOURCE_VERSION%/final/gene2OPI.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2OPI.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2OPI.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DbRefs from Winzeler and Westenberger"
         project="PlasmoDB"
@@ -405,7 +405,7 @@
   <resource resource="Pf_Winzeler_Literature_References_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2OPIAndlit/%RESOURCE_VERSION%/final/gene2lit.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2lit.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2lit.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="Literature references from Winzeler and Westenberger"
         project="PlasmoDB"
@@ -468,7 +468,7 @@
   <resource resource="Pf_BRENDAMapping_RSRC" version="2009-05-12"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/BRENDAMapping/%RESOURCE_VERSION%/BRENDA.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/BRENDA.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/BRENDA.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="Links to BRENDA reagents"
         project="PlasmoDB"
@@ -489,7 +489,7 @@
   <resource resource="Pf_SGPPMapping_RSRC" version="2009-05-12"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/SGPPMapping/%RESOURCE_VERSION%/SGPP.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/SGPP.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/SGPP.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="Links to SGPP reagents"
         project="PlasmoDB"
@@ -662,7 +662,7 @@
   <resource resource="Pf_ApiLoc_EupathDB_Dbrefs_RSRC" version="2010-06-17"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/gene2apiloc.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2apiloc.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="P. falicparum ApiLoc and EupathDb links"
         project="PlasmoDB"
