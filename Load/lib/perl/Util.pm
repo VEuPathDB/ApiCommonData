@@ -28,7 +28,7 @@ FROM Dots.SplicedNASequence
 
 # return null if not found:  be sure to check handle that condition!!
 sub getGeneFeatureId {
-  my ($plugin, $sourceId) = @_;
+  my ($plugin, $sourceId, $geneExtDbRlsId) = @_;
 
   if (!$plugin->{_sourceIdGeneFeatureIdMap}) {
 
@@ -38,6 +38,7 @@ sub getGeneFeatureId {
 SELECT source_id, na_feature_id
 FROM Dots.GeneFeature
 ";
+
     my $sql = "
 SELECT g.name, gf.na_feature_id
 FROM Dots.GeneFeature gf, Dots.NAFeatureNAGene nfng, Dots.NAGene g
@@ -48,6 +49,28 @@ select ga.alias, gf.na_feature_id
 from apidb.genealias ga, dots.genefeature gf
 where ga.gene = gf.source_id
 ";
+
+    if($geneExtDbRlsId){
+
+    $sql_preferred = "
+SELECT source_id, na_feature_id
+FROM Dots.GeneFeature
+where external_database_release_id in ($geneExtDbRlsId)
+";
+    $sql = "
+SELECT g.name, gf.na_feature_id
+FROM Dots.GeneFeature gf, Dots.NAFeatureNAGene nfng, Dots.NAGene g
+WHERE nfng.na_feature_id = gf.na_feature_id
+AND nfng.na_gene_id = g.na_gene_id
+AND gf.external_database_release_id in ($geneExtDbRlsId)
+union
+select ga.alias, gf.na_feature_id
+from apidb.genealias ga, dots.genefeature gf
+where ga.gene = gf.source_id
+and gf.external_database_release_id in ($geneExtDbRlsId)
+";
+    }
+    
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
       $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
