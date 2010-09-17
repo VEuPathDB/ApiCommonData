@@ -81,6 +81,12 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
+   stringArg({name => 'geneExternalDatabaseSpec',
+	      descr => 'External Database release `name1|version1,name2|version2` for the gene models to which will be attaching these DBRefs.',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
    stringArg ({name => 'columnSpec',
 	       descr => 'Comma delimited list specifying the correspondence of the file columns to the columns in sres.dbref starting with the second column of the file.Ex secondary_identifier,primary_identifier,remark for input line = PB402242        68056705        XP_670763.1     hypothetical protein',
 	       reqd => 1,
@@ -146,6 +152,9 @@ sub getMapping {
                                      $self->getArg('extDbReleaseNumber'))
       || die "Couldn't retrieve external database!\n";
 
+  my $geneExtDbRlsId;
+  $geneExtDbRlsId = join ',', map{$self->getExtDbRlsId($_)} split (/,/,$self->getArg('geneExternalDatabaseSpec')) if $self->getArg('geneExternalDatabaseSpec');
+
   my $cols = $self->getArg('columnSpec');
 
   if ($self->getArg('idURL')){
@@ -194,7 +203,7 @@ sub getMapping {
     my $methodName = $$tables{$tableName}->{getId};
     my $method = "ApiCommonData::Load::Util::$methodName";
 
-    my $featId = &$method($self, $sourceId);
+    my $featId = &$method($self, $sourceId, $geneExtDbRlsId);
 
     unless($featId){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
