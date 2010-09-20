@@ -5029,36 +5029,36 @@ tablespace indx
     <sql>
       <![CDATA[
 create table apidb.GeneContextSyntenicGenes&1
-      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, is_truncated, atts
-      )
-partition by list (organism)
-  (
-   partition Chominis values ('Cryptosporidium hominis'),
-   partition Cmuris values ('Cryptosporidium muris'),
-   partition Cparvum values ('Cryptosporidium parvum'),
-   partition Cparvum_Iowa values ('Cryptosporidium parvum Iowa II'),
-   partition Gintestinalis values ('Giardia intestinalis ATCC 50581'),
-   partition Glamblia values ('Giardia lamblia ATCC 50803'),
-   partition GlambliaP15 values ('Giardia lamblia P15'),
-   partition Lbraziliensis values ('Leishmania braziliensis'),
-   partition Linfantum values ('Leishmania infantum'),
-   partition Lmajor values ('Leishmania major'),
-   partition Ncaninum values ('Neospora caninum'),
-   partition Pberghei values ('Plasmodium berghei str. ANKA'),
-   partition Pchabaudi values ('Plasmodium chabaudi chabaudi'),
-   partition Pfalciparum values ('Plasmodium falciparum 3D7'),
-   partition Pknowlesi values ('Plasmodium knowlesi strain H'),
-   partition Pvivax values ('Plasmodium vivax SaI-1'),
-   partition Pyoelii values ('Plasmodium yoelii yoelii str. 17XNL'),
-   partition TgondiiGT1 values ('Toxoplasma gondii GT1'),
-   partition TgondiiME49 values ('Toxoplasma gondii ME49'),
-   partition TgondiiRH values ('Toxoplasma gondii RH'),
-   partition TgondiiVEG values ('Toxoplasma gondii VEG'),
-   partition Tvaginalis values ('Trichomonas vaginalis G3'),
-   partition Tbrucei values ('Trypanosoma brucei TREU927'),
-   partition Tcruzi values ('Trypanosoma cruzi strain CL Brener'),
-   partition others values (default)
-  )
+--      (organism, na_sequence_id, context_start, context_end, context_source_id, project_id, syntenic_na_feature_id, syntenic_source_id, synteny_id, startm, end, strand, is_truncated, atts
+--      )
+--partition by list (organism)
+--  (
+--   partition Chominis values ('Cryptosporidium hominis'),
+--   partition Cmuris values ('Cryptosporidium muris'),
+--   partition Cparvum values ('Cryptosporidium parvum'),
+--   partition Cparvum_Iowa values ('Cryptosporidium parvum Iowa II'),
+--   partition Gintestinalis values ('Giardia intestinalis ATCC 50581'),
+--   partition Glamblia values ('Giardia lamblia ATCC 50803'),
+--   partition GlambliaP15 values ('Giardia lamblia P15'),
+--   partition Lbraziliensis values ('Leishmania braziliensis'),
+--   partition Linfantum values ('Leishmania infantum'),
+--   partition Lmajor values ('Leishmania major'),
+--   partition Ncaninum values ('Neospora caninum'),
+--   partition Pberghei values ('Plasmodium berghei str. ANKA'),
+--   partition Pchabaudi values ('Plasmodium chabaudi chabaudi'),
+--   partition Pfalciparum values ('Plasmodium falciparum 3D7'),
+--   partition Pknowlesi values ('Plasmodium knowlesi strain H'),
+--   partition Pvivax values ('Plasmodium vivax SaI-1'),
+--   partition Pyoelii values ('Plasmodium yoelii yoelii str. 17XNL'),
+--   partition TgondiiGT1 values ('Toxoplasma gondii GT1'),
+--   partition TgondiiME49 values ('Toxoplasma gondii ME49'),
+--   partition TgondiiRH values ('Toxoplasma gondii RH'),
+--   partition TgondiiVEG values ('Toxoplasma gondii VEG'),
+--   partition Tvaginalis values ('Trichomonas vaginalis G3'),
+--   partition Tbrucei values ('Trypanosoma brucei TREU927'),
+--   partition Tcruzi values ('Trypanosoma cruzi strain CL Brener'),
+--   partition others values (default)
+--  )
 nologging
 as
 select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_attrs) */
@@ -5179,39 +5179,39 @@ create index apidb.gcsg_ix&1
     <sql>
       <![CDATA[
 create table SyntenicExonCache&1
-            (organism, na_sequence_id, feature_id, context_start, context_end,
-             context_source_id, project_id, syntenic_na_feature_id,
-             syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
-             strand, atts
-            )
-partition by list (organism)
-  (
-   partition Chominis values ('Cryptosporidium hominis'),
-   partition Cmuris values ('Cryptosporidium muris'),
-   partition Cparvum values ('Cryptosporidium parvum'),
-   partition Cparvum_Iowa values ('Cryptosporidium parvum Iowa II'),
-   partition Gintestinalis values ('Giardia intestinalis ATCC 50581'),
-   partition Glamblia values ('Giardia lamblia ATCC 50803'),
-   partition GlambliaP15 values ('Giardia lamblia P15'),
-   partition Lbraziliensis values ('Leishmania braziliensis'),
-   partition Linfantum values ('Leishmania infantum'),
-   partition Lmajor values ('Leishmania major'),
-   partition Ncaninum values ('Neospora caninum'),
-   partition Pberghei values ('Plasmodium berghei str. ANKA'),
-   partition Pchabaudi values ('Plasmodium chabaudi chabaudi'),
-   partition Pfalciparum values ('Plasmodium falciparum 3D7'),
-   partition Pknowlesi values ('Plasmodium knowlesi strain H'),
-   partition Pvivax values ('Plasmodium vivax SaI-1'),
-   partition Pyoelii values ('Plasmodium yoelii yoelii str. 17XNL'),
-   partition TgondiiGT1 values ('Toxoplasma gondii GT1'),
-   partition TgondiiME49 values ('Toxoplasma gondii ME49'),
-   partition TgondiiRH values ('Toxoplasma gondii RH'),
-   partition TgondiiVEG values ('Toxoplasma gondii VEG'),
-   partition Tvaginalis values ('Trichomonas vaginalis G3'),
-   partition Tbrucei values ('Trypanosoma brucei TREU927'),
-   partition Tcruzi values ('Trypanosoma cruzi strain CL Brener'),
-   partition others values (default)
-  )
+--            (organism, na_sequence_id, feature_id, context_start, context_end,
+--             context_source_id, project_id, syntenic_na_feature_id,
+--             syntenic_exon_feature_id, syntenic_gene_feature_id, startm, end,
+--             strand, atts
+--            )
+--partition by list (organism)
+--  (
+--   partition Chominis values ('Cryptosporidium hominis'),
+--   partition Cmuris values ('Cryptosporidium muris'),
+--   partition Cparvum values ('Cryptosporidium parvum'),
+--   partition Cparvum_Iowa values ('Cryptosporidium parvum Iowa II'),
+--   partition Gintestinalis values ('Giardia intestinalis ATCC 50581'),
+--   partition Glamblia values ('Giardia lamblia ATCC 50803'),
+--   partition GlambliaP15 values ('Giardia lamblia P15'),
+--   partition Lbraziliensis values ('Leishmania braziliensis'),
+--   partition Linfantum values ('Leishmania infantum'),
+--   partition Lmajor values ('Leishmania major'),
+--   partition Ncaninum values ('Neospora caninum'),
+--   partition Pberghei values ('Plasmodium berghei str. ANKA'),
+--   partition Pchabaudi values ('Plasmodium chabaudi chabaudi'),
+--   partition Pfalciparum values ('Plasmodium falciparum 3D7'),
+--   partition Pknowlesi values ('Plasmodium knowlesi strain H'),
+--   partition Pvivax values ('Plasmodium vivax SaI-1'),
+--   partition Pyoelii values ('Plasmodium yoelii yoelii str. 17XNL'),
+--   partition TgondiiGT1 values ('Toxoplasma gondii GT1'),
+--   partition TgondiiME49 values ('Toxoplasma gondii ME49'),
+--   partition TgondiiRH values ('Toxoplasma gondii RH'),
+--   partition TgondiiVEG values ('Toxoplasma gondii VEG'),
+--   partition Tvaginalis values ('Trichomonas vaginalis G3'),
+--   partition Tbrucei values ('Trypanosoma brucei TREU927'),
+--   partition Tcruzi values ('Trypanosoma cruzi strain CL Brener'),
+--   partition others values (default)
+--  )
 nologging
 as
 SELECT /*+ ordered no_expand use_hash(syn exfloc) use_hash(exfloc syntenic_gene_attrs) */
@@ -5801,7 +5801,7 @@ SQL
   ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
 
   my $noProd = changedGenesWithoutProduct($dbh);
-  ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: " . $noProd . " genes have changed annotation but no gene product stored")
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
     if $noProd;
 }
 
@@ -5824,12 +5824,12 @@ sub changedGenesWithoutProduct {
 
     my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
       select count(*)
-      from ( select gene from apidb.AnnotationChange
+      from ( select gene from apidb.ChangedGeneProduct
             minus
              select gene from apidb.ChangedGeneProduct&1)
 SQL
 
-  $stmt->execute() or die "checking for changed genes without product";
+  $stmt->execute() or die "checking that the new ChangedGeneProduct (named ChangedGeneProduct&1) is a superset of the existing version";
   my ($gwp) = $stmt->fetchrow_array();
 
   return $gwp;
