@@ -16,15 +16,22 @@ my $argsDeclaration =
              }),
    stringArg({name           => 'profileSetNames',
 	      descr          => 'Names of ProfileSets to update',
-	      reqd           => 1,
+	      reqd           => 0,
 	      constraintFunc => undef,
 	      isList         => 1, }),
 
    stringArg({name           => 'percentProfileSet',
 	      descr          => 'Name of the percents ProfileSet',
-	      reqd           => 1,
+	      reqd           => 0,
 	      constraintFunc => undef,
 	      isList         => 0, }),
+
+   stringArg({name           => 'profileSetSpecs',
+	      descr          => 'ProfileSets name to update and percent `profileSetName1|percentProfileSet1,profileSetName2|percentProfileSet2`',
+	      reqd           => 0,
+	      constraintFunc => undef,
+	      isList         => 0, }),
+
 
    fileArg({name           => 'timePointsMappingFile',
 	    descr          => 'Maps the time points in these profile sets to a "universal" set of time points.  If omitted, then do not map timepoints',
@@ -97,19 +104,40 @@ sub run {
 
   my $dbRlsId = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
 
-  my $percentsHash =
-    $self->makePercentsHash($self->getArg('percentProfileSet'), $dbRlsId) if $self->getArg('percentProfileSet');
 
-  my $profileSetNames = $self->getArg('profileSetNames');
+  if($self->getArg('profileSetSpecs')){
 
-  my $profilesCount = 0;
-  foreach my $profileSetName (@{$profileSetNames}) {
-    $profilesCount +=
-      $self->processProfileSet($profileSetName, $dbRlsId, $timePointMap,
-			       $percentsHash);
+      die "Do not use 'profileSetNames' and 'percentProfileSet' with 'profileSetSpecs', use only one set of then\n" if ($self->getArg('profileSetNames') || $self->getArg('percentProfileSet'));
+
+      my @profileSetSpecs = split (/,/,$self->getArg('profileSetSpecs'));
+
+      my $profilesCount = 0;
+
+      foreach my $profileSetSpec (@profileSetSpecs){
+      
+	  my ($profileSetName,$percentiles)= split (/\|/,$profileSetSpec);
+          my $percentsHash = $self->makePercentsHash($percentiles, $dbRlsId);
+	  $profilesCount += $self->processProfileSet($profileSetName, $dbRlsId, $timePointMap,$percentsHash);
+      }
+       return "Calculated summary statistics for $profilesCount Profiles in ProfileSets: " . join(", ", @profileSetSpecs); 
+
+  }elsif ($self->getArg('profileSetNames')){
+
+      die "Do not use 'profileSetNames' and 'percentProfileSet' with 'profileSetSpecs', use only one set of then\n" if ($self->getArg('profileSetSpecs'));
+
+      my $profileSetNames = $self->getArg('profileSetNames');
+
+      my $percentsHash = $self->makePercentsHash($self->getArg('percentProfileSet'), $dbRlsId) if $self->getArg('percentProfileSet');
+
+      my $profilesCount = 0;
+      foreach my $profileSetName (@{$profileSetNames}) {
+	  $profilesCount += $self->processProfileSet($profileSetName, $dbRlsId, $timePointMap, $percentsHash);
+      }
+
+      return "Calculated summary statistics for $profilesCount Profiles in ProfileSets: " . join(", ", @$profileSetNames);
+  }else {
+      die "Use either 'profileSetNames' or 'profileSetSpecs', but not both\n";
   }
-
-  return "Calculated summary statistics for $profilesCount Profiles in ProfileSets: " . join(", ", @$profileSetNames);
 }
 
 sub makeTimePointMap {
