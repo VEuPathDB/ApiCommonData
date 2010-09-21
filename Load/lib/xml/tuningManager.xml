@@ -5829,7 +5829,9 @@ sub changedGenesWithoutProduct {
              select gene from apidb.ChangedGeneProduct&1)
 SQL
 
-  $stmt->execute() or die "checking that the new ChangedGeneProduct (named ChangedGeneProduct&1) is a superset of the existing version";
+  # this query will fail on the first tuningManager run in a new instance,
+  # because apidb.ChangedGeneProduct doesn't yet exist.  So empty return on error.
+  $stmt->execute() or return;
   my ($gwp) = $stmt->fetchrow_array();
 
   return $gwp;
