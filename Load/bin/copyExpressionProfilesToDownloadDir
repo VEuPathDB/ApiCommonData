@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+use strict;
+use Bio::Seq;
+use Bio::Tools::GFF;
+use Getopt::Long qw(GetOptions);
+
+my $verbose = 0;
+my ($inputDir, $outputDir, $configFile);
+
+GetOptions("verbose!"        => \$verbose,
+           "inputDir=s"     => \$inputDir,
+           "outputDir=s"    => \$outputDir,
+           "configFile=s"    => \$configFile,
+          );
+
+unless (-e $inputDir) {
+  die "Must supply a valid input Dir!\nUsage: copyExpressionProfilesToDownloadDir --inputDir <DIR> --outputDir <DIR> --configFile <FILE>[--verbose]";
+}
+
+open (IN, "$configFile") || die "$configFile not found\n";
+
+while(<IN>){
+
+    chomp;
+    next if (/^\n/);
+
+    my @data=split(/\t/, $_);
+
+    my $fileName = $data[0];
+
+    my $cmd="cp $inputDir/$fileName $outputDir/$fileName";
+
+    system ($cmd) unless ($fileName =~ /pct$/);
+
+}
+
+close (IN);
+
