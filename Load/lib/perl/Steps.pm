@@ -4866,7 +4866,7 @@ sub xdformatDownloadFileForBlastSite {
 
   die "Failed to create $blastDir.\n"  unless (-e $blastDir);
 
-  my $inputFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$species/$inputFile";
+  my $inputFile = "$siteFileDir/downloadSite/$projectDB/release-$release/$species/fasta/$inputFile";
 
   my $formattedFile = "${blastDir}/$formattedFile";
 
@@ -6740,6 +6740,21 @@ sub getSoId {
 }
 
 sub getTaxonIdList {
+  my ($mgr,$taxonId,$hierarchy) = @_;
+  my $propertySet = $mgr->{propertySet};
+  my $returnValue;
+
+  if ($hierarchy) {
+    $returnValue = $mgr->runCmd("getSubTaxaList --taxon_id $taxonId");
+    chomp $returnValue;
+  } else {
+    $returnValue = $taxonId;
+  }
+
+  return $returnValue;
+}
+
+sub getNCBITaxIdList {
   my ($mgr,$taxonId,$hierarchy) = @_;
   my $propertySet = $mgr->{propertySet};
   my $returnValue;
