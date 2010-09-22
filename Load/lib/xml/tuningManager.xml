@@ -1444,7 +1444,9 @@ tablespace indx
   set exon_count = 1
   where exon_count > 1
    and project_id = 'TriTrypDB' 
-   and source_id not in (
+   and source_id in (
+                select source_id from apidb.GeneAttributes&1
+              minus
                 select source_id
                 from (
                   select 'intron' as type, ga.source_id,
