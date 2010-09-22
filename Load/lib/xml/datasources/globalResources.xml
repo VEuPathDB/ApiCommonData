@@ -21,7 +21,7 @@
     </info>
   </resource>
 
-  <resource resource="enzymeDB_RSRC" version="2010-06-15"
+  <resource resource="enzymeDB_RSRC" version="2010-09-10"
       plugin="GUS::Community::Plugin::LoadEnzymeDatabase">
     <wgetArgs url="ftp://ftp.expasy.org/databases/enzyme/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --include list  --accept=enzclass.txt,enzyme.dat</wgetArgs>
     <pluginArgs>--InPath @@dataDir@@ --enzymeDbName %RESOURCE_NAME% --enzymeDbRlsVer %RESOURCE_VERSION%</pluginArgs>
@@ -89,7 +89,7 @@
     </info>
   </resource>
 
-  <resource resource="updatePDBTaxon_RSRC" version="2010-06-11"
+  <resource resource="updatePDBTaxon_RSRC" version="2010-09-17"
       plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/source.idx</wgetArgs>
     <unpack>processSourceIdxFile --inFile @@dataDir@@/source.idx --outFile @@dataDir@@/source.idx.processed</unpack>
@@ -113,7 +113,7 @@
 
   <resource resource="SO_RSRC" version="@@SO_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO">
-    <wgetArgs url="http://song.cvs.sourceforge.net/viewvc/song/ontology/so.obo?revision=1.265">--tries=5 --output-document=@@dataDir@@/so.obo</wgetArgs>
+    <wgetArgs url="http://song.cvs.sourceforge.net/viewvc/song/ontology/so.obo">--tries=5 --output-document=@@dataDir@@/so.obo</wgetArgs>
     <pluginArgs>--inputFile @@dataDir@@/so.obo --soVersion @@SO_VER@@ --soCvsVersion @@SO_VER@@</pluginArgs>
     <info
         displayName="Sequence Ontology"
