@@ -32,7 +32,7 @@ FROM dual,
      (SELECT table_id FROM core.TableInfo WHERE name = 'NAFeatureImp') t,
      (SELECT table_id FROM core.TableInfo WHERE name = 'NAFeature') s
 WHERE 'arrayelementfeature' NOT IN (SELECT lower(name) FROM core.TableInfo
-                                    where database_id = d.database_id)
+                                    where database_id = d.database_id);
 ------------------------------------------------------------------------------
 exit;
 
