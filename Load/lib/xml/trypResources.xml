@@ -2727,4 +2727,51 @@ Laboratory of Molecular Parasitology, The Rockefeller University
         </description>  
     </resource>
 
+<resource resource="L.infantum_Papadoupou_Amastigote_Array_Profiles" version="2009-01-15"
+            displayName="L.infantum axenic and intracellular amastigote Array Profiles"
+            category="ignore"
+            organisms="Leishmania infantum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="L.infantum_Papadoupou_Amastigote_Array_Profiles"
+            extDbRlsVer="2009-01-15"
+            extDbRlsDescrip="L.infantum axenic and intracellular amastigote Array Profiles"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Papadopoulou_temp/profile" 
+            contact="Barbara Papadopoulou"
+            email="barbara.papadopoulou@crchul.ulaval.ca"
+            institution="Infectious Disease Research Center (IDRC) of Laval University"
+      />
+<pluginArgs>--inputDir @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_Profiles/profile --configFile @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_Profiles/profile/profiles.conf --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+         Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum. 
+  
+         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellular amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47 
+          ]]>
+    </description>
+    <publication pmid="19393160"/>
+  </resource>
+
+<resource resource = "L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis" version="2009-01-15"
+            displayName="L.infantum axenic and intracellular amastigote Array PaGE analysis"
+            organisms="Leishmania infantum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Papadopoulou_temp/page"
+            contact="Barbara Papadopoulou"
+            email="barbara.papadopoulou@crchul.ulaval.ca"
+            institution="Infectious Disease Research Center (IDRC) of Laval University"
+     />
+<pluginArgs>--inputDir @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis/page --configFile @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis/page/page.conf --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+        Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum. 
+  
+         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellular amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47
+         ]]>
+    </description>
+    <publication pmid="19393160"/>
+  </resource>
+
 </resourcesPipeline>
