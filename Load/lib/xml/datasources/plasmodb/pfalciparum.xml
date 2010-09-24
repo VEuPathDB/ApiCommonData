@@ -1501,6 +1501,7 @@
   <resource resource="sangerItGhanaSnps_RSRC" version="@@sangerItGhanaSnps_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerItGhana/%RESOURCE_VERSION%/final/sangerItGhanaSnps_RSRC.gff"/>
+    <getAndUnpackOutput file="@@dataDir@@/sangerItGhanaSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Ghana1 and IT SNPs, Wellcome Trust Sanger Institute"
@@ -1523,6 +1524,7 @@
   <resource resource="sangerPReichenowiSnps_RSRC" version="@@sangerPReichenowiSnps_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/sangerPReichenowi/2006-10-21/final/sangerPReichenowiSnps_RSRC.gff"/>
+   <getAndUnpackOutput file="@@dataDir@@/sangerPReichenowiSnps_RSRC.gff"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="P. reichenowi SNPs, Wellcome Trust Sanger Institute"
@@ -1743,7 +1745,6 @@
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPfal.fsa </unpack>
     <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPfal.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPfal.fsa"/>
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
