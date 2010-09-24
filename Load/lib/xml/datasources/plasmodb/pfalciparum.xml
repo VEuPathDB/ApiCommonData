@@ -2236,6 +2236,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_array_derisi_RSRC" version="@@Pf_array_derisi_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/derisi/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final/"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -2282,6 +2283,7 @@ Expression data for the <i>P. falciparum</i> DD2 strain during the erythocytic s
   <resource resource="Pf_Derisi_3D7_TimeSeries_RSRC" version="@@Pf_Derisi_3D7_TimeSeries_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_3D7_TimeSeries/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final/"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -2331,7 +2333,8 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_array_A_MEXP_75_RSRC" version="@@Pf_array_A_MEXP_75_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/A-MEXP-75-MTC_KI_Plasmodium_falciparum_33k/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final/"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
@@ -2353,7 +2356,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
   <resource resource="Pf_E_MEXP_128_ArrayExpression_RSRC" version="@@Pf_E_MEXP_128_ArrayExpression_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/E-MEXP-128_IsogenicClonesStages/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info

@@ -81,7 +81,7 @@
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa </unpack>
-    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed/fasta"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa"/>
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
@@ -502,7 +502,7 @@
   <resource resource="Pyoelii_Vaidya_Bergman_oligos_RSRC" version="@@Pyoelii_Vaidya_Bergman_oligos_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayPlatform/Vaidya_Bergman_oligos/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--sequenceFile @@dataDir@@/final/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
@@ -525,7 +525,7 @@
   <resource resource="Py_array_Affy_scrMalaria_RSRC" version="@@Py_array_Affy_scrMalaria_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/"/>
-    <getAndUnpackOutput file="@@dataDir@@/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--sequenceFile @@dataDir@@/final/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
@@ -547,7 +547,7 @@
   <resource resource="Py_Kappe_array_RSRC" version="@@Py_Kappe_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Kappe_LiverStage/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
