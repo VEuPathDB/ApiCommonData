@@ -1355,6 +1355,97 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         </description>
     </resource> 
 
+    <resource resource="Lmajor_seidman_75.1" version="2010-07-20" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.major"
+        displayName="L.major_seidman_75.1"
+        category="Genome"
+        extDbName="L.major_seidman_75.1 genome from WUSTL"
+        extDbRlsVer="07-20-2010"
+        extDbRlsDescrip="L.major_seidman_75.1 genome from WUSTL|07-20-2010"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/WhitePaper_preliminary_genomes/Lmajor_seidman_75.1/FTP/454AllContigs.fna"/>
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/Lmajor_seidman_75.1/454AllContigs.fna --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 <i>Leishmania major strain Seidman 75.1</i>  genome from WUSTL
+          ]]>      
+        </description>  
+    </resource>
+<resource resource="Lmajor_Seidman_75.1_Scaffolds" version="2010-07-20"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="P. vivax contig to scaffold map"
+         category="Genome"
+         extDbName="L.major Seidman 75.1 scaffolds"
+         extDbRlsVer="2010-07-20"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/WhitePaper_preliminary_genomes/Lmajor_seidman_75.1/FTP/454Scaffolds.txt"
+         />
+         <pluginArgs>--agpFile @downloadDir@/Lmajor_Seidman_75.1_Scaffolds/454Scaffolds.txt --seqPieceExtDbName "L.major_seidman_75.1 genome from WUSTL" --seqPieceExtDbRlsVer "07-20-2010" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <description>
+            <![CDATA[
+         Contig to scaffold map for <i>L. major Seidman 75.1</i>.
+         ]]>
+        </description>
+    </resource>
+
+<resource resource="Lbraziliensis_Proteomics_Promastigotes" version="2009-08-22"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	     displayName="L. braziliensis Proteomics-Promastigotes"
+	     category="Proteome"
+                extDbName="L. braziliensis Proteomics-Promastigotes"
+                extDbRlsVer="2009-08-22"
+                extDbRlsDescrip="L. braziliensis Proteomics-Promastigotes|2009-08-22"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/L.braziliensis_secreted/Lbraziliensis_proteomics.tab"
+            contact = "Patricia Cuervo"
+            email = "patyce@ioc.fiocruz.br"
+            institution = "Instituto Oswaldo Cruz, Rio de Janeiro, Brazil"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Lbraziliensis_Proteomics_Promastigotes/Lbraziliensis_proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. braziliensis chromosomes|2009-10-06'</pluginArgs>
+         <description>
+            <![CDATA[
+          Proteomic characterization of the released/secreted proteins of <i>Leishmania (Viannia) braziliensis</i> promastigotes <a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Cuervo et al.</a>
+          ]]>
+         </description>		
+     </resource>  
+
+<resource resource="Lmajor_Proteomics_Exosomes" version="2010-02-16"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	     displayName="L. major Proteomics-Exosomes"
+	     category="ignore"
+                extDbName="L.major Proteomics-Exosomes"
+                extDbRlsVer="2010-02-16"
+                extDbRlsDescrip="L.major Proteomics-Exosomes|2010-02-16"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/L.major_exosome/Lmajor_exosomes.tab"
+            contact = "Silverman JM"
+            email = ""
+            institution = "University of British Columbia"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Lmajor_Proteomics_Exosomes/Lmajor_exosomes.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. major chromosomes|2009-09-10'</pluginArgs>
+         <description>
+            <![CDATA[
+            An exosome-based secretion pathway is responsible for protein export from Leishmania and communication with macrophages.<a href="http://www.ncbi.nlm.nih.gov/pubmed/20159964">Silverman et al.</a>
+          ]]>
+         </description>	
+ </resource>
+
+  
+
+
+ <resource resource="TriTryp_Gene_Aliases" version="2010-09-03" 
+        displayName="TriTryp old gene aliases" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/alias/pathogenDB/09-03-2010/gene_names_pathogensdb_sanger_20100903.tab"/>
+        <pluginArgs>--MappingFile @downloadDir@/TriTryp_Gene_Aliases/gene_names_pathogensdb_sanger_20100903.tab</pluginArgs>
+    </resource>
+
+
 <resource resource="Tcruzi_Proteomics_Amastigote" version="2008-12-12"
                 plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
 	     displayName="T. cruzi Proteomics (Tarleton et. al.)"
