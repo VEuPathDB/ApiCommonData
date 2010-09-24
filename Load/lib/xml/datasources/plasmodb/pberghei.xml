@@ -513,6 +513,7 @@
   <resource resource="Pberghei_gss_oligos_RSRC" version="@@Pberghei_gss_oligos_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayPlatform/WatersGSSOligos/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
@@ -536,6 +537,7 @@
   <resource resource="Pberghei_DOZI_oligos_RSRC" version="@@Pberghei_DOZI_oligos_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayPlatform/WatersDOZIOligos/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <pluginArgs>--sequenceFile @@dataDir@@/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 5823</pluginArgs>
     <info
@@ -557,6 +559,7 @@
   <resource resource="Pb_Waters_gss_time_series_HP_HPE_RSRC" version="@@Pb_Waters_gss_time_series_HP_HPE_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_TimeSeries_HP-HPE/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -590,6 +593,7 @@ the non-producer would quickly overgrow the producer.  Both are cloned.
   <resource resource="Pb_Waters_DOZI_array_RSRC" version="@@Pb_Waters_DOZI_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pberghei/microarrayExpression/Waters_DOZI/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <getAndUnpackOutput file="@@dataDir@@/final/analysis_result_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
