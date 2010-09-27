@@ -78,7 +78,7 @@
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPviv.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPviv.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPviv.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPviv.fsa </unpack>
-    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed/fasta"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPviv.txt"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPviv.fsa"/>
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
