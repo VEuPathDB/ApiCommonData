@@ -2,22 +2,20 @@
 <!--c_neoformans_grubiiISFResource-->
   <resource resource="C_neoformans_grubii_chromosomes_RSRC" version="@@C_neoformans_grubii_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
-    <unpack>mkdir @@dataDir@@/Pfalciparum_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36329 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
+    <manualGet fileOrDir="FungiDB/c_neoformans_grubii/genome/chromosome/%RESOURCE_VERSION%"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 235443 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_2_supercontigs.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\d+\.(\d+)' </pluginArgs>
     <info
-        displayName="P. falciparum (3D7) chromosomes sequence and annotation"
-        project="PlasmoDB"
-        organisms="@@PfOrganismFullName@@"
+        displayName="C. neoformans var. grubii (strain H99, serotype A) chromosomes sequence and annotation"
+        project="FungiDB"
+        organisms="Cryptococcus neoformans var. grubii strain H99"
         category="Genome"
         publicUrl=""
         contact=""
         email=""
-        institution="">
+        institution="Broad">
       <description>
         <![CDATA[
-         Sequence data from GeneDB for <i>P. falciparum</i> 3D7 chromosomes in EMBL (sequence and annotated features) format generated at the Wellcome Trust Sanger Institute. The new annotation for P. falciparum 3D7 genome started in October 2007 with a weeklong workshop co-organized by staff from the Wellcome Trust Sanger Institute (WTSI) and the EuPathDB team. The Wellcome Trust and Burroughs Wellcome Fund-sponsored workshop was held in Hinxton, UK and was attended by nearly 30 Plasmodium researchers contributing expertise in various aspects of Plasmodium biology, plus more than 10 bioinformatics support staff from the Artemis, GeneDB and EuPathDB teams. Ongoing annotation and error checking is being carried out by the GeneDB group from WTSI.
+         Sequence data from Broad.
         ]]>
       </description>
     </info>
