@@ -524,9 +524,11 @@
 
   <resource resource="Py_array_Affy_scrMalaria_RSRC" version="@@Py_array_Affy_scrMalaria_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/"/>
+    <manualGet fileOrDir="common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/scrMalariaa.cdf"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
     <pluginArgs>--sequenceFile @@dataDir@@/final/probes.fsa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "oligo" --regexSourceId ">(\S+)" --tableName "DoTS::ExternalNASequence" --logFrequency 100 --ncbiTaxId 352914</pluginArgs>
     <info
         displayName=""

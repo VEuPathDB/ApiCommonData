@@ -2096,7 +2096,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
 
   <resource resource="Pf_array_Affy_scrMalaria_RSRC" version="@@Pf_array_Affy_scrMalaria_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="global/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
@@ -2145,6 +2145,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Winzeler_WBCGametocyte_RSRC" version="@@Pf_Winzeler_WBCGametocyte_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Winzeler_WBCGametocyte/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -2191,6 +2192,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
   <resource resource="Pf_Cowman_Invasion_KO_RSRC" version="@@Pf_Cowman_Invasion_KO_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Cowman_InvasionKOs/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
@@ -2430,6 +2432,8 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/Affy-plasmodiumanopheles/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Plasmodium_Anopheles.cdf"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
