@@ -227,9 +227,7 @@ sub traverseSeqFeatures {
 			
 			$codingEnd = $subFeature->location->end;
 
-			if($CDSctr ==0){
-			    $codingStart += $subFeature->frame();
-			}
+
 		    }
 		    
 
@@ -237,12 +235,6 @@ sub traverseSeqFeatures {
 		    push(@codingStart,$codingStart);
 		    push(@codingEnd,$codingEnd);
 
-
-		    if($subFeature->location->strand == -1){
-			$codingStart = $codingStart + $prevPhase - $subFeature->frame();
-
-			$prevPhase = $subFeature->frame();
-		    }
 
 		    $CDSctr++;
 
@@ -270,7 +262,7 @@ sub traverseSeqFeatures {
 	    $codingEnd = shift(@codingEnd);
 	    foreach my $exon (@exons){
 
-
+		
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 
 		    $exon->add_tag_value('CodingStart',$codingStart);
