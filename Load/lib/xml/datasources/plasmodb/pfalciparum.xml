@@ -2500,7 +2500,27 @@ Plasmodium falciparum coding specific 70mer oligonucleotides designed by ArrayOl
   </resource>
 
 
-
+  <resource resource="Pf_Derisi_HalfLife_RSRC" version="@@Pf_Derisi_HalfLife_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HalfLife/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Derisi half life array data."
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
 
 
