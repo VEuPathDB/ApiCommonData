@@ -739,6 +739,12 @@ create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, 
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index apidb.staa_tag_ix&1 on apidb.SageTagAnalysisAttributes&1 (composite_element_id, analysis_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.SageTagGene">
@@ -865,6 +871,13 @@ from
    select * from apidb.SageTagGeneThreePrime) t,
   (select distinct(analysis_id), library_name from apidb.SageTagAnalysisAttributes) libs
   where t.analysis_id = libs.analysis_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.staa_ix
+on apidb.SageTagAnalysisAttributes&1 (composite_element_id)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
