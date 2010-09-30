@@ -77,7 +77,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   </feature>
   <feature name="pseudo_gene" so="protein_coding">
-    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"  ignore="true" />
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -109,7 +110,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="rRNA_gene" so="rRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="Alias"              handler="api" method="gene"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -133,7 +135,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"  ignore="true" />
     <qualifier name="note"                 handler="api" method="note"/>
    <qualifier name="Name"         handler="api" method="gene"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -144,7 +147,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
@@ -167,7 +171,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="direct_repeat" table="DoTS::Repeats" so="direct_repeat">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+     <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
@@ -191,7 +196,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="RNApol_I_promoter" table="DoTS::Miscellaneous" so="direct_repeat">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+     <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
@@ -215,7 +221,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="deletion" table="DoTS::Miscellaneous" so="direct_repeat">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+     <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
@@ -239,7 +246,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="insertion" table="DoTS::Miscellaneous" so="direct_repeat">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+    <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="curation" handler="api" method="note"/>
@@ -263,7 +271,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -284,7 +293,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+     <qualifier name="ID"  ignore="true" />
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -305,7 +315,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+     <qualifier name="ID"  ignore="true" />
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
@@ -326,7 +337,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA">
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+     <qualifier name="ID"  ignore="true" />
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="embl_qualifier"                 handler="api" method="note"/>
     <qualifier name="eMBL_qualifier"                 handler="api" method="note"/>
@@ -372,7 +384,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="tRNA_gene" so="tRNA_encoding">
  
-    <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID"  ignore="true" /> 
     <qualifier name="comment"                 handler="api" method="note"/>
     <qualifier name="Note"              handler="api" method="product"/>
     <qualifier name="note"                 handler="api" method="note"/>
@@ -402,7 +415,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="variation" table="DoTS::Miscellaneous" so="">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="note"                 handler="api" method="note"/>
   </feature>
 
@@ -444,7 +458,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   
   <feature name="three_prime_UTR" table="DoTS::UTRFeature" so="three_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
    <qualifier name="controlled_curation" ignore="true"/>
    <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
@@ -453,7 +468,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="splice_acceptor_site" table="DoTS::UTRFeature" so="three_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
    <qualifier name="controlled_curation" ignore="true"/>
    <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
@@ -464,7 +480,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
 
   <feature name="five_prime_UTR" table="DoTS::UTRFeature" so="five_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
@@ -476,7 +493,8 @@ necessarily by what's defined in the input (eg. Genbank) file
 
  
   <feature name="five_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
@@ -485,7 +503,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="three_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="controlled_curation" ignore="true"/>
     <qualifier name="note"       handler="api" method="note"/>
     <qualifier name="timelastmodified" ignore="true"/>
@@ -496,13 +515,14 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
   </feature>
 
   <feature name="misc_feature_gene" so="sequence_feature">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="db_xref"              handler="api" method="dbXRef"/>
    <qualifier name="synonym"         handler="api" method="gene"/>
@@ -528,7 +548,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
-   <qualifier name="ID"     column="source_id"/>
+   <qualifier name="Name"     column="source_id"/>
     <qualifier name="comment"              handler="api" method="note"/>
     <qualifier name="estimated_length"  handler="api" method="gapLength"/>
     <qualifier name="type" ignore="true"/>
@@ -542,7 +562,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 <!--
   <feature name="pseudo_gene" so="pseudogene" table="DoTS::GeneFeature">
-    <qualifier name="ID" column="source_id"/>
+    <qualifier name="Name" column="source_id"/>
+   <qualifier name="ID"  ignore="true" />
      <qualifier name="note" handler="api" method="note"/>
      <qualifier name="is_pseudo" column="is_pseudo"/>
      <qualifier name="pseudo" ignore="true"/>
