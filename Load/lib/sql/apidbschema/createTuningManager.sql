@@ -29,7 +29,8 @@ grant insert, update, delete on apidb.TuningMgrExternalDependency to gus_w;
 
 create table apidb.InstanceMetaInfo as
 select sys_context ('USERENV', 'SERVICE_NAME') as instance_nickname,
-       cast(null as varchar2(50)) as current_updater
+       cast(null as varchar2(50)) as current_updater,
+       cast(null as date) as update_start
 from dual;
 
 grant select on apidb.InstanceMetaInfo to gus_r;
