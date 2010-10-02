@@ -482,6 +482,10 @@ begin
            then return 'OrphanDB';
          when 'babesia'
            then return 'OrphanDB';
+         when 'cryptococcus'
+           then return 'FungalDB';
+         when 'neurospora'
+           then return 'FungalDB';
          else raise_application_error(-20101,
                                       'project_id() function called with unknown organism "'
                                       || organism || '"' );
