@@ -472,6 +472,10 @@ begin
            then return 'MicrosporidiaDB';
          when 'vittaforma'
            then return 'MicrosporidiaDB';
+         when 'cryptococcus'
+           then return 'FungiDB';
+         when 'neurospora'
+           then return 'FungiDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
