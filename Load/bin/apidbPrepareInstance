@@ -39,7 +39,7 @@ if ($restart){
 
     my $password = $gusconfig->getDatabasePassword();
 
-    &runSql($login, $password, $db, 'dropMultiDbUsers.pl');
+    &runSql($login, $password, $db, 'dropMultiDbUsers.sql');
 }
 
     my $gusInstall='build GUS install  -append -installDBSchema';
