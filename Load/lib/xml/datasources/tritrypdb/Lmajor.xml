@@ -254,4 +254,88 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
         </description>
     </resource> 
 
+<resource resource="Lmajor_Proteomics_Exosomes" version="2010-02-16"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	     displayName="L. major Proteomics-Exosomes"
+	     category="ignore"
+                extDbName="L.major Proteomics-Exosomes"
+                extDbRlsVer="2010-02-16"
+                extDbRlsDescrip="L.major Proteomics-Exosomes|2010-02-16"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/L.major_exosome/Lmajor_exosomes.tab"
+            contact = "Silverman JM"
+            email = ""
+            institution = "University of British Columbia"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Lmajor_Proteomics_Exosomes/Lmajor_exosomes.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. major chromosomes|2009-09-10'</pluginArgs>
+         <description>
+            <![CDATA[
+            An exosome-based secretion pathway is responsible for protein export from Leishmania and communication with macrophages.<a href="http://www.ncbi.nlm.nih.gov/pubmed/20159964">Silverman et al.</a>
+          ]]>
+         </description>	
+ </resource>
+
+   <resource resource="ChIP_Chip_Peter_Myler" version="2008-11-07"
+        displayName="Chromatin Immunoprecipitation Microarray - Peter Myler"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        extDbName="ChIP Chip Peter Myler"
+        extDbRlsVer="2008-11-07"
+        extDbRlsDescrip="Chromatin Immunoprecipitation data from Peter Myler lab"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty"
+            contact = "Peter Myler"
+            email = "peter.myler@sbri.org"
+            institution = "Seattle Biomedical Research Institute"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+The chromosomal location of TATA-binding protein (TBP or TRF4), Small Nuclear Activating Protein complex (SNAP50), and H3 histones were assessed in Leishmania major using microarrays hybridized with DNA obtained through chromatin immunoprecipitation (ChIP-chip). The TBP and SNAP50 binding patterns were almost identical and high intensity peaks were associated with tRNAs and snRNAs. Only 184 peaks of acetylated H3 histone were found in the entire genome, with substantially higher intensity in rapidly-dividing cells than stationary-phase. The majority of the acetylated H3 peaks were found at divergent strand-switch regions, but some occurred at chromosome ends and within polycistronic gene clusters. Almost all these peaks were associated with lower intensity peaks of TBP/SNAP50 binding a few kilobases upstream, evidence that they represent transcription initiation sites.
+Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute.
+          ]]>
+        </description>
+<publication pmid="19356248"/>
+    </resource>
+
+  <resource resource="L.major_Beverley_Steve_Array_Profiles" version="1.0"
+            displayName="L.major Beverley Steve Array Profiles"
+            category="Transcriptome"
+            organisms="L.major"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="L.major_Beverley_Steve_Array_Profiles"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="L.major_Beverley_Steve_Array_Profiles|1.0"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Beverley_Steve/6-2-09/analysis/" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+      />
+<pluginArgs>--inputDir @downloadDir@/L.major_Beverley_Steve_Array_Profiles/analysis --configFile @downloadDir@/L.major_Beverley_Steve_Array_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+Natalia S. Akopyants, Elizabeth Kruvand, Iris Wong, and Stephen M. Beverley (2010), manuscript in preparation.    Dept of Molecular Microbiology, Washington University School of Medicine, St. Louis 63110 USA.   Please send queries to Stephen M. Beverley (beverley@borcim.wustl.edu).
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "L.major_Beverley_Steve_Array_Page" version="1.0"
+            displayName="L.major Beverley Steve Array page analysis"
+            organisms="L.major"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Beverley_Steve/6-2-09/analysis/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/L.major_Beverley_Steve_Array_Page/analysis --configFile @downloadDir@/L.major_Beverley_Steve_Array_Page/analysis/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+        L.major compared expression values at two life cycle stages by microarray PaGE  
+         ]]>
+    </description>
+  </resource>
 </resources>
