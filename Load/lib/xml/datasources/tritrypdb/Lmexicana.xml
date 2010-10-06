@@ -23,5 +23,61 @@
   </resource>
 
 
+    <resource resource="L.mexicana_chromosomes" version="2009-11-03" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.mexicana"
+        displayName="L.mexicana contigs and chromosomes"
+        category="Genome"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes/fasta/"/>
+         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --seqFileDir @downloadDir@/L.mexicana_chromosomes/fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 This resource includes chromosome and unassigned contig sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Lmexicana">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="L.mexicana_unassigned_contigs" version="2009-11-03" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.mexicana"
+        displayName="L.mexicana contigs and chromosomes"
+        category="ignore"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/bin.fasta"/>
+         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.mexicana_unassigned_contigs/bin.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Lmexicana">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="L.mexicana_Annotations" version="2009-11-03"
+
+        displayName="L.mexicana Genome Annotations"
+        category="Genome"
+        organisms="L.mexicana"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. mexicana contigs and chromosomes"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes" />
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypEmbl2gus.xml --inputFileOrDir @downloadDir@/L.mexicana_Annotations/Chromosomes --fileFormat embl --inputFileExtension embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania mexicana mexicana" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lmexicana.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lmexicana.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Genome and annotations for <i>L. mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
+           ]]>
+        </description>
+    </resource>
 
 </resources>

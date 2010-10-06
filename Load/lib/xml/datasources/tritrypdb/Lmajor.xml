@@ -23,5 +23,235 @@
   </resource>
 
 
+    <resource resource="L.major_chromosomes" version="2009-09-10" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.major"
+        displayName="L.major chromosomes"
+        category="ignore"
+        extDbName="Sanger L. major chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger L. major chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Lmajor"/>
+        <unpack>mkdir @downloadDir@/L.major_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/L.major_chromosomes/Lmajor --output_fasta @downloadDir@/L.major_chromosomes_fixed/Lmajor.fasta --output_gff @downloadDir@/L.major_chromosomes_fixed/Lmajor.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5664 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.major_chromosomes_fixed/Lmajor.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_major/">The Sanger Institute pathogen sequencing unit</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://www.sanger.ac.uk/Projects/L_major/EUseqlabs.shtml">The European Leishmania major Friedlin Genome Sequencing Consortium</a>.
+          ]]>
+        </description>
+<publication pmid="16020728"/>
+    </resource>
+
+    <resource resource="L.major_Annotation" version="2009-09-10"
+        displayName="L.major Genome Annotations"
+        category="Genome"
+        organisms="L.major"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. major chromosomes"
+        extDbRlsVer="2009-09-10"
+        extDbRlsDescrip="Sanger L. major chromosomes|2009-09-10"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/L.major_chromosomes_fixed/Lmajor.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/L.major_chromosomes_fixed/Lmajor.gff --output_gff @downloadDir@/L.major_Annotation/Lmajor_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/L.major_Annotation/Lmajor_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Leishmania major" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lmajor.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lmajor.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   This resource includes chromosome sequences and annotations for <i>Leishmania infantum</i>.
+   Sequence data for <i>Leishmania major</i> Friedlin (reference strain - MHOM/IL/80/Friedlin, zymodeme MON-103) were downloaded from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_major/">The Sanger Institute pathogen sequencing unit</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://www.sanger.ac.uk/Projects/L_major/EUseqlabs.shtml">The European Leishmania major Friedlin Genome Sequencing Consortium</a>.
+          ]]>
+        </description>
+<publication pmid="16020728"/>
+    </resource>
+
+
+
+
+    <resource resource="Lmajor_seidman_75.1" version="2010-07-20" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.major"
+        displayName="L.major_seidman_75.1"
+        category="Genome"
+        extDbName="L.major_seidman_75.1 genome from WUSTL"
+        extDbRlsVer="07-20-2010"
+        extDbRlsDescrip="L.major_seidman_75.1 genome from WUSTL|07-20-2010"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/WhitePaper_preliminary_genomes/Lmajor_seidman_75.1/FTP/454AllContigs.fna"/>
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/Lmajor_seidman_75.1/454AllContigs.fna --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 <i>Leishmania major strain Seidman 75.1</i>  genome from WUSTL
+          ]]>      
+        </description>  
+    </resource>
+<resource resource="Lmajor_Seidman_75.1_Scaffolds" version="2010-07-20"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="P. vivax contig to scaffold map"
+         category="Genome"
+         extDbName="L.major Seidman 75.1 scaffolds"
+         extDbRlsVer="2010-07-20"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/WhitePaper_preliminary_genomes/Lmajor_seidman_75.1/FTP/454Scaffolds.txt"
+         />
+         <pluginArgs>--agpFile @downloadDir@/Lmajor_Seidman_75.1_Scaffolds/454Scaffolds.txt --seqPieceExtDbName "L.major_seidman_75.1 genome from WUSTL" --seqPieceExtDbRlsVer "07-20-2010" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <description>
+            <![CDATA[
+         Contig to scaffold map for <i>L. major Seidman 75.1</i>.
+         ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="GOAssociations_Lmajor" version="2009-10-06"
+        displayName="L. major protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="L.major GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="L.major GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmajor.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lmajor/Lmajor.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>L. major</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="LmajorCosmidEnds_GenomicLibrary" version="2002-08-13"
+        displayName="L. major Cosmid Ends"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major Cosmid Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major Cosmid Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/CosmidGenomicLibrary"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorCosmidEnds_GenomicLibrary/CosmidGenomicLibrary --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|\\w+\\d+\\s(\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|(\\w+\\d+)\\s\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   <i>L. major</i> cosmid end-sequences were provided by the GeneDB project at the Sanger Institute Pathogen Sequencing Unit.
+          ]]>
+        </description>
+    </resource>  
+
+<resource resource="LmajorCosmidEnds_cosmid" version="2002-08-13"
+        displayName="L. major Cosmid Ends from Sanger"
+        category="ignore"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major Cosmid Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major Cosmid Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/cosmidLibrary"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorCosmidEnds_cosmid/cosmidLibrary --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|emb\\|AL\\S+\\|(L\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|emb\\|(AL\\S+)\\|L\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Cosmid End genome sequences for L. major from sanger</a>.
+          ]]>
+        </description>
+    </resource>   
+
+<resource resource="LmajorFV1Ends" version="2002-08-13"
+        displayName="L. major FV1 random Ends"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major FV1 random Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major FV1 random Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/FV1Library"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorFV1Ends/FV1Library --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|\\w+\\d+\\s(LMAJFV1\\S+)\\s" --regexSecondaryId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|(\\w+\\d+)\\sLMAJFV1\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+  <i>L. major</i> FV1 random end-sequences provided by the GeneDB project at the Sanger Institute Pathogen Sequencing Unit.
+          ]]>
+        </description>
+    </resource>   
+   
+<resource resource="LmajorPACEnds_gb" version="2002-08-13"
+        displayName="L. major PAC Ends"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major PAC Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major PAC Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/PACLibrary_gb"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorPACEnds_gb/PACLibrary_gb --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|BH\\d+\\s(P\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|(BH\\d+)\\sP\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   <i>L. major</i> PAC end-sequences were provided by the GeneDB project at the Sanger Institute Pathogen Sequencing Unit.
+          ]]>
+        </description>
+    </resource>   
+
+
+<resource resource="LmajorPACEnds_emb" version="2002-08-13"
+        displayName="L. major PAC Ends from Sanger"
+        category="ignore"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major PAC Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major PAC Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/PACLibrary_emb"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorPACEnds_emb/PACLibrary_emb --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|emb\\|AL\\S+\\|(P\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|emb\\|(AL\\S+)\\|P\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   PAC End genome sequences for L. major from sanger</a>.
+          ]]>
+        </description>
+    </resource>   
+
+<resource resource="LmajorBACEnds" version="2002-08-13"
+        displayName="L. major BAC Ends"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="L.major BAC Ends from Sanger"
+        extDbRlsVer="2002-08-13"
+        extDbRlsDescrip="L.major BAC Ends from Sanger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/BACLibrary"
+            contact = "Christiane Hertz-Fowler"
+            email = "chf@sanger.ac.uk"
+            institution = "Sanger"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorBACEnds/BACLibrary --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|BH\\d+\\s(LB\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|(BH\\d+)\\sLB\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   BAC End genome sequences for L. major from Seattle Biomedical Research Institute and TIGR </a>.
+          ]]>
+        </description>
+    </resource> 
 
 </resources>

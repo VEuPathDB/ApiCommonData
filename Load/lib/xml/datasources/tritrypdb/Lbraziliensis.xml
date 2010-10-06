@@ -23,5 +23,94 @@
   </resource>
 
 
+    <resource resource="L.braziliensis_chromosomes" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="L.braziliensis"
+        displayName="L.braziliensis chromosomes"
+        category="ignore"
+        extDbName="Sanger L. braziliensis chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger L. braziliensis chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lbraziliensis"/>
+        <unpack>mkdir @downloadDir@/L.braziliensis_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/L.braziliensis_chromosomes/Lbraziliensis --output_fasta @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5560 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
+
+          ]]>      
+        </description>  
+<publication pmid="17572675"/>
+    </resource>
+
+    <resource resource="L.braziliensis_Annotation" version="2009-10-06"
+        displayName="L.braziliensis Genome Annotations"
+        category="Genome"
+        organisms="L.braziliensis"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger L. braziliensis chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger L. braziliensis chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff" />
+        <unpack>cp @downloadDir@/L.braziliensis_chromosomes/Lbraziliensis/Lbrerrs.txt @downloadDir@/L.braziliensis_Annotation/</unpack>
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/L.braziliensis_chromosomes_fixed/Lbraziliensis.gff --output_gff @downloadDir@/L.braziliensis_Annotation/Lbraziliensis_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/L.braziliensis_Annotation/Lbraziliensis_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Leishmania braziliensis" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lbraziliensis.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lbraziliensis.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   This resource includes chromosome sequences and annotations for <i>Leishmania braziliensis</i>.
+   Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
+
+           ]]>
+        </description>
+<publication pmid="17572675"/>
+    </resource>
+
+    <resource resource="GOAssociations_Lbraziliensis" version="2009-10-06"
+        displayName="L. braziliensis protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="L.braziliensis GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="L.braziliensis GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lbraziliensis.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Lbraziliensis/Lbraziliensis.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>L. braziliensis</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/leish/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+
+
+<resource resource="Lbraziliensis_Proteomics_Promastigotes" version="2009-08-22"
+                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	     displayName="L. braziliensis Proteomics-Promastigotes"
+	     category="Proteome"
+                extDbName="L. braziliensis Proteomics-Promastigotes"
+                extDbRlsVer="2009-08-22"
+                extDbRlsDescrip="L. braziliensis Proteomics-Promastigotes|2009-08-22"
+		dbCommit="@dbcommit@">	
+      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/L.braziliensis_secreted/Lbraziliensis_proteomics.tab"
+            contact = "Patricia Cuervo"
+            email = "patyce@ioc.fiocruz.br"
+            institution = "Instituto Oswaldo Cruz, Rio de Janeiro, Brazil"
+         />
+            <pluginArgs>--inputFile @downloadDir@/Lbraziliensis_Proteomics_Promastigotes/Lbraziliensis_proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. braziliensis chromosomes|2009-10-06'</pluginArgs>
+         <description>
+            <![CDATA[
+          Proteomic characterization of the released/secreted proteins of <i>Leishmania (Viannia) braziliensis</i> promastigotes <a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Cuervo et al.</a>
+          ]]>
+         </description>		
+     </resource> 
 
 </resources>

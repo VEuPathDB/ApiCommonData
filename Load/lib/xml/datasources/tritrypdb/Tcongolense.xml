@@ -23,5 +23,105 @@
   </resource>
 
 
+    <resource resource="T.congolense_contigs" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.congolense"
+        displayName="T.congolense contigs"
+        category="ignore"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcongolense/Tcongolense_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.congolense_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.congolense_contigs/Tcongolense_contigs --output_fasta @downloadDir@/T.congolense_contigs_fixed/Tcongolense.fasta --output_gff @downloadDir@/T.congolense_contigs_fixed/Tcongolense.gff3</unpack>
+        <unpack>makeContigsFromBinChrom --input_gff @downloadDir@/T.congolense_contigs_fixed/Tcongolense.gff3 --output_gff @downloadDir@/T.congolense_contigs_fixed/TcContigs.gff --input_fasta @downloadDir@/T.congolense_contigs_fixed/Tcongolense.fasta --output_fasta @downloadDir@/T.congolense_contigs_fixed/TcContigs.fasta 2> @pipelineDir@/logs/TcongolenseContigSpanningFeatures.err</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.congolense_contigs_fixed/TcContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.congolense_Annotation_contigs" version="2009-09-14"
+        displayName="T.congolense Genome Annotations"
+        category="ignore"
+        organisms="T.congolense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.congolense_contigs_fixed/TcContigs.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.congolense_contigs_fixed/TcContigs.gff --output_gff @downloadDir@/T.congolense_Annotation_contigs/TcContigs_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.congolense_Annotation_contigs/TcContigs_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma congolense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcongolense.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tcongolense.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Contig sequences and annotations for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="T.congolense_chromosomes" version="2009-09-14" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.congolense"
+        displayName="T.congolense chromosomes"
+        category="ignore"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-14/Tcongolense/Tcongolense_chromosomes/"/>
+        <unpack>mkdir @downloadDir@/T.congolense_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.congolense_chromosomes/Tcongolense_chromosomes --output_fasta @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.fasta --output_gff @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="T.congolense_Annotation_chromosomes" version="2009-09-14"
+        displayName="T.congolense Genome Annotations"
+        category="Genome"
+        organisms="T.congolense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. congolense contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. congolense contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.congolense_chromosomes_fixed/Tcongolense.gff --output_gff @downloadDir@/T.congolense_Annotation_chromosomes/Tcongolense_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.congolense_Annotation_chromosomes/Tcongolense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma congolense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcongolense.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcongolense.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma congolense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tcongolense">GeneDB</a> for project details and data release policies.
+           ]]>
+        </description>
+    </resource>
+ 
+
+    <resource resource="GOAssociations_Tcongolense" version="2009-10-06"
+        displayName="T. congolense protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.congolense GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.congolense GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcongolense.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcongolense/Tcongolense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. congolense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
 
 </resources>
