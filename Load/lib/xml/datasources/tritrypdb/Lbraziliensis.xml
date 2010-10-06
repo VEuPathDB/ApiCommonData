@@ -1,5 +1,7 @@
 <resources>
-  <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
+
+ <!--ESTResource-->
+ <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
     <unpack>getSubTaxa --ncbiTaxId 5660 --outputFile @@dataDir@@/taxonIdFile</unpack>
@@ -22,8 +24,8 @@
     </info>
   </resource>
 
-
-    <resource resource="L.braziliensis_chromosomes" version="2009-10-06" 
+<!--ISFResource-->
+    <resource resource="Lbraziliensis_chromosomes_RSRC" version="@@Lbraziliensis_chromosomes_VER@@" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="L.braziliensis"
         displayName="L.braziliensis chromosomes"
@@ -47,7 +49,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 <publication pmid="17572675"/>
     </resource>
 
-    <resource resource="L.braziliensis_Annotation" version="2009-10-06"
+    <resource resource="Lbraziliensis_Annotation_RSRC" version="2009-10-06"
         displayName="L.braziliensis Genome Annotations"
         category="Genome"
         organisms="L.braziliensis"
@@ -71,7 +73,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 <publication pmid="17572675"/>
     </resource>
 
-    <resource resource="GOAssociations_Lbraziliensis" version="2009-10-06"
+    <resource resource="GOAssociations_Lbraziliensis_RSRC" version="2009-10-06"
         displayName="L. braziliensis protein GO Associations"        
         category="Proteome"
         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
@@ -91,26 +93,28 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     </resource>
 
 
+<!--MassSpecResource-->
 
-<resource resource="Lbraziliensis_Proteomics_Promastigotes" version="2009-08-22"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="L. braziliensis Proteomics-Promastigotes"
-	     category="Proteome"
-                extDbName="L. braziliensis Proteomics-Promastigotes"
-                extDbRlsVer="2009-08-22"
-                extDbRlsDescrip="L. braziliensis Proteomics-Promastigotes|2009-08-22"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/L.braziliensis_secreted/Lbraziliensis_proteomics.tab"
-            contact = "Patricia Cuervo"
-            email = "patyce@ioc.fiocruz.br"
-            institution = "Instituto Oswaldo Cruz, Rio de Janeiro, Brazil"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Lbraziliensis_Proteomics_Promastigotes/Lbraziliensis_proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. braziliensis chromosomes|2009-10-06'</pluginArgs>
-         <description>
-            <![CDATA[
+  <resource resource="Lbraziliensis_Proteomics_Promastigotes_RSRC" version="2009-08-22"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/Lbraziliensis/massSpec/L.braziliensis_secreted/%RESOURCE_VERSION%/Lbraziliensis_proteomics.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Lbraziliensis_proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' --developmentalStage 'promastigotes'</pluginArgs>
+    <info
+        displayName="L. braziliensis Proteomics-Promastigotes"
+        project="TriTrypDB"
+        organisms="@@LbraziliensisOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Patricia Cuervo"
+        email="patyce@ioc.fiocruz.br"
+        institution="Instituto Oswaldo Cruz, Rio de Janeiro, Brazil">
+      <description>
+        <![CDATA[
           Proteomic characterization of the released/secreted proteins of <i>Leishmania (Viannia) braziliensis</i> promastigotes <a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Cuervo et al.</a>
-          ]]>
-         </description>		
-     </resource> 
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 </resources>
+

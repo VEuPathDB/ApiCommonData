@@ -1,4 +1,109 @@
 <resources>
+<!--ISFResource-->
+
+    <resource resource="Tvivax_contigs_RSRC" version="@@Tvivax_contigs_VER@@" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.vivax"
+        displayName="T.vivax contigs"
+        category="ignore"
+        Genome="Sanger T. vivax contigs and chromosomes"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax/Tvivax_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.vivax_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_contigs/Tvivax_contigs --output_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3</unpack>
+        <unpack>makeContigsFromBinChrom --input_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3 --output_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --input_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_fasta @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta 2> @pipelineDir@/logs/TvivaxContigSpanningFeatures.err</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Contig sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="Tvivax_Annotation_contigs_RSRC" version="@@Tvivax_Annotation_contigs_VER@@"
+        displayName="T.vivax Genome Annotations"
+        category="ignore"
+        organisms="T.vivax"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.vivax_contigs_fixed/TvContigs.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --output_gff @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  Contig sequences and annotations for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="Tvivax_chromosomes_RSRC" version="@@Tvivax_chromosomes_VER@@" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="ignore"
+        displayName="T.vivax chromosomes"
+        category="Genome"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-14/Tvivax/Tvivax_chromosomes/"/>
+        <unpack>mkdir @downloadDir@/T.vivax_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_chromosomes/Tvivax_chromosomes --output_fasta @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+   <resource resource="Tvivax_Annotation_chromosomes_RSRC" version="Tvivax_Annotation_chromosomes_VER"
+        displayName="T.vivax Genome Annotations"
+        category="Genome"
+        organisms="T.vivax"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. vivax contigs and chromosomes"
+        extDbRlsVer="2009-09-14"
+        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff --output_gff @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
+           ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tvivax_RSRC" version="@@@@"
+        displayName="T. vivax protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.vivax GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.vivax GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tvivax/Tvivax.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. vivax</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+<!--ESTResource-->
+
   <resource resource="Tvivax_dbEST_RSRC" version="@@Tvivax_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
@@ -22,105 +127,5 @@
     </info>
   </resource>
 
-    <resource resource="GOAssociations_Tvivax" version="2009-10-06"
-        displayName="T. vivax protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.vivax GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.vivax GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax.gas"/>
 
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tvivax/Tvivax.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. vivax</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-
-    <resource resource="T.vivax_contigs" version="2009-09-14" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.vivax"
-        displayName="T.vivax contigs"
-        category="ignore"
-        Genome="Sanger T. vivax contigs and chromosomes"
-        extDbName="Sanger T. vivax contigs and chromosomes"
-        extDbRlsVer="2009-09-14"
-        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tvivax/Tvivax_contigs/"/>
-        <unpack>mkdir @downloadDir@/T.vivax_contigs_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_contigs/Tvivax_contigs --output_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3</unpack>
-        <unpack>makeContigsFromBinChrom --input_gff @downloadDir@/T.vivax_contigs_fixed/Tvivax.gff3 --output_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --input_fasta @downloadDir@/T.vivax_contigs_fixed/Tvivax.fasta --output_fasta @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta 2> @pipelineDir@/logs/TvivaxContigSpanningFeatures.err</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_contigs_fixed/TvContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Contig sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
-
-    <resource resource="T.vivax_Annotation_contigs" version="2009-09-14"
-        displayName="T.vivax Genome Annotations"
-        category="ignore"
-        organisms="T.vivax"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. vivax contigs and chromosomes"
-        extDbRlsVer="2009-09-14"
-        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.vivax_contigs_fixed/TvContigs.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_contigs_fixed/TvContigs.gff --output_gff @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_contigs/TvContigs_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-                  Contig sequences and annotations for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
-           ]]>
-        </description>
-    </resource>
-
-    <resource resource="T.vivax_chromosomes" version="2009-09-14" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="ignore"
-        displayName="T.vivax chromosomes"
-        category="Genome"
-        extDbName="Sanger T. vivax contigs and chromosomes"
-        extDbRlsVer="2009-09-14"
-        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-14/Tvivax/Tvivax_chromosomes/"/>
-        <unpack>mkdir @downloadDir@/T.vivax_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.vivax_chromosomes/Tvivax_chromosomes --output_fasta @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --output_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Chromosome sequences for <i>T.vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
-
-   <resource resource="T.vivax_Annotation_chromosomes" version="2009-09-14"
-        displayName="T.vivax Genome Annotations"
-        category="Genome"
-        organisms="T.vivax"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. vivax contigs and chromosomes"
-        extDbRlsVer="2009-09-14"
-        extDbRlsDescrip="Sanger T. vivax contigs and chromosomes|2009-09-14"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.vivax_chromosomes_fixed/Tvivax.gff --output_gff @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.vivax_Annotation_chromosomes/Tvivax_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma vivax" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tvivax.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tvivax.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-                  This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma vivax</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tvivax">GeneDB</a> for project details and data release policies.
-           ]]>
-        </description>
-    </resource>
 </resources>
