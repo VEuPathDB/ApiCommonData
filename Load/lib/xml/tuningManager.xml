@@ -5757,6 +5757,7 @@ createEmptyTable($dbh);
 storeProducts($dbh);
 createIndex($dbh);
 
+die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 
 ################################################################################
 
