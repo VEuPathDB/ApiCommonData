@@ -875,8 +875,8 @@ from
     </sql>
     <sql>
       <![CDATA[
-create index apidb.staa_ix
-on apidb.SageTagAnalysisAttributes&1 (composite_element_id)
+create index apidb.stg_ix&1
+on apidb.SageTagGene&1 (gene_source_id, direction, distance, tag_source_id, tag_feature_id, antisense)
 tablespace indx
       ]]>
     </sql>
@@ -5709,6 +5709,7 @@ createEmptyTable($dbh);
 storeProducts($dbh);
 createIndex($dbh);
 
+die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 
 ################################################################################
 
