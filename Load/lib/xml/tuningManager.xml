@@ -3080,6 +3080,11 @@ from
           'PlasmoDB' as project_id
     from dual
     UNION
+    select 'Percentiles of Derisi HalfLife-Ring' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
     select 'Profiles of Derisi HalfLife-half_life' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
@@ -3414,6 +3419,20 @@ select 'Profiles of Derisi HalfLife-Ring' as profile_name,
        '' as attribution
 from dual
 UNION
+select 'Percentiles of Derisi HalfLife-Ring' as profile_name,
+       '' as module,
+       'Plasmodium falciparum' as species,
+       'Intraerythrocytic development of 3D7 post treatment with actD' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       155 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'pct' as visible_parts,
+       '' as attribution
+from dual
+UNION
 select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        '' as module,
        'Plasmodium falciparum' as species,
@@ -3424,7 +3443,7 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        156 as order_num,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
-       'coverage' as visible_parts,
+       'hl' as visible_parts,
        '' as attribution
 from dual
 
