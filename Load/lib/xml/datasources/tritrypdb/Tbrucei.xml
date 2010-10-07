@@ -1,4 +1,177 @@
 <resources>
+
+<!--ISFResource-->
+
+    <resource resource="Tbrucei927_contigs_RSRC" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei 927"
+        displayName="T.brucei 927 contigs and chromosomes"
+        category="ignore"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_contigs/"/>
+        <unpack>mkdir @downloadDir@/T.brucei927_contigs_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_contigs/Tbruceibrucei927_contigs/ --output_fasta @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+    </resource>
+
+    <resource resource="Tbrucei927_Annotation_contigs_RSRC" version="2009-10-06"
+        displayName="T.brucei 927 Genome Annotations"
+        category="ignore"
+        organisms="T.brucei927"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   This resource includes contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+     </resource>
+
+    <resource resource="Tbrucei927_chromosomes_RSRC" version="2009-10-06" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei 927"
+        displayName="T.brucei 927 chromosomes and contigs"
+        category="ignore"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_chromosomes"/>
+        <unpack>mkdir @downloadDir@/T.brucei927_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_chromosomes/Tbruceibrucei927_chromosomes --output_fasta @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+    </resource>
+
+    <resource resource="Tbrucei927_Annotation_chromosomes_RSRC" version="2009-10-06"
+        displayName="T.brucei927 Genome Annotations"
+        category="Genome"
+        organisms="T.brucei927"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. brucei 927 contigs and chromosomes"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+   This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+          ]]>
+        </description>
+<publication pmid="16020726"/>
+     </resource>
+
+    <resource resource="Tbruceigambiense_chromosomes_RSRC" version="2009-09-07" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.brucei gambiense"
+        displayName="T.brucei gambiense chromosomes"
+        category="ignore"
+        extDbName="Sanger T. brucei gambiense chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-07/Tbruceigambiense"/>
+        <unpack>mkdir @downloadDir@/T.bruceigambiense_chromosomes_fixed</unpack>
+        <unpack>makeFastaFile --input_dir @downloadDir@/T.bruceigambiense_chromosomes/Tbruceigambiense --output_fasta @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Chromosome sequences for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="Tbruceigambiense_Annotation_RSRC" version="2009-09-07"
+        displayName="T.brucei gambiense Genome Annotations"
+        category="Genome"
+        organisms="T.bruceigambiense"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Sanger T. brucei gambiense chromosomes"
+        extDbRlsVer="2009-09-07"
+        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
+        dbCommit="@dbcommit@">
+      <manualGet fileOrDir="@downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff" />
+        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff --output_gff @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei gambiense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbruceigambiense.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tbruceigambiense.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
+        <description>
+            <![CDATA[
+                  This resource includes chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
+           ]]>
+        </description>
+    </resource>
+
+ 
+    <resource resource="GOAssociations_Tbruceibrucei927_RSRC" version="2009-10-06"
+        displayName="T. brucei brucei927 protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.bruceibrucei927 GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.bruceibrucei927 GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceibrucei927/Tbruceibrucei927.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. brucei brucei927</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="GOAssociations_Tbruceigambiense_RSRC" version="2009-10-06"
+        displayName="T. brucei gambiense protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.bruceigambiense GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.bruceigambiense GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceigambiense.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceigambiense/Tbruceigambiense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. brucei gambiense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+<!--ESTResource-->
   <resource resource="Tbrucei_dbEST_RSRC" version="@@Tbrucei_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
@@ -22,357 +195,28 @@
     </info>
   </resource>
 
-
-
-    <resource resource="T.brucei927_contigs" version="2009-10-06" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei 927"
-        displayName="T.brucei 927 contigs and chromosomes"
-        category="ignore"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_contigs/"/>
-        <unpack>mkdir @downloadDir@/T.brucei927_contigs_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_contigs/Tbruceibrucei927_contigs/ --output_fasta @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-    </resource>
-
-    <resource resource="T.brucei927_Annotation_contigs" version="2009-10-06"
-        displayName="T.brucei 927 Genome Annotations"
-        category="ignore"
-        organisms="T.brucei927"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-     </resource>
-
-    <resource resource="T.brucei927_chromosomes" version="2009-10-06" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei 927"
-        displayName="T.brucei 927 chromosomes and contigs"
-        category="ignore"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_chromosomes"/>
-        <unpack>mkdir @downloadDir@/T.brucei927_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_chromosomes/Tbruceibrucei927_chromosomes --output_fasta @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-    </resource>
-
-    <resource resource="T.brucei927_Annotation_chromosomes" version="2009-10-06"
-        displayName="T.brucei927 Genome Annotations"
-        category="Genome"
-        organisms="T.brucei927"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-     </resource>
-
-    <resource resource="T.bruceigambiense_chromosomes" version="2009-09-07" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei gambiense"
-        displayName="T.brucei gambiense chromosomes"
-        category="ignore"
-        extDbName="Sanger T. brucei gambiense chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-07/Tbruceigambiense"/>
-        <unpack>mkdir @downloadDir@/T.bruceigambiense_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.bruceigambiense_chromosomes/Tbruceigambiense --output_fasta @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Chromosome sequences for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
-
-    <resource resource="T.bruceigambiense_Annotation" version="2009-09-07"
-        displayName="T.brucei gambiense Genome Annotations"
-        category="Genome"
-        organisms="T.bruceigambiense"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei gambiense chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff --output_gff @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei gambiense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbruceigambiense.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tbruceigambiense.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-                  This resource includes chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
-           ]]>
-        </description>
-    </resource>
-
- 
-    <resource resource="GOAssociations_Tbruceibrucei927" version="2009-10-06"
-        displayName="T. brucei brucei927 protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.bruceibrucei927 GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.bruceibrucei927 GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927.gas"/>
-
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceibrucei927/Tbruceibrucei927.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. brucei brucei927</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-    <resource resource="GOAssociations_Tbruceigambiense" version="2009-10-06"
-        displayName="T. brucei gambiense protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.bruceigambiense GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.bruceigambiense GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceigambiense.gas"/>
-
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceigambiense/Tbruceigambiense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. brucei gambiense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-
-<resource resource="TbruceiBACEnds" version="2008-12-08"
+<!--MiscResource-->
+  <resource resource="Tbrucei_Genbank_BACEnds_RSRC" version="2008-12-08"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/GenbankEndSequences/%RESOURCE_VERSION%/TbruceiBAC.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId 185431 --sequenceFile @@dataDir@@/TbruceiBAC.fasta --soTermName "clone_insert_end"  --regexSourceId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|\\w+\\d+\\s(RPCI\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|(\\w+\\d+)\\sRPCI\\S+\\s" -tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
         displayName="T.brucei RPCI93 BAC Ends"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
         category="Genome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="T.brucei RPCI93 BAC Ends"
-        extDbRlsVer="2008-12-08"
-        extDbRlsDescrip="T.brucei RPCI93 BAC Ends"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Tbrucei/TbruceiBAC.fasta"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "pcbi"
-        />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 185431 --sequenceFile @downloadDir@/TbruceiBACEnds/TbruceiBAC.fasta --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|\\w+\\d+\\s(RPCI\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|(\\w+\\d+)\\sRPCI\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
+        publicUrl=""
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="pcbi">
+      <description>
+        <![CDATA[
    T.brucei RPCI93 BAC End genome sequences from genbank</a>.
-          ]]>
-        </description>
-    </resource> 
-
-
-<resource resource="Tbrucei_Proteomics_Procyclic_Form" version="2008-12-17"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="T. brucei Procyclic Form Proteomics (Panigrahi et. al.)"
-	     category="Proteome"
-             publicUrl="http://www.trypsproteome.org/"
-                extDbName="Tbrucei Proteomics Procyclic Form"
-                extDbRlsVer="2008-12-17"
-                extDbRlsDescrip="Tbrucei Proteomics Procyclic Form"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tbrucei_from_Panigrahi/Tbrucei_Proteomics_Procyclic_Form.tab"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tbrucei_Proteomics_Procyclic_Form/Tbrucei_Proteomics_Procyclic_Form.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.brucei 927 chromosomes and annotations|2008-11-13'</pluginArgs>
-         <description>
-            <![CDATA[
-           MS/MS analysis of <i>T. brucei</i> proteins from procyclic form (PF) and a mitochondrial enriched fraction.
-          ]]>
-         </description>
-      <publication pmid="19105172"/>		
-     </resource>
-
- <resource resource="RNASeqCoveragePlot_George_Cross" version="2009-07-29" 
-        displayName="RNA-Seqs from George Cross" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
-        extDbName="RNA-Seqs from George Cross"
-        extDbRlsVer="2009-07-29"
-        extDbRlsDescrip="load RNA-Seqs coverage plot from George Cross by sqlldr"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_7-29-09/NewData/working_dir/bowtie/" 
-            contact = "Brian Brunk" 
-            email = "brunkb@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-
-<unpack>generateCoveragePlot.pl --m 14 --sample BF_All --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2705147 --nm 47408485 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF2_2_23_09_tab_dl_unfiltered.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/SM_sequence_fastq_36bp_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/BF_2_fastq_score.raw.bt>  @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov </unpack>
-
-<unpack>generateCoveragePlot.pl --m 14 --sample PF_WT --extDbSpecs 'RNA-Seqs from George Cross|2009-07-29' --ft bowtie --nu 2705147 --nm 47408485 @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/s_5_sequence_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_cDNA_December_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/PF_2nd_hexamer_fastq_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_2_score.raw.bt @downloadDir@/RNASeqCoveragePlot_George_Cross/bowtie/Nicolai_cDNA_2_22sequence_1_score.raw.bt>  @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov </unpack>
-
-<unpack>cat @downloadDir@/RNASeqCoveragePlot_George_Cross/BF_All.cov @downloadDir@/RNASeqCoveragePlot_George_Cross/PF_WT.cov > @downloadDir@/RNASeqCoveragePlot_George_Cross/RNASeqCoveragePlot_George_Cross.cov</unpack>
-
-<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_George_Cross/RNASeqCoveragePlot_George_Cross.cov</pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>
-    </resource> 
-
-  <resource resource="George_Cross_RNA_Seq_Profiles" version="1.0"
-            displayName="RNA sequence profiles from George Cross"
-            category="Transcriptome"
-            organisms=""
-            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName="George_Cross_RNA_Seq_Profiles"
-            extDbRlsVer="1.0"
-            extDbRlsDescrip="George_Cross_RNA_Seq_Profiles|1.0"
-            dbCommit="@dbcommit@">
-     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_7-29-09/NewData/working_dir/profiles" 
-                contact="Greg Grant"
-                email="ggrant@pcbi.upenn.edu"
-                institution="University of Pennsylvania"
-      />
-<pluginArgs>--inputDir @downloadDir@/George_Cross_RNA_Seq_Profiles/profiles --configFile @downloadDir@/George_Cross_RNA_Seq_Profiles/profiles/config.txt --tolerateMissingIds  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
-   <description>
-         <![CDATA[
-RNA sequence profiles from George Cross.
-          ]]>
-    </description>
+        ]]>
+      </description>
+    </info>
   </resource>
 
-
-
- <resource resource="ChIPSeqCoveragePlot_George_Cross" version="2009-08-27" 
-        displayName="ChIP-Seqs from George Cross" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
-        extDbName="ChIP-Seqs from George Cross"
-        extDbRlsVer="2009-08-27"
-        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_8-27-09/working_dir/bowtie/" 
-            contact = "Brian Brunk" 
-            email = "brunkb@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-
-<unpack>generateCoveragePlot.pl --m 14 --sample H4K10ac --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 2074545  --nm 5320979 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/H4K10ac.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H2BV --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 2559395  --nm 7260778  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/4_18_2008_Cross_Chua_7_1.raw.bt>  @downloadDir@/ChIPSeqCoveragePlott_George_Cross/4_18_2008_Cross_Chua_7_1.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H2AZ --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 3022853  --nm 6796518 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/6_26_2008.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample BDF3 --extDbSpecs 'ChIP-Seqs from George Cross|2009-08-27' --ft bowtie --nu 417231  --nm 1086605 @downloadDir@/ChIPSeqCoveragePlot_George_Cross/bowtie/7_18_8.raw.bt>  @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov </unpack>
-
-<unpack>cat @downloadDir@/ChIPSeqCoveragePlot_George_Cross/H4K10ac.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/4_18_2008_Cross_Chua_7_1.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/6_26_2008.cov @downloadDir@/ChIPSeqCoveragePlot_George_Cross/7_18_8.cov > @downloadDir@/ChIPSeqCoveragePlot_George_Cross/ChIPSeqCoveragePlot_George_Cross.cov</unpack>
-<pluginArgs>--dataFile @downloadDir@/ChIPSeqCoveragePlot_George_Cross/ChIPSeqCoveragePlot_George_Cross.cov</pluginArgs>
-        <description>
-            <![CDATA[
-Genes Dev. 2009 May 1;23(9):1063-76. Epub 2009 Apr 15.
-
-Four histone variants mark the boundaries of polycistronic transcription units in Trypanosoma brucei.
-Siegel TN, Hekstra DR, Kemp LE, Figueiredo LM, Lowell JE, Fenyo D, Wang X, Dewell S, Cross GA.
-Laboratory of Molecular Parasitology, The Rockefeller University
-
-
-          ]]>
-        </description>
-    <publication pmid="19369410"/>
-    </resource> 
-
-
-
- <resource resource="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross" version="2010-01-27" 
-        displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)" 
-        category="Transcriptome" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqAlignmentWithSqlLdr" 
-        extDbName="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross"
-        extDbRlsVer="2010-01-27"
-        extDbRlsDescrip="Splice Leader and Poly A Sites from RNASeq (George Cross)"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_1-10-10_pas_sas/unique_bowtie/" 
-            contact="George Cross"
-            email="gamc@mail.rockefeller.edu"
-            institution="Rockefeller University" />
-
-<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/unique_bowtie/sas_curated_unique.bowtie --sample curated_splice --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --m 14> @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated_basicinfo_for_ttdb_100122.align</unpack>
-
-<unpack>generateAlignmentsFromMultBlocks.pl --f @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/unique_bowtie/pas_curated_unique.bowtie  --sample curated_polyA --ft bowtie --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --m 14> @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align</unpack>
-
-<unpack>cat @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_curated_basicinfo_for_ttdb_100122.align @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/pas_curated.align > @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align</unpack>
-<pluginArgs>--dataFile @downloadDir@/Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross/sas_pas_curated.align --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
-        <description>
-            <![CDATA[
-Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
-          ]]>
-        </description>
-    </resource>
-
- <resource resource="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross_PatchCurated" version="2010-01-27" 
-        displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_1-10-10_pas_sas/unique_bowtie/" 
-            contact="George Cross"
-            email="gamc@mail.rockefeller.edu"
-            institution="Rockefeller University" />
-
-<unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set intron_size = regexp_replace(regexp_substr(query_id,'\(\d+\)','1'),'[\(|\)]','') where intron_size is null and sample in ('curated_polyA','curated_splice')"</unpack>
-<unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set strand = decode(strand,'+','-','-','+') where sample = 'curated_polyA'"</unpack>
-<unpack>assignQueryIdToSplicePolyA.pl --type splice --o 'Trypanosoma brucei TREU927' --sample curated_splice --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --v --commit</unpack>
-<unpack>assignQueryIdToSplicePolyA.pl --type polyA --o 'Trypanosoma brucei TREU927' --sample curated_polyA --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --v --commit</unpack>
-<pluginArgs></pluginArgs>
-
-        <description>
-            <![CDATA[
-Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
-          ]]>
-        </description>
-    </resource>
 
 <resource resource="Sanger_siRNA" version="2008-12-15"
             plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr"
@@ -393,6 +237,203 @@ Phenotype data generated from siRNA experiments
       </description>
  </resource>
 
+
+  <resource resource="Tbrucei_Sanger_siRNA_RSRC" version="2008-12-15"
+      plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/phenotype_siRNA/%RESOURCE_VERSION%/Tbrucei_Drug_target_as_of_080201.txt"/>
+      <unpack>parseSangerSiRNA --inFile @downloadDir@/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
+    <pluginArgs>--dataFile @@dataDir@@/Tbrucei_Drug_target_as_of_080201_fixed.txt </pluginArgs>
+    <info
+        displayName="T.brucei siRNA - phenotype data"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Phenotype"
+        publicUrl=""
+        contact="Christiane Hertz-Fowler"
+        email="chf@sanger.ac.uk"
+        institution="Sanger Institute">
+      <description>
+        <![CDATA[
+Phenotype data generated from siRNA experiments.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--MassSpecResource-->
+
+  <resource resource="Tbrucei_Proteomics_PF" version="2008-12-17"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Proteomics_PF/%RESOURCE_VERSION%/Tbrucei_Proteomics_Procyclic_Form.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Tbrucei_Proteomics_Procyclic_Form.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_chromosomes_RSRC|@@Tbrucei927_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="T. brucei Procyclic Form Proteomics (Panigrahi et. al.)"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.trypsproteome.org/"
+        contact = "Omar Harb"
+        email = "oharb@pcbi.upenn.edu"
+        institution = "University of Pennsylvania">
+      <description>
+        <![CDATA[
+           MS/MS analysis of <i>T. brucei</i> proteins from procyclic form (PF) and a mitochondrial enriched fraction.
+        ]]>
+      </description>
+    <publication pmid="19105172"/>
+    </info>
+  </resource>
+
+<!--RNASeq and ChipSeq-->
+
+  <resource resource="Tbrucei_RNASeq_George_Cross_RSRC" version="@@Tbrucei_RNASeq_George_Cross_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNA-Seqs from George Cross"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Brian Brunk"
+        email="brunkb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+RNA sequence profiles from George Cross.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei_RNASeq_Clayton_RSRC" version="@@Tbrucei_RNASeq_Clayton_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/Clayton/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNA-Seqs from Clayton"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Christine Clayton"
+        email="cclayton@zmbh.uni-heidelberg.de"
+        institution="ZMBH">
+      <description>
+        <![CDATA[
+RNA sequence profiles from Christine Clayton.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei_ChIPSeq_George_Cross_RSRC" version="@@Tbrucei_ChIPSeq_George_Cross_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/chipSeq/George_Cross/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="ChIP-Seqs from George Cross"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Brian Brunk"
+        email="brunkb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+Genes Dev. 2009 May 1;23(9):1063-76. Epub 2009 Apr 15.
+
+Four histone variants mark the boundaries of polycistronic transcription units in Trypanosoma brucei.
+Siegel TN, Hekstra DR, Kemp LE, Figueiredo LM, Lowell JE, Fenyo D, Wang X, Dewell S, Cross GA.
+Laboratory of Molecular Parasitology, The Rockefeller University
+        ]]>
+      </description>
+    </info>
+    <publication pmid="19369410"/>
+  </resource>
+
+
+<resource resource="Additional_ChIPSeqCoveragePlot_George_Cross" version="2010-03-09" 
+        displayName="ChIP-Seqs from George Cross" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="ChIP-Seqs from George Cross"
+        extDbRlsVer="2010-03-09"
+        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_3-9-10/working_dir/bowtie/"
+ 
+            contact = "Brian Brunk" 
+            email = "brunkb@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+
+<unpack>generateCoveragePlot.pl --m 14 --sample BDF3-HA --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000 
+ --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/BDF3_HA_tagsonly_080723.txt.bt >  @downloadDir@/Addit
+ional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H3v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
+--nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3v_runBoth_tagsonly.txt.bt >  @downloadDir@/Additiona
+l_ChIPSeqCoveragePlot_George_Cross/H3v_runBoth_tagsonly.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H4v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
+--nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H4v_tagsonly_080920.txt.bt >  @downloadDir@/Additional
+_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov </unpack>
+<unpack>generateCoveragePlot.pl --m 14 --sample H3K4me3 --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 30000
+00  --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3K4me3_tagsequences.txt.bt >  @downloadDir@/Addit
+ional_ChIPSeqCoveragePlot_George_Cross/H3K4me3_tagsequences.cov </unpack>
+
+
+
+<unpack>cat @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov @downloadDir@/Additional_ChIPSeqCo
+veragePlot_George_Cross/H3v_runBoth_tagsonly.cov @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov @
+downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/> @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIP
+SeqCoveragePlot_George_Cross.cov/H3K4me3_tagsequences.cov</unpack>
+<pluginArgs>--dataFile @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIPSeqCoveragePlot_George_Cross.cov</pluginArgs>
+        <description>
+            <![CDATA[
+Mol Biochem Parasitol. 2010 Aug;172(2):141-4. Epub 2010 Mar 27.
+Histone H3 trimethylated at lysine 4 is enriched at probable transcription start sites in Trypanosoma brucei.
+
+Wright JR, Siegel TN, Cross GA.
+
+Laboratory of Molecular Parasitology, The Rockefeller University
+          ]]>
+        </description>
+<publication pmid="20347883"/>
+    </resource>
+
+<!--Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross_PatchCurated-->
+  <resource resource="Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC" version="@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqAlignmentWithSqlLdr">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross_Splice_Leader_And_Poly_A_Sites/%RESOURCE_VERSION%/final/sas_pas_curated.align"/>
+    <pluginArgs>--dataFile @downloadDir@/sas_pas_curated.align --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+    <info
+        displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Brian Brunk"
+        email="brunkb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--arrayStudies-->
 <resource resource = "Tbrucei_Matthews_differentiation_series" version="1.0"
             displayName="Expression profiling of T. brucei differentiation series from Keith Matthews"
             organisms="T. brucei"
@@ -524,98 +565,34 @@ Data provided by Christine Clayton. Contact: cclayton@zmbh.uni-heidelberg.de
 <publication pmid="19857263"/> 
   </resource>
 
- <resource resource="RNASeqCoveragePlot_Clayton" version="01-22-2010" 
-        displayName="RNA-Seqs from Clayton" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
-        extDbName="RNASeqCoveragePlot_Clayton"
-        extDbRlsVer="01-22-2010"
-        extDbRlsDescrip="RNASeqCoveragePlot_Clayton|01-22-2010"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/Clayton_1-22-10/working_dir/bowtie/" 
-            contact = "Christine Clayton" 
-            email = "cclayton@zmbh.uni-heidelberg.de" 
-            institution = "ZMBH" />
-
-<unpack>generateCoveragePlot.pl --m 14 --sample Paired_sequences --extDbSpecs 'RNASeqCoveragePlot_Clayton|01-22-2010' --ft bowtie --nu 5581514 --nm 301437486 @downloadDir@/RNASeqCoveragePlot_Clayton/bowtie/Clayton_RNA_seq_trimed.raw.bt>@downloadDir@/RNASeqCoveragePlot_Clayton/Paired_sequence.cov </unpack>
-
-<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Clayton/Paired_sequence.cov  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>
-    </resource> 
+ <!--TbruceiSpecific-->
 
 
-
-    <resource resource="TrypSageTagArrayDesign" version="1"
+  <resource resource="SageTagArrayDesign_RSRC" version="@@SageTagArrayDesign_VER@@"
+      plugin="GUS::Supported::Plugin::LoadArrayDesign">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/SageTagArrayDesign/%RESOURCE_VERSION%/array"/>
+    <unpack>preLoadArrayDesign --category TechnologyType --value @@TriTrypSageTags.OntologyEntryValue@@ --manufacturer @@TriTrypSageTags.Contact@@</unpack>
+    <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @@dataDir@@/array/distinct_sage_tags.txt > @@dataDir@@/array/distinct_sage_tags_header.txt</unpack>
+    <pluginArgs>--cfg_file @@dataDir@@/array/sageArray.config --data_file @@dataDir@@/array/distinct_sage_tags_header.txt  --manufacturer @@TriTrypSageTags.Contact@@ --technology_type @@TriTrypSageTags.OntologyEntryValue@@</pluginArgs>
+    <info
         displayName="T. brucei gambiense Experimental DGE Tags"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
         category="Transcriptome"
-        plugin="GUS::Supported::Plugin::LoadArrayDesign"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/high_throughput_sequencing/MacLeod/array/"
-            contact = "Annette MacLeod"
-            email = "gvwa08@udcf.glf.ac.uk"
-            institution = "Wellcome Trust Center for Molecular Parasitology"
-        />
-        <unpack>perl @gusHome@/bin/preLoadArrayDesign --category TechnologyType --value @TrypSageTags.OntologyEntryValue@ --manufacturer @TrypSageTags.Contact@</unpack>
-        <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags.txt > @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags_header.txt</unpack>
-        <pluginArgs>--cfg_file @downloadDir@/SageTagArrayDesign/array/sageArray.config --data_file @downloadDir@/SageTagArrayDesign/array/distinct_sage_tags_header.txt  --manufacturer @TrypSageTags.Contact@ --technology_type @TrypSageTags.OntologyEntryValue@ @commit@</pluginArgs>
-        <description>
-            <![CDATA[
+        publicUrl=""
+        contact="Annette MacLeod"
+        email="gvwa08@udcf.glf.ac.uk"
+        institution="Wellcome Trust Center for Molecular Parasitology">
+      <description>
+        <![CDATA[
 Digital Gene Expression tags (DGE) was applied to <i>T. brucei gambiense</i>. Publication is available from the PubMed <a href="http://www.ncbi.nlm.nih.gov/pubmed/20175885">http://www.ncbi.nlm.nih.gov/pubmed/20175885</a>
   <br/>
   <br/>
 
 <a href="http://www.ncbi.nlm.nih.gov/pubmed/20175885">Digital gene expression analysis of two life cycle stages of the human-infective parasite, Trypanosoma brucei gambiense reveals differentially expressed clusters of co-regulated genes. BMC Genomics. 2010 Feb 22;11:124.</a>
-         ]]>
-        </description>
-    </resource>
-
-<resource resource="Additional_ChIPSeqCoveragePlot_George_Cross" version="2010-03-09" 
-        displayName="ChIP-Seqs from George Cross" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
-        extDbName="ChIP-Seqs from George Cross"
-        extDbRlsVer="2010-03-09"
-        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_3-9-10/working_dir/bowtie/"
- 
-            contact = "Brian Brunk" 
-            email = "brunkb@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-
-<unpack>generateCoveragePlot.pl --m 14 --sample BDF3-HA --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000 
- --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/BDF3_HA_tagsonly_080723.txt.bt >  @downloadDir@/Addit
-ional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H3v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
---nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3v_runBoth_tagsonly.txt.bt >  @downloadDir@/Additiona
-l_ChIPSeqCoveragePlot_George_Cross/H3v_runBoth_tagsonly.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H4v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
---nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H4v_tagsonly_080920.txt.bt >  @downloadDir@/Additional
-_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H3K4me3 --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 30000
-00  --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3K4me3_tagsequences.txt.bt >  @downloadDir@/Addit
-ional_ChIPSeqCoveragePlot_George_Cross/H3K4me3_tagsequences.cov </unpack>
-
-
-
-<unpack>cat @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov @downloadDir@/Additional_ChIPSeqCo
-veragePlot_George_Cross/H3v_runBoth_tagsonly.cov @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov @
-downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/> @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIP
-SeqCoveragePlot_George_Cross.cov/H3K4me3_tagsequences.cov</unpack>
-<pluginArgs>--dataFile @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIPSeqCoveragePlot_George_Cross.cov</pluginArgs>
-        <description>
-            <![CDATA[
-Mol Biochem Parasitol. 2010 Aug;172(2):141-4. Epub 2010 Mar 27.
-Histone H3 trimethylated at lysine 4 is enriched at probable transcription start sites in Trypanosoma brucei.
-
-Wright JR, Siegel TN, Cross GA.
-
-Laboratory of Molecular Parasitology, The Rockefeller University
-          ]]>
-        </description>
-<publication pmid="20347883"/>
-    </resource>    
+        ]]>
+      </description>
+    </info>
+  </resource>
+    
 </resources>

@@ -232,29 +232,6 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
  
-
-<resource resource="LmajorBACEnds" version="2002-08-13"
-        displayName="L. major BAC Ends"
-        category="Genome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="L.major BAC Ends from Sanger"
-        extDbRlsVer="2002-08-13"
-        extDbRlsDescrip="L.major BAC Ends from Sanger"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/Lmajor/BACLibrary"
-            contact = "Christiane Hertz-Fowler"
-            email = "chf@sanger.ac.uk"
-            institution = "Sanger"
-        />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5664 --sequenceFile @downloadDir@/LmajorBACEnds/BACLibrary --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|BH\\d+\\s(LB\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|BH\\S+\\|(BH\\d+)\\sLB\\S+\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-   BAC End genome sequences for L. major from Seattle Biomedical Research Institute and TIGR </a>.
-          ]]>
-        </description>
-    </resource> 
-
-
   <resource resource="Lmajor_sanger_BACEnds_RSRC" version="2002-08-13"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/lmajor/SangerEndSequences/%RESOURCE_VERSION%/BACLibrary"/>
