@@ -4372,5 +4372,50 @@ Rich&aacute;rd B&aacute;rtfai, Wieteke A.M. Hoeijmakers, Adriana M. Salcedo-Amay
     </resource>
 
 
+<resource resource="Pf_Derisi_HalfLife_RSRC" version="1.0" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="Derisi half life array data."
+        category="Transcriptome"
+        publicUrl=""
+        extDbName="Pf_Derisi_HalfLife_RSRC"
+        extDbRlsVer="1.0"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HalfLife/%RESOURCE_VERSION%/final"
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania"
+        />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+    </resource> 
+
+
+<resource resource="Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC" version="2009-07-01" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC"
+        extDbRlsVer="2009-07-01"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_early_gametocytes_I-II.tab"
+        contact="Edwin Lasonder"
+        email="E.Lasonder@@ncmls.ru.nl"
+        institution="Radboud University Nijmegen Medical Centre"
+        />
+    <pluginArgs>--inputFile @@dataDir@@/lasonder_early_gametocytes_I-II.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'early gametocytes'</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+    <publication pmid="20332084"/>
+    </resource> 
+
+
+
 
  </resourcesPipeline>
