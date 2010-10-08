@@ -442,48 +442,48 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
 
 <!--DbxRefsResource-->
 
-<resource resource="T.cruzi_genome_id_mappings" version="2010-01-19"
-        displayName="T.cruzi mappings of older genome ids to the newer ones"
-        organisms="T.cruzi"
+  <resource resource=""Tcruzi_genome_id_mappings_RSRC" version="2010-01-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/genome_id_mappings/%RESOURCE_VERSION%/Tcruzi_names_mapped.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcruzi_names_mapped.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence" </pluginArgs>
+    <info
+        displayName=""
+        project="TriTrypDB"
+        organisms="@@PfOrganismFullName@@"
         category="ignore"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        extDbName="T.cruzi_genome_id_mappings"
-        extDbRlsVer="2010-01-19"
-        extDbRlsDescrip="T.cruzi_genome_id_mappings|2010-01-19"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/Tcruzi/Tcruzi_names_mapped.txt"
-            contact = "Deborah Pinney"
-            email = "pinney@pcbi.upenn.edu"
-            institution = "University of Pennsylania"
-        />
-        <pluginArgs>--DbRefMappingFile @downloadDir@/T.cruzi_genome_id_mappings/Tcruzi_names_mapped.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-            <i>T.cruzi</i> mappings of older genome ids to the newer ones.
-            ]]>
-        </description>
-    </resource>
+        publicUrl=""
+        contact="Deborah Pinney"
+        email="pinney@@pcbi.upenn.edu"
+        institution="University of Pennsylania">
+      <description>
+        <![CDATA[
+           <i>T.cruzi</i> mappings of older genome ids to the newer ones.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-    <resource resource="FernanAgueroTcSNPDbxRefs" version="2009-11-23"
-        displayName="External DbxRefs to TcSNP database for Tcruzi"
-        category="Genome"
-        extDbName="TcSNP dbxrefs"
-        extDbRlsVer="2009-11-23"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Fernan_Aguero_11-23-09/TcSNP_dbxrefs.txt"
-            contact = "Fernan Aguero"
-            email = "fernan.aguero@gmail.com"
-            institution = "University of San Martin, Argentina"
-        />
+
+  <resource resource="Tcruzi_Aguero_SNP_DBRefs_RSRC" version="2009-11-23"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/Aguero/%RESOURCE_VERSION%/SNP_dbxrefs.txt"/>
         <pluginArgs>--DBRefMappingFile @downloadDir@/FernanAgueroTcSNPDbxRefs/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
-
-        <description>
-            <![CDATA[
-TcSNP is an online resource/database with information on genetic variation(polymorphisms,mutations) for different stocks,strains and isolates of <i>Trypanosoma cruzi</i>, the causative agent of Chagas diseases. 
-         ]]>
-        </description>
-    </resource>
+    <info
+        displayName="External DbxRefs to TcSNP database for Tcruzi"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Fernan Aguero"
+        email="fernan.aguero@gmail.com"
+        institution="University of San Martin, Argentina">
+      <description>
+        <![CDATA[
+TcSNP is an online resource/database with information on genetic variation(polymorphisms,mutations) for different stocks,strains and isolates of <i>Trypanosoma cruzi</i>, the causative agent of Chagas diseases.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--arrayStudies-->
   <resource resource="T.cruzi_Tarleton_Rick_Array_Profiles" version="1.0"
