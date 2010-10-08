@@ -1,29 +1,7 @@
 <resources>
-  <resource resource="Tcruzi_dbEST_RSRC" version="@@Tcruzi_dbEST_VER@@"
-      plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 5693 --outputFile @@dataDir@@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
-    <info
-        displayName="TriTryp dbEST ESTs"
-        project="TriTrypDB"
-        organisms="@@TcruziFullName@@"
-        category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         TriTryp ESTs from dbEST.
-        ]]>
-      </description>
-    </info>
-  </resource>
+<!--ISFResource-->
 
-
-    <resource resource="T.cruziNonEsmeraldo_contigs" version="2009-09-10" 
+   <resource resource="T.cruziNonEsmeraldo_contigs" version="2009-09-10" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="T.cruzi"
         displayName="T.cruzi Non-Esmeraldo contigs"
@@ -166,226 +144,6 @@
 <publication pmid="16020725"/>
      </resource>
 
-    <resource resource="GOAssociations_Tcruzi" version="2009-10-06"
-        displayName="T. cruzi protein GO Associations"        
-        category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.cruzi GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.cruzi GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcruzi.gas"/>
-
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcruzi/Tcruzi.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. cruzi</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-
-
-<resource resource="TcruziBACEnds" version="2008-12-04"
-        displayName="T. cruzi CHORI105 BAC Ends"
-        category="Genome"
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        extDbName="T.cruzi CHORI105 BAC End"
-        extDbRlsVer="2008-12-04"
-        extDbRlsDescrip="T.cruzi CHORI105 BAC Ends"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/BACs/chori105_bac.fasta"
-            contact = "D Brent Weatherly"
-            email = "dbrentw@uga.edu"
-            institution = "University of Georgia"
-        />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 353153 --sequenceFile @downloadDir@/TcruziBACEnds/chori105_bac.fasta --soTermName "clone_insert_end" --regexSourceId "^>gi\\|\\d+\\|gb\\|DX\\S+\\|DX\\d+\\s(CHORI105\\S+)\\s" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
-   <i>T. cruzi</i> (CHORI105) BAC end-sequences were provided by Seattle Biomedical Research Institute and TIGR .
-          ]]>
-        </description>
-    </resource>   
-
-
-<resource resource="Tcruzi_Proteomics_Amastigote" version="2008-12-12"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="T. cruzi Proteomics (Tarleton et. al.)"
-	     category="Proteome"
-                extDbName="Tcruzi Proteomics-Amastigote"
-                extDbRlsVer="2008-12-12"
-                extDbRlsDescrip="Tcruzi Proteomics Amastigote"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_from_Brent/Amastigote.tab"
-            contact = "D Brent Weatherly"
-            email = "dbrentw@uga.edu"
-            institution = "University of Georgia"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Amastigote/Amastigote.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           Protein expression evidence from different stages (Amastigote, Epimastigote, Metacyclic, Trypomastigote) of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA
-          ]]>
-         </description>		
-     </resource> 
-
-<resource resource="Tcruzi_Proteomics_Epimastigote" version="2008-12-12"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="T. cruzi Proteomics-Epimastigote"
-	     category="ignore"
-                extDbName="Tcruzi Proteomics-Epimastigote"
-                extDbRlsVer="2008-12-12"
-                extDbRlsDescrip="Tcruzi Proteomics Epimastigote"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_from_Brent/Epimastigote.tab"
-            contact = "D Brent Weatherly"
-            email = "dbrentw@uga.edu"
-            institution = "University of Georgia"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Epimastigote/Epimastigote.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           T.cruzi Proteomics-Epimastigote
-          ]]>
-         </description>		
-     </resource>  
-
-<resource resource="Tcruzi_Proteomics_Metacyclic" version="2008-12-12"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="T. cruzi Proteomics-Metacyclic"
-	     category="ignore"
-                extDbName="Tcruzi Proteomics-Metacyclic"
-                extDbRlsVer="2008-12-12"
-                extDbRlsDescrip="Tcruzi Proteomics Metacyclic"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_from_Brent/Metacyclic.tab"
-            contact = "D Brent Weatherly"
-            email = "dbrentw@uga.edu"
-            institution = "University of Georgia"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Metacyclic/Metacyclic.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           T.cruzi Proteomics-Metacyclic
-          ]]>
-         </description>		
-     </resource>  
-
-<resource resource="Tcruzi_Proteomics_Trypomastigote" version="2008-12-12"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="T. cruzi Proteomics-Trypomastigote"
-	     category="ignore"
-                extDbName="Tcruzi Proteomics-Trypomastigote"
-                extDbRlsVer="2008-12-12"
-                extDbRlsDescrip="Tcruzi Proteomics Trypomastigote"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_from_Brent/Trypomastigote.tab"
-            contact = "D Brent Weatherly"
-            email = "dbrentw@uga.edu"
-            institution = "University of Georgia"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Trypomastigote/Trypomastigote.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           T.cruzi Proteomics-Trypomastigote
-          ]]>
-         </description>		
-     </resource>  
-
- <resource resource="Tcruzi_Proteomics_Membrane_Protein" version="2009-07-06"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms of Trypanosoma cruzi (Cordero et. al.)"
-	     category="Proteome"
-                extDbName="Tcruzi Proteomics-Membrane Protein"
-                extDbRlsVer="2009-07-06"
-                extDbRlsDescrip="Tcruzi Proteomics-Membrane Protein"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_Membrane_Protein_proteomics/working_dir/Epimastigote_LTQXL.tab"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Membrane_Protein/Epimastigote_LTQXL.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms of <i>T. cruzi</i> (<a href="http://www.ncbi.nlm.nih.gov/pubmed/19374451">Cordero et. al.</a>).  Data was provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical Research Center, University of Texas at El Paso, and Jose Franco da Silveira, Departamento de Microbiologia, Imunologia e Parasitologia, Escola Paulista de Medicina, UNIFESP.
-          ]]>
-         </description>	
-<publication pmid="19374451"/>		
-     </resource>  
-
-<resource resource="Tcruzi_Proteomics_Reservosomes_B1TU" version="2008-03-17"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
-	     category="Proteome"
-                extDbName="Tcruzi reservosomes-B1 fraction digested with trypsin"
-                extDbRlsVer="2008-03-17"
-                extDbRlsDescrip="Subcellular proteomics of Trypanosoma cruzi reservosomes-B1 fraction digested with trypsin"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_Reservosomes_SubCellular_proteomics/working_dir/B1TU_NCBI20080317.tab"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Reservosomes_B1TU/B1TU_NCBI20080317.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical
-Research Center, University of Texas at El Paso, and Narcisa Cunha-e-Silva,
-Laboratório de Ultraestrutura Celular Hertha Meyer, Instituto de Biofísica
-Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
-          ]]>
-         </description>	
-      <publication pmid="19288526"/>		
-     </resource> 
-
-<resource resource="Tcruzi_Proteomics_Reservosomes_B1TG" version="2008-03-17"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
-	     category="ignore"
-                extDbName="Tcruzi reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C"
-                extDbRlsVer="2008-03-17"
-                extDbRlsDescrip="Subcellular proteomics of Trypanosoma cruzi reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_Reservosomes_SubCellular_proteomics/working_dir/B1TG_NCBI20080317.tab"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Reservosomes_B1TG/B1TG_NCBI20080317.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Narcisa L. Cunha-e-Silva, Av. Carlos Chagas Filho 373, bloco G subsolo, Cidade Universitária, Ilha do Fundão, Rio de Janeiro, Brasil.
-          ]]>
-         </description>	
-      <publication pmid="19288526"/>		
-     </resource> 
-
-
-<resource resource="Tcruzi_Proteomics_Reservosomes_B1MTU" version="2008-03-17"
-                plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-	     displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
-	     category="ignore"
-                extDbName="Tcruzi reservosomes-B1M fraction digested with trypsin"
-                extDbRlsVer="2008-03-17"
-                extDbRlsDescrip="Subcellular proteomics of Trypanosoma cruzi reservosomes-B1MTU fraction digested with trypsin"
-		dbCommit="@dbcommit@">	
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/proteomics/Tcruzi_Reservosomes_SubCellular_proteomics/working_dir/B1MTU_NCBI20080317.tab"
-            contact = "Omar Harb"
-            email = "oharb@pcbi.upenn.edu"
-            institution = "University of Pennsylvania"
-         />
-            <pluginArgs>--inputFile @downloadDir@/Tcruzi_Proteomics_Reservosomes_B1MTU/B1MTU_NCBI20080317.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'T.cruzi contigs and annotations|2008-11-20'</pluginArgs>
-         <description>
-            <![CDATA[
-           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Narcisa L. Cunha-e-Silva, Av. Carlos Chagas Filho 373, bloco G subsolo, Cidade Universitária, Ilha do Fundão, Rio de Janeiro, Brasil.
-          ]]>
-         </description>	
-      <publication pmid="19288526"/>		
-     </resource>
-
-
     <resource resource="T.cruzi_Unassigned_Contigs" version="2010-01-15" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="T.cruzi"
@@ -405,6 +163,284 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
         </description>
 <publication pmid="16020725"/>
     </resource>
+
+    <resource resource="TcruziEsmeraldo_scaffolds" version="6.0" 
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        organisms="T.cruzi Esmeraldo"
+        displayName="T.cruzi Esmeraldo scaffolds"
+        category="Genome"
+        extDbName="T.cruzi Esmeraldo scaffolds from WUSTL"
+        extDbRlsVer="6.0"
+        extDbRlsDescrip="T.cruzi Esmeraldo scaffolds from WUSTL|6.0"
+        dbCommit="@dbcommit@">
+        <manualGet
+           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi_esmeraldo/Trypanosoma_cruzi-6.0_100506/T_cruzi.scf.fasta"/>
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziEsmeraldo_scaffolds/T_cruzi.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[ 
+                 Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
+          ]]>      
+        </description>  
+    </resource>
+
+    <resource resource="GOAssociations_Tcruzi" version="2009-10-06"
+        displayName="T. cruzi protein GO Associations"        
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
+        extDbName="T.cruzi GO Associations from GeneDB"
+        extDbRlsVer="2009-10-06"
+        extDbRlsDescrip="T.cruzi GO Associations from GeneDB|2009-10-06"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcruzi.gas"/>
+
+
+        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcruzi/Tcruzi.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
+        <description>
+          <![CDATA[
+          <i>T. cruzi</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
+          ]]>
+        </description>
+    </resource>
+
+<!--ESTResource-->
+  <resource resource="Tcruzi_dbEST_RSRC" version="@@Tcruzi_dbEST_VER@@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5693 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
+    <info
+        displayName="TriTryp dbEST ESTs"
+        project="TriTrypDB"
+        organisms="@@TcruziFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         TriTryp ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<!--MiscResource-->
+
+  <resource resource="Tcruzi_BACEnds_RSRC" version="2008-12-04"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/BacEndSequences/%RESOURCE_VERSION%/chori105_bac.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId 353153 --sequenceFile @@dataDir@@/chori105_bac.fasta --soTermName "clone_insert_end"   --regexSourceId "^>gi\\|\\d+\\|gb\\|DX\\S+\\|DX\\d+\\s(CHORI105\\S+)\\s" -tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="T.cruzi CHORI105 BAC Ends"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="D Brent Weatherly"
+        email="dbrentw@uga.edu"
+        institution="University of Georgia">
+      <description>
+        <![CDATA[
+   <i>T. cruzi</i> (CHORI105) BAC end-sequences were provided by Seattle Biomedical Research Institute and TIGR.
+        ]]>
+      </description>
+    </info>
+  </resource>  
+
+<!--Proteome-->
+
+  <resource resource="Tcruzi_Proteomics_Brent_Amastigote" version="2008-12-12"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Amastigote.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Amastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
+    <info
+        displayName="T. cruzi Proteomics (Tarleton et. al.)"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="D Brent Weatherly"
+        email="dbrentw@uga.edu"
+        institution="University of Georgia">
+      <description>
+        <![CDATA[
+           Protein expression evidence from different stages (Amastigote, Epimastigote, Metacyclic, Trypomastigote) of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Brent_Epimastigote" version="2008-12-12"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Epimastigote.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Epimastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Epimastigote'</pluginArgs>
+    <info
+        displayName=""
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="D Brent Weatherly"
+        email="dbrentw@uga.edu"
+        institution="University of Georgia">
+      <description>
+        <![CDATA[
+           Protein expression evidence from different stages (Amastigote, Epimastigote, Metacyclic, Trypomastigote) of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Brent_Metacyclic" version="2008-12-12"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Metacyclic.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Metacyclic.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Metacyclic'</pluginArgs>
+    <info
+        displayName=""
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="D Brent Weatherly"
+        email="dbrentw@uga.edu"
+        institution="University of Georgia">
+      <description>
+        <![CDATA[
+           Protein expression evidence from different stages (Amastigote, Epimastigote, Metacyclic, Trypomastigote) of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Brent_Trypomastigote" version="2008-12-12"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Trypomastigote.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Trypomastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Trypomastigote'</pluginArgs>
+    <info
+        displayName=""
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="D Brent Weatherly"
+        email="dbrentw@uga.edu"
+        institution="University of Georgia">
+      <description>
+        <![CDATA[
+           Protein expression evidence from different stages (Amastigote, Epimastigote, Metacyclic, Trypomastigote) of <i>T. cruzi</i> provided by <a href="http://paige.cb.uga.edu/">Rick Tarleton's group</a> at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+   <resource resource="Tcruzi_Proteomics_Membrane_Protein" version="2009-07-06"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Proteomics_Membrane/%RESOURCE_VERSION%/Epimastigote_LTQXL.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Epimastigote_LTQXL.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms of Trypanosoma cruzi (Cordero et. al.)"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+           Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms of <i>T. cruzi</i> (<a href="http://www.ncbi.nlm.nih.gov/pubmed/19374451">Cordero et. al.</a>).  Data was provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical Research Center, University of Texas at El Paso, and Jose Franco da Silveira, Departamento de Microbiologia, Imunologia e Parasitologia, Escola Paulista de Medicina, UNIFESP.
+        ]]>
+      </description>
+<publication pmid="19374451"/>	
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TU" version="2008-03-17"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1TU_NCBI20080317.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/B1TU_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical
+Research Center, University of Texas at El Paso, and Narcisa Cunha-e-Silva,
+Laboratório de Ultraestrutura Celular Hertha Meyer, Instituto de Biofísica
+Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
+        ]]>
+      </description>
+     <publication pmid="19288526"/>
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TG" version="2008-03-17"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1TG_NCBI20080317.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/B1TG_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical
+Research Center, University of Texas at El Paso, and Narcisa Cunha-e-Silva,
+Laboratório de Ultraestrutura Celular Hertha Meyer, Instituto de Biofísica
+Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
+        ]]>
+      </description>
+     <publication pmid="19288526"/>
+    </info>
+  </resource>
+
+
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1MTU" version="2008-03-17"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1MTU_NCBI20080317.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/B1MTU_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+           Subcellular proteomics of <i>T. cruzi</i> reservosomes provided by Igor C. Almeida, Department of Biological Sciences, The Border Biomedical
+Research Center, University of Texas at El Paso, and Narcisa Cunha-e-Silva,
+Laboratório de Ultraestrutura Celular Hertha Meyer, Instituto de Biofísica
+Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
+        ]]>
+      </description>
+     <publication pmid="19288526"/>
+    </info>
+  </resource>
+
+<!--DbxRefsResource-->
 
 <resource resource="T.cruzi_genome_id_mappings" version="2010-01-19"
         displayName="T.cruzi mappings of older genome ids to the newer ones"
@@ -428,6 +464,28 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
         </description>
     </resource>
 
+    <resource resource="FernanAgueroTcSNPDbxRefs" version="2009-11-23"
+        displayName="External DbxRefs to TcSNP database for Tcruzi"
+        category="Genome"
+        extDbName="TcSNP dbxrefs"
+        extDbRlsVer="2009-11-23"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Fernan_Aguero_11-23-09/TcSNP_dbxrefs.txt"
+            contact = "Fernan Aguero"
+            email = "fernan.aguero@gmail.com"
+            institution = "University of San Martin, Argentina"
+        />
+        <pluginArgs>--DBRefMappingFile @downloadDir@/FernanAgueroTcSNPDbxRefs/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
+
+        <description>
+            <![CDATA[
+TcSNP is an online resource/database with information on genetic variation(polymorphisms,mutations) for different stocks,strains and isolates of <i>Trypanosoma cruzi</i>, the causative agent of Chagas diseases. 
+         ]]>
+        </description>
+    </resource>
+
+<!--arrayStudies-->
   <resource resource="T.cruzi_Tarleton_Rick_Array_Profiles" version="1.0"
             displayName="T.cruzi Tarleton Rick Array Profiles"
             category="Transcriptome"
@@ -473,47 +531,5 @@ Data provided by Rick Tarleton. Contact: tarleton@cb.uga.edu
     </description>
 <publication pmid="19664227"/>
      </resource>
-
-
-    <resource resource="FernanAgueroTcSNPDbxRefs" version="2009-11-23"
-        displayName="External DbxRefs to TcSNP database for Tcruzi"
-        category="Genome"
-        extDbName="TcSNP dbxrefs"
-        extDbRlsVer="2009-11-23"
-        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Fernan_Aguero_11-23-09/TcSNP_dbxrefs.txt"
-            contact = "Fernan Aguero"
-            email = "fernan.aguero@gmail.com"
-            institution = "University of San Martin, Argentina"
-        />
-        <pluginArgs>--DBRefMappingFile @downloadDir@/FernanAgueroTcSNPDbxRefs/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
-
-        <description>
-            <![CDATA[
-TcSNP is an online resource/database with information on genetic variation(polymorphisms,mutations) for different stocks,strains and isolates of <i>Trypanosoma cruzi</i>, the causative agent of Chagas diseases. 
-         ]]>
-        </description>
-    </resource>
-
-    <resource resource="TcruziEsmeraldo_scaffolds" version="6.0" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.cruzi Esmeraldo"
-        displayName="T.cruzi Esmeraldo scaffolds"
-        category="Genome"
-        extDbName="T.cruzi Esmeraldo scaffolds from WUSTL"
-        extDbRlsVer="6.0"
-        extDbRlsDescrip="T.cruzi Esmeraldo scaffolds from WUSTL|6.0"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi_esmeraldo/Trypanosoma_cruzi-6.0_100506/T_cruzi.scf.fasta"/>
-
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziEsmeraldo_scaffolds/T_cruzi.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
-          ]]>      
-        </description>  
-    </resource>
 
 </resources>
