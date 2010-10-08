@@ -5997,4 +5997,26 @@ sub getDbHandle {
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.SnpCombined">
+    <externalDependency name="dots.SeqVariation"/>
+    <internalDependency name="apidb.SnpAttributes"/>
+    <sql>
+      <![CDATA[
+       create table apidb.SnpCombined&1
+              (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product,
+               constraint SeqVar&1_pk primary key (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product))
+       nologging
+       as
+       select sa.na_sequence_id, sa.dataset, sa.start_min,
+              substr(var.strain, 1, 20) as strain, sa.na_feature_id,
+              substr(var.allele, 1, 40) as allele,
+              substr(var.phenotype, 1, 20) as phenotype, nvl(substr(var.product, 1, 20), ' ') as product
+       FROM apidb.SnpAttributes sa,
+            dots.SeqVariation var
+       WHERE var.parent_id = sa.na_feature_id
+         and sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
+      ]]>
+    </sql>
+  </tuningTable>
+
 </tuningConfig>
