@@ -594,5 +594,37 @@ Digital Gene Expression tags (DGE) was applied to <i>T. brucei gambiense</i>. Pu
       </description>
     </info>
   </resource>
-    
+
+
+  <resource resource="SageTagFreqs_RSRC" version="@@SageTagArrayDesign_VER@@"
+      plugin="GUS::Community::Plugin::LoadSageResults">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/SageTagArrayDesign/%RESOURCE_VERSION%/freq/freqs.tsv"/>
+    <pluginArgs>--contact @@TriTrypSageTags.Contact@@ --arrayDesignName 'T.brucei gambiense SAGE Tags' --arrayDesignVersion '1' --studyName 'Transcriptome analysis of two life stages of Trypanosoma brucei gambiense' --studyDescription '' --freqFile @@dataDir@@/freqs.tsv</pluginArgs>
+    <info
+        displayName="T. brucei gambiense Experimental DGE tags Frequencies"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl=""
+            contact = "Annette MacLeod"
+            email = "gvwa08@udcf.glf.ac.uk"
+            institution = "Wellcome Trust Center for Molecular Parasitology">
+      <description>
+        <![CDATA[
+Frequencies of tags that were observed in studies using RNA from <i>T. brucei gambiense</i>.  <br/><br/> 
+    The digital gene expression (DGE) tags represent a 21 bp tag usually from the first NlaIII restriction site upstream of the poly A tail on mRNA transcript. A detailed description of the method and experiment is available in Veitch <i>et al</i> ( Veitch NJ, Johnson PCD, Trivedi U, Terry S, Wildridge D and MacLeod A. Digital gene expression analysis of two life-cycle stages of the human-infective parasite, Trypanosoma brucei gambiense reveals differentially expressed clusters of co-regulated genes. BMC Genomics, 2010, 11:124-137). DGE tags were created from three procyclic-form  and three bloodstream-form <i>Trypanosoma brucei gambiense STIB386</i> in vitro cultures. The 21bp tags have been aligned to the <i>T.b.brucei 927</i> and <i>T.b.gambiense</i> Dal genome databases, allowing for up to a 2 bp  mismatch. Tags that only align once to the genome are represented, so tags that are not unique are not present. The differential expression of bloodstream-form versus procyclic-form <i>T.b.gambiense</i> DGE tags is available to view for each tag.
+
+<br/>
+<br/>
+Publication is available from the PubMed <a href="http://www.ncbi.nlm.nih.gov/pubmed/20175885">http://www.ncbi.nlm.nih.gov/pubmed/20175885</a>
+  <br/>
+  <br/>
+
+<a href="http://www.ncbi.nlm.nih.gov/pubmed/20175885">Digital gene expression analysis of two life cycle stages of the human-infective parasite, Trypanosoma brucei gambiense reveals differentially expressed clusters of co-regulated genes. BMC Genomics. 2010 Feb 22;11:124.</a>
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+  
 </resources>
