@@ -1,0 +1,24 @@
+<resources>
+
+  <resource resource="TgVEG_RNASeq_Tachyzoite_Reid_RSRC" version="@@TgVEG_RNASeq_Tachyzoite_Reid_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="ToxoDB/tgondiiVEG/rnaSeq/tachy/Reid/%RESOURCE_VERSION%"/>
+    <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Tgondii VEG tachyzoite RNA-Seqs from Adam Reid"
+        project="ToxoDB"
+        organisms="@@TgOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Adam Reid"
+        email="ap2@sanger.ac.uk"
+        institution="Sanger">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>
