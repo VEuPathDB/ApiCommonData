@@ -1,0 +1,24 @@
+<resources>
+
+  <resource resource="Nc_RNASeq_Tachyzoite_Reid_RSRC" version="@@Nc_RNASeq_Tachyzoite_Reid_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="ToxoDB/Ncaninum/rnaSeq/tachy/Reid/%RESOURCE_VERSION%"/>
+    <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Ncaninum tachyzoite RNA-Seqs from Adam Reid"
+        project="ToxoDB"
+        organisms="@@NcOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Adam Reid"
+        email="ap2@sanger.ac.uk"
+        institution="Sanger">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>
