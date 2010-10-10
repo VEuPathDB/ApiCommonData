@@ -1,0 +1,99 @@
+<resources>
+<!-- Saccharomyces cerevisiae S288C ISFResource-->
+  <resource
+        resource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
+        version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
+        <manualGet 
+              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/chromosome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+        <!-- Unnecessary 
+        <unpack>
+              mkdir @@dataDir@@/fasta
+        </unpack>
+        -->
+        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
+        <unpack>
+             makeCustomFastaAndGffFromGff3
+                  --input_dir @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
+                  --inputFileExt gff3
+                  --output_fasta @@dataDir@@/fasta/saccharomyces_cerevisiae_s288c.unpacked.fasta
+                  --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+        </unpack>
+
+        <pluginArgs>
+             --externalDatabaseName %RESOURCE_NAME%
+             --ncbiTaxId 235443 
+             --externalDatabaseVersion %RESOURCE_VERSION%
+             --sequenceFile @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
+             --SOTermName 'chromosome' 
+             --regexSourceId  '>(\S+)'
+             --tableName "DoTS::ExternalNASequence"
+             --regexChromosome '\d+\.(\d+)'
+         </pluginArgs>
+
+         <info
+             displayName="Saccharomyces cerevisiae (S288C) chromosomal sequence and annotation"
+             project="FungiDB"
+             organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+             category="Genome"
+             publicUrl="http://www.yeastgenome.org/"
+             contact=""
+             email=""
+             institution="SGD">
+             <description>
+                 <![CDATA[
+                    Sequence data from Saccharomyces Genome Database
+             ]]>
+             </description>
+         </info>
+  </resource>
+
+  <resource
+         resource="saccharomyces_cerevisiae_s288c_annotations_RSRC"
+         version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@" 
+         parentResource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/chromosome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288.unpacked.gff3" />
+ 
+         <unpack>
+               preprocessGFF3
+                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+                   --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
+         </unpack>
+
+         <pluginArgs>
+                --extDbName      %PARENT_RESOURCE_NAME%
+                --extDbRlsVer    %PARENT_RESOURCE_VERSION%
+                --mapFile        @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
+                --inputFileExtension "gff3"
+                --fileFormat     gff3
+                --soCvsVersion   @@SO_VER@@
+                --defaultOrganism "Saccharomyces cerevisiae (S288C)"
+                --seqSoTerm "chromosome"
+                --validationLog     @@dataDir@@/validation.log
+                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                --seqIdColumn source_id
+                --naSequenceSubclass ExternalNASequence
+          </pluginArgs>
+
+          <info
+             displayName="Saccharomyces cerevisiae (S288C) chromosomal sequence and annotation"
+             project="FungiDB"
+             organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+             category="Genome"
+             publicUrl="http://www.yeastgenome.org/"
+             contact=""
+             email=""
+             institution="Broad and Duke">
+             <description>
+               <![CDATA[
+                    Annotations from Saccharomyces Genome Database
+                ]]>
+            </description>
+          </info>
+     </resource>
+
+
+</resources>
