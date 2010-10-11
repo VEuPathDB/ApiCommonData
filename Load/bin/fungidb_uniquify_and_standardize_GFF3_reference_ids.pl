@@ -10,8 +10,9 @@ GetOptions('input=s'  => \$input,
 	   'prefix=s' => \$prefix
 	   );
 
-
+unless ($input && $output && $prefix) {
 die <<END;
+
 Uniquify chromosomes/scaffolds by appending a short prefix
 corresponding to the Genus species + strain of the organism
 to the original IDs.
@@ -34,40 +35,53 @@ More generally:
   supercont_1   -> supercontig1
   scaffold_1    -> scaffold1
 
-Usage: $0 --input [gff_file] --output [gff_file] --prefix [prefix]" unless ($input && $output && $prefix);
+Usage: $0 --input [gff_file] --output [gff_file] --prefix [prefix]"
 END
 ;
-
+}
 
 my $out = new IO::File;
 $out->open("> $output") or die "Couldn't open the output file: $output $!";
 
 my $in = new IO::File;
-if ($in->open("$input) {
-    while (<$fh>) {
-	my ($ref,@rest) = split("\t");
-	
-	# Turn Chromosome into Chr
-	$ref =~ s/Chromosome/Chr/;
+if ($in->open($input)) {
+    while (<$in>) {
+        next if $_ =~ /^#/;
 
-        # Supercontig/contig
-        lc($ref) if $ref =~ /contig/i;
-        
+	my ($id,$source,$type,$start,$end,$score,$strand,$phase,$attributes) = split("\t");
+	
+        # Save the original id for later post-processing.
+        my $original_id = $id;
+
+	# Turn Chromosome into Chr
+	$id =~ s/Chromosome/Chr/;
+
+        # Supercontig/contig all lowercase
+        $id = lc($id) if $id =~ /contig/i;
+
+        # Chr are ucfirst
+        $id = ucfirst($id) if $id =~ /chr/;
+
         # make sure supercontig is spelled out
-        $ref =~ s/supercont([_|\d])/supercontig$1/;
+        $id =~ s/supercont([_|\d])/supercontig$1/;
        
         # Scaffolds becomes SC; a stajichism.
-        $ref =~ s/scaffold/SC/;
+        $id =~ s/scaffold/SC/;
 	
 	# Strip underscores
-	$ref =~ s/_//;
+	$id =~ s/_//;
 
         # Finally, insert an underscore between the feature
         # type and the feature ID.
-        $ref =~ s/([Chr|contig|supercontig])(.*)/$1_$2/;
+        $id =~ s/([Chr|contig|supercontig]*)(.*)/$1_$2/;
 	
-	# Append the Prefix
-	print $out join("\t","$prefix:$ref",@rest);
+	# Append the prefix
+        my $new_id = "$prefix:$id";
+
+        $attributes =~ s/$original_id/$new_id/g;
+        
+        # Replace the old ref with the new universally.
+        print $out join("\t",$new_id,$source,$type,$start,$end,$score,$strand,$phase,$attributes);
   }
 }
 $in->close;
