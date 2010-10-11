@@ -21,8 +21,8 @@ eg, for Saccharomyces:
 
 More generally:
    Chromosomes:
-   Chr1 -> Scer_s288c:Chr1
-   Chromosome1 -> Scer_s288c:Chr1
+   Chr1 -> Scer_s288c:Chr_1
+   Chromosome1 -> Scer_s288c:Chr_1
 
   Contigs:
   contig1.1  -> contig1.1
@@ -54,13 +54,17 @@ if ($in->open("$input) {
         lc($ref) if $ref =~ /contig/i;
         
         # make sure supercontig is spelled out
-        $ref =~ s/supercont_/supercontig_/;
+        $ref =~ s/supercont([_|\d])/supercontig$1/;
        
         # Scaffolds becomes SC; a stajichism.
         $ref =~ s/scaffold/SC/;
 	
 	# Strip underscores
 	$ref =~ s/_//;
+
+        # Finally, insert an underscore between the feature
+        # type and the feature ID.
+        $ref =~ s/([Chr|contig|supercontig])(.*)/$1_$2/;
 	
 	# Append the Prefix
 	print $out join("\t","$prefix:$ref",@rest);
