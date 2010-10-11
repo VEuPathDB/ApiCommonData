@@ -1,5 +1,5 @@
+<!-- Saccharomyces cerevisiae (S288C) ISF Resource -->
 <resources>
-<!-- Saccharomyces cerevisiae S288C ISFResource-->
   <resource
         resource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
         version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
@@ -56,9 +56,23 @@
 
          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/chromosome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288.unpacked.gff3" />
  
+         <!-- Standardize scaffold IDs by prefixing -->
          <unpack>
-               preprocessGFF3
-                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+               fungidb_uniquify_and_standardize_GFF3_reference_ids.pl
+                   --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+                   --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                   --prefix Scer_s288c
+         </unpack>
+
+
+         <!-- Assume that S. cerevisiae transcript IDs are already unique -->
+
+
+         <!-- Run the standard ISF preprocess step -->
+         <unpack>
+               preprocessGFF3 
+<!--                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3 -->
+                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
                    --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
          </unpack>
 
