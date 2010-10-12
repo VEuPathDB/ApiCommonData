@@ -3,7 +3,15 @@
   <resource resource="TgME49_RNASeq_Tachyzoite_Reid_RSRC" version="@@TgME49_RNASeq_Tachyzoite_Reid_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="ToxoDB/tgondiiVEG/rnaSeq/tachy/Reid/%RESOURCE_VERSION%"/>
-    <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/tgME49config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/3152_3_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3152_3_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3152_5_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3152_5_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/4137_7_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/4137_7_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/4137_8_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/4137_8_2.fastq"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Tgondii VEG tachyzoite RNA-Seqs from Adam Reid"
@@ -14,6 +22,26 @@
         contact="Adam Reid"
         email="ap2@sanger.ac.uk"
         institution="Sanger">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<resource resource="DoNothing_RSRC" version="@@DoNothing_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="ToxoDB/dummy"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="ToxoDB"
+        organisms=""
+        category=""
+        publicUrl=""
+        contact="Adam Reid"
+        email=""
+        institution="">
       <description>
         <![CDATA[
         ]]>
