@@ -2,8 +2,16 @@
 
   <resource resource="Nc_RNASeq_Tachyzoite_Reid_RSRC" version="@@Nc_RNASeq_Tachyzoite_Reid_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="ToxoDB/Ncaninum/rnaSeq/tachy/Reid/%RESOURCE_VERSION%"/>
+    <manualGet fileOrDir="ToxoDB/ncaninum/rnaSeq/tachy/Reid/%RESOURCE_VERSION%"/> 
     <getAndUnpackOutput file="@@dataDir@@/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/3250_5_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3250_5_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3250_6_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3250_6_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3563_2_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3563_2_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3563_3_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/3563_3_2.fastq"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Ncaninum tachyzoite RNA-Seqs from Adam Reid"
@@ -14,6 +22,26 @@
         contact="Adam Reid"
         email="ap2@sanger.ac.uk"
         institution="Sanger">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<resource resource="DoNothing_RSRC" version="@@DoNothing_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="ToxoDB/dummy"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="ToxoDB"
+        organisms=""
+        category=""
+        publicUrl=""
+        contact="Adam Reid"
+        email=""
+        institution="">
       <description>
         <![CDATA[
         ]]>
