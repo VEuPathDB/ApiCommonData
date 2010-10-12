@@ -4,8 +4,12 @@ package ApiCommonData::Load::Plugin::InsertOrganismProjectFeature;
 use strict;
 use warnings;
 
+use lib "$ENV{GUS_HOME}/lib/perl";
+
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::OrganismProject;
+
+
 
 
 # ----------------------------------------------------------
