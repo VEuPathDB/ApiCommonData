@@ -2,6 +2,7 @@
 
 
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Bio::SequenceUtils;
 use Getopt::Long;
 
