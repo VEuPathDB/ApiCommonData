@@ -55,8 +55,6 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
         extDbRlsDescrip="L.infantum GO Associations from GeneDB|2009-10-06"
         dbCommit="@dbcommit@">
         <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Linfantum.gas"/>
-
-
         <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Linfantum/Linfantum.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
         <description>
           <![CDATA[
@@ -93,7 +91,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_PTM_glycosylation" version="2008-12-15"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM_glycosylation/%RESOURCE_VERSION%/pro200701043_glycosylation.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM/%RESOURCE_VERSION%/pro200701043_glycosylation.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/pro200701043_glycosylation.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Post-translational modifications, Rosenzweig et. al.)"
@@ -115,7 +113,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
     <resource resource="Linfantum_Proteomics_PTM_acetylation" version="2008-12-15"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM_acetylation/%RESOURCE_VERSION%/pro200701043_acetylation.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM/%RESOURCE_VERSION%/pro200701043_acetylation.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/pro200701043_acetylation.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Post-translational modifications, Rosenzweig et. al.)"
@@ -137,7 +135,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_PTM_methylation" version="2008-12-15"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM_methylation/%RESOURCE_VERSION%/pro200701043_methylation.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM/%RESOURCE_VERSION%/pro200701043_methylation.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/pro200701043_methylation.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Post-translational modifications, Rosenzweig et. al.)"
@@ -159,7 +157,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_PTM_phosphorylation" version="2008-12-15"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM_phosphorylation/%RESOURCE_VERSION%/pro200701043_phosphorylation.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Zilberstein_PTM/%RESOURCE_VERSION%/pro200701043_phosphorylation.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/pro200701043_phosphorylation.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Post-translational modifications, Rosenzweig et. al.)"
@@ -182,7 +180,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_SDS_Amastigote" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Spectrum_Report_for_OuelletteM_Ld1_ama_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Spectrum_Report_for_OuelletteM_Ld1_ama_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Spectrum_Report_for_OuelletteM_Ld1_ama_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -203,7 +201,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_2DGel_6_11_Amastigote" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Ama6-11_2DGel_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Ama6-11_2DGel_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Ama6-11_2DGel_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -224,7 +222,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_2DGel_6_11_Promastigote" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Pro6-11_2DGel_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Pro6-11_2DGel_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Pro6-11_2DGel_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Promastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -245,7 +243,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_2DGel_6_9_Amastigote" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Ama6-9_2DGel_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Ama6-9_2DGel_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Ama6-9_2DGel_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -266,7 +264,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_2DGel_6_9_Promastigote" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Pro6-9_2DGel_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Pro6-9_2DGel_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Pro6-9_2DGel_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Promastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -287,7 +285,7 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_Proteomics_Brotherton_Amastigote_Secreted_Protein" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Amastigote_Secreted_proteins.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Amastigote_Secreted_proteins.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Amastigote_Secreted_proteins.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -308,7 +306,7 @@ Linfantum Proteomics Amastigote Secreted Protein
 
   <resource resource="Linfantum_Proteomics_Brotherton_Promastigote_Secreted_Protein" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Promastigote_Secreted_proteins_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Promastigote_Secreted_proteins_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Promastigote_Secreted_proteins_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Promastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -329,7 +327,7 @@ Linfantum Proteomics Promastigote Secreted Protein
 
   <resource resource="Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_non_stressed" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Promastigote_non-stressed_pH_and_T_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Promastigote_non-stressed_pH_and_T_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Promastigote_non-stressed_pH_and_T_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Promastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -350,7 +348,7 @@ Linfantum Proteomics Promastigote temperature and pH non-stressed
 
   <resource resource="Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_stressed" version="2008-12-19"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/Promastigote_stressed_pH_and_T_Lin.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/Brotherton/%RESOURCE_VERSION%/final/Promastigote_stressed_pH_and_T_Lin.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Promastigote_stressed_pH_and_T_Lin.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage 'Promastigote'</pluginArgs>
     <info
         displayName="L. infantum Proteomics (Ouellette et. al.)"
@@ -372,7 +370,7 @@ Linfantum Proteomics Promastigote temperature and pH stressed
 
   <resource resource="Linfantum_Proteomics_OuelletteM_Metacyclic" version="2009-07-17"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/OuelletteM/%RESOURCE_VERSION%/Spectrum_Report_OuelletteM_Linfantum.tab"/>
+    <manualGet fileOrDir="TriTrypDB/linfantum/massSpec/OuelletteM/%RESOURCE_VERSION%/final/Spectrum_Report_OuelletteM_Linfantum.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Spectrum_Report_OuelletteM_Linfantum.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Linfantum_chromosomes_RSRC|@@Linfantum_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="Linfantum Proteomics data from Marc Ouellette"
@@ -391,7 +389,8 @@ Linfantum Proteomics data from Marc Ouellette (pH5-6).
     </info>
   </resource>
 
-  <resource resource="Linfantum_array_Myler_RSRC" version="@@Linfantum_array_Affy_Myler_VER@@"
+<!--arrayStudies-->
+  <resource resource="Linfantum_array_Myler_RSRC" version="@@Linfantum_array_Myler_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/linfantum/microarrayPlatform/Myler/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
@@ -403,9 +402,31 @@ Linfantum Proteomics data from Marc Ouellette (pH5-6).
         organisms="@@LinfantumOrganismFullName@@"
         category="ignore"
         publicUrl=""
-        contact=""
-        email=""
-        institution="">
+       contact = "John Brestelli"
+        email = "jbrestel@pcbi.upenn.edu"
+        institution = "University of Pennsylvania">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Linfantum_array_Papadoupou_RSRC" version="@@Linfantum_array_Papadoupou_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/linfantum/microarrayPlatform/Papadoupou_Amastigote/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact="Barbara Papadopoulou"
+        email="barbara.papadopoulou@crchul.ulaval.ca"
+        institution="Infectious Disease Research Center (IDRC) of Laval University">
       <description>
         <![CDATA[
         ]]>
