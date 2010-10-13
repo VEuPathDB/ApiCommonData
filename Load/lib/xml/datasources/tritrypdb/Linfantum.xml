@@ -411,6 +411,26 @@ Linfantum Proteomics data from Marc Ouellette (pH5-6).
     </info>
   </resource>
 
+  <resource resource="Linfantum_Uniprot_Gene_dbxref_RSRC" version="@@Linfantum_Uniprot_Gene_dbxref_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@'</pluginArgs>
+    <info
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--arrayStudies-->
   <resource resource="Linfantum_array_Myler_RSRC" version="@@Linfantum_array_Myler_VER@@"
