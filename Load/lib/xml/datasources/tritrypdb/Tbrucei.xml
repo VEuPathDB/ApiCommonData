@@ -198,7 +198,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 <!--MiscResource-->
   <resource resource="Tbrucei_Genbank_BACEnds_RSRC" version="2008-12-08"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/GenbankEndSequences/%RESOURCE_VERSION%/TbruceiBAC.fasta"/>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dnaSeq/GenbankEndSequences/%RESOURCE_VERSION%/final/TbruceiBAC.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId 185431 --sequenceFile @@dataDir@@/TbruceiBAC.fasta --soTermName "clone_insert_end"  --regexSourceId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|\\w+\\d+\\s(RPCI\\S+)\\s"  --regexSecondaryId "^>gi\\|\\d+\\|gb\\|\\w+\\S+\\|(\\w+\\d+)\\sRPCI\\S+\\s" -tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="T.brucei RPCI93 BAC Ends"
@@ -218,30 +218,9 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   </resource>
 
 
-<resource resource="Sanger_siRNA" version="2008-12-15"
-            plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr"
-            displayName="siRNA - phenotype data"
-            category="Phenotype"
-            dbCommit="@dbcommit@">
-        <manualGet fileOrDir="@manualDelivery@/phenotype_siRNA/Tbrucei_Drug_target_as_of_080201.txt"
-            contact="Christiane Hertz-Fowler"
-            email="chf@sanger.ac.uk"
-            institution="Sanger Institute"
-        />
-      <unpack>parseSangerSiRNA --inFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
-      <pluginArgs>--dataFile @downloadDir@/Sanger_siRNA/Tbrucei_Drug_target_as_of_080201_fixed.txt</pluginArgs>
-      <description>
-         <![CDATA[
-Phenotype data generated from siRNA experiments
-          ]]>
-      </description>
- </resource>
-
-
-  <resource resource="Tbrucei_Sanger_siRNA_RSRC" version="2008-12-15"
+ <resource resource="Tbrucei_Sanger_siRNA_RSRC" version="2008-12-15"
       plugin="ApiCommonData::Load::Plugin::InsertSiRNAWithSqlLdr">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/phenotype_siRNA/%RESOURCE_VERSION%/Tbrucei_Drug_target_as_of_080201.txt"/>
-      <unpack>parseSangerSiRNA --inFile @downloadDir@/Tbrucei_Drug_target_as_of_080201.txt --outFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.txt --rejectFile @downloadDir@/Tbrucei_Drug_target_as_of_080201_fixed.reject</unpack>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/phenotype/siRNA/%RESOURCE_VERSION%/final/Tbrucei_Drug_target_as_of_080201_fixed.txt"/>
     <pluginArgs>--dataFile @@dataDir@@/Tbrucei_Drug_target_as_of_080201_fixed.txt </pluginArgs>
     <info
         displayName="T.brucei siRNA - phenotype data"
@@ -264,7 +243,7 @@ Phenotype data generated from siRNA experiments.
 
   <resource resource="Tbrucei_Proteomics_PF" version="2008-12-17"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Proteomics_PF/%RESOURCE_VERSION%/Tbrucei_Proteomics_Procyclic_Form.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Procyclic_Form/%RESOURCE_VERSION%/final/Tbrucei_Proteomics_Procyclic_Form.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Tbrucei_Proteomics_Procyclic_Form.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_chromosomes_RSRC|@@Tbrucei927_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="T. brucei Procyclic Form Proteomics (Panigrahi et. al.)"
@@ -356,65 +335,25 @@ Genes Dev. 2009 May 1;23(9):1063-76. Epub 2009 Apr 15.
 Four histone variants mark the boundaries of polycistronic transcription units in Trypanosoma brucei.
 Siegel TN, Hekstra DR, Kemp LE, Figueiredo LM, Lowell JE, Fenyo D, Wang X, Dewell S, Cross GA.
 Laboratory of Molecular Parasitology, The Rockefeller University
-        ]]>
-      </description>
-    </info>
-    <publication pmid="19369410"/>
-  </resource>
 
-
-<resource resource="Additional_ChIPSeqCoveragePlot_George_Cross" version="2010-03-09" 
-        displayName="ChIP-Seqs from George Cross" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
-        extDbName="ChIP-Seqs from George Cross"
-        extDbRlsVer="2010-03-09"
-        extDbRlsDescrip="load ChIP-Seqs coverage plot from George Cross by sqlldr"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_Chip-seq_3-9-10/working_dir/bowtie/"
- 
-            contact = "Brian Brunk" 
-            email = "brunkb@pcbi.upenn.edu" 
-            institution = "University of Pennsylvania" />
-
-<unpack>generateCoveragePlot.pl --m 14 --sample BDF3-HA --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000 
- --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/BDF3_HA_tagsonly_080723.txt.bt >  @downloadDir@/Addit
-ional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H3v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
---nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3v_runBoth_tagsonly.txt.bt >  @downloadDir@/Additiona
-l_ChIPSeqCoveragePlot_George_Cross/H3v_runBoth_tagsonly.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H4v --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 3000000  
---nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H4v_tagsonly_080920.txt.bt >  @downloadDir@/Additional
-_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov </unpack>
-<unpack>generateCoveragePlot.pl --m 14 --sample H3K4me3 --extDbSpecs 'ChIP-Seqs from George Cross|2010-03-09' --ft bowtie --nu 30000
-00  --nm 5000000 @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/bowtie/H3K4me3_tagsequences.txt.bt >  @downloadDir@/Addit
-ional_ChIPSeqCoveragePlot_George_Cross/H3K4me3_tagsequences.cov </unpack>
-
-
-
-<unpack>cat @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/BDF3_HA_tagsonly_080723.cov @downloadDir@/Additional_ChIPSeqCo
-veragePlot_George_Cross/H3v_runBoth_tagsonly.cov @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/H4v_tagsonly_080920.cov @
-downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/> @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIP
-SeqCoveragePlot_George_Cross.cov/H3K4me3_tagsequences.cov</unpack>
-<pluginArgs>--dataFile @downloadDir@/Additional_ChIPSeqCoveragePlot_George_Cross/Additional_ChIPSeqCoveragePlot_George_Cross.cov</pluginArgs>
-        <description>
-            <![CDATA[
 Mol Biochem Parasitol. 2010 Aug;172(2):141-4. Epub 2010 Mar 27.
 Histone H3 trimethylated at lysine 4 is enriched at probable transcription start sites in Trypanosoma brucei.
 
 Wright JR, Siegel TN, Cross GA.
 
 Laboratory of Molecular Parasitology, The Rockefeller University
-          ]]>
-        </description>
-<publication pmid="20347883"/>
-    </resource>
+        ]]>
+      </description>
+    </info>
+    <publication pmid="19369410"/>
+    <publication pmid="20347883"/>
+  </resource>
 
 <!--Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross_PatchCurated-->
   <resource resource="Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC" version="@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqAlignmentWithSqlLdr">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross_Splice_Leader_And_Poly_A_Sites/%RESOURCE_VERSION%/final/sas_pas_curated.align"/>
-    <pluginArgs>--dataFile @downloadDir@/sas_pas_curated.align --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross_pas_sas/%RESOURCE_VERSION%/final/"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)"
         project="TriTrypDB"
@@ -434,135 +373,173 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
   </resource>
 
 <!--arrayStudies-->
-<resource resource = "Tbrucei_Matthews_differentiation_series" version="1.0"
-            displayName="Expression profiling of T. brucei differentiation series from Keith Matthews"
-            organisms="T. brucei"
-            category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Tbrucei_Matthews_differentiation_series"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Expression profiling of T. brucei differentiation series"
-            dbCommit = "@dbcommit@"
-            publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE17026">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Matthews_Keith/greg_orig"
-                contact="Keith Matthews"
-                email="keith.matthews@ed.ac.uk"
-                institution="School of Biological Sciences&amp; University of Edinburgh" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Matthews_differentiation_series/gene_profiles/ --configFile @downloadDir@/Tbrucei_Matthews_differentiation_series/gene_profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
+
+  <resource resource="Tbrucei_array_GPL8834_RSRC" version="@@Lmajor_array_GPL8834_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayPlatform/GPL8834/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="JCVI PFGRC Trypanosoma brucei 19K v3 array designed primarily based on strain TREU927, full array version"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL8834"
+        contact="Keith Matthews"
+        email="keith.matthews@ed.ac.uk"
+        institution="School of Biological Sciences&amp; University of Edinburgh">
+      <description>
+        <![CDATA[
+JCVI PFGRC Trypanosoma brucei 19K v3 array designed primarily based on strain TREU927, full array version
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei_Matthews_differentiation_series_RSRC" version="@@Tbrucei_Matthews_differentiation_series_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayExpression/Matthews_Keith/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Expression profiling of T. brucei differentiation series from Keith Matthews"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE17026"
+        contact="Keith Matthews"
+        email="keith.matthews@ed.ac.uk"
+        institution="School of Biological Sciences&amp; University of Edinburgh">
+      <description>
+        <![CDATA[
 Data provided by Keith Matthews. Contact: keith.matthews@ed.ac.uk
-          ]]>
-    </description>
+        ]]>
+      </description>
 <publication pmid="19747379"/>
+    </info>
   </resource>
 
 
-<resource resource = "Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles" version="1.0"
-            displayName="Expression profiling of T. brucei five life cycle stages from Parsons lab"
-            organisms="T. brucei"
-            category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Expression profiling of Tbrucei five life cycle stages"
-            dbCommit = "@dbcommit@"
-            publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18049">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Parsons_Marilyn/gene_profiles"
-                contact="Dhileep Sivam"
-                email="Dhileep.sivam@seattlebiomed.org"
-                institution="" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles/gene_profiles/ --configFile @downloadDir@/Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles/gene_profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
-          Data provided by Marilyn Parsons. Contact (Dhileep Sivam): Dhileep.sivam@seattlebiomed.org   
-          ]]>
-    </description>
+  <resource resource="Tbrucei_array_GPL9285_RSRC" version="@@Lmajor_array_GPL9285_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayPlatform/GPL9285/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Trypanosoma brucei Strain 927 Oligonucleotide Tiling Array"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL9285"
+        contact="Dhileep Sivam"
+        email="Dhileep.sivam@seattlebiomed.org"
+        institution="">
+      <description>
+        <![CDATA[
+Trypanosoma brucei Strain 927 Oligonucleotide Tiling Array
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC" version="@@Tbrucei_Parsons_Five_Life_Cycle_Stages_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayExpression/Parsons_Marilyn/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Expression profiling of T. brucei five life cycle stages from Parsons lab"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18049"
+        contact="Dhileep Sivam"
+        email="Dhileep.sivam@seattlebiomed.org"
+        institution="">
+      <description>
+        <![CDATA[
+Data provided by Marilyn Parsons. Contact (Dhileep Sivam): Dhileep.sivam@seattlebiomed.org   
+        ]]>
+      </description>
 <publication pmid="19840382"/>
-  </resource>
-
-<resource resource = "Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Page" version="1.0"
-            displayName="Page analysis of T. brucei five life cycle stages from Parsons lab"
-            organisms="T. brucei"
-            category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Parsons_Marilyn/analysis"
-                contact="Dhileep Sivam"
-                email="Dhileep.sivam@seattlebiomed.org"
-                institution="" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Page/analysis --configFile @downloadDir@/Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Page/analysis/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature' --profileSetName 'Expression profiling of Tbrucei five life cycle stages'</pluginArgs>
-   <description>
-         <![CDATA[
-         Data provided by Marilyn Parsons. Contact (Dhileep Sivam): Dhileep.sivam@seattlebiomed.org   
-          ]]>
-    </description>
-<publication pmid="19840382"/>    
+    </info>
   </resource>
 
 
- <resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion_Page" version="1.0"
-            displayName="Tbrucei Procyclic TbDRBD3 Depletion Array page analysis"
-            organisms="Tbrucei"
-            category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Estevez_Antonio/analysis/"
-            contact="Antonio Estevez"
-            email="aestevez@ipb.csic.es"
-            institution="EuPathDB"
-     />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Page/analysis --configFile @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Page/analysis/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature' --profileSetName 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion'</pluginArgs>
-   <description>
-         <![CDATA[
-Comparison of transcriptome of procyclic trypanosomes depleted of TbDRBD3 to that of uninduced cells using hybridizations of genomic microarrays and PaGE analysis          ]]>
-    </description>
-<publication pmid="18611951"/>          
+  <resource resource="Tbrucei_array_GPL5721_RSRC" version="@@Lmajor_array_GPL5721_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayPlatform/GPL5721/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Brems/Hoheisel/Clayton T. brucei genomic array (DKFZ/ZMBH, Heidelberg)"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL5721"
+        contact="Antonio M Estevez"
+        email="aestevez@ipb.csic.es"
+        institution="CSIC">
+      <description>
+        <![CDATA[
+Brems/Hoheisel/Clayton T. brucei genomic array (DKFZ/ZMBH, Heidelberg)
+        ]]>
+      </description>
+    </info>
   </resource>
 
-<resource resource = "Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles" version="1.0"
-            displayName="Expression profiling of T. brucei Procyclic TbDRBD3 depletion from Antonio M Estevez"
-            organisms="T. brucei"
-            category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Expression profiling of Tbrucei Procyclic TbDRBD3 depletion"
-            dbCommit = "@dbcommit@"
-            publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8734">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Estevez_Antonio/analysis"
-                contact="Antonio M Estevez"
-                email="aestevez@ipb.csic.es"
-                institution="" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles/analysis --configFile @downloadDir@/Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
+  <resource resource="Tbrucei_Procyclic_TbDRBD3_Depletion_RSRC" version="@@Tbrucei_Procyclic_TbDRBD3_Depletion_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayExpression/Estevez_Antonio/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Expression profiling of T. brucei Procyclic TbDRBD3 depletion from Antonio M Estevez"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8734"
+        contact ="Antonio M Estevez"
+        email="aestevez@ipb.csic.es"
+        institution="CSIC">
+      <description>
+        <![CDATA[
 Effect of TbDRBD3 depletion on procyclic T. brucei transcriptome.(GEO record GSE8734)
-          ]]>
-    </description>
-<publication pmid="18611951"/>          
+        ]]>
+      </description>
+<publication pmid="18611951"/>
+    </info>
   </resource>
 
-<resource resource = "Tbrucei_Expression_Profiles_From_Christine_Clayton" version="1.0"
-            displayName="Expression profiling of T. brucei from Christine Clayton"
-            organisms="T. brucei"
-            category="Transcriptome"
-            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName = "Tbrucei_Expression_Profiles_From_Christine_Clayton"
-            extDbRlsVer = "1.0"
-            extDbRlsDescrip = "Tbrucei_Expression_Profiles_From_Christine_Clayton"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Clayton_Christine"
-                contact="Christine Clayton"
-                email="cclayton@zmbh.uni-heidelberg.de"
-                institution="" />
-<pluginArgs>--inputDir @downloadDir@/Tbrucei_Expression_Profiles_From_Christine_Clayton/Clayton_Christine --configFile @downloadDir@/Tbrucei_Expression_Profiles_From_Christine_Clayton/Clayton_Christine/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-   <description>
-         <![CDATA[
+  <resource resource="Tbrucei_Christine_Clayton_RSRC" version="@@Tbrucei_Christine_Clayton_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayExpression/Clayton_Christine/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Expression profiling of T. brucei from Christine Clayton"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Christine Clayton"
+        email="cclayton@zmbh.uni-heidelberg.de"
+        institution="">
+      <description>
+        <![CDATA[
 Data provided by Christine Clayton. Contact: cclayton@zmbh.uni-heidelberg.de
-          ]]>
-    </description>
-<publication pmid="19857263"/> 
+        ]]>
+      </description>
+<publication pmid="19857263"/>
+    </info>
   </resource>
 
  <!--TbruceiSpecific-->
@@ -570,7 +547,7 @@ Data provided by Christine Clayton. Contact: cclayton@zmbh.uni-heidelberg.de
 
   <resource resource="SageTagArrayDesign_RSRC" version="@@SageTagArrayDesign_VER@@"
       plugin="GUS::Supported::Plugin::LoadArrayDesign">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/SageTagArrayDesign/%RESOURCE_VERSION%/array"/>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/DGETag/%RESOURCE_VERSION%/final/array"/>
     <unpack>preLoadArrayDesign --category TechnologyType --value @@TriTrypSageTags.OntologyEntryValue@@ --manufacturer @@TriTrypSageTags.Contact@@</unpack>
     <unpack>awk -F:::: 'x++; x==1{print "tag\n" $1}' @@dataDir@@/array/distinct_sage_tags.txt > @@dataDir@@/array/distinct_sage_tags_header.txt</unpack>
     <pluginArgs>--cfg_file @@dataDir@@/array/sageArray.config --data_file @@dataDir@@/array/distinct_sage_tags_header.txt  --manufacturer @@TriTrypSageTags.Contact@@ --technology_type @@TriTrypSageTags.OntologyEntryValue@@</pluginArgs>
@@ -598,7 +575,7 @@ Digital Gene Expression tags (DGE) was applied to <i>T. brucei gambiense</i>. Pu
 
   <resource resource="SageTagFreqs_RSRC" version="@@SageTagArrayDesign_VER@@"
       plugin="GUS::Community::Plugin::LoadSageResults">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/SageTagArrayDesign/%RESOURCE_VERSION%/freq/freqs.tsv"/>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/DGETag/%RESOURCE_VERSION%/final/freq/freqs.tsv"/>
     <pluginArgs>--contact @@TriTrypSageTags.Contact@@ --arrayDesignName 'T.brucei gambiense SAGE Tags' --arrayDesignVersion '1' --studyName 'Transcriptome analysis of two life stages of Trypanosoma brucei gambiense' --studyDescription '' --freqFile @@dataDir@@/freqs.tsv</pluginArgs>
     <info
         displayName="T. brucei gambiense Experimental DGE tags Frequencies"
