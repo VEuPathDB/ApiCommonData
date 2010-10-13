@@ -231,7 +231,7 @@
 
   <resource resource="Tcruzi_BACEnds_RSRC" version="2008-12-04"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/BacEndSequences/%RESOURCE_VERSION%/chori105_bac.fasta"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dnaSeq/BacEndSequences/%RESOURCE_VERSION%/final/chori105_bac.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId 353153 --sequenceFile @@dataDir@@/chori105_bac.fasta --soTermName "clone_insert_end"   --regexSourceId "^>gi\\|\\d+\\|gb\\|DX\\S+\\|DX\\d+\\s(CHORI105\\S+)\\s" -tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="T.cruzi CHORI105 BAC Ends"
@@ -252,9 +252,9 @@
 
 <!--Proteome-->
 
-  <resource resource="Tcruzi_Proteomics_Brent_Amastigote" version="2008-12-12"
+  <resource resource="Tcruzi_Proteomics_Brent_Amastigote_RSRC" version="2008-12-12"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Amastigote.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/final/Amastigote.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Amastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Amastigote'</pluginArgs>
     <info
         displayName="T. cruzi Proteomics (Tarleton et. al.)"
@@ -274,9 +274,9 @@
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Brent_Epimastigote" version="2008-12-12"
+  <resource resource="Tcruzi_Proteomics_Brent_Epimastigote_RSRC" version="2008-12-12"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Epimastigote.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/final/Epimastigote.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Epimastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Epimastigote'</pluginArgs>
     <info
         displayName=""
@@ -296,9 +296,9 @@
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Brent_Metacyclic" version="2008-12-12"
+  <resource resource="Tcruzi_Proteomics_Brent_Metacyclic_RSRC" version="2008-12-12"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Metacyclic.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/final/Metacyclic.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Metacyclic.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Metacyclic'</pluginArgs>
     <info
         displayName=""
@@ -318,9 +318,9 @@
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Brent_Trypomastigote" version="2008-12-12"
+  <resource resource="Tcruzi_Proteomics_Brent_Trypomastigote_RSRC" version="2008-12-12"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/Trypomastigote.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Brent/%RESOURCE_VERSION%/final/Trypomastigote.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Trypomastigote.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage 'Trypomastigote'</pluginArgs>
     <info
         displayName=""
@@ -340,9 +340,9 @@
   </resource>
 
 
-   <resource resource="Tcruzi_Proteomics_Membrane_Protein" version="2009-07-06"
+   <resource resource="Tcruzi_Proteomics_Membrane_Protein_RSRC" version="2009-07-06"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Proteomics_Membrane/%RESOURCE_VERSION%/Epimastigote_LTQXL.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Proteomics_Membrane/%RESOURCE_VERSION%/final/Epimastigote_LTQXL.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/Epimastigote_LTQXL.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms of Trypanosoma cruzi (Cordero et. al.)"
@@ -363,9 +363,9 @@
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TU" version="2008-03-17"
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TU_RSRC" version="2008-03-17"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1TU_NCBI20080317.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/final/B1TU_NCBI20080317.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/B1TU_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
@@ -389,9 +389,9 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TG" version="2008-03-17"
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1TG_RSRC" version="2008-03-17"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1TG_NCBI20080317.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/final/B1TG_NCBI20080317.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/B1TG_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
@@ -415,9 +415,9 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
   </resource>
 
 
-  <resource resource="Tcruzi_Proteomics_Reservosomes_B1MTU" version="2008-03-17"
+  <resource resource="Tcruzi_Proteomics_Reservosomes_B1MTU_RSRC" version="2008-03-17"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/B1MTU_NCBI20080317.tab"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/massSpec/Reservosomes_SubCellular/%RESOURCE_VERSION%/final/B1MTU_NCBI20080317.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/B1MTU_NCBI20080317.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '_chromosomes_RSRC|@@'_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="Subcellular proteomics of Trypanosoma cruzi reservosomes (Celso Sant'Anna et. al.)"
@@ -444,7 +444,7 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
 
   <resource resource=""Tcruzi_genome_id_mappings_RSRC" version="2010-01-19"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/genome_id_mappings/%RESOURCE_VERSION%/Tcruzi_names_mapped.txt"/>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/oldAndNewGenomeIdMappings/%RESOURCE_VERSION%/final/Tcruzi_names_mapped.txt"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcruzi_names_mapped.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence" </pluginArgs>
     <info
         displayName=""
@@ -466,8 +466,8 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
 
   <resource resource="Tcruzi_Aguero_SNP_DBRefs_RSRC" version="2009-11-23"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/Aguero/%RESOURCE_VERSION%/SNP_dbxrefs.txt"/>
-        <pluginArgs>--DBRefMappingFile @downloadDir@/FernanAgueroTcSNPDbxRefs/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/TcSNP/%RESOURCE_VERSION%/final/TcSNP_dbxrefs.txt"/>
+        <pluginArgs>--DBRefMappingFile @downloadDir@/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature</pluginArgs>
     <info
         displayName="External DbxRefs to TcSNP database for Tcruzi"
         project="TriTrypDB"
@@ -486,50 +486,54 @@ TcSNP is an online resource/database with information on genetic variation(polym
   </resource>
 
 <!--arrayStudies-->
-  <resource resource="T.cruzi_Tarleton_Rick_Array_Profiles" version="1.0"
-            displayName="T.cruzi Tarleton Rick Array Profiles"
-            category="Transcriptome"
-            organisms="T.cruzi"
-            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-            extDbName="T.cruzi_Tarleton_Rick_Array_Profiles"
-            extDbRlsVer="1.0"
-            extDbRlsDescrip="T.cruzi_Tarleton_Rick_Array_Profiles|1.0"
-            dbCommit="@dbcommit@"
-            publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE14641">
-     <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Tarleton_Rick/analysis/PROFILE/" 
-            contact="John Brestelli"
-            email="jbrestel@pcbi.upenn.edu"
-            institution="EuPathDB"
-      />
-<pluginArgs>--inputDir @downloadDir@/T.cruzi_Tarleton_Rick_Array_Profiles/PROFILE --configFile @downloadDir@/T.cruzi_Tarleton_Rick_Array_Profiles/PROFILE/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
-   <description>
-         <![CDATA[
-Data provided by Rick Tarleton. Contact: tarleton@cb.uga.edu
-          ]]>
-    </description>
-<publication pmid="19664227"/>
+
+  <resource resource="Tcruzi_array_GPL8132_RSRC" version="@@Lmajor_array_GPL8132_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/microarrayPlatform/GPL8132/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="PFGRC Trypanosoma cruzi Oligonucleotide Array v1"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Genome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL8132"
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+PFGRC Trypanosoma cruzi Oligonucleotide Array v1
+        ]]>
+      </description>
+    </info>
   </resource>
 
 
-
- <resource resource = "T.cruzi_Tarleton_Rick_Array_Page" version="1.0"
-            displayName="T.cruzi Tarleton Rick Array page analysis"
-            organisms="T.cruzi"
-            category="ignore"
-            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
-            dbCommit = "@dbcommit@">
-     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Tarleton_Rick/analysis/PAGE/"
-            contact="John Brestelli"
-            email="jbrestel@pcbi.upenn.edu"
-            institution="EuPathDB"
-     />
-<pluginArgs>--inputDir @downloadDir@/T.cruzi_Tarleton_Rick_Array_Page/PAGE --configFile @downloadDir@/T.cruzi_Tarleton_Rick_Array_Page/PAGE/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'  --profileSetName 'Profiles of T.cruzi Tarleton Rick array data'</pluginArgs>
-   <description>
-         <![CDATA[
+  <resource resource="Tcruzi_Tarleton_Rick_RSRC" version="@@Tcruzi_Tarleton_Rick_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayExpression/Tarleton_Rick/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Transcriptome analysis of the Trypanosoma cruzi life-cycle"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE14641"
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+Transcriptome analysis of the Trypanosoma cruzi life-cycle
 Data provided by Rick Tarleton. Contact: tarleton@cb.uga.edu
-          ]]>
-    </description>
+        ]]>
+      </description>
 <publication pmid="19664227"/>
-     </resource>
+    </info>
+  </resource>
 
 </resources>
