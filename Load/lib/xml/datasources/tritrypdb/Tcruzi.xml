@@ -485,6 +485,29 @@ TcSNP is an online resource/database with information on genetic variation(polym
     </info>
   </resource>
 
+
+
+  <resource resource="Tcruzi_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@'</pluginArgs>
+    <info
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        project="TriTrypDB"
+        organisms="@@TcruziOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 <!--arrayStudies-->
 
   <resource resource="Tcruzi_array_GPL8132_RSRC" version="@@Lmajor_array_GPL8132_VER@@"

@@ -359,7 +359,7 @@
     </info>
   </resource>
 
-  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="08-2010"
+  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="10-2010"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/pathwayMappings.txt"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/pathwayMappings.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -549,7 +549,7 @@
     </info>
   </resource>
 
-  <resource resource="Pf_EcMappings_Hagai_RSRC" version="08-2010"
+  <resource resource="Pf_EcMappings_Hagai_RSRC" version="10-2010"
       plugin="GUS::Community::Plugin::InsertECMapping">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/ecMapping.txt"/>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pfid.txt --evidenceCode "Hagai Ginsburg" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" </pluginArgs>
