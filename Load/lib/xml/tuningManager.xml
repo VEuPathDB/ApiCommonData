@@ -3127,6 +3127,11 @@ from
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
+    UNION
+    select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
     ) pm, apidb.geneattributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -3473,6 +3478,20 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
         'Linfantum_promastigote_ExpressionData' as attribution
+from dual
+UNION
+select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
+       'Papadopoulou::LiAxenicVsIntracellular' as module,
+       'Leishmania infantum' as species,
+       'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as display_name,
+       'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as description,
+       'The bars represent a direct comparison of <i>Intercellular Amastigotes vs. Promastigotes (Ic.A vs P)</i> <b>AND</b> <i>Axenic Amastigotes vs. Promastigotes (Ax.A vs P)</i>' as x_axis,
+       'Fold Induction or percentile.  The percentile was calculated for each channel/sample to give an indication of the expression level of this gene compared to all others on that array.' as y_axis,
+        330 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'expr_val,pct' as visible_parts,
+        'L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
