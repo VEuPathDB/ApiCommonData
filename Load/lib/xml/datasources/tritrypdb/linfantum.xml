@@ -432,6 +432,57 @@ Linfantum Proteomics data from Marc Ouellette (pH5-6).
     </info>
   </resource>
 
+
+<!--Proteome-->
+
+  <resource resource="Linfantum_IEDB_Epitopes_RSRC" version="@@Linfantum_IEDB_Epitopes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportLi.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportLi.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportLi.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportLi.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportLi.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportLi.txt"/>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Linfantum_IEDB_Epitopes_DBxRefs_RSRC" version="@@Linfantum_IEDB_Epitopes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Linfantum_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--arrayStudies-->
   <resource resource="Linfantum_array_Myler_RSRC" version="@@Linfantum_array_Myler_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
