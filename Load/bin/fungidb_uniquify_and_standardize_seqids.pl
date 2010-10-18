@@ -107,7 +107,11 @@ sub transmogrify {
     # something weird like 2-micron. There may be
     # other per-organism cases to deal with later.
 
-    unless ($id eq '2-micron') {	
+    if ($id eq '2-micron') {
+	# Totally arbitrary, but let's just call it Chr_
+	# for now since it matches downstream regexes.
+	$id = 'Chr_2-micron';
+    } else {
 	$id =~ s/([Chr|contig|supercontig]*)(.*)/$1_$2/;
     }
 

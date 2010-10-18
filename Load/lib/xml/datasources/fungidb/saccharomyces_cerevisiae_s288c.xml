@@ -1,28 +1,41 @@
-<!-- Saccharomyces cerevisiae (S288C) ISF Resource -->
+<!-- Saccharomyces cerevisiae (S288C) Resources -->
 <resources>
+
+  <!-- ISF FASTA resource -->
   <resource
         resource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
         version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet 
-              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/chromosome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
         <!-- Unnecessary 
         <unpack>
               mkdir @@dataDir@@/fasta
         </unpack>
         -->
         <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
+
+        <!-- Standardize scaffold IDs by prefixing -->
+        <unpack>
+               fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
+                   --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                   --prefix Scer_s288c
+        </unpack>
+
+        <!-- Split FASTA from GFF -->
         <unpack>
              makeCustomFastaAndGffFromGff3
-                  --input_dir @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
+                  --input_dir @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
                   --inputFileExt gff3
-                  --output_fasta @@dataDir@@/fasta/saccharomyces_cerevisiae_s288c.unpacked.fasta
+                  --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
                   --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
         </unpack>
 
+        <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId 235443 
+             --ncbiTaxId 559292
              --externalDatabaseVersion %RESOURCE_VERSION%
              --sequenceFile @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
              --SOTermName 'chromosome' 
@@ -48,22 +61,15 @@
          </info>
   </resource>
 
+
+  <!-- ISF genomic annotations resource -->
   <resource
          resource="saccharomyces_cerevisiae_s288c_annotations_RSRC"
          version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@" 
          parentResource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/chromosome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288.unpacked.gff3" />
- 
-         <!-- Standardize scaffold IDs by prefixing -->
-         <unpack>
-               fungidb_uniquify_and_standardize_GFF3_reference_ids.pl
-                   --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
-                   --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix Scer_s288c
-         </unpack>
-
+         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.unpacked.gff3" />
 
          <!-- Assume that S. cerevisiae transcript IDs are already unique -->
 
@@ -71,8 +77,7 @@
          <!-- Run the standard ISF preprocess step -->
          <unpack>
                preprocessGFF3 
-<!--                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3 -->
-                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
                    --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
          </unpack>
 
@@ -84,7 +89,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat     gff3
                 --soCvsVersion   @@SO_VER@@
-                --defaultOrganism "Saccharomyces cerevisiae (S288C)"
+                --defaultOrganism "Saccharomyces cerevisiae S288C"
                 --seqSoTerm "chromosome"
                 --validationLog     @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -109,5 +114,80 @@
           </info>
      </resource>
 
+
+  <!-- GO annotations resource -->
+  <resource 
+         resource="GOAssociations_saccharomyces_cerevisiae_s288c_RSRC"
+         version="@@saccharaomyces_erevisiae_s288c_chromosomes_VER@@"
+         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    
+         <manualGet 
+              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@/gene_association.sgd" />
+ 
+         <pluginArgs>
+               --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
+               --inputFile @@dataDir@@/gene_association.sgd
+               --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
+               --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
+              --targetTable "DoTS::TranslatedAASequence"
+              --lineOfEvidence "GeneDB"
+              --inputIdColumn id
+              --tolerateMissingSeqs
+              --skipBadGOTerms @@dataDir@@/badGOTerms.log
+         </pluginArgs>
+
+         <info
+              displayName="GO Associations for Saccharomyces cerevisiae (S288C) genes"
+              project="FungiDB"
+              organisms="@@PfOrganismFullName@@"
+              category="Proteome"
+              publicUrl="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz"
+              contact=""
+              email=""
+              institution="">
+              <description>
+                 <![CDATA[
+                     GO Associations for <i>S. cerevisiae (S288C)</i> genes.
+                 ]]>
+              </description>
+          </info>
+   </resource>
+
+   
+   <!-- EC numbers -->
+   <resource
+          resource="saccharomyces_cerevisiae_s288c_EC_numbers_RSRC" version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/IDs/%RESOURCE_VERSION%">
+    <unpack>
+          fungidb_unpack_sgd_ids.pl
+              --input @@dataDir@@/dbxref.tab
+              --output @@dataDir@@/ec_numbers.tab
+              --db IUBMB
+              --type "EC number"
+    </unpack>
+
+    <pluginArgs>
+          --ECMappingFile @@dataDir@@/ec_numbers.tab
+          --evidenceCode "SGD"
+          --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
+    </pluginArgs>
+    
+    <info
+        displayName="EC Number Mapping for Saccharomyces cerevisiae (S288C) genes"
+        project="FungiDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>Saccharomyces cerevisiae (S288C)</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 </resources>
