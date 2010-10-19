@@ -1,47 +1,88 @@
+<!-- Cryptococcus neoformans var. grubii H99 -->
 <resources>
-<!--c_neoformans_grubiiISFResource-->
-  <resource resource="cryptococcus_neoformans_grubii_h99_chromosomes_RSRC" version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/chromosome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 235443 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\d+\.(\d+)' </pluginArgs>
-    <info
-        displayName="C. neoformans var. grubii (strain H99, serotype A) chromosomes sequence and annotation"
-        project="FungiDB"
-        organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="Broad">
-      <description>
-        <![CDATA[
-         Sequence data from Broad.
-        ]]>
-      </description>
-    </info>
+     <!-- ISF FASTA resource -->
+     <resource 
+            resource="cryptococcus_neoformans_grubii_h99_chromosomes_RSRC"
+            version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences">
+            
+            <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
+    
+            <pluginArgs>
+                   --externalDatabaseName %RESOURCE_NAME%
+                   --ncbiTaxId 235443 
+                   --externalDatabaseVersion %RESOURCE_VERSION% 
+                   --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta 
+                   --SOTermName 'chromosome'  
+                   --regexSourceId  '>(\S+)' 
+                   --tableName "DoTS::ExternalNASequence" 
+                   --regexChromosome '\d+\.(\d+)' 
+             </pluginArgs>
+
+             <info
+                   displayName="C. neoformans var. grubii (strain H99, serotype A) chromosomes sequence and annotation"
+                   project="FungiDB"
+                   organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
+                   category="Genome"
+                   publicUrl=""
+                   contact=""
+                   email=""
+                   institution="Broad">
+          
+                   <description>
+                          <![CDATA[
+                              Cryptococcus neoformans var. grubii equence data from Broad.
+                          ]]>
+                   </description>
+          </info>
   </resource>
 
-<resource resource="cryptococcus_neoformans_grubii_h99_annotations_RSRC" version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@" parentResource="cryptoccus_neoformans_grubii_h99_chromosomes_RSRC"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+  <!-- ISF genome annotations -->
+  <resource 
+         resource="cryptococcus_neoformans_grubii_h99_annotations_RSRC"
+         version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@"
+         parentResource="cryptoccus_neoformans_grubii_h99_chromosomes_RSRC"
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
+         <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
 
-    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/chromosome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3 --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff</unpack>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Cryptococcus neoformans var. grubii H99"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
-    <info
-        displayName="Cryptococcus neoformans var. grubii strain H99 chromosomes sequence and annotation"
-        project="FungiDB"
-        organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="Broad and Duke">
-      <description>
-        <![CDATA[
-         ]]>
-      </description>
-    </info>
+         <unpack>
+             preprocessGFF3 
+                --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
+                --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff
+         </unpack>
+
+         <pluginArgs>
+                --extDbName %PARENT_RESOURCE_NAME%
+                --extDbRlsVer %PARENT_RESOURCE_VERSION%
+                --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff
+                --inputFileExtension "gff"
+                --fileFormat gff3
+                --soCvsVersion @@SO_VER@@
+                --defaultOrganism "Cryptococcus neoformans var. grubii H99"
+                --seqSoTerm "chromosome"
+                --validationLog @@dataDir@@/validation.log
+                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                --seqIdColumn source_id
+                --naSequenceSubclass ExternalNASequence
+            </pluginArgs>
+
+            <info
+                displayName="Cryptococcus neoformans var. grubii strain H99 chromosomes sequence and annotation"
+                project="FungiDB"
+                organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
+                category="Genome"
+                publicUrl=""
+                contact=""
+                email=""
+                institution="Broad and Duke">
+
+                <description>
+                     <![CDATA[
+                      ]]>
+                </description>
+            </info>
   </resource>
 
 </resources>
