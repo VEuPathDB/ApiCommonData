@@ -55,10 +55,6 @@ sub preprocess {
 #    }
 	
 	# Promote various small RNAs to genes and process coding genes
-#	if ($type eq 'gene'
-#	    || $type eq 'pseudogene'
-#	    ) {
-#	    # Skip ncRNAs for now.
 	if ($type eq 'snoRNA'
 	    || $type eq 'snRNA'
 	    || $type eq 'rRNA'
@@ -310,13 +306,19 @@ sub gene2centraldogma {
     if ($tag eq 'gene') {
 	$type = 'coding_gene';
     } elsif ($tag eq 'pseudogene') {
-	$type = 'pseudogene';
+	$type = 'pseudo_gene';
     } else {
 	$type = $feature->primary_tag . '_gene';
     }
+    print STDERR $feature->primary_tag . " $type\n";
 
     my $gene = makeBioperlFeature($type, $feature->location, $bp_seq_obj);
-    
+
+    if ($type eq 'pseudo_gene') {
+	$gene->add_tag_value("pseudo",""); 
+	$gene->primary_tag('pseudo_gene');
+    }
+	    
     # Copy the name of the feature to our new gene object
     my ($name) = $feature->get_tag_values('Name');
     print STDERR "Processing $type ($name)...\n";
@@ -333,12 +335,14 @@ sub gene2centraldogma {
     # Unnecessary.
 #    $transcript    = copy_attributes($feature,$transcript);
     
-    # Copy exons and UTRs for coding genes.
-    if ($type eq 'coding_gene' || $type =~ /.*\_gene/) {
+    # Create transcripts and exons and copy UTRs for coding genes,
+    # Create transcripts and exons for pseudogenes and small RNAs
+    if ($type eq 'coding_gene' 
+	|| $type =~ /.*\_gene/) {
 	
 	# Two-tiered hierachy at SGD
 	# Would need to be modified to include alternative transcripts.
-	# Subfeatures of genes at SGD are CDS, intron, UTR
+	# Subfeatures of coding and pseudo genes at SGD are CDS, intron, UTR
 	# Subfeatures of ncRNAs: noncoding_exon
 	
 	my (@exons,@codingStart,@codingEnd);
@@ -378,7 +382,9 @@ sub gene2centraldogma {
 		push(@codingEnd,$codingEnd);
 		$cds_counter++;
 
-		my $exon_type = $subfeature->primary_tag eq 'CDS' ? 'exon' : 'noncoding_exon';
+                # my $exon_type = $subfeature->primary_tag eq 'CDS' ? 'exon' : 'noncoding_exon';
+		# ncRNAs also required exon type of "exon" 
+		my $exon_type = $subfeature->primary_tag eq 'CDS' ? 'exon' : 'exon';
 		
 		my $exon = makeBioperlFeature($exon_type,
 					      $subfeature->location,$bp_seq_obj);
@@ -407,9 +413,7 @@ sub gene2centraldogma {
 	my $codingEnd = shift (@codingEnd);
 	foreach my $exon (@exons) {
 
-# These could potentially be non-coding exons
-# Whcih would simplify this logic.
-	    if ($exon->primary_tag eq 'exon') {
+#	    if ($exon->primary_tag eq 'exon') {
 		if ($codingStart <= $exon->location->end && $codingStart >= $exon->location->start) {
 		    
 		    # ncRNAs shouldn't have start/stop values
@@ -424,7 +428,7 @@ sub gene2centraldogma {
 		    $codingStart = shift(@codingStart);
 		    $codingEnd = shift(@codingEnd);
 		}
-	    }
+#	    }
 	    $transcript->add_SeqFeature($exon);
 	}
 			
