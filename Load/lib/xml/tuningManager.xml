@@ -474,6 +474,8 @@ WHERE dr.primary_identifier IS NOT NULL
   AND ed.name != 'Links to Pathway Maps'
   AND ed.name != 'Phenotype DBRefs'
   AND ed.name != 'MPMP'
+  AND ed.name != 'Pf_BRENDAMapping_RSRC'
+  AND ed.name != 'Pf_SGPPMapping_RSRC'
   AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
   AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC', 'Pf_Entrez_DBRefs_RSRC')
   AND ed.name != 'PMID'
@@ -3406,27 +3408,13 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
         'RNASeqCoveragePlot_Patrick_Duffy' as attribution
 from dual
 UNION
-select 'Profiles of Derisi HalfLife-Ring' as profile_name,
-       'DeRisiHalfLife::3D7' as module,
-       'Plasmodium falciparum' as species,
-       'Intraerythrocytic development of 3D7 post treatment with actD' as display_name,
-       'Intra-rythrocytic development of Plasmodium 3d7 with the addition of actinomycin D (actD), to achieve transcription inhibition' as description,
-       'Time (in minutes)' as x_axis,
-       'Log (base 2) ratio of MOID expression value' as y_axis,
-       155 as order_num,
-       'FALSE' as mainOpen,
-       'FALSE' as dataOpen,
-       'coverage' as visible_parts,
-       '' as attribution
-from dual
-UNION
 select 'Profiles of Derisi HalfLife-half_life' as profile_name,
-       'DeRisiHalfLife::halflife' as module,
+       'DeRisiHalfLife::Combined' as module,
        'Plasmodium falciparum' as species,
-       'mRNA half-lives during intraerythrocytic development of 3D7 post treatment with actD' as display_name,
-       '' as description,
-       'Erythrocytic lifecycle stages' as x_axis,
-       'mRNA half-lives changes for each stage of erythrocytic development (in minutes)' as y_axis,
+       'mRNA half-lives during intraerythrocytic development - 3D7 post treatment with actD' as display_name,
+       'Intra-rythrocytic development of Plasmodium 3d7 with the addition of actinomycin D (actD), to achieve transcription inhibition' as description,
+       'Erythrocytic lifecycle stages for barplot or time in minutes' as x_axis,
+       'mRNA half-lives for each stage of erythrocytic development (in minutes) for barplot or expression level normalized to the 0 Hour' as y_axis,
        157 as order_num,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
@@ -6103,3 +6091,7 @@ sub getDbHandle {
   </tuningTable>
 
 </tuningConfig>
+
+
+
+
