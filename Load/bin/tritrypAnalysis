@@ -1318,6 +1318,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 
 &makeTranscriptDownloadFileTransformed($mgr, "Cfasciculata", "CfasciculataAnnotatedTranscripts","C.fasciculata genome v9.1 from WUSTL","9.1","wustl","TriTrypDB",0);
 
+&makeTranscriptDownloadFileTransformed($mgr, "LmajorSeidman", "LmajorSeidmanAnnotatedTranscripts","L.major_seidman_75.1 genome from WUSTL","07-20-2010","wustl","TriTrypDB",0);
+
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiTreu927AnnotatedProteins","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB",0);
 
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Tbrucei", "TbruceiGambienseAnnotatedProteins","Sanger T. brucei gambiense chromosomes","2009-09-07","psu","TriTrypDB",0);
@@ -1335,6 +1337,7 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Linfantum", "LinfantumAnnotatedProteins","Sanger L. infantum chromosomes","2009-09-07","psu","TriTrypDB",0);
 
 &makeAnnotatedProteinDownloadFileTransformed($mgr, "Lmajor", "LmajorAnnotatedProteins","Sanger L. major chromosomes","2009-09-10","psu","TriTrypDB",0);
+
 
 &makeMixedGenomicDownloadFile($mgr, "Tbrucei", "TbruceiTreu927Genomic","Sanger T. brucei 927 contigs and chromosomes","2009-10-06","psu","TriTrypDB");
 
@@ -1359,6 +1362,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &makeMixedGenomicDownloadFile($mgr, "Lmexicana", "LmexicanaGenomic","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
 
 &makeMixedGenomicDownloadFile($mgr, "Cfasciculata", "CfasciculataGenomic","C.fasciculata genome v9.1 from WUSTL","9.1","wustl","TriTrypDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "LmajorSeidman", "LmajorSeidmanGenomic","L.major_seidman_75.1 genome from WUSTL","07-20-2010","wustl","TriTrypDB",0);
 
 &makeDoTSAssemblyDownloadFile ($mgr, 'Tbrucei', 'assemblies',185431, 'TriTrypDB');
 
@@ -1456,6 +1461,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 
 &makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Cfasciculata", "CfasciculataORFs", 'C.fasciculata genome v9.1 from WUSTL','9.1', 50, "TriTrypDB");
 
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "LmajorSeidman", "LmajorSeidmanORFs", 'L.major_seidman_75.1 genome from WUSTL','07-20-2010', 50, "TriTrypDB");
+
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiTreu927ORFNAs", "Sanger T. brucei 927 contigs and chromosomes","2009-10-06", 50, "TriTrypDB");
 
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Tbrucei", "TbruceiGambienseORFNAs", "Sanger T. brucei gambiense chromosomes","2009-09-07", 50, "TriTrypDB");
@@ -1479,6 +1486,8 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Lmexicana", "LmexicanaORFNAs", 'Sanger L. mexicana contigs and chromosomes','2009-11-03', 50, "TriTrypDB");
 
 &makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Cfasciculata", "CfasciculataORFNAs", 'C.fasciculata genome v9.1 from WUSTL','9.1', 50, "TriTrypDB");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "LmajorSeidman", "LmajorSeidmanORFNAs", 'L.major_seidman_75.1 genome from WUSTL','07-20-2010', 50, "TriTrypDB");
 
 &makeDerivedCdsDownloadFileTransformed($mgr, "Lmexicana", "LmexicanaAnnotatedCDS","Sanger L. mexicana contigs and chromosomes","2009-11-03","psu","TriTrypDB",0);
 
@@ -1619,6 +1628,11 @@ $mgr->{genomeNaSequences} = ({Tbrucei927 =>[{name => "Sanger T. brucei 927 conti
 &xdformatDownloadFileForBlastSite($mgr,"Cfasciculata","CfasciculataGenomic_TriTrypDB-2.4.fasta","CfasciculataGenomics","-n -t release-2.4/CfasciculataGenomics");
 
 &xdformatDownloadFileForBlastSite($mgr,"Cfasciculata","CfasciculataORFs_TriTrypDB-2.4.fasta","CfasciculataORF","-p -C X -t release-2.4/CfasciculataORF");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"LmajorSeidman","LmajorSeidmanGenomic_TriTrypDB-2.5.fasta","LmajorSeidmanGenomics","-n -t release-2.5/LmajorSeidmanGenomics");
+
+&xdformatDownloadFileForBlastSite($mgr,"LmajorSeidman","LmajorSeidmanORFs_TriTrypDB-2.5.fasta","LmajorSeidmanORF","-p -C X -t release-2.5/LmajorSeidmanORF");
 
   &xdformatDownloadFileForBlastSite($mgr,"Lmexicana", "LmexicanaEST_TriTrypDB-2.1.fasta","LmexicanaEST","-n -t release-2.1/LmexicanaEST");
 
@@ -1836,6 +1850,58 @@ mastigote time-course biorep02","","Percents of the Lmajor promastigote time-cou
 &findTandemRepeats($mgr,"LtarentolaeContigs.fsa","seqfiles",$repeatFinderArgs);
 
 &loadTandemRepeats($mgr,"LtarentolaeContigs.fsa",$repeatFinderArgs,"L. tarentolae contig sequences","2009-04-07");
+
+##################################
+####L. major Seidman
+##################################
+&createSimilarityDir($mgr,"LmajorSeidmanContigs","nr","gi\\|(\\d+)\\|","$blastParams Y=35386209","blastx");
+
+&copyFilesToComputeCluster($mgr,"LmajorSeidmanContigs-nr","similarity");
+
+&extractNaSeq($mgr,"L.major_seidman_75.1 genome from WUSTL","07-20-2010",'LmajorSeidman',"contigs","ExternalNASequence","source_id"); 
+
+
+&copyFilesToComputeCluster($mgr,"LmajorSeidmanContigs.fsa","seqfiles");
+
+&startProteinBlastOnComputeCluster($mgr,"LmajorSeidmanContigs","nr","apidb",4);
+
+$mgr->waitForCluster("LmajorSeidmanContigs blast similarity to nr", "waitLmajorSeidmanContigs-nr");
+
+&copyFilesFromComputeCluster($mgr,"LmajorSeidmanContigs-nr","similarity");
+
+&renameFile($mgr,"blastSimilarity.out.gz","blastSimilarity.unfilt.out.gz","similarity/LmajorSeidmanContigs-nr/master/mainresult/");
+
+&filterBLASTResults($mgr,"Eukaryota, Kinetoplastida, Leishmania","gi_taxid_prot.dmp","LmajorSeidmanContigs-nr","blastSimilarity.unfilt.out.gz");
+
+&extractIdsFromBlastResult($mgr,"LmajorSeidmanContigs-nr","subject");
+
+&loadNRDBSubset($mgr,"LmajorSeidmanContigs-nr","blastSimIds.out","NRDB","2009-08-04");
+
+&loadProteinBlast($mgr, "LmajorSeidmanContigs-nr","DoTS::ExternalNASequence", "DoTS::ExternalAASequence","source_id","source_id","L.major_seidman_75.1 genome from WUSTL","07-20-2010","NRDB","2009-08-04");
+
+&makeOrfFile($mgr, "LmajorSeidmanContigs.fsa", 50);
+
+&loadOrfFile($mgr, "LmajorSeidmanContigs_orf50.gff","L.major_seidman_75.1 genome from WUSTL","07-20-2010", "$ENV{GUS_HOME}/lib/xml/isf/orf2gus.xml", "1.226","ExternalNASequence","Leishmania major strain Seidman 75.1");
+
+&documentLowComplexity($mgr, 'dust', 'Genomic', 'N');
+
+&filterSequences($mgr,"LmajorSeidmanContigs.fsa","filter","dust");
+
+
+&loadLowComplexitySequences($mgr,"LmajorSeidmanContigs.fsa.dust","L.major_seidman_75.1 genome from WUSTL","07-20-2010","dna","N","--LowComplexityName 'dust'");
+
+
+
+
+my $repeatFinderArgs = "2 7 7 80 20 50 500";
+
+&documentTandemRepeatFinder($mgr,"3.21",$repeatFinderArgs);
+
+&findTandemRepeats($mgr,"LmajorSeidmanContigs.fsa","seqfiles",$repeatFinderArgs);
+
+
+&loadTandemRepeats($mgr,"LmajorSeidmanContigs.fsa",$repeatFinderArgs,"L.major_seidman_75.1 genome from WUSTL","07-20-2010");
+
 
 
 ##################################
