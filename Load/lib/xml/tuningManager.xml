@@ -5145,10 +5145,10 @@ as
 select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_attrs) */
        syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
-       substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
-       substr(context_gene_attrs.project_id, 1, 10) project_id,
+       context_gene_attrs.source_id as context_source_id,
+       context_gene_attrs.project_id,
        syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
-       substr(syntenic_gene_attrs.source_id, 1, 25) as syntenic_source_id,
+       syntenic_gene_attrs.source_id as syntenic_source_id,
        anch_left.synteny_id synteny_id,
        CASE WHEN (syn.is_reversed = 1) 
             THEN anch_left.ref_loc - ((anch_left.syntenic_loc
@@ -5245,6 +5245,14 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
     </sql>
     <sql>
       <![CDATA[
+insert into apidb.GeneContextSyntenicGenes&1 (na_sequence_id, context_start, context_end, context_source_id, organism, syntenic_na_feature_id)
+select na_sequence_id, context_start, context_end, source_id,  'placeholder', -1
+from apidb.GeneAttributes
+where source_id in (select source_id from apidb.GeneAttributes minus select context_source_id from apidb.GeneContextSyntenicGenes&1)
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[
 create index apidb.gcsg_ix&1
         on apidb.GeneContextSyntenicGenes&1 (na_sequence_id, context_start, context_end, organism)
       ]]> 
@@ -5299,8 +5307,8 @@ SELECT /*+ ordered no_expand use_hash(syn exfloc) use_hash(exfloc syntenic_gene_
        syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        exfloc.na_feature_id feature_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
-       substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
-       substr(context_gene_attrs.project_id, 1, 10) project_id,
+       context_gene_attrs.source_id as context_source_Id,
+       context_gene_attrs.project_id,
        syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
        exfloc.na_feature_id as syntenic_exon_feature_id,
        exfloc.parent_id as syntenic_gene_feature_id,
@@ -5388,6 +5396,14 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   )
   AND exfloc.start_min <= syn.b_end
   AND exfloc.end_max >= syn.b_start
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[
+insert into apidb.SyntenicExonCache&1 (na_sequence_id, context_start, context_end, context_source_id, organism, syntenic_na_feature_id)
+select na_sequence_id, context_start, context_end, source_id,  'placeholder', -1
+from apidb.GeneAttributes
+where source_id in (select source_id from apidb.GeneAttributes minus select context_source_id from apidb.SyntenicExonCache&1)
       ]]> 
     </sql>
     <sql>
