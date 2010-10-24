@@ -1,9 +1,11 @@
 <!-- Neurospora crassa OR74A Resource File -->
+
 <resources>
+
        <!-- ISF FASTA resource -->
        <resource
-             resource="neurospora_crassa_or74a_chromosomes_RSRC"
-             version="@@neurospora_crassa_or74a_chromosomes_VER@@"
+             resource="neurospora_crassa_or74a_genomic_sequence_RSRC"
+             version="@@neurospora_crassa_or74a_VER@@"
              plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
              <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
@@ -28,17 +30,17 @@
              </pluginArgs>
 
              <info
-                      displayName="Neurospora crassa OR74A chromosomes sequence and annotation"
+                      displayName="Neurospora crassa (OR74A) genomic sequence"
                       project="FungiDB"
                       organisms="@@neurospora_crassa_or74a_OrganismFullName@@"
                       category="Genome"
                       publicUrl=""
                       contact=""
                       email=""
-                      institution="Broad">
+                      institution="The Broad Institute">
                       <description>
                          <![CDATA[
-                             Neurospora crassa sequence data from Broad.
+                            Neurospora crassa (OR74A) genomic sequence. Source: The Broad Institute.
                          ]]>
                       </description>
               </info>
@@ -46,9 +48,9 @@
 
   <!-- ISF genome annotations -->
   <resource
-          resource="neurospora_crassa_or74a_annotations_RSRC"
-          version="@@neurospora_crassa_or74a_chromosomes_VER@@"
-          parentResource="neurospora_crassa_or74a_chromosomes_RSRC"
+          resource="neurospora_crassa_or74a_genomic_annotations_RSRC"
+          version="@@neurospora_crassa_or74a_VER@@"
+          parentResource="neurospora_crassa_or74a_genomic_sequence_RSRC"
           plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
  
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
@@ -84,16 +86,17 @@
            </pluginArgs>
 
            <info
-                displayName="Neurospora crassa OR74A chromosomes sequence and annotation"
+                displayName="Neurospora crassa (OR74A) genomic annotations"
                 project="FungiDB"
                 organisms="@@neurospora_crassa_or74a_OrganismFullName@@"
                 category="Genome"
                 publicUrl=""
                 contact=""
                 email=""
-                institution="Broad">
+                institution="The Broad Institute">
                 <description>
                  <![CDATA[
+                     Neurospora crassa (OR74A) genomic annotations. Source: The Broad Institute.
                  ]]>
                 </description>
            </info>

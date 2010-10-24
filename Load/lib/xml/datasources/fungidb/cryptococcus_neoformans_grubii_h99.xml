@@ -1,9 +1,10 @@
 <!-- Cryptococcus neoformans var. grubii H99 -->
 <resources>
+
      <!-- ISF FASTA resource -->
      <resource 
-            resource="cryptococcus_neoformans_grubii_h99_chromosomes_RSRC"
-            version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@"
+            resource="cryptococcus_neoformans_grubii_h99_genomic_sequence_RSRC"
+            version="@@cryptococcus_neoformans_grubii_h99_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
             
             <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
@@ -28,18 +29,18 @@
              </pluginArgs>
 
              <info
-                   displayName="C. neoformans var. grubii (strain H99, serotype A) chromosomes sequence and annotation"
+                   displayName="Cryptococcus neoformans var. grubii (strain H99, serotype A) genomic sequence"
                    project="FungiDB"
                    organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
                    category="Genome"
                    publicUrl=""
                    contact=""
                    email=""
-                   institution="Broad">
+                   institution="The Broad Institute">
           
                    <description>
                           <![CDATA[
-                              Cryptococcus neoformans var. grubii equence data from Broad.
+                              Cryptococcus neoformans var. grubii (H99) genomic sequence. Source: The Broad Institute
                           ]]>
                    </description>
           </info>
@@ -47,9 +48,9 @@
 
   <!-- ISF genome annotations -->
   <resource 
-         resource="cryptococcus_neoformans_grubii_h99_annotations_RSRC"
-         version="@@cryptococcus_neoformans_grubii_h99_chromosomes_VER@@"
-         parentResource="cryptoccus_neoformans_grubii_h99_chromosomes_RSRC"
+         resource="cryptococcus_neoformans_grubii_h99_genomic_annotations_RSRC"
+         version="@@cryptococcus_neoformans_grubii_h99_VER@@"
+         parentResource="cryptoccus_neoformans_grubii_h99_genomic_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
          <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
@@ -86,17 +87,18 @@
             </pluginArgs>
 
             <info
-                displayName="Cryptococcus neoformans var. grubii strain H99 chromosomes sequence and annotation"
+                displayName="Cryptococcus neoformans var. grubii (H99) genomic annotations"
                 project="FungiDB"
                 organisms="@@cryptococcus_neoformans_grubii_h99_OrganismFullName@@"
                 category="Genome"
                 publicUrl=""
                 contact=""
                 email=""
-                institution="Broad and Duke">
+                institution="The Broad Institute and Duke">
 
                 <description>
                      <![CDATA[
+                      Cryptococcus neoformans var. grubii (H99) genomic annotations. Source: The Broad Institute and Duke
                       ]]>
                 </description>
             </info>

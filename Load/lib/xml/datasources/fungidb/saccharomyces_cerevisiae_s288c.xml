@@ -3,8 +3,8 @@
 
   <!-- ISF FASTA resource -->
   <resource
-        resource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
-        version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
+        resource="saccharomyces_cerevisiae_s288c_genomic_sequence_RSRC"
+        version="@@saccharomyces_cerevisiae_s288c_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet 
               fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
@@ -45,7 +45,7 @@
          </pluginArgs>
 
          <info
-             displayName="Saccharomyces cerevisiae (S288C) chromosomal sequence and annotation"
+             displayName="Saccharomyces cerevisiae (S288C) genomic sequence"
              project="FungiDB"
              organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
              category="Genome"
@@ -55,7 +55,7 @@
              institution="SGD">
              <description>
                  <![CDATA[
-                    Sequence data from Saccharomyces Genome Database
+                    Saccharomyces cerevisiae (S288C) genomic sequence. Source: SGD.
              ]]>
              </description>
          </info>
@@ -64,9 +64,9 @@
 
   <!-- ISF genomic annotations resource -->
   <resource
-         resource="saccharomyces_cerevisiae_s288c_annotations_RSRC"
-         version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@" 
-         parentResource="saccharomyces_cerevisiae_s288c_chromosomes_RSRC"
+         resource="saccharomyces_cerevisiae_s288c_genomic_annotations_RSRC"
+         version="@@saccharomyces_cerevisiae_s288c_VER@@" 
+         parentResource="saccharomyces_cerevisiae_s288c_genomic_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.unpacked.gff3" />
@@ -98,96 +98,99 @@
           </pluginArgs>
 
           <info
-             displayName="Saccharomyces cerevisiae (S288C) chromosomal sequence and annotation"
+             displayName="Saccharomyces cerevisiae (S288C) genomic annotations"
              project="FungiDB"
              organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
              category="Genome"
              publicUrl="http://www.yeastgenome.org/"
              contact=""
              email=""
-             institution="Broad and Duke">
+             institution="SGD">
              <description>
                <![CDATA[
-                    Annotations from Saccharomyces Genome Database
+                    Saccharomyces cerevisiae (S288C) genomic annotations. Source: SGD.
                 ]]>
             </description>
           </info>
      </resource>
 
 
-  <!-- GO annotations resource -->
-  <resource 
-         resource="GOAssociations_saccharomyces_cerevisiae_s288c_RSRC"
-         version="@@saccharaomyces_erevisiae_s288c_chromosomes_VER@@"
-         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+     <!-- GO annotations resource -->
+     <resource 
+            resource="saccharomyces_cerevisiae_s288c_go_associations_RSRC"
+            version="@@saccharomyces_cerevisiae_s288c_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     
-         <manualGet 
-              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@/gene_association.sgd" />
+            <manualGet 
+                  fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
  
-         <pluginArgs>
-               --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
-               --inputFile @@dataDir@@/gene_association.sgd
-               --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
-               --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
-              --targetTable "DoTS::TranslatedAASequence"
-              --lineOfEvidence "GeneDB"
-              --inputIdColumn id
-              --tolerateMissingSeqs
-              --skipBadGOTerms @@dataDir@@/badGOTerms.log
-         </pluginArgs>
+            <pluginArgs>
+                  --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
+                  --inputFile @@dataDir@@/gene_association.sgd
+                  --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
+                  --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
+                 --targetTable "DoTS::TranslatedAASequence"
+                 --lineOfEvidence "SGD"
+                 --inputIdColumn id
+                 --tolerateMissingSeqs
+                 --skipBadGOTerms @@dataDir@@/badGOTerms.log
+            </pluginArgs>
 
-         <info
-              displayName="GO Associations for Saccharomyces cerevisiae (S288C) genes"
-              project="FungiDB"
-              organisms="@@PfOrganismFullName@@"
-              category="Proteome"
-              publicUrl="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz"
-              contact=""
-              email=""
-              institution="">
-              <description>
-                 <![CDATA[
-                     GO Associations for <i>S. cerevisiae (S288C)</i> genes.
-                 ]]>
-              </description>
-          </info>
-   </resource>
+            <info
+                 displayName="Saccharomyces cerevisiae (S288C) GO associations"
+                 project="FungiDB"
+                 organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+                 category="Proteome"
+                 publicUrl="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz"
+                 contact=""
+                 email=""
+                 institution="">
+                 <description>
+                    <![CDATA[
+                        Saccharomyces cerevisiae (S288C) GO associations. Source: SGD.
+                    ]]>
+                 </description>
+             </info>
+      </resource>
 
    
-   <!-- EC numbers -->
-   <resource
-          resource="saccharomyces_cerevisiae_s288c_EC_numbers_RSRC" version="@@saccharomyces_cerevisiae_s288c_chromosomes_VER@@"
-      plugin="GUS::Community::Plugin::InsertECMapping">
-    <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/IDs/%RESOURCE_VERSION%" />
-    <unpack>
-          fungidb_unpack_sgd_ids.pl
-              --input @@dataDir@@/dbxref.tab
-              --output @@dataDir@@/ec_numbers.tab
-              --db IUBMB
-              --type "EC number"
-    </unpack>
-
-    <pluginArgs>
-          --ECMappingFile @@dataDir@@/ec_numbers.tab
-          --evidenceCode "SGD"
-          --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
-    </pluginArgs>
+      <!-- EC numbers -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_ec_ids_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="GUS::Community::Plugin::InsertECMapping">
     
-    <info
-        displayName="EC Number Mapping for Saccharomyces cerevisiae (S288C) genes"
-        project="FungiDB"
-        organisms="@@PfOrganismFullName@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         EC Number mapping for <i>Saccharomyces cerevisiae (S288C)</i> genes.
-        ]]>
-      </description>
-    </info>
-  </resource>
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/xrefs/%RESOURCE_VERSION%" />
+ 
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/ec_numbers.tab
+                 --db IUBMB
+                 --type "EC number"
+         </unpack>
+
+         <pluginArgs>
+              --ECMappingFile @@dataDir@@/ec_numbers.tab
+              --evidenceCode "SGD"
+              --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) EC IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+            category="Proteome"
+            publicUrl=""
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) EC IDs. Source: SGD.                 
+               ]]>
+            </description>
+         </info>
+     </resource>
 
 </resources>
