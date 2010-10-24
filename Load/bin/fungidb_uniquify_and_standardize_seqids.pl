@@ -4,16 +4,17 @@ use strict;
 use Getopt::Long;
 use IO::File;
 
-my ($input,$output,$prefix);
+my ($input,$output,$prefix,$scaffolds_only);
 GetOptions('input=s'  => \$input,
 	   'output=s' => \$output,
-	   'prefix=s' => \$prefix
+	   'prefix=s' => \$prefix,
+	   'scaffolds_only=s' => \$scaffolds_only,
 	   );
 
 unless ($input && $output && $prefix) {
 die <<END;
 
-Uniquify chromosomes/scaffolds by appending a short prefix
+Uniquify chromosomes/scaffolds and gene IDs by appending a short prefix
 corresponding to the Genus species + strain of the organism
 to the original IDs.
 
@@ -130,7 +131,7 @@ sub process_annotations {
     # Save the original id for later post-processing.
     my $original_id = $id;
     
-    my $new_id = transmogrify($id);
+    my $new_id = ($scaffolds_only) ? $original_id : transmogrify($id);
     
     # Fix attributes to match the new id
     $attributes =~ s/$original_id/$new_id/g;
