@@ -7,12 +7,20 @@
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
             
             <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
-    
+
+             <!-- Standardize scaffold IDs by prefixing -->
+             <unpack>
+                   fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta
+                   --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta
+                   --prefix Cneo_h99
+             </unpack>
+
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
                    --ncbiTaxId 235443 
                    --externalDatabaseVersion %RESOURCE_VERSION% 
-                   --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta 
+                   --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta 
                    --SOTermName 'chromosome'  
                    --regexSourceId  '>(\S+)' 
                    --tableName "DoTS::ExternalNASequence" 
@@ -46,9 +54,18 @@
 
          <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
 
+
+          <!-- Standardize scaffold IDs by prefixing -->
+          <unpack>
+                fungidb_uniquify_and_standardize_seqids.pl
+                --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
+                --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
+                --prefix Ncra_or74a
+          </unpack>
+
          <unpack>
              preprocessGFF3 
-                --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
+                --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff
          </unpack>
 

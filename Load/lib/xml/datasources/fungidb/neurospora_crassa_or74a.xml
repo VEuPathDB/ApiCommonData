@@ -8,11 +8,19 @@
 
              <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
 
+             <!-- Standardize scaffold IDs by prefixing -->
+             <unpack>
+                   fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/neurospora_crassa_or74a_supercontigs.fasta
+                   --output @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
+                   --prefix Ncra_or74a
+             </unpack>
+
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
                      --ncbiTaxId 367110
                      --externalDatabaseVersion %RESOURCE_VERSION%
-                     --sequenceFile @@dataDir@@/neurospora_crassa_or74a_supercontigs.fasta
+                     --sequenceFile @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
                      --SOTermName 'chromosome'
                      --regexSourceId  '>(\S+)'
                      --tableName "DoTS::ExternalNASequence"
@@ -45,9 +53,17 @@
  
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
 
+          <!-- Standardize scaffold IDs by prefixing -->
+          <unpack>
+                fungidb_uniquify_and_standardize_seqids.pl
+                --input  @@dataDir@@/neurospora_crassa_or74a_transcripts.gff3
+                --output @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
+                --prefix Ncra_or74a
+          </unpack>
+
           <unpack>
               preprocessGFF3 
-                 --input_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.gff3
+                 --input_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
                  --output_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.transformed.gff
           </unpack>
 
