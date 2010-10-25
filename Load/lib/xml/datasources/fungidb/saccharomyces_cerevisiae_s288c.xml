@@ -6,14 +6,22 @@
         resource="saccharomyces_cerevisiae_s288c_genomic_sequence_RSRC"
         version="@@saccharomyces_cerevisiae_s288c_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
-        <manualGet 
-              fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
-        <!-- Unnecessary 
-        <unpack>
-              mkdir @@dataDir@@/fasta
-        </unpack>
-        -->
-        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
+
+
+        <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/saccharomyces_cerevisiae.gff">
+               --tries=5 
+               --mirror 
+                --no-parent
+               --no-host-directories
+               --cut-dirs=5
+         </wgetArgs>
+
+         <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+         <unpack>mv @@dataDir@@/saccharomyces_cerevisiae.gff @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3</unpack>
+
+<!--
+        <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+-->
 
         <!-- Standardize scaffold IDs by prefixing -->
         <unpack>
@@ -24,9 +32,10 @@
         </unpack>
 
         <!-- Split FASTA from GFF -->
+        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
         <unpack>
              makeCustomFastaAndGffFromGff3
-                  --input_dir @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                  --input_dir    @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
                   --inputFileExt gff3
                   --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
                   --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
@@ -35,13 +44,13 @@
         <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId 559292
-             --externalDatabaseVersion %RESOURCE_VERSION%
-             --sequenceFile @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
-             --SOTermName 'chromosome' 
-             --regexSourceId  '>(\S+)'
-             --tableName "DoTS::ExternalNASequence"
-             --regexChromosome '\d+\.(\d+)'
+             --externalDatabaseVersion %RESOURCE_VERSION% 
+             --ncbiTaxId               559292
+             --sequenceFile            @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
+             --SOTermName             'chromosome' 
+             --regexSourceId          '>(\S+)'
+             --tableName              "DoTS::ExternalNASequence"
+             --regexChromosome        '\d+\.(\d+)'
          </pluginArgs>
 
          <info
@@ -71,8 +80,7 @@
 
          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.unpacked.gff3" />
 
-         <!-- Assume that S. cerevisiae transcript IDs are already unique -->
-
+         <!-- Assume that S. cerevisiae transcript IDs are already unique, created during fasta processing -->
 
          <!-- Run the standard ISF preprocess step -->
          <unpack>
@@ -82,18 +90,18 @@
          </unpack>
 
          <pluginArgs>
-                --extDbName      %PARENT_RESOURCE_NAME%
-                --extDbRlsVer    %PARENT_RESOURCE_VERSION%
-                --mapFile        @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
+                --extDbName          %PARENT_RESOURCE_NAME%
+                --extDbRlsVer        %PARENT_RESOURCE_VERSION%
+                --mapFile            @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
+                --inputFileOrDir     @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
                 --inputFileExtension "gff3"
-                --fileFormat     gff3
-                --soCvsVersion   @@SO_VER@@
-                --defaultOrganism "Saccharomyces cerevisiae S288C"
-                --seqSoTerm "chromosome"
-                --validationLog     @@dataDir@@/validation.log
-                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
-                --seqIdColumn source_id
+                --fileFormat         gff3
+                --soCvsVersion       @@SO_VER@@
+                --defaultOrganism    "Saccharomyces cerevisiae S288C"
+                --seqSoTerm          "chromosome"
+                --validationLog      @@dataDir@@/validation.log
+                --bioperlTreeOutput  @@dataDir@@/bioperlTree.out
+                --seqIdColumn        source_id
                 --naSequenceSubclass ExternalNASequence
           </pluginArgs>
 
@@ -120,20 +128,32 @@
             resource="saccharomyces_cerevisiae_s288c_go_associations_RSRC"
             version="@@saccharomyces_cerevisiae_s288c_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    
+ 
+            <wgetArgs url="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz">
+                 --tries=5 
+                 --mirror 
+                 --no-parent
+                 --no-host-directories
+                 --cut-dirs=5
+            </wgetArgs>
+
+            <unpack>gunzip @@dataDir@@/geneassociate.sgd.gz</unpack>
+
+<!--   
             <manualGet 
                   fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
- 
+--> 
+
             <pluginArgs>
                   --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
                   --inputFile @@dataDir@@/gene_association.sgd
                   --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
                   --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
-                 --targetTable "DoTS::TranslatedAASequence"
-                 --lineOfEvidence "SGD"
-                 --inputIdColumn id
-                 --tolerateMissingSeqs
-                 --skipBadGOTerms @@dataDir@@/badGOTerms.log
+                  --targetTable "DoTS::TranslatedAASequence"
+                  --lineOfEvidence "SGD"
+                  --inputIdColumn id
+                  --tolerateMissingSeqs
+                  --skipBadGOTerms @@dataDir@@/badGOTerms.log
             </pluginArgs>
 
             <info
@@ -153,15 +173,25 @@
              </info>
       </resource>
 
-   
+
       <!-- EC numbers -->
       <resource
           resource="saccharomyces_cerevisiae_s288c_ec_ids_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
           plugin="GUS::Community::Plugin::InsertECMapping">
-    
+
+
+            <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/dbxref.tab">
+                 --tries=5 
+                 --mirror 
+                 --no-parent
+                 --no-host-directories
+                 --cut-dirs=5
+            </wgetArgs>
+   
+<!--    
           <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/xrefs/%RESOURCE_VERSION%" />
- 
+ -->
           <unpack>
              fungidb_unpack_sgd_ids.pl
                  --input @@dataDir@@/dbxref.tab
