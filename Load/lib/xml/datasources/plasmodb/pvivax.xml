@@ -71,6 +71,28 @@
     </info>
   </resource>
 
+<!--EC Numbers Resource-->
+  <resource resource="Pvivax_ECNumbers_RSRC" version="@@Pvivax_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pvivax/function/ECNumbers_Pvivax/PvivaxECNumbers"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/PvivaxECNumbers --evidenceCode "jCVI" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium vivax genes"
+        project="PlasmoDB"
+        organisms="@@PvOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. vivax</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--IEDB Resource-->
   <resource resource="Pv_IEDB_Epitopes_RSRC" version="@@Pv_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
