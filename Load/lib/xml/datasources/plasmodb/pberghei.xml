@@ -148,7 +148,7 @@
   <resource resource="Pb_Entrez_DBRefs_RSRC" version="2010-06-16"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Gene2EntrezUrl/%RESOURCE_VERSION%/final/gene2Url.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@@Pberghei_chromosomes_VER@@"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2Url.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pberghei_chromosomes_RSRC|@@Pberghei_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Entrez gene links"
         project="PlasmoDB"
@@ -166,10 +166,10 @@
     </info>
   </resource>
 
-  <resource resource="Pb_RMgm_Phenotype_DBRefs_RSRC" version="2010-06-17"
+  <resource resource="Pb_RMgm_Phenotype_DBRefs_RSRC" version="2010-10-25"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec "Pberghei_chromosomes_RSRC|@@Pberghei_chromosomes_VER@@"</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pberghei_chromosomes_RSRC|@@Pberghei_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Phenotype db links"
         project="PlasmoDB"
