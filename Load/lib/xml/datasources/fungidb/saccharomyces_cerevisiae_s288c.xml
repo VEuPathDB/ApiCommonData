@@ -7,7 +7,6 @@
         version="@@saccharomyces_cerevisiae_s288c_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-
         <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/saccharomyces_cerevisiae.gff">
                --tries=5 
                --mirror 
@@ -19,7 +18,7 @@
          <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
          <unpack>mv @@dataDir@@/saccharomyces_cerevisiae.gff @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3</unpack>
 
-<!--
+<!--  Retain to switch back to manualDelivery
         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
 -->
 
@@ -139,9 +138,8 @@
 
             <unpack>gunzip @@dataDir@@/geneassociate.sgd.gz</unpack>
 
-<!--   
-            <manualGet 
-                  fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
+<!--  Retain to switch back to manualDelivery
+            <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
 --> 
 
             <pluginArgs>
@@ -189,8 +187,8 @@
                  --cut-dirs=5
             </wgetArgs>
    
-<!--    
-          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/xrefs/%RESOURCE_VERSION%" />
+<!--  Retain to switch back to manualDelivery
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%" />
  -->
           <unpack>
              fungidb_unpack_sgd_ids.pl

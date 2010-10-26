@@ -1,0 +1,105 @@
+<!-- Neurospora crassa OR74A Resource File -->
+
+<resources>
+
+       <!-- ISF FASTA resource -->
+       <resource
+             resource="phanerochaete_chrysosporium_unknown_strain_genomic_sequence_RSRC"
+             version="@@phanerochaete_chrysosporium_unknown_strain_VER@@"
+             plugin="GUS::Supported::Plugin::LoadFastaSequences">
+
+             <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_unknown_strain/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_unknown_strain_supercontigs.fasta"/>
+
+             <!-- Standardize scaffold IDs by prefixing -->
+             <unpack>
+                   fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_supercontigs.fasta
+                   --output @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_supercontigs.uniquified.fasta
+                   --prefix Ncra_or74a
+             </unpack>
+
+             <pluginArgs>
+                     --externalDatabaseName %RESOURCE_NAME%
+                     --ncbiTaxId 367110
+                     --externalDatabaseVersion %RESOURCE_VERSION%
+                     --sequenceFile @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_supercontigs.uniquified.fasta
+                     --SOTermName 'chromosome'
+                     --regexSourceId  '>(\S+)'
+                     --tableName "DoTS::ExternalNASequence"
+                     --regexChromosome '\d+\.(\d+)'
+             </pluginArgs>
+
+             <info
+                      displayName="Neurospora crassa (OR74A) genomic sequence"
+                      project="FungiDB"
+                      organisms="@@phanerochaete_chrysosporium_unknown_strain_OrganismFullName@@"
+                      category="Genome"
+                      publicUrl=""
+                      contact=""
+                      email=""
+                      institution="The Broad Institute">
+                      <description>
+                         <![CDATA[
+                            Neurospora crassa (OR74A) genomic sequence. Source: The Broad Institute.
+                         ]]>
+                      </description>
+              </info>
+  </resource>
+
+  <!-- ISF genome annotations -->
+  <resource
+          resource="phanerochaete_chrysosporium_unknown_strain_genomic_annotations_RSRC"
+          version="@@phanerochaete_chrysosporium_unknown_strain_VER@@"
+          parentResource="phanerochaete_chrysosporium_unknown_strain_genomic_sequence_RSRC"
+          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+ 
+          <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_unknown_strain/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_unknown_strain_transcripts.gff3"/> 
+
+          <!-- Standardize scaffold IDs by prefixing -->
+          <unpack>
+                fungidb_uniquify_and_standardize_seqids.pl
+                --input  @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_transcripts.gff3
+                --output @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_transcripts.uniquified.gff3
+                --prefix Ncra_or74a
+          </unpack>
+
+          <unpack>
+              preprocessGFF3 
+                 --input_gff @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_transcripts.uniquified.gff3
+                 --output_gff @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_transcripts.transformed.gff
+          </unpack>
+
+          <pluginArgs>
+                 --extDbName %PARENT_RESOURCE_NAME%
+                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
+                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
+                 --inputFileOrDir @@dataDir@@/phanerochaete_chrysosporium_unknown_strain_transcripts.transformed.gff
+                 --inputFileExtension "gff" 
+                 --fileFormat gff3 
+                 --soCvsVersion @@SO_VER@@
+                 --defaultOrganism "Neurospora crassa OR74A"
+                 --seqSoTerm "chromosome"
+                 --validationLog @@dataDir@@/validation.log
+                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                 --seqIdColumn source_id
+                 --naSequenceSubclass ExternalNASequence
+           </pluginArgs>
+
+           <info
+                displayName="Neurospora crassa (OR74A) genomic annotations"
+                project="FungiDB"
+                organisms="@@phanerochaete_chrysosporium_unknown_strain_OrganismFullName@@"
+                category="Genome"
+                publicUrl=""
+                contact=""
+                email=""
+                institution="The Broad Institute">
+                <description>
+                 <![CDATA[
+                     Neurospora crassa (OR74A) genomic annotations. Source: The Broad Institute.
+                 ]]>
+                </description>
+           </info>
+    </resource>
+
+</resources>
