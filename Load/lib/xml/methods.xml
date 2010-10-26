@@ -1,6 +1,6 @@
 <methods>
   <method method="BLASTX_genome_NRDB_MTHD" version="2.0 [06-Apr-2005]">
-    <displayName>BLASTX</displayName>
+    <displayName>Align NRDB proteins to genomic sequence</displayName>
     <toolName>WU-BLASTX</toolName>
     <input>Genomic sequence and NCBI non-redundant protein database</input>
     <output>BLASTX alignments</output>
@@ -10,30 +10,8 @@
     <credit>Warren R. Gish, Washington University, Saint Louis, Missouri</credit>
   </method>
 
-  <method method="HMMPfam_MTHD" version="2.3.2">
-    <displayName>HMMPfam</displayName>
-    <toolName>HMMPfam</toolName>
-    <input>FASTA file of protein sequences and PFAM database</input>
-    <output></output>
-    <pubmedId></pubmedId>
-    <description>Searches HMMs from the PFAM database for significantly similar sequences in the input protein sequence.</description>
-    <url></url>
-    <credit></credit>
-  </method>
-
-  <method method="splign_MTHD" version="07/19/06">
-    <displayName>splign</displayName>
-    <toolName>splign</toolName>
-    <input>output of megablast analysis of a fasta formatted transcript file with a genomic sequence database formatted using formatdb </input>
-    <output>a tab-delimited text with every line representing a separate segment on the query sequence.</output>
-    <pubmedId>16381840</pubmedId>
-    <description>Splign uses transcript to genomic sequence BLAST hit output to generate information about exon-intron boundaries, splice-junctions, potential frameshifts, and alternative models when there is more than one possibility</description>
-    <url>http://www.ncbi.nlm.nih.gov/sutils/splign/</url>
-    <credit></credit>
-  </method>
-
   <method method="BLASTP_translated_proteins_NRDB_MTHD" version="2.0 [06-Apr-2005]">
-    <displayName>BLASTP Annotated protein sequences vs. NRDB</displayName>
+    <displayName>Align NRDB proteins to annotated proteins</displayName>
     <toolName>WU-BLASTP</toolName>
     <input>Protein sequences and NRDB</input>
     <output>BLASTP alignments</output>
@@ -44,7 +22,7 @@
   </method>
 
   <method method="BLASTP_translated_proteins_PDB_MTHD" version="2.0 [06-Apr-2005]">
-    <displayName>BLASTP translated protein sequences vs. PDB</displayName>
+    <displayName>Align PDB proteins to annotated proteins</displayName>
     <toolName>WU-BLASTP</toolName>
     <input>Protein sequences and PDB</input>
     <output>BLASTP alignments</output>
@@ -55,7 +33,7 @@
   </method>
 
   <method method="TMHMM_MTHD" version="2.0a">
-    <displayName>Predict transmembrane domains</displayName>
+    <displayName>Predict transmembrane domains in proteins</displayName>
     <toolName>TMHMM</toolName>
     <input>Protein sequences</input>
     <output>Predicted transmembrane domain topology</output>
@@ -77,7 +55,7 @@
   </method>
 
   <method method="BLASTN_isolate_sequence_MTHD" version="2.0 [06-Apr-2005]">
-    <displayName>BLASTN</displayName>
+    <displayName>Align isolate sequences to genomic sequence</displayName>
     <toolName>WU-BLASTN</toolName>
     <input>Oligo sequences and Genomic or transcript sequences</input>
     <output>BLASTN alignments</output>
@@ -88,7 +66,7 @@
   </method>
 
   <method method="ExportPred_MTHD" version="1.0.1">
-    <displayName>Predict export to host</displayName>
+    <displayName>Predict proteins exported to host</displayName>
     <toolName>ExportPred</toolName>
     <input>FASTA file of protein sequences</input>
     <output>file containing export sequences and scores</output>
@@ -110,7 +88,7 @@
   </method>
 
   <method method="seg_translated_proteins_MTHD" version="unknown">
-    <displayName>Filter low complexity protein sequences</displayName>
+    <displayName>Mask low complexity protein sequence</displayName>
     <toolName>seg</toolName>
     <input>Protein sequences</input>
     <output>Protein sequences containing regions of low complexity are masked with the character 'x'</output>
@@ -121,7 +99,7 @@
   </method>
 
   <method method="dust_genome_MTHD" version="unknown">
-    <displayName>Filter Low Complexity Genomic Sequences</displayName>
+    <displayName>Mask low complexity genomic sequence</displayName>
     <toolName>dust</toolName>
     <input>Genomic sequences</input>
     <output>Genomic sequences containing regions of low complexity are masked with the character 'N'</output>
@@ -132,7 +110,7 @@
   </method>
 
   <method method="psipred_MTHD" version="2.4">
-    <displayName>Predict secondary structure</displayName>
+    <displayName>Predict protein secondary structure</displayName>
     <toolName>psipred</toolName>
     <input>Protein translations of annotated genes (filtered with seg)</input>
     <output>Residue by residue prediction of helix, strand, and coil accompanied by confidence level</output>
@@ -143,7 +121,7 @@
   </method>
 
   <method method="tRNAscan_MTHD" version="1.4">
-    <displayName>Predict tRNAs in genomic sequence</displayName>
+    <displayName>Predict tRNA genes in genomic sequence</displayName>
     <toolName>tRNAScan-SE</toolName>
     <input>Transcript or genomic sequence file in fasta format</input>
     <output>tab delimited file with the type of tRNA, anticodon, score, and locations on the sequences analyzed</output>
@@ -154,7 +132,7 @@
   </method>
 
   <method method="interProScan_MTHD" version="most recent">
-    <displayName>Find InterPro Domains</displayName>
+    <displayName>Find InterPro domains in protein sequence</displayName>
     <toolName>InterProScan</toolName>
     <input>Protein translations of annotated genes and the InterPro Domains Database</input>
     <output>Domains matched, description of the interpro entry, GO description of the Interpro entry and E-value of the match</output>
@@ -176,7 +154,7 @@
   </method>
 
   <method method="CAP4_cluster_ESTs_MTHD" version="unknown">
-    <displayName>CAP4</displayName>
+    <displayName>Cluster mRNA and EST sequences</displayName>
     <toolName>CAP4</toolName>
     <input>Clusters of EST sequences</input>
     <output>assembled consensus sequence and quality values</output>
@@ -197,7 +175,7 @@
     <credit></credit>
   </method>
 
-  <method method="mercator_mavid_MTHD" version="unknown">
+  <method method="mercator_MTHD" version="unknown">
     <displayName>Mercator and Mavid</displayName>
     <toolName>Mercator and Mavid</toolName>
     <input>genomes, exon coordinates, and a phylogentic newick tree</input>
@@ -206,6 +184,19 @@
     <description>Mercator and Mavid are used for comparative genome analysis. Mercator uses genomes and exon coordinates to create exon translations for protein BLAT alignments and outputs orthology maps. The orthology maps are used as a guide for Mavid which also uses a phylogentic newick tree to generate gene alignments</description>
     <url></url>
     <credit></credit>
+    <seeAlso>mavid_MTHD</seeAlso>
+  </method>
+
+  <method method="mavid_MTHD" version="unknown">
+    <displayName>Mercator and Mavid</displayName>
+    <toolName>Mercator and Mavid</toolName>
+    <input>genomes, exon coordinates, and a phylogentic newick tree</input>
+    <output>file of pairwise synteny alignments with defined spans</output>
+    <pubmedId>17993677</pubmedId>
+    <description>Mercator and Mavid are used for comparative genome analysis. Mercator uses genomes and exon coordinates to create exon translations for protein BLAT alignments and outputs orthology maps. The orthology maps are used as a guide for Mavid which also uses a phylogentic newick tree to generate gene alignments</description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>mercator_MTHD</seeAlso>
   </method>
 
   <method method="repeatMasker_genome_MTHD" version="unknown">
@@ -220,7 +211,7 @@
   </method>
 
   <method method="isoelectric_point_MTHD" version="FIX_VERSION">
-    <displayName>Protein pI (isoelectric point) calculation</displayName>
+    <displayName>Calculate protein pI (isoelectric point)</displayName>
     <toolName>BioPerl Bio::Tools::pICalculator</toolName>
     <input>Protein sequences</input>
     <output>pI (isoelectric point) values</output>
@@ -231,7 +222,7 @@
   </method>
 
   <method method="molecular_weight_MTHD" version="FIX_VERSION">
-    <displayName>Protein molecular weight calculation</displayName>
+    <displayName>Calculate protein molecular weight</displayName>
     <toolName>BioPerl Bio::Tools::SeqStats</toolName>
     <input>Protein sequences</input>
     <output>Molecular weight values</output>
@@ -241,52 +232,341 @@
     <credit></credit>
   </method>
 
-  <method method="crossmatch_transcript_seqs_MTHD" version="">
+  <method method="crossmatch_transcript_seqs_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
-  <method method="repeatMasker_transcript_seqs_MTHD" version="">
+  <method method="repeatMasker_transcript_seqs_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="one_channel_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>two_channel_MTHD</seeAlso>
+    <seeAlso>PaGE_MTHD</seeAlso>
+  </method>
+
+  <method method="two_channel_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>one_channel_MTHD</seeAlso>
+    <seeAlso>PaGE_MTHD</seeAlso>
+  </method>
+
+  <method method="PaGE_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>one_channel_MTHD</seeAlso>
+    <seeAlso>two_channel_MTHD</seeAlso>
+  </method>
+
+  <method method="transcript_assemblies_overview_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>crossmatch, mask,blat,cluster, assemble</seeAlso>
+  </method>
+
+  <method method="epitopes_mapping_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="snps_mummer_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="map_sage_tags_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="sage_tags_norm_freqs_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blast_isolates_to_genome_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blast_piggy_bacs_to_genome_MTHD" version="FIX">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
   <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
   </method>
 
 
