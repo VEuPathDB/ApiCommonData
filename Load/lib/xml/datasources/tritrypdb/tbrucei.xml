@@ -263,6 +263,28 @@ Phenotype data generated from siRNA experiments.
     </info>
   </resource>
 
+  <resource resource="Tbrucei_Ferguson_Phospho_Proteome_RSRC" version="2009-04-04"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Ferguson_Phospho_Proteomics/%RESOURCE_VERSION%/final/Table_S2.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Table_S2.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_chromosomes_RSRC|@@Tbrucei927_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="T. brucei phospho-proteome of bloodstream (Ferguson et. al.)"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.trypsproteome.org/"
+        contact = "Michael Ferguson"
+        email = "m.a.j.ferguson@dundee.ac.uk"
+        institution = "Isabelle Nett">
+      <description>
+        <![CDATA[
+The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of African sleeping sickness
+        ]]>
+      </description>
+    <publication pmid="19346560"/>
+    </info>
+  </resource>
+
 <!--TbruceiProteome-->
 
   <resource resource="Tbrucei_IEDB_Epitopes_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@"
