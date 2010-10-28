@@ -1650,6 +1650,31 @@
     </info>
   </resource>
 
+  <resource resource="Pf_Jeffares_SNPs_RSRC" version="@@Pf_Jeffares_SNPs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Jeffares/%RESOURCE_VERSION%/final/Pf_Jeffares_SNPs_RSRC.gff"/>
+    <getAndUnpackOutput file="@@dataDir@@/Pf_Jeffares_SNPs_RSRC.gff"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="SNPs from Sanger (Jeffares et al.)"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Daniel Jeffares"
+        email="d.jeffares@ucl.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+      <description>
+        <![CDATA[
+SNPs from Sanger (Jeffares et al.)
+Nygaard et al (2010) PLoS Genetics
+        ]]>
+      </description>
+    <publication pmid="20838588"/>
+    </info>
+  </resource>
+
+
 <!--pfalciparumSpecific-->
 
   <resource resource="WirthSageTagArrayDesign_RSRC" version="@@WirthSageTagArrayDesign_VER@@"
