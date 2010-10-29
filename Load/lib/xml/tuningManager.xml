@@ -5921,18 +5921,37 @@ sub changedGenesWithoutProduct {
     my ($dbh) = @_;
 
     my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
-      select count(*)
-      from ( select gene from apidb.ChangedGeneProduct
-            minus
-             select gene from apidb.ChangedGeneProduct&1)
+      select gene from apidb.ChangedGeneProduct
+    minus
+      select gene from apidb.ChangedGeneProduct&1
+    order by gene
 SQL
 
-  # this query will fail on the first tuningManager run in a new instance,
-  # because apidb.ChangedGeneProduct doesn't yet exist.  So empty return on error.
-  $stmt->execute() or return;
-  my ($gwp) = $stmt->fetchrow_array();
+  $stmt->execute() or die "checking for changed genes without product";
 
-  return $gwp;
+    my @missing;
+    while (my ($gene) = $stmt->fetchrow_array()) {
+      push(@missing, $gene);
+  }
+
+    my $numberMissing = scalar(@missing);
+
+    if ($numberMissing > 10) {
+	# error message listing a subset of missing genes, as examples
+	  ApiCommonData::Load::TuningConfig::Log::addLog("The following $numberMissing genes are in the current version ofChangedGeneProduct, but not the new version:");
+	    my $listString;
+	    my $SAMPLE_SIZE = 10; # list $SAMPLE_SIZE missing genes in the log
+	    for (my $i = 0; $i < $numberMissing; $i += $numberMissing / $SAMPLE_SIZE) {
+		$listString .= $missing[$i] . " ";
+	    }
+	    ApiCommonData::Load::TuningConfig::Log::addLog($listString);
+      } elsif ($numberMissing > 0) {
+	  # error message listing all missing genes 
+        ApiCommonData::Load::TuningConfig::Log::addLog("The following " . $numberMissing . " genes are in the current ChangedGeneProduct, but not the new one:");
+	  ApiCommonData::Load::TuningConfig::Log::addLog(join(' ', @missing));
+	}
+
+    return $numberMissing;
 }
 
 sub createIndex {
