@@ -277,7 +277,7 @@ sub update {
 
     if ($@) {
       $updateError = 1;
-      ApiCommonData::Load::TuningConfig::Log::addErrorLog("Error \"$@\" encountered executing Perl statement:\n$perlCopy");
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("Error \"$@\" encountered executing Perl statement beginning:\n" . substr($perlCopy, 1, 100) );
     }
   }
 
