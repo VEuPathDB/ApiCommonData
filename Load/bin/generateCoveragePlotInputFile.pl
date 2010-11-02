@@ -69,6 +69,8 @@ sub getExtDbRlsId {
     my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
     my $sth = $dbh->prepareAndExecute($sql);
     my $extDbRlsId = $sth->fetchrow_array();
+    die "Can't retrieve an ext db rls id with $extDbSpecs" unless $extDbRlsId;
+      
     $sth->finish();
     return $extDbRlsId;
 }
