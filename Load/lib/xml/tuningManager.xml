@@ -5938,7 +5938,7 @@ SQL
 
     if ($numberMissing > 10) {
 	# error message listing a subset of missing genes, as examples
-	  ApiCommonData::Load::TuningConfig::Log::addLog("The following $numberMissing genes are in the current version ofChangedGeneProduct, but not the new version:");
+	  ApiCommonData::Load::TuningConfig::Log::addLog("$numberMissing genes, including the examples below, are in the current version ofChangedGeneProduct, but not the new version:");
 	    my $listString;
 	    my $SAMPLE_SIZE = 10; # list $SAMPLE_SIZE missing genes in the log
 	    for (my $i = 0; $i < $numberMissing; $i += $numberMissing / $SAMPLE_SIZE) {
@@ -5947,7 +5947,7 @@ SQL
 	    ApiCommonData::Load::TuningConfig::Log::addLog($listString);
       } elsif ($numberMissing > 0) {
 	  # error message listing all missing genes 
-        ApiCommonData::Load::TuningConfig::Log::addLog("The following " . $numberMissing . " genes are in the current ChangedGeneProduct, but not the new one:");
+        ApiCommonData::Load::TuningConfig::Log::addLog("The following $numberMissing genes are in the current ChangedGeneProduct, but not the new one:");
 	  ApiCommonData::Load::TuningConfig::Log::addLog(join(' ', @missing));
 	}
 
