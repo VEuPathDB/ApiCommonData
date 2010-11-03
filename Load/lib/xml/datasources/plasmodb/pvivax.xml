@@ -72,7 +72,7 @@
   </resource>
 
 <!--EC Numbers Resource-->
-  <resource resource="Pvivax_ECNumbers_RSRC" version="@@Pvivax_chromosomes_VER@@"
+  <resource resource="Pvivax_ECNumbers_RSRC" version="@@Pvivax_contigsGB_VER@@"
       plugin="GUS::Community::Plugin::InsertECMapping">
     <manualGet fileOrDir="PlasmoDB/pvivax/function/ECNumbers_Pvivax/PvivaxECNumbers"/>
     <pluginArgs>--ECMappingFile @@dataDir@@/PvivaxECNumbers --evidenceCode "jCVI" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
