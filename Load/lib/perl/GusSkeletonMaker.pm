@@ -8,6 +8,8 @@ use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
+use GUS::Model::DoTS::Gene;
+use GUS::Model::DoTS::GeneInstance;
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
 		'repeated_gene'=>'repeat_region',
@@ -35,13 +37,6 @@ sub makeGeneSkeleton{
 
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId);
 
-  my $gene = GUS::Model::DoTS::Gene->new();
-
-  my $geneInstance = GUS::Model::DoTS::GeneInstance->new();
-
-  $geneInstance->setParent($gusGene);
-  $geneInstance->setParent($gene);
-  
   $bioperlGene->{gusFeature} = $gusGene;
 
   my $transcriptExons;  # hash to remember each transcript's exons
