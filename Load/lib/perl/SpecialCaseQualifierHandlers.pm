@@ -3,6 +3,8 @@ package ApiCommonData::Load::SpecialCaseQualifierHandlers;
 use strict;
 
 use GUS::Supported::SpecialCaseQualifierHandlers;
+use GUS::Model::DoTS::Gene;
+use GUS::Model::DoTS::GeneInstance;
 use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
@@ -63,6 +65,7 @@ sub undoAll{
   $self->_undoAnticodon();
   $self->_undoProvidedTranslation();
   $self->_undoMiscSignalNote();
+  $self->_undoSetParent();
   $self->_undoSourceIdAndTranscriptSeq();
   $self->_undoDbXRef();
   $self->_undoGenbankDbXRef();
@@ -101,6 +104,9 @@ sub sourceIdAndTranscriptSeq {
   $tagValues[0] =~ s/\s+$//;
 
   $geneFeature->setSourceId($tagValues[0]);
+
+
+
   
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
 
@@ -288,6 +294,38 @@ sub sourceIdAndTranscriptSeq {
 }
 
 sub _undoSourceIdAndTranscriptSeq {
+  my ($self) = @_;
+
+}
+
+
+################ Set Parent for GeneFeature ######################
+
+sub setParent{
+  my ($self, $tag, $bioperlFeature, $geneFeature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  
+
+  $tagValues[0] =~ s/^\s+//;
+  $tagValues[0] =~ s/\s+$//;
+
+
+  my $gene = GUS::Model::DoTS::Gene->new({description => $tagValues[0]});
+
+  $gene->retrieveFromDB();
+
+  my $geneInstance = GUS::Model::DoTS::GeneInstance->new();
+  
+  
+  $geneInstance->setParent($geneFeature);
+  $geneInstance->setParent($gene);
+  $geneInstance->set("is_reference",0);
+
+  return [];
+}
+
+sub _undoSetParent {
   my ($self) = @_;
 
 }
