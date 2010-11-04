@@ -226,6 +226,7 @@ sub traverseSeqFeatures {
 	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
 	    my($geneID) = $geneFeature->get_tag_values('ID');
 
+	    my($parentID) = $RNA->get_tag_values('Parent') if $RNA->has_tag('Parent');
 	    if($transcriptCount > 1){
 		
 		$geneID .= "-".$suffixes[$ctr];
@@ -238,6 +239,8 @@ sub traverseSeqFeatures {
 	    $gene->add_tag_value("ID",$geneID);
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
+	    $gene->add_tag_value("parentID",$parentID);
+
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
   	    #$transcript = &copyQualifiers($RNA,$transcript);
 
@@ -392,6 +395,15 @@ sub traverseSeqFeatures {
 
 
 	    foreach my $exon (@fixedExons){
+		if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
+		    $exon->add_tag_value('CodingStart', '');
+		    $exon->add_tag_value('CodingEnd', '');	
+		}else{
+		    if(!($exon->has_tag('CodingStart'))){
+			$exon->add_tag_value('CodingStart', '');
+			$exon->add_tag_value('CodingEnd', '');	
+		    }
+		}
 
 		$transcript->add_SeqFeature($exon);
 	    }
@@ -404,6 +416,11 @@ sub traverseSeqFeatures {
 		    if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');	
+		    }else{
+			if(!($exon->has_tag('CodingStart'))){
+			    $exon->add_tag_value('CodingStart', '');
+			    $exon->add_tag_value('CodingEnd', '');	
+			}
 		    }
 
 		}
