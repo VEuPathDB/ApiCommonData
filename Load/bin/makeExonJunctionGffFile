@@ -20,7 +20,7 @@ open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
 while (<TABFILE>){
   chomp;
 
-  next if /^#/; 
+  next if /^intron/; 
 
   my ($intron,)= split(/\t/, $_);
 
@@ -28,11 +28,9 @@ while (<TABFILE>){
 
   my ($start, $end) = split(/-/, $location);
 
-  print OUT "$genomeId\tIntron\t.\t$start\t$end\t.\t.\t.\tID \"$sampleName"."-"."$genomeId"."-"."$location\"; Name \"$sampleName"."-"."$genomeId"."-"."$location\"\n";
+  print OUT "$genomeId\tEXON_JUNCTIONS\tIntron\t$start\t$end\t.\t.\t.\tID \"$sampleName"."-"."$genomeId"."-"."$location\"\n";
+}
 
 close(TABFILE);
 
 close(OUT);
-
-
-
