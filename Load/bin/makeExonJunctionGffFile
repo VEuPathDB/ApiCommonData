@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use Data::Dumper;
+use List::Util qw(sum);
+
+my ($outputFile,$inputFile,$verbose, $sampleName);
+&GetOptions("inputFile=s" => \$inputFile,
+	    "sampleName=s" => \$sampleName,
+            "verbose!" => \$verbose,
+            "outputFile=s" => \$outputFile);
+
+open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";
+
+open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
+
+while (<TABFILE>){
+  chomp;
+
+  next if /^#/; 
+
+  my ($intron,)= split(/\t/, $_);
+
+  my ($genomeId, $location) =split(/:/, $intron);
+
+  my ($start, $end) = split(/-/, $location);
+
+  print OUT "$genomeId\tIntron\t.\t$start\t$end\t.\t.\t.\tID \"$sampleName"."-"."$genomeId"."-"."$location\"; Name \"$sampleName"."-"."$genomeId"."-"."$location\"\n";
+
+close(TABFILE);
+
+close(OUT);
+
+
+
