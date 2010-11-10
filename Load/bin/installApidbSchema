@@ -22,45 +22,31 @@ my $password = $gusconfig->getDatabasePassword();
 
 my @create = qw( enterDbVersion.sql
                  createApidbSchema.sql
-                 increaseColumnWidth.sql
                  removeNullConstraintsFromSimilarityTables.sql
-                 fixGusTableCapitalization.sql
                  createAnalysisMethod.sql
                  createChromosome6Orthology.sql
                  createDbLinks.sql
-                 createDbRefAaFeature.sql
                  createDbUser.sql
-                 createDifferentialExpression.sql
                  createExpressionProfileTables.sql
                  createGeneInteractionTables.sql
                  createGeneMappingView.sql
                  createGeneFeatureProduct.sql
                  createGeneName.sql
                  createIsolateVocabulary.sql
-                 createIsolateFeature.sql
-                 createIsolateSourceTable.sql
                  createMassSpecSummary.sql
-                 createNaSequenceViews.sql
                  createGusTuning.sql
                  createOrthologGroup.sql
                  createOrthomclEngine.sql
                  createPhylogeneticProfile.sql
                  createPhylogeneticTree.sql
-                 createRadExpressionProfile.sql
                  createRelatedNaFeature.sql
                  createReportCache.sql
                  createRodentChrColors.sql
                  createSequenceAttributeTables.sql
-                 createSeqVariation.sql
-                 createSnpFeature.sql
                  createStoredProcedures.sql
                  createSyntenyTables.sql
                  createToxodbGenesView.sql
-                 createTranscriptView.sql
-                 createTranslatedAaFeature.sql
                  createTransmembraneTable.sql
-                 2aryStructCallPct.sql
-                 createArrayElementFeature.sql
                  createTuningManager.sql
                  createContinents.sql
 		 createWorkflow.sql
@@ -69,7 +55,6 @@ my @create = qw( enterDbVersion.sql
 		 createNextGenSeq_Align.sql
 		 createPlasmoPfalLocations.sql
 		 createPlasmoMapp.sql
-                 backwards_fks.sql
 		 createGeneGenomicSequence_Split.sql
 		 createOrganismProject.sql
                  createIsolateMapping.sql
@@ -77,7 +62,6 @@ my @create = qw( enterDbVersion.sql
 
 my @delete = qw( dropTuningManager.sql
                  dropDbLinks.sql
-                 dropDbRefAaFeature.sql
                  dropDbUser.sql
                  dropExpressionProfileTables.sql
                  dropGeneInteractionTables.sql
@@ -89,11 +73,9 @@ my @delete = qw( dropTuningManager.sql
                  dropOrthomclEngine.sql
                  dropPhylogeneticProfile.sql
                  dropSequenceAttributeTables.sql
-                 dropSnpFeature.sql
                  dropSyntenyTables.sql
                  dropToxodbGenesView.sql
                  dropTransmembraneTable.sql
-                 dropArrayElementFeature.sql
 		 dropWorkflow.sql
                  dropOrganismProject.sql
 		 dropGenegenomicsequence.sql
