@@ -105,7 +105,7 @@ sub sourceIdAndTranscriptSeq {
 
   $geneFeature->setSourceId($tagValues[0]);
 
-
+  $geneFeature->setProduct('unspecified product');
 
   
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
@@ -311,16 +311,23 @@ sub setParent{
   $tagValues[0] =~ s/\s+$//;
 
 
-  my $gene = GUS::Model::DoTS::Gene->new({description => $tagValues[0]});
-
-  $gene->retrieveFromDB();
-
+  my $gene = GUS::Model::DoTS::Gene->new({name => $tagValues[0]});
   my $geneInstance = GUS::Model::DoTS::GeneInstance->new();
   
   
   $geneInstance->setParent($geneFeature);
-  $geneInstance->setParent($gene);
-  $geneInstance->set("is_reference",0);
+
+  if($gene->retrieveFromDB()){
+      $geneInstance->setParent($gene);
+      $geneInstance->set("is_reference",0);
+  }else{
+
+      $gene->set("name",$tagValues[0]);
+
+
+      $geneInstance->setParent($gene);
+      $geneInstance->set("is_reference",1);
+  }
 
   return [];
 }
