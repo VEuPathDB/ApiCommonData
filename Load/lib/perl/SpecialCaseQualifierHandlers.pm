@@ -109,11 +109,6 @@ sub sourceIdAndTranscriptSeq {
   $geneFeature->setSourceId($tagValues[0]);
 
   
-  my $product = $geneFeature->getChild('ApiDB::GeneFeatureProduct');
-
-  $product->set('product','unspecified product');
-
-  
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
 
   my @exonFeatures = $geneFeature->getChildren("DoTS::ExonFeature");
