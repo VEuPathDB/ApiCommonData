@@ -62,7 +62,7 @@ sub makeGeneSkeleton{
     }
 
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
-      my $product = &makeProduct($dbRlsId);.
+      my $product = &makeProduct($dbRlsId);
       my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       
