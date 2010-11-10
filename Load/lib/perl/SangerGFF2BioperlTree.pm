@@ -128,16 +128,11 @@ sub preprocess {
 		
 		my @genes = @{$geneArrayRef};
 
-		my %polypep = %{$polypeptideRef};
+		%polypeptide = %{$polypeptideRef};
 
 		
 		
-		foreach my $rnaId (keys %polypep){
 
-		    if(!($polypep{$rnaId}->{flag})){
-			print STDERR "Error: No genes/mRNAs for this polypeptide : $rnaId\n";
-		    }
-		}
 		foreach my $gene (@genes){
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
@@ -158,6 +153,14 @@ sub preprocess {
 	    }
 
 	}
+    
+    foreach my $rnaId (keys %polypeptide){
+
+	if(!($polypeptide{$rnaId}->{flag})){
+	    print STDERR "Error: No genes/mRNAs for this polypeptide : $rnaId\n";
+	}
+    }
+
 }
 
 sub traverseSeqFeatures {
@@ -220,6 +223,9 @@ sub traverseSeqFeatures {
 		    $type = 'coding';
 		    $RNA = &copyQualifiers($polypeptide{$rnaId},$RNA);
 		    $CDSLocation  = $polypeptide{$rnaId}->location;
+		    $polypeptide{$rnaId}->{flag} = 1;
+		}else{
+		    print STDERR "Missing polypeptide for: $rnaId\n";
 		}
 		    
 
