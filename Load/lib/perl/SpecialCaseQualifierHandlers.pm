@@ -13,6 +13,7 @@ use GUS::Supported::Plugin::InsertSequenceFeaturesUndo;
 use GUS::Model::DoTS::AASequenceEnzymeClass;
 use GUS::Model::DoTS::NAFeatureComment;
 use GUS::Model::DoTS::Repeats;
+use GUS::Model::ApiDB::GeneFeatureProduct;
 use ApiCommonData::Load::Util;
 use Data::Dumper;
 
@@ -105,7 +106,10 @@ sub sourceIdAndTranscriptSeq {
 
   $geneFeature->setSourceId($tagValues[0]);
 
-  $geneFeature->setProduct('unspecified product');
+  
+  my $product = GUS::Model::ApiDB::GeneFeatureProduct->new({product => 'unspecified product',is_preferred => 1});
+
+  $product->setParent($geneFeature);
 
   
   my $geneLoc = $geneFeature->getChild('DoTS::NALocation');
