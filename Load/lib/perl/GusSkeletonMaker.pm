@@ -61,12 +61,16 @@ sub makeGeneSkeleton{
       push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
+    my $product = &makeProduct($dbRlsId);
+
+    $product->setParent($gusGene);
+
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
-      my $product = &makeProduct($dbRlsId);
+
       my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
       
-      $product->setParent($gusGene);
+
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
 
