@@ -42,27 +42,29 @@ sub preprocess {
 	
         my %polypeptide;
 
-      
+        my %rnas;
 	foreach my $bioperlFeatureTree (@seqFeatures){
 	    my $type = $bioperlFeatureTree->primary_tag();
 
-#	    print "$type\n";
+
 	    if($type eq 'polypeptide'){
 		my $id;
 		my $sourceId = "";
-		($sourceId) = $bioperlFeatureTree->get_tag_values("Derives_from") if $bioperlFeatureTree->has_tag("ID");
+		($sourceId) = $bioperlFeatureTree->get_tag_values("ID") if $bioperlFeatureTree->has_tag("ID");
 		if ($bioperlFeatureTree->has_tag("Derives_from")){
 		    ($id) = $bioperlFeatureTree->get_tag_values("Derives_from");
 		}else{
-		    print STDERR "$sourceId polypeptide feature has no associated parent";
+		    print STDERR "Error: $sourceId polypeptide feature has no associated parent$id\n";
+		}
+
+		if($polypeptide{$id}){
+		    print STDERR "Error: Multiple polypeptides for $id\n";
 		}
 
 		$polypeptide{$id} = $bioperlFeatureTree if($id);
 	    }
 
 	}
-
-
 	    
 
 
@@ -120,13 +122,22 @@ sub preprocess {
 			
 		    }
 		}       
-		my ($geneArrayRef,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
+		my ($geneArrayRef,$UTRArrayRef,$polypeptideRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq,\%polypeptide);
 
 		my @UTRs = @{$UTRArrayRef};
 		
 		my @genes = @{$geneArrayRef};
 
+		my %polypep = %{$polypeptideRef};
+
 		
+		
+		foreach my $rnaId (keys %polypep){
+
+		    if(!($polypep{$rnaId}->{flag})){
+			print STDERR "Error: No genes/mRNAs for this polypeptide : $rnaId\n";
+		    }
+		}
 		foreach my $gene (@genes){
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
@@ -159,9 +170,7 @@ sub traverseSeqFeatures {
 
     my $transcriptFlag = 0;
 
-    my $suffix = "abcdefghijklmnopqrstuvwxyz";
 
-    my @suffixes = split(//,$suffix);
 
 
     # This will accept genes of type misc_feature (e.g. cgd4_1050 of GI:46229367)
@@ -172,7 +181,7 @@ sub traverseSeqFeatures {
 
     my $transcriptCount = scalar @RNAs;
 
-    my $ctr = 0;
+    my $ctr = 1;
 
 
     foreach my $RNA (sort {$a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end} @RNAs){ 
@@ -192,7 +201,7 @@ sub traverseSeqFeatures {
         ) {
 
 
-	    my $CDSLocation;
+	    my ($CDSLocation,$rnaId);
 	    
 	   # print STDERR "-----------------$type----------------------\n";
 
@@ -218,9 +227,15 @@ sub traverseSeqFeatures {
 
 	    if($type eq 'mRNA'){
 		$type = 'coding';
-		my($rnaId) = $RNA->get_tag_values('ID');
-		$RNA = &copyQualifiers($polypeptide{$rnaId},$RNA) if $polypeptide{$rnaId};
-		#print STDERR "Missing poly: $rnaId\n";
+		($rnaId) = $RNA->get_tag_values('ID');
+
+		if($polypeptide{$rnaId}){
+		    $RNA = &copyQualifiers($polypeptide{$rnaId},$RNA);
+		    $polypeptide{$rnaId}->{flag} = 1;
+		}else{
+		    print STDERR "Missing polypeptide for: $rnaId\n";
+		}
+
 		$CDSLocation  = $polypeptide{$rnaId}->location;
 	    }
 	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
@@ -229,7 +244,12 @@ sub traverseSeqFeatures {
 	    my($parentID) = $RNA->get_tag_values('Parent') if $RNA->has_tag('Parent');
 	    if($transcriptCount > 1){
 		
-		$geneID .= "-".$suffixes[$ctr];
+		$rnaId =~ s/\:mRNA$//g;
+		if($rnaId eq $geneID){
+		    $geneID = $rnaId."\.$ctr";
+		}else{
+		    $geneID = $rnaId;
+		}
 
 		$ctr++;
 		
@@ -445,7 +465,7 @@ sub traverseSeqFeatures {
 
 	}
     }
-    return (\@genes,\@UTRs);
+    return (\@genes,\@UTRs,\%polypeptide);
 }
 
 
