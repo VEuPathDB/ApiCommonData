@@ -10,7 +10,7 @@ use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
 use GUS::Model::DoTS::Gene;
 use GUS::Model::DoTS::GeneInstance;
-use GUS::Model::ApiDB::GeneFeatureProduct;
+
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
 		'repeated_gene'=>'repeat_region',
@@ -61,9 +61,6 @@ sub makeGeneSkeleton{
       push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
-    my $product = &makeProduct($dbRlsId);
-
-    $product->setParent($gusGene);
 
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
 
@@ -260,18 +257,7 @@ sub makeTranslatedAAFeat {
 
 #--------------------------------------------------------------------------------
 
-sub makeProduct {
-  my ($dbRlsId) = @_;
 
-  my $product = GUS::Model::ApiDB::GeneFeatureProduct->
-    new({external_database_release_id => $dbRlsId,
-         is_preferred => 1,
-        });
-
-  return $product;
-}
-
-#--------------------------------------------------------------------------------
 
 #################################################################
 
@@ -279,7 +265,6 @@ sub undoTables {
  return ('DoTS.RNAFeatureExon',
 	 'DoTS.TranslatedAAFeature',
 	 'DoTS.TranslatedAASequence',
-	 'ApiDB.GeneFeatureProduct',
 	 );
 }
 
