@@ -5,7 +5,7 @@ use strict;
 
 use FileHandle;
 use GUS::ObjRelP::DbiDatabase;
-use GUS::Model::ApiDB::AnalysisMethod;
+use GUS::Model::ApiDB::AnalysisMethodInvocation;
 use GUS::PluginMgr::Plugin;
 
 $| = 1;
