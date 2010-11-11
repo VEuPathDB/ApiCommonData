@@ -1,17 +1,8 @@
-CREATE TABLE apidb.AnalysisMethod (
- analysis_method_id         NUMBER(12) NOT NULL,
+CREATE TABLE apidb.AnalysisMethodInvocation (
+ analysis_method_invocation_id NUMBER(12) NOT NULL,
  name                       VARCHAR(200) NOT NULL,
- tool                       VARCHAR(40),
  version                    VARCHAR(30),
- category                   VARCHAR(30),
- input                      VARCHAR(200),
- output                     VARCHAR(300),
  parameters                 VARCHAR(200),
- description                CLOB,
- pubmed_id                  VARCHAR(16),
- citation_string            VARCHAR(500),
- url                        VARCHAR(200),
- credits                    VARCHAR(200),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -25,20 +16,20 @@ CREATE TABLE apidb.AnalysisMethod (
  row_alg_invocation_id        NUMBER(12) NOT NULL
 );
 
-ALTER TABLE apidb.AnalysisMethod
-ADD CONSTRAINT anal_method_pk PRIMARY KEY (analysis_method_id);
+ALTER TABLE apidb.AnalysisMethodInvocation
+ADD CONSTRAINT anal_method_inv_pk PRIMARY KEY (analysis_method_invocation_id);
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AnalysisMethod TO gus_w;
-GRANT SELECT ON apidb.AnalysisMethod TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.AnalysisMethodInvocation TO gus_w;
+GRANT SELECT ON apidb.AnalysisMethodInvocation TO gus_r;
 
-CREATE INDEX apiDB.analysis_method_name_idx ON apiDB.AnalysisMethod(name);
+CREATE INDEX apiDB.analysis_method_name_idx ON apiDB.AnalysisMethodInvocation(name);
 
 ------------------------------------------------------------------------------
 
-CREATE SEQUENCE apidb.AnalysisMethod_sq;
+CREATE SEQUENCE apidb.AnalysisMethodInvocation_sq;
 
-GRANT SELECT ON apidb.AnalysisMethod_sq TO gus_r;
-GRANT SELECT ON apidb.AnalysisMethod_sq TO gus_w;
+GRANT SELECT ON apidb.AnalysisMethodInvocation_sq TO gus_r;
+GRANT SELECT ON apidb.AnalysisMethodInvocation_sq TO gus_w;
 
 ------------------------------------------------------------------------------
 
@@ -48,14 +39,14 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'AnalysisMethod',
-       'Standard', 'analysis_method_id',
+SELECT core.tableinfo_sq.nextval, 'AnalysisMethodInvocation',
+       'Standard', 'analysis_method_invocation_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'analysismethod' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'analysismethodinvocation' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
