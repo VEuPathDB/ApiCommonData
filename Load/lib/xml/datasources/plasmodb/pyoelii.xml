@@ -124,6 +124,55 @@
     </info>
   </resource>
 
+
+  <resource resource="PyoeliiProvisionalGenes_IEDB_Epitopes_RSRC" version="@@Py_IEDB_Epitopes_VER@@"  parentResource="Py_IEDB_Epitopes_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPyoe.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed/fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="Ignore
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="PyoeliiProvisionalGenes_IEDB_Epitopes_DBxRefs_RSRC" version="@@Py_IEDB_Epitopes_VER@@" parentResource="Py_IEDB_Epitopes_DBxRefs_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--PyDbxRefResource-->
 
   <resource resource="Py_Entrez_DBRefs_RSRC" version="2010-06-16"

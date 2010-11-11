@@ -336,6 +336,52 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
   </resource>
 
 
+  <resource resource="TbGambiense_IEDB_Epitopes_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@" parentResource="Tbrucei_IEDB_Epitopes_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportTb.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportTb.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TbGambiense_IEDB_Epitopes_DBxRefs_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@" parentResource="Tbrucei_IEDB_Epitopes_DBxRefs_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@TbruceiOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--RNASeq and ChipSeq-->
 
