@@ -218,7 +218,7 @@ sub traverseSeqFeatures {
 	    if($type eq 'pseudogenic_transcript'){
 	
 		$RNA->add_tag_value("pseudo","");
-		my($rnaId) = $RNA->get_tag_values('ID');
+		($rnaId) = $RNA->get_tag_values('ID');
 		if ($polypeptide{$rnaId}){
 		    $type = 'coding';
 		    $RNA = &copyQualifiers($polypeptide{$rnaId},$RNA);
@@ -296,7 +296,7 @@ sub traverseSeqFeatures {
 		    my($exonId) = $subFeature->get_tag_values('ID') if $subFeature->has_tag('ID');
 		    
 		    #print STDERR "$id\n";
-		    if($exonId =~ /splice acceptor/i){
+		    if($exonId =~ /splice acceptor/i || $exonId =~ /splice addition/i){
 			#print STDERR "Splice Acceptor\n";
 			$subFeature->primary_tag('splice_acceptor_site');
 		    }
@@ -306,6 +306,8 @@ sub traverseSeqFeatures {
 
 		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR' || $subFeature->primary_tag eq 'splice_acceptor_site'){
 		    
+
+
 		    $exonType = $subFeature->primary_tag;
 		    my $UTR = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
 
@@ -320,8 +322,11 @@ sub traverseSeqFeatures {
 		    
 		    $subFeature->primary_tag('exon');
 		    push(@UTRs, $UTR);
-		    
 
+			if(($polypeptide{$rnaId}->location->start <= $subFeature->location->start && $polypeptide{$rnaId}->location->end >= $subFeature->location->end)){
+
+			    next;
+			}
 		}elsif($type eq 'coding'){
 		    $exonType = 'coding';
 
@@ -372,6 +377,7 @@ sub traverseSeqFeatures {
 			    $subFeature->remove_tag('type') if $subFeature->has_tag('type');
 			    $subFeature->add_tag_value('type','coding');
 
+			    $exonType = 'coding';
 			    ($codingEnd) = $prevExon->get_tag_values('CodingEnd');
 			    ($codingStart) = $prevExon->get_tag_values('CodingStart');
 			    if($subFeature->location->strand == -1){
