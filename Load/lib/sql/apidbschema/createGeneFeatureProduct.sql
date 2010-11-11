@@ -2,9 +2,9 @@ CREATE TABLE apidb.GeneFeatureProduct (
  gene_feature_product_id      NUMBER(12) NOT NULL,
  na_feature_id                NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(12) NOT NULL,
- product                      VARCHAR(4000) NOT NULL,
+ product                      VARCHAR(400) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
- modification_date            date NOT NULL,
+ modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
  group_read                   NUMBER(1) NOT NULL,
@@ -22,7 +22,7 @@ ADD CONSTRAINT gene_prod_pk PRIMARY KEY (gene_feature_product_id);
 
 ALTER TABLE apidb.GeneFeatureProduct
 ADD CONSTRAINT gene_prod_fk1 FOREIGN KEY (na_feature_id)
-REFERENCES dots.NAFeatureImp (na_feature_id);
+REFERENCES dots.NaFeatureImp (na_feature_id);
 
 ALTER TABLE apidb.GeneFeatureProduct
 ADD CONSTRAINT gene_prod_fk2 FOREIGN KEY (external_database_release_id)
@@ -31,7 +31,7 @@ REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneFeatureProduct TO gus_w;
 GRANT SELECT ON apidb.GeneFeatureProduct TO gus_r;
 
-CREATE INDEX apiDB.gene_prod_idx ON apiDB.GeneFeatureProduct(na_feature_id,is_preferred,product);
+CREATE INDEX apiDB.gene_prod_idx ON apiDB.GeneFeatureProduct(na_feature_id, is_preferred, product);
 
 ------------------------------------------------------------------------------
 

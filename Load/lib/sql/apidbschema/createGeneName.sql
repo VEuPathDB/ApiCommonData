@@ -2,9 +2,9 @@ CREATE TABLE apidb.GeneName (
  gene_name_id                 NUMBER(12) NOT NULL,
  gene_id                      NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(12) NOT NULL,
- name                         VARCHAR(4000) NOT NULL,
+ name                         VARCHAR(60) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
- modification_date            date NOT NULL,
+ modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
  group_read                   NUMBER(1) NOT NULL,
@@ -31,7 +31,7 @@ REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneName TO gus_w;
 GRANT SELECT ON apidb.GeneName TO gus_r;
 
-CREATE INDEX apiDB.gene_name_idx ON apiDB.GeneName(gene_id,is_preferred,name);
+CREATE INDEX apiDB.gene_name_idx ON apiDB.GeneName(gene_id, is_preferred, name);
 
 ------------------------------------------------------------------------------
 
