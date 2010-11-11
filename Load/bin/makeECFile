@@ -30,10 +30,10 @@ my $append = 0;
             'fileOrDir=s' => \$inFileDir,
             'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
-	    'ec_id_qualifier=s'       =>  \$idQualifier,
- 	    'parent_id_qualifier=s'       =>  \$parentQualifier,
- 	    'parent_feature=s'       =>  \$parentFeature,
-	    'ec_feature=s'       => \$ecFeature,
+	    'ecfeatid_qualifier=s'       =>  \$idQualifier,
+ 	    'geneid_qualifier=s'       =>  \$parentQualifier,
+ 	    'feat_with_geneid=s'       =>  \$parentFeature,
+	    'feat_with_ec=s'       => \$ecFeature,
 	    'ec_qualifier=s'       => \$ecQualifier,
 	    'format=s'         => \$format,
             'append'          => sub {$append = 1},
@@ -43,7 +43,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $ecQualifier);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $ecQualifier && $ecFeature);
 
 
 
@@ -57,9 +57,6 @@ if($append){
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
-$parentQualifier = $idQualifier if (!($parentQualifier));
-
-$ecFeature = "CDS" if (!($ecFeature));
 
 
 my %parentIDHash;
@@ -149,14 +146,13 @@ while ( my $seq = $in->next_seq() ) {
 	    if ($feature->has_tag($parentQualifier)){
 	      foreach my $value ($feature->get_tag_values($parentQualifier)){
 		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
+
+		  $parentId = &trimIds($parentId);
 	      }
 
 	      my @children;
 	      if($parentFeature eq $ecFeature){
-		  push(@children,$feature);
+		  push(@children,$parentFeature);
 		  $parentIDHash{$parentId}->{flag} = 0;
 	      }else{
 		  @children = $feature->get_SeqFeatures;
@@ -172,14 +168,14 @@ while ( my $seq = $in->next_seq() ) {
 			  my ($id) = $child->get_tag_values($idQualifier) if $child->has_tag($idQualifier);
 			  my (@ecs) = $child->get_tag_values($ecQualifier) if $child->has_tag($ecQualifier);
 			  
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+
+			  $id = &trimIds($id);
 
 			  if($id eq $parentId){
 			      $id .= "\.$transcriptCtr";
 			  }
 			  foreach my $ec (@ecs){
+			      $ec = &trim($ec);
 			      if($ec ne ""){
 				  $ecFh->print("$id\t$ec\n");
 			      }
@@ -191,11 +187,10 @@ while ( my $seq = $in->next_seq() ) {
 			  
 			  my $id = $parentId;
 
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+			  $id = &trimIds($id);
 
 			  foreach my $ec (@ecs){
+			      $ec = &trim($ec);
 			      if($ec ne ""){
 				  $ecFh->print("$id\t$ec\n");
 			      }
@@ -225,6 +220,20 @@ sub trim($){
 	my $string = shift;
 	$string =~ s/^\s+//;
 	$string =~ s/\s+$//;
+
+	return $string;
+}
+
+
+#-------------------------------------------------------------------------------
+
+sub trimIds($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/:pep.*$//g;
+	$string =~ s/:mRNA.*$//g;
+	$string =~ s/:pseudogenic_transcript.*$//g;
 	return $string;
 }
 
@@ -235,17 +244,17 @@ sub usage {
   my ($m) = @_;
 
   print STDERR "$m\n" if($m);
-  my $usage = "usage:  perl makeGeneNameFile \\
+  my $usage = "usage:  perl makeEcFile \\
 --format      <format of the annotation file (genbank, embl, gff)>
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
---output_file <output ec file> \\
-[--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if ec is not in top level feature >] \\
-[--parent_feature <name of the parent feature` -only required if ec is not in top level feature >] \\
-[--ec_feature <name of the feature in which ec number qualifier is present (default 'CDS')>] \\
---ec_id_qualifier <qualifier for ec numbers in input file> \\
---ec_qualifier <qualifier for ec numbers in input file> \\
-[--append' <if ec list should be appended to file (boolean)>] \\
+--output_file <output EC number file> \\
+--feat_with_ec <name of the feature in which EC numbers is present> \\
+--ec_qualifier <qualifier for EC numbers within feat_with_ec> \\
+--ecfeatid_qualifier <qualifier for source ids within feat_with_ec  (may be required for alternative spliced form ids)> \\
+[--feat_with_geneid <name of feature containing gene source ids` -only required if ec is not in feature >] \\
+[--geneid_qualifier <qualifier for gene source ids within feat_with_geneid` -only required if ec is not contained in this feature >] \\
+[--append' <if EC number list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
 [--verbose <boolean-a little extra STDERR out>] \\
 --help|h

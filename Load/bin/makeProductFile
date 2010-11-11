@@ -30,10 +30,10 @@ my $append = 0;
             'fileOrDir=s' => \$inFileDir,
             'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
-	    'product_id_qualifier=s'       =>  \$idQualifier,
- 	    'parent_id_qualifier=s'       =>  \$parentQualifier,
- 	    'parent_feature=s'       =>  \$parentFeature,
-	    'product_feature=s'       => \$productFeature,
+	    'prodfeatid_qualifier=s'       =>  \$idQualifier,
+ 	    'geneid_qualifier=s'       =>  \$parentQualifier,
+ 	    'feat_with_geneid=s'       =>  \$parentFeature,
+	    'feat_with_product=s'       => \$productFeature,
 	    'product_qualifier=s'       => \$productQualifier,
 	    'format=s'         => \$format,
             'append'          => sub {$append = 1},
@@ -43,7 +43,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $productQualifier);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $productQualifier && $productFeature);
 
 
 
@@ -57,9 +57,6 @@ if($append){
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
-$parentQualifier = $idQualifier if (!($parentQualifier));
-
-$productFeature = "CDS" if (!($productFeature));
 
 
 my %parentIDHash;
@@ -149,9 +146,8 @@ while ( my $seq = $in->next_seq() ) {
 	    if ($feature->has_tag($parentQualifier)){
 	      foreach my $value ($feature->get_tag_values($parentQualifier)){
 		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
+
+		  $parentId = &trimIds($parentId);
 	      }
 
 	      my @children;
@@ -172,14 +168,14 @@ while ( my $seq = $in->next_seq() ) {
 			  my ($id) = $child->get_tag_values($idQualifier) if $child->has_tag($idQualifier);
 			  my (@products) = $child->get_tag_values($productQualifier) if $child->has_tag($productQualifier);
 			  
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+
+			  $id = &trimIds($id);
 
 			  if($id eq $parentId){
 			      $id .= "\.$transcriptCtr";
 			  }
 			  foreach my $product (@products){
+			      $product = &trim($product);
 			      if($product ne ""){
 				  $productFh->print("$id\t$product\n");
 			      }
@@ -191,11 +187,10 @@ while ( my $seq = $in->next_seq() ) {
 			  
 			  my $id = $parentId;
 
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+			  $id = &trimIds($id);
 
 			  foreach my $product (@products){
+			      $product = &trim($product);
 			      if($product ne ""){
 				  $productFh->print("$id\t$product\n");
 			      }
@@ -225,6 +220,21 @@ sub trim($){
 	my $string = shift;
 	$string =~ s/^\s+//;
 	$string =~ s/\s+$//;
+	$string =~ s/;evidence=.*$//g;
+
+	return $string;
+}
+
+
+#-------------------------------------------------------------------------------
+
+sub trimIds($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/:pep.*$//g;
+	$string =~ s/:mRNA.*$//g;
+	$string =~ s/:pseudogenic_transcript.*$//g;
 	return $string;
 }
 
@@ -240,11 +250,11 @@ sub usage {
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
 --output_file <output product file> \\
-[--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if product is not in top level feature >] \\
-[--parent_feature <name of the parent feature` -only required if product is not in top level feature >] \\
-[--product_feature <name of the feature in which product qualifier is present (default 'CDS')>] \\
---product_id_qualifier <qualifier for  in input file> \\
---product_qualifier <qualifier for products in input file> \\
+--feat_with_product <name of the feature in which product is present> \\
+--product_qualifier <qualifier for products within feat_with_product> \\
+--prodfeatid_qualifier <qualifier for source ids within feat_with_product (could be gene source id)> \\
+[--feat_with_geneid <name of feature containing gene source ids` -only required if product is not in feature >] \\
+[--geneid_qualifier <qualifier for gene source ids within feat_with_geneid` -only required if product is not contained in this feature >] \\
 [--append' <if product list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
 [--verbose <boolean-a little extra STDERR out>] \\

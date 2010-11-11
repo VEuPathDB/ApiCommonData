@@ -30,10 +30,10 @@ my $append = 0;
             'fileOrDir=s' => \$inFileDir,
             'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
-	    'comment_id_qualifier=s'       =>  \$idQualifier,
- 	    'parent_id_qualifier=s'       =>  \$parentQualifier,
- 	    'parent_feature=s'       =>  \$parentFeature,
-	    'comment_feature=s'       => \$commentFeature,
+	    'commentfeatid_qualifier=s'       =>  \$idQualifier,
+ 	    'geneid_qualifier=s'       =>  \$parentQualifier,
+ 	    'feat_with_geneid=s'       =>  \$parentFeature,
+	    'feat_with_comment=s'       => \$commentFeature,
 	    'comment_qualifier=s'       => \$commentQualifier,
 	    'format=s'         => \$format,
             'append'          => sub {$append = 1},
@@ -43,7 +43,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $commentQualifier);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $commentQualifier && $commentFeature);
 
 
 
@@ -57,9 +57,6 @@ if($append){
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
-$parentQualifier = $idQualifier if (!($parentQualifier));
-
-$commentFeature = "CDS" if (!($commentFeature));
 
 
 my %parentIDHash;
@@ -149,14 +146,13 @@ while ( my $seq = $in->next_seq() ) {
 	    if ($feature->has_tag($parentQualifier)){
 	      foreach my $value ($feature->get_tag_values($parentQualifier)){
 		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
+
+		  $parentId = &trimIds($parentId);
 	      }
 
 	      my @children;
 	      if($parentFeature eq $commentFeature){
-		  push(@children,$feature);
+		  push(@children,$parentFeature);
 		  $parentIDHash{$parentId}->{flag} = 0;
 	      }else{
 		  @children = $feature->get_SeqFeatures;
@@ -172,14 +168,14 @@ while ( my $seq = $in->next_seq() ) {
 			  my ($id) = $child->get_tag_values($idQualifier) if $child->has_tag($idQualifier);
 			  my (@comments) = $child->get_tag_values($commentQualifier) if $child->has_tag($commentQualifier);
 			  
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+
+			  $id = &trimIds($id);
 
 			  if($id eq $parentId){
 			      $id .= "\.$transcriptCtr";
 			  }
 			  foreach my $comment (@comments){
+			      $comment = &trim($comment);
 			      if($comment ne ""){
 				  $commentFh->print("$id\t$comment\n");
 			      }
@@ -191,11 +187,10 @@ while ( my $seq = $in->next_seq() ) {
 			  
 			  my $id = $parentId;
 
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+			  $id = &trimIds($id);
 
 			  foreach my $comment (@comments){
+			      $comment = &trim($comment);
 			      if($comment ne ""){
 				  $commentFh->print("$id\t$comment\n");
 			      }
@@ -225,6 +220,20 @@ sub trim($){
 	my $string = shift;
 	$string =~ s/^\s+//;
 	$string =~ s/\s+$//;
+
+	return $string;
+}
+
+
+#-------------------------------------------------------------------------------
+
+sub trimIds($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/:pep.*$//g;
+	$string =~ s/:mRNA.*$//g;
+	$string =~ s/:pseudogenic_transcript.*$//g;
 	return $string;
 }
 
@@ -235,16 +244,16 @@ sub usage {
   my ($m) = @_;
 
   print STDERR "$m\n" if($m);
-  my $usage = "usage:  perl makeGeneNameFile \\
+  my $usage = "usage:  perl makeCommentFile \\
 --format      <format of the annotation file (genbank, embl, gff)>
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
 --output_file <output comment file> \\
-[--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if comment is not in top level feature >] \\
-[--parent_feature <name of the parent feature` -only required if comment is not in top level feature >] \\
-[--comment_feature <name of the feature in which comment qualifier is present (default 'CDS')>] \\
---comment_id_qualifier <qualifier for  in input file> \\
---comment_qualifier <qualifier for comments in input file> \\
+--feat_with_comment <name of the feature in which comment is present> \\
+--comment_qualifier <qualifier for comments within feat_with_comment> \\
+--commentfeatid_qualifier <qualifier for source ids within feat_with_comment  (may be required for alternative spliced form ids)> \\
+[--feat_with_geneid <name of feature containing gene source ids` -only required if comment is not in feature >] \\
+[--geneid_qualifier <qualifier for gene source ids within feat_with_geneid` -only required if comment is not contained in this feature >] \\
 [--append' <if comment list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
 [--verbose <boolean-a little extra STDERR out>] \\

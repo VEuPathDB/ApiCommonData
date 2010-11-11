@@ -30,10 +30,10 @@ my $append = 0;
             'fileOrDir=s' => \$inFileDir,
             'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
-	    'gene_name_id_qualifier=s'       =>  \$idQualifier,
-	    'gene_name_qualifier=s'       =>  \$geneNameQualifier,
- 	    'parent_feature=s'       =>  \$parentFeature,
-	    'gene_name_feature=s'       => \$geneNameFeature,
+ 	    'feat_with_geneid=s'       =>  \$parentFeature,
+	    'geneid_qualifier=s'       =>  \$idQualifier,
+	    'feat_with_genename=s'       => \$geneNameFeature,
+	    'genename_qualifier=s'       =>  \$geneNameQualifier,
 	    'format=s'         => \$format,
             'append'          => sub {$append = 1},
             'gff2GroupTag=s' => \$gff2GroupTag,	
@@ -42,7 +42,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $geneNameQualifier && $idQualifier);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $geneNameQualifier && $idQualifier && $geneNameFeature);
 
 
 
@@ -57,7 +57,7 @@ if($append){
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
 
-$geneNameFeature = "CDS" if (!($geneNameFeature));
+
 
 
 
@@ -86,9 +86,7 @@ while ( my $seq = $in->next_seq() ) {
 	    if ($feature->has_tag($idQualifier)){
 	      foreach my $value ($feature->get_tag_values($idQualifier)){
 		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
+		  $parentId = &trimIds($parentId);
 	      }
 
 	      my @children;
@@ -110,6 +108,7 @@ while ( my $seq = $in->next_seq() ) {
 
 
 		      foreach my $geneName (@geneNames){
+			  $geneName = &trim($geneName);
 			  if($geneName ne ""){
 			      $geneNameFh->print("$id\t$geneName\n");
 			  }
@@ -145,6 +144,19 @@ sub trim($){
 
 #-------------------------------------------------------------------------------
 
+sub trimIds($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/:pep.*$//g;
+	$string =~ s/:mRNA.*$//g;
+	$string =~ s/:pseudogenic_transcript.*$//g;
+	return $string;
+}
+
+
+#-------------------------------------------------------------------------------
+
 sub usage {
   my ($m) = @_;
 
@@ -154,10 +166,10 @@ sub usage {
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
 --output_file <output geneName file> \\
-[--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if geneName is not in top level feature >] \\
-[--parent_feature <name of the parent feature` -only required if geneName is not in top level feature >] \\
-[--gene_name_feature <name of the feature in which geneName qualifier is present (default 'CDS')>] \\
---gene_name_qualifier <qualifier for geneNames in input file> \\
+--feat_with_genename <name of the feature in which gene name is present> \\
+--genename_qualifier <qualifier for gene names within feat_with_genename> \\
+--feat_with_geneid <name of feature containing gene source ids` -only required if gene name is not in feature >] \\
+--geneid_qualifier <qualifier for gene source ids within feat_with_geneid or feat_with_genename> \\
 [--append' <if geneName list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
 [--verbose <boolean-a little extra STDERR out>] \\
