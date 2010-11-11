@@ -308,7 +308,7 @@ sub getGeneFeat {
 						     'is_predicted' => 1,
 						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'},
 						     'is_pseudo' => $isPseudo,
-						     'product' => "tRNA $product"});
+						     'product' => ""});
 
   $geneFeat->retrieveFromDB();
 
@@ -323,6 +323,10 @@ sub getGeneFeat {
   my $naLoc = $self->getNaLocation($start,$end,$isReversed);
 
   $geneFeat->addChild($naLoc);
+
+  my $newGeneFeatProduct = $self->getGeneFeatProduct($scanReleaseId,$tRNA);
+
+  $geneFeat->addChild($newGeneFeatProduct);
 
   my $transcript = $self->getTranscript($seqSourceId,$tRNAs,$scanReleaseId,$soIds,$tRNA,$extNaSeq,$isPseudo,$product,$sourceId, $geneFeat);
 
@@ -378,6 +382,19 @@ sub getTranscript {
   return $transcript;
 }
 
+sub getGeneFeatProduct {
+  my ($self,$scanReleaseId,$tRNA) = @_;
+
+  my $product = $tRNA;
+
+  $product =~ s/\d//g;
+
+  my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({   'external_database_release_id' => $scanReleaseId,
+						                       'product' => "tRNA $product",
+						                       'is_preferred' => 1});
+
+  return $geneFeatProduct;
+}
 
 sub getRNAType {
   my ($self,$anticodon) = @_;
@@ -577,6 +594,7 @@ sub undoTables {
 	  'DoTS.Transcript',
 	  'DoTS.SplicedNASequence',
 	  'DoTS.ExonFeature',
+	  'apidb.GeneFeatureProduct',
 	  'DoTS.GeneFeature',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
