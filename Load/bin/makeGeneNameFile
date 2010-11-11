@@ -31,10 +31,9 @@ my $append = 0;
             'fileExt=s'  => \$seqFileExtension,
             'output_file=s' => \$outFile,
 	    'gene_name_id_qualifier=s'       =>  \$idQualifier,
- 	    'parent_id_qualifier=s'       =>  \$parentQualifier,
+	    'gene_name_qualifier=s'       =>  \$geneNameQualifier,
  	    'parent_feature=s'       =>  \$parentFeature,
 	    'gene_name_feature=s'       => \$geneNameFeature,
-	    'gene_name_qualifier=s'       => \$geneNameQualifier,
 	    'format=s'         => \$format,
             'append'          => sub {$append = 1},
             'gff2GroupTag=s' => \$gff2GroupTag,	
@@ -43,7 +42,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $idQualifier && $geneNameQualifier);
+&usage("Missing Argument") unless(defined $inFileDir && $outFile && $format && $geneNameQualifier && $idQualifier);
 
 
 
@@ -57,73 +56,11 @@ if($append){
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
-$parentQualifier = $idQualifier if (!($parentQualifier));
 
 $geneNameFeature = "CDS" if (!($geneNameFeature));
 
 
-my %parentIDHash;
 
-
-if($parentFeature){
-foreach my $inFile (@inputFiles){
-
-    my $in;
-    if ($format =~ m/^gff([2|3])$/i) {
-
-	$in = &convertGFFStreamToSeqIO($inFile,$1,$gff2GroupTag);
-    }else{
-	$in  = Bio::SeqIO->new(-file => $inFile , '-format' => $format) or die("Could not open $inFile for reading\n");
-    }
-
-
-
-while ( my $seq = $in->next_seq() ) {
-  if(!($seq->molecule =~ /rna/i)){
-
-
-	foreach my $feature ($seq->all_SeqFeatures){
-#	    print $feature->primary_tag()."\t$parentFeature\n";
-
-	  if($feature->primary_tag eq $parentFeature){
-	    my $parentId;
-	    if ($feature->has_tag($parentQualifier)){
-	      foreach my $value ($feature->get_tag_values($parentQualifier)){
-		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
-		  
-	      }
-
-	      my @children = $feature->get_SeqFeatures;
-
-	      foreach my $child (@children){
-
-		  if($child->primary_tag eq $geneNameFeature){
-
-		      if($parentIDHash{$parentId}->{count} >= 1){
-
-			  $parentIDHash{$parentId}->{count} = $parentIDHash{$parentId}->{count} + 1;
-			  $parentIDHash{$parentId}->{flag} = 1;
-		      }else{
-
-			  $parentIDHash{$parentId}->{count} = 1;
-			  $parentIDHash{$parentId}->{flag} = 0;
-		      }
-		  }
-
-	      }
-	  }
-
-	}
-      }
-
-    }
-}
-}
-
-}
 
 foreach my $inFile (@inputFiles){
 
@@ -142,12 +79,12 @@ while ( my $seq = $in->next_seq() ) {
 
 	    if(!($parentFeature)){
 		$parentFeature = $geneNameFeature;
-		$parentQualifier = $idQualifier;
+	
 	    }
 	  if($feature->primary_tag eq $parentFeature){
 	    my $parentId;
-	    if ($feature->has_tag($parentQualifier)){
-	      foreach my $value ($feature->get_tag_values($parentQualifier)){
+	    if ($feature->has_tag($idQualifier)){
+	      foreach my $value ($feature->get_tag_values($idQualifier)){
 		  $parentId = $value;
 		  $parentId =~ s/:pep.*$//g;
 		  $parentId =~ s/:mRNA.*$//g;
@@ -157,61 +94,38 @@ while ( my $seq = $in->next_seq() ) {
 	      my @children;
 	      if($parentFeature eq $geneNameFeature){
 		  push(@children,$feature);
-		  $parentIDHash{$parentId}->{flag} = 0;
+
 	      }else{
 		  @children = $feature->get_SeqFeatures;
 	      }
 
-	      my $transcriptCtr = 0;
+
 	      foreach my $child (@children){
 		  if($child->primary_tag eq $geneNameFeature){
 
-		      $transcriptCtr++;
-
-		      if($parentIDHash{$parentId}->{flag} == 1){
-			  my ($id) = $child->get_tag_values($idQualifier) if $child->has_tag($idQualifier);
-			  my (@geneNames) = $child->get_tag_values($geneNameQualifier) if $child->has_tag($geneNameQualifier);
+		      
+		      my (@geneNames) = $child->get_tag_values($geneNameQualifier) if $child->has_tag($geneNameQualifier);
 			  
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
+		      my $id = $parentId;
 
-			  if($id eq $parentId){
-			      $id .= "\.$transcriptCtr";
-			  }
-			  foreach my $geneName (@geneNames){
-			      if($geneName ne ""){
-				  $geneNameFh->print("$id\t$geneName\n");
-			      }
-			  }
 
-			  
-		      }else{
-			  my (@geneNames) = $child->get_tag_values($geneNameQualifier) if $child->has_tag($geneNameQualifier);
-			  
-			  my $id = $parentId;
-
-			  $id =~ s/:pep.*$//g;
-			  $id =~ s/:mRNA.*$//g;
-			  $id =~ s/:pseudogenic_transcript.*$//g;
-
-			  foreach my $geneName (@geneNames){
-			      if($geneName ne ""){
-				  $geneNameFh->print("$id\t$geneName\n");
-			      }
+		      foreach my $geneName (@geneNames){
+			  if($geneName ne ""){
+			      $geneNameFh->print("$id\t$geneName\n");
 			  }
 		      }
 		  }
-
 	      }
+
 	  }
+	}
 
 	}
-      }
-
     }
+
 }
 }
+
 
 
 
@@ -243,7 +157,6 @@ sub usage {
 [--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if geneName is not in top level feature >] \\
 [--parent_feature <name of the parent feature` -only required if geneName is not in top level feature >] \\
 [--gene_name_feature <name of the feature in which geneName qualifier is present (default 'CDS')>] \\
---gene_name_id_qualifier <qualifier for  in input file> \\
 --gene_name_qualifier <qualifier for geneNames in input file> \\
 [--append' <if geneName list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
