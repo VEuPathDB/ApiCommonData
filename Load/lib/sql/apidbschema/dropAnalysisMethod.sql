@@ -1,9 +1,9 @@
-DROP TABLE apidb.AnalysisMethod;
+DROP TABLE apidb.AnalysisMethodInvocation;
 
-DROP SEQUENCE apidb.AnalysisMethod_sq;
+DROP SEQUENCE apidb.AnalysisMethodInvocation_sq;
 
 DELETE FROM core.TableInfo
-WHERE lower(name) = lower('AnalysisMethod')
+WHERE lower(name) = lower('AnalysisMethodInvocation')
   AND database_id = (SELECT database_id
                      FROM core.DatabaseInfo 
                      WHERE lower(name) = 'apidb');
