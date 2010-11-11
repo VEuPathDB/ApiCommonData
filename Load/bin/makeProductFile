@@ -32,7 +32,6 @@ my $append = 0;
             'output_file=s' => \$outFile,
 	    'product_id_qualifier=s'       =>  \$idQualifier,
  	    'parent_id_qualifier=s'       =>  \$parentQualifier,
-	    'product_qualifier=s'       => \$productQualifier,
  	    'parent_feature=s'       =>  \$parentFeature,
 	    'product_feature=s'       => \$productFeature,
 	    'product_qualifier=s'       => \$productQualifier,
@@ -62,11 +61,11 @@ $parentQualifier = $idQualifier if (!($parentQualifier));
 
 $productFeature = "CDS" if (!($productFeature));
 
-$parentFeature = "gene" if (!($parentFeature));
 
 my %parentIDHash;
 
 
+if($parentFeature){
 foreach my $inFile (@inputFiles){
 
     my $in;
@@ -78,12 +77,14 @@ foreach my $inFile (@inputFiles){
     }
 
 
+
 while ( my $seq = $in->next_seq() ) {
   if(!($seq->molecule =~ /rna/i)){
 
 
 	foreach my $feature ($seq->all_SeqFeatures){
 #	    print $feature->primary_tag()."\t$parentFeature\n";
+
 	  if($feature->primary_tag eq $parentFeature){
 	    my $parentId;
 	    if ($feature->has_tag($parentQualifier)){
@@ -122,6 +123,8 @@ while ( my $seq = $in->next_seq() ) {
 }
 }
 
+}
+
 foreach my $inFile (@inputFiles){
 
     my $in;
@@ -136,6 +139,11 @@ foreach my $inFile (@inputFiles){
 while ( my $seq = $in->next_seq() ) {
   if(!($seq->molecule =~ /rna/i)){
 	foreach my $feature ($seq->all_SeqFeatures){
+
+	    if(!($parentFeature)){
+		$parentFeature = $productFeature;
+		$parentQualifier = $idQualifier;
+	    }
 	  if($feature->primary_tag eq $parentFeature){
 	    my $parentId;
 	    if ($feature->has_tag($parentQualifier)){
@@ -145,7 +153,14 @@ while ( my $seq = $in->next_seq() ) {
 		  $parentId =~ s/:mRNA.*$//g;
 		  $parentId =~ s/:pseudogenic_transcript.*$//g;
 	      }
-	      my @children = $feature->get_SeqFeatures;
+
+	      my @children;
+	      if($parentFeature eq $productFeature){
+		  push(@children,$parentFeature);
+		  $parentIDHash{$parentId}->{flag} = 0;
+	      }else{
+		  @children = $feature->get_SeqFeatures;
+	      }
 
 	      my $transcriptCtr = 0;
 	      foreach my $child (@children){
@@ -165,7 +180,9 @@ while ( my $seq = $in->next_seq() ) {
 			      $id .= "\.$transcriptCtr";
 			  }
 			  foreach my $product (@products){
-			      $productFh->print("$id\t$product\n");
+			      if($product ne ""){
+				  $productFh->print("$id\t$product\n");
+			      }
 			  }
 
 			  
@@ -179,7 +196,9 @@ while ( my $seq = $in->next_seq() ) {
 			  $id =~ s/:pseudogenic_transcript.*$//g;
 
 			  foreach my $product (@products){
-			      $productFh->print("$id\t$product\n");
+			      if($product ne ""){
+				  $productFh->print("$id\t$product\n");
+			      }
 			  }
 		      }
 		  }
@@ -221,9 +240,9 @@ sub usage {
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
 --output_file <output product file> \\
-[--parent_id_qualifier <qualifier for parent feature ids in input file>] \\
-[--parent_feature <name of the parent feature (default 'gene')>] \\
-[--productFeature <name of the feature in which product qualifier is present (default 'CDS')>] \\
+[--parent_id_qualifier <qualifier for parent feature ids in input file` -only required if product is not in top level feature >] \\
+[--parent_feature <name of the parent feature` -only required if product is not in top level feature >] \\
+[--product_feature <name of the feature in which product qualifier is present (default 'CDS')>] \\
 --product_id_qualifier <qualifier for  in input file> \\
 --product_qualifier <qualifier for products in input file> \\
 [--append' <if product list should be appended to file (boolean)>] \\
