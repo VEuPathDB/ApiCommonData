@@ -43,7 +43,7 @@
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
              --externalDatabaseVersion %RESOURCE_VERSION% 
-             --ncbiTaxId               @@neurospora_crassa_or74a_NCBI_TAXONOMY_ID@@
+             --ncbiTaxId               @@saccharomyces_cerevisiae_s288c_NCBI_TAXONOMY_ID@@
              --sequenceFile            @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
              --SOTermName             'chromosome' 
              --regexSourceId          '>(\S+)'
@@ -124,7 +124,7 @@
      <!-- GO annotations resource -->
      <resource 
             resource="saccharomyces_cerevisiae_s288c_go_associations_RSRC"
-            version="@@saccharomyces_cerevisiae_s288c_VER@@"
+            version="@@saccharomyces_cerevisiae_s288c_GO_ASSOCIATIONS_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
  
             <wgetArgs url="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz">

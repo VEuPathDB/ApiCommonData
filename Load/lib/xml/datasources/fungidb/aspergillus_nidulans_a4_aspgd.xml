@@ -5,7 +5,7 @@
   <!-- ISF FASTA resource -->
   <resource
         resource="aspergillus_nidulans_a4_genome_sequence_RSRC"
-        version="@@aspergillus_nidulans_a4_VER@@"
+        version="@@aspergillus_nidulans_a4_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet 
               fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4.gff3"/>
@@ -204,110 +204,3 @@
 
 
 
-<!-- Cryptococcus neoformans var. grubii H99 -->
-<resources>
-
-     <!-- ISF FASTA resource -->
-     <resource 
-            resource="cryptococcus_neoformans_grubii_h99_genome_sequence_RSRC"
-            version="@@cryptococcus_neoformans_grubii_h99_VER@@"
-            plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
-            <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
-
-             <!-- Standardize scaffold IDs by prefixing -->
-             <unpack>
-                   fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta
-                   --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta
-                   --prefix Cneo_h99
-             </unpack>
-
-            <pluginArgs>
-                   --externalDatabaseName %RESOURCE_NAME%
-                   --ncbiTaxId 235443 
-                   --externalDatabaseVersion %RESOURCE_VERSION% 
-                   --sequenceFile @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta 
-                   --SOTermName 'chromosome'  
-                   --regexSourceId  '>(\S+)' 
-                   --tableName "DoTS::ExternalNASequence" 
-                   --regexChromosome '\d+\.(\d+)' 
-             </pluginArgs>
-
-             <info
-                   displayName="Cryptococcus neoformans var. grubii (strain H99, serotype A) genomic sequence"
-                   project="FungiDB"
-                   organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
-                   category="Genome"
-                   publicUrl=""
-                   contact=""
-                   email=""
-                   institution="The Broad Institute">
-          
-                   <description>
-                          <![CDATA[
-                              Cryptococcus neoformans var. grubii (H99) genomic sequence. Source: The Broad Institute
-                          ]]>
-                   </description>
-          </info>
-  </resource>
-
-  <!-- ISF genome annotations -->
-  <resource 
-         resource="cryptococcus_neoformans_grubii_h99_genome_annotations_RSRC"
-         version="@@cryptococcus_neoformans_grubii_h99_VER@@"
-         parentResource="cryptoccus_neoformans_grubii_h99_genome_sequence_RSRC"
-         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-
-         <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
-
-
-          <!-- Standardize scaffold IDs by prefixing -->
-          <unpack>
-                fungidb_uniquify_and_standardize_seqids.pl
-                --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
-                --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
-                --prefix Ncra_or74a
-          </unpack>
-
-         <unpack>
-             preprocessGFF3 
-                --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
-                --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff3
-         </unpack>
-
-         <pluginArgs>
-                --extDbName %PARENT_RESOURCE_NAME%
-                --extDbRlsVer %PARENT_RESOURCE_VERSION%
-                --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff
-                --inputFileExtension "gff3"
-                --fileFormat gff3
-                --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Cryptococcus neoformans var. grubii H99"
-                --seqSoTerm "chromosome"
-                --validationLog @@dataDir@@/validation.log
-                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
-                --seqIdColumn source_id
-                --naSequenceSubclass ExternalNASequence
-            </pluginArgs>
-
-            <info
-                displayName="Cryptococcus neoformans var. grubii (H99) genomic annotations"
-                project="FungiDB"
-                organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
-                category="Genome"
-                publicUrl=""
-                contact=""
-                email=""
-                institution="The Broad Institute and Duke">
-
-                <description>
-                     <![CDATA[
-                      Cryptococcus neoformans var. grubii (H99) genomic annotations. Source: The Broad Institute and Duke.
-                      ]]>
-                </description>
-            </info>
-  </resource>
-
-</resources>

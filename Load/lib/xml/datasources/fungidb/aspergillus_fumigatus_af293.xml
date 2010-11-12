@@ -4,7 +4,7 @@
   <!-- ISF FASTA resource -->
   <resource
         resource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
-        version="@@aspergillus_fumigatus_af293_VER@@"
+        version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet 
               fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.gff3"/>
@@ -35,7 +35,7 @@
         <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId 330879
+             --ncbiTaxId @@asperpgillus_fumigatus_af293_NCBI_TAXONOMY_ID@@
              --externalDatabaseVersion %RESOURCE_VERSION%
              --sequenceFile @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
              --SOTermName 'chromosome' 
@@ -65,7 +65,7 @@
   <!-- ISF genomic annotations resource -->
   <resource
          resource="aspergillus_fumigatus_af293_genome_annotations_RSRC"
-         version="@@aspergillus_fumigatus_af293_VER@@" 
+         version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@" 
          parentResource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
@@ -118,7 +118,7 @@
   <!-- GO annotations resource -->
   <resource 
          resource="aspergillus_fumigatus_af293_go_associations_RSRC"
-         version="@@aspergillus_fumigatus_af293_VER@@"
+         version="@@aspergillus_fumigatus_af293_GO_ASSOCIATIONS_VER@@"
          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     
          <manualGet 

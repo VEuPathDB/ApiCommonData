@@ -48,7 +48,7 @@
         <!-- IDs: Ca21chr1_C_albicans_SC5314"
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId @@candida_albicans_sc5314_NCBI_TAXON_ID@@
+             --ncbiTaxId @@candida_albicans_sc5314_NCBI_TAXONOMY_ID@@
              --externalDatabaseVersion %RESOURCE_VERSION%
              --sequenceFile      @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
              --SOTermName        'chromosome' 
@@ -78,7 +78,7 @@
   <!-- ISF genomic annotations resource -->
   <resource
          resource="candida_albicans_sc5314_genome_annotations_RSRC"
-         version="@@candida_albicans_sc5314_VER@@" 
+         version="@@candida_albicans_sc5314_GENOME_SEQUENCE_VER@@" 
          parentResource="candida_albicans_sc5314_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
@@ -130,7 +130,7 @@
   <!-- GO associations -->
   <resource 
          resource="candida_albicans_sc5314_go_associations_RSRC"
-         version="@@candida_albicans_sc5314_VER@@"
+         version="@@candida_albicans_sc5314_GO_ASSOCIATIONS_VER@@"
          plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
 
         <wgetArgs url="http://candidagenome.org/download/go/gene_association.cgd.gz">
