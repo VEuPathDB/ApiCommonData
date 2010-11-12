@@ -2,174 +2,206 @@
 
 <!--ISFResource-->
 
-    <resource resource="Tbrucei927_contigs_RSRC" version="2009-10-06" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei 927"
-        displayName="T.brucei 927 contigs and chromosomes"
-        category="ignore"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_contigs/"/>
-        <unpack>mkdir @downloadDir@/T.brucei927_contigs_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_contigs/Tbruceibrucei927_contigs/ --output_fasta @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-    </resource>
 
-    <resource resource="Tbrucei927_Annotation_contigs_RSRC" version="2009-10-06"
-        displayName="T.brucei 927 Genome Annotations"
+  <resource resource="Tbrucei927_chromosomes_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb927Chrom.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="T.brucei 927 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="ignore"
-        organisms="T.brucei927"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_contigs_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_contigs/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.1 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.1 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
    Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.         
+        ]]>
+      </description>
 <publication pmid="16020726"/>
-     </resource>
+    </info>
+  </resource>
 
-    <resource resource="Tbrucei927_chromosomes_RSRC" version="2009-10-06" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei 927"
-        displayName="T.brucei 927 chromosomes and contigs"
-        category="ignore"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927/Tbruceibrucei927_chromosomes"/>
-        <unpack>mkdir @downloadDir@/T.brucei927_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.brucei927_chromosomes/Tbruceibrucei927_chromosomes --output_fasta @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
-Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
-<publication pmid="16020726"/>
-    </resource>
 
-    <resource resource="Tbrucei927_Annotation_chromosomes_RSRC" version="2009-10-06"
-        displayName="T.brucei927 Genome Annotations"
+  <resource resource="Tbrucei927_annotations_RSRC" version="@@Tbrucei927_chromosomes_VER@@" parentResource="Tbrucei927_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tb927Chrom.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU927"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T.brucei 927 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="Genome"
-        organisms="T.brucei927"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei 927 contigs and chromosomes"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="Sanger T. brucei 927 contigs and chromosomes|2009-10-06"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.brucei927_chromosomes_fixed/Tbrucei927.gff --output_gff @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.brucei927_Annotation_chromosomes/Tbrucei927_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei TREU927" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbrucei927.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tbrucei927.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes chromosome and unassigned contig sequences and annotations for <i>Trypanosoma brucei strain TREU 927</i>.
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
    Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
 Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
-          ]]>
-        </description>
+        ]]>
+      </description>
 <publication pmid="16020726"/>
-     </resource>
+    </info>
+  </resource>
 
-    <resource resource="Tbruceigambiense_chromosomes_RSRC" version="2009-09-07" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.brucei gambiense"
-        displayName="T.brucei gambiense chromosomes"
+
+  <resource resource="Tbruceigambiense_chromosomes_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbg.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="T.brucei gambiense chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TbruceigambienseOrganismFullName@@"
         category="ignore"
-        extDbName="Sanger T. brucei gambiense chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-07/Tbruceigambiense"/>
-        <unpack>mkdir @downloadDir@/T.bruceigambiense_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.bruceigambiense_chromosomes/Tbruceigambiense --output_fasta @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Chromosome sequences for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Chromosome sequences for <i>T.brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-    <resource resource="Tbruceigambiense_Annotation_RSRC" version="2009-09-07"
-        displayName="T.brucei gambiense Genome Annotations"
+
+  <resource resource="Tbruceigambiense_annotations_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@" parentResource="Tbruceigambiense_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tbg.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei gambiense"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T.brucei gambiense chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TbruceigambienseOrganismFullName@@"
         category="Genome"
-        organisms="T.bruceigambiense"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. brucei gambiense chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. brucei gambiense chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.bruceigambiense_chromosomes_fixed/Tbruceigambiense.gff --output_gff @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.bruceigambiense_Annotation/Tbruceigambiense_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma brucei gambiense" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tbruceigambiense.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tbruceigambiense.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
                   This resource includes chromosome sequences and annotations for <i>Trypanosoma brucei gambiense</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Tbruceigambiense">GeneDB</a> for project details and data release policies.
-           ]]>
-        </description>
-    </resource>
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei427_chromosomes_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceibrucei427/contig/%RESOURCE_VERSION%/Tb427.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 1854310 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb427.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="T.brucei 427 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="Tbrucei427_annotations_RSRC" version="@@Tbrucei427_chromosomes_VER@@" parentResource="Tbrucei427_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tbrucei/genome/tbruceibrucei427/chromosome/%RESOURCE_VERSION%/Tb427.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tb427.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU427"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T.brucei 427 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
 
  
-    <resource resource="GOAssociations_Tbruceibrucei927_RSRC" version="2009-10-06"
-        displayName="T. brucei brucei927 protein GO Associations"        
+  <resource resource="GOAssociations_Tbrucei927_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbruceibrucei927/%RESOURCE_VERSION%/Tbruceibrucei927.gas"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Tbruceibrucei927.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for T. brucei 927 genes"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.bruceibrucei927 GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.bruceibrucei927 GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceibrucei927.gas"/>
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>T. brucei 927</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceibrucei927/Tbruceibrucei927.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. brucei brucei927</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
-
-    <resource resource="GOAssociations_Tbruceigambiense_RSRC" version="2009-10-06"
-        displayName="T. brucei gambiense protein GO Associations"        
+  <resource resource="GOAssociations_Tbruceigambiense_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbruceigambiense/%RESOURCE_VERSION%/Tbruceigambiense.gas"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Tbruceibrucei927.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for T.brucei gambiense genes"
+        project="TriTrypDB"
+        organisms="@@TbruceigambienseOrganismFullName@@"
         category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.bruceigambiense GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.bruceigambiense GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tbruceigambiense.gas"/>
-
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tbruceigambiense/Tbruceigambiense.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
           <i>T. brucei gambiense</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Tbrucei427_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbruceibrucei427/%RESOURCE_VERSION%/Tbruceibrucei427.gas"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Tbruceibrucei427.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for T. brucei 427 genes"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>T. brucei 427</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
   <resource resource="Tbrucei927_ProductName_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
