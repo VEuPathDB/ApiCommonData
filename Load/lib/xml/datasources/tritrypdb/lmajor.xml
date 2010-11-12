@@ -100,6 +100,30 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
         </description>
     </resource>
 
+  <resource resource="Lmajor_ProductName_RSRC" version="@@Lmajor_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmajorProduct.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lmajor Product Name"
+        project="TriTrypDB"
+        organisms="@@LmajorOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 <!--ESTResource-->
   <resource resource="Lmajor_dbEST_RSRC" version="@@Lmajor_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
