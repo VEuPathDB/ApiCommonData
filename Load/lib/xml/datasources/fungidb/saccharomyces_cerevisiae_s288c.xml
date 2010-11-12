@@ -3,8 +3,8 @@
 
   <!-- ISF FASTA resource -->
   <resource
-        resource="saccharomyces_cerevisiae_s288c_genomic_sequence_RSRC"
-        version="@@saccharomyces_cerevisiae_s288c_VER@@"
+        resource="saccharomyces_cerevisiae_s288c_genome_sequence_RSRC"
+        version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
         <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/saccharomyces_cerevisiae.gff">
@@ -15,7 +15,6 @@
                --cut-dirs=5
          </wgetArgs>
 
-         <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
          <unpack>mv @@dataDir@@/saccharomyces_cerevisiae.gff @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3</unpack>
 
 <!--  Retain to switch back to manualDelivery
@@ -27,7 +26,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
                    --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix Scer_s288c
+                   --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
         </unpack>
 
         <!-- Split FASTA from GFF -->
@@ -44,7 +43,7 @@
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
              --externalDatabaseVersion %RESOURCE_VERSION% 
-             --ncbiTaxId               559292
+             --ncbiTaxId               @@neurospora_crassa_or74a_NCBI_TAXONOMY_ID@@
              --sequenceFile            @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
              --SOTermName             'chromosome' 
              --regexSourceId          '>(\S+)'
@@ -53,9 +52,9 @@
          </pluginArgs>
 
          <info
-             displayName="Saccharomyces cerevisiae (S288C) genomic sequence"
+             displayName="Saccharomyces cerevisiae (S288C) genome sequence"
              project="FungiDB"
-             organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+             organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
              category="Genome"
              publicUrl="http://www.yeastgenome.org/"
              contact=""
@@ -63,18 +62,18 @@
              institution="SGD">
              <description>
                  <![CDATA[
-                    Saccharomyces cerevisiae (S288C) genomic sequence. Source: SGD.
+                    Saccharomyces cerevisiae (S288C) genome sequence. Source: SGD.
              ]]>
              </description>
          </info>
   </resource>
 
 
-  <!-- ISF genomic annotations resource -->
+  <!-- ISF genome annotations resource -->
   <resource
-         resource="saccharomyces_cerevisiae_s288c_genomic_annotations_RSRC"
-         version="@@saccharomyces_cerevisiae_s288c_VER@@" 
-         parentResource="saccharomyces_cerevisiae_s288c_genomic_sequence_RSRC"
+         resource="saccharomyces_cerevisiae_s288c_genome_annotations_RSRC"
+         version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@" 
+         parentResource="saccharomyces_cerevisiae_s288c_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.unpacked.gff3" />
@@ -107,7 +106,7 @@
           <info
              displayName="Saccharomyces cerevisiae (S288C) genomic annotations"
              project="FungiDB"
-             organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+             organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
              category="Genome"
              publicUrl="http://www.yeastgenome.org/"
              contact=""
@@ -157,7 +156,7 @@
             <info
                  displayName="Saccharomyces cerevisiae (S288C) GO associations"
                  project="FungiDB"
-                 organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+                 organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
                  category="Proteome"
                  publicUrl="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz"
                  contact=""
@@ -177,7 +176,6 @@
           resource="saccharomyces_cerevisiae_s288c_ec_ids_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
           plugin="GUS::Community::Plugin::InsertECMapping">
-
 
             <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/dbxref.tab">
                  --tries=5 
@@ -207,7 +205,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) EC IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_OrganismFullName@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
             category="Proteome"
             publicUrl=""
             contact=""
@@ -220,5 +218,38 @@
             </description>
          </info>
      </resource>
+
+
+  <!-- dbEST -->
+  <resource resource="saccharomyces_cerevisiae_s288c_dbest_RSRC" version="@@saccharomyces_cerevisiae_s288c_DBEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@saccharomyces_cerevisiae_s288c_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
+    <info
+        displayName="Saccharomyces cerevisiae (S288C) dbEST ESTs"
+        project="FungiDB"
+        organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Saccharomyces cerevisiae ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 </resources>

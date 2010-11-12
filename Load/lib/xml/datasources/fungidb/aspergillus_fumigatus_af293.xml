@@ -3,7 +3,7 @@
 
   <!-- ISF FASTA resource -->
   <resource
-        resource="aspergillus_fumigatus_af293_genomic_sequence_RSRC"
+        resource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
         version="@@aspergillus_fumigatus_af293_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
         <manualGet 
@@ -20,7 +20,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
                    --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
-                   --prefix Scer_s288c
+                   --prefix @@aspergillus_fumigatus_af392_ORGANISM_ABBREVIATION@@
         </unpack>
 
         <!-- Split FASTA from GFF -->
@@ -35,7 +35,7 @@
         <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId 559292
+             --ncbiTaxId 330879
              --externalDatabaseVersion %RESOURCE_VERSION%
              --sequenceFile @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
              --SOTermName 'chromosome' 
@@ -47,7 +47,7 @@
          <info
              displayName="Aspergillus fumigatus (AF293) genomic sequence"
              project="FungiDB"
-             organisms="@@aspergillus_fumigatus_af293_OrganismFullName@@"
+             organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
              category="Genome"
              publicUrl=""
              contact=""
@@ -64,9 +64,9 @@
 
   <!-- ISF genomic annotations resource -->
   <resource
-         resource="aspergillus_fumigatus_af293_genomic_annotations_RSRC"
+         resource="aspergillus_fumigatus_af293_genome_annotations_RSRC"
          version="@@aspergillus_fumigatus_af293_VER@@" 
-         parentResource="aspergillus_fumigatus_af293_genomic_sequence_RSRC"
+         parentResource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
          <manualGet fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.unpacked.gff3" />
@@ -100,7 +100,7 @@
           <info
              displayName="Aspergillus fumigatus (AF293) genomic annotations"
              project="FungiDB"
-             organisms="@@aspergillus_fumigatus_af293_OrganismFullName@@"
+             organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
              category="Genome"
              publicUrl=""
              contact=""
@@ -139,7 +139,7 @@
          <info
               displayName="Aspergillus fumigatus (AF293) GO associations"
               project="FungiDB"
-              organisms="@@aspergillus_fumigatus_af293_OrganismFullName@@"
+              organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
               category="Proteome"
               publicUrl=""
               contact=""
@@ -178,7 +178,7 @@
     <info
         displayName="Aspergillus fumigatus (AF293) EC IDs"
         project="FungiDB"
-        organisms="@@aspergillus_fumigatus_af293_OrganismFullName@@"
+        organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
         category="Proteome"
         publicUrl=""
         contact=""

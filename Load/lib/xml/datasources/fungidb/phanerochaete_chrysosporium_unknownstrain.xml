@@ -1,28 +1,28 @@
-<!-- Neurospora crassa OR74A Resource File -->
+<!-- Phanerochaete chrysosporum (RP-78) resources file -->
 
 <resources>
 
        <!-- ISF FASTA resource -->
        <resource
-             resource="neurospora_crassa_or74a_genome_sequence_RSRC"
-             version="@@neurospora_crassa_or74a_GENOME_SEQUENCE_VER@@"
+             resource="phanerochaete_chrysosporium_rp-78_genome_sequence_RSRC"
+             version="@@phanerochaete_chrysosporium_rp-78_GENOME_SEQUENCE_VER@@"
              plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-             <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
+             <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp-78_strain_supercontigs.fasta"/>
 
              <!-- Standardize scaffold IDs by prefixing -->
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/neurospora_crassa_or74a_supercontigs.fasta
-                   --output @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
-                   --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
+                   --input  @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.fasta
+                   --output @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.uniquified.fasta
+                   --prefix @@phanerochaete_chrysosporium_rp-78_ORGANISM_ABBREVIATION@@
              </unpack>
 
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
-                     --ncbiTaxId @@neurospora_crassa_or74a_NCBI_TAXONOMY_ID@@
+                     --ncbiTaxId @@phanerochaete_chrysosporium_rp-78_NCBI_TAXONOMY_ID@@
                      --externalDatabaseVersion %RESOURCE_VERSION%
-                     --sequenceFile @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
+                     --sequenceFile @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.uniquified.fasta
                      --SOTermName 'chromosome'
                      --regexSourceId  '>(\S+)'
                      --tableName "DoTS::ExternalNASequence"
@@ -30,17 +30,17 @@
              </pluginArgs>
 
              <info
-                      displayName="Neurospora crassa (OR74A) genomic sequence"
+                      displayName="Phanerochaete chrysosporium (rp-78) genomic sequence"
                       project="FungiDB"
-                      organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+                      organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
                       category="Genome"
-                      publicUrl="http://www.broadinstitute.org/annotation/genome/neurospora/MultiDownloads.html"
+                      publicUrl=""
                       contact=""
                       email=""
-                      institution="The Broad Institute">
+                      institution="Joint Genome Institute">
                       <description>
                          <![CDATA[
-                            Neurospora crassa (OR74A) genomic sequence. Source: The Broad Institute.
+                            Phanerochaete chrysosporium (rp-78) genomic sequence. Source: JGI."                            
                          ]]>
                       </description>
               </info>
@@ -48,36 +48,36 @@
 
   <!-- ISF genome annotations -->
   <resource
-          resource="neurospora_crassa_or74a_genome_annotations_RSRC"
-          version="@@neurospora_crassa_or74a_GENOME_SEQUENCE_VER@@"
-          parentResource="neurospora_crassa_or74a_genome_sequence_RSRC"
+          resource="phanerochaete_chrysosporium_rp-78_genome_annotations_RSRC"
+          version="@@phanerochaete_chrysosporium_rp-78_GENOME_VERSION_VER@@"
+          parentResource="phanerochaete_chrysosporium_rp-78_genome_sequence_RSRC"
           plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
  
-          <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
+          <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp-78_transcripts.gff3"/> 
 
           <!-- Standardize scaffold IDs by prefixing -->
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
-                --input  @@dataDir@@/neurospora_crassa_or74a_transcripts.gff3
-                --output @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
-                --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
+                --input  @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.gff3
+                --output @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.uniquified.gff3
+                --prefix @@phanerochaete_chrysosporium_rp-78_ORGANISM_ABBREVIATION@@
           </unpack>
 
           <unpack>
               preprocessGFF3 
-                 --input_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
-                 --output_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.transformed.gff3
+                 --input_gff @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.uniquified.gff3
+                 --output_gff @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.transformed.gff
           </unpack>
 
           <pluginArgs>
                  --extDbName %PARENT_RESOURCE_NAME%
                  --extDbRlsVer %PARENT_RESOURCE_VERSION%
                  --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                 --inputFileOrDir @@dataDir@@/neurospora_crassa_or74a_transcripts.transformed.gff3
+                 --inputFileOrDir @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.transformed.gff3
                  --inputFileExtension "gff3" 
                  --fileFormat gff3 
                  --soCvsVersion @@SO_VER@@
-                 --defaultOrganism "Neurospora crassa OR74A"
+                 --defaultOrganism "Phanerochaete chrysosporium (RP-78)"
                  --seqSoTerm "chromosome"
                  --validationLog @@dataDir@@/validation.log
                  --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -86,28 +86,27 @@
            </pluginArgs>
 
            <info
-                displayName="Neurospora crassa (OR74A) genomic annotations"
+                displayName="Phanerochaete chrysosporium (RP-78) genomic annotations."
                 project="FungiDB"
-                organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+                organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
                 category="Genome"
-                publicUrl="http://www.broadinstitute.org/annotation/genome/neurospora/MultiDownloads.html"
+                publicUrl=""
                 contact=""
                 email=""
-                institution="The Broad Institute">
+                institution="Joint Genome Institute">
                 <description>
                  <![CDATA[
-                     Neurospora crassa (OR74A) genomic annotations. Source: The Broad Institute.
+                     Phanerochaete_chrysosporium (RP-78) genomic annotations. Source: JGI.
                  ]]>
                 </description>
            </info>
     </resource>
 
-
   <!-- dbEST -->
-  <resource resource="neurospora_crassa_or74a_dbest_RSRC" version="@@neurospora_crassa_or74a_DBEST_VER@@"
+  <resource resource="phanerochaete_chrysosporium_rp-78_dbest_RSRC" version="@@phanerochaete_chrysosporium_rp-78_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@neurospora_crassa_or74a_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@phanerochaete_chrysosporium_rp-78_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -119,9 +118,9 @@
     </pluginArgs>
 
     <info
-        displayName="Neurospora crassa (OR74A) dbEST ESTs"
+        displayName="Phanerochaete chrysosporium (RP-78) dbEST ESTs"
         project="FungiDB"
-        organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+        organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
@@ -129,7 +128,7 @@
         institution="">
       <description>
         <![CDATA[
-         Neurospora crassa ESTs from dbEST.
+         Phanerochaeta chrysosporium ESTs from dbEST.
         ]]>
       </description>
     </info>

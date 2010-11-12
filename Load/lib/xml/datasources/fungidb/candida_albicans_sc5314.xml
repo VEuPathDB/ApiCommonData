@@ -1,9 +1,9 @@
-<!-- Saccharomyces cerevisiae (S288C) Resources -->
+<!-- Candida albicans (SC5314) Resources -->
 <resources>
 
   <!-- ISF FASTA resource -->
   <resource
-        resource="candida_albicans_sc5314_genomic_sequence_RSRC"
+        resource="candida_albicans_sc5314_genome_sequence_RSRC"
         version="@@candida_albicans_sc5314_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
@@ -11,7 +11,7 @@
         <wgetArgs url="http://candidagenome.org/download/gff/C_albicans_SC5314/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz">
                --tries=5 
                --mirror 
-                --no-parent
+               --no-parent
                --no-host-directories
                --cut-dirs=5
          </wgetArgs>
@@ -30,7 +30,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/candida_albicans_sc5314.gff3
                    --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                   --prefix Calb_sc5314
+                   --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
                    --uniquify features
         </unpack>
 
@@ -48,7 +48,7 @@
         <!-- IDs: Ca21chr1_C_albicans_SC5314"
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
-             --ncbiTaxId 237561
+             --ncbiTaxId @@candida_albicans_sc5314_NCBI_TAXON_ID@@
              --externalDatabaseVersion %RESOURCE_VERSION%
              --sequenceFile      @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
              --SOTermName        'chromosome' 
@@ -60,9 +60,9 @@
          <info
              displayName="Candida albicans (SC5314) genomic sequence"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_OrganismFullName@@"
+             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
              category="Genome"
-             publicUrl=""
+             publicUrl="http://candidagenome.org/download/gff/candida_21_with_chromosome_sequences.gff.gz"
              contact=""
              email=""
              institution="CGD">
@@ -77,9 +77,9 @@
 
   <!-- ISF genomic annotations resource -->
   <resource
-         resource="candida_albicans_sc5314_genomic_annotations_RSRC"
+         resource="candida_albicans_sc5314_genome_annotations_RSRC"
          version="@@candida_albicans_sc5314_VER@@" 
-         parentResource="candida_albicans_sc5314_genomic_sequence_RSRC"
+         parentResource="candida_albicans_sc5314_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
          <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/candida_albicans_sc5314.unpacked.gff3" />
@@ -112,7 +112,7 @@
           <info
              displayName="Candida albicans (SC5314) genomic annotations"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_OrganismFullName@@"
+             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
              category="Genome"
              publicUrl="http://candidagenome.org/download/gff/C_albicans_SC5314/"
              contact=""
@@ -120,7 +120,7 @@
              institution="Candida Genome Database">
              <description>
                <![CDATA[
-                    Candida albicans (SC5314) genomic annations. Source: Candida Genome Database.
+                    Candida albicans (SC5314) genomic annotations. Source: Candida Genome Database.
                 ]]>
             </description>
           </info>
@@ -163,7 +163,7 @@
          <info
               displayName="Candida albicans (SC5314) GO associations"
               project="FungiDB"
-              organisms="@@candida_albicans_sc5314_OrganismFullName@@"
+              organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
               category="Proteome"
               publicUrl=""
               contact=""
@@ -217,7 +217,7 @@
     <info
         displayName="Candida albicans (SC5314) EC IDs"
         project="FungiDB"
-        organisms="@@candida_albicans_sc5314_OrganismFullName@@"
+        organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
         category="Proteome"
         publicUrl=""
         contact=""
@@ -254,7 +254,7 @@
              fungidb_map_candida_ids_to_features.pl
                 --input @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --output @@dataDir@@/gene_aliases.tab
-                --prefix Calb_sc5314
+                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
          </unpack>
 
          <pluginArgs>
@@ -268,7 +268,7 @@
          <info
              displayName="Candida albicans (SC5314) gene aliases"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_OrganismFullName@@"
+             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
              category="ignore"
              publicUrl=""
              contact=""
@@ -316,7 +316,7 @@
                 --input               @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --id_to_dbxref        @@dataDir@@/CGDID_2_RefSeqID.tab
                 --output @@dataDir    @@/geneid2entrez.tab
-                --prefix Calb_sc5314
+                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
          </unpack>
  
          <pluginArgs>
@@ -378,7 +378,7 @@
                 --input               @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --id_to_dbxref        @@dataDir@@/gp2protein.cgd
                 --output @@dataDir    @@/geneid2uniprot.tab
-                --prefix Calb_sc5314
+                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
          </unpack>
 
          <pluginArgs>
@@ -393,7 +393,7 @@
          <info
               displayName="Candida albicans (SC5314) Gene IDs to UniProt dbxrefs"
               project="FungiDB"
-              organisms="@@PfOrganismFullName@@"
+              organisms="@@PfORGANISM_FULL_NAME@@"
               category="ignore"
               publicUrl=""
               contact=""
