@@ -1,113 +1,69 @@
 <resources>
 <!--ISFResource-->
 
-   <resource resource="T.cruziNonEsmeraldo_contigs" version="2009-09-10" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.cruzi"
-        displayName="T.cruzi Non-Esmeraldo contigs"
+  <resource resource="TcNonEsmeraldoLike_chromosomes_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="T. cruzi NonEsmeraldo Like chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcNonEsmeraldoLikeOrganismFullName@@"
         category="ignore"
-        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
-        extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_contigs/"/>
-        <unpack>mkdir @downloadDir@/T.cruzi_contigs_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruzi_contigs/Tcruzi_contigs --output_fasta @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff</unpack>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
    Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
+        ]]>
+      </description>
 <publication pmid="16020725"/>
-    </resource>
+    </info>
+  </resource>
 
-
-    <resource resource="T.cruziNonEsmeraldo_Annotation_contigs" version="2009-09-10"
-        displayName="T.cruzi Non-Esmeraldo Genome Annotations"
-        category="ignore"
-        organisms="T.cruzi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
-        extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruzi_contigs_fixed/Tcruzi.gff --output_gff @downloadDir@/T.cruzi_Annotation/Tcruzi_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruzi_Annotation/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain CL Brener" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
-<publication pmid="16020725"/>
-     </resource>
-
-
-    <resource resource="T.cruziNonEsmeraldo_chromosomes" version="2009-09-10" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="ignore"
-        displayName="T.cruzi Non-Esmeraldo chromosomes"
-        category="ignore"
-        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
-        extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/export_2009-09-10/Tcruzi/Tcruzi_chromosomes/"/>
-        <unpack>mkdir @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed</unpack>
-        <unpack>makeFastaFile --input_dir @downloadDir@/T.cruziNonEsmeraldo_chromosomes/Tcruzi_chromosomes --output_fasta @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi.fasta --output_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff</unpack>
-        <unpack>grep "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff</unpack>
-        <unpack>grep -v "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.gff > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff</unpack>
-        <unpack>grep -A 1 "-S[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.fasta > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.fasta</unpack>
-        <unpack>grep -A 1 "-P[[:space:]]" @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi.fasta > @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.fasta</unpack>
-        
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxonName "Trypanosoma cruzi strain NonEsmeraldo" --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_chromosomes_fixed/Tcruzi_NonEsmeraldo.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
-<publication pmid="16020725"/>
-    </resource>
-
-    <resource resource="T.cruziNonEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
-        displayName="T.cruzi Genome Annotations"
-        category="ignore"
-        organisms="T.cruzi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
-        extDbRlsVer="2009-09-10"
-        extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_NonEsmeraldo.gff --output_gff @downloadDir@/T.cruziNonEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruziNonEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain NonEsmeraldo" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes chromosome and unassigned contig sequences and annotations for the non-Esmeraldo haplotype of the sequenced <i>Trypanosoma cruzi</i> strain CL Brener.
-   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
-<publication pmid="16020725"/>
-     </resource>
-
-
-    <resource resource="T.cruziEsmeraldo_chromosomes" version="2009-09-10" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.cruzi"
-        displayName="T.cruzi Genome Sequence and Annotation and Haplotype Assignment"
+  <resource resource="TcNonEsmeraldoLike_annotations_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@" parentResource="TcNonEsmeraldoLike_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/TcNonEsm.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi strain NonEsmeraldo"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T. cruzi NonEsmeraldo Like chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcNonEsmeraldoLikeOrganismFullName@@"
         category="Genome"
-        extDbName="Sanger T. cruzi Esmeraldo chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. cruzi Esmeraldo chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.fasta"/>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruziEsmeraldo_chromosomes/Tcruzi_Esmeraldo.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+        ]]>
+      </description>
+<publication pmid="16020725"/>
+    </info>
+  </resource>
+
+
+
+  <resource resource="TcEsmeraldoLike_chromosomes_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 3665810 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcEsm.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="T. cruzi Esmeraldo Like chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
    Genome sequences and annotations for <i>T.cruzi</i> strain CL Brener were obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute 
    Sequencing and annotation of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
    Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> was generated by Rick Tarleton's group at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA. 
@@ -116,98 +72,140 @@
    References:
    The genome sequence of Trypanosoma cruzi, etiologic agent of Chagas disease. Science 2005 Jul 15;309(5733):409-15 El-Sayed et al.
    Chromosome level assembly of the hybrid Trypanosoma cruzi genome.BMC Genomics. 2009 Jun 1;10:255.
-
-          ]]>
-        </description>
+        ]]>
+      </description>
 <publication pmid="16020725"/>
 <publication pmid="19486522"/>
-    </resource>
+    </info>
+  </resource>
 
-    <resource resource="T.cruziEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
-        displayName="T.cruzi Esmeraldo Genome Annotations"
-        category="ignore"
-        organisms="T.cruzi"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger T. cruzi Esmeraldo chromosomes"
-        extDbRlsVer="2009-09-07"
-        extDbRlsDescrip="Sanger T. cruzi Esmeraldo chromosomes|2009-09-07"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="@downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff" />
-        <unpack>preprocessGFF3 --input_gff @downloadDir@/T.cruziNonEsmeraldo_chromosomes_fixed/Tcruzi_Esmeraldo.gff --output_gff @downloadDir@/T.cruziEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/sangerGFF32Gus.xml --inputFileOrDir @downloadDir@/T.cruziEsmeraldo_Annotation_Chromosomes/Tcruzi_fixed.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Trypanosoma cruzi strain Esmeraldo" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Tcruzi.validation.log.2 --bioperlTreeOutput @pipelineDir@/logs/Tcruzi.bioperl.2 --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
-   This resource includes chromosome sequences and annotations for the Esmeraldo haplotype of the sequenced <i>Trypanosoma cruzi</i> strain CL Brener.
-   Sequence data for <i>Trypanosoma cruzi</i> strain CL Brener contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
-<publication pmid="16020725"/>
-     </resource>
-
-    <resource resource="Tcruzi_Unassigned_Contigs" version="2010-01-15" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.cruzi"
-        displayName="T.cruzi unassigned contigs"
-        category="ignore"
-        extDbName="T.cruzi_Unassigned_Contigs"
-        extDbRlsVer="2010-01-15"
-        extDbRlsDescrip="T.cruzi_Unassigned_Contigs|2010-01-15"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/Tcruzi/UnassignedContigs_1-14-2010/unassigned_contigs_1-14-2010.fasta"/>
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5693 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/T.cruzi_Unassigned_Contigs/unassigned_contigs_1-14-2010.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-   Sequence data for <i>Trypanosoma cruzi</i> contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
-          ]]>
-        </description>
-<publication pmid="16020725"/>
-    </resource>
-
-    <resource resource="TcruziEsmeraldo_scaffolds" version="6.0" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="T.cruzi Esmeraldo"
-        displayName="T.cruzi Esmeraldo scaffolds"
+  <resource resource="TcEsmeraldoLike_annotations_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@" parentResource="TcEsmeraldoLike_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/TcEsm.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi strain Esmeraldo"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T. cruzi Esmeraldo Like chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcEsmeraldoLikeOrganismFullName@@"
         category="Genome"
-        extDbName="T.cruzi Esmeraldo scaffolds from WUSTL"
-        extDbRlsVer="6.0"
-        extDbRlsDescrip="T.cruzi Esmeraldo scaffolds from WUSTL|6.0"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/Tcruzi_esmeraldo/Trypanosoma_cruzi-6.0_100506/T_cruzi.scf.fasta"/>
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Genome sequences and annotations for <i>T.cruzi</i> strain CL Brener were obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute 
+   Sequencing and annotation of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+   Mapping of gene coordinates from contigs to chromosomes for <i>T. cruzi</i> was generated by Rick Tarleton's group at the University of Georgia, Atehns, Georgia. The Center for Tropical and Emerging Global Diseases, University of Georgia, Athens, GA. 
 
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziEsmeraldo_scaffolds/T_cruzi.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
-          ]]>      
-        </description>  
-    </resource>
 
-    <resource resource="GOAssociations_Tcruzi" version="2009-10-06"
-        displayName="T. cruzi protein GO Associations"        
+   References:
+   The genome sequence of Trypanosoma cruzi, etiologic agent of Chagas disease. Science 2005 Jul 15;309(5733):409-15 El-Sayed et al.
+   Chromosome level assembly of the hybrid Trypanosoma cruzi genome.BMC Genomics. 2009 Jun 1;10:255.
+        ]]>
+      </description>
+<publication pmid="16020725"/>
+<publication pmid="19486522"/>
+    </info>
+  </resource>
+
+
+  <resource resource="TcUnassigned_contigs_RSRC" version="@@TcUnassigned_contigs_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <info
+        displayName="T.cruzi unassigned contigs sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcUnAssignedContigsOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Sequence data for <i>Trypanosoma cruzi</i> contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+        ]]>
+      </description>
+<publication pmid="16020725"/>
+    </info>
+  </resource>
+
+
+  <resource resource="TcUnassigned_annotations_RSRC" version="@@TcUnassigned_contigs_VER@@" parentResource="TcUnassigned_contigs_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/TcContigs.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi strain CL Brener"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T.cruzi unassigned contigs sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@TcUnAssignedContigsOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Sequence data for <i>Trypanosoma cruzi</i> contigs were downloaded from Genbank (sequence and annotated features).<br>  Sequencing of <i>T. cruzi</i> was conducted by the <i>Trypanosoma cruzi</i> sequencing consortium (<a href="http://www.tigr.org/tdb/e2k1/tca1/">TIGR</a>, <a href="http://www.sbri.org/">Seattle Biomedical Research Institute</a> and <a href="http://ki.se/ki/jsp/polopoly.jsp?d=130&l=en">Karolinska Institute</a>.
+        ]]>
+      </description>
+<publication pmid="16020725"/>
+    </info>
+  </resource>
+
+
+  <resource resource="TcEsmeraldo_scaffolds_RSRC" version="@@TcEsmeraldo_scaffolds_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/Tcruzi/%RESOURCE_VERSION%/fromProvider/T_cruzi.scf.fasta"/>
+    <unpack></unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/T_cruzi.scf.fasta --SOTermName 'scaffolds'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <info
+        displayName="T.cruzi Esmeraldo scaffold sequences"
+        project="TriTrypDB"
+        organisms="@@TcEsmeraldoOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Tcruzi_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/function/GOAssociations_Tcruzi/%RESOURCE_VERSION%/Tcruzi.gas"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Tcruzi.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for T.cruzi genes"
+        project="TriTrypDB"
+        organisms="@@TcNonEsmeraldoLikeOrganismFullName@@,@@TcEsmeraldoLikeOrganismFullName@@,@@TcUnAssignedContigsOrganismFullName@@"
         category="Proteome"
-        plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
-        extDbName="T.cruzi GO Associations from GeneDB"
-        extDbRlsVer="2009-10-06"
-        extDbRlsDescrip="T.cruzi GO Associations from GeneDB|2009-10-06"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Tcruzi.gas"/>
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>T. cruzi</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-
-        <pluginArgs>--externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --inputFile @downloadDir@/GOAssociations_Tcruzi/Tcruzi.gas --goExternalDatabaseSpec "Gene Ontology|1.748" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @pipelineDir@/logs/badGOTerms.log</pluginArgs>
-        <description>
-          <![CDATA[
-          <i>T. cruzi</i> Gene Ontology associations from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a>.
-          ]]>
-        </description>
-    </resource>
 
   <resource resource="TcNonEsmeraldoLike_ProductName_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
     <pluginArgs>--file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --genomeDbName TcNonEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="TcNonEsmeraldoLike Product Name"
@@ -228,14 +226,37 @@
 
   <resource resource="TcEsmeraldoLike_ProductName_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
     <pluginArgs>--file @@dataDir@@/TcEsmeraldoLikeProduct.tab --genomeDbName TcEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="TcEsmeraldoLike Product Name"
         project="TriTrypDB"
         organisms="@@TcEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TcUnAssignedContigs_ProductName_RSRC" version="@@TcUnassigned_contigs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcUnAssignedContigsProduct.tab --genomeDbName TcUnassigned_contigs_RSRC --genomeDbVer @@TcUnassigned_contigs_VER@@ </pluginArgs>
+    <info
+        displayName="TcUnAssignedContigs Product Name"
+        project="TriTrypDB"
+        organisms="@@TcUnAssignedContigsOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -668,6 +689,8 @@ TcSNP is an online resource/database with information on genetic variation(polym
       </description>
     </info>
   </resource>
+
+
 
 <!--arrayStudies-->
 
