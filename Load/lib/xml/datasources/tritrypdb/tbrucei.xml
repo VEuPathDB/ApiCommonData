@@ -6,7 +6,6 @@
   <resource resource="Tbrucei927_chromosomes_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.fasta"/>
-    <unpack></unpack>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb927Chrom.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T.brucei 927 chromosomes sequence and annotation"
@@ -55,7 +54,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbruceigambiense_chromosomes_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.fasta"/>
-    <unpack></unpack>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbg.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T.brucei gambiense chromosomes sequence and annotation"
@@ -99,7 +97,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbrucei427_chromosomes_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei427/contig/%RESOURCE_VERSION%/Tb427.fasta"/>
-    <unpack></unpack>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 1854310 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb427.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T.brucei 427 chromosomes sequence and annotation"
@@ -388,7 +385,7 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
 
 <!--TbruceiProteome-->
 
-  <resource resource="Tbrucei_IEDB_Epitopes_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@"
+  <resource resource="Tbrucei927_IEDB_Epitopes_RSRC" version="@@Tbrucei927_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportTb.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
@@ -400,7 +397,7 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@TbruceiOrganismFullName@@"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="Proteome"
         publicUrl="http://www.immuneepitope.org"
         contact="IEDB"
@@ -414,15 +411,15 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
     </info>
   </resource>
 
-  <resource resource="Tbrucei_IEDB_Epitopes_DBxRefs_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@"
+  <resource resource="Tbrucei927_IEDB_Epitopes_DBxRefs_RSRC" version="@@Tbrucei927_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Tbrucei_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Tbrucei927_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@TbruceiOrganismFullName@@"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="ignore"
         publicUrl="http://www.immuneepitope.org"
         contact=""
@@ -436,20 +433,19 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
     </info>
   </resource>
 
-
-  <resource resource="TbGambiense_IEDB_Epitopes_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@" parentResource="Tbrucei_IEDB_Epitopes_RSRC"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+  <resource resource="Tbrucei427_IEDB_Epitopes_RSRC" version="@@Tbrucei427_IEDB_Epitopes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportTb.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportTb.fsa </unpack>
     <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@TbruceiOrganismFullName@@"
+        organisms="@@Tbrucei427OrganismFullName@@"
         category="Proteome"
         publicUrl="http://www.immuneepitope.org"
         contact="IEDB"
@@ -463,14 +459,15 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
     </info>
   </resource>
 
-  <resource resource="TbGambiense_IEDB_Epitopes_DBxRefs_RSRC" version="@@Tbrucei_IEDB_Epitopes_VER@@" parentResource="Tbrucei_IEDB_Epitopes_DBxRefs_RSRC"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+  <resource resource="Tbrucei427_IEDB_Epitopes_DBxRefs_RSRC" version="@@Tbrucei427_IEDB_Epitopes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Tbrucei427_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@TbruceiOrganismFullName@@"
+        organisms="@@Tbrucei427OrganismFullName@@"
         category="ignore"
         publicUrl="http://www.immuneepitope.org"
         contact=""
@@ -483,6 +480,55 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
       </description>
     </info>
   </resource>
+
+   <resource resource="TbGambiense_IEDB_Epitopes_RSRC" version="@@TbGambiense_IEDB_Epitopes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportTb.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportTb.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTb.txt"/>
+    <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@TbGambienseOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TbGambiense_IEDB_Epitopes_DBxRefs_RSRC" version="@@TbGambiense_IEDB_Epitopes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../TbGambiense_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@TbGambienseOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 <!--RNASeq and ChipSeq-->
 
