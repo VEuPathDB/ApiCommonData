@@ -1,62 +1,93 @@
 <resources>
 
 <!--ISFResource-->
-    <resource resource="Lmexicana_chromosomes_RSRC" version="2009-11-03" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="L.mexicana"
-        displayName="L.mexicana contigs and chromosomes"
+
+  <resource resource="Lmexicana_chromosomes_RSRC" version="@@Lmexicana_chromosomes_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.fasta/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5665 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmex.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <info
+        displayName="L. mexicana chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
         category="Genome"
-        extDbName="Sanger L. mexicana contigs and chromosomes"
-        extDbRlsVer="2009-11-03"
-        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes/fasta/"/>
-         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --seqFileDir @downloadDir@/L.mexicana_chromosomes/fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
                  This resource includes chromosome and unassigned contig sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Lmexicana">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
+        ]]>
+      </description>
+    </info>
+  </resource>
 
-    <resource resource="Lmexicana_unassigned_contigs_RSRC" version="2009-11-03" 
-        plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="L.mexicana"
-        displayName="L.mexicana contigs and chromosomes"
+  <resource resource="Lmexicana_annotations_RSRC" version="@@Lmexicana_chromosomes_VER@@" parentResource="Lmexicana_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Lmex.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania mexicana"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="L. mexicana sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
         category="ignore"
-        extDbName="Sanger L. mexicana contigs and chromosomes"
-        extDbRlsVer="2009-11-03"
-        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
-        dbCommit="@dbcommit@">
-        <manualGet
-           fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/bin.fasta"/>
-         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 44270 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/L.mexicana_unassigned_contigs/bin.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-        <description>
-            <![CDATA[ 
-                 Contig sequences for <i>L.mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Lmexicana">GeneDB</a> for project details and data release policies.
-          ]]>      
-        </description>  
-    </resource>
-
-    <resource resource="Lmexicana_Annotations_RSRC" version="2009-11-03"
-
-        displayName="L.mexicana Genome Annotations"
-        category="Genome"
-        organisms="L.mexicana"
-        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-        extDbName="Sanger L. mexicana contigs and chromosomes"
-        extDbRlsVer="2009-11-03"
-        extDbRlsDescrip="Sanger L. mexicana contigs and chromosomes|2009-11-03"
-        dbCommit="@dbcommit@">
-      <manualGet fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/GenomesFromSanger/nfs/pathdata2/GFF/eupath-export-2009-10-06/Lmexicana/Chromosomes" />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/TriTrypDB/TrypEmbl2gus.xml --inputFileOrDir @downloadDir@/L.mexicana_Annotations/Chromosomes --fileFormat embl --inputFileExtension embl --soCvsVersion @soVer@ --defaultOrganism "Leishmania mexicana mexicana" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --validationLog @pipelineDir@/logs/Lmexicana.validation.log --bioperlTreeOutput @pipelineDir@/logs/Lmexicana.bioperl --handlerExternalDbs "enzyme:enzymeDB:2009-08-12"</pluginArgs>
-        <description>
-            <![CDATA[
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
                   Genome and annotations for <i>L. mexicana</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute
-           ]]>
-        </description>
-    </resource>
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="GOAssociations_Lmexicana_RSRC" version="@@Lmexicana_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    <manualGet fileOrDir="TriTrypDB/lmexicana/function/GOAssociations_Lmexicana/%RESOURCE_VERSION%/Lmexicana.gas"/>
+    <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Lmexicana.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
+    <info
+        displayName="GO Association for L. mexicana genes"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         GO Associations for <i>L. mexicana</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Lmexicana_ProductName_RSRC" version="@@Lmexicana_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gffs --output_file @@dataDir@@/LmexicanaProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gffs --output_file @@dataDir@@/LmexicanaProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmexicanaProduct.tab --genomeDbName Lmexicana_chromosomes_RSRC --genomeDbVer @@Lmexicana_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lmexicana Product Name"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 <!--ESTResource-->
   <resource resource="Lmexicana_dbEST_RSRC" version="@@Lmexicana_dbEST_VER@@"
