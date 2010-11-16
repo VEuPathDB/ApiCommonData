@@ -70,7 +70,7 @@
     <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gff3 --output_file @@dataDir@@/LmexicanaProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gff3 --output_file @@dataDir@@/LmexicanaProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmexicanaProduct.tab --genomeDbName Lmexicana_chromosomes_RSRC --genomeDbVer @@Lmexicana_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/LmexicanaProduct.tab --genomeDbName Lmexicana_chromosomes_RSRC --genomeDbVer @@Lmexicana_chromosomes_VER@@ --productDbName Lmexicana_chromosomes_RSRC --productDbVer @@Lmexicana_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Lmexicana Product Name"
         project="TriTrypDB"
@@ -96,6 +96,29 @@
     <pluginArgs>--file @@dataDir@@/LmexicanaComment.tab --genomeDbName Lmexicana_chromosomes_RSRC --genomeDbVer @@Lmexicana_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Lmexicana Comment Name"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Lmexicana_GeneName_RSRC" version="@@Lmexicana_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gff3 --output_file @@dataDir@@/LmexicanaGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmex.gff3 --output_file @@dataDir@@/LmexicanaGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmexicanaGeneName.tab --genomeDbName Lmexicana_chromosomes_RSRC --genomeDbVer @@Lmexicana_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lmexicana Gene Name"
         project="TriTrypDB"
         organisms="@@LmexicanaOrganismFullName@@"
         category="ignore"

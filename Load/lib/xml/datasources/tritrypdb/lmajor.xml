@@ -119,9 +119,32 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorProduct.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/LmajorProduct.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ --productDbName Lmajor_chromosomes_RSRC --productDbVer @@Lmajor_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Lmajor Product Name"
+        project="TriTrypDB"
+        organisms="@@LmajorOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Lmajor_GeneName_RSRC" version="@@Lmajor_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmajorGeneName.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lmajor Gene Name"
         project="TriTrypDB"
         organisms="@@LmajorOrganismFullName@@"
         category="ignore"

@@ -69,7 +69,7 @@
     <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/Tvivax.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tvivax.gff3 --output_file @@dataDir@@/TvivaxProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tvivax.gff3 --output_file @@dataDir@@/TvivaxProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TvivaxProduct.tab --genomeDbName Tvivax_chromosomes_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/TvivaxProduct.tab --genomeDbName Tvivax_chromosomes_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ --productDbName Tvivax_chromosomes_RSRC --productDbVer @@Tvivax_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tvivax Product Name"
         project="TriTrypDB"
@@ -86,6 +86,30 @@
       </description>
     </info>
   </resource>
+
+  <resource resource="Tvivax_GeneName_RSRC" version="@@Tvivax_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/Tvivax.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tvivax.gff3 --output_file @@dataDir@@/TvivaxGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tvivax.gff3 --output_file @@dataDir@@/TvivaxGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TvivaxGeneName.tab --genomeDbName Tvivax_chromosomes_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tvivax Gene Name"
+        project="TriTrypDB"
+        organisms="@@TvivaxOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
   <resource resource="Tvivax_Comment_RSRC" version="@@Tvivax_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">

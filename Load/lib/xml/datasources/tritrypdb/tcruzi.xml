@@ -203,7 +203,7 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --genomeDbName TcNonEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/TcNonEsmeraldoLikeProduct.tab --genomeDbName TcNonEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@ --productDbName TcNonEsmeraldoLike_chromosomes_RSRC --productDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@</pluginArgs>
     <info
         displayName="TcNonEsmeraldoLike Product Name"
         project="TriTrypDB"
@@ -221,12 +221,37 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
     </info>
   </resource>
 
+
+  <resource resource="TcNonEsmeraldoLike_GeneName_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcNonEsmeraldoLikeGeneName.tab --genomeDbName TcNonEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TcNonEsmeraldoLike Gene Name"
+        project="TriTrypDB"
+        organisms="@@TcNonEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <resource resource="TcEsmeraldoLike_ProductName_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcEsmeraldoLikeProduct.tab --genomeDbName TcEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/TcEsmeraldoLikeProduct.tab --genomeDbName TcEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcEsmeraldoLike_chromosomes_VER@@ --productDbName TcEsmeraldoLike_chromosomes_RSRC --productDbVer @@TcEsmeraldoLike_chromosomes_VER@@</pluginArgs>
     <info
         displayName="TcEsmeraldoLike Product Name"
         project="TriTrypDB"
@@ -244,12 +269,37 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
     </info>
   </resource>
 
+
+  <resource resource="TcEsmeraldoLike_GeneName_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcEsmeraldoLikeGeneName.tab --genomeDbName TcEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TcEsmeraldoLike Gene Name"
+        project="TriTrypDB"
+        organisms="@@TcEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <resource resource="TcUnAssignedContigs_ProductName_RSRC" version="@@TcUnassigned_contigs_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcUnAssignedContigsProduct.tab --genomeDbName TcUnassigned_contigs_RSRC --genomeDbVer @@TcUnassigned_contigs_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/TcUnAssignedContigsProduct.tab --genomeDbName TcUnassigned_contigs_RSRC --genomeDbVer @@TcUnassigned_contigs_VER@@ --productDbName TcUnassigned_contigs_RSRC  --productDbVer @@TcUnassigned_contigs_VER@@</pluginArgs>
     <info
         displayName="TcUnAssignedContigs Product Name"
         project="TriTrypDB"
@@ -266,6 +316,30 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
       </description>
     </info>
   </resource>
+
+  <resource resource="TcUnAssignedContigs_GeneName_RSRC" version="@@TcUnAssigned_contigs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcUnAssignedContigsGeneName.tab --genomeDbName TcUnassigned_contigs_RSRC --genomeDbVer @@TcUnassigned_contigs_VER@@ </pluginArgs>
+    <info
+        displayName="TcUnAssignedContigs Gene Name"
+        project="TriTrypDB"
+        organisms="@@TcUnAssignedContigsOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
   <resource resource="TcNonEsmeraldoLike_Comment_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
@@ -809,7 +883,7 @@ TcSNP is an online resource/database with information on genetic variation(polym
 
 <!--arrayStudies-->
 
-  <resource resource="Tcruzi_array_GPL8132_RSRC" version="@@Lmajor_array_GPL8132_VER@@"
+  <resource resource="Tcruzi_array_GPL8132_RSRC" version="@@Tcruzi_array_GPL8132_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tcruzi/microarrayPlatform/GPL8132/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>

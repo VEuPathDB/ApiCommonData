@@ -205,7 +205,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Product.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Product.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/Tbrucei927Product.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/Tbrucei927Product.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ --productDbName Tbrucei927_chromosomes_RSRC --productDbVer @@Tbrucei927_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tbrucei927 Product Name"
         project="TriTrypDB"
@@ -228,7 +228,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei427/contig/%RESOURCE_VERSION%/Tb427.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427Product.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427Product.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/Tbrucei427Product.tab --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/Tbrucei427Product.tab --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ --productDbName Tbrucei427_chromosomes_RSRC --productDbVer @@Tbrucei427_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tbrucei427 Product Name"
         project="TriTrypDB"
@@ -251,7 +251,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TbGambienseProduct.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/TbGambienseProduct.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ --productDbName Tbrucei427_chromosomes_RSRC --productDbVer @@Tbrucei427_chromosomes_VER@@</pluginArgs>
     <info
         displayName="TbGambiense Product Name"
         project="TriTrypDB"
@@ -292,6 +292,53 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
+  <resource resource="Tbrucei927_GeneName_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927GeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927GeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/Tbrucei927GeneName.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tbrucei927 Gene Name"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei427_GeneName_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei427/contig/%RESOURCE_VERSION%/Tb427.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427GeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427GeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/Tbrucei427GeneName.tab --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tbrucei427 Gene Name"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <resource resource="Tbrucei427_Comment_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei427/contig/%RESOURCE_VERSION%/Tb427.gff3"/>
@@ -323,6 +370,29 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <pluginArgs>--file @@dataDir@@/TbGambienseComment.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="TbGambiense Comments"
+        project="TriTrypDB"
+        organisms="@@TbGambienseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TbGambiense_GeneName_RSRC" version="@@TbGambiense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TbGambienseGeneName.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TbGambiense Gene Name"
         project="TriTrypDB"
         organisms="@@TbGambienseOrganismFullName@@"
         category="ignore"

@@ -99,7 +99,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     <manualGet fileOrDir="PlasmoDB/TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.gff3"/>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
     <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LbraziliensisProduct.tab --genomeDbName Lbraziliensis_chromosomes_RSRC --genomeDbVer @@Lbraziliensis_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/LbraziliensisProduct.tab --genomeDbName Lbraziliensis_chromosomes_RSRC --genomeDbVer @@Lbraziliensis_chromosomes_VER@@ --productDbName Lbraziliensis_chromosomes_RSRC --productDbVer @@Lbraziliensis_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Lbraziliensis Product Name"
         project="TriTrypDB"
@@ -125,6 +125,29 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     <pluginArgs>--file @@dataDir@@/LbraziliensisComment.tab --genomeDbName Lbraziliensis_chromosomes_RSRC --genomeDbVer @@Lbraziliensis_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Lbraziliensis Comment"
+        project="TriTrypDB"
+        organisms="@@LbraziliensisOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Lbraziliensis_GeneName_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LbraziliensisGeneName.tab --genomeDbName Lbraziliensis_chromosomes_RSRC --genomeDbVer @@Lbraziliensis_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lbraziliensis Gene Name"
         project="TriTrypDB"
         organisms="@@LbraziliensisOrganismFullName@@"
         category="ignore"
