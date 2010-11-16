@@ -134,12 +134,13 @@ sub run {
 	       
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
       
+
       if($geneFeature->retrieveFromDB()){
 	  my $product = $geneFeature->getChild("GUS::Model::ApiDB::GeneFeatureProduct");
 
 	  $preferred = 1 unless $product->retrieveFromDB();
 
-	  my $nafeatureId = $self->getNaFeatId($genomeReleaseId,$sourceId);	       
+	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
 	  $self->makeGeneFeatProduct($genomeReleaseId,$nafeatureId,$product,$preferred);
   
@@ -167,19 +168,6 @@ sub makeGeneFeatProduct {
   $geneFeatProduct->submit() unless $geneFeatProduct->retrieveFromDB();
 }
 
-sub getNaFeatId {
-  my ($self,$genomeReleaseId,$sourceId) = @_;
-
-  my $geneFeat =  GUS::Model::DoTS::GeneFeature->new({'external_database_release_id' => $genomeReleaseId,
-						      'source_id' => $sourceId});
-  $geneFeat->retrieveFromDB();
-
-  my $naFeatId = $geneFeat->getNaFeatureId();
-
-  $self->undefPointerCache();
-
-  return $naFeatId;
-}
 
 sub undoTables {
   return ('ApiDB.GeneFeatureProduct',
