@@ -117,7 +117,7 @@ sub run {
   my $self = shift;
 
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
-						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
+						 $self->getArg('genomeDbVer')) || $self->error("Can't find external_database_release_id for genome");
 
   my $tabFile = $self->getArg('file');
 
@@ -128,12 +128,22 @@ sub run {
   while(<FILE>){
       next if (^\s*$);
 
-      my ($sourceId, $product, $preferred) = split(/\t/,$_);
+      my ($sourceId, $product) = split(/\t/,$_);
 
-      my $nafeatureId=$self->getNaFeatId($genomeReleaseId,$sourceId);
+      my $preferred = 0;
+	       
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
+      	       
+      $self->warn("Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found") unless  $geneFeature->retrieveFromDB();
+      
+      my $product = $geneFeature->getChild("GUS::Model::ApiDB::GeneFeatureProduct");
 
+      $preferred = 1 unless $product->retrieveFromDB();
+
+      my $nafeatureId = $self->getNaFeatId($genomeReleaseId,$sourceId);	       
+    
       $self->makeGeneFeatProduct($genomeReleaseId,$nafeatureId,$product,$preferred);
-
+  
       $processed++;
   }
 
@@ -151,7 +161,7 @@ sub makeGeneFeatProduct {
 						                    'product' => $product,
 						                    'is_preferred' => $preferred});
 
-  $geneFeatProductexon->submit() unless $geneFeatProduct->retrieveFromDB();
+  $geneFeatProduct->submit() unless $geneFeatProduct->retrieveFromDB();
 }
 
 sub getNaFeatId {
