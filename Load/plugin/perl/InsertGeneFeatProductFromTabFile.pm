@@ -133,19 +133,22 @@ sub run {
       my $preferred = 0;
 	       
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
-      	       
-      $self->warn("Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found") unless  $geneFeature->retrieveFromDB();
       
-      my $product = $geneFeature->getChild("GUS::Model::ApiDB::GeneFeatureProduct");
+      if($geneFeature->retrieveFromDB()){
+	  my $product = $geneFeature->getChild("GUS::Model::ApiDB::GeneFeatureProduct");
 
-      $preferred = 1 unless $product->retrieveFromDB();
+	  $preferred = 1 unless $product->retrieveFromDB();
 
-      my $nafeatureId = $self->getNaFeatId($genomeReleaseId,$sourceId);	       
+	  my $nafeatureId = $self->getNaFeatId($genomeReleaseId,$sourceId);	       
     
-      $self->makeGeneFeatProduct($genomeReleaseId,$nafeatureId,$product,$preferred);
+	  $self->makeGeneFeatProduct($genomeReleaseId,$nafeatureId,$product,$preferred);
   
-      $processed++;
-  }
+	  $processed++;
+      }else{
+	  $self->warn("Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found");
+      }
+  }        
+
 
   $self->undefPointerCache();
 
