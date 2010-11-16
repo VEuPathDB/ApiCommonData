@@ -150,7 +150,7 @@ sub run {
   
 	  $processed++;
       }else{
-	  $self->warn("Gene Feature with source id: $sourceId and external database release id $productReleaseId cannot be found");
+	  $self->log("WARNING","Gene Feature with source id: $sourceId and external database release id $productReleaseId cannot be found");
       }
       
       $self->undefPointerCache();
@@ -175,7 +175,7 @@ sub makeGeneFeatProduct {
       $geneFeatProduct->set("external_database_release_id",$productReleaseId);
       $geneFeatProduct->submit();
   }else{
-      $self->warn("product $product already exists for na_feature_id: $naFeatId");
+      $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId");
   }
 
 }
