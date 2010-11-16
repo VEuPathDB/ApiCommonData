@@ -57,13 +57,13 @@ $out->open("> $output") or die "Couldn't open the output file: $output $!";
 
 my $in = new IO::File;
 if ($in->open($input)) {
-    
     my $fasta_seen;
 
     while (<$in>) {              
         # Comments
+	chomp;    
         if ($_ =~ /^\#/) {
-	    print $out $_ if $_ =~ /^\#\#/;  # Need to retain some comments for splitting fasta
+	    print $out "$_\n" if $_ =~ /^\#\#/;  # Need to retain some comments for splitting fasta
             next;
 	    
         # FASTA might be embedded
@@ -77,7 +77,7 @@ if ($in->open($input)) {
 		print $out ">$new_id\n";
 	    } else {
 		# Just dump the fasta
-		print $out $_;
+		print $out "$_\n";
 	    }
 	    
 	# Plain 'ol annotations.
@@ -175,5 +175,5 @@ sub process_annotations {
 	    $attributes = join(';',@new_attributes);
 	}
     }
-    print $out join("\t",$new_id,$source,$type,$start,$end,$score,$strand,$phase,$attributes);
+    print $out join("\t",$new_id,$source,$type,$start,$end,$score,$strand,$phase,$attributes) . "\n";
 }
