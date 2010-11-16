@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertGeneCommentFromTabFile;
+package ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -8,7 +8,7 @@ use GUS::PluginMgr::Plugin;
 
 
 use GUS::Model::DoTS::GeneFeature;
-use GUS::Model::DoTS::NaFeatureComment;
+use GUS::Model::DoTS::NAFeatureComment;
 use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
@@ -22,16 +22,18 @@ sub getArgsDeclaration {
 	       descr => 'tab delimited file containing gene identifiers and comments',
 	       constraintFunc=> undef,
 	       reqd  => 1,
-	       isList => 0
+	       isList => 0,
+	       mustExist => 1,
+	       format => 'Two column tab delimited file in the order identifier, comment',
 	     }),
      stringArg({ name => 'genomeDbName',
-		 descr => 'externaldatabase name for genome sequences scanned',
+		 descr => 'externaldatabase name for gene comment source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
 	       }),
      stringArg({ name => 'genomeDbVer',
-		 descr => 'externaldatabaserelease version used for genome sequences scanned',
+		 descr => 'externaldatabaserelease version used for gene comment source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
@@ -126,7 +128,7 @@ sub run {
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   while(<FILE>){
-      next if (^\s*$);
+      next if (/^\s*$/);
 
       my ($sourceId, $comment) = split(/\t/,$_);
 
@@ -136,17 +138,18 @@ sub run {
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
-	  $self->makeNaFeatComment($genomeReleaseId,$nafeatureId,$comment);
+	  $self->makeNaFeatComment($nafeatureId,$comment);
   
 	  $processed++;
 
       }else{
-	  $self->warn("Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found");
+	  $self->log("WARNING","Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found");
       }
+     $self->undefPointerCache();
 
   }
 
-  $self->undefPointerCache();
+
 
   return "$processed na feature comments parsed and loaded";
 }
@@ -155,14 +158,17 @@ sub run {
 sub makeNaFeatComment {
   my ($self,$naFeatId,$comment) = @_;
 
-  my $naFeatComment = GUS::Model::ApiDB::NaFeatureComment->new({'na_feature_id' => $naFeatId,
-						                  'COMMENT_STRING' => $comment});
-
-  $naFeatComment->submit() unless $naFeatComment->retrieveFromDB();
+  my $naFeatComment = GUS::Model::DoTS::NAFeatureComment->new({'na_feature_id' => $naFeatId,
+						              });
+  if($naFeatComment->retrieveFromDB()){
+      $comment .= ":".$naFeatComment->get("comment_string");
+  }
+  $naFeatComment->set("comment_string",$comment);
+  $naFeatComment->submit();
 }
 
 sub undoTables {
-  return ('ApiDB.NaFeatureComment',
+  return ('DoTS.NaFeatureComment',
 	 );
 }
 
