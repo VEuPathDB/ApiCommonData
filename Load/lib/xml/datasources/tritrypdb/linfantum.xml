@@ -72,12 +72,35 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_ProductName_RSRC" version="@@Linfantum_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="PlasmoDB/TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/Lin.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff --output_file @@dataDir@@/LinfantumProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff --output_file @@dataDir@@/LinfantumProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/Lin.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff3 --output_file @@dataDir@@/LinfantumProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff3 --output_file @@dataDir@@/LinfantumProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
     <pluginArgs>--file @@dataDir@@/LinfantumProduct.tab --genomeDbName Linfantum_chromosomes_RSRC --genomeDbVer @@Linfantum_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Linfantum Product Name"
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Linfantum_Comment_RSRC" version="@@Linfantum_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/Lin.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff3 --output_file @@dataDir@@/LinfantumComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lin.gff3 --output_file @@dataDir@@/LinfantumComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LinfantumComment.tab --genomeDbName Linfantum_chromosomes_RSRC --genomeDbVer @@Linfantum_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Linfantum Comment"
         project="TriTrypDB"
         organisms="@@LinfantumOrganismFullName@@"
         category="ignore"

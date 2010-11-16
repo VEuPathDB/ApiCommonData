@@ -269,6 +269,75 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
+  <resource resource="Tbrucei927_Comment_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/Tbrucei927Comment.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tbrucei927 Comments"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei427_Comment_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei427/contig/%RESOURCE_VERSION%/Tb427.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427Comment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb427.gff3 --output_file @@dataDir@@/Tbrucei427Comment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/Tbrucei427Comment.tab --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tbrucei427 Comments"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TbGambiense_Comment_RSRC" version="@@TbGambiense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TbGambienseComment.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TbGambiense Comments"
+        project="TriTrypDB"
+        organisms="@@TbGambienseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ESTResource-->
   <resource resource="Tbrucei_dbEST_RSRC" version="@@Tbrucei_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">

@@ -267,6 +267,76 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
     </info>
   </resource>
 
+  <resource resource="TcNonEsmeraldoLike_Comment_RSRC" version="@@TcNonEsmeraldoLike_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziNonEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcNonEsm.gff3 --output_file @@dataDir@@/TcNonEsmeraldoLikeComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcNonEsmeraldoLikeComment.tab --genomeDbName TcNonEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcNonEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TcNonEsmeraldoLike Comments"
+        project="TriTrypDB"
+        organisms="@@TcNonEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TcEsmeraldoLike_Comment_RSRC" version="@@TcEsmeraldoLike_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldo_like/chromosome/%RESOURCE_VERSION%/TcEsm.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcEsm.gff3 --output_file @@dataDir@@/TcEsmeraldoLikeComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcEsmeraldoLikeComment.tab --genomeDbName TcEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TcEsmeraldoLike Comments"
+        project="TriTrypDB"
+        organisms="@@TcEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TcUnAssignedContigs_Comment_RSRC" version="@@TcUnassigned_contigs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziUnassigned/contig/%RESOURCE_VERSION%/TcContigs.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/TcContigs.gff3 --output_file @@dataDir@@/TcUnAssignedContigsComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TcUnAssignedContigsComment.tab --genomeDbName TcUnassigned_contigs_RSRC --genomeDbVer @@TcUnassigned_contigs_VER@@ </pluginArgs>
+    <info
+        displayName="TcUnAssignedContigs Comments"
+        project="TriTrypDB"
+        organisms="@@TcUnAssignedContigsOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 <!--ESTResource-->
   <resource resource="Tcruzi_dbEST_RSRC" version="@@Tcruzi_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">

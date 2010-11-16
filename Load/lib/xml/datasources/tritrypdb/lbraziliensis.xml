@@ -117,6 +117,28 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     </info>
   </resource>
 
+  <resource resource="Lbraziliensis_Comment_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lbr.gff3 --output_file @@dataDir@@/LbraziliensisComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LbraziliensisComment.tab --genomeDbName Lbraziliensis_chromosomes_RSRC --genomeDbVer @@Lbraziliensis_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Lbraziliensis Comment"
+        project="TriTrypDB"
+        organisms="@@LbraziliensisOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--MassSpecResource-->
 
