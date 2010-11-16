@@ -1,25 +1,18 @@
 <!-- Saccharomyces cerevisiae (S288C) Resources -->
 <resources>
 
+ <!-- //////////////////////
+             ISF
+       ////////////////////// -->
+
   <!-- ISF FASTA resource -->
   <resource
         resource="saccharomyces_cerevisiae_s288c_genome_sequence_RSRC"
         version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-        <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/saccharomyces_cerevisiae.gff">
-               --tries=5 
-               --mirror 
-                --no-parent
-               --no-host-directories
-               --cut-dirs=5
-         </wgetArgs>
-
-         <unpack>mv @@dataDir@@/saccharomyces_cerevisiae.gff @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3</unpack>
-
-<!--  Retain to switch back to manualDelivery
+        <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->
         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
--->
 
         <!-- Standardize scaffold IDs by prefixing -->
         <unpack>
@@ -121,29 +114,31 @@
      </resource>
 
 
+ <!-- //////////////////////
+             GO
+       ////////////////////// -->
+
      <!-- GO annotations resource -->
      <resource 
             resource="saccharomyces_cerevisiae_s288c_go_associations_RSRC"
             version="@@saccharomyces_cerevisiae_s288c_GO_ASSOCIATIONS_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
- 
-            <wgetArgs url="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz">
-                 --tries=5 
-                 --mirror 
-                 --no-parent
-                 --no-host-directories
-                 --cut-dirs=5
-            </wgetArgs>
 
-            <unpack>gunzip @@dataDir@@/geneassociate.sgd.gz</unpack>
-
-<!--  Retain to switch back to manualDelivery
+            <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->
             <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
---> 
+
+            <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/gene_association.sgd
+                     --output @@dataDir@@/gene_association.uniquified.sgd
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 2
+                     --verbose
+            </unpack>
 
             <pluginArgs>
                   --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
-                  --inputFile @@dataDir@@/gene_association.sgd
+                  --inputFile @@dataDir@@/gene_association.uniquified.sgd
                   --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
                   --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
                   --targetTable "DoTS::TranslatedAASequence"
@@ -171,23 +166,20 @@
       </resource>
 
 
+
+ <!-- //////////////////////
+             DBXREFS
+       ////////////////////// -->
+
       <!-- EC numbers -->
       <resource
           resource="saccharomyces_cerevisiae_s288c_ec_ids_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
           plugin="GUS::Community::Plugin::InsertECMapping">
 
-            <wgetArgs url="http://downloads.yeastgenome.org/chromosomal_feature/dbxref.tab">
-                 --tries=5 
-                 --mirror 
-                 --no-parent
-                 --no-host-directories
-                 --cut-dirs=5
-            </wgetArgs>
-   
-<!--  Retain to switch back to manualDelivery
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
           <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%" />
- -->
+
           <unpack>
              fungidb_unpack_sgd_ids.pl
                  --input @@dataDir@@/dbxref.tab
@@ -196,14 +188,235 @@
                  --type "EC number"
          </unpack>
 
+        <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/ec_numbers.tab
+                     --output @@dataDir@@/ec_numbers.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
          <pluginArgs>
-              --ECMappingFile @@dataDir@@/ec_numbers.tab
+              --ECMappingFile @@dataDir@@/ec_numbers.uniquified.tab
               --evidenceCode "SGD"
               --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
+              --verbose
          </pluginArgs>
     
          <info
             displayName="Saccharomyces cerevisiae (S288C) EC IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) EC IDs. Description: EC number of the reaction catalyzed by the S. cerevisiae protein.  EC numbers are assigned to reactions by the Internal Union of Biochemistry and Molecular Biology. Source: SGD.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+
+      <!-- Uniprot dbxrefs: TODO: update plugin args;  should be attached to Protein -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_uniprot_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/uniprot_ids.tab
+                 --db SIB
+                 --type "Swiss-Prot ID"
+          </unpack>
+
+          <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/uniprot_ids.tab
+                     --output @@dataDir@@/uniprot_ids.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+          </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/uniprot_ids.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_genome_annotations_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://us.expasy.org/sprot/"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) Uniprot IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) Uniprot IDs. ID representing the accession number at the Swiss-Prot protein database for a S. cereivsiae protein. Source: SGD.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+
+      <!-- Candida XREFs -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_candida_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%/dbxref.tab" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/candida_ids.tab
+                 --db "Candida DB"
+                 --type "Gene ID"
+         </unpack>
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/candida_ids.tab
+                     --output @@dataDir@@/candida_ids.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/candida_ids.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_genome_annotations_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://genolist.pasteur.fr/CandidaDB/"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) Candida DB ortholog IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) Candida DB ortholog IDs. Gene ID of Candida albicans ortholog of the S. cerevisiae gene, from CandidaDB at the Institute Pastuer. Source: SGD.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+
+      <!-- Refseq Protein IDs. Plugin args might need to be updated to attach to proteins -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_refseq_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%/dbxref.tab" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/refseq_ids.tab
+                 --db NCBI
+                 --type "RefSeq protein version ID"
+         </unpack>
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/refseq_ids.tab
+                     --output @@dataDir@@/refseq_ids.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/refseq_ids.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_annotations_sequence_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?db=Protein"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) Refseq IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) Refseq protein IDs. ID representing an NCBI (DDBJ/EMBL-bank/GenBank) accession number for the protein sequence of an S. cerevisiae ORF. Source: SGD.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+
+      <!-- Refseq NA XREFs -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_refseq_na_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%/dbxref.tab" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/refseq_accessions.tab
+                 --db "NCBI"
+                 --type "RefSeq Accession"
+         </unpack>
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/refseq_accessions.tab
+                     --output @@dataDir@@/refseq_accessions.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/refseq_accessions.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_genome_annotations_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://www.ncbi.nlm.nih.gov/RefSeq/"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) RefSeq accessions"
             project="FungiDB"
             organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
             category="Proteome"
@@ -213,11 +426,118 @@
             institution="">
             <description>
                <![CDATA[
-                 Saccharomyces cerevisiae (S288C) EC IDs. Source: SGD.                 
+                 Saccharomyces cerevisiae (S288C) Refseq Accessions. ID of the S. cerevisiae chromosome sequence in the NCBI RefSeq database. Source: SGD.
                ]]>
             </description>
          </info>
      </resource>
+
+
+      <!-- Refseq Gene ID Xrefs -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_refseq_gene_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%/dbxref.tab" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/refseq_gene.tab
+                 --db "NCBI"
+                 --type "Gene ID"
+         </unpack>
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/refseq_gene.tab
+                     --output @@dataDir@@/refseq_gene.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/refseq_gene.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_genome_annotations_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?db=gene"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) RefSeq Gene IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl=""
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) Refseq Gene IDs. ID of the S. cerevisiae ORF at the NCBI Entrez Gene database. Source: SGD/NCBI.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+      <!-- MetaCyc XREFs -->
+      <resource
+          resource="saccharomyces_cerevisiae_s288c_metacyc_dbxrefs_RSRC" 
+          version="@@saccharomyces_cerevisiae_s288c_VER@@"
+          plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+          <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->   
+          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/@@saccharomyces_cerevisiae_s288c_VER@@/xrefs/%RESOURCE_VERSION%/dbxref.tab" />
+
+          <unpack>
+             fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/metacyc.tab
+                 --db "NCBI"
+                 --type "Gene ID"
+         </unpack>
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/metacyc.tab
+                     --output @@dataDir@@/metacyc.uniquified.tab
+                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --col 0
+         </unpack>
+
+         <pluginArgs>--DbRefMappingFile @@dataDir@@/metacyc.uniquified.tab 
+                     --extDbName %RESOURCE_NAME% 
+                     --extDbReleaseNumber %RESOURCE_VERSION% 
+                     --columnSpec "primary_identifier,secondary_identifier"
+                     --tableName "DbRefNASequence"
+                     --geneExternalDatabaseSpec 'saccharomyces_cerevisisae_s288c_genome_annotations_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@'
+                     --idURL "http://pathway.yeastgenome.org:8555/server.html"
+                     --verbose
+         </pluginArgs>
+    
+         <info
+            displayName="Saccharomyces cerevisiae (S288C) MetaCyc IDs"
+            project="FungiDB"
+            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            category="Proteome"
+            publicUrl=""
+            contact=""
+            email=""
+            institution="">
+            <description>
+               <![CDATA[
+                 Saccharomyces cerevisiae (S288C) MetaCyc Pathway IDs. ID of the pathway in which the S. cerevisiae protein participates. Source: SGD/MetaCyc.
+               ]]>
+            </description>
+         </info>
+     </resource>
+
+
 
 
   <!-- dbEST -->

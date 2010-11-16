@@ -74,7 +74,7 @@
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff
+                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
@@ -106,10 +106,10 @@
 
 
   <!-- dbEST -->
-  <resource resource="cryptococcus_neoformans_grubii_h99_dbEST_RSRC" version="@@cryptococcus_neoformans_grubii_h99_dbEST_VER@@"
+  <resource resource="cryptococcus_neoformans_grubii_h99_dbEST_RSRC" version="@@cryptococcus_neoformans_grubii_h99_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@cryptococcus_neoformans_grubii_h99_NCBI_TAXON_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@cryptococcus_neoformans_grubii_h99_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -123,7 +123,7 @@
     <info
         displayName="Cryptococcus neoformans var. grubii (H99) dbEST ESTs"
         project="FungiDB"
-        organisms="@@cryptoccus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
