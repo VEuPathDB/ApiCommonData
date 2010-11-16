@@ -1,4 +1,5 @@
 package ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile;
+
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 #######################################
@@ -18,7 +19,9 @@ use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Util;
 use GUS::Model::DoTS::Gene;
-use GUS::Model::ApiCommonData::GeneName;
+use GUS::Model::ApiDB::GeneName;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
 use Data::Dumper;
 
 # ----------------------------------------------------------
@@ -33,15 +36,17 @@ stringArg({name => 'geneNameFile',
          constraintFunc=> undef,
          reqd  => 1,
          isList => 0,
+	 mustExist => 1,
+	 format => 'Two column tab delimited file in the order identifier, gene_name',
         }),
-stringArg({ name => 'genomeDbName',
-		 descr => 'externaldatabase name for genome sequences scanned',
+stringArg({ name => 'geneNameDbName',
+		 descr => 'externaldatabase name for gene name source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
 	 }),
-stringArg({ name => 'genomeDbVer',
-	  descr => 'externaldatabaserelease version used for genome sequences scanned',
+stringArg({ name => 'geneNameDbVer',
+	  descr => 'externaldatabaserelease version used for gene name source',
 	  constraintFunc=> undef,
 	  reqd  => 1,
 	  isList => 0
@@ -128,8 +133,8 @@ sub new {
 sub run{
   my $self = shift;
 
-  my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
-						 $self->getArg('genomeDbVer')) || $self->error("Can't find external_database_release_id for genome");
+  my $geneNameReleaseId = $self->getOrCreateExtDbAndDbRls($self->getArg('geneNameDbName'),
+						 $self->getArg('geneNameDbVer')) || $self->error("Can't find or create external_database_release_id for gene name source");
   my $tabFile = $self->getArg('geneNameFile');
 
   my $processed;
@@ -137,50 +142,151 @@ sub run{
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   while(<FILE>){
-      next if (^\s*$);
+      next if (/^\s*$/);
 
-      my ($sourceId, $product) = split(/\t/,$_);
+      my ($sourceId, $geneName) = split(/\t/,$_);
 
       my $preferred = 0;
 
       my $gene = GUS::Model::DoTS::Gene->new({name => $sourceId});
 	       
       if($gene->retrieveFromDB()){
-	  my $geneName = $gene->getChild("GUS::Model::ApiDB::GeneName");
+	  my $geneNameFeat = $gene->getChild('ApiDB::GeneName',1);
 
-	  $preferred = 1 unless $geneName->retrieveFromDB();
+	  $preferred = 1 unless $geneNameFeat;
 
 	  my $geneId = $gene->getGeneId();	       
     
-	  $self->makeGeneName($genomeReleaseId,$geneId,$geneName,$preferred);
+	  $self->makeGeneName($geneNameReleaseId,$geneId,$geneName,$preferred);
   
 	  $processed++;
       }else{
-	  $self->warn("Gene with source id: $sourceId cannot be found");
+	  $self->log("WARNING","Gene with source id: $sourceId cannot be found");
       }  
+      $self->undefPointerCache();
   }        
 
 
-  $self->undefPointerCache();
+
 
   return "$processed gene names parsed and loaded";	  
   
 }
 
 sub makeGeneName {
-  my ($self,$genomeReleaseId,$geneId,$name,$preferred) = @_;
+  my ($self,$geneNameReleaseId,$geneId,$geneName,$preferred) = @_;
 
-  my $geneName = GUS::Model::ApiDB::GeneName->new({'gene_id' => $geneId,
-						    'external_database_release_id' => $genomeReleaseId,
-						     'name' => $name,
-						     'is_preferred' => $preferred});
+  my $geneNameFeat = GUS::Model::ApiDB::GeneName->new({'gene_id' => $geneId,
+						     'name' => $geneName,
+						     });
 
-  $geneName->submit() unless $geneName->retrieveFromDB();
+
+  unless ($geneNameFeat->retrieveFromDB()){
+      $geneNameFeat->set("is_preferred",$preferred);
+      $geneNameFeat->set("external_database_release_id",$geneNameReleaseId);
+      $geneNameFeat->submit();
+  }else{
+      $self->log("WARNING","Gene Name $geneName already exists for gene_id: $geneId");
+  }
+
 }
 
 
+sub getOrCreateExtDbAndDbRls{
+  my ($self, $dbName,$dbVer) = @_;
+
+  my $extDbId=$self->InsertExternalDatabase($dbName);
+
+  my $extDbRlsId=$self->InsertExternalDatabaseRls($dbName,$dbVer,$extDbId);
+
+  return $extDbRlsId;
+}
+
+sub InsertExternalDatabase{
+
+    my ($self,$dbName) = @_;
+    my $extDbId;
+
+    my $sql = "select external_database_id from sres.externaldatabase where lower(name) like '" . lc($dbName) ."'";
+    my $sth = $self->prepareAndExecute($sql);
+    $extDbId = $sth->fetchrow_array();
+
+    if ($extDbId){
+	print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
+    }
+
+    else {
+	my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({
+	    name => $dbName,
+	   });
+	$newDatabase->submit();
+	$extDbId = $newDatabase->getId();
+	print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
+    }
+    return $extDbId;
+}
+
+sub InsertExternalDatabaseRls{
+
+    my ($self,$dbName,$dbVer,$extDbId) = @_;
+
+    my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
+
+    if ($extDbRlsId){
+	print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
+    }
+
+    else{
+        $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
+	print STDERR "Created new release id for $dbName with version $dbVer and release id $extDbRlsId\n";
+    }
+    return $extDbRlsId;
+}
+
+
+sub releaseAlreadyExists{
+    my ($self, $extDbId,$dbVer) = @_;
+
+    my $sql = "select external_database_release_id 
+               from SRes.ExternalDatabaseRelease
+               where external_database_id = $extDbId
+               and version = '$dbVer'";
+
+    my $sth = $self->prepareAndExecute($sql);
+    my ($relId) = $sth->fetchrow_array();
+
+    return $relId; #if exists, entry has already been made for this version
+
+}
+
+sub makeNewReleaseId{
+    my ($self, $extDbId,$dbVer) = @_;
+
+    my $newRelease = GUS::Model::SRes::ExternalDatabaseRelease->new({
+	external_database_id => $extDbId,
+	version => $dbVer,
+	download_url => '',
+	id_type => '',
+	id_url => '',
+	secondary_id_type => '',
+	secondary_id_url => '',
+	description => 'annotation data from tRNAscan-SE analysis',
+	file_name => '',
+	file_md5 => '',
+	
+    });
+
+    $newRelease->submit();
+    my $newReleasePk = $newRelease->getId();
+
+    return $newReleasePk;
+
+}
+
 sub undoTables {
   return ('ApiDB.GeneName',
+	  'SRes.ExternalDatabaseRelease',
+	  'SRes.ExternalDatabase',
 	 ); 
 }
 
