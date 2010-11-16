@@ -167,11 +167,17 @@ sub makeGeneFeatProduct {
   my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
 
   my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
-						                    'external_database_release_id' => $productReleaseId,
 						                    'product' => $product,
-						                    'is_preferred' => $preferred});
+						                     });
 
-  $geneFeatProduct->submit() unless $geneFeatProduct->retrieveFromDB();
+  unless ($geneFeatProduct->retrieveFromDB()){
+      $geneFeatProduct->set("is_preferred",$preferred);
+      $geneFeatProduct->set("external_database_release_id",$productReleaseId);
+      $geneFeatProduct->submit();
+  }else{
+      $self->warn("product $product already exists for na_feature_id: $naFeatId");
+  }
+
 }
 
 
