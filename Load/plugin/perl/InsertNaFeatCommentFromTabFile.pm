@@ -117,7 +117,7 @@ sub run {
   my $self = shift;
 
   my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
-						 $self->getArg('genomeDbVer')) || $self->error("Can't find db_el_id for genome");
+						 $self->getArg('genomeDbVer')) || $self->error("Can't find external_database_release_id for genome");
 
   my $tabFile = $self->getArg('file');
 
@@ -130,11 +130,20 @@ sub run {
 
       my ($sourceId, $comment) = split(/\t/,$_);
 
-      my $nafeatureId=$self->getNaFeatId($genomeReleaseId,$sourceId);
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
 
-      $self->makeNaFeatComment($nafeatureId,$comment);
+      if($geneFeature->retrieveFromDB()){
 
-      $processed++;
+	  my $nafeatureId = $geneFeature->getNaFeatureId();
+    
+	  $self->makeNaFeatComment($genomeReleaseId,$nafeatureId,$comment);
+  
+	  $processed++;
+
+      }else{
+	  $self->warn("Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found");
+      }
+
   }
 
   $self->undefPointerCache();
@@ -150,20 +159,6 @@ sub makeNaFeatComment {
 						                  'COMMENT_STRING' => $comment});
 
   $naFeatComment->submit() unless $naFeatComment->retrieveFromDB();
-}
-
-sub getNaFeatId {
-  my ($self,$genomeReleaseId,$sourceId) = @_;
-
-  my $geneFeat =  GUS::Model::DoTS::GeneFeature->new({'external_database_release_id' => $genomeReleaseId,
-						      'source_id' => $sourceId});
-  $geneFeat->retrieveFromDB();
-
-  my $naFeatId = $geneFeat->getNaFeatureId();
-
-  $self->undefPointerCache();
-
-  return $naFeatId;
 }
 
 sub undoTables {
