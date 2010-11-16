@@ -476,6 +476,8 @@ begin
            then return 'FungiDB';
          when 'neurospora'
            then return 'FungiDB';
+         when 'saccharomyces'
+           then return 'FungiDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
