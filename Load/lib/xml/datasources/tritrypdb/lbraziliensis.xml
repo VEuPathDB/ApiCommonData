@@ -139,6 +139,27 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     </info>
   </resource>
 
+  <resource resource="Lbraziliensis_previds_dbxref_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/dbxref/Lbraziliensis_chromosomes_RSRC/%RESOURCE_VERSION%/Lbraziliensis_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Lbraziliensis_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' --idType 'previous ids'</pluginArgs>
+    <info
+        displayName="Lbraziliensis previous id mappings"
+        project="TriTrypDB"
+        organisms="@@LbraziliensisOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
  <!--ESTResource-->
  <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
