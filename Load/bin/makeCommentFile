@@ -87,9 +87,7 @@ while ( my $seq = $in->next_seq() ) {
 	    if ($feature->has_tag($parentQualifier)){
 	      foreach my $value ($feature->get_tag_values($parentQualifier)){
 		  $parentId = $value;
-		  $parentId =~ s/:pep.*$//g;
-		  $parentId =~ s/:mRNA.*$//g;
-		  $parentId =~ s/:pseudogenic_transcript.*$//g;
+		  $parentId = &trimIds($parentId);
 		  
 	      }
 
@@ -152,7 +150,7 @@ while ( my $seq = $in->next_seq() ) {
 
 	      my @children;
 	      if($parentFeature eq $commentFeature){
-		  push(@children,$parentFeature);
+		  push(@children,$feature);
 		  $parentIDHash{$parentId}->{flag} = 0;
 	      }else{
 		  @children = $feature->get_SeqFeatures;
