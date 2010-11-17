@@ -11,7 +11,7 @@
         displayName="T.brucei 927 chromosomes sequence and annotation"
         project="TriTrypDB"
         organisms="@@Tbrucei927OrganismFullName@@"
-        category="ignore"
+        category="Genome"
         publicUrl=""
         contact=""
         email=""
@@ -35,7 +35,55 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
         displayName="T.brucei 927 chromosomes sequence and annotation"
         project="TriTrypDB"
         organisms="@@Tbrucei927OrganismFullName@@"
-        category="Genome"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.
+        ]]>
+      </description>
+<publication pmid="16020726"/>
+    </info>
+  </resource>
+
+
+  <resource resource="Tbrucei927_contigs_RSRC" version="@@Tbrucei927_chromosomes_VER@@" parentResource="Tbrucei927_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/contig/%RESOURCE_VERSION%/Tb927Contigs.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb927Contigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <info
+        displayName="T.brucei 927 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+   Sequence data for <i>Trypanosome brucei</i> strain TREU (Trypanosomiasis Research Edinburgh University) 927/4 were downloaded from <a href="http://www.genedb.org/genedb/tryp/">GeneDB</a> (sequence and annotated features).<br>
+Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/T_brucei/">The Sanger Institute pathogen sequencing unit</a> and <a href="http://www.tigr.org/tdb/e2k1/tba1/">TIGR</a>.         
+        ]]>
+      </description>
+<publication pmid="16020726"/>
+    </info>
+  </resource>
+
+
+  <resource resource="Tbrucei927_contig_annotations_RSRC" version="@@Tbrucei927_chromosomes_VER@@" parentResource="Tbrucei927_chromosomes_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/contig/%RESOURCE_VERSION%/Tb927Contigs.gff3"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tb927Contigs.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU927"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T.brucei 927 chromosomes sequence and annotation"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="ignore"
         publicUrl=""
         contact=""
         email=""
@@ -269,29 +317,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="Tbrucei927_Comment_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
-    <pluginArgs>--file @@dataDir@@/Tbrucei927Comment.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ </pluginArgs>
-    <info
-        displayName="Tbrucei927 Comments"
-        project="TriTrypDB"
-        organisms="@@Tbrucei927OrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
   <resource resource="Tbrucei927_GeneName_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
@@ -325,6 +350,52 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
         displayName="Tbrucei427 Gene Name"
         project="TriTrypDB"
         organisms="@@Tbrucei427OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TbGambiense_GeneName_RSRC" version="@@TbGambiense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/TbGambienseGeneName.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="TbGambiense Gene Name"
+        project="TriTrypDB"
+        organisms="@@TbGambienseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei927_Comment_RSRC" version="@@Tbrucei927_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/Tb927Chrom.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tb927Chrom.gff3 --output_file @@dataDir@@/Tbrucei927Comment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/Tbrucei927Comment.tab --genomeDbName Tbrucei927_chromosomes_RSRC --genomeDbVer @@Tbrucei927_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tbrucei927 Comments"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -385,28 +456,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="TbGambiense_GeneName_RSRC" version="@@TbGambiense_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tbg.gff3 --output_file @@dataDir@@/TbGambienseGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TbGambienseGeneName.tab --genomeDbName TbGambiense_chromosomes_RSRC --genomeDbVer @@TbGambiense_chromosomes_VER@@ </pluginArgs>
-    <info
-        displayName="TbGambiense Gene Name"
-        project="TriTrypDB"
-        organisms="@@TbGambienseOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
 
 <!--ESTResource-->
   <resource resource="Tbrucei_dbEST_RSRC" version="@@Tbrucei_dbEST_VER@@"

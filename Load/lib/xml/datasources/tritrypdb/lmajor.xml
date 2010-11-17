@@ -2,14 +2,14 @@
 
 <!--ISFResource-->
 
-  <resource resource="Lmajor_chromosomes_RSRC" version="@@Lmajor_chromosomes_VER@@"
+  <resource resource="LmajorFriedlin_chromosomes_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.fasta"/>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 347515 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmaj.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
-        displayName="L. major chromosomes sequence and annotation"
+        displayName="L. major Friedlin chromosomes sequence and annotation"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="Genome"
         publicUrl=""
         contact=""
@@ -25,14 +25,14 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
-   <resource resource="Lmajor_annotations_RSRC" version="@@Lmajor_chromosomes_VER@@" parentResource="Lmajor_chromosomes_RSRC"
+   <resource resource="LmajorFriedlin_annotations_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@" parentResource="LmajorFriedlin_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/Lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <manualGet fileOrDir="TriTrypDB/Lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Lmaj.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania major strain Friedlin"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
-        displayName="L. major chromosomes sequence and annotation"
+        displayName="L. major Friedlin chromosomes sequence and annotation"
         project="TriTrypDB"
-        organisms="@@lmajorOrganismFullName@@"
+        organisms="@@lmajorFriedlinOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -52,7 +52,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
   <resource resource="LmajorSD_contigs_RSRC" version="@@LmajorSD_contigs_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorSD_75_1/%RESOURCE_VERSION%/final/454AllContigs.fna"/>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorSD_75_1/contig/%RESOURCE_VERSION%/final/454AllContigs.fna"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 860570 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/454AllContigs.fna --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="L. major SD 75.1 genome from WUSTL"
@@ -92,14 +92,14 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
-  <resource resource="GOAssociations_Lmajor_RSRC" version="@@Lmajor_chromosomes_VER@@"
+  <resource resource="GOAssociations_LmajorFriedlin_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="TriTrypDB/lmajor/function/GOAssociations_Lmajor/%RESOURCE_VERSION%/Lmajor.gas"/>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Lmajor.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
     <info
         displayName="GO Association for L. major genes"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="Proteome"
         publicUrl=""
         contact=""
@@ -114,16 +114,16 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   </resource>
 
 
-  <resource resource="Lmajor_ProductName_RSRC" version="@@Lmajor_chromosomes_VER@@"
+  <resource resource="LmajorFriedlin_ProductName_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorProduct.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ --productDbName Lmajor_chromosomes_RSRC --productDbVer @@Lmajor_chromosomes_VER@@</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmajorFriedlinProduct.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ --productDbName LmajorFriedlin_chromosomes_RSRC --productDbVer @@LmajorFriedlin_chromosomes_VER@@</pluginArgs>
     <info
-        displayName="Lmajor Product Name"
+        displayName="LmajorFriedlin Product Name"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -137,16 +137,16 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
-  <resource resource="Lmajor_GeneName_RSRC" version="@@Lmajor_chromosomes_VER@@"
+  <resource resource="LmajorFriedlin_GeneName_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorGeneName.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
+    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmajorFriedlinGeneName.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
     <info
-        displayName="Lmajor Gene Name"
+        displayName="LmajorFriedlin Gene Name"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -160,16 +160,16 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
-  <resource resource="Lmajor_Comment_RSRC" version="@@Lmajor_chromosomes_VER@@"
+  <resource resource="LmajorFriedlin_Comment_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajor/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorComment.tab --genomeDbName Lmajor_chromosomes_RSRC --genomeDbVer @@Lmajor_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
+    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
+    <pluginArgs>--file @@dataDir@@/LmajorFriedlinComment.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
     <info
-        displayName="Lmajor Comments"
+        displayName="LmajorFriedlin Comments"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""

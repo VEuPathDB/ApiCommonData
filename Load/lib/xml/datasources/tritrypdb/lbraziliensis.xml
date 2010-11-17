@@ -1,35 +1,11 @@
 <resources>
 
- <!--ESTResource-->
- <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
-      plugin="GUS::Supported::Plugin::dbEST">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 5660 --outputFile @@dataDir@@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
-    <info
-        displayName="TriTryp dbEST ESTs"
-        project="TriTrypDB"
-        organisms="@@LbraziliensisFullName@@"
-        category="Transcriptome"
-        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         TriTryp ESTs from dbEST.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 <!--ISFResource-->
 
   <resource resource="Lbraziliensis_chromosomes_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5560 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbr.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbr.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="L. braziliensis chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -158,6 +134,30 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
       <description>
         <![CDATA[
          
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+ <!--ESTResource-->
+ <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
+      plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 5660 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
+    <info
+        displayName="TriTryp dbEST ESTs"
+        project="TriTrypDB"
+        organisms="@@LbraziliensisFullName@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         TriTryp ESTs from dbEST.
         ]]>
       </description>
     </info>
