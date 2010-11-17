@@ -21,7 +21,7 @@ my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date)); 
 
 
-my ($verbose, $help, $inFileDir, $outFilePrefix, $outFileSuffix,$dbxrefFeature, $idQualifier, $parentFeature, $parentQualifier, $dbxrefQualifier, $format, $seqFileExtension,$gff2GroupTag,$dbxrefType);
+my ($verbose, $help, $inFileDir, $outDir, $outFilePrefix, $outFileSuffix,$dbxrefFeature, $idQualifier, $parentFeature, $parentQualifier, $dbxrefQualifier, $format, $seqFileExtension,$gff2GroupTag,$dbxrefType);
 
 my $append = 0;
 
@@ -31,6 +31,7 @@ my $append = 0;
             'fileExt=s'  => \$seqFileExtension,
             'output_file_prefix=s' => \$outFilePrefix,
             'output_file_suffix=s' => \$outFileSuffix,
+            'output_dir=s' => \$outDir,
 	    'dbxreffeatid_qualifier=s'       =>  \$idQualifier,
  	    'geneid_qualifier=s'       =>  \$parentQualifier,
  	    'feat_with_geneid=s'       =>  \$parentFeature,
@@ -44,7 +45,7 @@ my $append = 0;
 
 
 &usage() if($help);
-&usage("Missing Argument") unless(defined $inFileDir && $outFilePrefix && $format && $idQualifier && $dbxrefQualifier && $dbxrefFeature);
+&usage("Missing Argument") unless(defined $inFileDir && $outFilePrefix && $format && $idQualifier && $dbxrefQualifier && $dbxrefFeature && $outDir);
 
 
 my %outFileHash;
@@ -52,7 +53,7 @@ my %outFileHash;
 my %dbxrefFhHash;
 
 if($outFileSuffix){
-    my $outFile = "${outFilePrefix}_${outFileSuffix}.txt" ;
+    my $outFile = "${outDir}/${outFilePrefix}_${outFileSuffix}.txt" ;
 
     $outFileHash{$outFileSuffix} = $outFile;
 }
@@ -121,7 +122,7 @@ while ( my $seq = $in->next_seq() ) {
 			      
 			      my($type,@ids) = split(/\:/,$tagValuePair);
 			      $type = &trim($type);
-			      $outFileHash{lc($type)} = "${outFilePrefix}_".lc($type).".txt";
+			      $outFileHash{lc($type)} = "${outDir}/${outFilePrefix}_".lc($type).".txt";
 			  }
 		      }
 
@@ -143,9 +144,9 @@ foreach my $type (keys %outFileHash){
     $dbxrefFhHash{$type} = FileHandle->new();
 
     if($append){
-	$dbxrefFhHash{$type}->open(">>${outFilePrefix}_${type}.txt");
+	$dbxrefFhHash{$type}->open(">>${outDir}/${outFilePrefix}_${type}.txt");
     }else{
-	$dbxrefFhHash{$type}->open(">${outFilePrefix}_${type}.txt");
+	$dbxrefFhHash{$type}->open(">${outDir}/${outFilePrefix}_${type}.txt");
     }
 }
 
@@ -300,6 +301,7 @@ sub usage {
 --format      <format of the annotation file (genbank, embl, gff)>
 --fileOrDir <file or directory to be parsed> \\
 [--fileExt  <extension of file in directory>] \\
+--output_dir <directory to store output files> \\
 --output_file_prefix <output dbxref file(s) prefix> \
 [--output_file_suffix <if dbxref type is not specified>] \\
 \--feat_with_dbxref <name of the feature in which dbxref is present> \\
