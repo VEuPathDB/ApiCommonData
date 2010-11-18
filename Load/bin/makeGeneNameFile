@@ -108,9 +108,16 @@ while ( my $seq = $in->next_seq() ) {
 
 
 		      foreach my $geneName (@geneNames){
-			  $geneName = &trim($geneName);
-			  if($geneName ne ""){
-			      $geneNameFh->print("$id\t$geneName\n");
+			  
+			  my(@names) split(/,/,$geneName);
+
+			  foreach my $name (@names){
+			      $name = &trim($name);
+			  
+			  
+			      if($name ne ""){
+				  $geneNameFh->print("$id\t$name\n");
+			      }
 			  }
 		      }
 		  }
@@ -168,7 +175,7 @@ sub usage {
 --output_file <output geneName file> \\
 --feat_with_genename <name of the feature in which gene name is present> \\
 --genename_qualifier <qualifier for gene names within feat_with_genename> \\
---feat_with_geneid <name of feature containing gene source ids` -only required if gene name is not in feature >] \\
+[--feat_with_geneid <name of feature containing gene source ids` -only required if gene name is not in feature >] \\
 --geneid_qualifier <qualifier for gene source ids within feat_with_geneid or feat_with_genename> \\
 [--append' <if geneName list should be appended to file (boolean)>] \\
 [--gff2GroupTag <group tag if gff2 file format>] \\	
