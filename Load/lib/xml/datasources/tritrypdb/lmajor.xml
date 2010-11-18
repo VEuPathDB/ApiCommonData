@@ -116,10 +116,8 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
   <resource resource="LmajorFriedlin_ProductName_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorFriedlinProduct.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ --productDbName LmajorFriedlin_chromosomes_RSRC --productDbVer @@LmajorFriedlin_chromosomes_VER@@</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/function/LmajorFriedlin_chromosomes_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ --productDbName LmajorFriedlin_chromosomes_RSRC --productDbVer @@LmajorFriedlin_chromosomes_VER@@</pluginArgs>
     <info
         displayName="LmajorFriedlin Product Name"
         project="TriTrypDB"
@@ -139,10 +137,8 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
   <resource resource="LmajorFriedlin_GeneName_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorFriedlinGeneName.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/LmajorFriedlin_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
+    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="LmajorFriedlin Gene Name"
         project="TriTrypDB"
@@ -160,12 +156,33 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
+  <resource resource="LmajorFriedlin_previousAliases_RSRC" version="2009-09-10"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/linfantum/genome/LmajorFriedlin_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/previousAliases.tab"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
+    <pluginArgs>--file @@dataDir@@/previousAliasesWithTwoCols.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="LmajorFriedlin previous Aliases"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <resource resource="LmajorFriedlin_Comment_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff3"/>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Lmaj.gff3 --output_file @@dataDir@@/LmajorFriedlinComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
-    <pluginArgs>--file @@dataDir@@/LmajorFriedlinComment.tab --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/LmajorFriedlin_chromosomes_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName LmajorFriedlin_chromosomes_RSRC --genomeDbVer @@LmajorFriedlin_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="LmajorFriedlin Comments"
         project="TriTrypDB"
@@ -178,6 +195,166 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
       <description>
         <![CDATA[
          
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_previds_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="LmajorFriedlin previds mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_pmid_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_pmid.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_pmid.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="LmajorFriedlin pmid mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_ctp_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_ctp.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_ctp.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="LmajorFriedlin ctp mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_uniprot_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_uniprot.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_uniprot.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="LmajorFriedlin uniprot mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_prosite_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_prosite.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_prosite.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="LmajorFriedlin prosite mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_pdb_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_pdb.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_pdb.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="LmajorFriedlin pdb mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_gi_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_gi.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_gi.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="LmajorFriedlin gi mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="LmajorFriedlin_pfam_dbxref_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LmajorFriedlin_chromosomes_RSRC/%RESOURCE_VERSION%/LmajorFriedlin_pfam.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/LmajorFriedlin_pfam.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="LmajorFriedlin pfam mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
         ]]>
       </description>
     </info>
@@ -363,7 +540,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   <resource resource="Lmajor_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="TriTrypDB"
@@ -383,7 +560,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   <resource resource="Lmajor_Uniprot_Gene_dbxref_RSRC" version="@@Lmajor_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="TriTrypDB"
