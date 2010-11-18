@@ -67,10 +67,8 @@
 
   <resource resource="Tcongolense_ProductName_RSRC" version="@@Tcongolense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tcongolense/genome/chromosome/%RESOURCE_VERSION%/Tcongolense.gff3"/>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
-    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcongolenseProduct.tab --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ --productDbName Tcongolense_chromosomes_RSRC --productDbVer @@Tcongolense_chromosomes_VER@@</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tcongolense/function/Tcongolense_chromosomes_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ --productDbName Tcongolense_chromosomes_RSRC --productDbVer @@Tcongolense_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tcongolense Product Name"
         project="TriTrypDB"
@@ -90,10 +88,8 @@
 
   <resource resource="Tcongolense_GeneName_RSRC" version="@@Tcongolense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="PlasmoDB/TriTrypDB/tcongolense/genome/chromosome/%RESOURCE_VERSION%/Tcongolense.gff3"/>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseGeneName.tab --feat_with_genename gene --genename_qualifier Name --geneid_qualifier ID</unpack>
-    <unpack>makeGeneNameFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseGeneName.tab --feat_with_genename gene --genename_qualifier synonym --geneid_qualifier ID --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcongolenseGeneName.tab --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tcongolense/genome/Tcongolense_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
+    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tcongolense Gene Name"
         project="TriTrypDB"
@@ -114,10 +110,8 @@
 
   <resource resource="Tcongolense_Comment_RSRC" version="@@Tcongolense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tcongolense/genome/chromosome/%RESOURCE_VERSION%/Tcongolense.gff3"/>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseComment.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment</unpack>
-    <unpack>makeCommentFile --format gff3 --fileOrDir @@dataDir@@/Tcongolense.gff3 --output_file @@dataDir@@/TcongolenseComment.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_comment polypeptide --commentfeatid_qualifier ID --comment_qualifier comment --append</unpack>
-    <pluginArgs>--file @@dataDir@@/TcongolenseComment.tab --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tcongolense/genome/Tcongolense_chromosomes_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName Tcongolense_chromosomes_RSRC --genomeDbVer @@Tcongolense_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tcongolense Comments"
         project="TriTrypDB"
@@ -134,7 +128,87 @@
       </description>
     </info>
   </resource>
- 
+
+  <resource resource="Tcongolense_previds_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tcongolense_chromosomes_RSRC/%RESOURCE_VERSION%/Tcongolense_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcongolense_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tcongolense_chromosomes_RSRC|@@Tcongolense_chromosomes_VER@@' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="Tcongolense previds mappings"
+        project="TriTrypDB"
+        organisms="@@TcongolenseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+   <resource resource="Tcongolense_pmid_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tcongolense_chromosomes_RSRC/%RESOURCE_VERSION%/Tcongolense_pmid.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcongolense_pmid.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tcongolense_chromosomes_RSRC|@@Tcongolense_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="Tcongolense pmid mappings"
+        project="TriTrypDB"
+        organisms="@@TcongolenseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+    <resource resource="Tcongolense_pmid_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tcongolense_chromosomes_RSRC/%RESOURCE_VERSION%/Tcongolense_pmid.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcongolense_pmid.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tcongolense_chromosomes_RSRC|@@Tcongolense_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="Tcongolense pmid mappings"
+        project="TriTrypDB"
+        organisms="@@TcongolenseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+     <resource resource="Tcongolense_interpro_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tcongolense_chromosomes_RSRC/%RESOURCE_VERSION%/Tcongolense_interpro.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcongolense_interpro.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tcongolense_chromosomes_RSRC|@@Tcongolense_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="Tcongolense interpro mappings"
+        project="TriTrypDB"
+        organisms="@@TcongolenseOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ESTResource-->
   <resource resource="Tcongolense_dbEST_RSRC" version="@@Tcongolense_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
@@ -164,7 +238,7 @@
   <resource resource="Tcongolense_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@' --idType 'alternate id' </pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="TriTrypDB"
@@ -184,7 +258,7 @@
   <resource resource="Tcongolense_Uniprot_Gene_dbxref_RSRC" version="@@Tcongolense_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@'  --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="TriTrypDB"
