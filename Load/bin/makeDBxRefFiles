@@ -144,9 +144,9 @@ foreach my $type (keys %outFileHash){
     $dbxrefFhHash{$type} = FileHandle->new();
 
     if($append){
-	$dbxrefFhHash{$type}->open(">>${outDir}/${outFilePrefix}_${type}.txt");
+	$dbxrefFhHash{$type}->open(">>${outDir}/${outFilePrefix}_${type}.txt") or die("Could not open ${outDir}/${outFilePrefix}_${type}.txt for writing");
     }else{
-	$dbxrefFhHash{$type}->open(">${outDir}/${outFilePrefix}_${type}.txt");
+	$dbxrefFhHash{$type}->open(">${outDir}/${outFilePrefix}_${type}.txt") or die("Could not open ${outDir}/${outFilePrefix}_${type}.txt for writing");
     }
 }
 
