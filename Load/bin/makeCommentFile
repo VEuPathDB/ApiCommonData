@@ -50,9 +50,9 @@ my $append = 0;
 my $commentFh = FileHandle->new();
 
 if($append){
-    $commentFh->open(">>$outFile");
+    $commentFh->open(">>$outFile") or die("Could not open $outFile for writing");
 }else{
-    $commentFh->open(">$outFile");
+    $commentFh->open(">$outFile") or die("Could not open $outFile for writing");
 }
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
