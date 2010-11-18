@@ -50,9 +50,9 @@ my $append = 0;
 my $productFh = FileHandle->new();
 
 if($append){
-    $productFh->open(">>$outFile");
+    $productFh->open(">>$outFile") or die("Could not open $outFile for writing");
 }else{
-    $productFh->open(">$outFile");
+    $productFh->open(">$outFile") or die("Could not open $outFile for writing");
 }
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
