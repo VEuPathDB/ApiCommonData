@@ -49,9 +49,9 @@ my $append = 0;
 my $geneNameFh = FileHandle->new();
 
 if($append){
-    $geneNameFh->open(">>$outFile");
+    $geneNameFh->open(">>$outFile") or die("Could not open $outFile for writing");
 }else{
-    $geneNameFh->open(">$outFile");
+    $geneNameFh->open(">$outFile") or die("Could not open $outFile for writing");
 }
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
