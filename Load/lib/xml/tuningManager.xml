@@ -2639,6 +2639,13 @@ CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SageTagAttr_ftrId_idx&1 ON apidb.SageTagAttributes&1
+             (na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.AsmAlignmentGeneSummary">
@@ -5924,7 +5931,8 @@ sub changedGenesWithoutProduct {
     my ($dbh) = @_;
 
     my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
-      select gene from apidb.ChangedGeneProduct
+      select cgp.gene from apidb.ChangedGeneProduct cgp, apidb.GeneAttributes ga
+                  where cgp.gene = ga.source_id
     minus
       select gene from apidb.ChangedGeneProduct&1
     order by gene
