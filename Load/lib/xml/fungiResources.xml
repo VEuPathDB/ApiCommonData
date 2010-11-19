@@ -1,0 +1,2430 @@
+<resourcesPipeline repository="/files/efr"
+                   downloadDir="@downloadDir@">
+  <cleanups>
+ 
+  </cleanups>
+
+ <!-- //////////////////////
+           GLOBAL
+       ////////////////////// -->
+
+  <resource resource="enzymeDB" version="2010-06-15" 
+            displayName="Enzyme nomenclature database"
+            publicUrl="http://www.expasy.org/enzyme"
+            category="Ontology"
+            url="ftp://ftp.expasy.org/databases/enzyme/"
+            plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
+            extDbName="enzymeDB"
+            extDbRlsVer="2009-02-11"
+            dbCommit="@dbcommit@">
+     <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
+     <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
+     <description>
+         <![CDATA[
+    ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+     </description>
+  </resource>
+ 
+<resource resource="GO_evidence_codes" version="1.21"
+        displayName="Gene Ontology evidence codes"        
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"   
+	url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+        <description>
+            <![CDATA[
+   Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support. 
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="GO" version="1.1300"
+            displayName="Gene Ontology"
+            publicUrl="http://www.geneontology.org"
+            category="Ontology"
+            url="http://www.geneontology.org/ontology/gene_ontology.obo"
+            plugin="GUS::Supported::Plugin::InsertGeneOntology"
+            extDbName="Gene Ontology"
+            extDbRlsVer="4.540"
+            extDbRlsDescrip="The Gene Ontology from 02/20/2009"
+            dbCommit="@dbcommit@">
+      <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
+      <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+      <description>
+         <![CDATA[
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+      </description>
+  </resource>   
+
+ <resource resource="NRDB" version="2010-06-14"
+            plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            displayName="GenBank NRDB"
+            publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+            category="Proteome"
+            url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+            extDbName="NRDB"
+            extDbRlsVer="2009-02-22"
+            extDbRlsDescrip="The nr file from 2009-02-22"
+            dbCommit="@dbcommit@">
+      <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+      <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      <description>
+         <![CDATA[
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+      </description>
+ </resource>
+
+    <resource resource="dbEST" version="200-06-17"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        extDbName="dbEST"
+        extDbRlsVer="2009-02-23"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        />
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId 5820 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <description>
+            <![CDATA[
+                  Plasmodium ESTs from dbEST.
+          ]]>
+        </description>
+    </resource>
+
+
+
+ <!-- //////////////////////
+           Aspergilus nidulans (A4)
+       ////////////////////// -->
+
+     <resource 
+            resource="aspergillus_nidulans_a4_genome_sequence_RSRC"
+            version="@aspergillus_nidulans_a4_VER@"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            displayName="Aspergillus nidulans (strain A4) genomic sequence"
+            category="Genome"
+            publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html">
+            
+            <manualGet 
+              fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.fasta"/>
+
+             <!-- Standardize scaffold IDs by prefixing -->
+             <unpack>
+                  fungidb_uniquify_and_standardize_seqids.pl
+                      --input  @@dataDir@@/aspergillus_nidulans_a4_supercontigs.fasta
+                      --output @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
+                      --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+             </unpack>
+
+            <pluginArgs>
+                   --externalDatabaseName %RESOURCE_NAME%
+                   --ncbiTaxId @@aspergillus_nidulans_a4_NCBI_TAXONOMY_ID@@
+                   --externalDatabaseVersion %RESOURCE_VERSION%
+                   --sequenceFile @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
+                   --SOTermName 'supercontig'  
+                   --regexSourceId  '>(\S+)' 
+                   --tableName "DoTS::ExternalNASequence" 
+                   --regexChromosome '\d+\.(\d+)' 
+             </pluginArgs>
+             <description>
+                          <![CDATA[
+                              Aspergillus nidulans (A4) genomic sequence. Source: The Broad Institute
+                          ]]>
+                   </description>
+          </resource>
+
+  <!-- ISF genome annotations -->
+  <resource 
+         resource="aspergillus_nidulans_a4_genome_annotations_RSRC"
+         version="@@aspergillus_nidulans_a4_GENOME_SEQUENCE_VER@@" 
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+         displayName="Aspergillus nidulans A4 genomic annotations"
+        category="Genome"
+         publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
+
+         <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_transcripts.gff3" />
+
+        <!-- Standardize scaffold IDs by prefixing -->
+        <unpack>
+               fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/aspergillus_nidulans_a4_transcripts.gff3
+                   --output @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
+                   --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+        </unpack>
+
+         <unpack>
+               preprocessGFF3 
+                   --input_gff  @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
+                   --output_gff @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
+         </unpack>
+
+         <pluginArgs>
+                --extDbName %PARENT_RESOURCE_NAME%
+                --extDbRlsVer %PARENT_RESOURCE_VERSION%
+                --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
+                --inputFileExtension "gff3"
+                --fileFormat gff3
+                --soCvsVersion @@SO_VER@@
+                --defaultOrganism "Aspergillus nidulans A4"
+                --seqSoTerm "supercontig"
+                --validationLog @@dataDir@@/validation.log
+                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                --seqIdColumn source_id
+                --naSequenceSubclass ExternalNASequence
+            </pluginArgs>
+                <description>
+                     <![CDATA[
+                      Aspergillus nidulans (A4) genomic annotations. Source: The Broad Institute.
+                      ]]>
+                </description>
+  </resource>
+
+    <resource resource="BibRefType" 
+        version="1"
+        plugin="GUS::Supported::Plugin::LoadGusXml"
+        displayName="Bibliographic Reference Types"
+        category="ignore"
+        publicUrl="http://www.nlm.nih.gov/mesh/pubtypes2006.html"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BibliographicReferenceType/ncbiPublicationTypes.xml" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>	
+        <pluginArgs>--filename @downloadDir@/BibRefType/ncbiPublicationTypes.xml</pluginArgs>
+    </resource>  
+    
+    <resource resource="Mged_Ontology_Term_Types" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyTermType"
+        displayName="MGED Ontology Term Types"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Term_Types/MgedOntologyTermTypes.tab</pluginArgs>
+    </resource>    
+    
+    
+    <resource resource="Mged_Ontology_Relationship_Types" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
+        displayName="MGED Ontology Relationship Types"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania"/>
+        <pluginArgs>--inputFile @downloadDir@/Mged_Ontology_Relationship_Types/MgedOntologyRelationshipTypes.tab</pluginArgs>
+    </resource>    
+    
+    <resource resource="MGED_Ontology" 
+        version="1.3"
+        plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships"
+        displayName="The MGED Ontology"
+        category="Ontology"
+        publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
+        url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
+        extDbName="MGED_Ontology"
+        extDbRlsVer="1.3"
+        extDbRlsDescrip="MGED Ontology"
+        dbCommit="@dbcommit@"
+        >	
+        <wgetArgs>--tries=5 --no-directories --no-host-directories --accept=MGEDOntology.owl </wgetArgs>
+        <pluginArgs>--inFile @downloadDir@/MGED_Ontology/MGEDOntology.owl --extDbName %EXT_DB_NAME% --extDbVersion %EXT_DB_RLS_VER% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+        <description>
+            <![CDATA[Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
+        </description>		
+    </resource>
+    
+    <resource resource="Mged_Ontology_Entry" 
+        version="1.3"
+        plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
+        displayName="MGED Ontology Entry"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
+            contact="Trish Whetzel"
+            email="whetzel@pcbi.upenn.edu"
+            institution="University of Pennsylvania" />
+        <pluginArgs>--externalDatabase MGED_Ontology --externalDatabaseRls 1.3</pluginArgs>
+    </resource>  
+   
+        <resource resource="InterproscanData" version="27.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        category="Proteome"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan19.0/"
+            contact = "EBI"
+            email = "interhelp@ebi.ac.uk"
+            institution = "EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan19.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan19.0/iprscan/data/</pluginArgs>
+        <description>
+            <![CDATA[
+			InterPro family of databases
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>    
+
+
+
+
+
+
+
+
+
+
+ 
+ <resource resource="MAPPpromoters" version="2008-09-10" 
+        displayName="MAPP (Malaria Promoter Predictor)" 
+        category="Genome" 
+        plugin="ApiCommonData::Load::Plugin::CreatePlasmoMappFile" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/plasmoMAPP_kevin_brick/version3" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <pluginArgs> --inDir  @downloadDir@/MAPPpromoters/version3 --outDir @downloadDir@/MAPPpromoters/ --outputFile Pfal_MAPP-version3.sql --table ApiDB.plasmoMapp --verbose</pluginArgs> 
+        <description> 
+            <![CDATA[ MAPP (Malaria Promoter Predictor) recognises transcription start sites using 21 physicochemical properties of DNA. The predictor is comprised of a series of support vector machines which were trained on the 5' ends of full-length cDNAs from the FULL-Malaria database. Optimal prediction performance is achieved using only predictions with a MAPP score > 0.90.  Predictions are strand specific. (Brick K, Watanabe J, Pizzi E).
+          ]]> 
+        </description>                
+		<publication pmid="19094208"/>
+    </resource>    
+
+ <resource resource="loadMAPPWithSqlldr" version="2009-05-01" 
+        displayName="load MAPP With Sqlldr" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertPlasmoMappWithSqlLdr" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "@downloadDir@/MAPPpromoters/Pfal_MAPP-version3.sql" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <pluginArgs>--dataFile @downloadDir@/loadMAPPWithSqlldr/Pfal_MAPP-version3.sql</pluginArgs>
+        <description> 
+            <![CDATA[ MAPP (Malaria Promoter Predictor) recognises transcription start sites using 21 physicochemical properties of DNA. The predictor is comprised of a series of support vector machines which were trained on the 5' ends of full-length cDNAs from the FULL-Malaria database. Optimal prediction performance is achieved using only predictions with a MAPP score > 0.90.  Predictions are strand specific. (Brick K, Watanabe J, Pizzi E).
+          ]]> 
+        </description>                
+		<publication pmid="19094208"/>
+    </resource> 
+
+<resource resource="Phenotype_DBRefs" version="2010-02-19"
+        displayName="DBRefs for Phenotype db links"
+        category="External_links"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Phenotype DBRefs"
+        extDbRlsVer="2010-02-19"
+        extDbRlsDescrip="DBRefs for Phenotype db links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/phenotypeLink/geneid_list_02-19-2010.txt"
+            contact = "Shahid Kahn"
+            email = "S.M.Khan@lumc.nl"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Phenotype_DBRefs/geneid_list__02-19-2010.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            Phenotype links from Genetically Modified Rodent Malaria Parasites: 
+            <a href="http://www.pberghei.eu/index.php">Pberghei.eu</a>  hosts a database
+            containing information on genetically modified rodent malaria parasite
+            lines generated by many labs worldwide. Specifically, it contains data
+            of three rodent malaria parasite species; Plasmodium berghei, P. yoelii
+            and P. chabaudi. The aim of this database is to provide the research
+            community access to detailed information on the generation (e.g.
+            disruption, tagging, mutation, transgene expression) and phenotype of
+            genetically modified malaria parasites. The database not only provides
+            information on 'successful' mutants with a clear phenotype, but also
+            (un)published mutants without a clear phenotype and (un)published
+            negative trials to disrupt genes.
+            ]]>
+        </description>
+    </resource>
+
+<!--array design-->
+
+    <resource resource="Agilent_P_Berghei_Array" 
+              version="1.0"
+              plugin="GUS::Supported::Plugin::LoadArrayDesign"
+	      displayName="Agilent P. Berghei Oligo Array"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3824"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/Agilent_P_Berghei/" 
+                contact="George Dimopoulos"
+                email="gdimopou@jhsph.edu"
+                institution="Johns Hopkins School of Public Health"
+        />
+          <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/columnTranslator.xml --data_in @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/GPL3824.txt --log @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/translator.log --data_out @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Agilent' --commit @dbcommit@</unpack>
+          <pluginArgs>--cfg_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/agilentBerghei.config --data_file @downloadDir@/Agilent_P_Berghei_Array/Agilent_P_Berghei/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Agilent</pluginArgs>
+        <description>
+            <![CDATA[
+This microarray is a high-resolution, high performance 60-mer oligonucleotide array that represents the <i>P. berghei</i> transcriptome. (taken from GEO record GPL3824)
+          ]]>
+        </description>
+    </resource>    
+
+    <resource resource="scrMalaria_PlasmoSubset" 
+              version="1.0"
+              plugin="GUS::Supported::Plugin::LoadArrayDesign"
+	      displayName="Scripps Malaria GeneChip"
+              category="Transcriptome"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL1892"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/affy_arrays/scrMalaria/newMapping" 
+                contact="Elizabeth Winzeler"
+                email="winzeler@scripps.edu"
+                institution="The Scripps Research Institute"
+        />
+          <unpack>MakeLoadAffyArrayDesignInput.pl --target_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/targets.txt --probe_tab_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/probes.txt --cdf_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/winzeler_newmapping_5-13-09_PF.cdf --design_element_type short_oligo --polymer_type DNA --physical_biosequence_type unknown_sequence --output_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalariaPlasmoSubset.out --non_fasta_target_file</unpack>
+          <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Affymetrix' --commit @dbcommit@</unpack>
+          <pluginArgs>--cfg_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalaria.config --data_file @downloadDir@/scrMalaria_PlasmoSubset/newMapping/scrMalariaPlasmoSubset.out --technology_type in_situ_oligo_features --substrate_type glass --manufacturer Affymetrix</pluginArgs>
+        <description>
+            <![CDATA[
+Custom GeneChip for <i>P. falciparum</i> (taken from GEO record GPL1892)
+          ]]>
+        </description>
+      <publication pmid="12893887"/>
+    </resource>    
+
+    
+    <resource resource="MTC_KI_Plasmodium_falciparum_33k_Array" 
+        version="1"
+        plugin="GUS::Supported::Plugin::LoadArrayDesign"
+        displayName="Karolinska Institutet MTC P. falciparum Oligo Array"
+        category="Transcriptome"
+        dbCommit="@dbcommit@"
+        publicUrl="http://www.ebi.ac.uk/aerep/lob?name=adss&amp;id=325368727"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/MTC_KI_33k_v1/" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/columnTranslator.xml --data_in  @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/A-MEXP-75.txt --log @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/translator.log --data_out @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/loadArrayDesign.data</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Bobo Mok' --first Bobo --last Mok --commit @dbcommit@</unpack>
+        <pluginArgs>--cfg_file  @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/mtc_ki_33k_v1.config --data_file @downloadDir@/MTC_KI_Plasmodium_falciparum_33k_Array/MTC_KI_33k_v1/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Bobo Mok'</pluginArgs>
+        <description>
+            <![CDATA[
+	ArrayExpress (A-MEXP-75).  The 70-mer oligonucleotides microarray consisted of 6850 probes. From there, 6542 probes (Malaria Genome Oligo Set Version 1.0) were designed and synthesized by Qiagen Operon and 14 probes were obtained from the SpotReport Alien oligo array validation system (Stratagene, CA, USA). The rest of the oligos were selected using ArrayDesigner Version 1 (Premier Biosoft International, CA, USA). Oligonucleotides were dissolved in 1:3 of DMSO:dH2O at a final concentration of 40 µM in preparation for spotting on CMT-UltraGaps slides. Microarraying was done by Genetix Qarray. Each probe was printed in quadruplicate on the slides.
+          ]]>
+        </description>
+    </resource>    
+    
+    <resource resource="DeRisi_Plasmodium_falciparum_Oligo_Array_7282" 
+        version="1"
+        plugin="GUS::Supported::Plugin::LoadArrayDesign"
+        displayName="Malaria Oligo p19"
+        category="Transcriptome"
+        dbCommit="@dbcommit@"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL3983"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/GPL3983/" 
+            contact="Joseph L DeRisi"
+            email="joe@derisilab.ucsf.edu"
+            institution="Biochemistry and Biophysics, University of California San Francisco"
+        />
+        <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/columnTranslator.xml --data_in  @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/gpl3983_configforloading.txt --log @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/translator.log --data_out @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/loadArrayDesign.data</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'Joseph DeRisi' --first Joseph --last DeRisi --commit @dbcommit@</unpack>
+        <pluginArgs>--cfg_file @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/gpl3983_config --data_file @downloadDir@/DeRisi_Plasmodium_falciparum_Oligo_Array_7282/GPL3983/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'Joseph DeRisi'</pluginArgs>
+        <description>
+            <![CDATA[
+<i>P. falciparum</i> coding specific 70mer oligonucleotides designed by ArrayOligoSelector
+          ]]>
+        </description>
+    </resource>    
+    
+    <resource resource="Plasmodium_falciparum_Pfab_Array" 
+        version="1"
+        plugin="GUS::Supported::Plugin::LoadArrayDesign"
+        displayName="Pfab Array"
+        category="Transcriptome"
+        dbCommit="@dbcommit@"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL1858"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/spotted_arrays/GPL1858/" 
+            contact="NIAID Microarray Research Facility"
+            email="niaid-mrf-geo@nih.gov"
+            institution="National Institute for Allergy and Infectious Diseases"
+        />
+        <unpack>loadArrayDesignHelper.pl --xml_config @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/columnTranslator.xml --data_in  @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/gpl1858_data --log @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/translator.log --data_out @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/loadArrayDesign.data</unpack>
+        <unpack>ga GUS::Supported::Plugin::InsertContact --name 'NIAID Microarray Research Facility' --commit @dbcommit@</unpack>
+        <pluginArgs>--cfg_file @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/gpl1858_config --data_file @downloadDir@/Plasmodium_falciparum_Pfab_Array/GPL1858/loadArrayDesign.data --technology_type in_situ_oligo_features --substrate_type glass --manufacturer 'NIAID Microarray Research Facility'</pluginArgs>
+        <description>
+            <![CDATA[
+Printing by NIAID / Microarray Research Facility
+          ]]>
+        </description>
+    </resource>    
+
+
+
+<!--Microarray metaData-->
+
+    <resource resource="CowmanStubbs_metaData" 
+              version="1.0"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="P. falciparum invasion pathways - meta data"
+              category="Transcriptome"
+              extDbName="P.falciparum invasion pathways (Cowman Lab)"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/Stubbs.xls" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/CowmanStubbs_metaData/Stubbs.xls >@downloadDir@/CowmanStubbs_metaData/loadMageDoc.config</unpack>
+          <pluginArgs>--configfile @downloadDir@/CowmanStubbs_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    <description>
+    Information describing the methods of the experiment
+    </description>
+    </resource>    
+
+    <resource resource="CowmanDuraisingh_metaData" 
+              version="1.0"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="P. falciparum strain 3D7, SIR2 knockout - meta data"
+              category="Transcriptome"
+              extDbName="P.falciparum strain 3D7, SIR2 knockout (Cowman Lab)"
+              extDbRlsVer="1"
+              extDbRlsDescrip="This experiment studies the effect of knocking out the transcriptional regulator SIR2 in 3D7 parasites. RNA was harvested from ring-stage parasites at 8 hours post-infection."
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/Duraisingh.xls" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/CowmanDuraisingh_metaData/Duraisingh.xls >@downloadDir@/CowmanDuraisingh_metaData/loadMageDoc.config</unpack>
+          <pluginArgs>--configfile @downloadDir@/CowmanDuraisingh_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    <description>
+    Information describing the methods of the experiment
+    </description>
+    </resource>    
+
+    <resource resource="CowmanBaum_metaData" 
+              version="1.0"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="Invasion by P. falciparum merozoites - meta data"
+              category="Transcriptome"
+              extDbName="Invasion by P. falciparum merozoites (Cowman Lab)"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/Baum.xls" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/CowmanBaum_metaData/Baum.xls >@downloadDir@/CowmanBaum_metaData/loadMageDoc.config</unpack>
+          <pluginArgs>--configfile @downloadDir@/CowmanBaum_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    <description>
+    Information descibing the methods of the experiment
+    </description>
+    </resource>    
+
+    <resource resource="Waters_metaData" 
+              version="1.0"
+              plugin="GUS::Community::Plugin::LoadMageDoc"
+	      displayName="Regulation of sexual development of P. berghei - meta data"
+              category="Transcriptome"
+              extDbName="Regulation of sexual development of P.berghei (Waters Lab)"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Regulation of sexual development of Plasmodium by translational repression."
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/Waters.xls" 
+                contact="Andrew Waters"
+                email="waters@lumc.nl"
+                institution="Leiden University Medical Centre"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/Waters_metaData/Waters.xls >@downloadDir@/Waters_metaData/loadMageDoc.config</unpack>
+          <pluginArgs>--configfile @downloadDir@/Waters_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+    <description>
+    Information describing the methods of the experiment
+    </description>
+    </resource>    
+
+    <resource resource="E-MEXP-128_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - meta data"
+        category="ignore"
+        extDbName="Expression profile of 3D7 clones (E-MEXP-128)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Comparison of expression profile of two 3D7 isogenic clones : 3D7AH1S2 and 3D7S8.4 at three different stages of intraerythrocytic cycle: ring, trophozite and schizont stage "
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/AH1S2_vs_S8.4.xls" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/E-MEXP-128_metaData/AH1S2_vs_S8.4.xls >@downloadDir@/E-MEXP-128_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/E-MEXP-128_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+Antigenic variation is a survival mechanism developed by the malaria parasite <i>P. falciparum</i> in order to allow for the establishment of a chronic infection. Here we have studied clonal differences in the transcriptomes of two isogenic <i>P. falciparum</i> clones (3D7S8.4 and 3D7AH1S2) of distinct adhesive and antigenic phenotypes employing a <i>P. falciparum</i> 70-mer oligonucleotide microarray. Fifteen transcripts were highly differentially expressed (greater than a 5-fold change) with five transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4, and ten downregulated. Identified genes encode apical organellar (Gbph2, GBP-related antigen), cell cycle and DNA/RNA processing (SERA-5, RNA-methylase), cell-rescue, defense/virulence (RESA-2, RIFIN, PfEMP1) and hypothetical proteins (PFB0115w, PFI1445w, MAL13P1.121). A number of short and full-length var transcripts were differentially expressed between the clones but one full-length transcript was dominant in both rings and trophozoites (PFD0630c versus PFF0845c). Distinct members of two other variant gene families (phist-a and rif-like), scattered over the subtelomeric areas of the 14 chromosomes, were also found to be clonally and developmentally expressed. Three sibling-clones of 3D7AH1S2 (3D7AH1S1, -S3, -S4) were further studied for the expression of transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4. Individual var and phist-a genes were found expressed in all of the clones while the expression of a rif-like gene and gbph2 varied in-between the clones. The present data provides evidence for complex transcriptional differences between closely related isogenic <i>P. falciparum</i> of distinct adhesive and antigenic characteristics.
+         ]]>
+        </description>
+        <publication pmid="17196675"/>
+    </resource>   
+    
+    <resource resource="E-MEXP-439_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="3D7AH1S1 vs. 3D7S8.4 AND 3D7AH1S3 vs. 3D7S8.4 (ring) - meta data"
+        category="Transcriptome"
+        extDbName="CD36 panned clones (E-MEXP-439)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Plasmodium falciparum cellline experiment: CD36 panned clones (Ring) were hybridized against S8.4 (Ring)"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-439"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-439/working_dir/CD36_panned_clones.xls" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/E-MEXP-439_metaData/CD36_panned_clones.xls >@downloadDir@/E-MEXP-439_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/E-MEXP-439_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+<i>P. falciparum</i> cellline experiment: CD36 panned clones (Ring) were hybridized against S8.4 (Ring)
+
+         ]]>
+        </description>
+        <publication pmid="17196675"/>
+    </resource>   
+    
+    <resource resource="E-MEXP-494_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum - meta data"
+        category="Transcriptome"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-494"
+        extDbName="Genome wide gene copy number polymorphisms (E-MEXP-494)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum by comparative genomic hybridizations on an oligonucleotide microarray. The 3D7 strain was used as a common reference in all strain/strain comparisons. A panel of the strains were hybridized to self in order to estimate the level of noise."
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-494/working_dir/KI-KTH_Pf_CGH_UR.xls" 
+            contact="Ulf Ribacke"
+            email="ulf.ribacke@smi.ki.se"
+            institution="Dept. of Parasitology, Karolinska Institutet"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/E-MEXP-494_metaData/KI-KTH_Pf_CGH_UR.xls >@downloadDir@/E-MEXP-494_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/E-MEXP-494_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+Identification of genome wide gene copy number polymorphisms in <i>P. falciparum</i> by comparative genomic hybridizations on an oligonucleotide microarray. The 3D7 strain was used as a common reference in all strain/strain comparisons. A panel of the strains were hybridized to self in order to estimate the level of noise.
+         ]]>
+        </description>
+        <publication pmid="17599553"/>
+    </resource>      
+    
+    <resource resource="GSE5267_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="Tetracyclines Specifically Target the Apicoplast of the Malaria Parasite Plasmodium falciparum - meta data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5267"
+        extDbName="Tetracyclines Target the Apicoplast of P.falciparum (GSE5267)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured Plasmodium falciparum."
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE5267/working_dir/derisi2.xls" 
+            contact="Joseph L DeRisi"
+            email="joe@derisilab.ucsf.edu"
+            institution="Biochemistry and Biophysics, University of California San Francisco"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/GSE5267_metaData/derisi2.xls >@downloadDir@/GSE5267_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/GSE5267_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured <i>P. falciparum</i>.
+         ]]>
+        </description>
+        <publication pmid="16940111"/>
+    </resource>  
+    
+    <resource resource="GSE8099_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="Whole genome analysis of mRNA decay in P. falciparum - meta data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8099"
+        extDbName="Whole genome analysis of mRNA decay in P. falciparum (GSE8099)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Whole genome analysis of mRNA decay in Plasmodium falciparum reveals a global lengthening of mRNA half-life during the intraerythrocytic development cycle."
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE8099/working_dir/derisi.xls" 
+            contact="Joseph L DeRisi"
+            email="joe@derisilab.ucsf.edu"
+            institution="Biochemistry and Biophysics, University of California San Francisco"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/GSE8099_metaData/derisi.xls >@downloadDir@/GSE8099_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/GSE8099_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+Whole genome analysis of mRNA decay in <i>P. falciparum</i> reveals a global lengthening of mRNA half-life during the intraerythrocytic development cycle.
+         ]]>
+        </description>
+        <publication pmid="17612404"/>
+    </resource>  
+    
+    <resource resource="GSE2265_metaData" 
+        version="1"
+        plugin="GUS::Community::Plugin::LoadMageDoc"
+        displayName="Plasmodium falciparum W2/Dd2 Day 8 gametocytes - meta data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2265"
+        extDbName="Plasmodium falciparum W2/Dd2 Day 8 gametocytes (GSE2265)"
+        extDbRlsVer="1"
+        extDbRlsDescrip="To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured Plasmodium falciparum."
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE2265/working_dir/fuyura.xls" 
+            contact="Tetsuya Furuya"
+            email="tfuruya@niaid.nih.gov"
+            institution="National Institutes of Health"
+        />
+        <unpack>makeMageTabConfig.pl @downloadDir@/GSE2265_metaData/fuyura.xls >@downloadDir@/GSE2265_metaData/loadMageDoc.config</unpack>
+        <pluginArgs>--configfile @downloadDir@/GSE2265_metaData/loadMageDoc.config --extDbRlsSpec '%EXT_DB_NAME%|%EXT_DB_RLS_VER%'</pluginArgs>
+        <description>
+            <![CDATA[
+To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured <i>P. falciparum</i>.
+         ]]>
+        </description>
+        <publication pmid="16275909"/>
+    </resource> 
+
+
+
+
+<!--Expression Data-->
+
+ <resource resource="Pberghei_Protein_Expression" version="1.0"
+        displayName="P. berghei protein expression"
+        organisms="P.berghei"
+	category="Proteome"
+        publicUrl="http://www.sciencemag.org/content/vol307/issue5706/images/data/82/DC1/hall-SOM-tables.zip"
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+        extDbName="Plasmodium Life Cycle by Proteomic Analyses"
+        extDbRlsVer="1.0"
+        extDbRlsDescrip="Summary of Plasmodium berghei proteins detected in mixed
+        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/proteinExpression/berghei/"
+            contact="Neil Hall or Robert Sinden"
+            email = "nhall@tigr.org, r.sinden@imperial.ac.uk"
+            institution = "The Wellcome Trust Sanger Institute"
+        />
+        <pluginArgs>--inputDir @downloadDir@/Pberghei_Protein_Expression/berghei/ --configFile @downloadDir@/Pberghei_Protein_Expression/berghei/tableS8.config --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+        Summary of <i>P. berghei</i> proteins detected in mixed
+        asexual blood stages, gametocytes, ookinetes, oocysts and sporozoites by MudPIT analysis.
+            ]]>
+        </description>
+      <publication pmid="15637271"/>
+    </resource>
+ 
+  <resource resource="berghei_gss_time_series" version="1.0"
+            displayName="P. berghei transcript expression - HP"
+            organisms="P.berghei"
+            category="Transcriptome"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P.berghei expression profile - HP - Hall-Waters"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P.berghei expression profile - HP - Hall-Waters"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HP/" 
+                contact="Andy Waters"
+                email="A.P.Waters@lumc.nl"
+                institution="Leiden University"
+      />
+<pluginArgs>--inputDir @downloadDir@/berghei_gss_time_series/HP --configFile @downloadDir@/berghei_gss_time_series/HP/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs><publication pmid="16267556"/>
+   <description>
+         <![CDATA[
+   Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
+          ]]>
+    </description>
+      <publication pmid="15637271"/>
+  </resource>
+
+    <resource resource="berghei_gss_time_seriesHPE" version="1.0"
+        displayName="P. berghei transcript expression - HPE"
+        organisms="P.berghei"
+        category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+        extDbName="P.berghei expression profile - HPE - Hall-Waters"
+        extDbRlsVer="1.0"
+        extDbRlsDescrip="P.berghei expression profile - HPE - Hall-Waters"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/waters/HPE/" 
+            contact="Andy Waters"
+            email="A.P.Waters@lumc.nl"
+            institution="Leiden University"
+        />
+        <pluginArgs>--inputDir @downloadDir@/berghei_gss_time_seriesHPE/HPE --configFile @downloadDir@/berghei_gss_time_seriesHPE/HPE/config.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+   Expression data for the <i>P. berghei</i> for four stages (Rings, Young Trophozoite, Young Schizont, Mature Schizont) using Mature Trophozoite as reference.
+<p>
+There are two datasets: HP and HPE.  HP is High Producer (as in gametocytes) 
+and HPE is High Producer "E".  HP was mechanically
+passaged on a weekly basis from mouse to mouse and 10 independent
+experiments were set up (HPA-HPJ).  The parasites were observed, waiting
+for non-producing parasites to appear.  HPE was the chosen one.
+A deletion in HP was assumed to have created HPE (they are otherwise
+isogenic) and KO'd the production of gametocytes.  In such a scenario
+the non-producer would quickly overgrow the producer.  Both are cloned.
+          ]]>
+        </description>
+      <publication pmid="15637271"/>
+    </resource>
+
+ <resource resource = "Kappe_expressionProfiles" version="1.0"
+            displayName="P. yoelii liver stage expression data"
+            organisms="P. yoelii"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Kappe expression profiles"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "P. yoelii liver stage expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/"
+                contact = "Stefan Kappe"
+                email = "stefan.kappe@sbri.org"
+                institution = "Seattle Biomedical Research Institute"
+     />
+<pluginArgs>--inputDir @downloadDir@/Kappe_expressionProfiles/working_dir/ --configFile @downloadDir@/Kappe_expressionProfiles/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+     P. yoelii liver stage expression data from Kappe lab.
+     Seattle Biomedical Research Institute
+     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
+     206-256-7205
+ 
+          ]]>
+    </description>
+        <publication pmid="18172196"/>
+    </resource>
+
+
+  <resource resource="derisi_Dd2_time_series" version="1.0"
+            displayName="DD2 erythrocytic expression time series (DeRisi)"
+            publicUrl="http://malaria.ucsf.edu/comparison/comp_SupplementalData.php"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="DeRisi Dd2 Time Series"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="The DeRisi expression data for Dd2"
+            dbCommit="@dbcommit@">
+      <publication pmid="12929205"/>
+      <publication pmid="16493140"/>
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/derisi/Dd2/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/derisi_Dd2_time_series/Dd2 --configFile @downloadDir@/derisi_Dd2_time_series/Dd2/config.txt --dudProfilesFile @downloadDir@/derisi_Dd2_time_series/Dd2/dud_oligos.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+   Expression data for the <i>P. falciparum</i> DD2 strain during the erythocytic stage generated by the DeRisi lab (UCSF).
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="derisi_3D7_time_series" version="1.0"
+            displayName="3D7 erythrocytic expression time series (DeRisi)"
+            organisms="P.falciparum"
+            publicUrl="http://malaria.ucsf.edu/comparison/comp_SupplementalData.php"
+            category="Transcriptome"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="DeRisi 3D7 Time Series"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="The DeRisi expression data for 3D7"
+            dbCommit="@dbcommit@">
+      <publication pmid="12929205"/>
+      <publication pmid="16493140"/>
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/derisi/3D7/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/derisi_3D7_time_series/3D7 --configFile @downloadDir@/derisi_3D7_time_series/3D7/config.txt --dudProfilesFile @downloadDir@/derisi_3D7_time_series/3D7/dud_oligos.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+   Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic stage generated by the DeRisi lab (UCSF).
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="derisi_HB3_time_series" version="1.0"
+            displayName="HB3 erythrocytic expression time series (DeRisi)"
+            organisms="P.falciparum"
+            category="Transcriptome"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="DeRisi HB3 Time Series"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="The DeRisi expression data for HB3"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/derisi/HB3/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/derisi_HB3_time_series/HB3 --configFile @downloadDir@/derisi_HB3_time_series/HB3/config.txt --dudProfilesFile @downloadDir@/derisi_HB3_time_series/HB3/dud_oligos.txt --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% --tolerateMissingIds</pluginArgs>
+   <description>
+         <![CDATA[
+   Expression data for the <i>P. falciparum</i> HB3 strain during the erythocytic stage generated by the DeRisi lab (UCSF). Described in Bozdech et al. PloS Biology 1:E5, 2003.
+          ]]>
+    </description>
+      <publication pmid="12929205"/>
+  </resource>
+
+  <resource resource = "winzeler_cell_cycle" version="1.0"
+            displayName="3D7 cell cycle expression data (Winzeler)"
+            organisms="P.falciparum"
+            publicUrl="http://carrier.gnf.org/publications/CellCycle/"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Winzeler Cell Cycle"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "The Winzeler Cell Cycle expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/winzeler/CellCycle/2009-05-14"
+                contact = "Greg Grant"
+                email = "ggrant@pcbi.upenn.edu"
+                institution = "University of Pennsylvania"
+     />
+     <publication pmid="12893887"/>
+<pluginArgs>--inputDir @downloadDir@/winzeler_cell_cycle/2009-05-14/ --configFile @downloadDir@/winzeler_cell_cycle/2009-05-14/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+   Cell cycle expression data for the <i>P. falciparum</i> 3D7 strain generated by the Winzeler lab (Scripps Research Institute).
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource = "winzeler_gametocyte_expression" version="10-19-2009"
+            displayName="3D7 gametocyte expression data (Winzeler)"
+            organisms="P.falciparum"
+            category="Transcriptome"
+            publicUrl="http://www.scripps.edu/cb/winzeler/"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Winzeler Gametocyte"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "The Winzeler Gametocyte expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionProfiles/wbc_gametocyte/2009-10-19"
+                contact = "Greg Grant"
+                email = "ggrant@pcbi.upenn.edu"
+                institution = "University of Pennsylvania"
+     />
+  <pluginArgs>--inputDir @downloadDir@/winzeler_gametocyte_expression/2009-10-19 --configFile @downloadDir@/winzeler_gametocyte_expression/2009-10-19/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+   Gametocyte expression data for the <i>P. falciparum</i> 3D7 strain generated by the Winzeler lab (Scripps Research Institute).
+          ]]>
+    </description>
+    <publication pmid="16005087"/>
+  </resource>
+
+     
+    <resource resource="CowmanStubbs_arrayData" 
+              version="1.0"
+              plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
+	      displayName="P. falciparum invasion pathways - array data"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2878"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/stubbs/" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+          <pluginArgs>--studyName 'Molecular mechanism for switching of P.falciparum invasion pathways into human erythrocytes' --headerMappingFile @downloadDir@/CowmanStubbs_arrayData/stubbs/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @downloadDir@/CowmanStubbs_arrayData/stubbs/</pluginArgs>
+        <description>
+            <![CDATA[
+The malaria parasite, <i>P. falciparum</i>, exploits multiple ligand-receptor interactions, called invasion pathways, to invade the host erythrocyte. Strains of <i>P. falciparum</i> vary in their dependency on sialated red cell receptors for invasion. We show that switching from sialic acid-dependent to independent invasion is reversible and depends on parasite ligand utilisation. Expression of <i<P. falciparum</i> reticulocyte-binding like homologue 4 (PfRh4) correlates with sialic acid-independent invasion and PfRh4 is essential for switching invasion pathways. Differential activation of PfRh4 represents a novel mechanism of invasion pathway control and provides <i>P.falciparum</i> with exquisite adaptability in the face of erythrocyte receptor polymorphisms and host immune responses. (taken from GEO record GSE2878)
+          ]]>
+        </description>
+      <publication pmid="16123303"/>
+    </resource>    
+
+    <resource resource="CowmanDuraisingh_arrayData" 
+              version="1.0"
+              plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
+	      displayName="P. falciparum strain 3D7, SIR2 knockout - array data"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=1350"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/duraisingh/" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+          <pluginArgs>--studyName 'P.falciparum strain 3D7, SIR2 knockout' --headerMappingFile @downloadDir@/CowmanDuraisingh_arrayData/duraisingh/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @downloadDir@/CowmanDuraisingh_arrayData/duraisingh/</pluginArgs>
+        <description>
+            <![CDATA[
+Expression profiling of 3D7 silent information regulator 2 homolog (Sir2) knockout at ring stage, 8 hours post-invasion. Results identify Sir2-mediated, reversible heterochromatin silencing as one tier of epigenetic regulation of the antigenic variation var gene family. (taken from GEO record GDS1350) 
+         ]]>
+        </description>
+      <publication pmid="15820675"/>
+    </resource>   
+
+    <resource resource="CowmanBaum_arrayData" 
+              version="1.0"
+              plugin="ApiCommonData::Load::Plugin::LoadSimpleBatchArrayResults"
+	      displayName="Invasion by P. falciparum merozoites - array data"
+              category="Transcriptome"
+	      dbCommit="@dbcommit@"
+              publicUrl="http://www.ncbi.nlm.nih.gov/geo/gds/gds_browse.cgi?gds=2346"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/data_repository/quantifications/baum/" 
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+          <pluginArgs>--studyName 'Invasion by P. falciparum merozoites suggests a hierarchy of molecular interactions' --headerMappingFile @downloadDir@/CowmanBaum_arrayData/baum/header_map.xml  --resultSubclassView 'RAD::RMAExpress' --arraySubclassView 'RAD::ShortOligoFamily' --quantificationProtocolName 'Robust Multi-Array Average expression measure (Bioconductor affy package)' --quantificationDirectory @downloadDir@/CowmanBaum_arrayData/baum/</pluginArgs>
+        <description>
+            <![CDATA[
+Analysis of reticulocyte binding-like homolog 2b (PfRh2b) null mutant 3D7 parasites. D10 isolate naturally lacks PfRh2b. Silencing of PfRh2b, a key invasion ligand, leads to altered invasion receptor dependency. Results provide insight into the molecular basis for invasion via an alternate pathway. (taken from GEO record GDS2346)
+         ]]>
+        </description>
+      <publication pmid="16362075"/>
+    </resource>     
+
+ 
+    <resource resource="Cowman_radAnalysis" 
+              version="1.0"
+              plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      displayName="Comparison of Various P. falciparum Knock outs - Invasion Pathways"
+              category="ignore"
+	      dbCommit="@dbcommit@"
+            >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Cowman/working_dir/radAnalysis/"
+                contact="Alan Cowman"
+                email="cowman@wehi.edu.au"
+                institution="The Walter and Eliza Hall Institute of Medical Research"
+        />
+          <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource>    
+
+    <resource resource="E-MEXP-128_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="3D7AH1S2 vs. 3D7S8.4 (ring, trophozite and schizont) - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-128"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/e-mexp-128_arrayData.xml" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Antigenic variation is a survival mechanism developed by the malaria parasite <i>P. falciparum</i> in order to allow for the establishment of a chronic infection. Here we have studied clonal differences in the transcriptomes of two isogenic <i>P. falciparum</i> clones (3D7S8.4 and 3D7AH1S2) of distinct adhesive and antigenic phenotypes employing a <i>P. falciparum</i> 70-mer oligonucleotide microarray. Fifteen transcripts were highly differentially expressed (greater than a 5-fold change) with five transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4, and ten downregulated. Identified genes encode apical organellar (Gbph2, GBP-related antigen), cell cycle and DNA/RNA processing (SERA-5, RNA-methylase), cell-rescue, defense/virulence (RESA-2, RIFIN, PfEMP1) and hypothetical proteins (PFB0115w, PFI1445w, MAL13P1.121). A number of short and full-length var transcripts were differentially expressed between the clones but one full-length transcript was dominant in both rings and trophozoites (PFD0630c versus PFF0845c). Distinct members of two other variant gene families (phist-a and rif-like), scattered over the subtelomeric areas of the 14 chromosomes, were also found to be clonally and developmentally expressed. Three sibling-clones of 3D7AH1S2 (3D7AH1S1, -S3, -S4) were further studied for the expression of transcripts upregulated in 3D7AH1S2 compared to 3D7S8.4. Individual var and phist-a genes were found expressed in all of the clones while the expression of a rif-like gene and gbph2 varied in-between the clones. The present data provides evidence for complex transcriptional differences between closely related isogenic <i>P. falciparum</i> of distinct adhesive and antigenic characteristics.
+         ]]>
+        </description>
+        <publication pmid="17196675"/>
+    </resource>    
+    
+    <resource resource="E-MEXP-439_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="3D7AH1S1 vs. 3D7S8.4 AND 3D7AH1S3 vs. 3D7S8.4 (ring) - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-439"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-439/working_dir/e-mexp-439_arrayData.xml" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+<i>P. falciparum</i> cellline experiment: CD36 panned clones (Ring) were hybridized against S8.4 (Ring)
+
+         ]]>
+        </description>
+        <publication pmid="17196675"/>
+    </resource>    
+    
+    <resource resource="E-MEXP-494_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ebi.ac.uk/aerep/result?queryFor=Experiment&amp;eAccession=E-MEXP-494"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-494/working_dir/e-mexp-494_arrayData.xml" 
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Identification of genome wide gene copy number polymorphisms in <i>P. falciparum</i> by comparative genomic hybridizations on an oligonucleotide microarray. The 3D7 strain was used as a common reference in all strain/strain comparisons. A panel of the strains were hybridized to self in order to estimate the level of noise.
+         ]]>
+        </description>
+        <publication pmid="17599553"/>
+    </resource>    
+    
+    <resource resource="GSE5267_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="Tetracyclines Specifically Target the Apicoplast of the Malaria Parasite Plasmodium falciparum - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE5267"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE5267/data_repository/quantifications/" 
+            contact="Joseph L DeRisi"
+            email="joe@derisilab.ucsf.edu"
+            institution="Biochemistry and Biophysics, University of California San Francisco"
+        />
+        <unpack> normalizationAnalysisCfgMaker.pl --mageTab @downloadDir@/GSE5267_metaData/derisi2.xls --lg_quant_map @downloadDir@/GSE5267_arrayData/quantifications/lg_quant.txt --directory_prefix @downloadDir@/GSE5267_arrayData/quantifications/  --file_translator @downloadDir@/GSE5267_arrayData/quantifications/arrayDataTranslator.xml >@downloadDir@/GSE5267_arrayData/GSE5267_arrayData.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured <i>P. falciparum</i>.
+         ]]>
+        </description>
+        <publication pmid="16940111"/>
+    </resource>  
+    
+    <resource resource="GSE8099_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="Whole genome analysis of mRNA decay in P. falciparum - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8099"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE8099/data_repository/quantifications/" 
+            contact="Joseph L DeRisi"
+            email="joe@derisilab.ucsf.edu"
+            institution="Biochemistry and Biophysics, University of California San Francisco"
+        />
+        <unpack> normalizationAnalysisCfgMaker.pl --mageTab @downloadDir@/GSE8099_metaData/derisi.xls --lg_quant_map @downloadDir@/GSE8099_arrayData/quantifications/lg_quant.txt --directory_prefix @downloadDir@/GSE8099_arrayData/quantifications/  --file_translator @downloadDir@/GSE8099_arrayData/quantifications/arrayDataTranslator.xml >@downloadDir@/GSE8099_arrayData/GSE8099_arrayData.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Whole genome analysis of mRNA decay in <i>P. falciparum</i> reveals a global lengthening of mRNA half-life during the intraerythrocytic development cycle.
+         ]]>
+        </description>
+        <publication pmid="17612404"/>
+    </resource>  
+    
+    <resource resource="GSE2265_arrayData" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="Plasmodium falciparum W2/Dd2 Day 8 gametocytes - array data"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE2265"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE2265/data_repository/quantifications" 
+            contact="Tetsuya Furuya"
+            email="tfuruya@niaid.nih.gov"
+            institution="National Institutes of Health"
+        />
+        <unpack>normalizationAnalysisCfgMaker.pl --mageTab @downloadDir@/GSE2265_metaData/fuyura.xls --lg_quant_map @downloadDir@/GSE2265_arrayData/quantifications/lg_quant.txt --directory_prefix @downloadDir@/GSE2265_arrayData/quantifications/ --file_translator @downloadDir@/GSE2265_arrayData/quantifications/arrayDataTranslator.xml > @downloadDir@/GSE2265_arrayData/GSE2265_arrayData.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+To characterize the antimalarial mechanism of tetracyclines, evaluated their stage-specific activities, impacts on parasite transcription, and effects on two predicted organelle targets, the apicoplast and the mitochondrion, in cultured <i>P. falciparum</i>.
+         ]]>
+        </description>
+        <publication pmid="16275909"/>
+    </resource>  
+
+    <resource resource="E-MEXP-128_radAnalysis" 
+        version="1"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="S8.4 vs. AH1S2 (Ring, Schizont, Trophozite) Expression Analysis"
+        category="ignore"
+        dbCommit="@dbcommit@"
+        >
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/radAnalysis/"
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource>      
+
+ <resource resource = "daily_expressionProfiles" version="1.0"
+            displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients - expression profiles"
+            organisms="P.falciparum"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Daily expression profiles"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Distinct physiological states of Plasmodium falciparum in malaria infected patients - expression profiles"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Daily/working_dir/profiles"
+                contact="Johanna Daily"
+                email="jdaily@partners.org"
+                institution="Harvard"
+     />
+<pluginArgs>--inputDir @downloadDir@/daily_expressionProfiles/profiles/ --configFile @downloadDir@/daily_expressionProfiles/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+   To explore parasite in vivo biology we measured parasite steady state whole genome transcription using a previously reported custom made Affy array (Scrmalaria) based on the laboratory strain 3D7.
+          ]]>
+    </description>
+  <publication pmid="18046333"/>
+  </resource>
+
+
+ <resource resource = "daily_correlations" version="1.0"
+            displayName="Distinct physiological states of Plasmodium falciparum in malaria infected patients"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Daily/working_dir/analysis/"
+                contact="Johanna Daily"
+                email="jdaily@partners.org"
+                institution="Harvard"
+     />
+<pluginArgs>--inputDir @downloadDir@/daily_correlations/analysis --configFile @downloadDir@/daily_correlations/analysis/config.txt -
+-analysisResultView 'DataTransformationResult'</pluginArgs>
+   <description>
+         <![CDATA[
+   To explore parasite in vivo biology we measured parasite steady state whole genome transcription using a previously reported cust
+om made Affy array (Scrmalaria) based on the laboratory strain 3D7.
+          ]]>
+    </description>
+  </resource>
+
+
+ <resource resource = "e-mexp-128_percentiles" version="1.0"
+            displayName=""
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "E-MEXP-128 Percentile Profiles"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = ""
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-MEXP-128/working_dir/profiles"
+            contact="Bobo Mok"
+            email="bobo.mok@mtc.ki.se"
+            institution="Parasitology, Karolinska Institutet, MTC"
+     />
+<pluginArgs>--inputDir @downloadDir@/e-mexp-128_percentiles/profiles/ --configFile @downloadDir@/e-mexp-128_percentiles/profiles/con
+fig.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Antigenic variation is a survival mechanism developed by the malaria parasite <i>P. falciparum</i> in order to allow for the establ
+ishment of a chronic infection. Here we have studied clonal differences in the transcriptomes of two isogenic <i>P. falciparum</i> clones (
+3D7S8.4 and 3D7AH1S2) of distinct adhesive and antigenic phenotypes employing a <i>P. falciparum</i> 70-mer oligonucleotide microarray. Fif
+teen transcripts were highly differentially expressed (greater than a 5-fold change) with five transcripts upregulated in 3D7AH1S2 c
+ompared to 3D7S8.4, and ten downregulated. Identified genes encode apical organellar (Gbph2, GBP-related antigen), cell cycle and DN
+A/RNA processing (SERA-5, RNA-methylase), cell-rescue, defense/virulence (RESA-2, RIFIN, PfEMP1) and hypothetical proteins (PFB0115w
+, PFI1445w, MAL13P1.121). A number of short and full-length var transcripts were differentially expressed between the clones but one
+ full-length transcript was dominant in both rings and trophozoites (PFD0630c versus PFF0845c). Distinct members of two other varian
+t gene families (phist-a and rif-like), scattered over the subtelomeric areas of the 14 chromosomes, were also found to be clonally 
+and developmentally expressed. Three sibling-clones of 3D7AH1S2 (3D7AH1S1, -S3, -S4) were further studied for the expression of tran
+scripts upregulated in 3D7AH1S2 compared to 3D7S8.4. Individual var and phist-a genes were found expressed in all of the clones whil
+e the expression of a rif-like gene and gbph2 varied in-between the clones. The present data provides evidence for complex transcrip
+tional differences between closely related isogenic <i>P. falciparum</i> of distinct adhesive and antigenic characteristics.
+          ]]>
+    </description>
+  </resource>
+
+    <resource resource="BRENDAMapping" version="2009-05-12"
+        displayName="Links to BRENDA reagents"
+        category="Proteome"
+        organisms="P.falciparum"
+        publicUrl="http://www.brenda-enzymes.info/"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to BRENDA reagents"
+        extDbRlsVer="2009-05-12"
+        extDbRlsDescrip="Links to BRENDA reagents."
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/BRENDA/2009-05-12/BRENDA.txt"
+            contact = "Omar Harb"
+            email = "oharb@sas.upenn.edu"
+            institution = "University of Pennsylvania"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/BRENDAMapping/BRENDA.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+                Links to BRENDA reagents.
+          ]]>
+        </description>
+    </resource>  
+
+
+    <resource resource="SGPPMapping" version="2009-05-12"
+        displayName="Links to SGPP reagents"
+        category="Proteome"
+        organisms="P.falciparum"
+        publicUrl="http://www.msgpp.org/index.shtml"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to SGPP reagents"
+        extDbRlsVer="2009-05-12"
+        extDbRlsDescrip="Links to SGPP reagents."
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/SGPP/2009-05-12/SGPP.txt"
+            contact = "Omar Harb"
+            email = "oharb@sas.upenn.edu"
+            institution = "University of Pennsylvania"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/SGPPMapping/SGPP.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+                Links to SGPP reagents.
+          ]]>
+        </description>
+    </resource>  
+
+<resource resource = "Pvivax_ZB_Time_Series_ExpressionData" version="1.0"
+            displayName="Transcriptional profile throughout 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
+            organisms="Pvivax"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Transcriptional profile of the Pvivax time-series"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Transcriptional profile throughout the 48-h intraerythrocytic cycle of three distinct P. vivax isolates"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/ZB_vivax/data/working_dir/profiles"
+                contact="Zbynek Bozdech"
+                email="ZBozdech@ntu.edu.sg"
+                institution="School of Biological Sciences, Nanyang Technological University" />
+<pluginArgs>--inputDir @downloadDir@/Pvivax_ZB_Time_Series_ExpressionData/profiles/ --configFile @downloadDir@/Pvivax_ZB_Time_Series_ExpressionData/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Transcriptional profile throughout the 48-h intraerythrocytic cycle of three distinct P. vivax isolates.
+          ]]>
+    </description>
+        <publication pmid="18852452"/>
+  </resource>
+
+
+  <resource resource = "winzeler_yoelii_falciparum_comparison_expression" version="1.0"
+            displayName="Winzeler Pyoelii mixed RMAouput naturalscale expression data"
+            organisms="Pyoelii"
+            category="Transcriptome"
+            publicUrl="http://www.scripps.edu/cb/winzeler/"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Winzeler Pyoelii mixed RMAouput naturalscale"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Winzeler Pyoelii mixed RMAouput naturalscale expression data"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/winzeler_yoelii_falciparum_comparison/2009-05-14/"
+                contact = "Greg Grant"
+                email = "ggrant@pcbi.upenn.edu"
+                institution = "University of Pennsylvania"
+     />
+  <pluginArgs>--inputDir @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14 --configFile @downloadDir@/winzeler_yoelii_falciparum_comparison_expression/2009-05-14/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+   Winzeler lab (Scripps Research Institute) performed comparative expression analysis on Plasmodium parasite life cycle data derived from P. falciparum blood, sporozoite, zygote and ookinete stages, and P. yoelii mosquito oocyst and salivary gland sporozoites, blood and liver stages and show that type II fatty acid biosynthesis genes are upregulated in liver and insect stages relative to asexual blood stages.
+          ]]>
+    </description>
+    <publication pmid="18270564"/>
+  </resource>
+
+
+<resource resource = "Westenberger_vivax_ExpressionData" version="1.0"
+            displayName="Westenberger Pvivax ExpressionData"
+            organisms="Pvivax"
+            category="Transcriptome"
+            plugin = "ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName = "Westenberger Pvivax ExpressionData"
+            extDbRlsVer = "1.0"
+            extDbRlsDescrip = "Westenberger Pvivax ExpressionData"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/Microarray/westenberger_vivax"
+                contact="Scott Westenberger"
+                email="scottw@scripps.edu"
+                institution="The Scripps Research Institute" />
+<pluginArgs>--inputDir @downloadDir@/Westenberger_vivax_ExpressionData/westenberger_vivax --configFile @downloadDir@/Westenberger_vivax_ExpressionData/westenberger_vivax/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+   <description>
+         <![CDATA[
+Sporozoites were purified from dissected mosquitoes fed on monkeys infected with the genome reference strain Salvador I at the Centers for Disease Control and Prevention, Atlanta, Georgia. Asexual blood stage parasites were obtained from P. vivax-infected patients in Iquitos, Peru. White blood cells were removed by CF-11 cellulose column filtration, asexual parasites were enriched by gradient centrifugation and purified by saponin lysis of RBCs. Total RNA was isolated from purified parasites and subjected to two rounds of RNA amplification for microarray analysis as described previously (Zhou, et al. 2008). Experimental technical replicate hybridizations were performed for the single sporozoite sample and two asexual samples (CM012 and CM013). Gene expression values were calculated using MOID; expression profiles were clustered using OPI as described previously (Zhou, et al. 2008). <br/><br/>
+Scott J Westenberger, Colleen M McClean, Rana Chattopadhyay, Neekesh V Dharia, Jane M Carlton, John W Barnwell, William E Collins, Stephen L Hoffman, Yingyao Zhou, Joseph M Vinetz, Elizabeth A Winzeler. Plasmodium vivax transcriptome analysis reveals divergent in vivo blood stage profiles and species-specific sporozoite gene expression. (in submission)
+          ]]>
+    </description>
+  </resource>
+
+
+ <resource resource = "Kappe_foldChange" version="1.0"
+            displayName="P. yoelii liver stage expression data fold change"
+            organisms="P. yoelii"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Kappe/working_dir/analysis/"
+                contact = "Stefan Kappe"
+                email = "stefan.kappe@sbri.org"
+                institution = "Seattle Biomedical Research Institute"
+  
+     />
+<pluginArgs>--inputDir @downloadDir@/Kappe_foldChange/analysis --configFile @downloadDir@/Kappe_foldChange/analysis/config.txt --analysisResultView 'DifferentialExpression'</pluginArgs>
+   <description>
+         <![CDATA[
+  P. yoelii liver stage expression data from Kappe lab.
+     Seattle Biomedical Research Institute
+     307 Westlake Ave N, Suite 500, Seattle, WA, 98109
+     206-256-7205
+          ]]>
+    </description>
+  </resource>
+
+
+    <resource resource="Florens_Life_Cycle_MassSpec_Tpz" version="1" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Florens Life Cycle MassSpec-Trophozoites"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Florens Life Cycle MassSpec-Trophozoites"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/massSpec/Florens/life_cycle_nature01107-Tpz.tab"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="CBIL"
+        />
+        <pluginArgs>--inputFile @downloadDir@/Florens_Life_Cycle_MassSpec_Tpz/life_cycle_nature01107-Tpz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage trophozoites</pluginArgs>
+        <description>
+            <![CDATA[
+             Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
+          ]]>
+	<publication pmid="12368866"/>
+        </description>		
+    </resource>
+
+
+    <resource resource="Florens_Life_Cycle_MassSpec_Mrz" version="1" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
+        category="ignore"
+        publicUrl=""
+        extDbName="Florens Life Cycle MassSpec-Merozoites"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Florens Life Cycle MassSpec-Merozoites"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/massSpec/Florens/life_cycle_nature01107-Mrz.tab"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="CBIL"
+        />
+        <pluginArgs>--inputFile @downloadDir@/Florens_Life_Cycle_MassSpec_Mrz/life_cycle_nature01107-Mrz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage merozoites</pluginArgs>
+        <description>
+            <![CDATA[
+             Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
+          ]]>
+	<publication pmid="12368866"/>
+        </description>		
+    </resource>
+
+    <resource resource="Florens_Life_Cycle_MassSpec_Gmt" version="1" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
+        category="ignore"
+        publicUrl=""
+        extDbName="Florens Life Cycle MassSpec-Gametocytes"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Florens Life Cycle MassSpec-Gametocytes"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/massSpec/Florens/life_cycle_nature01107-Gmt.tab"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="CBIL"
+        />
+        <pluginArgs>--inputFile @downloadDir@/Florens_Life_Cycle_MassSpec_Gmt/life_cycle_nature01107-Gmt.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage gametocytes</pluginArgs>
+        <description>
+            <![CDATA[
+             Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
+          ]]>
+	<publication pmid="12368866"/>
+        </description>		
+    </resource>
+
+    <resource resource="Florens_Life_Cycle_MassSpec_Spz" version="1" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec. Data of the P. falciparum life cycle, 2002"
+        category="ignore"
+        publicUrl=""
+        extDbName="Florens Life Cycle MassSpec-Sporozoite"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Florens Life Cycle MassSpec-Sporozoite"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/massSpec/Florens/life_cycle_nature01107-Spz.tab"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="CBIL"
+        />
+        <pluginArgs>--inputFile @downloadDir@/Florens_Life_Cycle_MassSpec_Spz/life_cycle_nature01107-Spz.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage sporozoite</pluginArgs>
+        <description>
+            <![CDATA[
+             Peptides identified in four stages of the <i>P. falciparum</i> life cycle identified by multi-dimensional protein identification technology.
+          ]]>
+	<publication pmid="12368866"/>
+        </description>		
+    </resource>
+
+
+    <resource resource="Florens_PIESPs_MassSpec" version="1" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="Mass Spec. Data from P. falciparum infected red blood cell membrane fractions, 2004"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Florens PIESPs MassSpec"
+        extDbRlsVer="1"
+        extDbRlsDescrip="Florens PIESPs MassSpec"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/massSpec/Florens/PIESPs_Florens_2Rev11242003.tab"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="CBIL"
+        />
+        <pluginArgs>--inputFile @downloadDir@/Florens_PIESPs_MassSpec/PIESPs_Florens_2Rev11242003.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19'</pluginArgs>
+        <description>
+            <![CDATA[
+             Peptides identified in two stages of the <i>P. falciparum</i> life cycle and the iRBC Membrane, identified by multi-dimensional protein identification technology.
+          ]]>
+	<publication pmid="15287581"/>
+        </description>		
+    </resource>
+
+ <resource resource="isolateVocabulary" version="2009-06-14" 
+        displayName="load isolate vocabulary" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolateVocabulary.txt" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>updateIsolateVocabulary.pl --gus_config_file @gusHome@/config/gus.config --inFile @downloadDir@/isolateVocabulary/isolateVocabulary.txt</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_isolation_source" version="2009-06-14" 
+        displayName="update isolate vocabulary-isolation_source" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/isolationSource.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type isolation_source --xml_file @downloadDir@/isolateVocabularyUpdate_isolation_source/isolationSource.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_specific_host" version="2009-06-14" 
+        displayName="update isolate vocabulary-specific_host" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/specificHost.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type specific_host --xml_file @downloadDir@/isolateVocabularyUpdate_specific_host/specificHost.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_geographic_location" version="2009-06-14" 
+        displayName="update isolate vocabulary-geographic_location" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/geographicLocation.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/geographicLocation.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="isolateVocabularyUpdate_product" version="2009-06-14" 
+        displayName="update isolate vocabulary-product" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/isolate_ontology/product.xml" 
+            contact = "Bindu Gajria" 
+            email = "bindu@pcbi.upenn.edu" 
+            institution = "University of Pennsylvania" />
+        <unpack>isolateVocabulary.pl update --gus_config_file @gusHome@/config/gus.config --type geographic_location --xml_file @downloadDir@/isolateVocabularyUpdate_geographic_location/product.xml</unpack>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    </resource> 
+
+ <resource resource="Pf_Gene_Aliases" version="2009-07-22" 
+        displayName="insert P. falciparum old gene aliases from version 5.5" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene" 
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/naGeneNAFeature/6.0/pfGeneAlias.tab"/>
+        <pluginArgs>--MappingFile @downloadDir@/Pf_Gene_Aliases/pfGeneAlias.tab</pluginArgs>
+    </resource>
+
+
+<resource resource="Plasmodraft_DBRefs" version="2009-04-20"
+        displayName="DBRefs for plasmodraft URL links"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="plasmodraft DBRefs"
+        extDbRlsVer="2009-04-20"
+        extDbRlsDescrip="DBRefs for plasmodraft URL links"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "@manualDelivery@/plasmodraft/plasmodraft_genes.txt"
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Plasmodraft_DBRefs/plasmodraft_genes.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+            DBRefs for plasmodraft URL links.
+            ]]>
+        </description>
+    </resource>
+
+
+  <resource resource="Pfalciparum_RNA_Seq" version="1.0"
+            displayName=" New insights into the blood stage transcriptome of Plasmodium falciparum using RNA-Seq (Otto et al. )"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P.falciparum RNA Sequence Profiles"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P.falciparum RNA Sequence Profiles"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Newbold_8-5-09/Profiles/" 
+                contact="Brian P. Brunk"
+                email="brunkb@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_RNA_Seq/Profiles --configFile @downloadDir@/Pfalciparum_RNA_Seq/Profiles/config.txt --tolerateMissingIds  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+<p>The raw sequence read data can be found at the European Read Archive (ERA) website: <a href="http://www.ebi.ac.uk/embl/Documentation/ENA-Reads.html">http://www.ebi.ac.uk/embl/Documentation/ENA-Reads.html</a>
+Use the following study accession number at the top of the page to access the data: <a href="http://www.ebi.ac.uk/ebisearch/search.ebi?db=nucleotideSequences&t=ERP000069">ERP000069</a>. 
+Included here are 37bp as well as 54bp reads for all timepoints.
+          ]]>
+    </description>
+  <publication pmid="20141604"/>
+  </resource>
+
+  <resource resource="Pfalciparum_newbold_Gene_Expression" version="1.0"
+            displayName="P.falciparum gene expression profiles (Newbold)"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P.falciparum newbold gene expression profiles"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P.falciparum newbold gene expression profiles"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Newbold/working_dir/" 
+                contact="Chris I. Newbold"
+                email="cnewbold@hammer.imm.ox.ac.uk"
+                institution="Weatherall Institute of Molecular Medicine"
+      />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_newbold_Gene_Expression/working_dir --configFile @downloadDir@/Pfalciparum_newbold_Gene_Expression/working_dir/config.txt --tolerateMissingIds  --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+   Plasmodium falciparum directly from the blood of infected individuals was cultured to examine patterns of mature-stage gene expression in patient isolates. Statistical estimation of cell-cycle progression and lineage commitment in Plasmodium falciparum reveals a homogeneous pattern of transcription in ex vivo culture, data provided by Chris I. Newbold, Weatherall Institute of Molecular Medicine, Molecular Parasitology Group.
+          ]]>
+    </description>
+        <publication pmid="19376968"/>
+  </resource>
+
+<resource resource="P.falciparum_Clinical_Proteomics" version="2009-08-11" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P. falciparum proteomics data from clinical samples (Tatu)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="P.falciparum Clinical Proteomics"
+        extDbRlsVer="2009-08-1"
+        extDbRlsDescrip="P. falciparum proteomics data from clinical samples"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Tatu_clinical/working_dir/P.falciparum_Clinical_Proteomics.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/P.falciparum_Clinical_Proteomics/P.falciparum_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19'</pluginArgs>
+        <description>
+            <![CDATA[
+             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. falciparum</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
+          ]]>
+        </description>	
+    </resource> 
+
+<resource resource="P.vivax_Clinical_Proteomics" version="2009-08-11" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.vivax proteomics data from clinical samples (Tatu)"
+        category="Proteome"
+        publicUrl=""
+        extDbName="P.vivax Clinical Proteomics"
+        extDbRlsVer="2009-08-1"
+        extDbRlsDescrip="P.vivax proteomics data from clinical samples"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Tatu_clinical/working_dir/P.vivax_Clinical_Proteomics.tab"
+          contact="Omar Harb"
+            email="oharb@pcbi.upenn.edu"
+            institution= "CBIL" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/P.vivax_Clinical_Proteomics/P.vivax_Clinical_Proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P.vivax contigs from Genbank|2007-06-13'</pluginArgs>
+        <description>
+            <![CDATA[
+             Data produced by proteomics analysis of clinical isolates of early stages of <i>P. vivax</i>. Patient derived malarial parasites were directly processed and analyzed using shotgun proteomics approach using high sensitivity mass spectrometry for protein identification. Utpal Tatu, Department of Biochemistry, Indian Institute of Science, Bangalore, 560012, karnataka, India.
+          ]]>
+        </description>	
+    </resource> 
+    <resource resource="ChIP_Chip_Henk_Stunnenberg" version="2009-05-18"
+        displayName="Chromatin Immunoprecipitation Microarray - Henk Stunnenberg"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        extDbName="ChIP Chip Henk Stunnenberg"
+        extDbRlsVer="2009-05-18"
+        extDbRlsDescrip="Chromatin Immunoprecipitation data from Henk Stunnenberg lab"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty"
+            contact = "Henk Stunnenberg"
+            email = "h.stunnenberg@ncmls.ru.nl"
+            institution = "NCMLS Radboud Universiteit"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+ChIP-on-chip profiling of H3, H3K4me3, H3K9me3, and H3K9ac of P. falciparum from asynchronous parasites revealed an extensively euchromatic epigenome with heterochromatin restricted to variant surface antigen gene families (VSA) and a number of genes hitherto unlinked to VSA.
+Contact Henk Stunnenberg, h.stunnenberg@ncmls.ru.nl, NCMLS Radboud Universiteit.
+          ]]>
+        </description>
+<publication pmid="19497874"/>
+    </resource>
+
+
+    <resource resource="ChIP_Chip_Artur_Scherf" version="2008-09-23"
+        displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        extDbName="ChIP Chip Artur Scherf"
+        extDbRlsVer="2008-09-23"
+        extDbRlsDescrip="Chromatin Immunoprecipitation data from Artur Scherf lab"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty"
+            contact = "Artur Scherf"
+            email = "artur.scherf@pasteur.fr"
+            institution = "Unité de Biologie des Interactions Hôte-Parasite"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Chromatin immunoprecipitation to identify histone modifications (H3K9me3, H3K9Ac, H3K4me3, H4K20me3) in Plasmodium falciparum wild type and Sir2 knock-outs.
+Contact Artur Scherf, artur.scherf@pasteur.fr, Unité de Biologie des Interactions Hôte-Parasite.
+          ]]>
+        </description>
+<publication pmid="19218088"/>
+    </resource>
+
+
+    <resource resource="ChIP_Chip_Till_Voss" version="2009-08"
+        displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        extDbName="ChIP Chip Till Voss"
+        extDbRlsVer="2009-08"
+        extDbRlsDescrip="Chromatin Immunoprecipitation data from Till Voss lab"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty"
+            contact = "Till Voss"
+            email = "till.voss@unibas.ch"
+            institution = "Swiss Tropical Institute"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+Genome-wide association of Pf Heterochromatin protein 1 (Hp-1) with virulence gene clusters. We identified 425 PfHP1-bound genes by ChIP-on-CHIP - almost all of which code for expor
+ted (predicted) virulence genes including all var genes, rifs, stevor, pfmc-2tm and others.
+Contact Till Voss, till.voss@unibas.ch, for further information  
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="ChIP_Chip_Winzeler_Westenberger" version="2009-11"
+        displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
+        category="Genome"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        extDbName="ChIP_Chip_Winzeler_Westenberger"
+        extDbRlsVer="2009-11"
+        extDbRlsDescrip="ChIP_Chip_Winzeler_Westenberger"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/empty"
+            contact = "Scott Westenberger / E. Winzeler"
+            email = "scottw@scripps.edu, winzeler@scripps.edu"
+            institution = "The Scripps Research Institute"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+A high-density oligonucleotide microarray to map the position and enrichment of nucleosomes across the entire genome of P. falciparum (3D7) at three time points of the intra-erythrocytic developmental cycle using an unmodified histone H4 antibody for chromatin immunoprecipitation of nucleosome-bound DNA.  Additionally, trophozoites were assessed with histone H3K9 acetylation (H3K9ac) antibodies.  Parasites were synchronized twice with 5% sorbitol.  Rings = 12 hrs; Trophozoites = 30 hrs; Schizont = 42 hrs.  Raw data available in <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE18968">geo</a>.
+          ]]>
+        </description>
+<publication pmid="20015349"/>
+    </resource>
+
+ <resource resource = "ChIP_Chip_Winzeler_Smoothed_Score" version="2009-11"
+            displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/Winzeler_Westenberger/working/CallPeaksAndSmootheRatios/SMOOTHED/"
+            contact = "Scott Westenberger / E. Winzeler"
+            email = "scottw@scripps.edu, winzeler@scripps.edu"
+            institution = "The Scripps Research Institute"
+     />
+<pluginArgs>--inputDir @downloadDir@/ChIP_Chip_Winzeler_Smoothed_Score/SMOOTHED --configFile @downloadDir@/ChIP_Chip_Winzeler_Smoothed_Score/SMOOTHED/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+<resource resource="temp_called_peaks" version="2009-11-11"
+        displayName="Pfalciparum ChIP-on-chip Peak Identifications"
+        category="Genome"
+        organisms="Pfalciparum"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="Pfalciparum ChIP-on-chip peak calls"
+        extDbRlsVer="2009-11-11"
+        extDbRlsDescrip="Pfalciparum ChIP-on-chip peak calls|2009-11-11"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/All_PEAKs.gff" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+        />
+
+<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile /home/weili1/gusApps/plas-load/gus_home/lib/xml/isf/PlasmoDB/plasmoPeakFeature2gus.xml --inputFileOrDir @downloadDir@/temp_called_peaks/All_PEAKs.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput @pipelineDir@/logs/temp_called_peaks.bioperl</pluginArgs>
+        <description>
+            <![CDATA[
+Cell Host Microbe. 2009 Feb 19;5(2):179-90.
+Genome-wide analysis of heterochromatin associates clonally variant gene regulation with perinuclear repressive centers in malaria parasites.
+
+Lopez-Rubio JJ, Mancio-Silva L, Scherf A.
+          ]]>
+        </description>
+        <publication pmid="19218088"/>
+    </resource>
+
+ <resource resource = "Pfalciparum_ChIP_PEAKs" version="2009-11-11"
+            displayName="Pfalciparum ChIP-on-chip Identifications"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/PEAK_DATA/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_ChIP_PEAKs/PEAK_DATA --configFile @downloadDir@/Pfalciparum_ChIP_PEAKs/PEAK_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "Pfalciparum_ChIP_SMOOTHED" version="2009-11-11"
+            displayName="Pfalciparum ChIP-on-chip Identifications"
+            organisms="P.falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_chip/temp_called_peaks/peaks_11-11-2009/working_dir/SMOOTHED_DATA/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/Pfalciparum_ChIP_SMOOTHED/SMOOTHED_DATA --configFile @downloadDir@/Pfalciparum_ChIP_SMOOTHED/SMOOTHED_DATA/config.txt --analysisResultView 'DataTransformationResult' --naFeatureView 'ArrayElementFeature' --useSqlLdr</pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+  <resource resource="New_Cowman_Sir2_KO" version="1.0"
+            displayName="affymetrix array data on two Sir2 KO lines(Cowman)"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="New Cowman Sir2 KO"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="New Cowman Sir2 KO"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-TABM-438_Cowman/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/New_Cowman_Sir2_KO/working_dir --configFile @downloadDir@/New_Cowman_Sir2_KO/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+<publication pmid="19402747"/>
+  </resource>
+
+  <resource resource="E-GEOD-10022_array" version="1.0"
+            displayName="E-GEOD-10022 array data(Su lab)"
+            category="Transcriptome"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="E-GEOD-10022 array data"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="E-GEOD-10022 array data"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE10022_CQstudy/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/E-GEOD-10022_array/working_dir --configFile @downloadDir@/E-GEOD-10022_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+<publication pmid="18575593"/>
+  </resource>
+
+ <resource resource = "E-GEOD-10022_page" version="1.0"
+            displayName="E-GEOD-10022 array data(Su lab) page analysis"
+            organisms="P. falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/GSE10022_CQstudy/working_dir/page/newFormat"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/E-GEOD-10022_page/page/newFormat --configFile @downloadDir@/E-GEOD-10022_page/page//newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource = "New_Cowman_foldChange" version="1.0"
+            displayName="Fold change of affymetrix array data on two Sir2 KO lines(Cowman)"
+            organisms="P. falciparum"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/E-TABM-438_Cowman/working_dir/analysis/"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/New_Cowman_foldChange/analysis --configFile @downloadDir@/New_Cowman_foldChange/analysis/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+   <resource resource="Entrez_Gene_dbxref" version="12-01-2009"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="12-01-2009"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_plasmo"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Uniprot_Gene_dbxref" version="11-24-2009"
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Uniprot Genes"
+        extDbRlsVer="11-24-2009"
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_plasmo"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_plasmo --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+  <resource resource="DOZI_array" version="1.0"
+            displayName="P. berghei DOZI array data"
+            category="Transcriptome"
+            organisms="P. berghei"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="P. berghei DOZI array data"
+            extDbRlsVer="1.0"
+            extDbRlsDescrip="P. berghei DOZI array data"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/" 
+                contact="Greg Grant"
+                email="ggrant@pcbi.upenn.edu"
+                institution="University of Pennsylvania"
+      />
+<pluginArgs>--inputDir @downloadDir@/DOZI_array/working_dir --configFile @downloadDir@/DOZI_array/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+ Data (series GSE5889) obtained from Gene Expression Omnibus (GEO).
+
+Data contributed by Gunnar,R,Mair, Joanna,A,Braks, Lindsey,S,Garver, Joop,C,Wiegant, Neil,,Hall, Roeland,W,Dirks, Shahid,M,Khan, George,,Dimopoulos, Chris,J,Janse, and Andrew,P,Waters
+
+mRNA abundance was compared between  DOZI (development of zygote inhibited) mutant and wt parasite strains.
+          ]]>
+    </description>
+      <publication pmid="16888139"/>
+  </resource>
+
+ <resource resource = "DOZI_page" version="1.0"
+            displayName="P. berghei DOZI array data page analysis"
+            organisms="P. berghei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/expressionArrayStudies/Waters/working_dir/newFormat"
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+     />
+<pluginArgs>--inputDir @downloadDir@/DOZI_page/newFormat --configFile @downloadDir@/DOZI_page/newFormat/config.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[
+          ]]>
+    </description>
+  </resource>
+
+   <resource resource="PiggyBac_Clones_Adams" version="2010-03-23"
+        displayName="Insertional mutagenesis from John Adams"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        category="Genome"
+        organisms="P.falciparum"
+        extDbName="PiggyBac_Clones_Adams"
+        extDbRlsVer="2010-03-23"
+        extDbRlsDescrip="PiggyBac_Clones_Adams"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/piggyBac_clones/PiggyBac_Clones_Adams.fsa" 
+            contact="Adams, John"
+            email="jadams3@health.usf.edu"
+            institution="University of South Florida"
+        />
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+       lepidopteran transposon (piggyBac) insertions sites generated in P. falciparum (NF54).  For additional information please see the publication.
+          ]]>
+        </description>		
+        <publication pmid="19422698"/>
+    </resource> 
+
+<resource resource="Pf_TransFactorBindingSitestemp_Llinas" version="2009-11-11"
+        displayName="Pfalciparum Trans-factor binding sites from Manuel Llinas"
+        organisms="Pfalciparum"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        category="Transcriptome"
+        extDbName="Pf_TransFactorBindingSitestemp_Llinas"
+        extDbRlsVer="2009-11-11"
+        extDbRlsDescrip=""
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/BindingSites/Llinas_AP2-1-15-10/working_dir/allSites_formated.gff" 
+            contact="Manuel Llinas"
+            email="manuel@genomics.princeton.edu"
+            institution="Princeton univeristy"
+        />
+
+<pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile /home/weili1/gusApps/tryp-load/project_home/ApiCommonData/Load/lib/xml/isf/PlasmoDB/pfDNABindingSite2gus.xml --inputFileOrDir @downloadDir@/Pf_TransFactorBindingSitestemp_Llinas/allSites_formated.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --seqExtDbName "Sanger P. falciparum chromosomes" --seqExtDbRlsVer "2009-02-19" --soCvsVersion @soVer@ --defaultOrganism "Plasmodium falciparum 3D7" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11"  --bioperlTreeOutput @pipelineDir@/logs/Pf_TransFactorBindingSitestemp_Llinas.bioperl</pluginArgs>
+        <description>
+            <![CDATA[The DNA sequence motifs bound by each ApiAP2 transcription factor were
+derived from protein binding microarray data using <i>P. falciparum</i> AP2
+domains.  Protein binding microarrays are non-organism specific and
+contain matches to all contiguous 10-mers at least once and
+non-palindromic 8-mers up to 32 times.  The DNA motifs were determined
+using purified recombinant AP2 domains and the resulting position weight
+matrix for each AP2 domain was used to search upstream regions for
+significant matches.  The AP2 domain that binds to each motif is
+indicated at the end of the gene ID.  Binding sites are based on
+sequence matches only and have not been verified <i>in vivo</i>.<br>  For further
+information, contact Manuel Llinás: manuel@princeton.edu
+          ]]>
+        </description>
+        <publication pmid="16998473"/>
+        <publication pmid="12370781"/>
+    </resource>
+
+ <resource resource="RNASeqCoveragePlot_Patrick_Duffy" version="01-04-2010" 
+        displayName="RNA-Seqs from Patrick Duffy" 
+	category="Transcriptome"
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="RNASeqCoveragePlot_Patrick_Duffy"
+        extDbRlsVer="01-04-2010"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Duffy_9-9-09/1-4-10/dataLoad_dir/plotCov/perSpan" 
+            contact = "Patrick Duffy" 
+            email = "patrick.duffy@sbri.org" 
+            institution = "SBRI" />
+
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL01_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_PL01 > @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL01_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_3D7_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_3D7 >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_3D7_NORMALIZED_formated.cov </unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL02_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Patrick_Duffy|01-04-2010" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Duffy_PL02 >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL02_NORMALIZED_formated.cov</unpack>
+<unpack>cat @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL01_NORMALIZED_formated.cov @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_PL02_NORMALIZED_formated.cov @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_3D7_NORMALIZED_formated.cov >@downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_ALL_SAMPLES.cov </unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Patrick_Duffy/perSpan/Duffy_ALL_SAMPLES.cov</pluginArgs>
+        <description>
+            <![CDATA[
+NSR-seq was used to analyze the transcriptome of an unsynchronized in vitro culture of human malaria parasite P. falciparum reference strain 3D7, and two pools of field isolates from malaria-infected pregnant women and children adapted to short-term in vitro culture and matched by the percentage of rings, thophozoites and schizonts.
+<br><br>A gene signature of Plasmodium falciparum parasites infecting children identified by NSR-seq transcriptional profiling. Marissa Vignali, Christopher D. Armour , Jingyang Chen, Robert Morrison, John C. Castle, Matthew C. Biery, Heather Bouzek, Wonjong Moon, Tomas Babak, Michal Fried, Christopher K. Raymond and Patrick E. Duffy.  Submitted
+          ]]>
+        </description>
+    </resource> 
+
+
+  <resource resource="RNASeq_Intensity_Profiles_Patrick_Duffy" version="01-04-2010"
+            displayName="RNA-Seqs from Patrick Duffy"
+            category="ignore"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="RNASeq_Intensity_Profiles_Patrick_Duffy"
+            extDbRlsVer="01-04-2010"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Duffy_9-9-09/1-4-10/dataLoad_dir/profiles/" 
+            contact = "Patrick Duffy" 
+            email = "patrick.duffy@sbri.org" 
+            institution = "SBRI"/>
+<pluginArgs>--inputDir @downloadDir@/RNASeq_Intensity_Profiles_Patrick_Duffy/profiles --configFile @downloadDir@/RNASeq_Intensity_Profiles_Patrick_Duffy/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+          ]]>
+    </description>
+  </resource>
+
+ <resource resource="ChIPSeqCoveragePlot_Le_Roch" version="2009-11-24" 
+        displayName="ChIP-Seqs from Le Roch" 
+        category="Transcriptome" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="ChIPSeqCoveragePlot_Le_Roch"
+        extDbRlsVer="2009-11-24"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_seq/Le_Roch_ChIP-Seq/working_dir/perSpan" 
+            contact = "Karine Le Roch" 
+            email = "karine.leroch@ucr.edu" 
+            institution = "University of Regina Carmeli" />
+
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030745_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_36hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030745_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030744_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_30hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030744_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D_24hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030742_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_18hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030742_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030741_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_12hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030741_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030740_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_6hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030740_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030739_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_0hpi_MAINE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030739_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030738_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_36hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030738_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030737_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_30hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030737_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030736_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_24hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030736_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030735_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_18hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030735_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030734_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_12hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030734_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030733_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_6hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030733_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030732_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Le_Roch|2009-11-24" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample Pf3D7_0hpi_FAIRE > @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030732_NORMALIZED_formated.cov</unpack>
+
+<unpack>cat @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030745_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030744_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030743_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030742_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030741_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030740_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030739_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030738_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030737_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030736_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030735_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030734_NORMALIZED_formated.cov   @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030733_NORMALIZED_formated.cov  @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_SRR030732_NORMALIZED_formated.cov >@downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_ALL_SAMPLES.cov </unpack>
+
+<pluginArgs>--dataFile @downloadDir@/ChIPSeqCoveragePlot_Le_Roch/perSpan/Le_Roch_ChIPSeq_ALL_SAMPLES.cov</pluginArgs>
+        <publication pmid="20054063"/>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="ApiLoc_EupathDB_Dbrefs" version="2010-03-29"
+        displayName="ApiLoc and EupathDb links"
+        category="ignore"
+        organisms="all"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="ApiLoc_EupathDB_Dbrefs"
+        extDbRlsVer="2010-03-29"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/ApiLoc_dbrefs/2010-03-29/apiLoc_eupathDb_links.tab"
+            contact="Stuart Ralph"
+            email="saralph@unimelb.edu.au"
+            institution="University of Melbourne "
+        />
+        <pluginArgs>--DbRefMappingFile @downloadDir@/ApiLoc_EupathDB_Dbrefs/apiLoc_eupathDb_links.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+           ]]>
+        </description>
+    </resource>
+
+<resource resource="Pfalciparum_Lasonder_Proteomics_Blood_Stages" version="2009-07-01" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Lasonder"
+        category="ignore"
+        publicUrl=""
+        extDbName="Pfalciparum_Lasonder_Proteomics_Blood_Stages"
+        extDbRlsVer="2009-07-01"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/lasonder_edwin/blood_stages/working_dir/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab"
+          contact="Edwin Lasonder"
+            email="E.Lasonder@ncmls.ru.nl"
+            institution= "" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Lasonder_Proteomics_Blood_Stages/Peptides_Bloodstages_PlasmoDB_Lasonder_20091210.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'asexual trophozoites'</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>	
+        <publication pmid="20332084"/>  
+    </resource> 
+
+<resource resource="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection" version="2010-02-08" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Bowyer - 42hrs post infection"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection"
+        extDbRlsVer="2010-02-08"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Bowyer_2-8-2010/working_dir/Peptide_identifications_T6.tab"
+          contact="Paul William Bowyer"
+            email="pwbowyer@stanford.edu"
+            institution= "stanford" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection/Peptide_identifications_T6.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'early schizogeny'</pluginArgs>
+        <description>
+            <![CDATA[
+						P. falciparum mass spec peptides from at 42 and 48 hrs post infection, provided by the Bogyo Lab, Departments of Pathology and Microbiology and Immunology, Stanford University School of Medicine, 300 Pasteur Dr. Stanford, CA 94305 USA.  Further analysis of this data can be performed using the <a href="http://www.scripps.edu/chemphys/cravatt/Bowyer2010/">PROTOMAP data base</a>.
+          ]]>
+        </description>	
+    </resource> 
+
+ 
+<resource resource="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection" version="2010-02-08" 
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        displayName="P.falciparum proteomics data from Bowyer - 48hrs post infection"
+        category="Proteome"
+        publicUrl=""
+        extDbName="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection"
+        extDbRlsVer="2010-02-08"
+        dbCommit="@dbcommit@">	
+        <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/Proteomics/Bowyer_2-8-2010/working_dir/Peptide_identifications_T0.tab"
+          contact="Paul William Bowyer"
+            email="pwbowyer@stanford.edu"
+            institution= "stanford" 
+        />
+        <pluginArgs>--inputFile @downloadDir@/Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection/Peptide_identifications_T0.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger P. falciparum chromosomes|2009-02-19' --developmentalStage 'rupture'</pluginArgs>
+        <description>
+            <![CDATA[
+						P. falciparum mass spec peptides from at 42 and 48 hrs post infection, provided by the Bogyo Lab, Departments of Pathology and Microbiology and Immunology, Stanford University School of Medicine, 300 Pasteur Dr. Stanford, CA 94305 USA.  Further analysis of this data can be performed using the <a href="http://www.scripps.edu/chemphys/cravatt/Bowyer2010/">PROTOMAP data base</a>.
+          ]]>
+        </description>	
+    </resource> 
+
+<resource resource="RNASeqCoveragePlot_Stunnenberg" version="2010-03-12" 
+        displayName="RNA-Seqs from Henk Stunnenberg" 
+        category="Transcriptome" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="RNASeqCoveragePlot_Stunnenberg"
+        extDbRlsVer="2010-03-12"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Stunnenberg_3-12-10/perSpan1" 
+            contact = "Henk Stunnenberg" 
+            email = "H.Stunnenberg@ncmls.ru.nl" 
+            institution = "Radboud University Nijmegen, The Netherlands" />
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_10h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  10h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_10h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_15h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  15h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_15h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_20h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  20h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_20h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_25h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  25h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_25h_postinvasion_NORMALIZED.formatted.cov</unpack>
+
+<unpack>cat @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_10h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_15h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_20h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/RUM_Pf_3D7_25h_postinvasion_NORMALIZED.formatted.cov  >@downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/Stunnenberg_ALL_SAMPLES_1.cov</unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Stunnenberg/perSpan1/Stunnenberg_ALL_SAMPLES_1.cov</pluginArgs>
+        <description>
+            <![CDATA[
+   RNA-Seq coverage of RBC time study from the laboratory of Henk Stunnenberg.
+<br><br>
+Rich&aacute;rd B&aacute;rtfai, Wieteke A.M. Hoeijmakers, Adriana M. Salcedo-Amaya, Arne H. Smits, Eva Janssen-Megens, Anita Kaan, Moritz Treeck, Tim-Wolf Gilberger, Kees-Jan Fran&ccedil;oijs, Hendrik G. Stunnenberg. H2A.Z Demarcates Intergenic Regions of the Plasmodium falciparum Epigenome That Are Dynamically Marked by H3K9ac & H3K4me3. PLoS Pathogens, under revision
+          ]]>
+        </description>
+    </resource> 
+
+
+<resource resource="RNASeqCoveragePlot_Stunnenberg2" version="2010-03-12" 
+        displayName="RNA-Seqs from Henk Stunnenberg" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="RNASeqCoveragePlot_Stunnenberg"
+        extDbRlsVer="2010-03-12"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Stunnenberg_3-12-10/perSpan2" 
+            contact = "Henk Stunnenberg" 
+            email = "H.Stunnenberg@ncmls.ru.nl" 
+            institution = "Radboud University Nijmegen, The Netherlands" />
+
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_30h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  30h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_30h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_35h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  35h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_35h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_40h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  40h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_40h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_5h_postinvasion_NORMALIZED.cov --RNASeqExtDbSpecs "RNASeqCoveragePlot_Stunnenberg|2010-03-12" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample  5h_postinvasion > @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_5h_postinvasion_NORMALIZED.formatted.cov</unpack>
+<unpack>cat  @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_30h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_35h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_40h_postinvasion_NORMALIZED.formatted.cov @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/RUM_Pf_3D7_5h_postinvasion_NORMALIZED.formatted.cov >@downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/Stunnenberg_ALL_SAMPLES_2.cov</unpack>
+
+<pluginArgs>--dataFile @downloadDir@/RNASeqCoveragePlot_Stunnenberg2/perSpan2/Stunnenberg_ALL_SAMPLES_2.cov</pluginArgs>
+        <description>
+            <![CDATA[
+   RNA-Seq coverage plot from an RBC time study from the laboratory of Henk Stunnenberg
+          ]]>
+        </description>
+    </resource> 
+
+
+
+  <resource resource="RNASeq_Intensity_Profiles_Stunnenberg" version="2010-03-12"
+            displayName="RNA-Seqs from Henk Stunnenberg"
+            category="ignore"
+            organisms="P.falciparum"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="RNASeq_Intensity_Profiles_Stunnenberg"
+            extDbRlsVer="2010-03-12"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/RNASeq/Stunnenberg_3-12-10/profiles/" 
+            contact = "Henk Stunnenberg" 
+            email = "H.Stunnenberg@ncmls.ru.nl" 
+            institution = "Radboud University Nijmegen, The Netherlands"/>
+<pluginArgs>--inputDir @downloadDir@/RNASeq_Intensity_Profiles_Stunnenberg/profiles --configFile @downloadDir@/RNASeq_Intensity_Profiles_Stunnenberg/profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+ RNA-Seq intensity profiles from an RBC time study from the laboratory of Henk Stunnenberg
+          ]]>
+    </description>
+  </resource>
+
+<resource resource="ChIPSeqCoveragePlot_Stunnenberg" version="2010-05-11" 
+        displayName="ChIP-Seqs from Henk Stunnenberg" 
+        category="Transcriptome" 
+        plugin="ApiCommonData::Load::Plugin::InsertNextGenSeqCoverageWithSqlLdr" 
+        extDbName="ChIPSeqCoveragePlot_Stunnenberg"
+        extDbRlsVer="2010-05-11"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/chip_seq/Stunnenberg_RBC_cycle/2010-05-11/perSpan" 
+            contact = "Henk Stunnenberg" 
+            email = "H.Stunnenberg@ncmls.ru.nl" 
+            institution = "Radboud University Nijmegen, The Netherlands" />
+
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_10h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H2A.Z_10h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_10h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_20h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H2A.Z_20h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_20h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_30h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H2A.Z_30h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_30h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_40h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H2A.Z_40h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_40h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_10h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K4me3_10h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_10h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_20h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K4me3_20h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_20h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_30h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K4me3_30h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_30h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_40h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K4me3_40h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_40h_NORMALIZED_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_10h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K9ac_10h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_10h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_20h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K9ac_20h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_20h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_30h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K9ac_30h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_30h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_40h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample H3K9ac_40h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_40h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_10h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample input_10h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_10h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_20h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample input_20h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_20h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_30h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample input_30h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_30h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>generateCoveragePlotInputFile.pl  --filename @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_40h_NORMALIZED.cov --RNASeqExtDbSpecs "ChIPSeqCoveragePlot_Stunnenberg|2010-05-11" --genomeExtDbSpecs "Sanger P. falciparum chromosomes|2009-02-19" --sample input_40h > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_40h_NORMALIZED.cov_formated.cov</unpack>
+<unpack>cat @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_10h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_20h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_30h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H2A.Z_40h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_10h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_20h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_30h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K4me3_40h_NORMALIZED_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_10h_NORMALIZED.cov_formated.cov > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_20h_NORMALIZED.cov_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_30h_NORMALIZED.cov_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/H3K9ac_40h_NORMALIZED.cov_formated.cov > @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_10h_NORMALIZED.cov_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_20h_NORMALIZED.cov_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_30h_NORMALIZED.cov_formated.cov @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/input_40h_NORMALIZED.cov_formated.cov >@downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/ChIPSeq_Stunnenberg_ALL_SAMPLES.cov</unpack>
+
+<pluginArgs>--dataFile @downloadDir@/ChIPSeqCoveragePlot_Stunnenberg/perSpan/ChIPSeq_Stunnenberg_ALL_SAMPLES.cov </pluginArgs>
+        <description>
+            <![CDATA[
+	ChIP-seq coverage of a time-study from the laboratory of Henk Stunnenberg
+<br><br>
+Rich&aacute;rd B&aacute;rtfai, Wieteke A.M. Hoeijmakers, Adriana M. Salcedo-Amaya, Arne H. Smits, Eva Janssen-Megens, Anita Kaan, Moritz Treeck, Tim-Wolf Gilberger, Kees-Jan Fran&ccedil;oijs, Hendrik G. Stunnenberg. H2A.Z Demarcates Intergenic Regions of the Plasmodium falciparum Epigenome That Are Dynamically Marked by H3K9ac & H3K4me3. PLoS Pathogens, under revision
+          ]]>
+        </description>
+    </resource>
+
+
+
+ </resourcesPipeline>
