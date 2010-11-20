@@ -425,8 +425,11 @@ sub traverseSeqFeatures {
 	
 		
 
-
-	    foreach my $exon (@fixedExons){
+	    my $CDSLength = 0;
+	    my $first = 0;
+	    my $last = 0;
+	    my $exonCtr = 0;
+	    foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @fixedExons){
 		if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
 		    $exon->add_tag_value('CodingStart', '');
 		    $exon->add_tag_value('CodingEnd', '');	
@@ -434,12 +437,63 @@ sub traverseSeqFeatures {
 		    if(!($exon->has_tag('CodingStart'))){
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');	
-		    }
-		}
+			if($exonCtr == $first){
+			    $first++;
+			}
 
-		$transcript->add_SeqFeature($exon);
+		    }else{
+			my ($cStart) = $exon->get_tag_values('CodingStart');
+			my ($cEnd) = $exon->get_tag_values('CodingEnd');
+			$CDSLength += (abs($cEnd - $cStart)+1);
+			$last = $exonCtr;
+		    }
+		   
+		}
+		$exonCtr++;
+
+
 	    }
 
+	    
+	    my $trailingNAs = $CDSLength%3;
+	    $transcript->add_tag_value("CDSLength",$CDSLength);
+
+
+	    $exonCtr=0;
+
+	  foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @fixedExons){
+
+	      
+	      if($exon->location->strand() == -1){
+		  if($exonCtr == $first  && $trailingNAs > 0){
+		      if($exon->has_tag("CodingStart")){
+			  my($codingEnd) = $exon->get_tag_values("CodingEnd");
+
+			  if($codingEnd ne ''){
+			      $exon->remove_tag("CodingEnd");
+			      $exon->add_tag_value("CodingEnd",$codingEnd+$trailingNAs);
+			  }			  
+		      }
+		  }		  
+		  
+	      }else{
+		  if($exonCtr == $last && $trailingNAs > 0){
+		      if($exon->has_tag("CodingEnd")){
+			  my($codingEnd) = $exon->get_tag_values("CodingEnd");
+			  if($codingEnd ne ''){
+			      $exon->remove_tag("CodingEnd");
+			      $exon->add_tag_value("CodingEnd",$codingEnd-$trailingNAs);
+			  }			  
+		      }
+		  }
+	      }
+
+
+	      $exonCtr++;
+	      $transcript->add_SeqFeature($exon);
+	  }
+
+	    
 	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
 		foreach my $exonLoc (@exonLocs){
