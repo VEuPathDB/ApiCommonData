@@ -338,6 +338,7 @@ sub _undoSetParent {
 
 }
 
+
 ################ Coding Start/Stop ######################
 
 sub setCodingAndTranslationStart{
@@ -1236,98 +1237,31 @@ sub _makeHTML{
 
 }
 
+
+
 sub validateCodingSequenceLength {
     my ($self, $tag, $bioperlFeature, $feature) = @_;
+
 
     my ($msg, $warning);
 
 
-    my (@transcripts) = $feature->getChildren("DoTS::Transcript");
+    my $transcript = $feature->getChild("DoTS::Transcript");
 
-    my $sourceId = $feature->get("source_id");
+    my $splicedNASequence = $transcript->getParent('DoTS::SplicedNASequence');
 
-    my $geneLoc = $feature->getChild("DoTS::NALocation");
-
-    foreach my $transcript (@transcripts){
-	my(@exons);
-
-	foreach my $rnaExon ($transcript->getChildren('DoTS::RNAFeatureExon')) {
-	    my $exon = $rnaExon->getParent('DoTS::ExonFeature');
+    my ($mRNA) = $bioperlFeature->get_SeqFeatures();
 
 
-	    push(@exons, $exon);
-	}
+    my ($CDSLength) = $mRNA->get_tag_values('CDSLength') if $mRNA->has_tag('CDSLength');
 
-	my @exonsSorted = map { $_->[0] }
-	sort { $a->[3] ? $b->[1] <=> $a->[1] : $a->[1] <=> $b->[1] }
-	map { [ $_, $_->getFeatureLocation ]}
-	  @exons;
-
-	my $firstCodingExonLoc;
-
-	my $finalCodingExonLoc;
-
-
-	my($UTR5PrimeEnd,$UTR3PrimeEnd,$UTR3Prime,$UTR5Prime, $CDSLength,$splicedNASequence);
-	$UTR3Prime = 0;
-	$UTR5Prime = 0;
-
-	foreach my $sortedExon (@exonsSorted){
-
-	    $UTR5PrimeEnd = $sortedExon->get("coding_start");
-
-
-	    if($UTR5PrimeEnd ne 'null' && $UTR5PrimeEnd ne ''){
-		$firstCodingExonLoc = $sortedExon->getChild("DoTS::NALocation");
-		last;
-	    }else{
-		$UTR5Prime += (${[$sortedExon->getFeatureLocation()]}[1] - ${[$sortedExon->getFeatureLocation()]}[0]) + 1;
-	    }
-	}
-
-	foreach my $sortedExon (reverse @exonsSorted){
-
-	    $UTR3PrimeEnd = $sortedExon->get("coding_end");
-		
-
-	    if($UTR3PrimeEnd ne 'null' && $UTR3PrimeEnd ne ''){
-		$finalCodingExonLoc = $sortedExon->getChild("DoTS::NALocation");
-		last;
-	    }else{
-		$UTR3Prime += (${[$sortedExon->getFeatureLocation()]}[1] - ${[$sortedExon->getFeatureLocation()]}[0]) + 1;
-	    }
-	}
-
-
-
-
-
-
-	if(($UTR5PrimeEnd ne '' &&  $UTR5PrimeEnd ne 'null') && ($UTR3PrimeEnd ne '' && $UTR3PrimeEnd ne 'null')){
-	    if($geneLoc->getIsReversed() == 1){
-		$UTR5Prime += $firstCodingExonLoc->getEndMax() - $UTR5PrimeEnd;
-		$UTR3Prime += $UTR3PrimeEnd - $finalCodingExonLoc->getStartMin();
-
-	    }else{
-		$UTR5Prime += $UTR5PrimeEnd - $firstCodingExonLoc->getStartMin();
-		$UTR3Prime += $finalCodingExonLoc->getEndMax() - $UTR3PrimeEnd;
-	    }
-
-	    $splicedNASequence = $transcript->getParent('DoTS::SplicedNASequence');
-	    
-
-	    $CDSLength = $splicedNASequence->getLength() - $UTR3Prime - $UTR5Prime;
-
-	}
+    my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
+    if ($translatedAAFeat) {
+	my $proteinSourceId = $translatedAAFeat->get("source_id");
 	
-	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
-	if ($translatedAAFeat) {
-	    my $proteinSourceId = $translatedAAFeat->get("source_id");
-	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
-
-#	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
-	    if($aaSeq){
-
+	$proteinSourceId =~ s/\-\d+$//;
+	my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
+	if($aaSeq){
 	    if($aaSeq->get('length') != (($CDSLength / 3) -1)){
 
 
@@ -1335,7 +1269,7 @@ sub validateCodingSequenceLength {
 		my $lastCodon = substr($transcriptSeq,-3);
 
 		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
-		    $warning = "***WARNING********* The coding sequence  for protein with source id $proteinSourceId does not have a stop codon: ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
+		    $warning = "***WARNING********* $proteinSourceId does not have a stop codon\n";
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
 		    }else{
@@ -1345,7 +1279,7 @@ sub validateCodingSequenceLength {
 		if($feature->getIsPseudo()){
 
 
-		    $warning = "***WARNING********* Translated Sequence length for protein with source id $proteinSourceId : ".$aaSeq->get('length')." : ".$aaSeq->get('sequence')." is not equal to coding sequence length [($CDSLength/3) - 1] ".(($CDSLength / 3) -1)." The transcript sequence is ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
+		    $warning = "***WARNING********* Coding sequence for pseudo gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
 			
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1353,10 +1287,15 @@ sub validateCodingSequenceLength {
 			$self->{plugin}->log("$warning\n");
 		    }
 		}else{
+		    $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
 		    
-		    $msg = "***ERROR********* Translated Sequence length for protein with source id $proteinSourceId : ".$aaSeq->get('length')." : ".$aaSeq->get('sequence')." is not equal to coding sequence length [($CDSLength/3) - 1] ".(($CDSLength / 3) -1)." The transcript sequence is ".$splicedNASequence->getSequence()." with coding sequence starting from position ".$translatedAAFeat->getTranslationStart()." and ending at position ".$translatedAAFeat->getTranslationStop()."\n";
-			
-		    push(@{$self->{plugin}->{validationErrors}},$msg);
+
+		    if($self->{plugin}->{vlFh}){
+			$self->{plugin}->{vlFh}->print("$warning\n");
+		    }else{
+			$self->{plugin}->log("$warning\n");
+		    }			
+#		    push(@{$self->{plugin}->{validationErrors}},$msg);
 		}
 	    }
 
@@ -1364,11 +1303,12 @@ sub validateCodingSequenceLength {
 	}
 	}
 
-    }
 
     return [];
-}
 
+
+    
+}
 
 sub validateStopCodons {
     my ($self, $tag, $bioperlFeature, $feature) = @_;
@@ -1388,6 +1328,7 @@ sub validateStopCodons {
 	my $translatedAAFeat = $transcript->getChild('DoTS::TranslatedAAFeature');
 	if ($translatedAAFeat) {
 	    my $proteinSourceId = $translatedAAFeat->get("source_id");
+	    $proteinSourceId =~ s/\-\d+$//;
 	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
 
 #	    print $aaSeq->get('sequence');
@@ -1398,7 +1339,7 @@ sub validateStopCodons {
 
 
 		    if($feature->getIsPseudo()){
-			$warning = "***WARNING********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+			$warning = "***WARNING********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 			if($self->{plugin}->{vlFh}){
 			    $self->{plugin}->{vlFh}->print("$warning\n");
@@ -1406,8 +1347,8 @@ sub validateStopCodons {
 			    $self->{plugin}->log("$warning\n");
 			}
 		    }else{
-		    print "Hello\n";
-			$msg = "***ERROR********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+		    #print "Hello\n";
+			$msg = "***ERROR********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 			push(@{$self->{plugin}->{validationErrors}},$msg);
 		    }
 		}
@@ -1449,7 +1390,7 @@ sub validateGene {
 	if ($translatedAAFeat) {
 	    my $proteinSourceId = $translatedAAFeat->get("source_id");
 	    my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
-
+	    $proteinSourceId =~ s/\-\d+$//;
 #	    print STDERR $transcript->getSourceId()."\tCDS Length: $CDSLength\t$UTR5PrimeEnd\t$UTR3PrimeEnd\t$UTR3Prime\t$UTR5Prime\t",$splicedNASequence->getLength(),"\t".$translatedAAFeat->getTranslationStart()."\t".$translatedAAFeat->getTranslationStop()."\n";
 	    if($aaSeq){
 
@@ -1461,12 +1402,13 @@ sub validateGene {
 #		last;
 	    }else{
 		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
-		    $msg = "***ERROR********* Translated Sequence for protein with source id $proteinSourceId does not match with the protein/peptide sequence provided by annotators.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
+		    $msg = "***ERROR********* $proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
 		    push(@{$self->{plugin}->{validationErrors}},$msg);
 
 		}
+	    }
 		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
-		    $warning = "***WARNING********* Translated Sequence for protein with source id $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+		    $warning = "***WARNING********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1475,8 +1417,7 @@ sub validateGene {
 		    }
 		}
 #		last;
-	    }
-
+	    
 
 	}
 
