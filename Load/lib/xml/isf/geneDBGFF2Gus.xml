@@ -18,6 +18,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"      handler="api" method="validateGene"/>
+  <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="parentID"  handler="api" method="setParent"/>
     <qualifier name="Name"          ignore="true"/>
@@ -136,6 +137,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="private" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
 
@@ -150,6 +152,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="previous_systematic_id"  ignore="true"/>
    <qualifier name="synonym"          ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -295,6 +298,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
 
@@ -319,6 +323,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
@@ -342,6 +347,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="type" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="non_protein_coding">
@@ -369,6 +375,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="private" ignore="true"/>
     <qualifier name="blastx_file" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
@@ -416,7 +423,9 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="colour" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
+    <qualifier name="gO" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true">
@@ -437,6 +446,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="transcript">
   <!-- created by the reshaper -->
+  <qualifier name="CDSLength" ignore="true"/>
   </feature>
 
   <feature name="region" ignore="true">
@@ -478,6 +488,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastx_file" ignore="true"/>
     <qualifier name="history" ignore="true"/>
     <qualifier name="literature" ignore="true"/>
+    <qualifier name="eMBL_qualifier" ignore="true"/>
   </feature>
 
   <feature name="three_prime_UTR" table="DoTS::UTRFeature" so="three_prime_UTR">
@@ -490,7 +501,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="comment" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="curation" ignore="true"/>
-   <qualifier name="previous_systematic_id" ignore="true"/> 
+   <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="history" ignore="true"/> 
   </feature>
 
   <feature name="splice_acceptor_site" table="DoTS::UTRFeature" so="three_prime_UTR">
@@ -502,6 +514,7 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="isObsolete" ignore="true"/>
    <qualifier name="comment" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
   </feature>
 
 
@@ -517,6 +530,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="curation" ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/> 
   <qualifier name="private" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
 
   </feature>
 
