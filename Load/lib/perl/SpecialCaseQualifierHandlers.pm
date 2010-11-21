@@ -1269,7 +1269,11 @@ sub validateCodingSequenceLength {
 		my $lastCodon = substr($transcriptSeq,-3);
 
 		if($aaSeq->get('length') == ($CDSLength/3) && !($lastCodon eq 'TGA' || $lastCodon eq 'TAA' || $lastCodon eq 'TAG')){
-		    $warning = "***WARNING********* $proteinSourceId does not have a stop codon\n";
+		    $warning = "***WARNING********* ";
+		    if($feature->getIsPseudo()){
+			$warning .= "Pseudogene ";
+		    }
+		    $warning .= "$proteinSourceId does not have a stop codon\n";
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
 		    }else{
@@ -1279,7 +1283,7 @@ sub validateCodingSequenceLength {
 		if($feature->getIsPseudo()){
 
 
-		    $warning = "***WARNING********* Coding sequence for pseudo gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
+		    $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
 			
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1339,7 +1343,7 @@ sub validateStopCodons {
 
 
 		    if($feature->getIsPseudo()){
-			$warning = "***WARNING********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+			$warning = "***WARNING********* Pseudogene $proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 			if($self->{plugin}->{vlFh}){
 			    $self->{plugin}->{vlFh}->print("$warning\n");
@@ -1348,7 +1352,7 @@ sub validateStopCodons {
 			}
 		    }else{
 		    #print "Hello\n";
-			$msg = "***ERROR********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+			$msg = "***ERROR********* $proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 			push(@{$self->{plugin}->{validationErrors}},$msg);
 		    }
 		}
@@ -1408,7 +1412,12 @@ sub validateGene {
 		}
 	    }
 		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
-		    $warning = "***WARNING********* $proteinSourceId contains stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
+		    $warning = "***WARNING********* ";
+		    if ($feature->getIsPseudo()){
+			$warning .= "Pseudogene ";
+		    }
+		    
+		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
