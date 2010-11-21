@@ -103,7 +103,6 @@ sub preprocess {
 		  if($exonCtr == 0 && $trailingNAs > 0){
 		      if($exon->has_tag("CodingStart")){
 			  my($codingEnd) = $exon->get_tag_values("CodingEnd");
-			  print "Coding End: $codingEnd\n";
 			  if($codingEnd ne ''){
 			      $exon->remove_tag("CodingEnd");
 			      $exon->add_tag_value("CodingEnd",$codingEnd+$trailingNAs);
