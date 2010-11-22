@@ -31,7 +31,7 @@ use Data::Dumper;
 sub getArgsDeclaration {
 my $argsDeclaration  =
 [
-stringArg({name => 'geneNameFile',
+stringArg({name => 'file',
          descr => 'path and filename for the data file',
          constraintFunc=> undef,
          reqd  => 1,
@@ -135,7 +135,7 @@ sub run{
 
   my $geneNameReleaseId = $self->getOrCreateExtDbAndDbRls($self->getArg('geneNameDbName'),
 						 $self->getArg('geneNameDbVer')) || $self->error("Can't find or create external_database_release_id for gene name source");
-  my $tabFile = $self->getArg('geneNameFile');
+  my $tabFile = $self->getArg('file');
 
   my $processed;
 
