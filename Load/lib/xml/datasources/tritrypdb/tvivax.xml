@@ -3,8 +3,10 @@
 
   <resource resource="Tvivax_chromosomes_RSRC" version="@@Tvivax_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/Tvivax.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Tvivax_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --output_gff  @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T. vivax chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -24,8 +26,11 @@
 
   <resource resource="Tvivax_annotations_RSRC" version="@@Tvivax_chromosomes_VER@@" parentResource="Tvivax_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/Tvivax.gff3"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tvivax.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma vivax"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Tvivax_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --output_gff  @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff3 --output_gff @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff</unpack>  
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma vivax"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="T. vivax chromosomes sequence and annotation"
         project="TriTrypDB"
