@@ -66,7 +66,7 @@ my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 my %parentIDHash;
 
 
-if($parentFeature){
+
 foreach my $inFile (@inputFiles){
 
     my $in;
@@ -86,6 +86,11 @@ while ( my $seq = $in->next_seq() ) {
 	foreach my $feature ($seq->all_SeqFeatures){
 #	    print $feature->primary_tag()."\t$parentFeature\n";
 
+	    if(!($parentFeature)){
+		$parentFeature = $dbxrefFeature;
+		$parentQualifier = $idQualifier;
+	    }
+
 	  if($feature->primary_tag eq $parentFeature){
 	    my $parentId;
 	    if ($feature->has_tag($parentQualifier)){
@@ -96,7 +101,15 @@ while ( my $seq = $in->next_seq() ) {
 
 	      }
 
-	      my @children = $feature->get_SeqFeatures;
+	      my @children;
+
+	      if($parentFeature eq $dbxrefFeature){
+		  push(@children,$feature);
+		  $parentIDHash{$parentId}->{flag} = 0;
+	      }else{
+		  @children = $feature->get_SeqFeatures;
+	      }
+
 
 	      foreach my $child (@children){
 
@@ -137,7 +150,7 @@ while ( my $seq = $in->next_seq() ) {
 }
 
 }
-}
+
 
 foreach my $type (keys %outFileHash){
 
@@ -211,7 +224,7 @@ while ( my $seq = $in->next_seq() ) {
 				  my $dbxrefId = join("\t",@ids);
 				  
 				  $type = &trim($type);
-				  $dbxrefId = &trim($dbxrefId);
+				  $dbxrefId = &trimIds($dbxrefId);
 
 				  $dbxrefFhHash{lc($type)}->print("$id\t$dbxrefId\n");
 			      }
@@ -242,7 +255,7 @@ while ( my $seq = $in->next_seq() ) {
 				      $dbxrefId = join("\t",@ids);
 				  }
 				  $type = &trim($type);
-				  $dbxrefId = &trim($dbxrefId);
+				  $dbxrefId = &trimIds($dbxrefId);
 
 				  $dbxrefFhHash{lc($type)}->print("$id\t$dbxrefId\n");
 			      }
@@ -287,6 +300,8 @@ sub trimIds($){
 	$string =~ s/:pep.*$//g;
 	$string =~ s/:mRNA.*$//g;
 	$string =~ s/:pseudogenic_transcript.*$//g;
+	$string =~ s/;current=false*$//g;
+
 	return $string;
 }
 
