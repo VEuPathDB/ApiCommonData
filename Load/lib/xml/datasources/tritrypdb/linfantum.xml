@@ -4,8 +4,10 @@
 
   <resource resource="Linfantum_chromosomes_RSRC" version="@@Linfantum_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/Lin.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5671 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lin.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Linfantum_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --output_gff  @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5671 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <info
         displayName="L. infantum chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -27,13 +29,16 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
 
   <resource resource="Linfantum_annotations_RSRC" version="@@Linfantum_chromosomes_VER@@" parentResource="Linfantum_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/Lin.gff3"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Lin.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania infantum"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Linfantum_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --output_gff  @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff3 --output_gff @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism ""Leishmania infantum"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="L. infantum chromosomes sequence and annotation"
         project="TriTrypDB"
         organisms="@@LinfantumOrganismFullName@@"
-        category="ignore"
+        category="Genome"
         publicUrl=""
         contact=""
         email=""
@@ -47,9 +52,17 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
       </description>
     </info>
 <publication pmid="17572675"/>
+   This resource includes chromosome sequences and annotations for <i>Leishmania infantum</i>.
+   Sequence data for <i>Leishmania infantum</i> clone JPCM5 (MCAN/ES/98/LLM-877) were downloaded from <a href="http://www.genedb.org/genedb/linfantum/">GeneDB</a> (sequence and annotated features).<br> 
+Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_infantum/">The Sanger Institute pathogen sequencing unit</a>. 
+        ]]>
+      </description>
+    </info>
+<publication pmid="17572675"/>
+    </info>
   </resource>
 
-  <resource resource="GOAssociations_Linfantum_RSRC" version="@@Linfantum_chromosomes_VER@@"
+ <resource resource="GOAssociations_Linfantum_RSRC" version="@@Linfantum_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="TriTrypDB/linfantum/function/GOAssociations_Linfantum/%RESOURCE_VERSION%/Linfantum.gas"/>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Linfantum.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
