@@ -1,11 +1,12 @@
 <resources>
 
 <!--ISFResource-->
-
   <resource resource="Lbraziliensis_chromosomes_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbr.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <info
         displayName="L. braziliensis chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -27,29 +28,31 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
 
   <resource resource="Lbraziliensis_annotations_RSRC" version="@@Lbraziliensis_chromosomes_VER@@" parentResource="Lbraziliensis_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/Lbr.gff3"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Lbr.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania braziliensis"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3 --output_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism ""Leishmania braziliensis"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="L. braziliensis chromosomes sequence and annotation"
         project="TriTrypDB"
         organisms="@@LbraziliensisOrganismFullName@@"
-        category="ignore"
+        category="Genome"
         publicUrl=""
         contact=""
         email=""
         institution="">
       <description>
         <![CDATA[
-   This resource includes chromosome sequences and annotations for <i>Leishmania braziliensis</i>.
    Sequence data for <i>Leishmania braziliensis</i> clone M2904 (MHOM/BR/75M2904) were downloaded from <a href="http://www.genedb.org/genedb/lbraziliensis/">GeneDB</a> (sequence and annotated features).<br>
 Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger.ac.uk/Projects/L_braziliensis/">The Sanger Institute pathogen sequencing unit</a>.
         ]]>
       </description>
-    </info>
 <publication pmid="17572675"/>
+    </info>
   </resource>
 
-  <resource resource="GOAssociations_Lbraziliensis_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
+ <resource resource="GOAssociations_Lbraziliensis_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/function/GOAssociations_Lbraziliensis/%RESOURCE_VERSION%/Lbraziliensis.gas"/>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Lbraziliensis.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
