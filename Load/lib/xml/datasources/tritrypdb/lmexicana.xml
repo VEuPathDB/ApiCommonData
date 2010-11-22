@@ -4,8 +4,10 @@
 
   <resource resource="Lmexicana_chromosomes_RSRC" version="@@Lmexicana_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.fasta/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5665 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmex.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Lmexicana_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --output_gff  @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff3</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5665 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="L. mexicana chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -25,8 +27,11 @@
 
   <resource resource="Lmexicana_annotations_RSRC" version="@@Lmexicana_chromosomes_VER@@" parentResource="Lmexicana_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/Lmex.gff3"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Lmex.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania mexicana"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <unpack>mkdir @@dataDir@@/Lmexicana_chromosomes_fixed</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --output_gff  @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff3</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff3 --output_gff @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff</unpack>    
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania mexicana"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="L. mexicana sequence and annotation"
         project="TriTrypDB"
