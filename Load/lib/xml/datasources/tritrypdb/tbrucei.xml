@@ -120,7 +120,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-
   <resource resource="Tbruceigambiense_annotations_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@" parentResource="Tbruceigambiense_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/Tbg.gff3"/>
@@ -142,7 +141,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="Tbrucei427_genome_RSRC" version="@@Tbrucei427_genome_VER@@"
+  <resource resource="Tbrucei427_chromosomes_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei427/contig/%RESOURCE_VERSION%/Tb427.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 1854310 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tb427.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
@@ -163,7 +162,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   </resource>
 
 
-  <resource resource="Tbrucei427_annotations_RSRC" version="@@Tbrucei427_genome_VER@@" parentResource="Tbrucei427_genome_RSRC"
+  <resource resource="Tbrucei427_annotations_RSRC" version="@@Tbrucei427_chromosomes_VER@@" parentResource="Tbrucei427_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei427/chromosome/%RESOURCE_VERSION%/Tb427.gff3"/>
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF32Gus.xml --inputFileOrDir @@dataDir@@/Tb427.gff3 --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU427"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
@@ -183,7 +182,70 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
- 
+   <resource resource="Tbrucei927_ECNumbers_RSRC" version="@@Tbrucei927_genome_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceibrucei927_genome_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tbrucei427_ECNumbers_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceibrucei427_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+   <resource resource="Tbruceigambiense_ECNumbers_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceigambiense_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@TbruceigambienseOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <resource resource="GOAssociations_Tbrucei927_RSRC" version="@@Tbrucei927_genome_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
     <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbruceibrucei927/%RESOURCE_VERSION%/Tbruceibrucei927.gas"/>
@@ -227,9 +289,9 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="GOAssociations_Tbrucei427_RSRC" version="@@Tbrucei427_genome_VER@@"
+  <resource resource="GOAssociations_Tbrucei427_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbruceibrucei427/%RESOURCE_VERSION%/Tbruceibrucei427.gas"/>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/GOAssociations_Tbrucei427/%RESOURCE_VERSION%/Tbruceibrucei427.gas"/>
     <pluginArgs>--externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --inputFile @@dataDir@@/Tbruceibrucei427.gas --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@" --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf" --targetTable "DoTS::TranslatedAASequence" --lineOfEvidence "GeneDB" --inputIdColumn id --tolerateMissingSeqs --skipBadGOTerms @@dataDir@@/badGOTerms.log</pluginArgs>
     <info
         displayName="GO Association for T. brucei 427 genes"
@@ -269,10 +331,10 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="Tbrucei427_ProductName_RSRC" version="@@Tbrucei427_genome_VER@@"
+  <resource resource="Tbrucei427_ProductName_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/Tbrucei427_genome_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
-    <pluginArgs>--file @@dataDir@@/product.txt --genomeDbName Tbrucei427_genome_RSRC --genomeDbVer @@Tbrucei427_genome_VER@@ --productDbName Tbrucei427_genome_RSRC --productDbVer @@Tbrucei427_genome_VER@@</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceibrucei427_chromosomes_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ --productDbName Tbrucei427_chromosomes_RSRC --productDbVer @@Tbrucei427_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tbrucei427 Product Name"
         project="TriTrypDB"
@@ -332,10 +394,10 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </info>
   </resource>
 
-  <resource resource="Tbrucei427_GeneName_RSRC" version="@@Tbrucei427_genome_VER@@"
+  <resource resource="Tbrucei427_GeneName_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceibrucei427_genome_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
-    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName Tbrucei427_genome_RSRC --genomeDbVer @@Tbrucei427_genome_VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceibrucei427_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
+    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tbrucei427 Gene Name"
         project="TriTrypDB"
@@ -396,10 +458,10 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   </resource>
 
 
-  <resource resource="Tbrucei427_Comment_RSRC" version="@@Tbrucei427_genome_VER@@"
+  <resource resource="Tbrucei427_Comment_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceibrucei427_genome_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
-    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName Tbrucei427_genome_RSRC --genomeDbVer @@Tbrucei427_genome__VER@@ </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceibrucei427_chromosomes_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tbrucei427 Comments"
         project="TriTrypDB"

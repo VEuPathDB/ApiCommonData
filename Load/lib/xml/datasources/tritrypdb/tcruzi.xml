@@ -23,6 +23,7 @@
     </info>
   </resource>
 
+
   <resource resource="TcruziNonEsmeraldoLike_annotations_RSRC" version="@@TcruziNonEsmeraldoLike_genome_VER@@" parentResource="TcruziNonEsmeraldoLike_genome_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/chromosome/%RESOURCE_VERSION%/TcNonEsm.gff3"/>
@@ -49,7 +50,7 @@
   <resource resource="TcruziNonEsmeraldoLike_contigs_RSRC" version="@@TcruziNonEsmeraldoLike_genome_VER@@" parentResource="TcruziNonEsmeraldoLike_genome_RSRC"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/contig/%RESOURCE_VERSION%/TcContigs.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 353153 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
     <info
         displayName="T.cruzi unassigned contigs sequence and annotation"
         project="TriTrypDB"
@@ -172,6 +173,49 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
       </description>
     </info>
   </resource>
+
+  <resource resource="TcruziNonEsmeraldoLike_ECNumbers_RSRC" version="@@TcruziNonEsmeraldoLike_genome_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/function/TcruziNonEsmeraldoLike_genome_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@TcruziNonEsmeraldoLikeOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TcruziEsmeraldoLike_ECNumbers_RSRC" version="@@TcruziEsmeraldoLike_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/function/TcruziEsmeraldoLike_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@TcruziEsmeraldoLikeOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
   <resource resource="GOAssociations_Tcruzi_RSRC" version="@@TcruziNonEsmeraldoLike_genome_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">

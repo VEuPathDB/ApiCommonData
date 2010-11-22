@@ -169,25 +169,6 @@
     </info>
   </resource>
 
-    <resource resource="Tcongolense_pmid_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tcongolense_chromosomes_RSRC/%RESOURCE_VERSION%/Tcongolense_pmid.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcongolense_pmid.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tcongolense_chromosomes_RSRC|@@Tcongolense_chromosomes_VER@@' --idType ''</pluginArgs>
-    <info
-        displayName="Tcongolense pmid mappings"
-        project="TriTrypDB"
-        organisms="@@TcongolenseOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[         
-        ]]>
-      </description>
-    </info>
-  </resource>
 
      <resource resource="Tcongolense_interpro_dbxref_RSRC" version="@@Tcongolense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -204,6 +185,27 @@
         institution="">
       <description>
         <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tcongolense_ECNumbers_RSRC" version="@@Tcongolense_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tcongolense/function/Tcongolense_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@TcongolenseOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
         ]]>
       </description>
     </info>

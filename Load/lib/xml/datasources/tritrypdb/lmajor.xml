@@ -360,6 +360,27 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
+  <resource resource="LmajorFriedlin_ECNumbers_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/lmajor/function/LmajorFriedlin_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ESTResource-->
   <resource resource="Lmajor_dbEST_RSRC" version="@@Lmajor_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
@@ -580,7 +601,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
 <!--Proteome-->
 
-  <resource resource="Lmajor_IEDB_Epitopes_RSRC" version="@@Lmajor_IEDB_Epitopes_VER@@"
+  <resource resource="LmajorFriedlin_IEDB_Epitopes_RSRC" version="@@LmajorFriedlin_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportLm.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
@@ -592,7 +613,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="Proteome"
         publicUrl="http://www.immuneepitope.org"
         contact="IEDB"
@@ -606,15 +627,15 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
-  <resource resource="Lmajor_IEDB_Epitopes_DBxRefs_RSRC" version="@@Lmajor_IEDB_Epitopes_VER@@"
+  <resource resource="LmajorFriedlin_IEDB_Epitopes_DBxRefs_RSRC" version="@@LmajorFriedlin_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Lmajor_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../LmajorFriedlin_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
         category="ignore"
         publicUrl="http://www.immuneepitope.org"
         contact=""
