@@ -1407,7 +1407,14 @@ sub validateGene {
 	    }else{
 		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
 		    $msg = "***ERROR********* $proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
-		    push(@{$self->{plugin}->{validationErrors}},$msg);
+	
+		    if($self->{plugin}->{vlFh}){
+			$self->{plugin}->{vlFh}->print("$msg\n");
+		    }else{
+			$self->{plugin}->log("$msg\n");
+		    }
+	 
+		    #push(@{$self->{plugin}->{validationErrors}},$msg);
 
 		}
 	    }
