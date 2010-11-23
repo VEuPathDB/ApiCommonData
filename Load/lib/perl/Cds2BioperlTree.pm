@@ -33,7 +33,13 @@ sub preprocess {
 	  }
       }
 
-      my($parentID) = $bioperlFeatureTree->get_tag_values('systematic_id') if $bioperlFeatureTree->has_tag('systematic_id');     
+      my($parentID);
+
+      if($bioperlFeatureTree->has_tag('systematic_id')){
+	  ($parentID) = $bioperlFeatureTree->get_tag_values('systematic_id');
+      }elsif($bioperlFeatureTree->has_tag('locus_tag')){
+	  ($parentID) = $bioperlFeatureTree->get_tag_values('locus_tag');
+      }
       $bioperlFeatureTree->primary_tag("${type}_gene");
       my $gene = $bioperlFeatureTree;
       my $geneLoc = $gene->location();
