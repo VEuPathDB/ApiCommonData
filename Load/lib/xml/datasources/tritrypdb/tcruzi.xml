@@ -57,7 +57,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/contig/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/TcNonEsm_contigs_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --SOTermName 'contig'  --regexSourceId  '>([^\|]+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
     <info
         displayName="T.cruzi unassigned contigs sequence and annotation"
         project="TriTrypDB"
