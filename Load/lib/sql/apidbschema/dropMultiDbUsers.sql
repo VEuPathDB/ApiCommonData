@@ -13,6 +13,7 @@ drop user STUDY cascade;
 drop user STUDYVER cascade;
 drop user TESS cascade;
 drop user TESSVER cascade;
-
+DROP ROLE GUS_W;
+DROP ROLE GUS_R;
 
 exit
