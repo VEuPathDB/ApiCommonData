@@ -215,6 +215,27 @@
     </info>
   </resource>
 
+  <resource resource="Tvivax_ECNumbers_RSRC" version="@@Tvivax_chromosomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="TriTrypDB/tvivax/function/Tvivax_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="TriTrypDB"
+        organisms="@@TvivaxOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ESTResource-->
 
   <resource resource="Tvivax_dbEST_RSRC" version="@@Tvivax_dbEST_VER@@"
@@ -226,7 +247,7 @@
     <info
         displayName="TriTryp dbEST ESTs"
         project="TriTrypDB"
-        organisms="@@TvivaxFullName@@"
+        organisms="@@TvivaxOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
@@ -244,7 +265,7 @@
   <resource resource="Tvivax_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec ''Tvivax_chromosomes_RSRC|@@'Tvivax_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="TriTrypDB"
@@ -265,7 +286,7 @@
   <resource resource="Tvivax_Uniprot_Gene_dbxref_RSRC" version="@@Tvivax_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec ''Tvivax_chromosomes_RSRC|@@'Tvivax_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="TriTrypDB"

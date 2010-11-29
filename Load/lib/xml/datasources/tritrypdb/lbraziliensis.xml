@@ -3,7 +3,7 @@
 <!--ISFResource-->
   <resource resource="Lbraziliensis_chromosomes_RSRC" version="@@Lbraziliensis_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
@@ -351,7 +351,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     <info
         displayName="TriTryp dbEST ESTs"
         project="TriTrypDB"
-        organisms="@@LbraziliensisFullName@@"
+        organisms="@@LbraziliensisOrganismFullName@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
@@ -392,7 +392,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
   <resource resource="Lbraziliensis_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@' ----idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' ----idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="TriTrypDB"
@@ -412,7 +412,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
   <resource resource="Lbraziliensis_Uniprot_Gene_dbxref_RSRC" version="@@Lbraziliensis_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@' ----idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' ----idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="TriTrypDB"
