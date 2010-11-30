@@ -29,7 +29,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
    <resource resource="LmajorFriedlin_annotations_RSRC" version="@@LmajorFriedlin_chromosomes_VER@@" parentResource="LmajorFriedlin_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="TriTrypDB/Lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/gff"/>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/LmajorFriedlin_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/LmajorFriedlin.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3 --output_gff @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff</unpack>
@@ -78,7 +78,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
 
   <resource resource="LmajorSD_scaffolds_RSRC" version="@@LmajorSD_scaffolds_VER@@"
       plugin="GUS::Supported::Plugin::InsertVirtualSeqFromAgpFile">
-    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorSD_75_1/%RESOURCE_VERSION%/final/454Scaffolds.txt"/>
+    <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorSD_75_1/contig/%RESOURCE_VERSION%/final/454Scaffolds.txt"/>
          <pluginArgs>--agpFile @@dataDir@@/454Scaffolds.txt --seqPieceExtDbName "LmajorSD_contigs_RSRC" --seqPieceExtDbRlsVer @@LmajorSD_contigs_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
     <info
         displayName="L. major SD 75.1 contig to scaffold map"

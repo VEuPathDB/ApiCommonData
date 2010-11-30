@@ -1,4 +1,27 @@
 <resources>
+
+  <resource resource="TcruziNonEsmeraldoLike_IEDB_Epitopes_DBxRefs_RSRC" version="@@TcruziNonEsmeraldoLike_IEDB_Epitopes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../TcruziNonEsmeraldoLike_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="TriTrypDB"
+        organisms="@@TcruziNonEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ISFResource-->
 
   <resource resource="TcruziNonEsmeraldoLike_genome_RSRC" version="@@TcruziNonEsmeraldoLike_genome_VER@@"
@@ -1314,6 +1337,8 @@ TcSNP is an online resource/database with information on genetic variation(polym
     </info>
   </resource>
 
+
+
  
   <resource resource="TcruziNonEsmeraldoLike_IEDB_Epitopes_RSRC" version="@@TcruziNonEsmeraldoLike_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -1341,27 +1366,6 @@ TcSNP is an online resource/database with information on genetic variation(polym
     </info>
   </resource>
 
-  <resource resource="TcruziNonEsmeraldoLike_IEDB_Epitopes_DBxRefs_RSRC" version="@@TcruziNonEsmeraldoLike_IEDB_Epitopes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../TcruziNonEsmeraldoLike_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
-    <info
-        displayName="IEDB Epitopes"
-        project="TriTrypDB"
-        organisms="@@TcruziNonEsmeraldoLikeOrganismFullName@@"
-        category="ignore"
-        publicUrl="http://www.immuneepitope.org"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         IEDB epitopes.
-        ]]>
-      </description>
-    </info>
-  </resource>
 
 <!--arrayStudies-->
 

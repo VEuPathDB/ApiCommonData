@@ -1145,6 +1145,8 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
     <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/BF_All.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PF_WT.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="RNA-Seqs from George Cross"
@@ -1169,6 +1171,7 @@ RNA sequence profiles from George Cross.
     <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/Clayton/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Clayton_RNA_seq_trimed.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="RNA-Seqs from Clayton"
@@ -1192,7 +1195,14 @@ RNA sequence profiles from Christine Clayton.
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/chipSeq/George_Cross/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3K4me3.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H4K10ac.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/BDF3.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2AZ.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H2BV.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H4V.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/H3V.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/BDF3-HA.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="ChIP-Seqs from George Cross"
@@ -1248,8 +1258,8 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
   </resource>
 
 
-<!--DbxRefsResource-->
   <resource resource="Tbrucei_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+<!--DbxRefsResource-->
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --idType 'alternate id'</pluginArgs>
