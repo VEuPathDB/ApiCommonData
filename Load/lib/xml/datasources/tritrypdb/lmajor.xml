@@ -544,7 +544,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   <resource resource="Lmajor_Proteomics_Exosomes_RSRC" version="2010-02-16"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="TriTrypDB/lmajor/massSpec/exosomeBasedSecretion/%RESOURCE_VERSION%/final/Lmajor_exosomes.tab"/>
-    <pluginArgs>--inputFile @@dataDir@@/Lmajor_exosomes.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lmajor_chromosomes_RSRC|@@Lmajor_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <pluginArgs>--inputFile @@dataDir@@/Lmajor_exosomes.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
     <info
         displayName="L. major Proteomics-Exosomes"
         project="TriTrypDB"
@@ -566,7 +566,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   <resource resource="Lmajor_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@P_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="TriTrypDB"
@@ -586,7 +586,7 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   <resource resource="Lmajor_Uniprot_Gene_dbxref_RSRC" version="@@Lmajor_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '_chromosomes_RSRC|@@_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="TriTrypDB"

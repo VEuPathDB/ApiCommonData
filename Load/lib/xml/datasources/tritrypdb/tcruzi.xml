@@ -57,7 +57,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/contig/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/TcNonEsm_contigs_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --SOTermName 'contig'  --regexSourceId  '>([^\|]+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --SOTermName 'contig'  --regexSourceId  '>([^\|]+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
     <info
         displayName="T.cruzi unassigned contigs sequence and annotation"
         project="TriTrypDB"
@@ -1374,7 +1374,7 @@ TcSNP is an online resource/database with information on genetic variation(polym
     <info
         displayName="PFGRC Trypanosoma cruzi Oligonucleotide Array v1"
         project="TriTrypDB"
-        organisms="@@TbruceiOrganismFullName@@"
+        organisms="@@TcruziEsmeraldoLikeOrganismFullName@@,@@TcruziNonEsmeraldoLikeOrganismFullName@@"
         category="Genome"
         publicUrl="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GPL8132"
         contact="John Brestelli"
