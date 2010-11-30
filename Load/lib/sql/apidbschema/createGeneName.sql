@@ -1,6 +1,6 @@
-CREATE TABLE apidb.GeneName (
- gene_name_id                 NUMBER(12) NOT NULL,
- gene_id                      NUMBER(12) NOT NULL,
+CREATE TABLE apidb.GeneFeatureName (
+ gene_feature_name_id         NUMBER(12) NOT NULL,
+ na_feature_id                NUMBER(12) NOT NULL,
  external_database_release_id NUMBER(12) NOT NULL,
  name                         VARCHAR(60) NOT NULL,
  is_preferred                 NUMBER(1) NOT NULL,
@@ -17,28 +17,28 @@ CREATE TABLE apidb.GeneName (
  row_alg_invocation_id        NUMBER(12) NOT NULL
 );
 
-ALTER TABLE apidb.GeneName
-ADD CONSTRAINT gene_name_pk PRIMARY KEY (gene_name_id);
+ALTER TABLE apidb.GeneFeatureName
+ADD CONSTRAINT gene_feature_name_pk PRIMARY KEY (gene_feature_name_id);
 
-ALTER TABLE apidb.GeneName
-ADD CONSTRAINT gene_name_fk1 FOREIGN KEY (gene_id)
-REFERENCES dots.Gene (gene_id);
+ALTER TABLE apidb.GeneFeatureName
+ADD CONSTRAINT gene_feature_name_fk1 FOREIGN KEY (na_feature_id)
+REFERENCES dots.NaFeatureImp (na_feature_id);
 
-ALTER TABLE apidb.GeneName
-ADD CONSTRAINT gene_name_fk2 FOREIGN KEY (external_database_release_id)
+ALTER TABLE apidb.GeneFeatureName
+ADD CONSTRAINT gene_feature_name_fk2 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
-GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneName TO gus_w;
-GRANT SELECT ON apidb.GeneName TO gus_r;
+GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.GeneFeatureName TO gus_w;
+GRANT SELECT ON apidb.GeneFeatureName TO gus_r;
 
-CREATE INDEX apiDB.gene_name_idx ON apiDB.GeneName(gene_id, is_preferred, name);
+CREATE INDEX apiDB.gene_feature_name_idx ON apiDB.GeneFeatureName(na_feature_id, is_preferred, name);
 
 ------------------------------------------------------------------------------
 
-CREATE SEQUENCE apidb.GeneName_sq;
+CREATE SEQUENCE apidb.GeneFeatureName_sq;
 
-GRANT SELECT ON apidb.GeneName_sq TO gus_r;
-GRANT SELECT ON apidb.GeneName_sq TO gus_w;
+GRANT SELECT ON apidb.GeneFeatureName_sq TO gus_r;
+GRANT SELECT ON apidb.GeneFeatureName_sq TO gus_w;
 
 ------------------------------------------------------------------------------
 
@@ -48,14 +48,14 @@ INSERT INTO core.TableInfo
      modification_date, user_read, user_write, group_read, group_write, 
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'GeneName',
-       'Standard', 'gene_name_id',
+SELECT core.tableinfo_sq.nextval, 'GeneFeatureName',
+       'Standard', 'gene_feature_name_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'genename' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'genefeaturename' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 
