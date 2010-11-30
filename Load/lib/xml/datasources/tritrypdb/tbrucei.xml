@@ -1257,9 +1257,8 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
     </info>
   </resource>
 
-
-  <resource resource="Tbrucei_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
 <!--DbxRefsResource-->
+  <resource resource="Tbrucei_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --idType 'alternate id'</pluginArgs>
@@ -1470,7 +1469,7 @@ Data provided by Christine Clayton. Contact: cclayton@zmbh.uni-heidelberg.de
     </info>
   </resource>
 
-  <resource resource="Tbrucei_array_A-MEXP-1112_JCVI_37K_v2_RSRC" version="@@Tbrucei_array_A-MEXP-1112_JCVI_37K_v2_VER@@"
+  <resource resource="Tbrucei_array_A_MEXP_1112_JCVI_37K_v2_RSRC" version="@@Tbrucei_array_A_MEXP_1112_JCVI_37K_v2_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayPlatform/A-MEXP-1112_JCVI_37K_v2/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
@@ -1493,7 +1492,7 @@ JCVI PFGRC Trypanosoma brucei 37K v2 array TREU927.
     </info>
   </resource>
 
-  <resource resource="Tbrucei_array_A-MEXP-1512_JCVI_19K_v3_RSRC" version="@@Tbrucei_array_A-MEXP-1512_JCVI_19K_v3_VER@@"
+  <resource resource="Tbrucei_array_A_MEXP_1512_JCVI_19K_v3_RSRC" version="@@Tbrucei_array_A_MEXP_1512_JCVI_19K_v3_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/microarrayPlatform/A-MEXP-1512_JCVI_19K_v3/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
