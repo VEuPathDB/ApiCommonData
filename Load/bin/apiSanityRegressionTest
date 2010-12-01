@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use DBI;
+
+my $goodSite = $ARGV[0];
+my $newSite = $ARGV[1];
+my $outputDir = $ARGV[2];
+
+$| = 1;
+
+usage() unless $goodSite && $newSite && $outputDir;
+
+die "Error: output dir '$outputDir' already exists\n" if -e $outputDir;
+mkdir $outputDir || die "Error: can't create output dir '$outputDir'\n";
+
+my $sitesDir = '/var/www';
+my $goodSiteDir = "$sitesDir/$goodSite";
+my $newSiteDir = "$sitesDir/$newSite";
+my $logFile = "$outputDir/test.log"
+
+die "Error: good site dir '$goodSiteDir' doesn't exist\n" unless -e $goodSiteDir;
+die "Error: new site dir '$newSiteDir' doesn't exist\n" unless -e $newSiteDir;
+
+open(LOG, $logFile) || die "Can't open log file '$logFile'\n";
+&runSanityTests('good', $goodSiteDir, $goodSite, $outputDir);
+&runSanityTests('new', $newSiteDir, $newSite, $outputDir);
+
+&compareWdkSanityTests();
+&compareGbrowseSanityTests();
+
+sub runSanityTests {
+  my ($name, $siteDir, $site, $outputDir) = @_;
+
+  my $gus_home = "$siteDir/gus_home";
+  die "gus_home dir '$siteDir/gus_home' doesn't exist\n" unless -e $gus_home;
+  $ENV{GUS_ENV} = "$siteDir/gus_home";
+
+  $site =~ /\w+\.(\w+)\.org/ || die "can't find model name in site '$site'\n";
+  my $model = $1;
+  my $gbrowseFile = "$siteDir/conf/gbrowse.conf/gbrowseQueries.xml";
+
+  &runCmd("wdkSanityTest -model $model > $outputDir/$name.wdk.out");
+  &runCmd("gbrowseSanityTest --model $model --gbrowseFile $gbrowseFile > $outputDir/$name.gbrowse.out");
+}
+
+sub runCmd {
+  my ($cmd) = @_;
+  print STDERR "Running: '$cmd'";
+  system($cmd);
+  my $status = @! >> 8;
+
+}
+
+sub usage {
+
+  print STDERR "
+Usage:  apiGeneRegressionTest species dblinkName
+
+Example:  apiGeneRegressionTest 'Plasmodium vivax' plasrbld
+
+Compares the apidb.GeneAttributes table in an old and new database for the specified species.
+
+The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
+
+The 'new' database is accessed from the old via the dblink whose name is provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+
+";
+
+  exit(1);
+}
