@@ -20,7 +20,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <validator name="validateGene"      handler="api" method="validateGene"/>
   <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="Name"          ignore="true"/>
     <qualifier name="synonym"          ignore="true"/>
     <qualifier name="product_synonym"          ignore="true"/>
@@ -84,7 +84,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
   <feature name="pseudo_gene" so="protein_coding">
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
     <qualifier name="note"                  ignore="true"/>
@@ -117,7 +117,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
    <qualifier name="Dbxref"               ignore="true"/> 
@@ -143,7 +143,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-   <qualifier name="parentID"  handler="api" method="setParent"/> 
+   <qualifier name="parentID"  ignore="true"/> 
     <qualifier name="note"                  ignore="true"/>
    <qualifier name="Name"          ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
@@ -280,7 +280,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
@@ -304,7 +304,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
@@ -328,7 +328,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="db_xref"               ignore="true"/>
@@ -352,7 +352,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="ncRNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="embl_qualifier"                  ignore="true"/>
     <qualifier name="eMBL_qualifier"                  ignore="true"/>
@@ -404,7 +404,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="tRNA_gene" so="tRNA_encoding">
  
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="parentID"  handler="api" method="setParent"/>
+    <qualifier name="parentID"  ignore="true"/>
     <qualifier name="comment"                  ignore="true"/>
     <qualifier name="product"               ignore="true"/>
     <qualifier name="note"                  ignore="true"/>
