@@ -2,9 +2,6 @@
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use Getopt::Long;
-use GUS::Supported::GusConfig;
-use DBI;
 
 my $goodSite = $ARGV[0];
 my $newSite = $ARGV[1];
@@ -25,12 +22,18 @@ my $logFile = "$outputDir/test.log"
 die "Error: good site dir '$goodSiteDir' doesn't exist\n" unless -e $goodSiteDir;
 die "Error: new site dir '$newSiteDir' doesn't exist\n" unless -e $newSiteDir;
 
-open(LOG, $logFile) || die "Can't open log file '$logFile'\n";
+open(LOG, ">$logFile") || die "Can't open log file '$logFile'\n";
 &runSanityTests('good', $goodSiteDir, $goodSite, $outputDir);
 &runSanityTests('new', $newSiteDir, $newSite, $outputDir);
 
-&compareWdkSanityTests();
-&compareGbrowseSanityTests();
+my ($goodPassedHash, $goodFailedHash) = parseWdkTest("$outputDir/good.wdk.out");
+my ($newPassedHash, $newFailedHash) = parseWdkTest("$outputDir/new.wdk.out");
+&compareSanityTests($goodPassedHash, $newPassedHash, $newFailedHash, "$outputDir/wdk.result");
+
+($goodPassedHash, $goodFailedHash) = parseGbrowseTest("$outputDir/good.gbrowse.out");
+($newPassedHash, $newFailedHash) = parseGbrowseTest("$outputDir/new.gbrowse.out");
+&compareSanityTests($goodPassedHash, $newPassedHash, $newFailedHash, "$outputDir/gbrowse.result");
+
 
 sub runSanityTests {
   my ($name, $siteDir, $site, $outputDir) = @_;
@@ -43,13 +46,95 @@ sub runSanityTests {
   my $model = $1;
   my $gbrowseFile = "$siteDir/conf/gbrowse.conf/gbrowseQueries.xml";
 
+  print LOG "$site\n";
   &runCmd("wdkSanityTest -model $model > $outputDir/$name.wdk.out");
   &runCmd("gbrowseSanityTest --model $model --gbrowseFile $gbrowseFile > $outputDir/$name.gbrowse.out");
 }
 
+sub compareSanityTests {
+  my ($goodPassedHash, $newPassedHash, $newFailedHash, $resultFile) = @_;
+  open(F, ">$resultFile") || "can't open '$resultFile'\n";
+
+  foreach my $goodTest (keys(%$goodPassedHash)) {
+    $goodTestInfo = $goodPassedHash->{$goodTest};
+    $newTestInfo = $newPassedHash->{$goodTest};
+    $test = "[test: $goodTestInfo->[1]] $goodTest";
+    if (!$newTestInfo) {
+      if ($newFailedHash->{$goodTest}) {
+	print F "FAILED - $test\n\n";
+      } else {
+	print F "NOT FOUND - $test\n\n";
+      }
+    } else {
+      if ($newTestInfo->[2] != $goodTestInfo->[2]) {
+	print F "ROW COUNT - good:$goodTestInfo->[2] new:$newTestInfo->[2] $test\n\n";
+      }
+      if ($newTestInfo->[0] > 5*$goodTestInfo->[0]) {
+	print F "TIME - good:$goodTestInfo->[0] new:$newTestInfo->[0] $test\n\n";
+      }
+    }
+  }
+  close(F);
+}
+
+sub parseWdkTest {
+  my ($file) = @_;
+
+  open(F, $file) || die "can't find file '$file'\n";
+
+  my $passedHash;
+  my $failedHash;
+  while(<F>) {
+    # 0.142 [test: 100] TABLE QUERY GeneTables.BlastP passed. It returned 22 rows.  [ wdkQuery -model TriTrypDB -query GeneTables.BlastP -params source_id "Tb927.7.4060" project_id "TriTrypDB"  ]
+    if (/(\d+\.\d+) \[test\: (\d+)\] .* passed.* returned (\d+) .* \[(.*)\]/) {
+      my $time = $1;
+      my $testNum = $2;
+      my $rows = $3;
+      my $cmd = $4;
+      $passedHash->{$cmd} = [$time, $testNum, $rows];
+    }
+    elsif (/ \[test\: (\d+)\] .* FAILED.* \[(.*)\]/) {
+      my $testNum = $1;
+      my $cmd = $2;
+      $failedHash->{$cmd} = $testNum;
+    }
+  }
+  close(F);
+  return ($passedHash, $failedHash);
+}
+
+sub parseGbrowseTest {
+  my ($file) = @_;
+
+  open(F, $file) || die "can't find file '$file'\n";
+
+  my $passedHash;
+  my $failedHash;
+  while(<F>) {
+    # 0.002 PASSED ChIP:AcetylH3_Log_vs_Stationary -srcfeature_id '$$na_feat_id_LmjF24_01_20050601_V5.2$$' -rend '204367' -base_star (returned 1) [test: 42]
+t '203962' [test: 27]
+
+    if (/(\d+\.\d+) PASSED (.*) \(returned (\d+)\) \[test\: (\d+)\]/) {
+      my $time = $1;
+      my $nameAndParams = $2;
+      my $rows = $3;
+      my $testNum = $4;
+      $passedHash->{$nameAndParams} = [$time, $testNum, $rows];
+    }
+    elsif (/FAILED (.*) \[test\: (\d+)\]/) {
+      my $nameAndParams = $1;
+      my $testNum = $2;
+      $failedHash->{$test} = $testNum;
+    }
+  }
+  close(F);
+  return ($passedHash, $failedHash);
+}
+
+
 sub runCmd {
   my ($cmd) = @_;
-  print STDERR "Running: '$cmd'";
+  print LOG "Running: '$cmd'\n";
   system($cmd);
   my $status = @! >> 8;
 
@@ -58,15 +143,17 @@ sub runCmd {
 sub usage {
 
   print STDERR "
-Usage:  apiGeneRegressionTest species dblinkName
+Usage:  apiSanityRegressionTest goodSite newSite outputDir
 
-Example:  apiGeneRegressionTest 'Plasmodium vivax' plasrbld
+Example:  apiSanityRegressionTest w1.plasmodb.org q1.plasmodb.org my_output_dir
 
-Compares the apidb.GeneAttributes table in an old and new database for the specified species.
+Runs the wdk and gbrowse sanity test in the both goodSite and newSite environments.
 
-The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
-
-The 'new' database is accessed from the old via the dblink whose name is provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+Compares the results.  Reports the following class of issues with the new tests:
+   - NOT FOUND   (a good test has no match in the new results)
+   - FAILED      (a good test that passed failed in the new results)
+   - ROW COUNT   (the row counts don't match)
+   - TIME        (the new test took more than 5x longer than the good test)
 
 ";
 
