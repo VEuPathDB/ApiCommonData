@@ -18,8 +18,8 @@ use DBI;
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
 use ApiCommonData::Load::Util;
-use GUS::Model::DoTS::Gene;
-use GUS::Model::ApiDB::GeneName;
+use GUS::Model::DoTS::GeneFeature;
+use GUS::Model::ApiDB::GeneFeatureName;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use Data::Dumper;
@@ -148,20 +148,21 @@ sub run{
 
       my $preferred = 0;
 
-      my $gene = GUS::Model::DoTS::Gene->new({name => $sourceId});
-	       
-      if($gene->retrieveFromDB()){
-	  my $geneNameFeat = $gene->getChild('ApiDB::GeneName',1);
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $geneNameReleaseId});
+
+ 	       
+      if($geneFeature->retrieveFromDB()){
+	  my $geneNameFeat = $geneFeature->getChild('ApiDB::GeneFeatureName',1);
 
 	  $preferred = 1 unless $geneNameFeat;
 
-	  my $geneId = $gene->getGeneId();	       
+	  my $nafeatureId = $gene->getNaFeatureId();	       
     
-	  $self->makeGeneName($geneNameReleaseId,$geneId,$geneName,$preferred);
+	  $self->makeGeneFeatName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
   
 	  $processed++;
       }else{
-	  $self->log("WARNING","Gene with source id: $sourceId cannot be found");
+	  $self->log("WARNING","Gene Feature with source id: $sourceId cannot be found");
       }  
       $self->undefPointerCache();
   }        
@@ -174,9 +175,9 @@ sub run{
 }
 
 sub makeGeneName {
-  my ($self,$geneNameReleaseId,$geneId,$geneName,$preferred) = @_;
+  my ($self,$geneNameReleaseId,$nafeatureId,$geneName,$preferred) = @_;
 
-  my $geneNameFeat = GUS::Model::ApiDB::GeneName->new({'gene_id' => $geneId,
+  my $geneNameFeat = GUS::Model::ApiDB::GeneFeatureName->new({'na_feature_id' => $nafeatureId,
 						     'name' => $geneName,
 						     });
 
@@ -186,7 +187,7 @@ sub makeGeneName {
       $geneNameFeat->set("external_database_release_id",$geneNameReleaseId);
       $geneNameFeat->submit();
   }else{
-      $self->log("WARNING","Gene Name $geneName already exists for gene_id: $geneId");
+      $self->log("WARNING","Gene Name $geneName already exists for na_feature_id: $nafeatureId");
   }
 
 }
@@ -270,7 +271,7 @@ sub makeNewReleaseId{
 	id_url => '',
 	secondary_id_type => '',
 	secondary_id_url => '',
-	description => 'annotation data from tRNAscan-SE analysis',
+	description => '',
 	file_name => '',
 	file_md5 => '',
 	
@@ -284,7 +285,7 @@ sub makeNewReleaseId{
 }
 
 sub undoTables {
-  return ('ApiDB.GeneName',
+  return ('ApiDB.GeneFeatureName',
 	  'SRes.ExternalDatabaseRelease',
 	  'SRes.ExternalDatabase',
 	 ); 
