@@ -3,77 +3,91 @@
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 
-my $goodSite = $ARGV[0];
-my $newSite = $ARGV[1];
-my $outputDir = $ARGV[2];
+my $model = $ARGV[0];
+my $trustedSite = $ARGV[1];
+my $newSite = $ARGV[2];
+my $outputDir = $ARGV[3];
 
 $| = 1;
 
-usage() unless $goodSite && $newSite && $outputDir;
+usage() unless $trustedSite && $newSite && $model && $outputDir;
 
 die "Error: output dir '$outputDir' already exists\n" if -e $outputDir;
 mkdir $outputDir || die "Error: can't create output dir '$outputDir'\n";
 
 my $sitesDir = '/var/www';
-my $goodSiteDir = "$sitesDir/$goodSite";
+my $trustedSiteDir = "$sitesDir/$trustedSite";
 my $newSiteDir = "$sitesDir/$newSite";
-my $logFile = "$outputDir/test.log"
+my $logFile = "$outputDir/test.log";
 
-die "Error: good site dir '$goodSiteDir' doesn't exist\n" unless -e $goodSiteDir;
+die "Error: trusted site dir '$trustedSiteDir' doesn't exist\n" unless -e $trustedSiteDir;
 die "Error: new site dir '$newSiteDir' doesn't exist\n" unless -e $newSiteDir;
 
 open(LOG, ">$logFile") || die "Can't open log file '$logFile'\n";
-&runSanityTests('good', $goodSiteDir, $goodSite, $outputDir);
-&runSanityTests('new', $newSiteDir, $newSite, $outputDir);
+&runSanityTests('trusted', $trustedSiteDir, $trustedSite, $outputDir, $model);
+&runSanityTests('new', $newSiteDir, $newSite, $outputDir, $model);
 
-my ($goodPassedHash, $goodFailedHash) = parseWdkTest("$outputDir/good.wdk.out");
-my ($newPassedHash, $newFailedHash) = parseWdkTest("$outputDir/new.wdk.out");
-&compareSanityTests($goodPassedHash, $newPassedHash, $newFailedHash, "$outputDir/wdk.result");
+# wdk
+print LOG "\ncomparing WDK tests\n";
+my ($trustedPassedHash, $trustedFailedHash) = parseWdkTest("$outputDir/wdk.trusted.out");
+my ($newPassedHash, $newFailedHash) = parseWdkTest("$outputDir/wdk.new.out");
+&compareSanityTests($trustedPassedHash, $newPassedHash, $newFailedHash, "$outputDir/wdk.result");
 
-($goodPassedHash, $goodFailedHash) = parseGbrowseTest("$outputDir/good.gbrowse.out");
-($newPassedHash, $newFailedHash) = parseGbrowseTest("$outputDir/new.gbrowse.out");
-&compareSanityTests($goodPassedHash, $newPassedHash, $newFailedHash, "$outputDir/gbrowse.result");
+# gbrowse
+print LOG "\ncomparing GBrowse tests\n";
+($trustedPassedHash, $trustedFailedHash) = parseGbrowseTest("$outputDir/gbrowse.trusted.out");
+($newPassedHash, $newFailedHash) = parseGbrowseTest("$outputDir/gbrowse.new.out");
+&compareSanityTests($trustedPassedHash, $newPassedHash, $newFailedHash, "$outputDir/gbrowse.result");
 
+print LOG "\ndone\n";
+
+############################################################################################
 
 sub runSanityTests {
-  my ($name, $siteDir, $site, $outputDir) = @_;
+  my ($name, $siteDir, $site, $outputDir, $model) = @_;
 
   my $gus_home = "$siteDir/gus_home";
   die "gus_home dir '$siteDir/gus_home' doesn't exist\n" unless -e $gus_home;
-  $ENV{GUS_ENV} = "$siteDir/gus_home";
+  $ENV{GUS_HOME} = "$siteDir/gus_home";
 
-  $site =~ /\w+\.(\w+)\.org/ || die "can't find model name in site '$site'\n";
-  my $model = $1;
   my $gbrowseFile = "$siteDir/conf/gbrowse.conf/gbrowseQueries.xml";
 
-  print LOG "$site\n";
-  &runCmd("wdkSanityTest -model $model > $outputDir/$name.wdk.out");
-  &runCmd("gbrowseSanityTest --model $model --gbrowseFile $gbrowseFile > $outputDir/$name.gbrowse.out");
+  print LOG "\n$site ($name)\n";
+  &runSshCmd("wdkSanityTest -model $model -t 1-10", "$outputDir/wdk.$name.out", "$outputDir/wdk.$name.err", $site);
+  &runSshCmd("gbrowseSanityTest --model $model --gbrowseFile $gbrowseFile", "$outputDir/gbrowse.$name.out", "$outputDir/gbrowse.$name.err", $site);
 }
 
 sub compareSanityTests {
-  my ($goodPassedHash, $newPassedHash, $newFailedHash, $resultFile) = @_;
+  my ($trustedPassedHash, $newPassedHash, $newFailedHash, $resultFile) = @_;
   open(F, ">$resultFile") || "can't open '$resultFile'\n";
 
-  foreach my $goodTest (keys(%$goodPassedHash)) {
-    $goodTestInfo = $goodPassedHash->{$goodTest};
-    $newTestInfo = $newPassedHash->{$goodTest};
-    $test = "[test: $goodTestInfo->[1]] $goodTest";
+  my $count;
+  my $issueCount = 0;
+  foreach my $trustedTest (keys(%$trustedPassedHash)) {
+    $count++;
+    my $trustedTestInfo = $trustedPassedHash->{$trustedTest};
+    my $newTestInfo = $newPassedHash->{$trustedTest};
+    my $test = "[test: $trustedTestInfo->[1]] $trustedTest";
     if (!$newTestInfo) {
-      if ($newFailedHash->{$goodTest}) {
+      if ($newFailedHash->{$trustedTest}) {
 	print F "FAILED - $test\n\n";
+	$issueCount++;
       } else {
 	print F "NOT FOUND - $test\n\n";
+	$issueCount++;
       }
     } else {
-      if ($newTestInfo->[2] != $goodTestInfo->[2]) {
-	print F "ROW COUNT - good:$goodTestInfo->[2] new:$newTestInfo->[2] $test\n\n";
+      if ($newTestInfo->[2] != $trustedTestInfo->[2]) {
+	print F "ROW COUNT - trusted:$trustedTestInfo->[2] new:$newTestInfo->[2] $test\n\n";
+	$issueCount++;
       }
-      if ($newTestInfo->[0] > 5*$goodTestInfo->[0]) {
-	print F "TIME - good:$goodTestInfo->[0] new:$newTestInfo->[0] $test\n\n";
+      if ($newTestInfo->[0] > 5*$trustedTestInfo->[0]) {
+	print F "TIME - trusted:$trustedTestInfo->[0] new:$newTestInfo->[0] $test\n\n";
+	$issueCount++;
       }
     }
   }
+  print F "Compared $count tests.  Found $issueCount issues.\n";
   close(F);
 }
 
@@ -112,7 +126,6 @@ sub parseGbrowseTest {
   my $failedHash;
   while(<F>) {
     # 0.002 PASSED ChIP:AcetylH3_Log_vs_Stationary -srcfeature_id '$$na_feat_id_LmjF24_01_20050601_V5.2$$' -rend '204367' -base_star (returned 1) [test: 42]
-t '203962' [test: 27]
 
     if (/(\d+\.\d+) PASSED (.*) \(returned (\d+)\) \[test\: (\d+)\]/) {
       my $time = $1;
@@ -124,38 +137,41 @@ t '203962' [test: 27]
     elsif (/FAILED (.*) \[test\: (\d+)\]/) {
       my $nameAndParams = $1;
       my $testNum = $2;
-      $failedHash->{$test} = $testNum;
+      $failedHash->{$nameAndParams} = $testNum;
     }
   }
   close(F);
   return ($passedHash, $failedHash);
 }
 
-
-sub runCmd {
-  my ($cmd) = @_;
-  print LOG "Running: '$cmd'\n";
-  system($cmd);
-  my $status = @! >> 8;
-
-}
-
 sub usage {
 
   print STDERR "
-Usage:  apiSanityRegressionTest goodSite newSite outputDir
+Usage:  apiSanityRegressionTest model trustedSite newSite outputDir
 
-Example:  apiSanityRegressionTest w1.plasmodb.org q1.plasmodb.org my_output_dir
+Example:  apiSanityRegressionTest PlasmoDB w1.plasmodb.org q1.plasmodb.org my_output_dir
 
-Runs the wdk and gbrowse sanity test in the both goodSite and newSite environments.
+Runs the wdk and gbrowse sanity test in both the trustedSite and newSite environments.  (It uses
+ssh to go the appropriate web server.)
 
 Compares the results.  Reports the following class of issues with the new tests:
-   - NOT FOUND   (a good test has no match in the new results)
-   - FAILED      (a good test that passed failed in the new results)
+   - NOT FOUND   (a trusted test has no match in the new results)
+   - FAILED      (a trusted test that passed failed in the new results)
    - ROW COUNT   (the row counts don't match)
-   - TIME        (the new test took more than 5x longer than the good test)
+   - TIME        (the new test took more than 5x longer than the trusted test)
 
 ";
 
   exit(1);
+}
+
+sub runSshCmd {
+  my ($cmd, $outFile, $errFile, $server) = @_;
+  my $user = $ENV{USER};
+  my $sshcmd = qq{ssh -2 $user\@$server '/bin/bash -login -c "$cmd"' >$outFile 2>$errFile};
+
+  print LOG "  running: '$sshcmd'\n";
+  system($sshcmd);
+  my $status = $? >> 8;
+  die "Failed with status $status running: \n$sshcmd" if ($status);
 }
