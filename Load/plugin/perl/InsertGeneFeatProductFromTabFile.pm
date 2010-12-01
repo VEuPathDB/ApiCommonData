@@ -259,7 +259,7 @@ sub makeNewReleaseId{
 	id_url => '',
 	secondary_id_type => '',
 	secondary_id_url => '',
-	description => 'annotation data from tRNAscan-SE analysis',
+	description => '',
 	file_name => '',
 	file_md5 => '',
 	
