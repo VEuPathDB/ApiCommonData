@@ -27,6 +27,13 @@ my $argsDeclaration =
 	    reqd => 1,
 	    isList => 0
 	   }),
+
+ stringArg({name => 'parameters',
+	    descr => '',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0
+	   }),
  ];
 
 
