@@ -60,7 +60,7 @@ sub runSanityTests {
   print LOG "\n$site ($name)\n";
 
   if ($skip ne '-skipWdk') {
-    &runSshCmd("wdkSanityTest -model $model -t 1-10", "$outputDir/wdk.$name.out", "$outputDir/wdk.$name.err", $site);
+    &runSshCmd("wdkSanityTest -model $model", "$outputDir/wdk.$name.out", "$outputDir/wdk.$name.err", $site);
   }
 
   if ($skip ne '-skipGbrowse') {
