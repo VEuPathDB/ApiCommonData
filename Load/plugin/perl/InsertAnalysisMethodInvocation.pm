@@ -89,11 +89,10 @@ sub run {
     my $parameters = $self->getArg('parameters');
 
    my $am = GUS::Model::ApiDB::AnalysisMethodInvocation->
-     new(
-	 {'name' => $name,
+     new({'name' => $name,
 	 'version' => $version,
 	 'parameters' => $parameters,
-	);
+	});
 
     $am->submit();
    return "Inserted 1 method into AnalysisMethodInvocation";
