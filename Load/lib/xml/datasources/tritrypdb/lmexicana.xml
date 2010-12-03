@@ -7,7 +7,7 @@
     <manualGet fileOrDir="TriTrypDB/lmexicana/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Lmexicana_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --output_gff  @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5665 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5665 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lmexicana_chromosomes_fixed/Lmexicana.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="L. mexicana chromosomes sequence and annotation"
         project="TriTrypDB"
