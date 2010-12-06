@@ -158,7 +158,7 @@ sub run{
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();	       
     
-	  $self->makeGeneFeatName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
+	  $self->makeGeneName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
   
 	  $processed++;
       }else{
