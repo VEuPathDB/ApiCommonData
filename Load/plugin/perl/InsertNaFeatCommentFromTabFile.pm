@@ -130,6 +130,8 @@ sub run {
   while(<FILE>){
       next if (/^\s*$/);
 
+      chomp;
+
       my ($sourceId, $comment) = split(/\t/,$_);
 
       my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
