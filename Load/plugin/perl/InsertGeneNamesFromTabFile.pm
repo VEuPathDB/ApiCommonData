@@ -156,7 +156,7 @@ sub run{
 
 	  $preferred = 1 unless $geneNameFeat;
 
-	  my $nafeatureId = $gene->getNaFeatureId();	       
+	  my $nafeatureId = $geneFeature->getNaFeatureId();	       
     
 	  $self->makeGeneFeatName($geneNameReleaseId,$nafeatureId,$geneName,$preferred);
   
