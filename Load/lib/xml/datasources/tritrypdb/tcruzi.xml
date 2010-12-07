@@ -106,7 +106,7 @@
     <unpack>mkdir @@dataDir@@/TcNonEsm_contigs_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3 --output_gff @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff</unpack>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi strain CL Brener"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi strain NonEsmeraldo"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="T.cruzi unassigned contigs sequence and annotation"
         project="TriTrypDB"
