@@ -16,6 +16,7 @@ use GUS::Model::DoTS::RNAType;
 use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
+use GUS::Model::ApiDB::GeneFeatureProduct;
 use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
