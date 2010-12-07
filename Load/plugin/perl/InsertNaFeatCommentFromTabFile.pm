@@ -161,11 +161,8 @@ sub makeNaFeatComment {
   my ($self,$naFeatId,$comment) = @_;
 
   my $naFeatComment = GUS::Model::DoTS::NAFeatureComment->new({'na_feature_id' => $naFeatId,
-						              });
-  if($naFeatComment->retrieveFromDB()){
-      $comment .= ":".$naFeatComment->get("comment_string");
-  }
-  $naFeatComment->set("comment_string",$comment);
+						              'comment_string' => $comment,});
+
   $naFeatComment->submit();
 }
 
