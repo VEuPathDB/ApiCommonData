@@ -77,9 +77,9 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
   </resource>
 
   <resource resource="LmajorSD_scaffolds_RSRC" version="@@LmajorSD_scaffolds_VER@@"
-      plugin="GUS::Supported::Plugin::InsertVirtualSeqFromAgpFile">
+      plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile">
     <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorSD_75_1/contig/%RESOURCE_VERSION%/final/454Scaffolds.txt"/>
-         <pluginArgs>--agpFile @@dataDir@@/454Scaffolds.txt --seqPieceExtDbName "LmajorSD_contigs_RSRC" --seqPieceExtDbRlsVer @@LmajorSD_contigs_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <pluginArgs>--agpFile @@dataDir@@/454Scaffolds.txt --seqPieceExtDbName "LmajorSD_contigs_RSRC" --seqPieceExtDbRlsVer @@LmajorSD_contigs_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @@SO_VER@@ --sqlVerbose --notChromosomes</pluginArgs> 
     <info
         displayName="L. major SD 75.1 contig to scaffold map"
         project="TriTrypDB"
