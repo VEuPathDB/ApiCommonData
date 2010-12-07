@@ -8,7 +8,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Tbrucei927_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T.brucei 927 genome sequence and annotation"
         project="TriTrypDB"

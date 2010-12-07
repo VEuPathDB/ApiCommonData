@@ -7,7 +7,7 @@
     <manualGet fileOrDir="TriTrypDB/linfantum/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Linfantum_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --output_gff  @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5671 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5671 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Linfantum_chromosomes_fixed/Linfantum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <info
         displayName="L. infantum chromosomes sequence and annotation"
         project="TriTrypDB"
