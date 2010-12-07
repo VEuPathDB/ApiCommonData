@@ -6,7 +6,7 @@
     <manualGet fileOrDir="TriTrypDB/tvivax/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Tvivax_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --output_gff  @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5699 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tvivax_chromosomes_fixed/Tvivax.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T. vivax chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -110,50 +110,6 @@
       </description>
     </info>
   </resource>
-
-  <resource resource="Tvivax_previousAliases_RSRC" version="2009-09-14"
-      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tvivax/genome/Tvivax_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/previousAliases.tab"/>
-    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
-    <pluginArgs>--file @@dataDir@@/previousAliasesWithTwoCols.tab --genomeDbName Tvivax_chromosomes_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ </pluginArgs>
-    <info
-        displayName="Tvivax previous Aliases"
-        project="TriTrypDB"
-        organisms="@@TvivaxOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="Tvivax_Comment_RSRC" version="@@Tvivax_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/tvivax/genome/Tvivax_chromosomes_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
-    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName Tvivax_chromosomes_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ </pluginArgs>
-    <info
-        displayName="Tvivax Comments"
-        project="TriTrypDB"
-        organisms="@@TvivaxOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 
   <resource resource="Tvivax_previds_dbxref_RSRC" version="@@Tvivax_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">

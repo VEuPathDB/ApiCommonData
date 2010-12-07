@@ -7,7 +7,7 @@
     <manualGet fileOrDir="TriTrypDB/tcongolense/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Tcongolense_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tcongolense_chromosomes_fixed/Tcongolense.fasta --output_gff  @@dataDir@@/Tcongolense_chromosomes_fixed/Tcongolense.gff3</unpack>
-     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tcongolense_chromosomes_fixed/Tcongolense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5692 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tcongolense_chromosomes_fixed/Tcongolense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T. congolense chromosomes sequence and annotation"
         project="TriTrypDB"
