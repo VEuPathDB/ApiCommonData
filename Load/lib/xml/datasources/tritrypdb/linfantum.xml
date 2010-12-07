@@ -138,28 +138,6 @@ Sequencing of <i>L. infantum</i> was conducted by <a href="http://www.sanger.ac.
     </info>
   </resource>
 
-  <resource resource="Linfantum_previousAliases_RSRC" version="2009-09-07"
-      plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
-    <manualGet fileOrDir="TriTrypDB/linfantum/genome/Linfantum_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/previousAliases.tab"/>
-    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/previousAliases.tab --outputFile @@dataDir@@/previousAliasesWithTwoCols.tab</unpack>
-    <pluginArgs>--file @@dataDir@@/previousAliasesWithTwoCols.tab --genomeDbName Linfantum_chromosomes_RSRC --genomeDbVer @@Linfantum_chromosomes_VER@@ </pluginArgs>
-    <info
-        displayName="Linfantum previous Aliases"
-        project="TriTrypDB"
-        organisms="@@LinfantumOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
   <resource resource="Linfantum_previds_dbxref_RSRC" version="@@Linfantum_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/linfantum/dbxref/Linfantum_chromosomes_RSRC/%RESOURCE_VERSION%/Linfantum_previds.txt"/>
