@@ -5872,13 +5872,22 @@ SQL
 sub changedGenesWithoutProduct {
     my ($dbh) = @_;
 
-    my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
+    my $stmt;
+
+    # query will fail if tuning manager has never been run on this instance,
+    # so take sql error to mean that the changed-gene list was formerly empty.
+    eval {
+    $stmt = $dbh->prepare(<<SQL)
       select cgp.gene from apidb.ChangedGeneProduct cgp, apidb.GeneAttributes ga
                   where cgp.gene = ga.source_id
     minus
       select gene from apidb.ChangedGeneProduct&1
     order by gene
 SQL
+
+    };
+
+  return 0 if !$stmt;
 
   $stmt->execute() or die "checking for changed genes without product";
 
