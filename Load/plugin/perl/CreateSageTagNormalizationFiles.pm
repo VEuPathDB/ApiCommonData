@@ -394,6 +394,7 @@ sub makeCfgFile {
   protocol_param_id1\t$protParamId
   logical_group_id1\t$logicalGroupId
   protocol_param_value1\t$paramValue
+  analysis_name\tSAGETag
 XX
 }
 
