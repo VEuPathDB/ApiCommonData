@@ -1,4 +1,25 @@
 <resources>
+
+  <resource resource="Tvivax_previds_dbxref_RSRC" version="@@Tvivax_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tvivax/dbxref/Tvivax_chromosomes_RSRC/%RESOURCE_VERSION%/Tvivax_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tvivax_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tvivax_chromosomes_RSRC|@@Tvivax_chromosomes_VER@@' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="Tvivax previous id mappings"
+        project="TriTrypDB"
+        organisms="@@TvivaxOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--ISFResource-->
 
   <resource resource="Tvivax_chromosomes_RSRC" version="@@Tvivax_chromosomes_VER@@"
@@ -111,25 +132,7 @@
     </info>
   </resource>
 
-  <resource resource="Tvivax_previds_dbxref_RSRC" version="@@Tvivax_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tvivax/dbxref/Tvivax_chromosomes_RSRC/%RESOURCE_VERSION%/Tvivax_previds.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tvivax_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tvivax_chromosomes_RSRC|@@Tvivax_chromosomes_VER@@' --idType 'previous id'</pluginArgs>
-    <info
-        displayName="Tvivax previous id mappings"
-        project="TriTrypDB"
-        organisms="@@TvivaxOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[         
-        ]]>
-      </description>
-    </info>
-  </resource>
+
 
   <resource resource="Tvivax_pmid_dbxref_RSRC" version="@@Tvivax_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -187,6 +190,27 @@
       <description>
         <![CDATA[
          EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Tvivax_Comment_RSRC" version="@@Tvivax_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="TriTrypDB/tvivax/genome/Tvivax_chromosomes_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName Tbrucei927_genome_RSRC --genomeDbVer @@Tvivax_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Tvivax Comments"
+        project="TriTrypDB"
+        organisms="@@TvivaxOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
         ]]>
       </description>
     </info>
