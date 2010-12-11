@@ -346,7 +346,7 @@ Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
   <resource resource="TcruziEsmeraldoLike_GeneName_RSRC" version="@@TcruziEsmeraldoLike_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/TcruziEsmeraldoLike_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
-    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName TcruziEsmeraldoLike_chromosomes_RSRC --genomeDbVer @@TcruziEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/genename.txt --geneNameDbName TcruziEsmeraldoLike_chromosomes_RSRC --geneNameDbVer @@TcruziEsmeraldoLike_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="TcruziEsmeraldoLike Gene Name"
         project="TriTrypDB"
@@ -1145,7 +1145,7 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
   <resource resource="TcruziNonEsmeraldoLike_genome_id_mappings_RSRC" version="2010-01-19"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/oldAndNewGenomeIdMappings/%RESOURCE_VERSION%/final/Tcruzi_names_mapped.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcruzi_names_mapped.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence"  --geneExternalDatabaseSpec 'TcruziNonEsmeraldoLike_genome_RSRC|@@TcruziNonEsmeraldoLike_genome_VER@@'--idType 'previous id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tcruzi_names_mapped.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence"  --geneExternalDatabaseSpec 'TcruziNonEsmeraldoLike_genome_RSRC|@@TcruziNonEsmeraldoLike_genome_VER@@' --idType 'previous id'</pluginArgs>
     <info
         displayName=""
         project="TriTrypDB"
@@ -1166,7 +1166,7 @@ Carlos Chagas Filho, Universidade Federal do Rio de Janeiro, Brazil.
   <resource resource="TcruziEsmeraldoLike_Aguero_SNP_DBRefs_RSRC" version="2009-11-23"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/TcSNP/%RESOURCE_VERSION%/final/TcSNP_dbxrefs.txt"/>
-        <pluginArgs>--DBRefMappingFile @downloadDir@/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature --geneExternalDatabaseSpec 'TcruziEsmeraldoLike_chromosomes_RSRC|@@TcruziEsmeraldoLike_chromosomes_VER@@'</pluginArgs>
+        <pluginArgs>--DBRefMappingFile @@dataDir@@/TcSNP_dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature --geneExternalDatabaseSpec 'TcruziEsmeraldoLike_chromosomes_RSRC|@@TcruziEsmeraldoLike_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="External DbxRefs to TcSNP database for Tcruzi"
         project="TriTrypDB"
@@ -1187,7 +1187,7 @@ TcSNP is an online resource/database with information on genetic variation(polym
   <resource resource="TcruziNonEsmeraldoLike_Aguero_SNP_DBRefs_RSRC" version="2009-11-23"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/TcSNP/%RESOURCE_VERSION%/final/TcSNP_dbxrefs.txt"/>
-        <pluginArgs>--DBRefMappingFile @downloadDir@/TcSNP_dbxrefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature --geneExternalDatabaseSpec 'TcruziNonEsmeraldoLike_genome_RSRC|@@TcruziNonEsmeraldoLike_genome_VER@@'</pluginArgs>
+        <pluginArgs>--DBRefMappingFile @@dataDir@@/TcSNP_dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,remark" --idURL "http://snps.tcruzi.org/genes/alignment?assembly_id=" --tableName DbRefNAFeature --geneExternalDatabaseSpec 'TcruziNonEsmeraldoLike_genome_RSRC|@@TcruziNonEsmeraldoLike_genome_VER@@'</pluginArgs>
     <info
         displayName="External DbxRefs to TcSNP database for Tcruzi"
         project="TriTrypDB"
