@@ -167,7 +167,7 @@ sub getAaSeqId{
 sub createEpitopeEntry{
   my ($self, $data, $epiExtDbRls) = @_;
 
-  my $motifId = $self->getMotifId($$data[1]);
+  my $motifId = $self->getMotifId($$data[1],$epiExtDbRls);
 
   my $type = $self->getType($$data[5],$$data[7]);
 
@@ -198,10 +198,12 @@ sub createAALocation{
 }
 
 sub getMotifId{
-  my ($self,$sourceId) = @_;
+  my ($self,$sourceId,$epiExtDbRls) = @_;
   my $motifId;
 
-  my $motif = GUS::Model::DoTS::MotifAASequence->new({source_id => $sourceId});
+  my $motif = GUS::Model::DoTS::MotifAASequence->new({source_id => $sourceId,
+						      external_database_release_id => $epiExtDbRls,
+						     });
 
   if($motif->retrieveFromDB()){
     $motifId = $motif->getId();
