@@ -1,5 +1,23 @@
 <resources>
-
+  <resource resource="Tbrucei427_pdb_dbxref_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tbruceibrucei427_chromosomes_RSRC/%RESOURCE_VERSION%/Tbruceibrucei427_pdb.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tbruceibrucei427_pdb.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="Tbrucei427 pdb mappings"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
 <!--ISFResource-->
 
 
@@ -349,7 +367,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbrucei427_ProductName_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceibrucei427_chromosomes_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
-    <pluginArgs>--file @@dataDir@@/product.txt --geneNameDbName Tbrucei427_chromosomes_RSRC --geneNameDbVer @@Tbrucei427_chromosomes_VER@@ --productDbName Tbrucei427_chromosomes_RSRC --productDbVer @@Tbrucei427_chromosomes_VER@@</pluginArgs>
+    <pluginArgs>--file @@dataDir@@/product.txt --productDbName Tbrucei427_chromosomes_RSRC --productDbVer @@Tbrucei427_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tbrucei427 Product Name"
         project="TriTrypDB"
@@ -370,7 +388,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbruceigambiense_ProductName_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/function/Tbruceigambiense_chromosomes_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
-    <pluginArgs>--file @@dataDir@@/product.txt --genomeDbName Tbruceigambiense_chromosomes_RSRC --genomeDbVer @@Tbruceigambiense_chromosomes_VER@@ --productDbName Tbruceigambiense_chromosomes_RSRC --productDbVer @@Tbruceigambiense_chromosomes_VER@@</pluginArgs>
+    <pluginArgs>--file @@dataDir@@/product.txt --productDbName Tbruceigambiense_chromosomes_RSRC --productDbVer @@Tbruceigambiense_chromosomes_VER@@</pluginArgs>
     <info
         displayName="Tbruceigambiense Product Name"
         project="TriTrypDB"
@@ -412,7 +430,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbrucei427_GeneName_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceibrucei427_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
-    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName Tbrucei427_chromosomes_RSRC --genomeDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/genename.txt --geneNameDbName Tbrucei427_chromosomes_RSRC --geneNameDbVer @@Tbrucei427_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tbrucei427 Gene Name"
         project="TriTrypDB"
@@ -433,7 +451,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
   <resource resource="Tbruceigambiense_GeneName_RSRC" version="@@Tbruceigambiense_chromosomes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertGeneNamesFromTabFile">
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/Tbruceigambiense_chromosomes_RSRC_geneName/%RESOURCE_VERSION%/genename.txt"/>
-    <pluginArgs>--file @@dataDir@@/genename.txt --genomeDbName Tbruceigambiense_chromosomes_RSRC --genomeDbVer @@Tbruceigambiense_chromosomes_VER@@ </pluginArgs>
+    <pluginArgs>--file @@dataDir@@/genename.txt --geneNameDbName Tbruceigambiense_chromosomes_RSRC --geneNameDbVer @@Tbruceigambiense_chromosomes_VER@@ </pluginArgs>
     <info
         displayName="Tbruceigambiense Gene Name"
         project="TriTrypDB"
@@ -803,26 +821,6 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <pluginArgs>--DbRefMappingFile @@dataDir@@/Tbruceibrucei427_uniprot.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --idType ''</pluginArgs>
     <info
         displayName="Tbrucei427 uniprot mappings"
-        project="TriTrypDB"
-        organisms="@@Tbrucei427OrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[         
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="Tbrucei427_pdb_dbxref_RSRC" version="@@Tbrucei427_chromosomes_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tbruceibrucei427_chromosomes_RSRC/%RESOURCE_VERSION%/Tbruceibrucei427_pdb.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tbruceibrucei427_pdb.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --idType ''</pluginArgs>
-    <info
-        displayName="Tbrucei427 pdb mappings"
         project="TriTrypDB"
         organisms="@@Tbrucei427OrganismFullName@@"
         category="ignore"
