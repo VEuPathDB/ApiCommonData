@@ -6,7 +6,7 @@
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <info
         displayName="L. braziliensis chromosomes sequence and annotation"
         project="TriTrypDB"
@@ -32,7 +32,7 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3 --output_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff</unpack>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism ""Leishmania braziliensis"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania braziliensis"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <info
         displayName="L. braziliensis chromosomes sequence and annotation"
         project="TriTrypDB"

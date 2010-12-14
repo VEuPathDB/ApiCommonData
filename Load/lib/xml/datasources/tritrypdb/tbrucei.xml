@@ -132,7 +132,7 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/gff"/>
     <unpack>mkdir @@dataDir@@/Tbruceigambiense_chromosomes_fixed</unpack>
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff  @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3</unpack>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <info
         displayName="T.brucei gambiense chromosomes sequence and annotation"
         project="TriTrypDB"
