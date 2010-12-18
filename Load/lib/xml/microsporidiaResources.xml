@@ -270,6 +270,46 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
          ]]>
         </description>
     </resource>
+
+   <resource resource="Obayeri_contigs_RSRC" version="2009-12-14"
+        displayName="O.bayeri genome"
+        category="ignore"
+        organisms="Octosporea bayeri genome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="Obayeri_contigs_RSRC"
+        extDbRlsVer="2009-12-14"
+        extDbRlsDescrip="O. bayeri Genome from Genbank|2009-12-14"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Octosporea_bayeri/wgs.ACSZ.1.fsa_nt"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Octosporea bayeri OER-3-3" --sequenceFile @downloadDir@/Obayeri_contigs_RSRC/wgs.ACSZ.1.fsa_nt --soTermName "contig" --regexSourceId '>.+gb\|([^\| Octosporea]+)\| Octosporea' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   WGS assembly for <i>O. bayeri OER-3-3</i> obtained from Patrick Keeling, downloaded from Genbank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/ACSZ00000000.1"Target="_blank">O.bayeri Genbank Record</a>).
+          ]]>
+        </description>
+    </resource>
+
+
+   <resource resource="Nparisii_contigs_RSRC" version="2010-10-14"
+        displayName="N. parisii  genome"
+        category="ignore"
+        organisms="Nematocida parisii"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="Nparisii_contigs_RSRC"
+        extDbRlsVer="2010-10-14"
+        extDbRlsDescrip="N.parisii Genome from Genbank|2010-10-14"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Nematocida_parisii/wgs.AEFF.1.fsa_nt"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Nematocida parisii" --sequenceFile @downloadDir@/Nparisii_contigs_RSRC/wgs.AEFF.1.fsa_nt --soTermName "contig" --regexSourceId '>.+gb\|([^\| Nematocida]+)\| Nematocida' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   WGS sequence for <i>Nematocida parisii ERTm1</i> obtained from Christina Cuomo at the Broad Institute,downloaded from Genbank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/AEFF00000000"Target="_blank">N.parisii Genbank Record</a>).
+          ]]>
+        </description>
+    </resource>
+
    <resource resource="IEDB_Epitopes" version="2009-12-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
