@@ -2990,6 +2990,11 @@ from
            'ToxoDB' as project_id
     from dual
     UNION
+    select ''T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
     select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
@@ -3249,6 +3254,27 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
        'rma,pct' as visible_parts,
         'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
     from dual
+
+UNION
+select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+       'Reid::TgME49RnaSeq' as module,
+       'Toxoplasma gondii ME49' as species,
+       '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
+       'log2 X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+from dual
+
+
+
+
+
+
 
     UNION
 
