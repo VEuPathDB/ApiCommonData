@@ -290,7 +290,6 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
         </description>
     </resource>
 
-
    <resource resource="Nparisii_contigs_RSRC" version="2010-10-14"
         displayName="N. parisii  genome"
         category="ignore"
@@ -302,11 +301,28 @@ Protein sequences from PDB used for mapping protein sequences to crystal structu
         dbCommit="@dbcommit@">
        <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Nematocida_parisii/wgs.AEFF.1.fsa_nt"
         />
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Nematocida parisii" --sequenceFile @downloadDir@/Nparisii_contigs_RSRC/wgs.AEFF.1.fsa_nt --soTermName "contig" --regexSourceId '>.+gb\|([^\| Nematocida]+)\| Nematocida' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Nematocida parisii ERTm1" --sequenceFile @downloadDir@/Nparisii_contigs_RSRC/wgs.AEFF.1.fsa_nt --soTermName "contig" --regexSourceId '>.+gb\|([^\| Nematocida]+)\| Nematocida' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
             <![CDATA[
    WGS sequence for <i>Nematocida parisii ERTm1</i> obtained from Christina Cuomo at the Broad Institute,downloaded from Genbank (<a href="http://www.ncbi.nlm.nih.gov/nuccore/AEFF00000000"Target="_blank">N.parisii Genbank Record</a>).
           ]]>
+        </description>
+    </resource>
+
+<resource resource="Nparisii_scaffolds_RSRC" version="2010-10-14"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="N. parisii contig to scaffold map"
+         category="Genome"
+         extDbName="Nparisii_scaffolds_RSRC"
+         extDbRlsVer="2010-10-14"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/Genomes/Nematocida_parisiiAGP/Nema_parisii_V2.agp"
+         />
+         <pluginArgs>--agpFile @downloadDir@/Nparisii_scaffolds_RSRC/Nema_parisii_V2.agp --seqPieceExtDbName "Nparisii_contigs_RSRC" --seqPieceExtDbRlsVer "2010-10-14" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "881290" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <description>
+            <![CDATA[
+         Contig to scaffold map for <i>Nematocida parisii</i>.
+         ]]>
         </description>
     </resource>
 
