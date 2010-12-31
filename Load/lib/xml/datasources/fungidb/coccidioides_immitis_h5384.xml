@@ -1,0 +1,174 @@
+<!-- Coccidioides immitis (H5384) -->
+<resources>
+
+     <!-- ISF FASTA resource -->
+     <resource 
+            resource="coccidioides_immitis_h5384_genome_sequence_RSRC"
+            version="@@coccidioides_immitis_h5384_VER@@"
+            plugin="GUS::Supported::Plugin::LoadFastaSequences">
+            
+            <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_supercontigs.fasta" />
+
+             <!-- Standardize scaffold IDs by prefixing -->
+<!--
+             <unpack>
+                   fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/coccidioides_immitis_h5384_supercontigs.fasta
+                   --output @@dataDir@@/coccidioides_immitis_h5384_supercontigs.uniquified.fasta
+                   --prefix @@coccidioides_immitis_h5384_ORGANISM_ABBREVIATION@@
+             </unpack>
+-->
+
+            <pluginArgs>
+                   --externalDatabaseName %RESOURCE_NAME%
+                   --ncbiTaxId @@coccidioides_immitis_h5384_NCBI_TAXONOMY_ID@@
+                   --externalDatabaseVersion %RESOURCE_VERSION% 
+                   --sequenceFile @@dataDir@@/coccidioides_immitis_h5384_supercontigs.uniquified.fasta 
+                   --SOTermName 'chromosome'  
+                   --regexSourceId  '>(\S+)' 
+                   --tableName "DoTS::ExternalNASequence" 
+                   --regexChromosome '\d+\.(\d+)' 
+             </pluginArgs>
+
+             <info
+                   displayName="Coccidioides immitis (H5384) genomic sequence"
+                   project="FungiDB"
+                   organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+                   category="Genome"
+                   publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
+                   contact=""
+                   email=""
+                   institution="The Broad Institute">
+          
+                   <description>
+                          <![CDATA[
+                              Coccidioides immitis (H5384) genomic sequence. Source: The Broad Institute
+                          ]]>
+                   </description>
+          </info>
+  </resource>
+
+  <!-- ISF genome annotations -->
+  <resource 
+         resource="coccidioides_immitis_h5384_genome_annotations_RSRC"
+         version="@@coccidioides_immitis_h5384_GENOME_SEQUENCE_VER@@"
+         parentResource="coccidioides_immitis_h5384_genome_sequence_RSRC"
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+         <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_transcripts.gff3"/> 
+
+          <!-- Standardize scaffold IDs by prefixing -->
+<!--
+          <unpack>
+                fungidb_uniquify_and_standardize_seqids.pl
+                --input  @@dataDir@@/coccidioides_immitis_h5384_transcripts.gff3
+                --output @@dataDir@@/coccidioides_immitis_h5384_transcripts.uniquified.gff3
+                --prefix @@coccidioides_immitis_h5384_ORGANISM_ABBREVIATION@@
+          </unpack>
+
+         <unpack>
+             preprocessGFF3 
+                --input_gff @@dataDir@@/coccidioides_immitis_h5384_transcripts.uniquified.gff3
+                --output_gff @@dataDir@@/coccidioides_immitis_h5384.transformed.gff3
+         </unpack>
+-->
+
+         <pluginArgs>
+                --extDbName %PARENT_RESOURCE_NAME%
+                --extDbRlsVer %PARENT_RESOURCE_VERSION%
+                --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/coccidioides_immitis_h5384.transformed.gff
+                --inputFileExtension "gff3"
+                --fileFormat gff3
+                --soCvsVersion @@SO_VER@@
+                --defaultOrganism "Coccidiodes immitis H5384"
+                --seqSoTerm "chromosome"
+                --validationLog @@dataDir@@/validation.log
+                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                --seqIdColumn source_id
+                --naSequenceSubclass ExternalNASequence
+            </pluginArgs>
+
+            <info
+                displayName="Coccidiodes immitis (H5384) genomic annotations"
+                project="FungiDB"
+                organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+                category="Genome"
+                publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
+                contact=""
+                email=""
+                institution="The Broad Institute">
+
+                <description>
+                     <![CDATA[
+                      Coccidiodes immitis (H5384) genomic annotations. Source: The Broad Institute.
+                      ]]>
+                </description>
+            </info>
+  </resource>
+
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="coccidioides_immitis_h5384_primary_gene_aliases_RSRC" 
+            version="@@coccidioides_immitis_h5384_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+  <!-- dbEST -->
+  <resource resource="coccidioides_immitis_h5384_dbEST_RSRC" version="@@coccidioides_immitis_h5384_dbEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@coccidioides_immitis_h5384_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
+    <info
+        displayName="Coccidiodes immitis (H5384) dbEST ESTs"
+        project="FungiDB"
+        organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Coccidiodes immitis H5384 ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+</resources>

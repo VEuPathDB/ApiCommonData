@@ -3,27 +3,27 @@
 
      <!-- ISF FASTA resource -->
      <resource 
-            resource="coccidiodes_immitis_rs_genome_sequence_RSRC"
-            version="@@coccidiodes_immitis_rs_VER@@"
+            resource="coccidioides_immitis_rs_genome_sequence_RSRC"
+            version="@@coccidioides_immitis_rs_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
             
-            <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/coccidiodes_immitis_rs_supercontigs.fasta" />
+            <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_supercontigs.fasta" />
 
              <!-- Standardize scaffold IDs by prefixing -->
 <!--
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/coccidiodes_immitis_rs_supercontigs.fasta
-                   --output @@dataDir@@/coccidiodes_immitis_rs_supercontigs.uniquified.fasta
-                   --prefix @@coccidiodes_immitis_rs_ORGANISM_ABBREVIATION@@
+                   --input  @@dataDir@@/coccidioides_immitis_rs_supercontigs.fasta
+                   --output @@dataDir@@/coccidioides_immitis_rs_supercontigs.uniquified.fasta
+                   --prefix @@coccidioides_immitis_rs_ORGANISM_ABBREVIATION@@
              </unpack>
 -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
-                   --ncbiTaxId @@coccidiodes_immitis_rs_NCBI_TAXONOMY_ID@@
+                   --ncbiTaxId @@coccidioides_immitis_rs_NCBI_TAXONOMY_ID@@
                    --externalDatabaseVersion %RESOURCE_VERSION% 
-                   --sequenceFile @@dataDir@@/coccidiodes_immitis_rs_supercontigs.uniquified.fasta 
+                   --sequenceFile @@dataDir@@/coccidioides_immitis_rs_supercontigs.uniquified.fasta 
                    --SOTermName 'chromosome'  
                    --regexSourceId  '>(\S+)' 
                    --tableName "DoTS::ExternalNASequence" 
@@ -33,7 +33,7 @@
              <info
                    displayName="Coccidiodes immitis (RS) genomic sequence"
                    project="FungiDB"
-                   organisms="@@coccidiodes_immitis_rs_ORGANISM_FULL_NAME@@"
+                   organisms="@@coccidioides_immitis_rs_ORGANISM_FULL_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
                    contact=""
@@ -50,26 +50,26 @@
 
   <!-- ISF genome annotations -->
   <resource 
-         resource="coccidiodes_immitis_rs_genome_annotations_RSRC"
-         version="@@coccidiodes_immitis_rs_GENOME_SEQUENCE_VER@@"
-         parentResource="coccidiodes_immitis_rs_genome_sequence_RSRC"
+         resource="coccidioides_immitis_rs_genome_annotations_RSRC"
+         version="@@coccidioides_immitis_rs_GENOME_SEQUENCE_VER@@"
+         parentResource="coccidioides_immitis_rs_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/coccidiodes_immitis_rs_transcripts.gff3"/> 
+         <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_transcripts.gff3"/> 
 
           <!-- Standardize scaffold IDs by prefixing -->
 <!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
-                --input  @@dataDir@@/coccidiodes_immitis_rs_transcripts.gff3
-                --output @@dataDir@@/coccidiodes_immitis_rs_transcripts.uniquified.gff3
-                --prefix @@coccidiodes_immitis_rs_ORGANISM_ABBREVIATION@@
+                --input  @@dataDir@@/coccidioides_immitis_rs_transcripts.gff3
+                --output @@dataDir@@/coccidioides_immitis_rs_transcripts.uniquified.gff3
+                --prefix @@coccidioides_immitis_rs_ORGANISM_ABBREVIATION@@
           </unpack>
 
          <unpack>
              preprocessGFF3 
-                --input_gff @@dataDir@@/coccidiodes_immitis_rs_transcripts.uniquified.gff3
-                --output_gff @@dataDir@@/coccidiodes_immitis_rs.transformed.gff3
+                --input_gff @@dataDir@@/coccidioides_immitis_rs_transcripts.uniquified.gff3
+                --output_gff @@dataDir@@/coccidioides_immitis_rs.transformed.gff3
          </unpack>
 -->
 
@@ -77,7 +77,7 @@
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/coccidiodes_immitis_rs.transformed.gff
+                --inputFileOrDir @@dataDir@@/coccidioides_immitis_rs.transformed.gff
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
@@ -92,7 +92,7 @@
             <info
                 displayName="Coccidiodes immitis (RS) genomic annotations"
                 project="FungiDB"
-                organisms="@@coccidiodes_immitis_rs_ORGANISM_FULL_NAME@@"
+                organisms="@@coccidioides_immitis_rs_ORGANISM_FULL_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
                 contact=""
@@ -112,16 +112,16 @@
            ALIASES
        ////////////////////// -->
 
-  <resource resource="coccidiodes_immitis_rs_primary_gene_aliases_RSRC" 
-            version="@@coccidiodes_immitis_rs_VER@@"
+  <resource resource="coccidioides_immitis_rs_primary_gene_aliases_RSRC" 
+            version="@@coccidioides_immitis_rs_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
-    <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@coccidiodes_immitis_rs_ORGANISM_FULL_NAME@@"
+        organisms="@@coccidioides_immitis_rs_ORGANISM_FULL_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -138,10 +138,10 @@
 
 
   <!-- dbEST -->
-  <resource resource="coccidiodes_immitis_rs_dbEST_RSRC" version="@@coccidiodes_immitis_rs_dbEST_VER@@"
+  <resource resource="coccidioides_immitis_rs_dbEST_RSRC" version="@@coccidioides_immitis_rs_dbEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@coccidiodes_immitis_rs_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@coccidioides_immitis_rs_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -155,7 +155,7 @@
     <info
         displayName="Coccidiodes immitis (RS) dbEST ESTs"
         project="FungiDB"
-        organisms="@@coccidiodes_immitis_rs_ORGANISM_FULL_NAME@@"
+        organisms="@@coccidioides_immitis_rs_ORGANISM_FULL_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
