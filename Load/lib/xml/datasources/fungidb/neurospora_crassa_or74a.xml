@@ -11,12 +11,14 @@
              <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
 
              <!-- Standardize scaffold IDs by prefixing -->
+<!--
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/neurospora_crassa_or74a_supercontigs.fasta
                    --output @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
                    --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
              </unpack>
+-->
 
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
@@ -56,11 +58,14 @@
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
 
           <!-- Standardize scaffold IDs by prefixing -->
+
+<!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/neurospora_crassa_or74a_transcripts.gff3
                 --output @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
                 --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
+                --mapping_file primary_gene_aliases.tab
           </unpack>
 
           <unpack>
@@ -68,6 +73,7 @@
                  --input_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
                  --output_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.transformed.gff3
           </unpack>
+-->
 
           <pluginArgs>
                  --extDbName %PARENT_RESOURCE_NAME%
@@ -101,6 +107,37 @@
                 </description>
            </info>
     </resource>
+
+
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="neurospora_crassa_or74a_primary_gene_aliases_RSRC" 
+            version="@@neurospora_crassa_or74a_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 
   <!-- dbEST -->

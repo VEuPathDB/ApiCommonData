@@ -10,12 +10,14 @@
             <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/coccidiodes_immitis_rs_supercontigs.fasta" />
 
              <!-- Standardize scaffold IDs by prefixing -->
+<!--
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/coccidiodes_immitis_rs_supercontigs.fasta
                    --output @@dataDir@@/coccidiodes_immitis_rs_supercontigs.uniquified.fasta
                    --prefix @@coccidiodes_immitis_rs_ORGANISM_ABBREVIATION@@
              </unpack>
+-->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -56,6 +58,7 @@
          <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/coccidiodes_immitis_rs_transcripts.gff3"/> 
 
           <!-- Standardize scaffold IDs by prefixing -->
+<!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/coccidiodes_immitis_rs_transcripts.gff3
@@ -68,6 +71,7 @@
                 --input_gff @@dataDir@@/coccidiodes_immitis_rs_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/coccidiodes_immitis_rs.transformed.gff3
          </unpack>
+-->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
@@ -102,6 +106,35 @@
                 </description>
             </info>
   </resource>
+
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="coccidiodes_immitis_rs_primary_gene_aliases_RSRC" 
+            version="@@coccidiodes_immitis_rs_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/coccidiodes_immitis_rs/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@coccidiodes_immitis_rs_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 
   <!-- dbEST -->

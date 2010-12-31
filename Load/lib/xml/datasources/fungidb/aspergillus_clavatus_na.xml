@@ -1,31 +1,31 @@
-<!-- Aspergillus nidulans (A4) Resources -->
+<!-- Aspergillus clavatus (unknown strain) Resources -->
 <resources>
 
      <!-- ISF FASTA resource -->
      <resource 
-            resource="aspergillus_nidulans_a4_genome_sequence_RSRC"
-            version="@@aspergillus_nidulans_a4_VER@@"
+            resource="aspergillus_clavatus_na_genome_sequence_RSRC"
+            version="@@aspergillus_clavatus_na_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
             
             <manualGet 
-              fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.fasta"/>
+              fileOrDir="FungiDB/aspergillus_clavatus_na/genome/%RESOURCE_VERSION%/aspergillus_clavatus_na_supercontigs.fasta"/>
 
              <!-- Standardize scaffold IDs by prefixing -->
 
 <!--
              <unpack>
                   fungidb_uniquify_and_standardize_seqids.pl
-                      --input  @@dataDir@@/aspergillus_nidulans_a4_supercontigs.fasta
-                      --output @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
-                      --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+                      --input  @@dataDir@@/aspergillus_clavatus_na_supercontigs.fasta
+                      --output @@dataDir@@/aspergillus_clavatus_na_supercontigs_uniquified.fasta
+                      --prefix @@aspergillus_clavatus_na_ORGANISM_ABBREVIATION@@
              </unpack>
 -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
-                   --ncbiTaxId @@aspergillus_nidulans_a4_NCBI_TAXONOMY_ID@@
+                   --ncbiTaxId @@aspergillus_clavatus_na_NCBI_TAXONOMY_ID@@
                    --externalDatabaseVersion %RESOURCE_VERSION%
-                   --sequenceFile @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
+                   --sequenceFile @@dataDir@@/aspergillus_clavatus_na_supercontigs_uniquified.fasta
                    --SOTermName 'supercontig'  
                    --regexSourceId  '>(\S+)' 
                    --tableName "DoTS::ExternalNASequence" 
@@ -33,9 +33,9 @@
              </pluginArgs>
 
              <info
-                   displayName="Aspergillus nidulans (strain A4) genomic sequence"
+                   displayName="Aspergillus clavatus (unknown strain) genomic sequence"
                    project="FungiDB"
-                   organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+                   organisms="@@aspergillus_clavatus_na_ORGANISM_FULL_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                    contact=""
@@ -52,26 +52,26 @@
 
   <!-- ISF genome annotations -->
   <resource 
-         resource="aspergillus_nidulans_a4_genome_annotations_RSRC"
-         version="@@aspergillus_nidulans_a4_GENOME_SEQUENCE_VER@@" 
-         parentResource="aspergillus_nidulans_a4_genome_sequence_RSRC"
+         resource="aspergillus_clavatus_na_genome_annotations_RSRC"
+         version="@@aspergillus_clavatus_na_GENOME_SEQUENCE_VER@@" 
+         parentResource="aspergillus_clavatus_na_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_transcripts.gff3" />
+         <manualGet fileOrDir="FungiDB/aspergillus_clavatus_na/genome/%RESOURCE_VERSION%/aspergillus_clavatus_na_transcripts.gff3" />
 
         <!-- Standardize scaffold IDs by prefixing -->
 <!--
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/aspergillus_nidulans_a4_transcripts.gff3
-                   --output @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
-                   --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+                   --input  @@dataDir@@/aspergillus_clavatus_na_transcripts.gff3
+                   --output @@dataDir@@/aspergillus_clavatus_na.uniquified.gff3
+                   --prefix @@aspergillus_clavatus_na_ORGANISM_ABBREVIATION@@
         </unpack>
 
          <unpack>
                preprocessGFF3 
-                   --input_gff  @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
-                   --output_gff @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
+                   --input_gff  @@dataDir@@/aspergillus_clavatus_na.uniquified.gff3
+                   --output_gff @@dataDir@@/aspergillus_clavatus_na.transformed.gff3
          </unpack>
 -->
 
@@ -79,11 +79,11 @@
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
+                --inputFileOrDir @@dataDir@@/aspergillus_clavatus_na.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus nidulans A4"
+                --defaultOrganism "Aspergillus clavatus (unknown strain)"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -92,9 +92,9 @@
             </pluginArgs>
 
             <info
-                displayName="Aspergillus nidulans A4 genomic annotations"
+                displayName="Aspergillus clavatus genomic annotations"
                 project="FungiDB"
-                organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+                organisms="@@aspergillus_clavatus_na_ORGANISM_FULL_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                 contact=""
@@ -103,7 +103,7 @@
 
                 <description>
                      <![CDATA[
-                      Aspergillus nidulans (A4) genomic annotations. Source: The Broad Institute.
+                      Aspergillus clavatus genomic annotations. Source: The Broad Institute.
                       ]]>
                 </description>
             </info>
@@ -114,16 +114,16 @@
            ALIASES
        ////////////////////// -->
 
-  <resource resource="aspergillus_nidulans_a4_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_nidulans_a4_VER@@"
+  <resource resource="aspergillus_clavatus_na_primary_gene_aliases_RSRC" 
+            version="@@aspergillus_clavatus_na_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
-    <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <manualGet fileOrDir="FungiDB/aspergillus_clavatus_na/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_clavatus_na_ORGANISM_FULL_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -139,10 +139,10 @@
 
  
   <!-- dbEST -->
-  <resource resource="aspergillus_nidulans_a4_dbEST_RSRC" version="@@aspergillus_nidulans_a4_DBEST_VER@@"
+  <resource resource="aspergillus_clavatus_na_dbEST_RSRC" version="@@aspergillus_clavatus_na_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_nidulans_a4_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_clavatus_na_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -154,9 +154,9 @@
     </pluginArgs>
 
     <info
-        displayName="Aspergillus nidulans (A4) dbEST ESTs"
+        displayName="Aspergillus clavatus dbEST ESTs"
         project="FungiDB"
-        organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_clavatus_na_ORGANISM_FULL_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

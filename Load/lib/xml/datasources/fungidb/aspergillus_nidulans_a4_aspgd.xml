@@ -17,12 +17,14 @@
         <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
 
         <!-- Standardize scaffold IDs by prefixing -->
+<!--
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_nidulans_a4.gff3
                    --output @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
                    --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
         </unpack>
+-->
 
         <!-- Split FASTA from GFF -->
         <unpack>
@@ -73,6 +75,7 @@
          <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4.unpacked.gff3" />
 
          <!-- Standardize scaffold IDs by prefixing -->
+<!--
          <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/aspergillus_nidulans_a4_transcripts.gff3
@@ -87,6 +90,7 @@
                    --input_gff  @@dataDir@@/aspergillus_nidulans_a4.unpacked.gff3
                    --output_gff @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
          </unpack>
+-->
 
          <pluginArgs>
                 --extDbName      %PARENT_RESOURCE_NAME%
@@ -120,6 +124,33 @@
             </description>
           </info>
      </resource>
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="aspergillus_nidulans_a4_aspdb_primary_gene_aliases_RSRC" 
+            version="@@aspergillus_nidulans_a4_aspdb_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4_aspdb/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@aspergillus_nidulans_a4_aspdb_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 
   <!-- GO annotations resource -->

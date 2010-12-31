@@ -102,6 +102,36 @@
            </info>
     </resource>
 
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="phanerochaete_chrysosporium_rp-78_primary_gene_aliases_RSRC" 
+            version="@@phanerochaete_chrysosporium_rp-78_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@phanerochaete_chrysosporim_rp-78_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
   <!-- dbEST -->
   <resource resource="phanerochaete_chrysosporium_rp-78_dbest_RSRC" version="@@phanerochaete_chrysosporium_rp-78_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">

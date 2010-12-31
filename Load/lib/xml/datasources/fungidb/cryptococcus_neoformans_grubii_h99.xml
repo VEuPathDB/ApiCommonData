@@ -10,12 +10,14 @@
             <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
 
              <!-- Standardize scaffold IDs by prefixing -->
+<!--
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta
                    --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta
                    --prefix @@cryptococcus_neoformans_grubii_h99_ORGANISM_ABBREVIATION@@
              </unpack>
+-->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -57,6 +59,7 @@
 
 
           <!-- Standardize scaffold IDs by prefixing -->
+<!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
@@ -69,6 +72,8 @@
                 --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff3
          </unpack>
+-->
+
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
@@ -102,6 +107,63 @@
                       ]]>
                 </description>
             </info>
+  </resource>
+
+
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="cryptococcus_neoformans_grubii_h99_primary_gene_aliases_RSRC" 
+            version="@@cryptococcus_neoformans_grubii_h99_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="cryptococcus_neoformans_grubii_h99_genedb_ids_RSRC"
+            version="@@cryptococcus_neoformans_grubii_h99_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+
+<!--
+    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+-->
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+
+        ]]>
+      </description>
+    </info>
   </resource>
 
 
