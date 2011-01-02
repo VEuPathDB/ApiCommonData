@@ -7,19 +7,22 @@
             version="@@aspergillus_flavus_na_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
             
+
+            <!-- Transforming upstream of ISF/workflow... -->
             <manualGet 
-              fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_supercontigs.fasta"/>
+              fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_supercontigs.uniquified.fasta"/>
 
-             <!-- Standardize scaffold IDs by prefixing -->
-
-<!--
+            <!-- or within the workflow iteself... -->
+            <!--
+            <manualGet 
+              fileOrDir="FungiDB/aspergillus_clavatus_na/genome/%RESOURCE_VERSION%/aspergillus_clavatus_na_supercontigs.fasta"/>
              <unpack>
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_flavus_na_supercontigs.fasta
                       --output @@dataDir@@/aspergillus_flavus_na_supercontigs_uniquified.fasta
                       --prefix @@aspergillus_flavus_na_ORGANISM_ABBREVIATION@@
              </unpack>
--->
+             -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -44,7 +47,7 @@
           
                    <description>
                           <![CDATA[
-                              Aspergillus nidulans (A4) genomic sequence. Source: The Broad Institute
+                              Aspergillus flavus (unknown strain) genomic sequence. Source: The Broad Institute
                           ]]>
                    </description>
           </info>
@@ -57,33 +60,36 @@
          parentResource="aspergillus_flavus_na_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_transcripts.gff3" />
+         <!-- Transforming upstream of ISF/workflow... -->
+         <manualGet fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_transcripts.transformed.gff3" />
 
-        <!-- Standardize scaffold IDs by prefixing -->
-<!--
-        <unpack>
+         <!-- or within the workflow iteself... -->
+         <!--
+
+         <manualGet fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_transcripts.gff3" />
+         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_flavus_na_transcripts.gff3
-                   --output @@dataDir@@/aspergillus_flavus_na.uniquified.gff3
+                   --output @@dataDir@@/aspergillus_flavus_na_transcripts.uniquified.gff3
                    --prefix @@aspergillus_flavus_na_ORGANISM_ABBREVIATION@@
-        </unpack>
+         </unpack>
 
          <unpack>
                preprocessGFF3 
-                   --input_gff  @@dataDir@@/aspergillus_flavus_na.uniquified.gff3
-                   --output_gff @@dataDir@@/aspergillus_flavus_na.transformed.gff3
+                   --input_gff  @@dataDir@@/aspergillus_flavus_na_transcripts.uniquified.gff3
+                   --output_gff @@dataDir@@/aspergillus_flavus_na_transcripts.transformed.gff3
          </unpack>
--->
+         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_flavus_na.transformed.gff3
+                --inputFileOrDir @@dataDir@@/aspergillus_flavus_na_transcripts.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus flavus (unknown strain)"
+                --defaultOrganism "Aspergillus flavus"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -164,7 +170,7 @@
         institution="">
       <description>
         <![CDATA[
-         Aspergillus nidulans ESTs from dbEST.
+         Aspergillus flavus ESTs from dbEST.
         ]]>
       </description>
     </info>

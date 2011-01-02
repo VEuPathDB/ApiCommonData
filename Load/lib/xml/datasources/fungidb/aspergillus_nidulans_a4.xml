@@ -6,20 +6,24 @@
             resource="aspergillus_nidulans_a4_genome_sequence_RSRC"
             version="@@aspergillus_nidulans_a4_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
+
+            <!-- Transforming upstream of ISF/workflow... -->                        
             <manualGet 
-              fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.fasta"/>
+              fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.uniquified.fasta"/>
 
              <!-- Standardize scaffold IDs by prefixing -->
 
-<!--
+            <!-- or within the workflow iteself... -->
+            <!--
+            <manualGet 
+              fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.fasta"/>
              <unpack>
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_nidulans_a4_supercontigs.fasta
                       --output @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
                       --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
              </unpack>
--->
+            -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -33,7 +37,7 @@
              </pluginArgs>
 
              <info
-                   displayName="Aspergillus nidulans (strain A4) genomic sequence"
+                   displayName="Aspergillus nidulans (A4) genomic sequence"
                    project="FungiDB"
                    organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
                    category="Genome"
@@ -57,10 +61,12 @@
          parentResource="aspergillus_nidulans_a4_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_transcripts.gff3" />
+         <!-- Transforming upstream of ISF/workflow... -->            
+        <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_transcripts.transformed.gff3" />
 
-        <!-- Standardize scaffold IDs by prefixing -->
-<!--
+        <!-- or within the workflow iteself... -->
+        <!--
+        <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_nidulans_a4_transcripts.gff3
@@ -83,7 +89,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus nidulans A4"
+                --defaultOrganism "Aspergillus nidulans FSGC A4"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out

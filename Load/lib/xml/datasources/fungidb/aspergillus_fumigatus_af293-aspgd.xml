@@ -7,19 +7,27 @@
         version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
+
         <!-- Transforming upstream of ISF/workflow... -->
         <manualGet 
-              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_supercontigs.uniquified.gff3"/>
+              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.gff3"/>
 
-        <!-- or within the workflow iteself... -->
-        <!--
+        <!-- Unnecessary 
+        <unpack>
+              mkdir @@dataDir@@/fasta
+        </unpack>
+        -->
+        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
+
+        <!-- Standardize scaffold IDs by prefixing -->
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
                    --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
                    --prefix @@aspergillus_fumigatus_af392_ORGANISM_ABBREVIATION@@
         </unpack>
-       
+
+        <!-- Split FASTA from GFF -->
         <unpack>
              makeCustomFastaAndGffFromGff3
                   --input_dir @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
@@ -27,8 +35,8 @@
                   --output_fasta @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
                   --output_gff   @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
         </unpack>
-        -->
 
+        <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
              --ncbiTaxId @@asperpgillus_fumigatus_af293_NCBI_TAXONOMY_ID@@
@@ -65,21 +73,25 @@
          parentResource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-        <!-- Transforming upstream of ISF/workflow... -->
-        <manualGet 
-              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_transcripts.transformed.gff3"/>
-
-        <!-- or within the workflow iteself... -->
-        <!--
         <manualGet 
               fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.gff3"/>
+
+        <!-- Unnecessary 
+        <unpack>
+              mkdir @@dataDir@@/fasta
+        </unpack>
+        -->
+        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
+
+        <!-- Standardize scaffold IDs by prefixing -->
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
                    --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
                    --prefix @@aspergillus_fumigatus_af392_ORGANISM_ABBREVIATION@@
         </unpack>
-       
+
+        <!-- Split FASTA from GFF -->
         <unpack>
              makeCustomFastaAndGffFromGff3
                   --input_dir @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
@@ -87,23 +99,24 @@
                   --output_fasta @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
                   --output_gff   @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
         </unpack>
-       
+
+
+         <!-- Run the standard ISF preprocess step -->
          <unpack>
                preprocessGFF3 
                    --input_gff  @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
                    --output_gff @@dataDir@@/aspergillus_fumigatus_af293.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName      %PARENT_RESOURCE_NAME%
                 --extDbRlsVer    %PARENT_RESOURCE_VERSION%
-                --mapFile        @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_fumigatus_af293_transcripts.transformed.gff3
+                --mapFile        @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/aspergillus_fumigatus_af293.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat     gff3
                 --soCvsVersion   @@SO_VER@@
-                --defaultOrganism "Aspergillus fumigatus Af293"
+                --defaultOrganism "Saccharomyces cerevisiae S288C"
                 --seqSoTerm "chromosome"
                 --validationLog     @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out

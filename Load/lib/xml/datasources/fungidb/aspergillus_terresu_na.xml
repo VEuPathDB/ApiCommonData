@@ -3,39 +3,41 @@
 
      <!-- ISF FASTA resource -->
      <resource 
-            resource="aspergillus_terresu_na_genome_sequence_RSRC"
-            version="@@aspergillus_terresu_na_VER@@"
+            resource="aspergillus_terreus_na_genome_sequence_RSRC"
+            version="@@aspergillus_terreus_na_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
+          
+            <!-- Transforming upstream of ISF/workflow... -->   
             <manualGet 
-              fileOrDir="FungiDB/aspergillus_terresu_na/genome/%RESOURCE_VERSION%/aspergillus_terresu_na_supercontigs.fasta"/>
+              fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/aspergillus_terreus_na_supercontigs.uniquified.fasta"/>
 
-             <!-- Standardize scaffold IDs by prefixing -->
-
-<!--
+            <!-- or within the workflow iteself... -->
+            <!--
+            <manualGet 
+              fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/aspergillus_terreus_na_supercontigs.fasta"/>
              <unpack>
                   fungidb_uniquify_and_standardize_seqids.pl
-                      --input  @@dataDir@@/aspergillus_terresu_na_supercontigs.fasta
-                      --output @@dataDir@@/aspergillus_terresu_na_supercontigs_uniquified.fasta
-                      --prefix @@aspergillus_terresu_na_ORGANISM_ABBREVIATION@@
+                      --input  @@dataDir@@/aspergillus_terreus_na_supercontigs.fasta
+                      --output @@dataDir@@/aspergillus_terreus_na_supercontigs_uniquified.fasta
+                      --prefix @@aspergillus_terreus_na_ORGANISM_ABBREVIATION@@
              </unpack>
--->
+             -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
-                   --ncbiTaxId @@aspergillus_terresu_na_NCBI_TAXONOMY_ID@@
+                   --ncbiTaxId @@aspergillus_terreus_na_NCBI_TAXONOMY_ID@@
                    --externalDatabaseVersion %RESOURCE_VERSION%
-                   --sequenceFile @@dataDir@@/aspergillus_terresu_na_supercontigs_uniquified.fasta
-                   --SOTermName 'supercontig'  
+                   --sequenceFile @@dataDir@@/aspergillus_terreus_na_supercontigs_uniquified.fasta
+                   --SOTermName 'chromosome'  
                    --regexSourceId  '>(\S+)' 
                    --tableName "DoTS::ExternalNASequence" 
                    --regexChromosome '\d+\.(\d+)' 
              </pluginArgs>
 
              <info
-                   displayName="Aspergillus terresu (unknown strain) genomic sequence"
+                   displayName="Aspergillus terreus (unknown strain) genomic sequence"
                    project="FungiDB"
-                   organisms="@@aspergillus_terresu_na_ORGANISM_FULL_NAME@@"
+                   organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                    contact=""
@@ -44,7 +46,7 @@
           
                    <description>
                           <![CDATA[
-                              Aspergillus nidulans (A4) genomic sequence. Source: The Broad Institute
+                              Aspergillus terreus (unknown strain) genomic sequence. Source: The Broad Institute
                           ]]>
                    </description>
           </info>
@@ -52,39 +54,41 @@
 
   <!-- ISF genome annotations -->
   <resource 
-         resource="aspergillus_terresu_na_genome_annotations_RSRC"
-         version="@@aspergillus_terresu_na_GENOME_SEQUENCE_VER@@" 
-         parentResource="aspergillus_terresu_na_genome_sequence_RSRC"
+         resource="aspergillus_terreus_na_genome_annotations_RSRC"
+         version="@@aspergillus_terreus_na_GENOME_SEQUENCE_VER@@" 
+         parentResource="aspergillus_terreus_na_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/aspergillus_terresu_na/genome/%RESOURCE_VERSION%/aspergillus_terresu_na_transcripts.gff3" />
+         <!-- Transforming upstream of ISF/workflow... -->   
+         <manualGet fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/aspergillus_terreus_na_transcripts.transformed.gff3" />
 
-        <!-- Standardize scaffold IDs by prefixing -->
-<!--
+        <!-- or within the workflow iteself... -->
+        <!--
+         <manualGet fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/aspergillus_terreus_na_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/aspergillus_terresu_na_transcripts.gff3
-                   --output @@dataDir@@/aspergillus_terresu_na.uniquified.gff3
-                   --prefix @@aspergillus_terresu_na_ORGANISM_ABBREVIATION@@
+                   --input  @@dataDir@@/aspergillus_terreus_na_transcripts.gff3
+                   --output @@dataDir@@/aspergillus_terreus_na.uniquified.gff3
+                   --prefix @@aspergillus_terreus_na_ORGANISM_ABBREVIATION@@
         </unpack>
 
          <unpack>
                preprocessGFF3 
-                   --input_gff  @@dataDir@@/aspergillus_terresu_na.uniquified.gff3
-                   --output_gff @@dataDir@@/aspergillus_terresu_na.transformed.gff3
+                   --input_gff  @@dataDir@@/aspergillus_terreus_na.uniquified.gff3
+                   --output_gff @@dataDir@@/aspergillus_terreus_na.transformed.gff3
          </unpack>
--->
+         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_terresu_na.transformed.gff3
+                --inputFileOrDir @@dataDir@@/aspergillus_terreus_na.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus terresu (unknown strain)"
-                --seqSoTerm "supercontig"
+                --defaultOrganism "Aspergillus terreus"
+                --seqSoTerm "chromosome"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
                 --seqIdColumn source_id
@@ -92,9 +96,9 @@
             </pluginArgs>
 
             <info
-                displayName="Aspergillus terresu genomic annotations"
+                displayName="Aspergillus terreus genomic annotations"
                 project="FungiDB"
-                organisms="@@aspergillus_terresu_na_ORGANISM_FULL_NAME@@"
+                organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                 contact=""
@@ -103,7 +107,7 @@
 
                 <description>
                      <![CDATA[
-                      Aspergillus terresu genomic annotations. Source: The Broad Institute.
+                      Aspergillus terreus genomic annotations. Source: The Broad Institute.
                       ]]>
                 </description>
             </info>
@@ -114,16 +118,16 @@
            ALIASES
        ////////////////////// -->
 
-  <resource resource="aspergillus_terresu_na_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_terresu_na_VER@@"
+  <resource resource="aspergillus_terreus_na_primary_gene_aliases_RSRC" 
+            version="@@aspergillus_terreus_na_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
-    <manualGet fileOrDir="FungiDB/aspergillus_terresu_na/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <manualGet fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_terresu_na_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -139,10 +143,10 @@
 
  
   <!-- dbEST -->
-  <resource resource="aspergillus_terresu_na_dbEST_RSRC" version="@@aspergillus_terresu_na_DBEST_VER@@"
+  <resource resource="aspergillus_terreus_na_dbEST_RSRC" version="@@aspergillus_terreus_na_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_terresu_na_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_terreus_na_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -154,9 +158,9 @@
     </pluginArgs>
 
     <info
-        displayName="Aspergillus terresu dbEST ESTs"
+        displayName="Aspergillus terreus dbEST ESTs"
         project="FungiDB"
-        organisms="@@aspergillus_terresu_na_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
@@ -164,7 +168,7 @@
         institution="">
       <description>
         <![CDATA[
-         Aspergillus nidulans ESTs from dbEST.
+         Aspergillus terreus ESTs from dbEST.
         ]]>
       </description>
     </info>

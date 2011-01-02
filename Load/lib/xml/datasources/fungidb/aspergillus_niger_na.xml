@@ -6,13 +6,15 @@
             resource="aspergillus_niger_na_genome_sequence_RSRC"
             version="@@aspergillus_niger_na_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
+
+            <!-- Transforming upstream of ISF/workflow... -->            
+            <manualGet 
+              fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_supercontigs.uniquified.fasta"/>            
+
+            <!-- or within the workflow iteself... -->
+            <!--
             <manualGet 
               fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_supercontigs.fasta"/>
-
-             <!-- Standardize scaffold IDs by prefixing -->
-
-<!--
              <unpack>
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_niger_na_supercontigs.fasta
@@ -57,10 +59,12 @@
          parentResource="aspergillus_niger_na_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_transcripts.gff3" />
+         <!-- Transforming upstream of ISF/workflow... -->            
+         <manualGet fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_transcripts.transformed.gff3" />
 
-        <!-- Standardize scaffold IDs by prefixing -->
-<!--
+        <!-- or within the workflow iteself... -->
+        <!--
+         <manualGet fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_niger_na_transcripts.gff3
@@ -83,7 +87,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus niger (unknown strain)"
+                --defaultOrganism "Aspergillus niger"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
