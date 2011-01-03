@@ -1,0 +1,211 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use XML::Simple;
+use Getopt::Long qw(GetOptions);
+use ApiCommonData::Load::TuningConfig::Log;
+use ApiCommonData::Load::TuningConfig::Utils;
+use ReFlow::DataSource::DataSource;
+use ReFlow::DataSource::DataSources;
+use CBIL::Util::PropertySet;
+
+BEGIN {
+  # This variable is declared inside a BEGIN block, to make it behave
+  # like a Java "static" variable, whose state persists from one invocation to
+  # another.
+  my $errorFlag;
+
+  sub setErrorFlag {
+    $errorFlag = 1;
+  }
+
+  sub getErrorFlag {
+    return $errorFlag;
+  }
+}
+
+my ($propfile, $instance, $password, $logfile, $suffix, $project, $version);
+GetOptions("propfile=s" => \$propfile,
+           "instance=s" => \$instance,
+           "password=s" => \$password,
+           "logfile=s" => \$logfile,
+           "suffix=s" => \$suffix,
+           "project=s" => \$project,
+           "version=s" => \$version,
+	  );
+
+ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
+my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, $password);
+
+
+createTables($dbh, $suffix);
+# loadDataSources($dbh, "/var/www/iodice.plasmodb.org/project_home/ApiCommonData/Load/lib/xml/datasources/globalResources.xml");
+loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix);
+createIndexes($dbh);
+dropConstraints($dbh, $suffix);
+
+die if getErrorFlag();
+
+################################################################################
+
+sub loadDataSources {
+
+    my ($dbh, $infile, $project, $version, $suffix) = @_;
+
+# $self->{globalStepsConfig} = CBIL::Util::PropertySet->new("$homeDir/config/stepsShared.prop",[], 1);
+    my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
+    my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props);
+#    print Dumper($dataSources);
+
+    my $insertDs = $dbh->prepare(<<SQL);
+      insert into apidb.DataSource$suffix
+                  (data_source_id, display_name, version, categories, organisms,
+                   project, description, contact, institution)
+                  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+
+    my $insertDsp = $dbh->prepare(<<SQL);
+      insert into apidb.DataSourcePublication$suffix
+                  (data_source_publication_id, data_source_id, pmid, doi, citation, abstract)
+      select DataSourcePublication_sq$suffix.nextval, ?, ?, ?, ?, ?
+      from dual
+SQL
+
+    foreach my $dsName ($dataSources->getDataSourceNames()) {
+      my $ds = $dataSources->getDataSource($dsName);
+      print "name: \"$dsName\"\nproject: \"" . $ds->getProject() . "\"\n";
+      my $dataSourceId = getNextDataSourceId($dbh, $suffix);
+      $insertDs->execute($dataSourceId, $ds->getDisplayName(),
+                       $ds->getVersion(), $ds->getCategory(), $ds->getOrganisms(),
+                       $ds->getProject(), $ds->getDescription(), $ds->getContact(),
+                       $ds->getInstitution());
+      my %publicationHash;
+      foreach my $publication ($ds->getPublications()) {
+        print "Dumping publication:\n" . Dumper($publication) . "\n -- DUMPED!\n";
+	if ($publication->[0]) {
+#         %publicationHash = $publication->[0];
+# why did the above not work?  The hack below is just for testing
+	  %publicationHash =
+          (
+            pmid => '15608177',
+            citation => 'InterPro, progress and status in 2005.. Nucleic Acids Res. 2005 Jan 1;33(Database issue):D201-5 Mulder et al. http://www.ncbi.nlm.nih.gov/pubmed/15608177'
+          );
+	  print "pmid: \"" . $publicationHash{pmid} . "\"\n";
+	  print "citation: \"" . $publicationHash{citation} . "\"\n";
+	  print "X: \"" . $publicationHash{X} . "\"\n";
+	  print "Dumping publicationHash:\n" . Dumper(%publicationHash) . "\n -- ALSO DUMPED!\n";
+          $insertDsp->execute($dataSourceId, $publicationHash{pmid}, $publicationHash{doi}, $publicationHash{citation}, $publicationHash{abstract});
+	}
+      }
+    }
+}
+
+sub getNextDataSourceId {
+  my ($dbh, $suffix) = @_;
+
+  my $query = $dbh->prepare(<<SQL);
+    select apidb.DataSource_sq$suffix.nextval from dual
+SQL
+
+  $query->execute();
+  my ($id) = $query->fetchrow_array();
+
+  return $id;
+}
+
+sub createTables {
+    my ($dbh, $suffix) = @_;
+
+    $dbh->do(<<SQL) or die "creating DataSource table";
+      create table apidb.DataSource$suffix (
+        data_source_id               number(12),
+        external_database_release_id number(12),
+        display_name                 varchar2(60),
+        version                      varchar2(60),
+        public_url                   varchar2(80),
+        categories                   varchar2(80),
+        organisms                    varchar2(300),
+        project                      varchar2(30),
+        description                  varchar2(2000),
+        contact                      varchar2(80),
+        institution                  varchar2(80),
+        constraint DataSource_pk$suffix primary key (data_source_id),
+        constraint DataSource_extdb_fk$suffix foreign key (external_database_release_id) references sres.ExternalDatabaseRelease
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating DataSourcePublication table";
+      create table apidb.DataSourcePublication$suffix (
+        data_source_publication_id   number(12),
+        data_source_id               number(12),
+        pmid                         varchar2(60),
+        doi                          varchar2(60),
+        citation                     varchar2(300),
+        abstract                     varchar2(2000),
+        constraint DataSourcePub_pk$suffix primary key (data_source_publication_id),
+        constraint DataSourcePub_parent_fk$suffix foreign key (data_source_id) references apidb.DataSource$suffix
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating DataSourceReference table";
+      create table apidb.DataSourceReference$suffix (
+        data_source_reference_id     number(12),
+        data_source_id               number(12),
+        record_type                  varchar2(20),
+        target_type                  varchar2(20),
+        target_name                  varchar2(60),
+        constraint DataSourceRef_pk$suffix primary key (data_source_reference_id),
+        constraint DataSourceRef_parent_fk$suffix foreign key (data_source_id) references apidb.DataSource$suffix
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSource table";
+      create sequence apidb.DataSource_sq$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSourcePublication table";
+      create sequence apidb.DataSourcePublication_sq$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSourceReference table";
+      create sequence apidb.DataSourceReference_sq$suffix
+SQL
+
+}
+
+sub createIndexes {
+
+}
+
+sub dropConstraints {
+    my ($dbh, $suffix) = @_;
+
+    $dbh->do(<<SQL) or die "dropping foreign-key constraint from DataSourcePublication table";
+        alter table apidb.DataSourcePublication$suffix drop constraint DataSourcePub_parent_fk$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "dropping foreign-key constraint from DataSourceReference table";
+        alter table apidb.DataSourceReference$suffix drop constraint DataSourceRef_parent_fk$suffix
+SQL
+}
+
+sub getDbHandle {
+
+  my $username = 'apidb';
+  my $password = 'po34weep';
+  my $instance = 'apitest';
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  return $dbh;
+}
