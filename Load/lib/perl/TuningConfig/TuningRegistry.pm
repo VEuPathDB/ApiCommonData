@@ -23,7 +23,7 @@ sub getInfoFromRegistry {
 
     my $sql = <<SQL;
       select imi.instance_nickname, ti.instance_nickname, tf.subversion_url,
-             tf.notify_emails, tf.is_live, tf.config_file
+             tf.notify_emails, tf.is_live, tf.config_file, imi.project_id, imi.version
       from apidb_r.TuningInstance\@$dblink ti, apidb_r.TuningFamily\@$dblink tf,
            apidb.InstanceMetaInfo imi
       where ti.instance_nickname(+) =  imi.instance_nickname
@@ -40,6 +40,8 @@ SQL
      $self->{notify_emails},
      $self->{is_live},
      $self->{config_file},
+     $self->{project_id},
+     $self->{version},
     )
       = $stmt->fetchrow_array();
 
@@ -87,6 +89,22 @@ sub getConfigFile {
     $self->getInfoFromRegistry() if !defined $self->{config_file};
 
     return($self->{config_file});
+}
+
+sub getProjectId {
+    my ($self) = @_;
+
+    $self->getInfoFromRegistry() if !defined $self->{project_id};
+
+    return($self->{project_id});
+}
+
+sub getVersion {
+    my ($self) = @_;
+
+    $self->getInfoFromRegistry() if !defined $self->{version};
+
+    return($self->{version});
 }
 
 sub setLastUpdater {

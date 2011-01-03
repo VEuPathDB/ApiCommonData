@@ -10,7 +10,7 @@ BEGIN {
   # another.  $log accumulates all the messages posted with addLog().  getlog()
   # returns the value accreted so far.
 
-  my $log;
+  my $logFile;
   my $logPreamble;
   my $updateNeededFlag;
   my $updatePerformedFlag;
@@ -21,6 +21,15 @@ BEGIN {
   my $instance;
   my $outOfSpaceMessage;
 
+  sub setLogfile {
+    my ($fileName) = @_;
+    $logFile = $fileName;
+  }
+
+  sub getLogfile {
+    return $logFile;
+  }
+
   sub addLog {
     my ($message) = @_;
 
@@ -29,7 +38,14 @@ BEGIN {
 
     $| = 1;
     print "$message\n";
-    $log .= "$message\n";
+
+    # if log file name is unset, set it to a default
+    $logFile = "tuningManager." . $$ . "." . time . ".log"
+      if !$logFile;
+
+    open(my $fh, '>>', $logFile) or die "opening logfile \"$logFile\"for appending";
+    print $fh "$message\n";
+    close($fh);
   }
 
   sub addLogPreamble {
@@ -44,7 +60,7 @@ BEGIN {
   }
 
   sub getLog {
-    return $logPreamble . $log;
+    return $logPreamble . `cat $logFile`;
   }
 
   sub increaseIndent {

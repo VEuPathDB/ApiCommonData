@@ -11,14 +11,10 @@ use Data::Dumper;
 my $maxRebuildMinutes;
 
 sub new {
-    my ($class,
-	$name,                    # name of tuning table
-        $internalDependencyNames,
-        $externalDependencyNames,
-        $externalTuningTableDependencyNames,
-	$intermediateTables,
-        $sqls, # reference to array of SQL statements
-        $perls, $unionizations, $dbh, $debug, $dblinkSuffix, $alwaysUpdate, $maxRebuildMinutesParam)
+    my ($class, $name, $internalDependencyNames, $externalDependencyNames,
+        $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
+        $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
+        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password)
 	= @_;
 
     my $self = {};
@@ -30,9 +26,11 @@ sub new {
     $self->{externalDependencyNames} = $externalDependencyNames;
     $self->{externalTuningTableDependencyNames} = $externalTuningTableDependencyNames;
     $self->{intermediateTables} = $intermediateTables;
+    $self->{ancillaryTables} = $ancillaryTables;
     $self->{sqls} = $sqls;
     $self->{perls} = $perls;
     $self->{unionizations} = $unionizations;
+    $self->{programs} = $programs;
     $self->{debug} = $debug;
     $self->{dblinkSuffix} = $dblinkSuffix;
     $self->{internalDependencies} = [];
@@ -40,6 +38,9 @@ sub new {
     $self->{externalTuningTableDependencies} = [];
     $self->{debug} = $debug;
     $self->{alwaysUpdate} = $alwaysUpdate;
+    $self->{instance} = $instance;
+    $self->{propfile} = $propfile;
+    $self->{password} = $password;
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -75,6 +76,12 @@ sub getUnionizations {
   my ($self) = @_;
 
   return $self->{unionizations};
+}
+
+sub getPrograms {
+  my ($self) = @_;
+
+  return $self->{programs};
 }
 
 sub getInternalDependencyNames {
@@ -281,11 +288,45 @@ sub update {
     }
   }
 
+  foreach my $program (@{$self->{programs}}) {
+    last if $updateError;
+
+    my $commandLine = $program->{commandLine}
+                      . " -instance '" . $self->{instance} . "'"
+                      . " -propfile '" . $self->{propfile} . "'"
+                      . " -password '" . $self->{password} . "'"
+                      . " -project '" . $registry->getProjectId() . "'"
+                      . " -version '" . $registry->getVersion() . "'"
+                      . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
+                      . " -suffix '" . $suffix . "'";
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
+
+    my $returnCode = system("$commandLine");
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $returnCode");
+
+    if ($returnCode) {
+      $updateError = 1;
+    }
+  }
+
   return "broken" if $updateError;
 
   $self->dropIntermediateTables($dbh, 'warn on nonexistence');
 
-  $self->publish($suffix, $dbh, $purgeObsoletes) or return "broken";
+  # publish main table
+  $self->publish($self->{name}, $suffix, $dbh, $purgeObsoletes) or return "broken";
+
+  # publish ancillary tables
+  foreach my $ancillary (@{$self->{ancillaryTables}}) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("publishing ancillary table " . $ancillary->{name});
+      $self->publish($ancillary->{name}, $suffix, $dbh, $purgeObsoletes) or return "broken";
+  }
+
+  # store definition
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to store table definition")
+      if $self->storeDefinition($dbh);
 
   my $buildDuration = time - $startTime;
   ApiCommonData::Load::TuningConfig::Log::addLog("    $buildDuration seconds to rebuild tuning table "
@@ -346,6 +387,9 @@ sub getDefString {
 
   my $unionizations = $self->getUnionizations();
   $defString .= join(" ", @{$unionizations}) if $unionizations;
+
+  my $programs = $self->getPrograms();
+  $defString .= join(" ", @{$programs}) if $programs;
 
   $self->{defString} = $defString;
 
@@ -430,11 +474,11 @@ SQL
 }
 
 sub publish {
-  my ($self, $suffix, $dbh, $purgeObsoletes) = @_;
+  my ($self, $tuningTableName, $suffix, $dbh, $purgeObsoletes) = @_;
 
   # grant select privilege on new table
     my $sql = <<SQL;
-      grant select on $self->{name}$suffix to gus_r
+      grant select on $tuningTableName$suffix to gus_r
 SQL
 
     my $stmt = $dbh->prepare($sql);
@@ -442,12 +486,9 @@ SQL
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
 
-  # store definition
-  return if $self->storeDefinition($dbh);
-
   # get name of old table (for subsequenct purging). . .
   my $oldTable;
-  my ($schema, $table) = split(/\./, $self->{name});
+  my ($schema, $table) = split(/\./, $tuningTableName);
   if ($purgeObsoletes) {
     my $sql = <<SQL;
       select table_owner || '.' || table_name
@@ -479,7 +520,7 @@ SQL
 
   # update synonym
   my $sql = <<SQL;
-    create or replace synonym $self->{name} for $self->{name}$suffix
+    create or replace synonym $tuningTableName for $tuningTableName$suffix
 SQL
   my $synonymRtn = $dbh->do($sql);
 
