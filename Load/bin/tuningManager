@@ -13,6 +13,7 @@ use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::TableSuffix;
+use ApiCommonData::Load::TuningConfig::Utils;
 
 my $configDir;
 my $props;
@@ -28,7 +29,7 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -43,7 +44,10 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
            "maxWait=s" => \$maxWait,
+           "logfile=s" => \$logfile,
 	  );
+
+ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
 
 ApiCommonData::Load::TuningConfig::Log::setDebugFlag()
   if $debug;
@@ -78,7 +82,7 @@ eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = getDbHandle($instance, $props, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
@@ -95,14 +99,12 @@ eval {
 
     $tuningTables{$tuningTable->{name}}
       = ApiCommonData::Load::TuningConfig::InternalTable->
-	new($tuningTable->{name},
-	    $tuningTable->{internalDependency},
-	    $tuningTable->{externalDependency},
-	    $tuningTable->{externalTuningTableDependency},
-	    $tuningTable->{intermediateTable},
-	    $tuningTable->{sql},
-	    $tuningTable->{perl},
-	    $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate}, $maxRebuildMinutes);
+	new($tuningTable->{name}, $tuningTable->{internalDependency}, $tuningTable->{externalDependency},
+	    $tuningTable->{externalTuningTableDependency}, $tuningTable->{intermediateTable},
+            $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
+            $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
+            $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
+            $maxRebuildMinutes, $instance, $propFile, $password);
   }
 
   if ($doUpdate) {
@@ -480,27 +482,6 @@ sub parseConfigFile {
   }
 
   return ($config);
-}
-
-sub getDbHandle {
-  my ($instance, $props, $password) = @_;
-  my $username = 'apidb';
-
-  $password = $props->{password} if !$password;
-  $username = $props->{username} if $props->{username};
-
-  my $dsn = "dbi:Oracle:" . $instance;
-
-  my $dbh = DBI->connect(
-                $dsn,
-                $username,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-  $dbh->{LongReadLen} = 1000000;
-  $dbh->{LongTruncOk} = 1;
-  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
-  return $dbh;
 }
 
 sub cleanup {
