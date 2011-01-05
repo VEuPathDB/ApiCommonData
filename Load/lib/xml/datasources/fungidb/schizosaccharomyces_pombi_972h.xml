@@ -1,0 +1,392 @@
+<!-- ////////////////////////////////////////////////
+
+       Schizosachharomyces pombe (972h): Resources
+
+     ////////////////////////////////////////////////  -->
+
+<resources>
+
+  <!-- ISF FASTA resource -->
+  <resource
+        resource="schizosaccharomyces_pombi_972h_genome_sequence_RSRC"
+        version="@@schizosaccharomyces_pombi_972h_GENOME_SEQUENCE_VER@@"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
+
+	       <!-- Preprocess files outside of workflow; it's easier -->
+               <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h_supercontigs.uniquified.fasta"/>
+
+               <!-- Or be a glutton for punishment -->
+                    <!-- CUSTOMIZE: location/fetching/processing -->
+                    <!--
+                    <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h_supercontigs.fasta"/>
+
+                    <wgetArgs url="">
+                          --tries=5 
+                          --mirror 
+                          --no-parent
+                          --no-host-directories
+                          --cut-dirs=5
+                    </wgetArgs>
+
+                    <unpack>mv @@dataDir@@/schizosaccharomyces_pombi_972h.gff.gz @@dataDir@@/schizosaccharomyces_pombi_972h.gff3.gz</unpack>
+                    <unpack>gunzip @@dataDir/schizosaccharomyces_pombi_972h.gff3</unpack>
+                    -->
+
+                    <!-- Standardize scaffold IDs by prefixing -->
+                    <!--
+                    <unpack>
+                          fungidb_uniquify_and_standardize_seqids.pl
+                            --input  @@dataDir@@/schizosaccharomyces_pombi_972h.gff3
+                            --output @@dataDir@@/schizosaccharomyces_pombi_972h.uniquified.gff3
+                            --prefix @@schizosaccharomyces_pombi_972h_FUNGIDB_ABBREVIATION@@
+                            --uniquify features
+                    </unpack>
+
+                    <!-- CUSTOMIZE: FASTA processing if necessary -->
+                    <!-- Split FASTA from GFF -->
+                    <!--
+                    <unpack>
+                         makeCustomFastaAndGffFromGff3
+                            --input_dir @@dataDir@@/schizosaccharomyces_pombi_972h.uniquified.gff3
+                            --inputFileExt gff3
+                            --output_fasta @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.fasta
+                            --output_gff   @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.gff3
+                    </unpack>
+                    --> 
+
+              <!-- CUSTOMIZE: regexChromosome based on structure of IDs, SOTermName -->
+              <pluginArgs>
+                    --externalDatabaseName %RESOURCE_NAME%
+                    --ncbiTaxId @@schizosaccharomyces_pombi_972h_NCBI_TAXONOMY_ID@@
+                    --externalDatabaseVersion %RESOURCE_VERSION%
+                    --sequenceFile      @@dataDir@@/schizosaccharomyces_pombi_972h.uniquified.fasta
+                    --SOTermName        'chromosome' 
+                    --regexSourceId     '>(\S+)'
+                    --tableName         "DoTS::ExternalNASequence"
+                    --regexChromosome   '\d+\.(\d+)'
+              </pluginArgs>
+
+             <info
+                  displayName="Schizosachharomyces pombe (972h) genomic sequence"
+                  project="FungiDB"
+                  organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
+                  category="Genome"
+                  publicUrl=""
+                  contact=""
+                  email=""
+                  institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@"
+                  <description>
+                       <![CDATA[
+                          Schizosachharomyces pombe (972h) genomic sequence. 
+                        ]]>
+             </description>
+         </info>
+  </resource>
+
+
+  <!-- ISF genomic annotations resource -->
+  <resource
+         resource="schizosaccharomyces_pombi_972h_genome_annotations_RSRC"
+         version="@@schizosaccharomyces_pombi_972h_GENOME_SEQUENCE_VER@@" 
+         parentResource="schizosaccharomyces_pombi_972h_genome_sequence_RSRC"
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+      
+         <!-- Preprocess upstream of the workflow -->
+         <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h.unpacked.gff3" />
+  
+         <!-- or as part of the workflow proper -->
+
+                  <!-- Transcript IDs should already be unique. Created above. -->
+                  <!-- Run the standard ISF preprocess step -->
+                  <!--
+                     <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h.unpacked.gff3" />
+                     <unpack>
+                         preprocessGFF3 
+                            --input_gff  @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.gff3
+                            --output_gff @@dataDir@@/schizosaccharomyces_pombi_972h.transformed.gff3
+                     </unpack>
+                   -->
+
+         <!-- CUSTOMIZE: path to map file; seqSoTerm -->
+         <pluginArgs>
+                --extDbName      %PARENT_RESOURCE_NAME%
+                --extDbRlsVer    %PARENT_RESOURCE_VERSION%
+                --mapFile                @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
+                --inputFileOrDir         @@dataDir@@/schizosaccharomyces_pombi_972h.transformed.gff3
+                --inputFileExtension     "gff3"
+                --fileFormat             gff3
+                --soCvsVersion           @@SO_VER@@
+                --defaultOrganism        "@@schizosaccharomyces_pombi_972h_NCBI_DISPLAY_NAME@@"
+                --seqSoTerm              "chromosome"
+                --validationLog          @@dataDir@@/validation.log
+                --bioperlTreeOutput      @@dataDir@@/bioperlTree.out
+                --seqIdColumn            source_id
+                --naSequenceSubclass     ExternalNASequence
+          </pluginArgs>
+
+          <info
+             displayName="Schizosachharomyces pombe (972h) genomic annotations"
+             project="FungiDB"
+             organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
+             category="Genome"
+             publicUrl=""
+             contact=""
+             email=""
+             institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+             <description>
+               <![CDATA[
+                    Schizosachharomyces pombe (972h) genomic annotations.
+                ]]>
+            </description>
+          </info>
+     </resource>
+
+ <!-- //////////////////////
+           ALIASES
+      ////////////////////// -->
+
+  <resource resource="schizosaccharomyces_pombi_972h_primary_gene_aliases_RSRC" 
+            version="@@schizosaccharomyces_pombi_972h_GENOME_SEQUENCE_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@schizosaccharomyces_pombi_972h_ORGANISM_FULL_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+<!-- //////////////////////
+           ONTOLOGIES
+     ////////////////////// -->
+
+     <!-- GO -->
+     <resource 
+         resource="schizosaccharomyces_pombi_972h_go_associations_RSRC"
+         version="@@schizosaccharomyces_pombi_972h_GO_ASSOCIATIONS_VER@@"
+         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+
+        <!-- CUSTOMIZE -->
+        <wgetArgs url="">
+               --tries=5 
+               --mirror 
+                --no-parent
+               --no-host-directories
+               --cut-dirs=5
+         </wgetArgs>
+
+         <unpack>gunzip @@dataDir/gene_association.cgd.gz</unpack>
+
+<!--
+         <manualGet 
+              fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/gene_ontology/@@schizosaccharomyces_pombi_972h_GO_ASSOCIATIONS_VER@@/gene_association.cgd" /> 
+-->
+
+         <unpack>
+                fungidb_prepend_fungidb_identifier.pl
+                     --input @@dataDir@@/gene_association.sgd
+                     --output @@dataDir@@/gene_association.uniquified.sgd
+                     --prefix @@schizosaccharomyces_pombi_972h_ORGANISM_ABBREVIATION@@
+                     --col 2
+                     --verbose
+         </unpack>
+
+         <pluginArgs>
+               --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
+               --inputFile @@dataDir@@/gene_association.cgd
+               --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
+               --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
+              --targetTable "DoTS::TranslatedAASequence"
+              --lineOfEvidence ""
+              --inputIdColumn id
+              --tolerateMissingSeqs
+              --skipBadGOTerms @@dataDir@@/badGOTerms.log
+         </pluginArgs>
+
+         <info
+              displayName="Schizosachharomyces pombe (972h) GO associations"
+              project="FungiDB"
+              organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
+              category="Proteome"
+              publicUrl=""
+              contact=""
+              email=""
+              institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+              <description>
+                 <![CDATA[
+                     Schizosachharomyces pombe (972h) GO associations.
+                 ]]>
+              </description>
+          </info>
+   </resource>
+
+
+<!-- //////////////////////
+           DBXREFS
+     ////////////////////// -->
+   
+   <!-- EC IDs -->
+   <resource
+          resource="schizosaccharomyces_pombi_972h_ec_ids_RSRC" version="@@schizosaccharomyces_pombi_972h_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+
+         <!-- CUSTOMIZE -->
+        <wgetArgs url="">
+               --tries=5 
+               --mirror 
+               --no-parent
+               --no-host-directories
+               --cut-dirs=5
+         </wgetArgs>
+
+         <!--
+         <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/IDs/%RESOURCE_VERSION%" />
+         -->
+
+         <unpack>
+              fungidb_unpack_sgd_ids.pl
+                 --input @@dataDir@@/dbxref.tab
+                 --output @@dataDir@@/ec_numbers.tab
+                 --db IUBMB
+                 --type "EC number"
+         </unpack>
+
+         <pluginArgs>
+              --ECMappingFile @@dataDir@@/ec_numbers.tab
+              --evidenceCode ""
+              --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
+        </pluginArgs>
+    
+        <info
+           displayName="Schizosachharomyces pombe (972h) EC IDs"
+           project="FungiDB"
+           organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
+           category="Proteome"
+           publicUrl=""
+           contact=""
+           email=""
+           institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+           <description>
+           <![CDATA[   
+               Schizosachharomyces pombe (972h) EC IDs.
+            ]]>
+          </description>
+      </info>
+   </resource>
+
+    <!-- GeneIDs to refseq -->
+    <resource resource="schizosaccharomyces_pombi_972h_refseq_dbxrefs_RSRC"
+              version="@@schizosaccharomyces_pombi_972h_VER@@"
+              plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+         <wgetArgs url="">
+               --tries=5 
+               --mirror 
+                --no-parent
+               --no-host-directories
+               --cut-dirs=5
+         </wgetArgs>
+ 
+         <unpack>gunzip @@dataDir/CGDID_2_RefSeqID.tab.gz</unpack>
+
+         <unpack>
+             fungidb_map_candida_ids_to_features.pl
+                --input               @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
+                --id_to_dbxref        @@dataDir@@/CGDID_2_RefSeqID.tab
+                --output @@dataDir    @@/geneid2entrez.tab
+                --prefix @@schizosaccharomyces_pombi_972h_ORGANISM_ABBREVIATION@@
+         </unpack>
+ 
+         <pluginArgs>
+              --DbRefMappingFile @@dataDir@@/gene2entrez.tab
+              --extDbName %RESOURCE_NAME%
+              --extDbReleaseNumber %RESOURCE_VERSION%
+              --columnSpec "primary_identifier,secondary_identifier"
+              --tableName "DbRefNAFeature" 
+              --geneExternalDatabaseSpec 'schizosaccharomyces_pombi_972h_RSRC|@@schizosaccharomyces_pombi_972h_VER@@'
+          </pluginArgs>
+ 
+          <info
+               displayName="Schizosachharomyces pombe (972h) Gene ID to Entrez dbxrefs"
+               project="FungiDB"
+               organisms="@@schizosaccharomyces_pombi_972h_VER@@"
+               category="ignore"
+               publicUrl=""
+               contact=""
+               email=""
+               institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+               <description>
+                   <![CDATA[
+                        Schizosachharomyces pombe (972h) Gene ID to Entrez dbxrefs.
+                  ]]>
+                </description>
+          </info>
+     </resource>
+
+
+     <resource resource="schizosaccharomyces_pombi_972h_uniprot_dbxrefs_RSRC"
+               version="@@schizosaccharomyces_pombi_972h_uniprot_dbxrefs_VER@@"
+               plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+        <wgetArgs url="">
+               --tries=5 
+               --mirror 
+                --no-parent
+               --no-host-directories
+               --cut-dirs=5
+         </wgetArgs>
+ 
+         <unpack>gunzip @@dataDir/gp2protein.cgd.gz</unpack>
+
+         <unpack>
+             fungidb_map_candida_ids_to_features.pl
+                --input               @@dataDir@@/FILE.tab
+                --id_to_dbxref        @@dataDir@@/gp2protein.cgd
+                --output @@dataDir    @@/geneid2uniprot.tab
+                --prefix @@schizosaccharomyces_pombi_972h_ORGANISM_ABBREVIATION@@
+         </unpack>
+
+         <pluginArgs>
+               --DbRefMappingFile @@dataDir@@/geneid2uniprot.tab
+               --extDbName %RESOURCE_NAME%
+               --extDbReleaseNumber %RESOURCE_VERSION%
+               --columnSpec "primary_identifier,secondary_identifier"
+               --tableName "DbRefNAFeature"
+               --geneExternalDatabaseSpec 'schizosaccharomyces_pombi_972h_RSRC|@@schizosaccharomyces_pombi_972h_VER@@'
+         </pluginArgs>
+
+         <info
+              displayName="Schizosachharomyces pombe (972h) Gene IDs to UniProt dbxrefs"
+              project="FungiDB"
+              organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
+              category="ignore"
+              publicUrl=""
+              contact=""
+              email=""
+              institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+             <description>
+                <![CDATA[  
+                  Schizosachharomyces pombe (972h) Gene IDs to UniProt IDs.
+                ]]>
+             </description>
+          </info>
+      </resource>
+
+
+</resources>
