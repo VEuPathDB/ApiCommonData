@@ -41,6 +41,7 @@ sub preprocess {
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
+	    print STDERR "Feature type is: $type\n";
 	    
 	    if($type eq 'pseudogene'){
 		$bioperlFeatureTree->primary_tag('gene');
@@ -157,7 +158,7 @@ sub traverseSeqFeatures {
 
 
 	    
-	   # print STDERR "-----------------$type----------------------\n";
+	   print STDERR "-----------------$type----------------------\n";
 
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){

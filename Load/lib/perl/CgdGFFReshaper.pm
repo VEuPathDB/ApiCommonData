@@ -1,4 +1,4 @@
-package ApiCommonData::Load::SgdGFFReshaper;
+package ApiCommonData::Load::CgdGFFReshaper;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -27,42 +27,34 @@ sub preprocess {
     
     # my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;    
     # $unflattener->unflatten_seq(-seq=>$bp_seq_obj,-use_magic=>1);
-
+    
     # Remove all of the features on this Bio::Seq for now.
     my @seq_features = $bp_seq_obj->remove_SeqFeatures;
     foreach my $feature (@seq_features) {
 	
 	# Get the primary_tag, in this case the GFF3 'type'
 	my $type = $feature->primary_tag();
-
-
-        if (grep {$type eq $_} (
-				'mRNA',
-				'misc_RNA',
-				'rRNA',
-				'snRNA',
-				'snoRNA',
-				'tRNA',
-				'ncRNA',
-				'pseudogenic_transcript',	
-				'scRNA',
-				
-				)
-	    ) {
-	    next;
-	}
-
+	
 	# Bunch of things to flat out ignore
 	if ($type eq 'blocked_reading_frame'
 	    || $type eq 'centromere'
 	    || $type eq 'intron'
-	    || $type eq 'long_terminal_repeat'
-	    || $type eq 'ORF'
+#	    || $type eq 'snRNA'
+#	    || $type eq 'rRNA'
+	    || $type eq 'ncRNA'
+	    || $type eq 'tRNA'
 	    ) {
 	    next;
 	}
-		
+	
+	# Mongrify long_terminal_repeats
+	if ($type eq 'long_terminal_repeat') {
+	    $type = 'repeat_region';
+	    $feature->primary_tag('repeat_region');
+	}
+
 	if ($type eq 'repeat_region') {
+
 	    if ($feature->has_tag('satellite')) {
 		$feature->primary_tag('microsatellite');
 	    }
@@ -95,7 +87,7 @@ sub preprocess {
 	    
 	    # SGD genes already have IDs so this isn't really necessary.
 	    uniquify_and_add_id($feature,$bp_seq_obj);	
-	    	    
+	    
 #	my ($gene,$utrs) = gene2centraldogma($feature, $bp_seq_obj);
 	    my $gene = gene2centraldogma($feature, $bp_seq_obj);
 	    $bp_seq_obj->add_SeqFeature($gene) if $gene;
@@ -206,7 +198,7 @@ sub traverseSeqFeatures {
 #	
 #	# Copy attributes from our original gene to the new gene
 #	$gene = copy_attributes($gene_feature, $gene);
-
+	
 	# Promote subfeature attributes to the gene
 	$gene = copy_attributes($subfeature,$gene);
 	
@@ -317,7 +309,7 @@ sub traverseSeqFeatures {
 	}
 	$gene->add_SeqFeature($transcript);
     }
-
+    
     # Why keep the UTRs distinct?
     return ($gene,\@utrs);
 }
@@ -341,15 +333,15 @@ sub gene2centraldogma {
     } else {
 	$type = $feature->primary_tag . '_gene';
     }
-    print STDERR $feature->primary_tag . " $type\n";
-
+    print STDERR "Feature type: " . $feature->primary_tag . " $type\n";
+    
     my $gene = makeBioperlFeature($type, $feature->location, $bp_seq_obj);
-
+    
     if ($type eq 'pseudo_gene') {
 	$gene->add_tag_value("pseudo",""); 
 	$gene->primary_tag('pseudo_gene');
     }
-	    
+    
     # Copy the name of the feature to our new gene object
     my ($name) = $feature->get_tag_values('Name');
     print STDERR "Processing $type ($name)...\n";
@@ -412,7 +404,7 @@ sub gene2centraldogma {
 		push(@codingStart,$codingStart);
 		push(@codingEnd,$codingEnd);
 		$cds_counter++;
-
+		
                 # my $exon_type = $subfeature->primary_tag eq 'CDS' ? 'exon' : 'noncoding_exon';
 		# ncRNAs also required exon type of "exon" 
 		my $exon_type = $subfeature->primary_tag eq 'CDS' ? 'exon' : 'exon';
@@ -443,32 +435,32 @@ sub gene2centraldogma {
 	my $codingStart = shift (@codingStart);
 	my $codingEnd = shift (@codingEnd);
 	foreach my $exon (@exons) {
-
+	    
 #	    if ($exon->primary_tag eq 'exon') {
-		if ($codingStart <= $exon->location->end && $codingStart >= $exon->location->start) {
-		    
-		    # ncRNAs shouldn't have start/stop values
-		    if ($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene') {
-			$exon->add_tag_value('CodingStart', '');
-			$exon->add_tag_value('CodingEnd', '');		    
-		    } else {
-			$exon->add_tag_value('CodingStart',$codingStart);
-			$exon->add_tag_value('CodingEnd',$codingEnd);
-		    }
-		    
-		    $codingStart = shift(@codingStart);
-		    $codingEnd = shift(@codingEnd);
+	    if ($codingStart <= $exon->location->end && $codingStart >= $exon->location->start) {
+		
+		# ncRNAs shouldn't have start/stop values
+		if ($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene') {
+		    $exon->add_tag_value('CodingStart', '');
+		    $exon->add_tag_value('CodingEnd', '');		    
+		} else {
+		    $exon->add_tag_value('CodingStart',$codingStart);
+		    $exon->add_tag_value('CodingEnd',$codingEnd);
 		}
+		
+		$codingStart = shift(@codingStart);
+		$codingEnd = shift(@codingEnd);
+	    }
 #	    }
 	    $transcript->add_SeqFeature($exon);
 	}
-			
+	
 #	# If we don't yet have exons they weren't originally present.
 #	# Create them and add them to the transcript.
 #	if ( ! $transcript->get_SeqFeatures()) {
 #	    $transcript = create_exons($transcript,$subfeature,$bp_seq_obj);
 #	}
-    
+	
     }
     
     # (In)sanity checks
@@ -523,8 +515,8 @@ sub copy_attributes {
 	    $source_feature->get_tag_values($qualifier);
 	    
 	    $target_feature->add_tag_value(
-				    $qualifier, 
-				    @uniqVals
+					   $qualifier, 
+					   @uniqVals
 					   );    
 	} elsif ($qualifier ne "Name" 
 		 && $qualifier ne "Parent"

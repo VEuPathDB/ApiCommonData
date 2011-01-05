@@ -33,6 +33,33 @@ sub preprocess {
 	
 	# Get the primary_tag, in this case the GFF3 'type'
 	my $type = $feature->primary_tag();
+
+
+        if (grep {$type eq $_} (
+				'mRNA',
+				'misc_RNA',
+				'rRNA',
+				'snRNA',
+				'snoRNA',
+				'tRNA',
+				'ncRNA',
+				'pseudogenic_transcript',	
+				'scRNA',
+				
+				)
+	    ) {
+	    next;
+	}
+
+	# Bunch of things to flat out ignore
+	if ($type eq 'blocked_reading_frame'
+	    || $type eq 'centromere'
+	    || $type eq 'intron'
+	    || $type eq 'long_terminal_repeat'
+	    || $type eq 'ORF'
+	    ) {
+	    next;
+	}
 		
 	if ($type eq 'repeat_region') {
 	    if ($feature->has_tag('satellite')) {
@@ -62,6 +89,7 @@ sub preprocess {
 	    || $type eq 'tRNA'
 	    || $type eq 'gene'
 	    || $type eq 'pseudogene'
+	    || $type eq 'CDS'
 	    ) {
 	    
 	    # SGD genes already have IDs so this isn't really necessary.
