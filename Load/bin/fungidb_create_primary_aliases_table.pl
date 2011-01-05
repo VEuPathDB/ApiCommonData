@@ -4,13 +4,10 @@ use strict;
 use Getopt::Long;
 use IO::File;
 
-my ($input,$output,$prefix,$ignore_features,$ignore_contigs,$mapping_file);
+my ($input,$output,$prefix);
 GetOptions('input=s'    => \$input,
 	   'output=s'   => \$output,
 	   'prefix=s'   => \$prefix,
-	   'ignore_feature' => \$ignore_features,
-	   'ignore_contigs' => \$ignore_contigs,
-	   'mapping_file=s' => \$mapping_file,
 	   );
 
 unless ($input && $output && $prefix) {
@@ -23,22 +20,22 @@ to the original IDs.
 Can process fasta files, GFF files, or GFF with embedded fasta.
 
 eg, for Saccharomyces:
-  Chr1 -> Scers288c:Chr1
+  Chr1 -> Scer_s288c:Chr1
 
 More generally:
    Chromosomes:
    Chr1 -> Scer_s288c:Chr_1
    Chromosome1 -> Scer_s288c:Chr_1
 
-   Contigs:
-   contig1.1  -> contig1.1
-   contig_1.1 -> contig1.1
-   contig_1   -> contig1
+  Contigs:
+  contig1.1  -> contig1.1
+  contig_1.1 -> contig1.1
+  contig_1   -> contig1
 
-   Supercontigs:
-   supercontig_1 -> supercontig1
-   supercont_1   -> supercontig1
-   scaffold_1    -> scaffold1
+  Supercontigs:
+  supercontig_1 -> supercontig1
+  supercont_1   -> supercontig1
+  scaffold_1    -> scaffold1
 
 You can use the --ignore_* to limit which types of IDs are modified. Some may already be unique.
 
@@ -47,16 +44,14 @@ You can use the --ignore_* to limit which types of IDs are modified. Some may al
 
 By default, both contig (reference sequence) IDs and feature IDs (in the ninth column) will be updated.
 
-Usage: $0 --input [gff_file] --output [gff_file] --prefix [prefix] [--ignore_features] [--ignore_contigs] --mapping_file [file]
+Usage: $0 --input [gff_file] --output [gff_file] --prefix [prefix] [--ignore_features] [--ignore_contigs]
 END
 ;
 }
 
-my %original_ids;
 
 my $out = new IO::File;
 $out->open("> $output") or die "Couldn't open the output file: $output $!";
-
 
 my $in = new IO::File;
 if ($in->open($input)) {
@@ -91,19 +86,6 @@ if ($in->open($input)) {
 }
 $in->close;
 $out->close;
-
-dump_mapping_file() if $mapping_file;
-
-
-
-sub dump_mapping_file {
-    my $map = new IO::File;
-    $map->open("> $mapping_file") or die "Couldn't open the output file: $mapping_file $!";
-    foreach (sort keys %original_ids) {
-	print $map "$_\t$original_ids{$_}\n";
-    }
-    $map->close;
-}
 
 
 
@@ -184,12 +166,6 @@ sub process_annotations {
 		    $key eq 'Name') {
 		    push @new_attributes,"$key=$prefix:$value";
 		    push (@new_attributes,"Alias=" . $value) if ($key eq 'ID' || $key eq 'Name');
-
-		    # Create our mapping file for genes or ORFs
-		    if ($type =~ /gene/ || $type =~ /ORF/i) {
-			$original_ids{"$prefix:$value"} = $value;
-		    }
-
 		} else {
 		    push @new_attributes,"$key=$value";
 		}
