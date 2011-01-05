@@ -1,10 +1,9 @@
 #!/usr/bin/perl
 
-use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
-
 use Getopt::Long;
-use Bio::SeqIO;
+use Data::Dumper;
+use strict;
 
 my $debug = 0;
 my ($originalShortSeqsFile, $inputFile, $outputFile);
@@ -15,43 +14,31 @@ my ($originalShortSeqsFile, $inputFile, $outputFile);
 	    "debug!" => \$debug,
             );
 
-unless (-e $originalShortSeqsFile && -e $inputFile) { 
-  die "You must provide valid input and shortSeqsFile files. Usage: RevertProbeSeqId --originalShortSeqsFile <FILE> --inputFile <FILE> --outputFile <FILE> [--debug]";
+unless (-e $originalShortSeqsFile && -e $inputFile){ die "You must provide valid input and shortSeqsFile files. Usage: RevertProbeSeqId --originalShortSeqsFile <FILE> --inputFile <FILE> --outputFile <FILE> [--debug]";}
+
+my (%originalSeqIds, %seqIds, $idNum);
+
+open(ORI, "$originalShortSeqsFile");
+
+while(<ORI>){
+  chomp;
+  if(/\>(\S+)/){
+      $idNum++;
+      my $newSeqId="seq.".$idNum."a";
+      $originalSeqIds{$newSeqId} = $1;
+  }
 }
+close(ORI);
 
-my $seqio  = Bio::SeqIO->new( '-format' => 'fasta' , 
-                              -file => $originalShortSeqsFile
-                            );
 
-my %originalSeqIds;
-
-while(my $seq = $seqio->next_seq()) {
-  my $sequence = $seq->seq();
-  my $oligoId = $seq->id();
-
-  push @{$originalSeqIds{$sequence}}, $oligoId;
-}
-
-open(IN, $inputFile) or die "Cannot open file $inputFile for reading:  $!";
-open(OUT, ">$outputFile") or die "Cannot open file $outputFile for writing:  $!";
-
-my %seen;
+open(IN, "$inputFile");
+open(OUT, ">$outputFile");
 
 while(<IN>){
   chomp;
   my @list = split(/\t/, $_);
-
-  #rm Greg's id
-  shift @list;
-
-  my $sequence = $list[3];
-  if($seen{$sequence}) {
-    die "We've already seen sequence $sequence.";
-  }
-
-  foreach my $id (@{$originalSeqIds{$sequence}}) {
-    print OUT $id . "\t" . join("\t", @list) . "\n";
-  }
+  $_ =~ s|$list[0]|$originalSeqIds{$list[0]}|;
+  print OUT "$_\n";
 }
 close(IN);
 close(OUT);
