@@ -1,10 +1,10 @@
-<!-- Aspergillus terresu (unknown strain) Resources -->
+<!-- Aspergillus terreus (unknown strain) Resources -->
 <resources>
 
      <!-- ISF FASTA resource -->
      <resource 
             resource="aspergillus_terreus_na_genome_sequence_RSRC"
-            version="@@aspergillus_terreus_na_VER@@"
+            version="@@aspergillus_terreus_na_GENOME_SEQUENCE_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
           
             <!-- Transforming upstream of ISF/workflow... -->   
@@ -19,7 +19,7 @@
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_terreus_na_supercontigs.fasta
                       --output @@dataDir@@/aspergillus_terreus_na_supercontigs_uniquified.fasta
-                      --prefix @@aspergillus_terreus_na_ORGANISM_ABBREVIATION@@
+                      --prefix @@aspergillus_terreus_na_FUNGIDB_ABBREVIATION@@
              </unpack>
              -->
 
@@ -37,7 +37,7 @@
              <info
                    displayName="Aspergillus terreus (unknown strain) genomic sequence"
                    project="FungiDB"
-                   organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
+                   organisms="@@aspergillus_terreus_na_FUNGIDB_DISPLAY_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                    contact=""
@@ -69,7 +69,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_terreus_na_transcripts.gff3
                    --output @@dataDir@@/aspergillus_terreus_na.uniquified.gff3
-                   --prefix @@aspergillus_terreus_na_ORGANISM_ABBREVIATION@@
+                   --prefix @@aspergillus_terreus_na_FUNGIDB_ABBREVIATION@@
         </unpack>
 
          <unpack>
@@ -83,11 +83,11 @@
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_terreus_na.transformed.gff3
+                --inputFileOrDir @@dataDir@@/aspergillus_terreus_na_transcripts.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus terreus"
+                --defaultOrganism "@@aspergillus_terreus_na_NCBI_DISPLAY_NAME"
                 --seqSoTerm "chromosome"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -98,7 +98,7 @@
             <info
                 displayName="Aspergillus terreus genomic annotations"
                 project="FungiDB"
-                organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
+                organisms="@@aspergillus_terreus_na_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                 contact=""
@@ -119,7 +119,7 @@
        ////////////////////// -->
 
   <resource resource="aspergillus_terreus_na_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_terreus_na_VER@@"
+            version="@@aspergillus_terreus_na_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/aspergillus_terreus_na/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -127,7 +127,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_terreus_na_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -160,7 +160,7 @@
     <info
         displayName="Aspergillus terreus dbEST ESTs"
         project="FungiDB"
-        organisms="@@aspergillus_terreus_na_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_terreus_na_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

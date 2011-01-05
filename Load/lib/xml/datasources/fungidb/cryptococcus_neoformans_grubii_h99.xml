@@ -6,18 +6,20 @@
             resource="cryptococcus_neoformans_grubii_h99_genome_sequence_RSRC"
             version="@@cryptococcus_neoformans_grubii_h99_GENOME_SEQUENCE_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
-            <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
 
-             <!-- Standardize scaffold IDs by prefixing -->
-<!--
+            <!-- Transforming upstream of ISF/workflow... -->
+            <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta" />
+
+            <!-- or within the workflow iteself... -->
+            <!--
+            <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_supercontigs.fasta" />
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.fasta
                    --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_supercontigs.uniquified.fasta
-                   --prefix @@cryptococcus_neoformans_grubii_h99_ORGANISM_ABBREVIATION@@
+                   --prefix @@cryptococcus_neoformans_grubii_h99_FUNGIDB_ABBREVIATION@@
              </unpack>
--->
+             -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -33,7 +35,7 @@
              <info
                    displayName="Cryptococcus neoformans var. grubii (strain H99, serotype A) genomic sequence"
                    project="FungiDB"
-                   organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+                   organisms="@@cryptococcus_neoformans_grubii_h99_FUNGIDB_DISPLAY_NAME@@"
                    category="Genome"
                    publicUrl=""
                    contact=""
@@ -51,20 +53,21 @@
   <!-- ISF genome annotations -->
   <resource 
          resource="cryptococcus_neoformans_grubii_h99_genome_annotations_RSRC"
-         version="@@cryptococcus_neoformans_grubii_h99_VER@@"
+         version="@@cryptococcus_neoformans_grubii_h99_GENOME_SEQUENCE_VER@@"
          parentResource="cryptococcus_neoformans_grubii_h99_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
+         <!-- Transforming upstream of ISF/workflow... -->
+         <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.transformed.gff3"/> 
+
+         <!-- or within the workflow iteself... -->
+         <!--
          <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/cryptococcus_neoformans_grubii_h99_transcripts.gff3"/> 
-
-
-          <!-- Standardize scaffold IDs by prefixing -->
-<!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.gff3
                 --output @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
-                --prefix @@cryptococcus_neoformans_grubii_h99_ORGANISM_ABBREVIATION@@
+                --prefix @@cryptococcus_neoformans_grubii_h99_FUNGIDB_ABBREVIATION@@
           </unpack>
 
          <unpack>
@@ -72,18 +75,17 @@
                 --input_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff3
          </unpack>
--->
-
+         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99.transformed.gff3
+                --inputFileOrDir @@dataDir@@/cryptococcus_neoformans_grubii_h99_transcripts_transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Cryptococcus neoformans var. grubii H99"
+                --defaultOrganism "@@cryptococcus_neoformans_grubii_h99_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm "chromosome"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -94,7 +96,7 @@
             <info
                 displayName="Cryptococcus neoformans var. grubii (H99) genomic annotations"
                 project="FungiDB"
-                organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+                organisms="@@cryptococcus_neoformans_grubii_h99_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl=""
                 contact=""
@@ -116,7 +118,7 @@
        ////////////////////// -->
 
   <resource resource="cryptococcus_neoformans_grubii_h99_primary_gene_aliases_RSRC" 
-            version="@@cryptococcus_neoformans_grubii_h99_VER@@"
+            version="@@cryptococcus_neoformans_grubii_h99_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -125,7 +127,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        organisms="@@cryptococcus_neoformans_grubii_h99_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -144,15 +146,14 @@
             version="@@cryptococcus_neoformans_grubii_h99_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
 
-<!--
-    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
 
+    <manualGet fileOrDir="FungiDB/cryptococcus_neoformans_grubii_h99/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
--->
+
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        organisms="@@cryptococcus_neoformans_grubii_h99_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -185,7 +186,7 @@
     <info
         displayName="Cryptococcus neoformans var. grubii (H99) dbEST ESTs"
         project="FungiDB"
-        organisms="@@cryptococcus_neoformans_grubii_h99_ORGANISM_FULL_NAME@@"
+        organisms="@@cryptococcus_neoformans_grubii_h99_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

@@ -4,20 +4,22 @@
      <!-- ISF FASTA resource -->
      <resource 
             resource="coccidioides_immitis_h5384_genome_sequence_RSRC"
-            version="@@coccidioides_immitis_h5384_VER@@"
+            version="@@coccidioides_immitis_h5384_GENOME_SEQUENCE_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
-            
-            <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_supercontigs.fasta" />
 
-             <!-- Standardize scaffold IDs by prefixing -->
-<!--
-             <unpack>
+            <!-- Transforming upstream of ISF/workflow... -->
+            <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_supercontigs.uniquified.fasta" />
+
+            <!-- or within the workflow iteself... -->
+            <!--
+            <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_supercontigs.fasta" />
+            <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/coccidioides_immitis_h5384_supercontigs.fasta
                    --output @@dataDir@@/coccidioides_immitis_h5384_supercontigs.uniquified.fasta
-                   --prefix @@coccidioides_immitis_h5384_ORGANISM_ABBREVIATION@@
+                   --prefix @@coccidioides_immitis_h5384_FUNGIDB_ABBREVIATION@@
              </unpack>
--->
+            -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -33,7 +35,7 @@
              <info
                    displayName="Coccidioides immitis (H5384) genomic sequence"
                    project="FungiDB"
-                   organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+                   organisms="@@coccidioides_immitis_h5384_FUNGIDB_DISPLAY_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
                    contact=""
@@ -55,15 +57,16 @@
          parentResource="coccidioides_immitis_h5384_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_transcripts.gff3"/> 
+         <!-- Transforming upstream of ISF/workflow... -->
+         <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/coccidioides_immitis_h5384_transcripts.transformed.gff3"/> 
 
-          <!-- Standardize scaffold IDs by prefixing -->
-<!--
+         <!-- or within the workflow iteself... -->
+         <!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/coccidioides_immitis_h5384_transcripts.gff3
                 --output @@dataDir@@/coccidioides_immitis_h5384_transcripts.uniquified.gff3
-                --prefix @@coccidioides_immitis_h5384_ORGANISM_ABBREVIATION@@
+                --prefix @@coccidioides_immitis_h5384_FUNGIDB_ABBREVIATION@@
           </unpack>
 
          <unpack>
@@ -71,17 +74,17 @@
                 --input_gff @@dataDir@@/coccidioides_immitis_h5384_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/coccidioides_immitis_h5384.transformed.gff3
          </unpack>
--->
+         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/coccidioides_immitis_h5384.transformed.gff
+                --inputFileOrDir @@dataDir@@/coccidioides_immitis_h5384_transcripts.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Coccidiodes immitis H5384"
+                --defaultOrganism "@@coccidiodes_immitis_h5384_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm "chromosome"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -92,7 +95,7 @@
             <info
                 displayName="Coccidiodes immitis (H5384) genomic annotations"
                 project="FungiDB"
-                organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+                organisms="@@coccidioides_immitis_h5384_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/coccidioides_group/MultiDownloads.html"
                 contact=""
@@ -113,7 +116,7 @@
        ////////////////////// -->
 
   <resource resource="coccidioides_immitis_h5384_primary_gene_aliases_RSRC" 
-            version="@@coccidioides_immitis_h5384_VER@@"
+            version="@@coccidioides_immitis_h5384_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/coccidioides_immitis_h5384/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -121,7 +124,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+        organisms="@@coccidioides_immitis_h5384_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -155,7 +158,7 @@
     <info
         displayName="Coccidiodes immitis (H5384) dbEST ESTs"
         project="FungiDB"
-        organisms="@@coccidioides_immitis_h5384_ORGANISM_FULL_NAME@@"
+        organisms="@@coccidioides_immitis_h5384_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

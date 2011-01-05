@@ -8,17 +8,19 @@
              version="@@neurospora_crassa_or74a_GENOME_SEQUENCE_VER@@"
              plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-             <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
+             <!-- Transforming upstream of ISF/workflow... -->
+             <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.uniquified.fasta"/>
 
-             <!-- Standardize scaffold IDs by prefixing -->
-<!--
+             <!-- or within the workflow iteself... -->
+             <!--
+             <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/neurospora_crassa_or74a_supercontigs.fasta
                    --output @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
-                   --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
+                   --prefix @@neurospora_crassa_or74a_FUNGIDB_ABBREVIATION@@
              </unpack>
--->
+             -->
 
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
@@ -34,7 +36,7 @@
              <info
                       displayName="Neurospora crassa (OR74A) genomic sequence"
                       project="FungiDB"
-                      organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+                      organisms="@@neurospora_crassa_or74a_FUNGIDB_DISPLAY_NAME@@"
                       category="Genome"
                       publicUrl="http://www.broadinstitute.org/annotation/genome/neurospora/MultiDownloads.html"
                       contact=""
@@ -55,16 +57,17 @@
           parentResource="neurospora_crassa_or74a_genome_sequence_RSRC"
           plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
  
+          <!-- Transforming upstream of ISF/workflow... -->
+          <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.transformed.gff3"/> 
+
+          <!-- or within the workflow iteself... -->
+          <!--
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
-
-          <!-- Standardize scaffold IDs by prefixing -->
-
-<!--
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
                 --input  @@dataDir@@/neurospora_crassa_or74a_transcripts.gff3
                 --output @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
-                --prefix @@neurospora_crassa_or74a_ORGANISM_ABBREVIATION@@
+                --prefix @@neurospora_crassa_or74a_FUNGIDB_ABBREVIATION@@
                 --mapping_file primary_gene_aliases.tab
           </unpack>
 
@@ -83,7 +86,7 @@
                  --inputFileExtension "gff3" 
                  --fileFormat gff3 
                  --soCvsVersion @@SO_VER@@
-                 --defaultOrganism "Neurospora crassa OR74A"
+                 --defaultOrganism "@@neurospora_crassa_or74a_NCBI_DISPLAY_NAME@@"
                  --seqSoTerm "chromosome"
                  --validationLog @@dataDir@@/validation.log
                  --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -94,7 +97,7 @@
            <info
                 displayName="Neurospora crassa (OR74A) genomic annotations"
                 project="FungiDB"
-                organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+                organisms="@@neurospora_crassa_or74a_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/neurospora/MultiDownloads.html"
                 contact=""
@@ -115,7 +118,7 @@
        ////////////////////// -->
 
   <resource resource="neurospora_crassa_or74a_primary_gene_aliases_RSRC" 
-            version="@@neurospora_crassa_or74a_VER@@"
+            version="@@neurospora_crassa_or74a_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -124,7 +127,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+        organisms="@@neurospora_crassa_or74a_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -158,7 +161,7 @@
     <info
         displayName="Neurospora crassa (OR74A) dbEST ESTs"
         project="FungiDB"
-        organisms="@@neurospora_crassa_or74a_ORGANISM_FULL_NAME@@"
+        organisms="@@neurospora_crassa_or74a_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

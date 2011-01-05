@@ -1,10 +1,15 @@
-<!-- Aspergillus clavatus (NRRL 1) Resources -->
+<!-- ////////////////////////////////////////////////
+
+       Aspergillus clavatus (NRRL1): Resources
+
+     ////////////////////////////////////////////////  -->
+
 <resources>
 
      <!-- ISF FASTA resource -->
      <resource 
             resource="aspergillus_clavatus_nrrl1_genome_sequence_RSRC"
-            version="@@aspergillus_clavatus_nrrl1_VER@@"
+            version="@@aspergillus_clavatus_nrrl1_GENOME_SEQUENCE_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
             <!-- Transforming upstream of ISF/workflow... -->            
@@ -19,7 +24,7 @@
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_clavatus_nrrl1_supercontigs.fasta
                       --output @@dataDir@@/aspergillus_clavatus_nrrl1_supercontigs_uniquified.fasta
-                      --prefix @@aspergillus_clavatus_nrrl1_ORGANISM_ABBREVIATION@@
+                      --prefix @@aspergillus_clavatus_nrrl1_FUNGIDB_ABBREVIATION@@
             </unpack>
             -->
 
@@ -37,7 +42,7 @@
              <info
                    displayName="Aspergillus clavatus (NRRL 1) genomic sequence"
                    project="FungiDB"
-                   organisms="@@aspergillus_clavatus_nrrl1_ORGANISM_FULL_NAME@@"
+                   organisms="@@aspergillus_clavatus_nrrl1_FUNGIDB_DISPLAY_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                    contact=""
@@ -61,7 +66,7 @@
 
 
         <!-- Transforming upstream of ISF/workflow... -->
-        <manualGet fileOrDir="FungiDB/aspergillus_clavatus_nrr1/genome/%RESOURCE_VERSION%/aspergillus_clavatus_nrrl1_transcripts.transformed.gff3" />
+        <manualGet fileOrDir="FungiDB/aspergillus_clavatus_nrrl1/genome/%RESOURCE_VERSION%/aspergillus_clavatus_nrrl1_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
         <!--
@@ -70,7 +75,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_clavatus_nrrl1_transcripts.gff3
                    --output @@dataDir@@/aspergillus_clavatus_nrrl1_transcripts.uniquified.gff3
-                   --prefix @@aspergillus_clavatus_na_ORGANISM_ABBREVIATION@@
+                   --prefix @@aspergillus_clavatus_na_FUNGIDB_ABBREVIATION@@
         </unpack>
 
          <unpack>
@@ -88,7 +93,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus clavatus NRRL 1"
+                --defaultOrganism "@@aspergillus_clavatus_nrrl1_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -99,7 +104,7 @@
             <info
                 displayName="Aspergillus clavatus genomic annotations"
                 project="FungiDB"
-                organisms="@@aspergillus_clavatus_nrrl1_ORGANISM_FULL_NAME@@"
+                organisms="@@aspergillus_clavatus_nrrl1_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                 contact=""
@@ -120,7 +125,7 @@
        ////////////////////// -->
 
   <resource resource="aspergillus_clavatus_nrrl1_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_clavatus_nrrl1_VER@@"
+            version="@@aspergillus_clavatus_nrrl1_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/aspergillus_clavatus_nrrl1/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -128,7 +133,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_clavatus_nrrl1_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_clavatus_nrrl1_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -161,7 +166,7 @@
     <info
         displayName="Aspergillus clavatus dbEST ESTs"
         project="FungiDB"
-        organisms="@@aspergillus_clavatus_nrrl1_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_clavatus_nrrl1_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

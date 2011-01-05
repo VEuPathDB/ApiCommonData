@@ -17,7 +17,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
                    --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
-                   --prefix @@aspergillus_fumigatus_af392_ORGANISM_ABBREVIATION@@
+                   --prefix @@aspergillus_fumigatus_af392_FUNGIDB_ABBREVIATION@@
         </unpack>
        
         <unpack>
@@ -43,7 +43,7 @@
          <info
              displayName="Aspergillus fumigatus (AF293) genomic sequence (Broad)"
              project="FungiDB"
-             organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
+             organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl=""
              contact=""
@@ -77,7 +77,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
                    --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
-                   --prefix @@aspergillus_fumigatus_af392_ORGANISM_ABBREVIATION@@
+                   --prefix @@aspergillus_fumigatus_af392_FUNGIDB_ABBREVIATION@@
         </unpack>
        
         <unpack>
@@ -103,7 +103,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat     gff3
                 --soCvsVersion   @@SO_VER@@
-                --defaultOrganism "Aspergillus fumigatus Af293"
+                --defaultOrganism "@@aspergillus_fumigatus_af293_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm "chromosome"
                 --validationLog     @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -114,7 +114,7 @@
           <info
              displayName="Aspergillus fumigatus (AF293) genomic annotations"
              project="FungiDB"
-             organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
+             organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl=""
              contact=""
@@ -133,7 +133,7 @@
        ////////////////////// -->
 
   <resource resource="aspergillus_fumigatus_af293_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_fumigatus_af293_VER@@"
+            version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -141,7 +141,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -180,7 +180,7 @@
          <info
               displayName="Aspergillus fumigatus (AF293) GO associations"
               project="FungiDB"
-              organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
+              organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
               category="Proteome"
               publicUrl=""
               contact=""
@@ -219,7 +219,7 @@
     <info
         displayName="Aspergillus fumigatus (AF293) EC IDs"
         project="FungiDB"
-        organisms="@@aspergillus_fumigatus_af293_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
         category="Proteome"
         publicUrl=""
         contact=""

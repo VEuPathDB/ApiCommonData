@@ -4,14 +4,12 @@
      <!-- ISF FASTA resource -->
      <resource 
             resource="aspergillus_nidulans_a4_genome_sequence_RSRC"
-            version="@@aspergillus_nidulans_a4_VER@@"
+            version="@@aspergillus_nidulans_a4_GENOME_SEQUENCE_VER@@"
             plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
             <!-- Transforming upstream of ISF/workflow... -->                        
             <manualGet 
               fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/aspergillus_nidulans_a4_supercontigs.uniquified.fasta"/>
-
-             <!-- Standardize scaffold IDs by prefixing -->
 
             <!-- or within the workflow iteself... -->
             <!--
@@ -21,7 +19,7 @@
                   fungidb_uniquify_and_standardize_seqids.pl
                       --input  @@dataDir@@/aspergillus_nidulans_a4_supercontigs.fasta
                       --output @@dataDir@@/aspergillus_nidulans_a4_supercontigs_uniquified.fasta
-                      --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+                      --prefix @@aspergillus_nidulans_a4_FUNGIDB_ABBREVIATION@@
              </unpack>
             -->
 
@@ -39,7 +37,7 @@
              <info
                    displayName="Aspergillus nidulans (A4) genomic sequence"
                    project="FungiDB"
-                   organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+                   organisms="@@aspergillus_nidulans_a4_FUNGIDB_DISPLAY_NAME@@"
                    category="Genome"
                    publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                    contact=""
@@ -71,7 +69,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_nidulans_a4_transcripts.gff3
                    --output @@dataDir@@/aspergillus_nidulans_a4.uniquified.gff3
-                   --prefix @@aspergillus_nidulans_a4_ORGANISM_ABBREVIATION@@
+                   --prefix @@aspergillus_nidulans_a4_FUNGIDB_ABBREVIATION@@
         </unpack>
 
          <unpack>
@@ -85,11 +83,11 @@
                 --extDbName %PARENT_RESOURCE_NAME%
                 --extDbRlsVer %PARENT_RESOURCE_VERSION%
                 --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                --inputFileOrDir @@dataDir@@/aspergillus_nidulans_a4.transformed.gff3
+                --inputFileOrDir @@dataDir@@/aspergillus_nidulans_a4_transcripts.transformed.gff3
                 --inputFileExtension "gff3"
                 --fileFormat gff3
                 --soCvsVersion @@SO_VER@@
-                --defaultOrganism "Aspergillus nidulans FSGC A4"
+                --defaultOrganism "@@aspergillus_nidulans_a4_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm "supercontig"
                 --validationLog @@dataDir@@/validation.log
                 --bioperlTreeOutput @@dataDir@@/bioperlTree.out
@@ -100,7 +98,7 @@
             <info
                 displayName="Aspergillus nidulans A4 genomic annotations"
                 project="FungiDB"
-                organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+                organisms="@@aspergillus_nidulans_a4_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl="http://www.broadinstitute.org/annotation/genome/aspergillus_group/MultiDownloads.html"
                 contact=""
@@ -119,9 +117,8 @@
  <!-- //////////////////////
            ALIASES
        ////////////////////// -->
-
   <resource resource="aspergillus_nidulans_a4_primary_gene_aliases_RSRC" 
-            version="@@aspergillus_nidulans_a4_VER@@"
+            version="@@aspergillus_nidulans_a4_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/aspergillus_nidulans_a4/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -129,7 +126,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_nidulans_a4_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -162,7 +159,7 @@
     <info
         displayName="Aspergillus nidulans (A4) dbEST ESTs"
         project="FungiDB"
-        organisms="@@aspergillus_nidulans_a4_ORGANISM_FULL_NAME@@"
+        organisms="@@aspergillus_nidulans_a4_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

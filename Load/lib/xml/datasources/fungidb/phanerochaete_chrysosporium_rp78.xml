@@ -4,25 +4,25 @@
 
        <!-- ISF FASTA resource -->
        <resource
-             resource="phanerochaete_chrysosporium_rp-78_genome_sequence_RSRC"
-             version="@@phanerochaete_chrysosporium_rp-78_GENOME_SEQUENCE_VER@@"
+             resource="phanerochaete_chrysosporium_rp78_genome_sequence_RSRC"
+             version="@@phanerochaete_chrysosporium_rp78_GENOME_SEQUENCE_VER@@"
              plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-             <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp-78_strain_supercontigs.fasta"/>
+             <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp78_strain_supercontigs.fasta"/>
 
              <!-- Standardize scaffold IDs by prefixing -->
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.fasta
-                   --output @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.uniquified.fasta
-                   --prefix @@phanerochaete_chrysosporium_rp-78_ORGANISM_ABBREVIATION@@
+                   --input  @@dataDir@@/phanerochaete_chrysosporium_rp78_supercontigs.fasta
+                   --output @@dataDir@@/phanerochaete_chrysosporium_rp78_supercontigs.uniquified.fasta
+                   --prefix @@phanerochaete_chrysosporium_rp78_FUNGIDB_ABBREVIATION@@
              </unpack>
 
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
-                     --ncbiTaxId @@phanerochaete_chrysosporium_rp-78_NCBI_TAXONOMY_ID@@
+                     --ncbiTaxId @@phanerochaete_chrysosporium_rp78_NCBI_TAXONOMY_ID@@
                      --externalDatabaseVersion %RESOURCE_VERSION%
-                     --sequenceFile @@dataDir@@/phanerochaete_chrysosporium_rp-78_supercontigs.uniquified.fasta
+                     --sequenceFile @@dataDir@@/phanerochaete_chrysosporium_rp78_supercontigs.uniquified.fasta
                      --SOTermName 'chromosome'
                      --regexSourceId  '>(\S+)'
                      --tableName "DoTS::ExternalNASequence"
@@ -30,9 +30,9 @@
              </pluginArgs>
 
              <info
-                      displayName="Phanerochaete chrysosporium (rp-78) genomic sequence"
+                      displayName="Phanerochaete chrysosporium (rp78) genomic sequence"
                       project="FungiDB"
-                      organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
+                      organisms="@@phanerochaete_chrysosporium_rp78_FUNGIDB_DISPLAY_NAME@@"
                       category="Genome"
                       publicUrl=""
                       contact=""
@@ -40,7 +40,7 @@
                       institution="Joint Genome Institute">
                       <description>
                          <![CDATA[
-                            Phanerochaete chrysosporium (rp-78) genomic sequence. Source: JGI."                            
+                            Phanerochaete chrysosporium (rp78) genomic sequence. Source: JGI."                            
                          ]]>
                       </description>
               </info>
@@ -48,32 +48,32 @@
 
   <!-- ISF genome annotations -->
   <resource
-          resource="phanerochaete_chrysosporium_rp-78_genome_annotations_RSRC"
-          version="@@phanerochaete_chrysosporium_rp-78_GENOME_VERSION_VER@@"
-          parentResource="phanerochaete_chrysosporium_rp-78_genome_sequence_RSRC"
+          resource="phanerochaete_chrysosporium_rp78_genome_annotations_RSRC"
+          version="@@phanerochaete_chrysosporium_rp78_GENOME_SEQUENCE_VER@@"
+          parentResource="phanerochaete_chrysosporium_rp78_genome_sequence_RSRC"
           plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
  
-          <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp-78_transcripts.gff3"/> 
+          <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp78/genome/%RESOURCE_VERSION%/phanerochaete_chrysosporium_rp78_transcripts.gff3"/> 
 
           <!-- Standardize scaffold IDs by prefixing -->
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
-                --input  @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.gff3
-                --output @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.uniquified.gff3
-                --prefix @@phanerochaete_chrysosporium_rp-78_ORGANISM_ABBREVIATION@@
+                --input  @@dataDir@@/phanerochaete_chrysosporium_rp78_transcripts.gff3
+                --output @@dataDir@@/phanerochaete_chrysosporium_rp78_transcripts.uniquified.gff3
+                --prefix @@phanerochaete_chrysosporium_rp78_FUNGIDB_ABBREVIATION@@
           </unpack>
 
           <unpack>
               preprocessGFF3 
-                 --input_gff @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.uniquified.gff3
-                 --output_gff @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.transformed.gff
+                 --input_gff @@dataDir@@/phanerochaete_chrysosporium_rp78_transcripts.uniquified.gff3
+                 --output_gff @@dataDir@@/phanerochaete_chrysosporium_rp78_transcripts.transformed.gff
           </unpack>
 
           <pluginArgs>
                  --extDbName %PARENT_RESOURCE_NAME%
                  --extDbRlsVer %PARENT_RESOURCE_VERSION%
                  --mapFile @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
-                 --inputFileOrDir @@dataDir@@/phanerochaete_chrysosporium_rp-78_transcripts.transformed.gff3
+                 --inputFileOrDir @@dataDir@@/phanerochaete_chrysosporium_rp78_transcripts.transformed.gff3
                  --inputFileExtension "gff3" 
                  --fileFormat gff3 
                  --soCvsVersion @@SO_VER@@
@@ -88,7 +88,7 @@
            <info
                 displayName="Phanerochaete chrysosporium (RP-78) genomic annotations."
                 project="FungiDB"
-                organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
+                organisms="@@phanerochaete_chrysosporium_rp78_FUNGIDB_DISPLAY_NAME@@"
                 category="Genome"
                 publicUrl=""
                 contact=""
@@ -107,16 +107,16 @@
            ALIASES
        ////////////////////// -->
 
-  <resource resource="phanerochaete_chrysosporium_rp-78_primary_gene_aliases_RSRC" 
-            version="@@phanerochaete_chrysosporium_rp-78_VER@@"
+  <resource resource="phanerochaete_chrysosporium_rp78_primary_gene_aliases_RSRC" 
+            version="@@phanerochaete_chrysosporium_rp78_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
-    <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp-78/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <manualGet fileOrDir="FungiDB/phanerochaete_chrysosporium_rp78/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@phanerochaete_chrysosporim_rp-78_ORGANISM_FULL_NAME@@"
+        organisms="@@phanerochaete_chrysosporim_rp78_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -133,10 +133,10 @@
 
 
   <!-- dbEST -->
-  <resource resource="phanerochaete_chrysosporium_rp-78_dbest_RSRC" version="@@phanerochaete_chrysosporium_rp-78_DBEST_VER@@"
+  <resource resource="phanerochaete_chrysosporium_rp78_dbest_RSRC" version="@@phanerochaete_chrysosporium_rp78_DBEST_VER@@"
                                                           plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId @@phanerochaete_chrysosporium_rp-78_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId @@phanerochaete_chrysosporium_rp78_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 
                 --taxonFile @@dataDir@@/taxonIdFile 
@@ -150,7 +150,7 @@
     <info
         displayName="Phanerochaete chrysosporium (RP-78) dbEST ESTs"
         project="FungiDB"
-        organisms="@@phanerochaete_chrysosporium_rp-78_ORGANISM_FULL_NAME@@"
+        organisms="@@phanerochaete_chrysosporium_rp78_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""

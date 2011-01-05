@@ -4,42 +4,41 @@
   <!-- ISF FASTA resource -->
   <resource
         resource="candida_albicans_sc5314_genome_sequence_RSRC"
-        version="@@candida_albicans_sc5314_VER@@"
+        version="@@candida_albicans_sc5314_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-        <!-- WARNING! Versioned URL. Will need to be updated manually. -->
-<!--
-        <wgetArgs url="http://candidagenome.org/download/gff/C_albicans_SC5314/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz">--tries=5 --mirror  --no-parent --no-host-directories --cut-dirs=5
-         </wgetArgs>
--->
 
-         <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
-         <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
-         <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+         <!-- Fetching / preprocessing occurs upstream of the workflow. I think that's cleaner. -->
+         <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/candida_albicans_sc5314.unpacked.fasta" />
 
-        <!-- Standardize scaffold IDs by prefixing -->
-        <!-- Only need to uniquify transcript IDs for C. albicans -->
-        <unpack>
-               fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/candida_albicans_sc5314.gff3
-                   --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                   --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
-                   --ignore_contigs
-                   --mapping_file @@dataDir@@/primary_gene_aliases.tab
-        </unpack>
 
-        <!-- Split FASTA from GFF -->
-        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
-        <unpack>
-             makeCustomFastaAndGffFromGff3
-                  --input_dir @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                  --inputFileExt gff3
-                  --output_fasta @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
-                  --output_gff   @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
-        </unpack>
 
-        <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
-        <!-- IDs: Ca21chr1_C_albicans_SC5314" -->
+         <!-- Or processing as part of workflow...
+         <!-- WARNING! Versioned URL. Will need to be updated manually. -->
+         <!--
+                <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
+                <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+                <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+
+                <unpack>
+                    fungidb_uniquify_and_standardize_seqids.pl
+                       --input  @@dataDir@@/candida_albicans_sc5314.gff3
+                       --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
+                       --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
+                       --ignore_contigs
+                       --mapping_file @@dataDir@@/primary_gene_aliases.tab
+               </unpack>
+
+               <unpack>
+                    makeCustomFastaAndGffFromGff3
+                        --input_dir @@dataDir@@/candida_albicans_sc5314.gff3
+                        --inputFileExt gff3
+                        --output_fasta @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
+                        --output_gff   @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
+               </unpack>
+               -->
+
+        <!-- Sequence IDs: Ca21chr1_C_albicans_SC5314" -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
              --ncbiTaxId @@candida_albicans_sc5314_NCBI_TAXONOMY_ID@@
@@ -54,7 +53,7 @@
          <info
              displayName="Candida albicans (SC5314) genomic sequence"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+             organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl="http://candidagenome.org/download/gff/candida_21_with_chromosome_sequences.gff.gz"
              contact=""
@@ -76,49 +75,43 @@
          parentResource="candida_albicans_sc5314_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
+         <!-- Fetching / preprocessing occurs upstream of the workflow. I think that's cleaner. -->
+        <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/candida_albicans_sc5314.transformed.gff3" />
+
         <!-- WARNING! Versioned URL. Will need to be updated manually. -->
-<!--
-        <wgetArgs url="http://candidagenome.org/download/gff/C_albicans_SC5314/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz">--tries=5 --mirror --no-parent --no-host-directories --cut-dirs=5
-         </wgetArgs>
--->
+        <!-- Or processing as part of workflow...
+             <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
+             <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+             <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
 
+             <unpack>
+                    fungidb_uniquify_and_standardize_seqids.pl
+                        --input  @@dataDir@@/candida_albicans_sc5314.gff3
+                        --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
+                        --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
+                        --ignore_contigs
+                        --mapping_file @@dataDir@@/primary_gene_aliases.tab
+             </unpack>
 
-         <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
-         <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
-         <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
+             <unpack>
+                  makeCustomFastaAndGffFromGff3
+                       --input_dir @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
+                       --inputFileExt gff3
+                       --output_fasta @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
+                       --output_gff   @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
+             </unpack>
 
-        <!-- Standardize scaffold IDs by prefixing -->
-        <!-- Only need to uniquify transcript IDs for C. albicans -->
-        <unpack>
-               fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/candida_albicans_sc5314.gff3
-                   --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                   --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
-                   --ignore_contigs
-                   --mapping_file @@dataDir@@/primary_gene_aliases.tab
-        </unpack>
-
-        <!-- Split FASTA from GFF -->
-        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
-        <unpack>
-             makeCustomFastaAndGffFromGff3
-                  --input_dir @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                  --inputFileExt gff3
-                  --output_fasta @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
-                  --output_gff   @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
-        </unpack>
-
-         <!-- Run the standard ISF preprocess step -->
-         <unpack>
-               preprocessGFF3 
-                   --input_gff  @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
-                   --output_gff @@dataDir@@/candida_albicans_sc5314.transformed.gff3
-         </unpack>
+             <unpack>
+                    preprocessGFF3 
+                        --input_gff  @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
+                        --output_gff @@dataDir@@/candida_albicans_sc5314.transformed.gff3
+              </unpack>
+             -->
 
          <pluginArgs>
                 --extDbName      %PARENT_RESOURCE_NAME%
                 --extDbRlsVer    %PARENT_RESOURCE_VERSION%
-                --mapFile                @@gusHome@@/lib/xml/isf/FungiDB/sgdGFF32Gus.xml
+                --mapFile                @@gusHome@@/lib/xml/isf/FungiDB/cgdGFF32Gus.xml
                 --inputFileOrDir         @@dataDir@@/candida_albicans_sc5314.transformed.gff3
                 --inputFileExtension     "gff3"
                 --fileFormat             gff3
@@ -127,14 +120,14 @@
                 --seqSoTerm              "chromosome"
                 --validationLog          @@dataDir@@/validation.log
                 --bioperlTreeOutput      @@dataDir@@/bioperlTree.out
-                --seqIdColumn source_id
+                --seqIdColumn            source_id
                 --naSequenceSubclass     ExternalNASequence
           </pluginArgs>
 
           <info
              displayName="Candida albicans (SC5314) genomic annotations"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+             organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl="http://candidagenome.org/download/gff/C_albicans_SC5314/"
              contact=""
@@ -153,39 +146,33 @@
        ////////////////////// -->
 
   <resource resource="candida_albicans_sc5314_primary_gene_aliases_RSRC" 
-            version="@@candida_albicans_sc5314_VER@@"
+            version="@@candida_albicans_sc5314_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
- 
-        <!-- WARNING! Versioned URL. Will need to be updated manually. -->
-<!--
-        <wgetArgs url="http://candidagenome.org/download/gff/C_albicans_SC5314/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz">--tries=5  --mirror  --no-parent --no-host-directories --cut-dirs=5
-         </wgetArgs>
--->
 
 
+          <!-- Processing occurs upstream of the workflow now -->
+          <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/> 
+
+         <!-- Or as part of the workflow ...
          <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
          <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
          <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
 
-        <!-- Standardize scaffold IDs by prefixing -->
-        <!-- Only need to uniquify transcript IDs for C. albicans -->
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/candida_albicans_sc5314.gff3
                    --output @@dataDir@@/candida_albicans_sc5314.uniquified.gff3
-                   --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
+                   --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
                    --ignore_contigs
                    --mapping_file @@dataDir@@/primary_gene_aliases.tab
         </unpack>
-<!--
-    <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
--->
+        -->
 
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+        organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -210,6 +197,8 @@
            version="@@candida_albicans_sc5314_GO_ASSOCIATIONS_VER@@"
            plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
 
+
+
            <wgetArgs url="http://candidagenome.org/download/go/gene_association.cgd.gz">--tries=5  --mirror --no-parent --no-host-directories --cut-dirs=5
            </wgetArgs>
            <unpack>gunzip @@dataDir@@/gene_association.cgd.gz</unpack>
@@ -222,7 +211,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/gene_association.cgd
                      --output @@dataDir@@/gene_association.uniquified.cgd
-                     --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
+                     --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
                      --col 2
                      --verbose
           </unpack>
@@ -242,7 +231,7 @@
          <info
               displayName="Candida albicans (SC5314) GO associations"
               project="FungiDB"
-              organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+              organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
               category="Proteome"
               publicUrl=""
               contact=""
@@ -295,7 +284,7 @@
     <info
         displayName="Candida albicans (SC5314) EC IDs"
         project="FungiDB"
-        organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+        organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
         category="Proteome"
         publicUrl=""
         contact=""
@@ -329,7 +318,7 @@
              fungidb_map_candida_ids_to_features.pl
                 --input @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --output @@dataDir@@/gene_aliases.tab
-                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
+                --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
          </unpack>
 
          <pluginArgs>
@@ -343,7 +332,7 @@
          <info
              displayName="Candida albicans (SC5314) gene aliases"
              project="FungiDB"
-             organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+             organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
              category="ignore"
              publicUrl=""
              contact=""
@@ -377,7 +366,7 @@
                 --input               @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --id_to_dbxref        @@dataDir@@/CGDID_2_RefSeqID.tab
                 --output @@dataDir    @@/geneid2entrez.tab
-                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
+                --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
          </unpack>
  
          <pluginArgs>
@@ -427,7 +416,7 @@
                 --input               @@dataDir@@/C_albicans_SC5314_A21_chromosomal_feature.tab
                 --id_to_dbxref        @@dataDir@@/gp2protein.cgd
                 --output @@dataDir    @@/geneid2uniprot.tab
-                --prefix @@candida_albicans_sc5314_ORGANISM_ABBREVIATION@@
+                --prefix @@candida_albicans_sc5314_FUNGIDB_ABBREVIATION@@
          </unpack>
 
          <pluginArgs>
@@ -442,7 +431,7 @@
          <info
               displayName="Candida albicans (SC5314) Gene IDs to UniProt dbxrefs"
               project="FungiDB"
-              organisms="@@candida_albicans_sc5314_ORGANISM_FULL_NAME@@"
+              organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
               category="ignore"
               publicUrl=""
               contact=""

@@ -19,7 +19,7 @@
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
                    --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                   --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                    --mapping_file @@dataDir@@/primary_gene_aliases.tab
         </unpack>
 
@@ -48,7 +48,7 @@
          <info
              displayName="Saccharomyces cerevisiae (S288C) genome sequence"
              project="FungiDB"
-             organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+             organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl="http://www.yeastgenome.org/"
              contact=""
@@ -77,7 +77,7 @@
                 fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
                    --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                   --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                    --mapping_file @@dataDir@@/primary_gene_aliases.tab
          </unpack>
 
@@ -117,7 +117,7 @@
           <info
              displayName="Saccharomyces cerevisiae (S288C) genomic annotations"
              project="FungiDB"
-             organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+             organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
              publicUrl="http://www.yeastgenome.org/"
              contact=""
@@ -137,7 +137,7 @@
        ////////////////////// -->
 
   <resource resource="saccharomyces_cerevisiae_s288c_primary_gene_aliases_RSRC" 
-            version="@@saccharomyces_cerevisiae_s288c_VER@@"
+            version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
  
     <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
@@ -145,7 +145,7 @@
     <info
         displayName="Mapping of FungiDB IDs to original gene names."
         project="FungiDB"
-        organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+        organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -173,13 +173,13 @@
             plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
 
             <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->
-            <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/@@saccharomyces_cerevisiae_s288c_VER@@/gene_association.sgd" />
+            <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/gene_ontology/%RESOURCE_VERSION%/gene_association.sgd" />
 
             <unpack>
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/gene_association.sgd
                      --output @@dataDir@@/gene_association.uniquified.sgd
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 2
                      --verbose
             </unpack>
@@ -199,7 +199,7 @@
             <info
                  displayName="Saccharomyces cerevisiae (S288C) GO associations"
                  project="FungiDB"
-                 organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+                 organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
                  category="Proteome"
                  publicUrl="http://downloads.yeastgenome.org/literature_curation/gene_association.sgd.gz"
                  contact=""
@@ -220,7 +220,7 @@
 
       <!-- EC numbers -->
       <resource
-          resource="saccharomyces_cerevisiae_s288c_ec_ids_RSRC" 
+          resource="saccharomyces_cerevisiae_s288c_ec_dbxrefs_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
           plugin="GUS::Community::Plugin::InsertECMapping">
 
@@ -239,7 +239,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/ec_numbers.tab
                      --output @@dataDir@@/ec_numbers.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -253,7 +253,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) EC IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
             contact=""
@@ -289,7 +289,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/uniprot_ids.tab
                      --output @@dataDir@@/uniprot_ids.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
           </unpack>
 
@@ -306,7 +306,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) Uniprot IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
             contact=""
@@ -342,7 +342,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/candida_ids.tab
                      --output @@dataDir@@/candida_ids.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -359,7 +359,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) Candida DB ortholog IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
             contact=""
@@ -395,7 +395,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/refseq_ids.tab
                      --output @@dataDir@@/refseq_ids.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -412,7 +412,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) Refseq IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl="http://downloads.yeastgenome.org/chromosomal_feature/"
             contact=""
@@ -448,7 +448,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/refseq_accessions.tab
                      --output @@dataDir@@/refseq_accessions.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -465,7 +465,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) RefSeq accessions"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl=""
             contact=""
@@ -501,7 +501,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/refseq_gene.tab
                      --output @@dataDir@@/refseq_gene.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -518,7 +518,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) RefSeq Gene IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl=""
             contact=""
@@ -553,7 +553,7 @@
                 fungidb_prepend_fungidb_identifier.pl
                      --input @@dataDir@@/metacyc.tab
                      --output @@dataDir@@/metacyc.uniquified.tab
-                     --prefix @@saccharomyces_cerevisiae_s288c_ORGANISM_ABBREVIATION@@
+                     --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
                      --col 0
          </unpack>
 
@@ -570,7 +570,7 @@
          <info
             displayName="Saccharomyces cerevisiae (S288C) MetaCyc IDs"
             project="FungiDB"
-            organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+            organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
             category="Proteome"
             publicUrl=""
             contact=""
@@ -605,7 +605,7 @@
     <info
         displayName="Saccharomyces cerevisiae (S288C) dbEST ESTs"
         project="FungiDB"
-        organisms="@@saccharomyces_cerevisiae_s288c_ORGANISM_FULL_NAME@@"
+        organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
         category="Transcriptome"
         publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
         contact=""
