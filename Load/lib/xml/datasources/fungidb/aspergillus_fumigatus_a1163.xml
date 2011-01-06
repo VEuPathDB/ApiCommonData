@@ -1,0 +1,236 @@
+<!-- Aspergillus fumigatus (AF293) Resources -->
+<resources>
+
+  <!-- ISF FASTA resource -->
+  <resource
+        resource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
+        version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences">
+
+        <!-- Transforming upstream of ISF/workflow... -->
+        <manualGet 
+              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_supercontigs.uniquified.gff3"/>
+
+        <!-- or within the workflow iteself... -->
+        <!--
+        <unpack>
+               fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
+                   --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
+                   --prefix @@aspergillus_fumigatus_af392_FUNGIDB_ABBREVIATION@@
+        </unpack>
+       
+        <unpack>
+             makeCustomFastaAndGffFromGff3
+                  --input_dir @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
+                  --inputFileExt gff3
+                  --output_fasta @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
+                  --output_gff   @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
+        </unpack>
+        -->
+
+        <pluginArgs>
+             --externalDatabaseName %RESOURCE_NAME%
+             --ncbiTaxId @@asperpgillus_fumigatus_af293_NCBI_TAXONOMY_ID@@
+             --externalDatabaseVersion %RESOURCE_VERSION%
+             --sequenceFile @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
+             --SOTermName 'chromosome' 
+             --regexSourceId  '>(\S+)'
+             --tableName "DoTS::ExternalNASequence"
+             --regexChromosome '\d+\.(\d+)'
+         </pluginArgs>
+
+         <info
+             displayName="Aspergillus fumigatus (AF293) genomic sequence (Broad)"
+             project="FungiDB"
+             organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+             category="Genome"
+             publicUrl=""
+             contact=""
+             email=""
+             institution="Genbank">
+             <description>
+                 <![CDATA[
+                    Aspergillus fumigatus (AF293) genomic sequence. Source: Broad.
+             ]]>
+             </description>
+         </info>
+  </resource>
+
+
+  <!-- ISF genomic annotations resource -->
+  <resource
+         resource="aspergillus_fumigatus_af293_genome_annotations_RSRC"
+         version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@" 
+         parentResource="aspergillus_fumigatus_af293_genome_sequence_RSRC"
+         plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+        <!-- Transforming upstream of ISF/workflow... -->
+        <manualGet 
+              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_transcripts.transformed.gff3"/>
+
+        <!-- or within the workflow iteself... -->
+        <!--
+        <manualGet 
+              fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.gff3"/>
+        <unpack>
+               fungidb_uniquify_and_standardize_seqids.pl
+                   --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
+                   --output @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
+                   --prefix @@aspergillus_fumigatus_af392_FUNGIDB_ABBREVIATION@@
+        </unpack>
+       
+        <unpack>
+             makeCustomFastaAndGffFromGff3
+                  --input_dir @@dataDir@@/aspergillus_fumigatus_af293.uniquified.gff3
+                  --inputFileExt gff3
+                  --output_fasta @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
+                  --output_gff   @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
+        </unpack>
+       
+         <unpack>
+               preprocessGFF3 
+                   --input_gff  @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
+                   --output_gff @@dataDir@@/aspergillus_fumigatus_af293.transformed.gff3
+         </unpack>
+         -->
+
+         <pluginArgs>
+                --extDbName      %PARENT_RESOURCE_NAME%
+                --extDbRlsVer    %PARENT_RESOURCE_VERSION%
+                --mapFile        @@gusHome@@/lib/xml/isf/FungiDB/broadGFF32Gus.xml
+                --inputFileOrDir @@dataDir@@/aspergillus_fumigatus_af293_transcripts.transformed.gff3
+                --inputFileExtension "gff3"
+                --fileFormat     gff3
+                --soCvsVersion   @@SO_VER@@
+                --defaultOrganism "@@aspergillus_fumigatus_af293_NCBI_DISPLAY_NAME@@"
+                --seqSoTerm "chromosome"
+                --validationLog     @@dataDir@@/validation.log
+                --bioperlTreeOutput @@dataDir@@/bioperlTree.out
+                --seqIdColumn source_id
+                --naSequenceSubclass ExternalNASequence
+          </pluginArgs>
+
+          <info
+             displayName="Aspergillus fumigatus (AF293) genomic annotations"
+             project="FungiDB"
+             organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+             category="Genome"
+             publicUrl=""
+             contact=""
+             email=""
+             institution="Broad">
+             <description>
+               <![CDATA[
+                    Aspergillus fumigatus (AF293) genomic annotations. Source: Broad.
+                ]]>
+            </description>
+          </info>
+     </resource>
+
+ <!-- //////////////////////
+           ALIASES
+       ////////////////////// -->
+
+  <resource resource="aspergillus_fumigatus_af293_primary_gene_aliases_RSRC" 
+            version="@@aspergillus_fumigatus_af293_GENOME_SEQUENCE_VER@@"
+            plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+ 
+    <manualGet fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/>
+    <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
+    <info
+        displayName="Mapping of FungiDB IDs to original gene names."
+        project="FungiDB"
+        organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- GO annotations resource -->
+  <resource 
+         resource="aspergillus_fumigatus_af293_go_associations_RSRC"
+         version="@@aspergillus_fumigatus_af293_GO_ASSOCIATIONS_VER@@"
+         plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple">
+    
+         <manualGet 
+              fileOrDir="FungiDB/aspergillus_fumigatus_af293/gene_ontology/@@aspergillus_fumigatus_af293_VER@@/gene_association.sgd" />
+ 
+         <pluginArgs>
+               --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"
+               --inputFile @@dataDir@@/gene_association.sgd
+               --goExternalDatabaseSpec "GO_RSRC|@@GO_VER@@"
+               --seqIdSql "SELECT g.source_id, taf.aa_sequence_id FROM dots.genefeature g, dots.transcript t, dots.translatedAAFeature taf WHERE g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id UNION SELECT taf.source_id, taf.aa_sequence_id FROM dots.translatedAAFeature taf"
+              --targetTable "DoTS::TranslatedAASequence"
+              --lineOfEvidence "SGD"
+              --inputIdColumn id
+              --tolerateMissingSeqs
+              --skipBadGOTerms @@dataDir@@/badGOTerms.log
+         </pluginArgs>
+
+         <info
+              displayName="Aspergillus fumigatus (AF293) GO associations"
+              project="FungiDB"
+              organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+              category="Proteome"
+              publicUrl=""
+              contact=""
+              email=""
+              institution="">
+              <description>
+                 <![CDATA[
+                     Aspergillus fumigatus (AF293) GO associations
+                 ]]>
+              </description>
+          </info>
+   </resource>
+
+   
+   <!-- EC numbers -->
+   <resource
+          resource="aspergillus_fumigatus_af293_ec_ids_RSRC"
+          version="@@aspergillus_fumigatus_af293_VER@@"
+          plugin="GUS::Community::Plugin::InsertECMapping">
+
+    <manualGet fileOrDir="FungiDB/aspergillus_fumigatus_af293/xrefs/%RESOURCE_VERSION%" />
+    <unpack>
+          fungidb_unpack_sgd_ids.pl
+              --input @@dataDir@@/dbxref.tab
+              --output @@dataDir@@/ec_numbers.tab
+              --db IUBMB
+              --type "EC number"
+    </unpack>
+
+    <pluginArgs>
+          --ECMappingFile @@dataDir@@/ec_numbers.tab
+          --evidenceCode "SGD"
+          --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"
+    </pluginArgs>
+    
+    <info
+        displayName="Aspergillus fumigatus (AF293) EC IDs"
+        project="FungiDB"
+        organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Aspergillus fumigatus (AF293) EC IDs
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>

@@ -10,30 +10,33 @@
         resource="saccharomyces_cerevisiae_s288c_genome_sequence_RSRC"
         version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
         plugin="GUS::Supported::Plugin::LoadFastaSequences">
+        
+        <!-- Manual delivery: see git:script/mirror_sgd_data.sh, which also handles a bunch of preprocessing -->
+        <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.unpacked.fasta"/>
 
+
+        <!-- Or handle processing in the workflow itself -->
         <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->
-        <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+             <!--
+             <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+     
+             <unpack>
+                      fungidb_uniquify_and_standardize_seqids.pl
+                            --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
+                            --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                            --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
+                            --mapping_file @@dataDir@@/primary_gene_aliases.tab
+             </unpack>
 
-        <!-- Standardize scaffold IDs by prefixing -->
-        <unpack>
-               fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
-                   --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
-                   --mapping_file @@dataDir@@/primary_gene_aliases.tab
-        </unpack>
+             <unpack>
+                     makeCustomFastaAndGffFromGff3
+                          --input_dir    @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                          --inputFileExt gff3
+                          --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
+                          --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+             </unpack>
+         -->
 
-        <!-- Split FASTA from GFF -->
-        <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
-        <unpack>
-             makeCustomFastaAndGffFromGff3
-                  --input_dir    @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                  --inputFileExt gff3
-                  --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
-                  --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
-        </unpack>
-
-        <!-- There may not be a taxonomy ID for some organisms; Others don't seem to be present in the taxonomy -->
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
              --externalDatabaseVersion %RESOURCE_VERSION% 
@@ -70,33 +73,35 @@
          parentResource="saccharomyces_cerevisiae_s288c_genome_sequence_RSRC"
          plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
-         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3" />
 
-         <!-- Standardize scaffold IDs by prefixing -->
-         <unpack>
-                fungidb_uniquify_and_standardize_seqids.pl
-                   --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
-                   --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
-                   --mapping_file @@dataDir@@/primary_gene_aliases.tab
-         </unpack>
+         <!-- Manual delivery: see git:script/mirror_sgd_data.sh, which also handles a bunch of preprocessing -->
+         <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.transformed.gff3"/>
 
-         <!-- Split FASTA from GFF -->
-         <!-- Arg isn't input_file_or_dir but only input_dir (which can also be a file) -->
-         <unpack>
-              makeCustomFastaAndGffFromGff3
-                   --input_dir    @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
-                   --inputFileExt gff3
-                   --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
-                   --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
-         </unpack>
+         <!-- Or processing as part of workflow...
+                  <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3" />
 
-         <!-- Run the standard ISF preprocess step -->
-         <unpack>
-               preprocessGFF3 
-                   --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
-                   --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
-         </unpack>
+                  <unpack>
+                        fungidb_uniquify_and_standardize_seqids.pl
+                            --input  @@dataDir@@/saccharomyces_cerevisiae_s288c.gff3
+                            --output @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                            --prefix @@saccharomyces_cerevisiae_s288c_FUNGIDB_ABBREVIATION@@
+                            --mapping_file @@dataDir@@/primary_gene_aliases.tab
+                  </unpack>
+
+                  <unpack>
+                       makeCustomFastaAndGffFromGff3
+                            --input_dir    @@dataDir@@/saccharomyces_cerevisiae_s288c.uniquified.gff3
+                            --inputFileExt gff3
+                            --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
+                            --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+                  </unpack>
+  
+                  <unpack>
+                       preprocessGFF3 
+                           --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
+                           --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
+                  </unpack>
+         -->
 
          <pluginArgs>
                 --extDbName          %PARENT_RESOURCE_NAME%
@@ -106,7 +111,7 @@
                 --inputFileExtension "gff3"
                 --fileFormat         gff3
                 --soCvsVersion       @@SO_VER@@
-                --defaultOrganism    "Saccharomyces cerevisiae"
+                --defaultOrganism    "@@saccharomyces_cerevisiae_s288c_NCBI_DISPLAY_NAME@@"
                 --seqSoTerm          "chromosome"
                 --validationLog      @@dataDir@@/validation.log
                 --bioperlTreeOutput  @@dataDir@@/bioperlTree.out
