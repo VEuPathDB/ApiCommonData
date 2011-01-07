@@ -50,9 +50,16 @@ while(<NDF>) {
   my @a = split(/\t/, $_);
 
   my $probeId = $a[12];
+  my $x = $a[15];
+  my $y = $a[16];
 
-  if(my $geneId = $oligoToGene{$probeId}) {
-    $a[4] = $geneId;
+  my $alternateId = "${x}-${y}";
+
+  if($oligoToGene{$probeId}) {
+    $a[4] = $oligoToGene{$probeId};
+  }
+  elsif($oligoToGene{$alternateId}) {
+    $a[4] = $oligoToGene{$alternateId};
   }
   else {
     $a[4] = $probeId;
