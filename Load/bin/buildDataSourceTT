@@ -43,8 +43,25 @@ my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $prop
 
 
 createTables($dbh, $suffix);
-# loadDataSources($dbh, "/var/www/iodice.plasmodb.org/project_home/ApiCommonData/Load/lib/xml/datasources/globalResources.xml");
-loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix);
+
+chdir "$ENV{GUS_HOME}/lib/xml/datasources";
+
+my $projectQuery = $dbh->prepare(<<SQL);
+  select project_id, lower(project_id) as lower_project_id
+  from (select distinct project_id from apidb.SequenceAttributes)
+SQL
+
+$projectQuery->execute();
+while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
+
+  loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix);
+
+  foreach my $file (`ls $lowerProject/*.xml`) {
+    print "loading $file\n";
+    loadDataSources($dbh, $file, $project, $version, $suffix);
+  }
+}
+
 createIndexes($dbh);
 dropConstraints($dbh, $suffix);
 
@@ -75,32 +92,37 @@ SQL
       from dual
 SQL
 
+    my $insertDsr = $dbh->prepare(<<SQL);
+      insert into apidb.DataSourceReference$suffix
+                  (data_source_reference_id, data_source_id, record_type, target_type, target_name)
+      select DataSourceReference_sq$suffix.nextval, ?, ?, ?, ?
+      from dual
+SQL
+
     foreach my $dsName ($dataSources->getDataSourceNames()) {
       my $ds = $dataSources->getDataSource($dsName);
-      print "name: \"$dsName\"\nproject: \"" . $ds->getProject() . "\"\n";
+#     print "name: \"$dsName\"\nproject: \"" . $ds->getProject() . "\"\n";
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
       $insertDs->execute($dataSourceId, $ds->getDisplayName(),
                        $ds->getVersion(), $ds->getCategory(), $ds->getOrganisms(),
-                       $ds->getProject(), $ds->getDescription(), $ds->getContact(),
+                       $project, # not $ds->getProject()
+                       $ds->getDescription(), $ds->getContact(),
                        $ds->getInstitution());
-      my %publicationHash;
+
       foreach my $publication ($ds->getPublications()) {
-        print "Dumping publication:\n" . Dumper($publication) . "\n -- DUMPED!\n";
+        # print "Dumping publication:\n" . Dumper($publication) . "\n -- DUMPED!\n";
 	if ($publication->[0]) {
-#         %publicationHash = $publication->[0];
-# why did the above not work?  The hack below is just for testing
-	  %publicationHash =
-          (
-            pmid => '15608177',
-            citation => 'InterPro, progress and status in 2005.. Nucleic Acids Res. 2005 Jan 1;33(Database issue):D201-5 Mulder et al. http://www.ncbi.nlm.nih.gov/pubmed/15608177'
-          );
-	  print "pmid: \"" . $publicationHash{pmid} . "\"\n";
-	  print "citation: \"" . $publicationHash{citation} . "\"\n";
-	  print "X: \"" . $publicationHash{X} . "\"\n";
-	  print "Dumping publicationHash:\n" . Dumper(%publicationHash) . "\n -- ALSO DUMPED!\n";
-          $insertDsp->execute($dataSourceId, $publicationHash{pmid}, $publicationHash{doi}, $publicationHash{citation}, $publicationHash{abstract});
+          $insertDsp->execute($dataSourceId, $publication->[0]->{pmid}, $publication->[0]->{doi}, $publication->[0]->{citation}, $publication->[0]->{abstract});
 	}
       }
+
+      foreach my $reference ($ds->getWdkReferences()) {
+        print "Dumping reference:\n" . Dumper($reference) . "\n -- DUMPED!\n";
+	if ($reference->[0]) {
+          $insertDsp->execute($dataSourceId, $reference->[0]->{record_type}, $reference->[0]->{target_type}, $reference->[0]->{target_name});
+	}
+      }
+
     }
 }
 
@@ -124,7 +146,7 @@ sub createTables {
       create table apidb.DataSource$suffix (
         data_source_id               number(12),
         external_database_release_id number(12),
-        display_name                 varchar2(60),
+        display_name                 varchar2(200),
         version                      varchar2(60),
         public_url                   varchar2(80),
         categories                   varchar2(80),
@@ -132,7 +154,7 @@ sub createTables {
         project                      varchar2(30),
         description                  varchar2(2000),
         contact                      varchar2(80),
-        institution                  varchar2(80),
+        institution                  varchar2(120),
         constraint DataSource_pk$suffix primary key (data_source_id),
         constraint DataSource_extdb_fk$suffix foreign key (external_database_release_id) references sres.ExternalDatabaseRelease
       )
@@ -193,19 +215,3 @@ SQL
 SQL
 }
 
-sub getDbHandle {
-
-  my $username = 'apidb';
-  my $password = 'po34weep';
-  my $instance = 'apitest';
-  my $dsn = "dbi:Oracle:" . $instance;
-
-  my $dbh = DBI->connect(
-                $dsn,
-                $username,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-
-  return $dbh;
-}
