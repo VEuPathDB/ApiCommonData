@@ -604,6 +604,28 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
+
+  <resource resource="Lmajor_LeishCYC_dbxref_RSRC" version="2010-01-07"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/lmajor/dbxref/LeishCYC/%RESOURCE_VERSION%/final/links.out"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/links.out --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'LmajorFriedlin_chromosomes_RSRC|@@LmajorFriedlin_chromosomes_VER@@' --idType ''</pluginArgs>
+    <info
+        displayName="dbxref from LeishCyc to eupathdb gene identifiers"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@,@@LmajorSDOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact="Vladimir Likic"
+        email="vlikic@unimelb.edu.au"
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--Proteome-->
 
   <resource resource="LmajorFriedlin_IEDB_Epitopes_RSRC" version="@@LmajorFriedlin_IEDB_Epitopes_VER@@"
