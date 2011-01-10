@@ -44,7 +44,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle();
 
-my $align = ToxoDBData::Load::MultAlignMercatorMavid->new();
+my $align = ApiCommonData::Load::MultAlignMercatorMavid->new();
 $align->initialize($dbh,$mercatorOutputDir,$cndSrcBin);
 
 #my $loc = $align->getAlignmentLocations('TGG_995291',4025,5000,'+');
