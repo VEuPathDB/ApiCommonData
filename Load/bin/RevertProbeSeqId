@@ -22,7 +22,7 @@ open(ORI, "$originalShortSeqsFile");
 
 while(<ORI>){
   chomp;
-  if(/\>(\S+)/){
+  if(/\>\s.(\S+)/){
       $idNum++;
       my $newSeqId="seq.".$idNum."a";
       $originalSeqIds{$newSeqId} = $1;
