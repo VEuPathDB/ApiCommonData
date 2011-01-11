@@ -28,7 +28,7 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $password, $logfile, $suffix, $project, $version);
+my ($propfile, $instance, $password, $logfile, $suffix, $version, $debug);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
            "password=s" => \$password,
@@ -36,6 +36,7 @@ GetOptions("propfile=s" => \$propfile,
            "suffix=s" => \$suffix,
            "project=s" => \$project,
            "version=s" => \$version,
+           "debug=!" => \$debug,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
@@ -51,14 +52,14 @@ my $projectQuery = $dbh->prepare(<<SQL);
   from (select distinct project_id from apidb.SequenceAttributes)
 SQL
 
-$projectQuery->execute();
+$projectQuery->execute() or die "getting a list of project IDs";
 while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
 
-  loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix);
+  loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix, $debug);
 
   foreach my $file (`ls $lowerProject/*.xml`) {
-    print "loading $file\n";
-    loadDataSources($dbh, $file, $project, $version, $suffix);
+  ApiCommonData::Load::TuningConfig::Log::addLog("loading $file");
+    loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
   }
 }
 
@@ -71,12 +72,11 @@ die if getErrorFlag();
 
 sub loadDataSources {
 
-    my ($dbh, $infile, $project, $version, $suffix) = @_;
+    my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
 
-# $self->{globalStepsConfig} = CBIL::Util::PropertySet->new("$homeDir/config/stepsShared.prop",[], 1);
     my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
     my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props);
-#    print Dumper($dataSources);
+  ApiCommonData::Load::TuningConfig::Log::addLog(Dumper($dataSources)) if $debug;
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSource$suffix
@@ -101,25 +101,28 @@ SQL
 
     foreach my $dsName ($dataSources->getDataSourceNames()) {
       my $ds = $dataSources->getDataSource($dsName);
-#     print "name: \"$dsName\"\nproject: \"" . $ds->getProject() . "\"\n";
+      ApiCommonData::Load::TuningConfig::Log::addLog("loading data source: \"$dsName\"") if $debug;
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
       $insertDs->execute($dataSourceId, $ds->getDisplayName(),
                        $ds->getVersion(), $ds->getCategory(), $ds->getOrganisms(),
                        $project, # not $ds->getProject()
                        $ds->getDescription(), $ds->getContact(),
-                       $ds->getInstitution());
+                       $ds->getInstitution())
+	or die "inserting a DataSource record";
 
-      foreach my $publication ($ds->getPublications()) {
-        # print "Dumping publication:\n" . Dumper($publication) . "\n -- DUMPED!\n";
-	if ($publication->[0]) {
-          $insertDsp->execute($dataSourceId, $publication->[0]->{pmid}, $publication->[0]->{doi}, $publication->[0]->{citation}, $publication->[0]->{abstract});
+      foreach my $publicationList ($ds->getPublications()) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping publication:\n" . Dumper($publication)) if $debug;
+	foreach my $publication (@$publicationList) {
+          $insertDsp->execute($dataSourceId, $publication->[0]->{pmid}, $publication->[0]->{doi}, $publication->[0]->{citation}, $publication->[0]->{abstract})
+	    or die "inserting a DataSetPublication record";
 	}
       }
 
-      foreach my $reference ($ds->getWdkReferences()) {
-        print "Dumping reference:\n" . Dumper($reference) . "\n -- DUMPED!\n";
-	if ($reference->[0]) {
-          $insertDsp->execute($dataSourceId, $reference->[0]->{record_type}, $reference->[0]->{target_type}, $reference->[0]->{target_name});
+      foreach my $referenceList ($ds->getWdkReferences()) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping referenceList:\n" . Dumper($referenceList) ) if $debug;
+	foreach my $reference (@$referenceList) {
+	    $insertDsr->execute($dataSourceId, $reference->{recordClass}, $reference->{type}, $reference->{name})
+	      or die "inserting a DataSetReference record";
 	}
       }
 
@@ -133,7 +136,8 @@ sub getNextDataSourceId {
     select apidb.DataSource_sq$suffix.nextval from dual
 SQL
 
-  $query->execute();
+  $query->execute()
+    or die "getting a primary key for DataSource from its sequence";
   my ($id) = $query->fetchrow_array();
 
   return $id;
@@ -166,7 +170,7 @@ SQL
         data_source_id               number(12),
         pmid                         varchar2(60),
         doi                          varchar2(60),
-        citation                     varchar2(300),
+        citation                     varchar2(1000),
         abstract                     varchar2(2000),
         constraint DataSourcePub_pk$suffix primary key (data_source_publication_id),
         constraint DataSourcePub_parent_fk$suffix foreign key (data_source_id) references apidb.DataSource$suffix
@@ -177,7 +181,7 @@ SQL
       create table apidb.DataSourceReference$suffix (
         data_source_reference_id     number(12),
         data_source_id               number(12),
-        record_type                  varchar2(20),
+        record_type                  varchar2(50),
         target_type                  varchar2(20),
         target_name                  varchar2(60),
         constraint DataSourceRef_pk$suffix primary key (data_source_reference_id),
