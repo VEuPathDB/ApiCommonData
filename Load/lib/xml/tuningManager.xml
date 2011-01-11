@@ -2990,7 +2990,7 @@ from
            'ToxoDB' as project_id
     from dual
     UNION
-    select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+    select ''T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
@@ -5682,9 +5682,9 @@ sub processChangedGenes {
             . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
       }
 
-  } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success));
+  } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success && !($response->content =~ /<error /)));
 
-  if (!$response->is_success) {
+  if (!$response->is_success || $response->content =~ /<error /) {
     die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url";
   }
 
@@ -5808,15 +5808,37 @@ use HTTP::Response;
 use ApiCommonData::Load::TuningConfig::Log;
 use XML::Simple;
 
+BEGIN {
+  # This variable is declared inside a BEGIN block, to make it behave
+  # like a Java "static" variable, whose state persists from one invocation to
+  # another.
+  my $errorFlag;
+
+  sub setErrorFlag {
+    $errorFlag = 1;
+  }
+
+  sub getErrorFlag {
+    return $errorFlag;
+  }
+}
+
+
 # my $dbh = getDbHandle();
 
 createEmptyTable($dbh);
 storeProducts($dbh);
 createIndex($dbh);
 
-die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
+die if getErrorFlag();
 
 ################################################################################
+
+sub logError {
+    my ($msg) = @_;
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($msg);
+    setErrorFlag();
+}
 
 sub storeProducts {
 
@@ -5894,7 +5916,7 @@ SQL
 
   for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
        $response = $ua->request($request);
-       ApiCommonData::Load::TuningConfig::Log::addErrorLog("error message from web service: " . $response->content)
+       logError("error message from web service: " . $response->content)
          if $response->content =~ /"error": \{/;
        last if $response->is_success;
        ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
@@ -5922,7 +5944,7 @@ SQL
   ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
 
   my $noProd = changedGenesWithoutProduct($dbh);
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
+  logError($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
     if $noProd;
 }
 
@@ -6153,8 +6175,11 @@ sub getDbHandle {
     </sql>
   </tuningTable>
 
+  <tuningTable name="apidb.DataSource" alwaysUpdate="true">
+    <internalDependency name="apidb.SequenceAttributes"/>
+    <ancillaryTable name="apidb.DataSourcePublication"/>
+    <ancillaryTable name="apidb.DataSourceReference"/>
+    <program commandLine="buildDataSourceTT"/>
+  </tuningTable>
+
 </tuningConfig>
-
-
-
-
