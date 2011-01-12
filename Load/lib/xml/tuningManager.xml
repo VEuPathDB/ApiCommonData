@@ -1201,7 +1201,7 @@ CREATE TABLE apidb.GeneAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
-       SUBSTR(COALESCE(preferred_product.product, any_product.product, gf.product), 1, 300) AS product,
+       SUBSTR(COALESCE(preferred_product.product, any_product.product, gf.product, 'unspecified product'), 1, 300) AS product,
        COALESCE(preferred_name.name, any_name.name) AS name,
        gf.is_pseudo,
        LEAST(nl.start_min, nl.end_max) AS start_min,
