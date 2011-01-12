@@ -27,12 +27,14 @@ my $cndSrcBin = "/usr/local/bin/cndsrc-2006-09-19/bin/";
             "useGeneAttributes|uga!" => \$useGeneAttributes,
            );
 
-die "you MUST provide --gusConfigFile|gc <gusconfigfile> --mercatorOutputDir|md <dir with mercator output> --cndSrcBin|b <bin directory for mercator execs> --extDbRelIds|rel <comma delimited list of ids> --useGeneAttributes|uga --verbose|v \n" unless ($gusConfigFile && $mercatorOutputDir && $cndSrcBin && ($extDbRelIds || $useGeneAttributes)); 
+die "you MUST provide --gusConfigFile|gc <gusconfigfile> --mercatorOutputDir|md <dir with mercator output> --cndSrcBin|b <bin directory for mercator execs> --extDbRelIds|rel <comma delimited list of ids> --useGeneAttributes|uga --verbose|v \n" unless ($mercatorOutputDir && $cndSrcBin && ($extDbRelIds || $useGeneAttributes)); 
 
 my $type = $gene_type eq 'protein_coding' ? '=' : $gene_type eq 'rna_coding' ? '!=' : die "ERROR: you must provide --gene_type <(protein_coding|rna_coding)> on the command line\n";
 
 die "ERROR: mercatorOutputDir '$mercatorOutputDir' not found\n" unless -d "$mercatorOutputDir/alignments";
 die "ERROR: $cndSrcBin '$cndSrcBin' not found\n" unless -f "$cndSrcBin/sliceAlignment";
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
