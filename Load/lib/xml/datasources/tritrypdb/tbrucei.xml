@@ -1232,7 +1232,7 @@ Laboratory of Molecular Parasitology, The Rockefeller University
     <publication pmid="20347883"/>
   </resource>
 
-<!--Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross_PatchCurated-->
+
   <resource resource="Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC" version="@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@" 
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross_pas_sas/%RESOURCE_VERSION%/final/"/>
@@ -1282,29 +1282,6 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
     </info>
   </resource>
 
-
- <resource resource="Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross_PatchCurated" version="2010-01-27" 
-        displayName="Splice Leader and Poly A Sites from RNASeq (George Cross)" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/RNA-seq/GeorgeCross_1-10-10_pas_sas/unique_bowtie/" 
-            contact="George Cross"
-            email="gamc@mail.rockefeller.edu"
-            institution="Rockefeller University" />
-
-<unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set intron_size = regexp_replace(regexp_substr(query_id,'\(\d+\)','1'),'[\(|\)]','') where intron_size is null and sample in ('curated_polyA','curated_splice')"</unpack>
-<unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set strand = decode(strand,'+','-','-','+') where sample = 'curated_polyA'"</unpack>
-<unpack>assignQueryIdToSplicePolyA.pl --type splice --o 'Trypanosoma brucei TREU927' --sample curated_splice --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --v --commit</unpack>
-<unpack>assignQueryIdToSplicePolyA.pl --type polyA --o 'Trypanosoma brucei TREU927' --sample curated_polyA --extDbSpecs 'Splice_Leader_And_Poly_A_Sites_From_RNASeq_George_Cross|2010-01-27' --v --commit</unpack>
-<pluginArgs></pluginArgs>
-
-        <description>
-            <![CDATA[
-Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosoma brucei</i> and identification of trans-splicing and polyadenylation sites.<br>T. Nicolai Siegel, Doeke R. Hekstra, Xuning Wang, Scott Dewell and George A. M. Cross (submitted).
-          ]]>
-        </description>
-    </resource>
 
 
 <!--DbxRefsResource-->
