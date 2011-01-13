@@ -49,4 +49,32 @@
     </info>
   </resource>
 
+  <resource resource="ChIP_Chip_Einstein_ME1_RSRC" version="@@ChIP_Chip_Einstein_ME1_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="ToxoDB/tgondiiME49/chipChip/Einstein_ME1/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep2.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep2_smoothe_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep2_peak_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep1.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep1_smoothe_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/RH_H3K4me1_Rep1_peak_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chromatin Immunoprecipitation Microarray - Einstein ME1"
+        project="ToxoDB"
+        organisms="@@TgME49OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 </resources>
