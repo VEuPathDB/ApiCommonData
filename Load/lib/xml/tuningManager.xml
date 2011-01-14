@@ -4521,13 +4521,13 @@ ORDER by na_sequence_id, offset, sequence_order)
   </tuningTable>
 
   <tuningTable name="apidb.DistinctLowerProduct">
-    <externalDependency name="dots.NaFeatureImp"/>
+    <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.DistinctLowerProduct&1 NOLOGGING AS
 select rownum as dlp_id, dlp
 from (select distinct lower(product) as dlp
-      from dots.GeneFeature)
+      from apidb.GeneAttributes)
       ]]>
     </sql>
   </tuningTable>
@@ -6209,6 +6209,13 @@ sub getDbHandle {
     <ancillaryTable name="apidb.DataSourcePublication"/>
     <ancillaryTable name="apidb.DataSourceReference"/>
     <program commandLine="buildDataSourceTT"/>
+  </tuningTable>
+
+  <tuningTable name="apidb.TestStandaloneProgram" alwaysUpdate="true">
+    <internalDependency name="apidb.DataSource"/>
+    <ancillaryTable name="apidb.DataSourcePublication"/>
+    <ancillaryTable name="apidb.DataSourceReference"/>
+    <program commandLine="noSuchProgram"/>
   </tuningTable>
 
 </tuningConfig>

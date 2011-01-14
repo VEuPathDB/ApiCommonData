@@ -295,6 +295,8 @@ sub update {
                       . " -instance '" . $self->{instance} . "'"
                       . " -propfile '" . $self->{propfile} . "'"
                       . " -password '" . $self->{password} . "'"
+                      . " -project '" . $registry->getProjectId() . "'"
+                      . " -version '" . $registry->getVersion() . "'"
                       . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
                       . " -suffix '" . $suffix . "'";
 
@@ -305,6 +307,7 @@ sub update {
     ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $returnCode");
 
     if ($returnCode) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to run standalone program:\n$commandLine");
       $updateError = 1;
     }
   }
