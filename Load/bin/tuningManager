@@ -337,7 +337,7 @@ my $elapsed = time - $startTime;
 my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
 
 ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
-					       " seconds to run tuningManager ($hms)");
+					       " seconds to run tuningManager ($hms)\n\n");
 my $instance_name = $instanceName || $instance;
 if ($tuningRegistry) {
   $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
