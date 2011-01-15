@@ -1,13 +1,13 @@
 <resources>
 
-  <resource resource="OrthoMCL_Phyletic_RSRC" version="4"
+  <resource resource="OrthoMCL_Phyletic_RSRC" version="5"
       plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile">
     <manualGet fileOrDir="TriTrypDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
-    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "lmaj,linf,lbra,tbru,tcru"</pluginArgs>
+    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv"</pluginArgs>
     <info
         displayName="OrthoMCL phyletic profiles"
         project="TriTrypDB"
-        organisms="@@TriTrypDBOrganismNames@@"
+        organisms="@@AllOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
@@ -22,14 +22,14 @@
     </info>
   </resource>
 
-  <resource resource="OrthoMCL_RSRC" version="4"
+  <resource resource="OrthoMCL_RSRC" version="5"
       plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
     <manualGet fileOrDir="TriTrypDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
-    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "lmaj,linf,lbra,tbru,tcru" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
     <info
         displayName="Orthologous groups generated using OrthoMCL"
         project="TriTrypDB"
-        organisms="@@TriTrypOrganismNames@@"
+        organisms="@@AllOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
@@ -44,14 +44,14 @@
     </info>
   </resource>
 
-  <resource resource="OrthoMCLTree_RSRC" version="4"
+  <resource resource="OrthoMCLTree_RSRC" version="5"
       plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon">
-    <manualGet fileOrDir="TriTrypDB/common/phylogeny/OrthoMCLTaxon/%RESOURCE_VERSION%/orthomclTaxons.txt"/>
-    <pluginArgs>--cladeFile @@dataDir@@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @@dataDir@@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/"/>
+    <pluginArgs>--cladeFile @@dataDir@@/orthomclClades.txt --speciesFile @@dataDir@@/orthomclTaxons.txt </pluginArgs>
     <info
         displayName="OrthoMCL phyletic pattern tree"
         project="TriTrypDB"
-        organisms="@@TriTrypOrganismNames@@"
+        organisms="@@AllOrganismNames@@"
         category="Proteome"
         publicUrl="http://orthomcl.cbil.upenn.edu"
         contact="Deborah Pinney"
