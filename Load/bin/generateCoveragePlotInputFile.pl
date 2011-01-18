@@ -38,8 +38,8 @@ my $genomeExtDbRlsId = &getExtDbRlsId($genomeExtDbSpecs);
 my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE where external_database_release_id = '$genomeExtDbRlsId'";
 my %naSeqHash;
 my $sth = $dbh->prepareAndExecute($sqlSeq);
-while (my ($na_seuqnce_id , $source_id) = $sth->fetchrow_array()) {
-    $naSeqHash{$source_id} = $na_seuqnce_id;
+while (my ($na_sequence_id , $source_id) = $sth->fetchrow_array()) {
+    $naSeqHash{$source_id} = $na_sequence_id;
 }
 $sth->finish();
 $dbh->disconnect();
