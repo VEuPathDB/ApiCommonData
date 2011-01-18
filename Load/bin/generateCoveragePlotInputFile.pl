@@ -57,7 +57,7 @@ $dbh->disconnect();
     chomp;
     my ($source_id,$start,$end,$coverage) = split("\t",$_);
 
-    die "Can't reformat coverage plot file, values missing:\n $RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal" unless ($source_id && $start && $end &&$coverage);
+    die "Can't reformat coverage plot file, values missing:\n $RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal" unless ($source_id && ($start || $start == 0 ) && $end &&$coverage);
 
     if($naSeqHash{$source_id}){
 	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal\t\n";
