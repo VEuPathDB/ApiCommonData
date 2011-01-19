@@ -6,26 +6,7 @@
  
     </cleanups>
 
-<resource resource="dbEST_NC" version="2009-09-25"
-        plugin="GUS::Supported::Plugin::dbEST"
-        displayName="dbEST ESTs"
-        category="ignore"
-        extDbName="dbEST"
-        extDbRlsVer="2009-09-25"
-        extDbRlsDescrip="ESTs from the mirrored dbEST"
-        dbCommit="@dbcommit@">
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
-        />
-        <unpack>getSubTaxa --ncbiTaxId 29176 --outputFile @downloadDir@/dbEST_NC/taxonIdFile</unpack>
-        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST_NC/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-        <description>
-            <![CDATA[
-                  ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
-          ]]>
-        </description>
-    </resource>   
-
+<!--ISF-->
     <resource resource="N.caninum_chromosomes" version="2009-10-06" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="Neospora caninum"
@@ -46,6 +27,49 @@
           ]]>      
         </description>  
     </resource> 
+
+ <resource resource="updateChromosomeNumberFromMap" version="2009-11-23" 
+        displayName="update Chromosome and Chromosome order Number From Mapping file" 
+        category="ignore" 
+        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
+        extDbName="updateChromosomeNumberFromMap"
+        extDbRlsVer="2009-11-23"
+        extDbRlsDescrip="update Chromosome Number From Mapping file"
+        dbCommit="@dbcommit@"> 
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/chromosomeNumberMap/neospChrs.txt" 
+            contact = "" 
+            email = "" 
+            institution = "" />
+
+<unpack>updateChromosomeNumberFromMap.pl --map_file @downloadDir@/updateChromosomeNumberFromMap/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
+
+<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource> 
+
+<!--EST resource-->
+<resource resource="dbEST_NC" version="2009-09-25"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="ignore"
+        extDbName="dbEST"
+        extDbRlsVer="2009-09-25"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
+        />
+        <unpack>getSubTaxa --ncbiTaxId 29176 --outputFile @downloadDir@/dbEST_NC/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST_NC/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+        <description>
+            <![CDATA[
+                  ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
+          ]]>
+        </description>
+    </resource>   
 
    <resource resource="IEDB_Epitopes" version="2009-06-09"
         publicUrl="http://www.immuneepitope.org"
@@ -98,27 +122,7 @@
         </description>
     </resource>
 
- <resource resource="updateChromosomeNumberFromMap" version="2009-11-23" 
-        displayName="update Chromosome and Chromosome order Number From Mapping file" 
-        category="ignore" 
-        plugin="ApiCommonData::Load::Plugin::LoadNothing" 
-        extDbName="updateChromosomeNumberFromMap"
-        extDbRlsVer="2009-11-23"
-        extDbRlsDescrip="update Chromosome Number From Mapping file"
-        dbCommit="@dbcommit@"> 
-        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/chromosomeNumberMap/neospChrs.txt" 
-            contact = "" 
-            email = "" 
-            institution = "" />
 
-<unpack>updateChromosomeNumberFromMap.pl --map_file @downloadDir@/updateChromosomeNumberFromMap/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
-
-<pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-        <description>
-            <![CDATA[
-          ]]>
-        </description>
-    </resource> 
 
   <resource resource="Neosporacaninum_Gene_Aliases" version="01-27-2010"
         displayName="Neosporacaninum genes with the previous source_ids"
