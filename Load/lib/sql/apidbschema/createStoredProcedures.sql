@@ -486,10 +486,26 @@ begin
            then return 'OrphanDB';
          when 'babesia'
            then return 'OrphanDB';
-         when 'cryptococcus'
-           then return 'FungalDB';
+         when 'gibberella'
+           then return 'FungiDB';
          when 'neurospora'
-           then return 'FungalDB';
+           then return 'FungiDB';
+         when 'cryptococcus'
+           then return 'FungiDB';
+         when 'aspergillus'
+           then return 'FungiDB';
+         when 'coccidioides'
+           then return 'FungiDB';
+         when 'magnaporthe'
+           then return 'FungiDB';
+         when 'candida'
+           then return 'FungiDB';
+         when 'puccinia'
+           then return 'FungiDB';
+         when 'saccharomyces'
+           then return 'FungiDB';
+         when 'fusarium'
+           then return 'FungiDB';
          else raise_application_error(-20101,
                                       'project_id() function called with unknown organism "'
                                       || organism || '"' );
