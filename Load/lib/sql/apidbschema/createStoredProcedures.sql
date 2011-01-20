@@ -478,6 +478,22 @@ begin
            then return 'FungiDB';
          when 'saccharomyces'
            then return 'FungiDB';
+         when 'coccidioides'
+           then return 'FungiDB';
+         when 'candida'
+           then return 'FungiDB';
+         when 'aspergillus'
+           then return 'FungiDB';
+         when 'rhizopus'
+           then return 'FungiDB';
+         when 'neosartorya'
+           then return 'FungiDB';
+         when 'fusarium'
+           then return 'FungiDB';
+         when 'gibberella'
+           then return 'FungiDB';
+         when 'magnaporthe'
+           then return 'FungiDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
