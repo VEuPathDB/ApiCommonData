@@ -636,7 +636,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND ef.external_database_release_id
       = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name in ('Pf_IEDB_Epitopes_RSRC','Pb_IEDB_Epitopes_RSRC','Pc_IEDB_Epitopes_RSRC','Pk_IEDB_Epitopes_RSRC','Pv_IEDB_Epitopes_RSRC','Py_IEDB_Epitopes_RSRC','Links to IEDB epitopes')
+  AND ed.name in ('Pf_IEDB_Epitopes_RSRC','Pb_IEDB_Epitopes_RSRC','Pc_IEDB_Epitopes_RSRC','Pk_IEDB_Epitopes_RSRC','Pv_IEDB_Epitopes_RSRC','Py_IEDB_Epitopes_RSRC','Lbraziliensis_IEDB_Epitopes_RSRC','Linfantum_IEDB_Epitopes_RSRC','LmajorFriedlin_IEDB_Epitopes_RSRC','Tbrucei927_IEDB_Epitopes_RSRC','Tbrucei427_IEDB_Epitopes_RSRC','Tbruceigambiense_IEDB_Epitopes_RSRC','TcruziEsmeraldoLike_IEDB_Epitopes_RSRC','TcruziNonEsmeraldoLike_IEDB_Epitopes_RSRC','Links to IEDB epitopes')
       ]]>
     </sql>
     <sql>
@@ -2036,11 +2036,11 @@ tablespace indx
                 from sres.externaldatabase d, sres.externaldatabaserelease r, dots.externalnasequence s
                 where d.external_database_id = r.external_database_id
                  and s.external_database_release_id = r.external_database_release_id
-                 and d.name in ('T.cruzi CHORI105 BAC End',
-                                'T.brucei RPCI93 BAC Ends',
-                                'L.major BAC Ends from Sanger',
-                                'L.major PAC Ends from Sanger',
-                                'L.major Cosmid Ends from Sanger')
+                 and d.name in ('Tcruzi_BACEnds_RSRC',
+                                'Tbrucei_Genbank_BACEnds_RSRC',
+                                'Lmajor_sanger_BACEnds_RSRC',
+                                'Lmajor_sanger_PACEnds_RSRC',
+                                'Lmajor_sanger_CosmidEnds_RSRC')
             ) and is_best_alignment != 1
       ]]> 
     </sql>
@@ -3564,7 +3564,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val' as visible_parts,
-        'Tbrucei_Expression_Profiles_From_Christine_Clayton' as attribution
+        'Tbrucei_Christine_Clayton_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -3582,7 +3582,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'Tbrucei_Matthews_differentiation_series' as attribution
+        'Tbrucei_Matthews_differentiation_series_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -3600,7 +3600,7 @@ The data table above contains the actual expression values.  <b>For this experim
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
-        'Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles' as attribution
+        'Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
@@ -3617,7 +3617,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'T.cruzi_Tarleton_Rick_Array_Profiles' as attribution
+        'Tcruzi_Tarleton_Rick_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -3631,7 +3631,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'L.major_Beverley_Steve_Array_Profiles' as attribution
+        'Lmajor_Beverley_Steve_LifeStages_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
@@ -3645,7 +3645,7 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'ALL' as visible_parts,
-        'Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles' as attribution
+        'Tbrucei_Estevez_Procyclic_TbDRBD3_Depletion_RSRC_Profiles' as attribution
 from dual
 UNION
 select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
@@ -3659,7 +3659,7 @@ select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
-        'George_Cross_RNA_Seq_Profiles' as attribution
+        'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
 from dual
 UNION
 select 'T. brucei under heat shock array data' as profile_name,
@@ -4126,7 +4126,7 @@ from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>T. brucei</i> Procyclic Form ' as display_term,
-       'Tbrucei Proteomics Procyclic Form' as extDB_name
+       'Tbrucei_Proteomics_PF_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
@@ -4146,82 +4146,82 @@ from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - glycosylated ' as display_term,
-       'Linfantum Proteomics PTM-glycosylation' as extDB_name
+       'Linfantum_Proteomics_PTM_glycosylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - acetylated ' as display_term,
-       'Linfantum Proteomics PTM-acetylation' as extDB_name
+       'Linfantum_Proteomics_PTM_acetylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - methylated ' as display_term,
-       'Linfantum Proteomics PTM-methylation' as extDB_name
+       'Linfantum_Proteomics_PTM_methylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - phosphorylated' as display_term,
-       'Linfantum Proteomics PTM-phosphorylation' as extDB_name
+       'Linfantum_Proteomics_PTM_phosphorylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (1DGel) ' as display_term,
-       'Linfantum Proteomics SDS Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_SDS_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (2DGel pH6-9) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-9 Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_9_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Amastigote (2DGel pH6-11) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-11 Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_11_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (2DGel pH6-9) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-9 Promastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_9_Promastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (2DGel pH6-11) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-11 Promastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_11_Promastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        'Metacyclogenesis (pH 5-6)' as display_term,
-       'Linfantum Proteomics data from Marc Ouellette' as extDB_name
+       'Linfantum_Proteomics_OuelletteM_Metacyclic_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Promastigote temperature and pH Control ' as display_term,
-       'Linfantum Proteomics Promastigote temperature and pH non-stressed' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_non_stressed_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Promastigote temperature and pH stressed ' as display_term,
-       'Linfantum Proteomics Promastigote temperature and pH stressed' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_stressed_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (Secreted) ' as display_term,
-       'Linfantum Proteomics Amastigote Secreted Protein' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Amastigote_Secreted_Protein_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (Secreted) ' as display_term,
-       'Linfantum Proteomics Promastigote Secreted Protein' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_Secreted_Protein_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. braziliensis</i> Promastigotes ' as display_term,
-       'L. braziliensis Proteomics-Promastigotes' as extDB_name
+       'Lbraziliensis_Proteomics_Promastigotes_Secreted_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. major</i> Exosomes' as display_term,
-       'L.major Proteomics-Exosomes' as extDB_name
+       'Lmajor_Proteomics_Exosomes_RSRC' as extDB_name
 from dual
 )
       ]]>
