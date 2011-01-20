@@ -494,6 +494,8 @@ begin
            then return 'FungiDB';
          when 'magnaporthe'
            then return 'FungiDB';
+         when 'puccinia'
+           then return 'FungiDB';
          when 'gregarina'
            then return 'OrphanDB';
          when 'sarcocystis'
