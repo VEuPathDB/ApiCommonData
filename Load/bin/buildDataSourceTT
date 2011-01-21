@@ -58,7 +58,6 @@ while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
   loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix, $debug);
 
   foreach my $file (`ls $lowerProject/*.xml`) {
-  ApiCommonData::Load::TuningConfig::Log::addLog("loading $file");
     loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
   }
 }
@@ -73,6 +72,11 @@ die if getErrorFlag();
 sub loadDataSources {
 
     my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
+
+    # some instances don't have corresponding data files; a null in apidb.InstanceMetaInfo.version is the tipoff.
+    return if !$version;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("loading $infile");
 
     my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
     $props->addProperty("dataDir", "/tmp");
