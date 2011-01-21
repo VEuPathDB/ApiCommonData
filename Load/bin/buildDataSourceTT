@@ -75,6 +75,7 @@ sub loadDataSources {
     my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
 
     my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
+    $props->addProperty("dataDir", "/tmp");
     my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props);
   ApiCommonData::Load::TuningConfig::Log::addLog(Dumper($dataSources)) if $debug;
 
