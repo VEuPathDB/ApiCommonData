@@ -79,7 +79,7 @@ if ($props->{dbaEmail}) {
 }
 
 
-my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
+my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount, $instance_name);
 
 eval {
   $SIG{INT} = \&catch_signal;
@@ -330,6 +330,14 @@ eval {
     system(@cmdLine) == 0
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
   }
+
+  # set instance_name and notifyEmail (for log email)
+  $instance_name = $instanceName || $instance;
+  if ($tuningRegistry) {
+    $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
+    $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
+  }
+
 };
 
 # log any errors inside eval
@@ -341,11 +349,8 @@ my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $el
 
 ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
 					       " seconds to run tuningManager ($hms)\n\n");
-my $instance_name = $instanceName || $instance;
-if ($tuningRegistry) {
-  $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
-  $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-}
+
+$notifyEmail = "tuningMgr\@pcbi.upenn.edu" if !$notifyEmail;
 
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
