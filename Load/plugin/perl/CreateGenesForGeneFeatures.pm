@@ -200,3 +200,10 @@ sub makeGeneAndInstances {
    return $gene;
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('DoTS.GeneInstance',
+	  'DoTS.Gene',
+	 );
+}
