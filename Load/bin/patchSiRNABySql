@@ -9,6 +9,10 @@ use GUS::Supported::GusConfig;
 
 my $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config";
 
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = $1 if ($gusconfig->getDbiDsn()=~ m/:(\w+\-*\w*)$/);
+
 my $login = $gusconfig->getDatabaseLogin();
 
 my $password = $gusconfig->getDatabasePassword();
