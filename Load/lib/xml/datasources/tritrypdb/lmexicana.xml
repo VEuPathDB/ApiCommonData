@@ -261,6 +261,28 @@
     </info>
   </resource>
 
+<!--MassSpecResource-->
 
+  <resource resource="Lmexicana_Proteomics_Aebischer_GelFree_RSRC" version="2009-07"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="TriTrypDB/lmexicana/massSpec/Lmexicana_Aebischer_GelFree/%RESOURCE_VERSION%/final/Leishmania_Protein_Peptides1.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Leishmania_Protein_Peptides1.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lmexicana_chromosomes_RSRC|@@Lmexicana_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="Gel free analysis of the proteome of intracellular Leishmania mexicana"
+        project="TriTrypDB"
+        organisms="@@LmexicanaOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact = "Toni Aebischer"
+        email = "AebischerA@rki.de"
+        institution = "">
+      <description>
+        <![CDATA[
+         Gel free analysis of the proteome of intracellular Leishmania mexicana.
+        ]]>
+      </description>
+    <publication pmid="19900490"/>
+    </info>
+  </resource>
 
 </resources>
