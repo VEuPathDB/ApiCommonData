@@ -2557,6 +2557,7 @@ tablespace indx
         create table apidb.tfbsgene&1 NOLOGGING AS
 select distinct
       ga.source_id as gene_source_id,
+      ga.species as species,
       aef.source_id as probe_id,
       aef.na_feature_id as tfbs_na_feature_id,
       CASE 
