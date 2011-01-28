@@ -130,6 +130,9 @@ sub run {
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
 
   while(<FILE>){
+
+      chomp();
+
       next if (/^\s*$/);
 
       my ($sourceId, $product) = split(/\t/,$_);
