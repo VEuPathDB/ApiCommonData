@@ -90,18 +90,42 @@ sub GetGeneQuery {
 
   my ($TaxonID) = @_;
 
-  return ("SELECT ga.source_id, ga.na_feature_id,
-                  least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
-                  greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
-                  decode(nl.is_reversed, 1, '-', '+') as strand,
+  # return ("SELECT ga.source_id, ga.na_feature_id,
+#                   least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
+#                   greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
+#                   decode(nl.is_reversed, 1, '-', '+') as strand,
+#                   ga.sequence_id AS sequence_id,
+#                   exons.exon_count
+#              FROM apidb.geneattributes ga, dots.NaLocation nl, dots.NaSequence ens,
+#                   (SELECT parent_id, count(*) AS exon_count
+#                      FROM dots.ExonFeature
+#                  GROUP BY parent_id) exons, sres.SequenceOntology so
+#             WHERE ga.source_id is not null
+#               AND ga.na_feature_id = nl.na_feature_id
+#               AND ga.na_sequence_id = ens.na_sequence_id
+#               AND ens.taxon_id = $TaxonID
+#               AND ens.sequence_ontology_id = so.sequence_ontology_id
+#               AND so.term_name != 'EST'
+#               AND so.term_name != 'oligo'
+#               AND ga.na_feature_id = exons.parent_id(+)
+#             ORDER BY sequence_id,start_min,end_max,source_id");
+
+
+
+
+
+return ("SELECT ga.source_id, ga.na_feature_id,
+                  least(fl.start_min, fl.end_max)-1 as start_min,
+                  greatest(fl.start_min, fl.end_max) as end_max,
+                  decode(fl.is_reversed, 1, '-', '+') as strand,
                   ga.sequence_id AS sequence_id,
                   exons.exon_count
-             FROM apidb.geneattributes ga, dots.NaLocation nl, dots.NaSequence ens,
+             FROM apidb.geneattributes ga, apidb.featurelocation fl, dots.NaSequence ens,
                   (SELECT parent_id, count(*) AS exon_count
                      FROM dots.ExonFeature
                  GROUP BY parent_id) exons, sres.SequenceOntology so
             WHERE ga.source_id is not null
-              AND ga.na_feature_id = nl.na_feature_id
+              AND ga.na_feature_id = fl.na_feature_id
               AND ga.na_sequence_id = ens.na_sequence_id
               AND ens.taxon_id = $TaxonID
               AND ens.sequence_ontology_id = so.sequence_ontology_id
@@ -109,10 +133,9 @@ sub GetGeneQuery {
               AND so.term_name != 'oligo'
               AND ga.na_feature_id = exons.parent_id(+)
             ORDER BY sequence_id,start_min,end_max,source_id");
-  
-
 
 }
+
 sub GetExonQuery {
 
   my ($parentID) = @_;
