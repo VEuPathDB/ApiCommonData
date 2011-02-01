@@ -53,7 +53,7 @@ my $GeneQuery = &GetGeneQuery($taxonId);
 my $sth = $dbh->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
 $sth->execute ||  die "Couldn't execute statement: " . $sth->errstr;
 
-my $exonQuery;
+my $ExonQuery;
 
 my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
 
