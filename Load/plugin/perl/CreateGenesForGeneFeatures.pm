@@ -104,7 +104,7 @@ sub new {
   my $arguments     = &getArgumentsDeclaration();
 
   my $configuration = {requiredDbVersion => 3.5,
-	               cvsRevision => '$Revision: 22844 $', # cvs fills this in!
+	               cvsRevision => '$Revision: 38813 $', # cvs fills this in!
 		       name => ref($self),
 		       revisionNotes => 'make consistent with GUS 3.5',
 		       argsDeclaration   => $arguments,
