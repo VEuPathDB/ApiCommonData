@@ -80,14 +80,14 @@ sub loadDataSources {
 
     my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
     $props->addProperty("dataDir", "/tmp");
-    my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props);
+    my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props, getLoadedDatasets($dbh));
   ApiCommonData::Load::TuningConfig::Log::addLog(Dumper($dataSources)) if $debug;
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSource$suffix
-                  (data_source_id, display_name, version, categories, organisms,
+                  (data_source_id, name, display_name, version, categories, organisms,
                    project, description, contact, institution)
-                  values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 
     my $insertDsp = $dbh->prepare(<<SQL);
@@ -104,11 +104,16 @@ SQL
       from dual
 SQL
 
+    my %loadedDatasets = getLoadedDatasets($dbh);
     foreach my $dsName ($dataSources->getDataSourceNames()) {
       my $ds = $dataSources->getDataSource($dsName);
-      ApiCommonData::Load::TuningConfig::Log::addLog("loading data source: \"$dsName\"") if $debug;
+      ApiCommonData::Load::TuningConfig::Log::addLog("data source: \"$dsName\"") if $debug;
+      if (!$loadedDatasets{$dsName}) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . skipping because $dsName does not exist in sres.ExternalDatabase") if $debug;
+	next;
+      }
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
-      $insertDs->execute($dataSourceId, $ds->getDisplayName(),
+      $insertDs->execute($dataSourceId, $dsName, $ds->getDisplayName(),
                        $ds->getVersion(), $ds->getCategory(), $ds->getOrganisms(),
                        $project, # not $ds->getProject()
                        $ds->getDescription(), $ds->getContact(),
@@ -134,6 +139,24 @@ SQL
     }
 }
 
+sub getLoadedDatasets {
+  my ($dbh) = @_;
+
+  my $query = $dbh->prepare(<<SQL);
+    select name from sres.ExternalDatabase
+SQL
+
+  $query->execute()
+    or die "getting names from sres.ExternalDatabase";
+
+  my %datasetHash;
+  while (my ($extDbName) = $query->fetchrow_array()) {
+    $datasetHash{$extDbName} = 1;
+  }
+
+  return %datasetHash;
+}
+
 sub getNextDataSourceId {
   my ($dbh, $suffix) = @_;
 
@@ -154,6 +177,7 @@ sub createTables {
     $dbh->do(<<SQL) or die "creating DataSource table";
       create table apidb.DataSource$suffix (
         data_source_id               number(12),
+        name                         varchar2(120),
         external_database_release_id number(12),
         display_name                 varchar2(200),
         version                      varchar2(60),
