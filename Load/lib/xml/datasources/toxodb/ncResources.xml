@@ -2,16 +2,13 @@
 
   <resource resource="Nc_RNASeq_Tachyzoite_Reid_RSRC" version="@@Nc_RNASeq_Tachyzoite_Reid_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="ToxoDB/ncaninum/rnaSeq/tachy/Reid/%RESOURCE_VERSION%/fromProvider"/> 
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/config.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3250_5_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3250_5_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3250_6_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3250_6_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3563_2_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3563_2_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3563_3_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3563_3_2.fastq"/>
+    <manualGet fileOrDir="ToxoDB/ncaninum/rnaSeq/tachy/Reid/%RESOURCE_VERSION%/final"/> 
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day3_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day3_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day4_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day4_2.fastq"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Ncaninum tachyzoite RNA-Seqs from Adam Reid"
