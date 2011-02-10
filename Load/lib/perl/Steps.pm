@@ -3743,7 +3743,7 @@ sub mapProteomeToGroups{
 
   my $blastSelfOutput =  "$mgr->{dataDir}/similarity/Proteome-Proteome/master/mainresult/blastSimilarity.out.gz"; 
 
-  my $cmd = "orthomclMapProteomeToGroups $blastSelfOutput $blastOutput $groupsFile  $mgr->{dataDir}/similarity/Proteome-ProteinSeqs mcl $logfile";
+  my $cmd = "orthomclMapProteomeToGroups $blastSelfOutput $blastOutput $groupsFile  'wxyz' $mgr->{dataDir}/similarity/Proteome-ProteinSeqs mcl $logfile";
 
   $mgr->runCmd($cmd);
 
