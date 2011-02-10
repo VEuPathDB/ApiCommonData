@@ -35,7 +35,7 @@ my $dbh = $db->getQueryHandle();
 
 my $RNASeqExtDbRlsId = &getExtDbRlsId($RNASeqExtDbSpecs);
 my $genomeExtDbRlsId = &getExtDbRlsId($genomeExtDbSpecs);
-my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE where external_database_release_id = '$genomeExtDbRlsId'";
+my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE";
 my %naSeqHash;
 my $sth = $dbh->prepareAndExecute($sqlSeq);
 while (my ($na_sequence_id , $source_id) = $sth->fetchrow_array()) {
@@ -61,6 +61,9 @@ $dbh->disconnect();
 
     if($naSeqHash{$source_id}){
 	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal\t\n";
+    }
+    else {
+      die "Can't find na_sequence_id for source_id = $source_id\n";
     }
   }
   close F;
