@@ -2,16 +2,14 @@
 
   <resource resource="TgVEG_RNASeq_Tachyzoite_Reid_RSRC" version="@@TgVEG_RNASeq_Tachyzoite_Reid_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="ToxoDB/tgondiiVEG/rnaSeq/tachy/Reid/%RESOURCE_VERSION%/fromProvider"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/tgVEGconfig.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3152_3_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3152_3_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3152_5_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/3152_5_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/4137_7_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/4137_7_2.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/4137_8_1.fastq"/>
-    <getAndUnpackOutput file="@@dataDir@@/fromProvider/4137_8_2.fastq"/>  
+    <manualGet fileOrDir="ToxoDB/tgondiiVEG/rnaSeq/tachy/Reid/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/tgVEGconfig.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day3_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day3_2.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day4_1.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/day4_2.fastq"/>
+
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Tgondii VEG tachyzoite RNA-Seqs from Adam Reid"
