@@ -136,7 +136,8 @@ sub run {
       $self->log("Processed $counter lines");
     }
 
-    my ($orthoName, $restOfLine) = split(':', $line);
+    my ($orthoName, @restsOfLine) = split(':', $line);
+    my $restOfLine=join (':', @restsOfLine);
     my @elements = split(/\s+/, $restOfLine);
 
     my @foundIds;
