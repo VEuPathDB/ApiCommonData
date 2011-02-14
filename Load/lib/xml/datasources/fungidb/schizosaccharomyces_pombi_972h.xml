@@ -71,9 +71,9 @@
                   project="FungiDB"
                   organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
                   category="Genome"
-                  publicUrl=""
-                  contact=""
-                  email=""
+                  publicUrl="http://www.genedb.org/genedb/pombe/"
+                  contact="PomBase"
+                  email="val@sanger.ac.uk"
                   institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@"
                   <description>
                        <![CDATA[
@@ -130,10 +130,10 @@
              project="FungiDB"
              organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
-             publicUrl=""
-             contact=""
-             email=""
-             institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+             publicUrl="http://www.genedb.org/genedb/pombe/"
+	     contact="PomBase"
+	     email="val@sanger.ac.uk"
+             institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
              <description>
                <![CDATA[
                     Schizosachharomyces pombe (972h) genomic annotations.
@@ -158,10 +158,10 @@
         project="FungiDB"
         organisms="@@schizosaccharomyces_pombi_972h_ORGANISM_FULL_NAME@@"
         category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
+	publicUrl="http://www.genedb.org/genedb/pombe/"
+	contact="PomBase"
+	email="val@sanger.ac.uk"
+	institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
       <description>
         <![CDATA[
          
@@ -224,10 +224,10 @@
               project="FungiDB"
               organisms="@@schizosaccharomyces_pombi_972h_FUNGIDB_DISPLAY_NAME@@"
               category="Proteome"
-              publicUrl=""
-              contact=""
-              email=""
-              institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+	      publicUrl="http://old.genedb.org/amigo-cgi/browse.cgi?speciesdb=GeneDB_Spombe"
+	      contact="PomBase"
+	      email="val@sanger.ac.uk"
+	      institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
               <description>
                  <![CDATA[
                      Schizosachharomyces pombe (972h) GO associations.
@@ -281,7 +281,7 @@
            publicUrl=""
            contact=""
            email=""
-           institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+           institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
            <description>
            <![CDATA[   
                Schizosachharomyces pombe (972h) EC IDs.
@@ -330,7 +330,7 @@
                publicUrl=""
                contact=""
                email=""
-               institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+               institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
                <description>
                    <![CDATA[
                         Schizosachharomyces pombe (972h) Gene ID to Entrez dbxrefs.
@@ -379,7 +379,7 @@
               publicUrl=""
               contact=""
               email=""
-              institution=@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
+              institution="@@schizosaccharomyces_pombi_972h_GENOME_SOURCE@@">
              <description>
                 <![CDATA[  
                   Schizosachharomyces pombe (972h) Gene IDs to UniProt IDs.
@@ -387,6 +387,38 @@
              </description>
           </info>
       </resource>
+
+  <!-- dbEST -->
+  <resource resource="schizosaccharomyces_pombe_972h_dbest_RSRC" version="@@schizosaccharomyces_pombe_972h_DBEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@schizosaccharomyces_pombe_972h_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
+    <info
+        displayName="Schizosaccharomyces pombe (972h) dbEST ESTs"
+        project="FungiDB"
+        organisms="@@schizosaccharomyces_pombe_972h_FUNGIDB_DISPLAY_NAME@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact="NCBI HelpDesk"
+        email="info@ncbi.nlm.nih.gov"
+        institution="NCBI">
+      <description>
+        <![CDATA[
+         Schizosaccharomyces pombe ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 
 </resources>

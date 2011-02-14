@@ -49,17 +49,17 @@
          </pluginArgs>
 
          <info
-             displayName="Aspergillus fumigatus (AF293) genomic sequence (Broad)"
+             displayName="Aspergillus fumigatus (AF293) genomic sequence (AspGD)"
              project="FungiDB"
              organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
-             publicUrl=""
-             contact=""
-             email=""
-             institution="Genbank">
+             publicUrl="http://www.aspergillusgenome.org/"
+             contact="AspGD curator"
+             email="aspergillus-curator@genome.stanford.edu"
+             institution="AspGD">
              <description>
                  <![CDATA[
-                    Aspergillus fumigatus (AF293) genomic sequence. Source: Broad.
+                    Aspergillus fumigatus (AF293) genomic sequence. Source: JCVI via AspGD.
              ]]>
              </description>
          </info>
@@ -125,17 +125,17 @@
           </pluginArgs>
 
           <info
-             displayName="Aspergillus fumigatus (AF293) genomic annotations"
+             displayName="Aspergillus fumigatus (AF293) genomic annotations (AspGD)"
              project="FungiDB"
              organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
              category="Genome"
-             publicUrl=""
-             contact=""
-             email=""
-             institution="Broad">
+             publicUrl="http://www.aspergillusgenome.org/"
+             contact="AspGD curator"
+             email="aspergillus-curator@genome.stanford.edu"
+             institution="AspGD">
              <description>
                <![CDATA[
-                    Aspergillus fumigatus (AF293) genomic annotations. Source: Broad.
+                    Aspergillus fumigatus (AF293) genomic annotations. Source: JCVI via AspGD.
                 ]]>
             </description>
           </info>
@@ -241,6 +241,38 @@
       <description>
         <![CDATA[
          Aspergillus fumigatus (AF293) EC IDs
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <!-- dbEST -->
+  <resource resource="aspergillus_fumigatus_af293_dbEST_RSRC" version="@@aspergillus_fumigatus_af293_DBEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_fumigatus_af293_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
+    <info
+        displayName="Aspergillus fumigatus dbEST ESTs"
+        project="FungiDB"
+        organisms="@@aspergillus_fumigatus_af293_FUNGIDB_DISPLAY_NAME@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact="NCBI HelpDesk"
+        email="info@ncbi.nlm.nih.gov"
+        institution="NCBI">
+      <description>
+        <![CDATA[
+         Aspergillus fumigatus ESTs from dbEST.
         ]]>
       </description>
     </info>
