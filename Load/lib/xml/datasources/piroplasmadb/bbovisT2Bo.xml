@@ -4,8 +4,8 @@
 
   <resource resource="BbovisT2Bo_genomes_RSRC" version="@@BbovisT2Bo_genomes_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir="PiroplasmaDB/bbovisT2Bo/genome/bbovisT2Bo/%RESOURCE_VERSION%/gb/">
-    <pluginArgs>--organism "Babesia bovis T2Bo" --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --fileFormat genbank --inputFileOrDir @@dataDir@@/gb --mapFile @@gusHome@@/lib/xml/isf/PiroplasmaDB/piroGenbank2Gus.xml --soCvsVersion @@SO_VER@@ --bioperlTreeoutput @@dataDir@@/bioperlTree.out --validationLog @@dataDir@@/validation.log</pluginArgs>
+    <manualGet fileOrDir="PiroplasmaDB/bbovisT2Bo/genome/bbovisT2Bo/%RESOURCE_VERSION%/gb/"/>
+    <pluginArgs>--organism "Babesia bovis T2Bo" --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --fileFormat genbank --inputFileOrDir @@dataDir@@/gb --mapFile @@gusHome@@/lib/xml/isf/PiroplasmaDB/piroGenbank2Gus.xml --soCvsVersion @@SO_VER@@ --bioperlTreeoutput @@dataDir@@/bioperlTree.out --validationLog @@dataDir@@/validation.log --seqSoTerm contig</pluginArgs>
     <info
         displayName="BbovisT2Bo sequence and annotation"
         project="PiroplasmaDB"
@@ -165,7 +165,7 @@ genomes.
         institution="">
       <description>
         <![CDATA[
-         TriTryp ESTs from dbEST.
+         PiroplasmaDB ESTs from dbEST.
         ]]>
       </description>xb
     </info>
@@ -173,7 +173,7 @@ genomes.
 
 
 <!--DbxRefsResource-->
-  <resource resource="BbovisT2Bo_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+  <resource resource="BbovisT2Bo_Entrez_Gene_dbxref_RSRC" version="2011-01-31"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PiroplasmaDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'BbovisT2Bo_genomes_RSRC|@@BbovisT2Bo_genomes_VER@@'  --idType 'alternate id'</pluginArgs>
@@ -196,7 +196,7 @@ genomes.
   <resource resource="BbovisT2Bo_Uniprot_Gene_dbxref_RSRC" version="@@BbovisT2Bo_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PiroplasmaDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec ''BbovisT2Bo_genomes_RSRC|@@'BbovisT2Bo_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'BbovisT2Bo_genomes_RSRC|@@BbovisT2Bo_genomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PiroplasmaDB"
@@ -218,7 +218,7 @@ genomes.
 
   <resource resource="BbovisT2Bo_IEDB_Epitopes_RSRC" version="@@BbovisT2Bo_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PiroplasmaDB/common/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportBbovisT2Bo.txt"/>
+    <manualGet fileOrDir="PiroplasmaDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportBbovisT2Bo.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportBbovisT2Bo.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportBbovisT2Bo.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportBbovisT2Bo.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportBbovisT2Bo.txt </unpack>
