@@ -3302,7 +3302,8 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' 
        '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
        'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM)' as y_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3317,7 +3318,8 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as 
        '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
        'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM)' as y_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3332,7 +3334,8 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
        '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
        'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM)' as y_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3516,6 +3519,8 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
 from dual
 UNION
 
+
+/*
 select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'DeRisiHalfLife::Combined' as module,
        'Plasmodium falciparum' as species,
@@ -3530,6 +3535,8 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        '' as attribution
 from dual
 UNION
+*/
+
 
 -- AmoebaDB --
 select 'EhistolyticaAffyProfiles' as profile_name,
@@ -3693,7 +3700,8 @@ select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
        '<i>T. brucei</i> blood and procyclic forms RNA Sequence Coverage' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
        'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM)' as y_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
