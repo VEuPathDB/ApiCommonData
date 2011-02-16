@@ -328,7 +328,7 @@ sub loadPirsfFormat {
 }
 
 
-#<interpro id="IPR000001" type="Domain" short_name="Kringle" protein_count="303">
+#<interpro id="IPR000001" type="Domain" short_name="Kringle" type="Domain">
 #    <name>Kringle</name>
 sub loadInterproFormat {
    my ($self, $dbName, $file, $logFreq) = @_;
@@ -340,11 +340,12 @@ sub loadInterproFormat {
    my $name;
    my $desc;
    while (<DFILE>) {
-     if (/^\s*\<interpro id="(\w+)".+short_name="(.*)" protein_count/) {
+     if (/^\s*\<interpro id="(\w+)".+short_name="(.*)" type/) {
        $id = $1;
        $name = $2
      } elsif (/\<name\>(.*)\</) {
        $desc = $1;
+       print STDERR "$id\t$name\t$desc\n";
        $self->submitDbRef($dbName, $id, $name, undef, $logFreq, ++$eCount);
        last if ($testNum && $eCount >= $testNum)
      }

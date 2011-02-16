@@ -1,0 +1,53 @@
+#!/usr/bin/perl
+
+# RUM 
+#  0         1           2                                     3        4
+# query_id   target_id  target_start-target_end(offset from 0) strand   query_sequence
+#seq.12a Pf3D7_09        134425-134452   +       ACGATTCCAAAGATTCATAAGTNNTNTA
+
+use strict;
+use Getopt::Long;
+
+my $filename;
+my $sample;
+my $extDbSpecs;
+
+
+&GetOptions("filename|f=s" => \$filename, 
+            "sample|e=s"=> \$sample,
+            "extDbSpecs|s=s" => \$extDbSpecs,
+            );
+
+die "usage: makeNGSAlignFileFromRUM 
+             --filename|f <filename> 
+             --sample <sample name (reqired)> 
+             --extDbSpecs|s <external_database_name|version for this experiment>"; 
+
+
+my ($extDbName,$extDbRlsVer)=split(/\|/,$extDbSpecs);
+
+my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
+
+my $extDbRlsId= `getValueFromTable --idSQL \"$sql\"`;
+
+
+my $ct = 0;
+my $data = {};
+my %dis;
+
+open(F,"$filename") || die "unable to open $filename\n";
+while(<F>){
+  chomp;
+  my @line = split("\t",$_);
+  my $target_Id = $line[1];
+  my ($start, $end) = split("-",$line[2]);
+  push(@{$data->{$target_Id}},[$target_Id,$line[0],$line[3],$start+1,$end, undef, undef, undef,1]);
+  }
+
+foreach my $val (values %{$data}){
+  foreach my $h (sort {$a->[2] <=> $b->[2]} @{$val}){
+    print "\t$extDbRlsId\t$sample\t",join("\t",@{$h}),"\n";
+  }
+}
+
+

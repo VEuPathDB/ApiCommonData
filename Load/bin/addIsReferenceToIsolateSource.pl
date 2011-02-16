@@ -6,6 +6,7 @@ use Getopt::Long;
 
 use DBI;
 use DBD::Oracle;
+use lib "$ENV{GUS_HOME}/lib/perl";
 
 use CBIL::Util::PropertySet;
 

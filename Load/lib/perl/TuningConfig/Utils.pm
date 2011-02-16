@@ -86,4 +86,31 @@ sub sqlBugWorkaroundExecute {
   return $sqlReturn;
 }
 
+sub getDbHandle {
+  my ($instance, $propFile, $password) = @_;
+  my $username = 'apidb';
+  my $props;
+
+if ($propFile) {
+  my $simple = XML::Simple->new();
+  $props = $simple->XMLin($propFile);
+}
+
+  $password = $props->{password} if !$password;
+  $username = $props->{username} if $props->{username};
+
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+  $dbh->{LongReadLen} = 1000000;
+  $dbh->{LongTruncOk} = 1;
+  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
+  return $dbh;
+}
+
 1;

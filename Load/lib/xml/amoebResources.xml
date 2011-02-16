@@ -185,7 +185,7 @@
 
 
      <resource resource="E.histolytica_Annotations" version="2009-11-27"
-        displayName="E. histolytica genome and annotation"
+        displayName="E. histolytica HM-1:IMSS genome and annotation"
         organisms="Entamoeba histolytica"
         category="Genome"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -298,6 +298,138 @@
           ]]>
         </description>
       </resource>
+
+   <resource resource="E.histolyticaDS4_Genome" version="2010-08-04"
+        displayName="E. histolytica DS4 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica DS4"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica DS4 Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica DS4 Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/DS4_Reference_assembly.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHDS4_/g" @downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica DS4" --sequenceFile @downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica DS4</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU50_Genome" version="2010-08-04"
+        displayName="E. histolytica KU50 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU50"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU50 Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica KU50 Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/KU50_Reference_assembly.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU50_/g" @downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU50" --sequenceFile @downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU50</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaMS96_Genome" version="2010-08-24"
+        displayName="E. histolytica MS96 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica MS96"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica MS96 Genome from jCVI"
+        extDbRlsVer="2010-08-24"
+        extDbRlsDescrip="E. histolytica MS96 Genome from jCVI|2010-08-24"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-24-2010/MS96_Ref_1171_contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHMS96_/g" @downloadDir@/E.histolyticaMS96_Genome/MS96_Ref_1171_contigs.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaMS96_Genome/MS96_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica MS96" --sequenceFile @downloadDir@/E.histolyticaMS96_Genome/MS96_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica MS96</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaHM1_CA_Genome" version="2010-08-04"
+        displayName="E. histolytica HM1:CA genome"
+        category="Genome"
+        organisms="Entamoeba histolytica HM1_CA"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica HM1_CA Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica HM1_CA Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/HM1_CA_Reference_contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHHM1_CA_/g" @downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica HM-1:CA" --sequenceFile @downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica HM-1:CA</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU48_Genome" version="2010-08-17"
+        displayName="E. histolytica KU48 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU48"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU48 Genome from jCVI"
+        extDbRlsVer="2010-08-17"
+        extDbRlsDescrip="E. histolytica KU48 Genome from jCVI|2010-08-17"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-17-2010/ku48_consensus_1172contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU48_/g" @downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs.fa | perl -pe "s/mapping.*$//g" >@downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU48" --sequenceFile @downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU48</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU27_Genome" version="2010-08-17"
+        displayName="E. histolytica KU27 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU27"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU27 Genome from jCVI"
+        extDbRlsVer="2010-08-17"
+        extDbRlsDescrip="E. histolytica KU27 Genome from jCVI|2010-08-17"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-17-2010/ku27_consensus_1178contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU27_/g" @downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs.fa | perl -pe "s/mapping.*$//g" >@downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU27" --sequenceFile @downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU27</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
 
     <resource resource="PDBProteinSequences" version="2009-12-09"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"

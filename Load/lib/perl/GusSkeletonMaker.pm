@@ -8,13 +8,16 @@ use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::RNAFeatureExon;
+use GUS::Model::DoTS::Gene;
+use GUS::Model::DoTS::GeneInstance;
+
 
 my $soTerms = { 'coding_gene'=>'protein_coding',
 		'repeated_gene'=>'repeat_region',
 		'tRNA_gene'=> 'tRNA_encoding',
 		'rRNA_gene'=> 'rRNA_encoding',
                 'pseudo_gene'=>'pseudogene',                 
-		'ncRNA_gene'=> 'ncRNA',
+		'ncRNA_gene'=> 'non_protein_coding',
 		'snRNA_gene'=> 'snRNA_encoding',
 		'snoRNA_gene'=> 'snoRNA_encoding',
 		'scRNA_gene'=> 'scRNA_encoding',
@@ -34,6 +37,7 @@ sub makeGeneSkeleton{
   my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $taxonId) = @_;
 
   my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId);
+
   $bioperlGene->{gusFeature} = $gusGene;
 
   my $transcriptExons;  # hash to remember each transcript's exons
@@ -57,9 +61,12 @@ sub makeGeneSkeleton{
       push(@{$transcriptExons->{$gusTranscript}->{exons}}, $gusExon);
     }
 
+
     if ($bioperlGene->primary_tag() eq 'coding_gene' || $bioperlGene->primary_tag() eq 'repeated_gene' || $bioperlGene->primary_tag() eq 'pseudo_gene') {
+
       my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
       $gusTranscript->addChild($translatedAAFeat);
+      
 
       my $translatedAASeq = &makeTranslatedAASeq($plugin, $taxonId, $dbRlsId);
       $translatedAASeq->addChild($translatedAAFeat);
@@ -78,7 +85,7 @@ sub makeGeneSkeleton{
     if(my $exons = $transcriptExons->{$transcriptObjId}->{exons}) {
 
       foreach my $exon (@$exons) {
-        my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
+	my $rnaFeatureExon = GUS::Model::DoTS::RNAFeatureExon->new();
         $rnaFeatureExon->setParent($gusTranscript);
         $rnaFeatureExon->setParent($exon);
 
@@ -249,6 +256,8 @@ sub makeTranslatedAAFeat {
 }
 
 #--------------------------------------------------------------------------------
+
+
 
 #################################################################
 

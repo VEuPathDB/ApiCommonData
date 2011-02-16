@@ -236,9 +236,9 @@ SQL
     # insert new family
       my $url = svnUrl($svn);
       $dbh->do(<<SQL) or die $dbh->errstr;
-        insert into apidb_r.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails)
+        insert into apidb_r.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails, is_live)
         values ('$family', '$url',
-                'TuningMgr\@pcbi.upenn.edu')
+                'TuningMgr\@pcbi.upenn.edu', 1)
 SQL
   } elsif (!$svn && !$existingSvn) {
     # new family, but subversion config not supplied

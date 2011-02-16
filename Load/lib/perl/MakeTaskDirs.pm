@@ -156,7 +156,7 @@ sub makeMatrixDir {
 sub makeSimilarityDir {
     my ($queryName, $subjectName, $localDataDir, $clusterDataDir,
 	$nodePath, $taskSize, $blastBinPath, $dbName, $dbPath, $queryFileName,
-	$regex, $blast, $blastParams, $nodeClass,$dbType,$vendor) = @_;
+	$regex, $blast, $blastParams, $nodeClass,$dbType,$vendor,$printSimSeqs) = @_;
 
     my $inputDir = "$localDataDir/similarity/$queryName-$subjectName/input";
     my $serverBase = "$clusterDataDir/similarity/$queryName-$subjectName";
@@ -169,7 +169,7 @@ sub makeSimilarityDir {
     my $dbFileName = "$dbPath/$dbName"; 
     my $seqFileName = "$clusterDataDir/seqfiles/$queryFileName";
     &makeBSTaskPropFile($inputDir, $blastBinPath, $seqFileName, $dbFileName,
-			$regex, $blast, "blastParams",$dbType,$vendor);
+			$regex, $blast, "blastParams",$dbType,$vendor,$printSimSeqs);
 
     open(F, ">$blastParamsFile");
     print F "$blastParams\n";
@@ -443,7 +443,9 @@ inputFilePath=$queryFilePath
 
 sub makeBSTaskPropFile {
     my ($inputDir, $blastBinDir, $seqFilePath,  $dbFileName, 
-	$regex, $blast, $blastParamsFile,$dbType,$vendor) = @_;
+	$regex, $blast, $blastParamsFile,$dbType,$vendor,$printSimSeqs) = @_;
+
+    my $simSeqs = $printSimSeqs ? "printSimSeqsFile=yes" : "";
 
     open(F, ">$inputDir/task.prop") 
 	|| die "Can't open $inputDir/task.prop for writing";
@@ -456,6 +458,7 @@ dbType=$dbType
 regex='$regex'
 blastProgram=$blast
 blastParamsFile=$blastParamsFile
+$simSeqs
 ";
     close(F);
 

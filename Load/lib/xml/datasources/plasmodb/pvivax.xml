@@ -71,6 +71,51 @@
     </info>
   </resource>
 
+<!--EC Numbers Resource-->
+  <resource resource="Pvivax_ECNumbers_RSRC" version="@@Pvivax_contigsGB_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PlasmoDB/pvivax/function/ECNumbers_Pvivax/PvivaxECNumbers"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/PvivaxECNumbers --evidenceCode "jCVI" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Plasmodium vivax genes"
+        project="PlasmoDB"
+        organisms="@@PvOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping for <i>P. vivax</i> genes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pvivax_ProductName_RSRC" version="@@Pvivax_contigsGB_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/pvivax/genome/contig/%RESOURCE_VERSION%/sequences.gb"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/sequences.gb --output_file @@dataDir@@/PvivaxProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/sequences.gb --output_file @@dataDir@@/PvivaxProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/PvivaxProduct.tab --genomeDbName Pvivax_contigsGB_RSRC --genomeDbVer @@Pvivax_contigsGB_VER@@ </pluginArgs>
+    <info
+        displayName="Pvivax Product Name"
+        project="PlasmoDB"
+        organisms="@@PvOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--IEDB Resource-->
   <resource resource="Pv_IEDB_Epitopes_RSRC" version="@@Pv_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -168,9 +213,9 @@
     </info>
   </resource>
 
-  <resource resource="Pv_Phenotype_DBRefs_RSRC" version="2010-06-17"
+  <resource resource="Pv_RMgm_Phenotype_DBRefs_RSRC" version="2010-10-25"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list.txt"/>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/final/geneid_list.txt"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Phenotype db links"

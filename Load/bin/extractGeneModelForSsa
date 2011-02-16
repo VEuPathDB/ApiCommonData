@@ -2,6 +2,7 @@
 
 use strict;
 use DBI;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use Bio::SeqFeature::Gene::Exon;
 use CBIL::Util::PropertySet;
 use Getopt::Long;
@@ -43,40 +44,39 @@ my ($species,$indexFile,$geneFastaFile,$seqFastaFile);
 #------------------------------
 
 
-   open(OUTINDX,">$outputFile");
+open(OUTINDX,">$outputFile");
 
-  print("Preparing to export genes model for Ssa...\n");
+print("Preparing to export genes model for Ssa...\n");
 
-  my $GeneQuery = &GetGeneQuery($taxonId);
+my $GeneQuery = &GetGeneQuery;
 
-  my $sth = $dbh->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
-  $sth->execute ||  die "Couldn't execute statement: " . $sth->errstr;
+my $sth = $dbh->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+$sth->execute($taxonId) ||  die "Couldn't execute statement: " . $sth->errstr;
 
+my $ExonQuery = &GetExonQuery;
 
-  while (my ($SOURCE_ID, $NA_FEATURE_ID,$START_MIN,$END_MAX, $STRAND, $SEQUENCE_ID,$EXON_COUNT ) = $sth->fetchrow_array()) {
+my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
 
-      print OUTINDX $SEQUENCE_ID."\t".$STRAND."\t".$START_MIN."\t".$END_MAX."\t".$EXON_COUNT."\t";
+while (my ($source_id, $na_feature_id,$start_min,$end_max, $strand, $sequence_id, $na_sequence_id, $exon_count ) = $sth->fetchrow_array()) {
 
-      my $ExonQuery = &GetExonQuery($NA_FEATURE_ID);
-  
-      my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
-      $sth2->execute ||  die "Couldn't execute statement: " . $sth2->errstr;
+  print OUTINDX $sequence_id."\t".$strand."\t".$start_min."\t".$end_max."\t".$exon_count."\t";
 
-      my ($exonStarts,$exonEnds);
-      while (my  ($START_MIN,$END_MAX) = $sth2->fetchrow_array()) {
-	  $exonStarts .= $START_MIN.",";
-	  $exonEnds .= $END_MAX.",";
-      }
+  $sth2->execute($na_feature_id,$na_sequence_id) ||  die "couldn't execute statement: " . $sth2->errstr;
 
-      print OUTINDX "$exonStarts\t$exonEnds\t".$SOURCE_ID."\n";
-
+  my ($exonStarts,$exonEnds);
+  while (my  ($start_min,$end_max) = $sth2->fetchrow_array()) {
+    $exonStarts .= $start_min.",";
+    $exonEnds .= $end_max.",";
   }
+  
+  print OUTINDX "$exonStarts\t$exonEnds\t".$source_id."\n";
+  
+}
 
-      close(OUTINDX);
+close(OUTINDX);
 
  
 $dbh->disconnect;
-
 
 
 #----------SUBROUTINES------------------#
@@ -87,41 +87,28 @@ $dbh->disconnect;
 
 sub GetGeneQuery {
 
-  my ($TaxonID) = @_;
 
-  return ("SELECT gf.source_id, gf.na_feature_id,
-                  least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
-                  greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max,
-                  decode(nl.is_reversed, 1, '-', '+') as strand,
-                  ens.source_id AS sequence_id,
-                  exons.exon_count
-             FROM dots.GeneFeature gf, dots.NaLocation nl, dots.ExternalNaSequence ens,
-                  (SELECT parent_id, count(*) AS exon_count
-                     FROM dots.ExonFeature
-                 GROUP BY parent_id) exons, sres.SequenceOntology so
-            WHERE gf.source_id is not null
-              AND gf.na_feature_id = nl.na_feature_id
-              AND gf.na_sequence_id = ens.na_sequence_id
-              AND ens.taxon_id = $TaxonID
-              AND ens.sequence_ontology_id = so.sequence_ontology_id
-              AND so.term_name != 'EST'
-              AND so.term_name != 'oligo'
-              AND gf.na_feature_id = exons.parent_id(+)
+return ("SELECT ga.source_id, ga.na_feature_id,
+                  ga.start_min -1 as start_min ,
+                  ga.end_max,
+                  decode(ga.is_reversed, 1, '-', '+') as strand,
+                  ga.sequence_id AS sequence_id,ga.na_sequence_id,
+                  ga.exon_count
+             FROM apidb.geneattributes ga
+            WHERE ga.source_id is not null
+              and ga.taxon_id = ?
             ORDER BY sequence_id,start_min,end_max,source_id");
-  
-
-
 }
+
 sub GetExonQuery {
 
-  my ($parentID) = @_;
 
-  return ("SELECT least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)-1 as start_min,
-                  greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) as end_max
-             FROM dots.NaLocation nl, dots.NaFeature nf
-            WHERE nf.subclass_view = 'ExonFeature'
-              AND nf.parent_id in ($parentID)
-              AND nf.na_feature_id = nl.na_feature_id
+  return ("SELECT least(fl.start_min, fl.end_max)-1 as start_min,
+                  greatest(fl.start_min, fl.end_max) as end_max
+             FROM apidb.featurelocation fl
+            WHERE fl.feature_type = 'ExonFeature'
+              AND fl.parent_id = ?
+              AND fl.na_sequence_id = ?
          ORDER BY start_min,end_max");
 }
 

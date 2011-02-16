@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.5,
-                     cvsRevision       => '$Revision: 32168 $',
+                     cvsRevision       => '$Revision: 38629 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -1046,8 +1046,6 @@ sub undoTables {
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    Core.AlgorithmParam
-    Core.AlgorithmInvocation
     );
 }
 

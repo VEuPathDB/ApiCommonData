@@ -73,6 +73,29 @@
     </info>
   </resource>
 
+  <resource resource="Pyoelii_ProductName_RSRC" version="@@Pyoelii_Contigs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/genome/contig/%RESOURCE_VERSION%/sequences.gb"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/sequences.gb --output_file @@dataDir@@/PyoeliiProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/sequences.gb --output_file @@dataDir@@/PyoeliiProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/PyoeliiProduct.tab --genomeDbName Pyoelii_Contigs_RSRC --genomeDbVer @@Pyoelii_Contigs_VER@@ </pluginArgs>
+    <info
+        displayName="Pyoelii Product Name"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--IEDB resource-->
 
   <resource resource="Py_IEDB_Epitopes_RSRC" version="@@Py_IEDB_Epitopes_VER@@"
@@ -107,6 +130,55 @@
     <manualGet fileOrDir="global/empty"/>
     <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Py_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="PyoeliiProvisionalGenes_IEDB_Epitopes_RSRC" version="@@Py_IEDB_Epitopes_VER@@"  parentResource="Py_IEDB_Epitopes_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pyoelii/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportPyoe.txt"/>
+    <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt </unpack>
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa </unpack>
+    <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed/fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportPyoe.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportPyoe.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="Ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact="IEDB"
+        email=""
+        institution="IEDB">
+      <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="PyoeliiProvisionalGenes_IEDB_Epitopes_DBxRefs_RSRC" version="@@Py_IEDB_Epitopes_VER@@" parentResource="Py_IEDB_Epitopes_DBxRefs_RSRC"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="IEDB Epitopes"
         project="PlasmoDB"
@@ -290,6 +362,38 @@
       <description>
         <![CDATA[
          <i>P. yoelii</i> ApiLoc and EupathDb DBRefs.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Py_RMgm_Phenotype_DBRefs_RSRC" version="2010-10-25"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/final/geneid_list.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pyoelii_Contigs_RSRC|@@Pyoelii_Contigs_VER@@'</pluginArgs>
+    <info
+        displayName="DBRefs for Phenotype db links"
+        project="PlasmoDB"
+        organisms="@@PyOrganismFullName@@"
+        category="External_links"
+        publicUrl=""
+        contact="Shahid Kahn"
+        email="S.M.Khan@@lumc.nl"
+        institution="">
+      <description>
+        <![CDATA[
+         Phenotype links from Genetically Modified Rodent Malaria Parasites: 
+            <a href="http://www.pberghei.eu/index.php">Pberghei.eu</a>  hosts a database
+            containing information on genetically modified rodent malaria parasite
+            lines generated by many labs worldwide. Specifically, it contains data
+            of three rodent malaria parasite species; Plasmodium berghei, P. yoelii
+            and P. chabaudi. The aim of this database is to provide the research
+            community access to detailed information on the generation (e.g.
+            disruption, tagging, mutation, transgene expression) and phenotype of
+            genetically modified malaria parasites. The database not only provides
+            information on 'successful' mutants with a clear phenotype, but also
+            (un)published mutants without a clear phenotype and (un)published
+            negative trials to disrupt genes.
         ]]>
       </description>
     </info>
@@ -524,7 +628,7 @@
 
   <resource resource="Py_array_Affy_scrMalaria_RSRC" version="@@Py_array_Affy_scrMalaria_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/"/>
+    <manualGet fileOrDir="PlasmoDB/common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final/"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/scrMalariaa.cdf"/>
@@ -571,7 +675,7 @@
   <resource resource="winzeler_py_pf_comparison_array_RSRC" version="@@winzeler_py_pf_comparison_array_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="PlasmoDB/pyoelii/microarrayExpression/Winzeler_sporozoite/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info

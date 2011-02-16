@@ -450,7 +450,7 @@ sub documentBlast {
 }
 
 sub createSimilarityDir {
-  my ($mgr,$queryFile,$subjectFile,$regex,$bsParams,$blastType,$vendor) = @_;
+  my ($mgr,$queryFile,$subjectFile,$regex,$bsParams,$blastType,$vendor, $printSimSeqs) = @_;
 
   my $propertySet = $mgr->{propertySet};
   my $signal = "create" . ucfirst($queryFile) . "-" . ucfirst ($subjectFile) ."SimilarityDir";
@@ -473,7 +473,7 @@ sub createSimilarityDir {
   &makeSimilarityDir($queryFile, $subjectFile, $dataDir, $clusterDataDir,
 		     $nodePath, $bsTaskSize,
 		     $blastBinPathCluster,
-		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType,$vendor);
+		     "${subjectFile}.fsa", "$clusterDataDir/seqfiles", "${queryFile}.fsa", $regex, $blastType, $bsParams, $nodeClass,$dbType,$vendor,$printSimSeqs);
 
   $mgr->endStep($signal);
 }
@@ -1115,6 +1115,23 @@ sub copy {
   $mgr->runCmd("gzip $to") if $compress;
   $mgr->endStep();
 }
+
+sub copyProteomeFile {
+  my ($mgr) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "Copying_proteome";
+  return if $mgr->startStep("Copying proteome to seqfiles", $signal);
+
+  my $file = $propertySet->getProp('proteomePath');
+
+  unless (-e $file){die "$file does not exist\n";}
+
+  $mgr->runCmd("cp -a  $file $mgr->{dataDir}/seqfiles/Proteome.fsa");
+
+  $mgr->endStep($signal);
+}
+
 
 sub copyDirectory {
   my ($mgr, $from, $to, $dir) = @_;
@@ -3708,6 +3725,61 @@ evalueExponentCutoff=-5
   $mgr->endStep($signal);
 
 }
+
+sub mapProteomeToGroups{
+  my ($mgr) = @_;
+
+  my $signal = "mapProteomeToGroups";
+
+  return if $mgr->startStep("Mapping proteome to groups file", $signal);
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $groupsFile = $propertySet->getProp('groupsFile');
+
+  my $blastOutput =  "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/master/mainresult/blastSimilarity.out.gz";
+
+  my $blastSelfOutput =  "$mgr->{dataDir}/similarity/Proteome-Proteome/master/mainresult/blastSimilarity.out.gz"; 
+
+  my $cmd = "orthomclMapProteomeToGroups $blastSelfOutput $blastOutput $groupsFile  'wxyz' $mgr->{dataDir}/similarity/Proteome-ProteinSeqs mcl $logfile";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
+sub addIdsToGroupsFile {
+  my ($mgr) = @_;
+
+  my $signal = "addIdsToGroupsFile";
+
+  return if $mgr->startStep("Adding mapped ids to groups file", $signal);
+
+  my $propertySet = $mgr->{propertySet};
+
+  my $groupsFile = $propertySet->getProp('groupsFile');
+
+  my $proteomeName = $propertySet->getProp('proteomeName');
+
+  my $grpPrefix = $propertySet->getProp('grpPrefix');
+
+  my $logfile = "$mgr->{myPipelineDir}/logs/$signal.log";
+
+  my $idsToGroups = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/orthologGroups";
+
+  my $outputGroups = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/orthologGroups_$proteomeName";
+
+  my $cmd = "addSourceIdsToGroups --sourceIdFile $idsToGroups --inputGroupsfile $groupsFile  --outputGroupsFile $outputGroups --log $logfile --grpPrefix $grpPrefix --verbose";
+
+  $mgr->runCmd($cmd);
+
+  $mgr->endStep($signal);
+}
+
+
 
 sub orthomclPairs {
   my ($mgr, $cleanup, $startAfter) = @_;

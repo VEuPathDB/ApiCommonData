@@ -4,6 +4,7 @@ use strict;
 
 use DBI;
 use DBD::Oracle;
+use lib "$ENV{GUS_HOME}/lib/perl";
 
 use Getopt::Long;
 

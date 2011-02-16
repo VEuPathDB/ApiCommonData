@@ -472,6 +472,10 @@ begin
            then return 'MicrosporidiaDB';
          when 'vittaforma'
            then return 'MicrosporidiaDB';
+         when 'nematocida'
+           then return 'MicrosporidiaDB';
+         when 'octosporea'
+           then return 'MicrosporidiaDB';
          when 'cryptococcus'
            then return 'FungiDB';
          when 'neurospora'
@@ -506,6 +510,26 @@ begin
            then return 'OrphanDB';
          when 'babesia'
            then return 'OrphanDB';
+         when 'gibberella'
+           then return 'FungiDB';
+         when 'neurospora'
+           then return 'FungiDB';
+         when 'cryptococcus'
+           then return 'FungiDB';
+         when 'aspergillus'
+           then return 'FungiDB';
+         when 'coccidioides'
+           then return 'FungiDB';
+         when 'magnaporthe'
+           then return 'FungiDB';
+         when 'candida'
+           then return 'FungiDB';
+         when 'puccinia'
+           then return 'FungiDB';
+         when 'saccharomyces'
+           then return 'FungiDB';
+         when 'fusarium'
+           then return 'FungiDB';
          else raise_application_error(-20101,
                                       'project_id() function called with unknown organism "'
                                       || organism || '"' );

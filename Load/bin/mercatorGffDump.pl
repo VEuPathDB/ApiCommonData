@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
 use DBI;
 use Bio::Tools::GFF;
 use Bio::SeqFeature::Gene::Exon;

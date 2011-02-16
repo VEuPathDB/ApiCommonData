@@ -65,7 +65,9 @@ SELECT DISTINCT pairs.alias, pairs.gene, pairs.union_member, pairs.database_name
                        'TwinScanEt predictions', 'P. falciparum Evigan Gene Models','Evigan_RSRC',
                        'Pfalciparum workshop annotations reviewed and changed',
                        'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                       'Old annotation for ME49')
+                       'Old annotation for ME49',
+                       'Tbrucei427_AutoMAGI_Annotations_RSRC')
+
       ]]>
     </sql>
     <sql>
@@ -273,7 +275,8 @@ select case
                               'P. falciparum Evigan Gene Models','Evigan_RSRC',
                               'Pfalciparum workshop annotations reviewed and changed',
                               'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                              'Old annotation for ME49')
+                              'Old annotation for ME49',
+                              'Tbrucei427_AutoMAGI_Annotations_RSRC')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -302,7 +305,8 @@ select -- virtual feature locations mapped through SequencePiece
                           'TwinScanEt predictions', -- not 'tRNAscan-SE',
                           'P. falciparum Evigan Gene Models','Evigan_RSRC',
                           'Pfalciparum workshop annotations reviewed and changed',
-                          'Old annotation for ME49')
+                          'Old annotation for ME49',
+                          'Tbrucei427_AutoMAGI_Annotations_RSRC')
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -473,8 +477,11 @@ WHERE dr.primary_identifier IS NOT NULL
   AND ed.name != 'Pf_PathwayMappings_Hagai_RSRC'
   AND ed.name != 'Links to Pathway Maps'
   AND ed.name != 'Phenotype DBRefs'
+  AND ed.name != 'MPMP'
+  AND ed.name != 'Pf_BRENDAMapping_RSRC'
+  AND ed.name != 'Pf_SGPPMapping_RSRC'
   AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
-  AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC')
+  AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC', 'Pf_Entrez_DBRefs_RSRC')
   AND ed.name != 'PMID'
 UNION
 SELECT LOWER(dr.secondary_identifier) AS id, 
@@ -559,7 +566,7 @@ FROM (
   SELECT lower(source_id) as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic')
+    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
 UNION
   SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
   FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
@@ -629,7 +636,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND ef.external_database_release_id
       = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name in ('Pf_IEDB_Epitopes_RSRC','Pb_IEDB_Epitopes_RSRC','Pc_IEDB_Epitopes_RSRC','Pk_IEDB_Epitopes_RSRC','Pv_IEDB_Epitopes_RSRC','Py_IEDB_Epitopes_RSRC','Links to IEDB epitopes')
+  AND ed.name in ('Pf_IEDB_Epitopes_RSRC','Pb_IEDB_Epitopes_RSRC','Pc_IEDB_Epitopes_RSRC','Pk_IEDB_Epitopes_RSRC','Pv_IEDB_Epitopes_RSRC','Py_IEDB_Epitopes_RSRC','Lbraziliensis_IEDB_Epitopes_RSRC','Linfantum_IEDB_Epitopes_RSRC','LmajorFriedlin_IEDB_Epitopes_RSRC','Tbrucei927_IEDB_Epitopes_RSRC','Tbrucei427_IEDB_Epitopes_RSRC','Tbruceigambiense_IEDB_Epitopes_RSRC','TcruziEsmeraldoLike_IEDB_Epitopes_RSRC','TcruziNonEsmeraldoLike_IEDB_Epitopes_RSRC','Links to IEDB epitopes')
       ]]>
     </sql>
     <sql>
@@ -736,6 +743,12 @@ group by stf.source_id, dtr.analysis_id, st.tag, st.composite_element_id,
     <sql>
       <![CDATA[
 create index apidb.staa_ix&1 on apidb.SageTagAnalysisAttributes&1 (analysis_id, composite_element_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.staa_tag_ix&1 on apidb.SageTagAnalysisAttributes&1 (composite_element_id, analysis_id)
 tablespace indx
       ]]>
     </sql>
@@ -865,6 +878,13 @@ from
    select * from apidb.SageTagGeneThreePrime) t,
   (select distinct(analysis_id), library_name from apidb.SageTagAnalysisAttributes) libs
   where t.analysis_id = libs.analysis_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.stg_ix&1
+on apidb.SageTagGene&1 (gene_source_id, direction, distance, tag_source_id, tag_feature_id, antisense)
+tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -1185,7 +1205,8 @@ CREATE TABLE apidb.GeneAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
-       SUBSTR(gf.product, 1, 300) AS product,
+       SUBSTR(COALESCE(preferred_product.product, any_product.product, gf.product, 'unspecified product'), 1, 300) AS product,
+       COALESCE(preferred_name.name, any_name.name) AS name,
        gf.is_pseudo,
        LEAST(nl.start_min, nl.end_max) AS start_min,
        GREATEST(nl.start_min, nl.end_max) AS end_max,
@@ -1285,33 +1306,33 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
       and sf.external_database_release_id = rel.external_database_release_id
       and sf.parent_id is not null
       group by sf.parent_id) totsnps,
-      (select sf.parent_id,count(*) as nonsyn_snps
-       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-       where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+     (select sf.parent_id,count(*) as nonsyn_snps
+      from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
+      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
              'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
-       and d.external_database_id = rel.external_database_id
-       and sf.external_database_release_id = rel.external_database_release_id
-       and sf.parent_id is not null
-       and sf.has_nonsynonymous_allele = 1
-       group by sf.parent_id) nssnps,
-      (select sf.parent_id,count(*) as syn_snps
-       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-       where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
+        and d.external_database_id = rel.external_database_id
+        and sf.external_database_release_id = rel.external_database_release_id
+        and sf.parent_id is not null
+        and sf.has_nonsynonymous_allele = 1
+      group by sf.parent_id) nssnps,
+     (select sf.parent_id,count(*) as syn_snps
+      from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
+      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
              'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
-       and d.external_database_id = rel.external_database_id
-       and sf.external_database_release_id = rel.external_database_release_id
-       and sf.parent_id is not null
-       and sf.has_nonsynonymous_allele is null
-       and sf.is_coding = 1
-       group by sf.parent_id) synsnps,
-       (select gf.na_feature_id, sg.name
+        and d.external_database_id = rel.external_database_id
+        and sf.external_database_release_id = rel.external_database_release_id
+        and sf.parent_id is not null
+        and sf.has_nonsynonymous_allele is null
+        and sf.is_coding = 1
+      group by sf.parent_id) synsnps,
+     (  select gf.na_feature_id, sg.name
         from dots.genefeature gf, dots.sequencesequencegroup ssg, 
              dots.sequencegroup sg, Core.tableinfo ti
         where gf.na_feature_id = ssg.sequence_id
-         and ssg.sequence_group_id = sg.sequence_group_id
-         and ssg.source_table_id = ti.table_id
-         and ti.name = 'GeneFeature'
-        UNION
+          and ssg.sequence_group_id = sg.sequence_group_id
+          and ssg.source_table_id = ti.table_id
+          and ti.name = 'GeneFeature'
+      UNION
         select chr6.na_feature_id, sg.name
         from (select co.group_id, gf.source_id 
               from apidb.chromosome6orthology co, dots.genefeature gf,
@@ -1334,7 +1355,25 @@ FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
          and par.source_id = gf.source_id
          and gf.na_feature_id = ssg.sequence_id
          and ssg.sequence_group_id = sg.sequence_group_id
-       ) orthologs
+       ) orthologs,
+     (select na_feature_id, max(product) as product
+      from apidb.GeneFeatureProduct
+      where is_preferred = 1
+      group by na_feature_id
+     ) preferred_product,
+     (select na_feature_id, max(product) as product
+      from apidb.GeneFeatureProduct
+      group by na_feature_id
+     ) any_product,
+     (select na_feature_id, max(name) as name
+      from apidb.GeneFeatureName
+      where is_preferred = 1
+      group by na_feature_id
+     ) preferred_name,
+     (select na_feature_id, max(name) as name
+      from apidb.GeneFeatureName
+      group by na_feature_id
+     ) any_name
 WHERE gf.source_id is not null
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
@@ -1379,7 +1418,13 @@ WHERE gf.source_id is not null
                       'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
                       'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                       'Pfalciparum workshop annotations reviewed and changed',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01')
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Tbrucei427_AutoMAGI_Annotations_RSRC'
+)
+  AND gf.na_feature_id = preferred_product.na_feature_id(+)
+  AND gf.na_feature_id = preferred_name.na_feature_id(+)
+  AND gf.na_feature_id = any_product.na_feature_id(+)
+  AND gf.na_feature_id = any_name.na_feature_id(+)
       ]]>
     </sql>
     <sql>
@@ -1630,7 +1675,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic')
+  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
   AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+)
@@ -1991,11 +2036,11 @@ tablespace indx
                 from sres.externaldatabase d, sres.externaldatabaserelease r, dots.externalnasequence s
                 where d.external_database_id = r.external_database_id
                  and s.external_database_release_id = r.external_database_release_id
-                 and d.name in ('T.cruzi CHORI105 BAC End',
-                                'T.brucei RPCI93 BAC Ends',
-                                'L.major BAC Ends from Sanger',
-                                'L.major PAC Ends from Sanger',
-                                'L.major Cosmid Ends from Sanger')
+                 and d.name in ('Tcruzi_BACEnds_RSRC',
+                                'Tbrucei_Genbank_BACEnds_RSRC',
+                                'Lmajor_sanger_BACEnds_RSRC',
+                                'Lmajor_sanger_PACEnds_RSRC',
+                                'Lmajor_sanger_CosmidEnds_RSRC')
             ) and is_best_alignment != 1
       ]]> 
     </sql>
@@ -2512,6 +2557,7 @@ tablespace indx
         create table apidb.tfbsgene&1 NOLOGGING AS
 select distinct
       ga.source_id as gene_source_id,
+      ga.species as species,
       aef.source_id as probe_id,
       aef.na_feature_id as tfbs_na_feature_id,
       CASE 
@@ -2620,6 +2666,13 @@ tablespace indx
       <![CDATA[
 CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
              (na_sequence_id, start_min, end_max, is_reversed, source_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SageTagAttr_ftrId_idx&1 ON apidb.SageTagAttributes&1
+             (na_feature_id)
 tablespace indx
       ]]>
     </sql>
@@ -2967,6 +3020,21 @@ from
            'ToxoDB' as project_id
     from dual
     UNION
+    select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
     select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
@@ -3061,6 +3129,12 @@ from
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
+
+    UNION
+    select 'Profiles of Derisi HalfLife-half_life' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
     UNION
 
     --TriTrypDB --
@@ -3094,7 +3168,7 @@ from
            'TriTrypDB' as project_id
     from dual
     UNION
-    select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
+    select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
@@ -3103,6 +3177,21 @@ from
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
+    UNION
+    select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
+--    UNION
+--    select 'T. brucei under heat shock array data' as profile_name,
+--           '' as main_profile_name,
+--           'TriTrypDB' as project_id
+--    from dual
+--    UNION
+--    select 'T. brucei DHH1 wild type array data' as profile_name,
+--           '' as main_profile_name,
+--           'TriTrypDB' as project_id
+--    from dual
     ) pm, apidb.geneattributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -3205,6 +3294,58 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
        'rma,pct' as visible_parts,
         'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
     from dual
+
+UNION
+select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+       'Reid::TgME49RnaSeq' as module,
+       'Toxoplasma gondii ME49' as species,
+       '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+from dual
+
+UNION
+select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
+       'Reid::TgVEGRnaSeq' as module,
+       'Toxoplasma gondii VEG' as species,
+       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        'TgVEG_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+from dual
+
+UNION
+select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
+       'Reid::NcRnaSeq' as module,
+       'Neospora caninum' as species,
+       '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
+       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+from dual
+
+
+
+
 
     UNION
 
@@ -3376,9 +3517,27 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'coverage' as visible_parts,
         'RNASeqCoveragePlot_Patrick_Duffy' as attribution
 from dual
-
-
 UNION
+
+
+/*
+select 'Profiles of Derisi HalfLife-half_life' as profile_name,
+       'DeRisiHalfLife::Combined' as module,
+       'Plasmodium falciparum' as species,
+       'mRNA half-lives during intraerythrocytic development - 3D7 post treatment with actD' as display_name,
+       'Intra-rythrocytic development of Plasmodium 3d7 with the addition of actinomycin D (actD), to achieve transcription inhibition' as description,
+       'Erythrocytic lifecycle stages for barplot or time in minutes' as x_axis,
+       'mRNA half-lives for each stage of erythrocytic development (in minutes) for barplot or expression level normalized to the 0 Hour' as y_axis,
+       157 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'half_life,expr_val' as visible_parts,
+       '' as attribution
+from dual
+UNION
+*/
+
+
 -- AmoebaDB --
 select 'EhistolyticaAffyProfiles' as profile_name,
        'Singh::SinghEhTimeSeries' as module,
@@ -3423,6 +3582,20 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
         'Linfantum_promastigote_ExpressionData' as attribution
 from dual
 UNION
+select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
+       'Papadopoulou::LiAxenicVsIntracellular' as module,
+       'Leishmania infantum' as species,
+       'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as display_name,
+       'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as description,
+       'The bars represent a direct comparison of <i>Intercellular Amastigotes vs. Promastigotes (IC.A vs P)</i> <b>AND</b> <i>Axenic Amastigotes vs. Promastigotes (Ax.A vs P)</i>' as x_axis,
+       'Fold Induction or percentile.  The percentile was calculated for each channel/sample to give an indication of the expression level of this gene compared to all others on that array.' as y_axis,
+        330 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'expr_val,pct' as visible_parts,
+        'L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis' as attribution
+from dual
+UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
        'Clayton::TbTimeSeries' as module,
        'Trypanosoma brucei' as species,
@@ -3437,7 +3610,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val' as visible_parts,
-        'Tbrucei_Expression_Profiles_From_Christine_Clayton' as attribution
+        'Tbrucei_Christine_Clayton_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -3455,7 +3628,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'Tbrucei_Matthews_differentiation_series' as attribution
+        'Tbrucei_Matthews_differentiation_series_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -3473,7 +3646,7 @@ The data table above contains the actual expression values.  <b>For this experim
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
-        'Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles' as attribution
+        'Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
@@ -3490,7 +3663,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'T.cruzi_Tarleton_Rick_Array_Profiles' as attribution
+        'Tcruzi_Tarleton_Rick_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -3504,7 +3677,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
-        'L.major_Beverley_Steve_Array_Profiles' as attribution
+        'Lmajor_Beverley_Steve_LifeStages_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
@@ -3517,23 +3690,52 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
         240 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-        null as visible_parts,
-        'Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles' as attribution
+        'expr_val' as visible_parts,
+        'Tbrucei_Estevez_Procyclic_TbDRBD3_Depletion_RSRC_Profiles' as attribution
 from dual
 UNION
-select 'T.brucei George Cross RNA Sequence Profiles' as profile_name,
+select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
        'Cross::TbRnaSeqBfPf' as module,
        'Trypanosoma brucei' as species,
        '<i>T. brucei</i> blood and procyclic forms RNA Sequence Coverage' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
        'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
-       'log2 X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene' as y_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
-        'George_Cross_RNA_Seq_Profiles' as attribution
+        'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
 from dual
+--UNION
+--select 'T. brucei under heat shock array data' as profile_name,
+--       'Carrington::TbHeatShock' as module,
+--       'Trypanosoma brucei' as species,
+--       '<i>T. brucei</i> heat shock array data' as display_name,
+--       'Procyclic trypanosomes (strain 427 lister) were grown in culture under standard conditions at 27&deg;C in SDM79 medium with 10% foetal bovine serume (Brun and Schnenberger, 1979), in a gazed incubator (5% CO2). Logarithmically growing procyclic cells (at about 5*10^6 cells/ml, at 27&deg;C) were added to one volume medium that had been heated to 53&deg;C and incubated at 41&deg;C for 60 minutes in a waterbath in a closed tube (41&deg;C sample). The control cells were added to one volume medium at 27&deg;C and also incubated for 60 minutes in a closed tube at 27&deg;C. Cells were harvested and washed once in PBS. The harvesting was done within 8 minutes.' as description,
+--       'The bar represent the heat shock data versus the control' as x_axis,
+--       'Fold Induction or percentile.' as y_axis,
+--        260 as order_num,
+--        'TRUE' as mainOpen,
+--        'FALSE' as dataOpen,
+--        'expr_val,pct' as visible_parts,
+--        'T.brucei_Carrington_HeatShock_Array_PaGE_Analysis' as attribution
+--from dual
+--UNION
+--select 'T. brucei DHH1 wild type array data' as profile_name,
+--       'Carrington::TbCombined' as module,
+--       'Trypanosoma brucei' as species,
+--       '<i>T. brucei</i> DHH1 wild type and DHH1 DEAD-DQAD mutant array data' as display_name,
+--       'Induction of the expression of the DHH1 wild type and the DHH1 DEAD:DQAD mutant from pLEW100 for 24 hours (thus, &plusmn; 24 hours Tetracycline). Non-induced cells were used as control.' as description,
+--       'The bars represent the DHH1 wild type and DHH1 DEAD-DQAD mutant data versus the control' as x_axis,
+--       'Fold Induction or percentile.' as y_axis,
+--        270 as order_num,
+--        'TRUE' as mainOpen,
+--        'FALSE' as dataOpen,
+--        'expr_val,pct' as visible_parts,
+--        'T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis' as attribution
+--from dual
 )
       ]]>
     </sql>
@@ -3692,6 +3894,21 @@ UNION
 select 'PlasmoDB' as project_id,
        'Mosquito Salivary Gland Sporozoite Peptides ' as display_term,
        'Lasonder Mosquito salivary gland sporozoite peptides' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Blood Stages - Trophozoites' as display_term,
+       'Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Blood Stages - Early Gametocytes' as display_term,
+       'Pf_Lasonder_Proteomics_Blood_Stages_early_gametocytes_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Blood Stages - Late Gametocytes' as display_term,
+       'Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
@@ -3915,48 +4132,89 @@ select 'GiardiaDB' as project_id,
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>Trypanosoma cruzi</i> Amastigote ' as display_term,
-       'Tcruzi Proteomics-Amastigote' as extDB_name
+       '<i>Trypanosoma cruzi</i> Esmeraldo-like Amastigote ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Brent_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> Epimastigote ' as display_term,
-       'Tcruzi Proteomics-Epimastigote' as extDB_name
+       '<i>Trypanosoma cruzi</i> Non-Esmeraldo-like Amastigote ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Brent_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> Metacyclic ' as display_term,
-       'Tcruzi Proteomics-Metacyclic' as extDB_name
+       '<i>T. cruzi</i> Esmeraldo-like Epimastigote ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Brent_Epimastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> Trypomastigote ' as display_term,
-       'Tcruzi Proteomics-Trypomastigote' as extDB_name
+       '<i>T. cruzi</i> Non-Esmeraldo-like Epimastigote ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Brent_Epimastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C ' as display_term,
-       'Tcruzi reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C' as extDB_name
+       '<i>T. cruzi</i> Esmeraldo-like Metacyclic ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Brent_Metacyclic_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> reservosomes-B1 fraction digested with trypsin ' as display_term,
-       'Tcruzi reservosomes-B1 fraction digested with trypsin' as extDB_name
+       '<i>T. cruzi</i> Non-Esmeraldo-like Metacyclic ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Brent_Metacyclic_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> reservosomes-B1M fraction digested with trypsin ' as display_term,
-       'Tcruzi reservosomes-B1M fraction digested with trypsin' as extDB_name
+       '<i>T. cruzi</i> Esmeraldo-like Trypomastigote ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Brent_Trypomastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
-       '<i>T. cruzi</i> Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms ' as display_term,
-       'Tcruzi Proteomics-Membrane Protein' as extDB_name
+       '<i>T. cruzi</i> Non-Esmeraldo-like Trypomastigote ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Brent_Trypomastigote_RSRC' as extDB_name
 from dual
 UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Esmeraldo-like reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Reservosomes_B1TG_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Non-Esmeraldo-like reservosomes-B1 fraction digested with trypsin and endoproteinase Glu-C ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Reservosomes_B1TG_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Esmeraldo-like reservosomes-B1 fraction digested with trypsin' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Reservosomes_B1TU_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Non-Esmeraldo-like reservosomes-B1 fraction digested with trypsin' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Reservosomes_B1TU_RSRC' as extDB_name
+from dual
+  UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Esmeraldo-like reservosomes-B1M fraction digested with trypsin ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Reservosomes_B1MTU_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Non-Esmeraldo-like reservosomes-B1M fraction digested with trypsin ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Reservosomes_B1MTU_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Esmeraldo-like Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms ' as display_term,
+       'TcruziEsmeraldoLike_Proteomics_Membrane_Protein_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. cruzi</i> Non-Esmeraldo-like Proteomic Analysis of Detergent-Solubilized Membrane Proteins from Insect-Developmental Forms ' as display_term,
+       'TcruziNonEsmeraldoLike_Proteomics_Membrane_Protein_RSRC;' as extDB_name
+from dual
+UNION
+
 select 'TriTrypDB' as project_id,
        '<i>T. brucei</i> Procyclic Form ' as display_term,
-       'Tbrucei Proteomics Procyclic Form' as extDB_name
+       'Tbrucei_Proteomics_PF_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
@@ -3976,72 +4234,82 @@ from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - glycosylated ' as display_term,
-       'Linfantum Proteomics PTM-glycosylation' as extDB_name
+       'Linfantum_Proteomics_PTM_glycosylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - acetylated ' as display_term,
-       'Linfantum Proteomics PTM-acetylation' as extDB_name
+       'Linfantum_Proteomics_PTM_acetylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - methylated ' as display_term,
-       'Linfantum Proteomics PTM-methylation' as extDB_name
+       'Linfantum_Proteomics_PTM_methylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> - phosphorylated' as display_term,
-       'Linfantum Proteomics PTM-phosphorylation' as extDB_name
+       'Linfantum_Proteomics_PTM_phosphorylation_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (1DGel) ' as display_term,
-       'Linfantum Proteomics SDS Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_SDS_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (2DGel pH6-9) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-9 Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_9_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Amastigote (2DGel pH6-11) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-11 Amastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_11_Amastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (2DGel pH6-9) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-9 Promastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_9_Promastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (2DGel pH6-11) ' as display_term,
-       'Linfantum Proteomics 2DGel 6-11 Promastigote' as extDB_name
+       'Linfantum_Proteomics_Brotherton_2DGel_6_11_Promastigote_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        'Metacyclogenesis (pH 5-6)' as display_term,
-       'Linfantum Proteomics data from Marc Ouellette' as extDB_name
+       'Linfantum_Proteomics_OuelletteM_Metacyclic_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Promastigote temperature and pH Control ' as display_term,
-       'Linfantum Proteomics Promastigote temperature and pH non-stressed' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_non_stressed_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i>  Promastigote temperature and pH stressed ' as display_term,
-       'Linfantum Proteomics Promastigote temperature and pH stressed' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_temperature_and_pH_stressed_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Amastigote (Secreted) ' as display_term,
-       'Linfantum Proteomics Amastigote Secreted Protein' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Amastigote_Secreted_Protein_RSRC' as extDB_name
 from dual
 UNION
 select 'TriTrypDB' as project_id,
        '<i>L. infantum</i> Promastigote (Secreted) ' as display_term,
-       'Linfantum Proteomics Promastigote Secreted Protein' as extDB_name
+       'Linfantum_Proteomics_Brotherton_Promastigote_Secreted_Protein_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. braziliensis</i> Promastigotes ' as display_term,
+       'Lbraziliensis_Proteomics_Promastigotes_Secreted_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>L. major</i> Exosomes' as display_term,
+       'Lmajor_Proteomics_Exosomes_RSRC' as extDB_name
 from dual
 )
       ]]>
@@ -4334,13 +4602,13 @@ ORDER by na_sequence_id, offset, sequence_order)
   </tuningTable>
 
   <tuningTable name="apidb.DistinctLowerProduct">
-    <externalDependency name="dots.NaFeatureImp"/>
+    <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
 CREATE TABLE apidb.DistinctLowerProduct&1 NOLOGGING AS
 select rownum as dlp_id, dlp
 from (select distinct lower(product) as dlp
-      from dots.GeneFeature)
+      from apidb.GeneAttributes)
       ]]>
     </sql>
   </tuningTable>
@@ -4555,62 +4823,6 @@ swa.minor_allele = (select min(allele) from apidb.ISOLATEATTRIBUTES ia, apidb.IS
                     where isnp.snp_source_id = swa.snp_source_id and ia.EXTERNAL_DB_NAME = swa.iso_ext_db_name
                     group by isnp.snp_source_id,ia.EXTERNAL_DB_NAME)
 where swa.major_allele is null
-      ]]>
-    </sql>
-  </tuningTable>
-
-  <tuningTable name="apidb.MassSpecGeneTable">
-    <externalDependency name="apidb.MassSpecSummary"/>
-    <externalDependency name="dots.AaLocation"/>
-    <externalDependency name="dots.AaSequence"/>
-    <externalDependency name="dots.GeneFeature"/>
-    <externalDependency name="dots.MassSpecFeature"/>
-    <externalDependency name="dots.Transcript"/>
-    <externalDependency name="dots.TranslatedAaFeature"/>
-    <externalDependency name="sres.ExternalDatabase"/>
-    <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <sql>
-      <![CDATA[
-create table apidb.MassSpecGeneTable&1 as
-select sequencetable.source_id, substr(sequencetable.sequence, 1, 200) as sequence,
-       seq.sum_sequence_count, spec.spectrum_count,
-       sequencetable.name as experiment
-from (select intseq.aa_sequence_id,count(*) as sum_sequence_count
-      from (select mss.aa_sequence_id, count(*) as sum_seq_ct
-            from apidb.MassSpecSummary mss, dots.MassSpecFeature msf,
-                 dots.AaLocation aal, sres.ExternalDatabase ed,
-                 sres.ExternalDatabaseRelease edr
-            where mss.mass_spec_summary_id = msf.source_id
-              and msf.aa_feature_id = aal.aa_feature_id
-              and msf.external_database_release_id = edr.external_database_release_id
-              and edr.external_database_id = ed.external_database_id
-            group by mss.aa_sequence_id,aal.start_min,aal.end_max ) intseq
-      group by intseq.aa_sequence_id) seq,
-     (select mss.aa_sequence_id, spectrum_count as spectrum_count
-      from apidb.MassSpecSummary mss
-      group by mss.aa_sequence_id, mss.spectrum_count) spec,
-     (select msf.aa_sequence_id, to_char(substr(aas.sequence, aal.start_min,
-             aal.end_max - aal.start_min + 1)) as sequence, ed.name, gf.source_id
-      from dots.MassSpecFeature msf,dots.AaLocation aal, dots.AaSequence aas,
-           dots.TranslatedAaFeature taaf, sres.ExternalDatabaseRelease edr,
-           sres.ExternalDatabase ed, dots.GeneFeature gf, dots.Transcript t
-      where t.parent_id = gf.na_feature_id
-        and taaf.na_feature_id = t.na_feature_id
-        and msf.parent_id = taaf.aa_feature_id
-        and msf.aa_feature_id = aal.aa_feature_id
-        and msf.aa_sequence_id = aas.aa_sequence_id
-        and msf.external_database_release_id = edr.external_database_release_id
-        and edr.external_database_id = ed.external_database_id) sequencetable
-where seq.aa_sequence_id = sequencetable.aa_sequence_id
-  and spec.aa_sequence_id = sequencetable.aa_sequence_id
-group by sequencetable.sequence, sequencetable.name, seq.sum_sequence_count, 
-   sequencetable.source_id, spectrum_count
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-        create index apidb.MassSpec_idx&1 on apidb.MassSpecGeneTable&1 (source_id)
-tablespace indx
       ]]>
     </sql>
   </tuningTable>
@@ -5026,8 +5238,8 @@ tablespace indx
          and "gene:syntenyMC:bulksubfeatures", respectively.  -->
     <internalDependency name="apidb.GeneAttributes"/>
     <internalDependency name="apidb.FeatureLocation"/>
-    <!-- externalDependency name="apidb.Synteny"/ -->
-    <!-- externalDependency name="apidb.SyntenyAnchor"/ -->
+    <externalDependency name="apidb.Synteny"/>
+    <externalDependency name="apidb.SyntenyAnchor"/>
     <sql>
       <![CDATA[
 create table apidb.GeneContextSyntenicGenes&1
@@ -5066,10 +5278,10 @@ as
 select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_attrs) */
        syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
-       substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
-       substr(context_gene_attrs.project_id, 1, 10) project_id,
+       context_gene_attrs.source_id as context_source_id,
+       context_gene_attrs.project_id,
        syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
-       substr(syntenic_gene_attrs.source_id, 1, 25) as syntenic_source_id,
+       syntenic_gene_attrs.source_id as syntenic_source_id,
        anch_left.synteny_id synteny_id,
        CASE WHEN (syn.is_reversed = 1) 
             THEN anch_left.ref_loc - ((anch_left.syntenic_loc
@@ -5166,6 +5378,14 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
     </sql>
     <sql>
       <![CDATA[
+insert into apidb.GeneContextSyntenicGenes&1 (na_sequence_id, context_start, context_end, context_source_id, organism, syntenic_na_feature_id)
+select na_sequence_id, context_start, context_end, source_id,  'placeholder', -1
+from apidb.GeneAttributes
+where source_id in (select source_id from apidb.GeneAttributes minus select context_source_id from apidb.GeneContextSyntenicGenes&1)
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[
 create index apidb.gcsg_ix&1
         on apidb.GeneContextSyntenicGenes&1 (na_sequence_id, context_start, context_end, organism)
       ]]> 
@@ -5220,8 +5440,8 @@ SELECT /*+ ordered no_expand use_hash(syn exfloc) use_hash(exfloc syntenic_gene_
        syntenic_gene_attrs.organism, context_gene_attrs.na_sequence_id,
        exfloc.na_feature_id feature_id,
        context_gene_attrs.context_start, context_gene_attrs.context_end,
-       substr(context_gene_attrs.source_id, 1, 25) as context_source_Id,
-       substr(context_gene_attrs.project_id, 1, 10) project_id,
+       context_gene_attrs.source_id as context_source_Id,
+       context_gene_attrs.project_id,
        syntenic_gene_attrs.na_feature_id syntenic_na_feature_id,
        exfloc.na_feature_id as syntenic_exon_feature_id,
        exfloc.parent_id as syntenic_gene_feature_id,
@@ -5309,6 +5529,14 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   )
   AND exfloc.start_min <= syn.b_end
   AND exfloc.end_max >= syn.b_start
+      ]]> 
+    </sql>
+    <sql>
+      <![CDATA[
+insert into apidb.SyntenicExonCache&1 (na_sequence_id, context_start, context_end, context_source_id, organism, syntenic_na_feature_id)
+select na_sequence_id, context_start, context_end, source_id,  'placeholder', -1
+from apidb.GeneAttributes
+where source_id in (select source_id from apidb.GeneAttributes minus select context_source_id from apidb.SyntenicExonCache&1)
       ]]> 
     </sql>
     <sql>
@@ -5564,9 +5792,9 @@ sub processChangedGenes {
             . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
       }
 
-  } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success));
+  } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success && !($response->content =~ /<error /)));
 
-  if (!$response->is_success) {
+  if (!$response->is_success || $response->content =~ /<error /) {
     die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url";
   }
 
@@ -5690,14 +5918,37 @@ use HTTP::Response;
 use ApiCommonData::Load::TuningConfig::Log;
 use XML::Simple;
 
+BEGIN {
+  # This variable is declared inside a BEGIN block, to make it behave
+  # like a Java "static" variable, whose state persists from one invocation to
+  # another.
+  my $errorFlag;
+
+  sub setErrorFlag {
+    $errorFlag = 1;
+  }
+
+  sub getErrorFlag {
+    return $errorFlag;
+  }
+}
+
+
 # my $dbh = getDbHandle();
 
 createEmptyTable($dbh);
 storeProducts($dbh);
 createIndex($dbh);
 
+die if getErrorFlag();
 
 ################################################################################
+
+sub logError {
+    my ($msg) = @_;
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($msg);
+    setErrorFlag();
+}
 
 sub storeProducts {
 
@@ -5775,7 +6026,7 @@ SQL
 
   for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
        $response = $ua->request($request);
-       ApiCommonData::Load::TuningConfig::Log::addErrorLog("error message from web service: " . $response->content)
+       logError("error message from web service: " . $response->content)
          if $response->content =~ /"error": \{/;
        last if $response->is_success;
        ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
@@ -5803,7 +6054,7 @@ SQL
   ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
 
   my $noProd = changedGenesWithoutProduct($dbh);
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
+  logError($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
     if $noProd;
 }
 
@@ -5824,19 +6075,48 @@ SQL
 sub changedGenesWithoutProduct {
     my ($dbh) = @_;
 
-    my $stmt = $dbh->prepare(<<SQL) or die "preparing to check for changed genes without product";
-      select count(*)
-      from ( select gene from apidb.ChangedGeneProduct
-            minus
-             select gene from apidb.ChangedGeneProduct&1)
+    my $stmt;
+
+    # query will fail if tuning manager has never been run on this instance,
+    # so take sql error to mean that the changed-gene list was formerly empty.
+    eval {
+    $stmt = $dbh->prepare(<<SQL)
+      select cgp.gene from apidb.ChangedGeneProduct cgp, apidb.GeneAttributes ga
+                  where cgp.gene = ga.source_id
+    minus
+      select gene from apidb.ChangedGeneProduct&1
+    order by gene
 SQL
 
-  # this query will fail on the first tuningManager run in a new instance,
-  # because apidb.ChangedGeneProduct doesn't yet exist.  So empty return on error.
-  $stmt->execute() or return;
-  my ($gwp) = $stmt->fetchrow_array();
+    };
 
-  return $gwp;
+  return 0 if !$stmt;
+
+  $stmt->execute() or die "checking for changed genes without product";
+
+    my @missing;
+    while (my ($gene) = $stmt->fetchrow_array()) {
+      push(@missing, $gene);
+  }
+
+    my $numberMissing = scalar(@missing);
+
+    if ($numberMissing > 10) {
+	# error message listing a subset of missing genes, as examples
+	  ApiCommonData::Load::TuningConfig::Log::addLog("$numberMissing genes, including the examples below, are in the current version ofChangedGeneProduct, but not the new version:");
+	    my $listString;
+	    my $SAMPLE_SIZE = 10; # list $SAMPLE_SIZE missing genes in the log
+	    for (my $i = 0; $i < $numberMissing; $i += $numberMissing / $SAMPLE_SIZE) {
+		$listString .= $missing[$i] . " ";
+	    }
+	    ApiCommonData::Load::TuningConfig::Log::addLog($listString);
+      } elsif ($numberMissing > 0) {
+	  # error message listing all missing genes 
+        ApiCommonData::Load::TuningConfig::Log::addLog("The following $numberMissing genes are in the current ChangedGeneProduct, but not the new one:");
+	  ApiCommonData::Load::TuningConfig::Log::addLog(join(' ', @missing));
+	}
+
+    return $numberMissing;
 }
 
 sub createIndex {
@@ -5982,5 +6262,38 @@ sub getDbHandle {
       ]]>
     </sql>
   </tuningTable>
+
+  <tuningTable name="apidb.SnpCombined">
+    <externalDependency name="dots.SeqVariation"/>
+    <internalDependency name="apidb.SnpAttributes"/>
+    <sql>
+      <![CDATA[
+       create table apidb.SnpCombined&1
+              (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product,
+               constraint SeqVar&1_pk primary key (na_sequence_id, dataset, start_min, strain, na_feature_id, allele, phenotype, product))
+       nologging
+       as
+       select sa.na_sequence_id, sa.dataset, sa.start_min,
+              substr(var.strain, 1, 20) as strain, sa.na_feature_id,
+              substr(var.allele, 1, 40) as allele,
+              substr(var.phenotype, 1, 20) as phenotype, nvl(substr(var.product, 1, 20), ' ') as product
+       FROM apidb.SnpAttributes sa,
+            dots.SeqVariation var
+       WHERE var.parent_id = sa.na_feature_id
+         and sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
+      ]]>
+    </sql>
+  </tuningTable>
+
+<!-- No DataSource table for you, build 9.
+
+  <tuningTable name="apidb.DataSource" alwaysUpdate="true">
+    <internalDependency name="apidb.SequenceAttributes"/>
+    <ancillaryTable name="apidb.DataSourcePublication"/>
+    <ancillaryTable name="apidb.DataSourceReference"/>
+    <program commandLine="buildDataSourceTT"/>
+  </tuningTable>
+
+-->
 
 </tuningConfig>

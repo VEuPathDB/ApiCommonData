@@ -102,6 +102,13 @@ my $argsDeclaration =
 	      isList => 0,
 	     }),
 
+   stringArg({name => 'idType',
+	      descr => 'the identifier type for external dabase links',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
    enumArg({name => 'tableName',
 	    descr => 'The name of the mapping table for the sequences we are loading DBxRefs for. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
@@ -163,6 +170,11 @@ sub getMapping {
       $self->updateIdURL($dbRls,$url);
   }
 
+  if ($self->getArg('idType')){
+      my $idType=$self->getArg('idType');
+
+      $self->updateIdType($dbRls,$idType);
+  }
 
 
 
@@ -271,6 +283,19 @@ sub updateIdURL{
   $DbRlsObj -> retrieveFromDB();
  
   $DbRlsObj -> setIdUrl($url); 
+
+  $DbRlsObj->submit();
+
+}
+
+sub updateIdType{
+  my ($self,$dbRls,$idType) = @_;
+
+  my $DbRlsObj = GUS::Model::SRes::ExternalDatabaseRelease-> new({external_database_release_id => $dbRls});
+
+  $DbRlsObj -> retrieveFromDB();
+ 
+  $DbRlsObj -> set("id_type",$idType); 
 
   $DbRlsObj->submit();
 

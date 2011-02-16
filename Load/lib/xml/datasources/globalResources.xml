@@ -3,7 +3,7 @@
   <resource resource="GO_RSRC" version="@@GO_VER@@"
       plugin="GUS::Supported::Plugin::InsertGeneOntology">
     <manualGet fileOrDir="global/ontology/geneOntology/%RESOURCE_VERSION%/gene_ontology.obo"/>
-    <pluginArgs>--oboFile @@dataDir@@/gene_ontology.obo --extDbRlsName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION%</pluginArgs>
+    <pluginArgs>--oboFile @@dataDir@@/gene_ontology.obo --extDbRlsName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --calcTransitiveClosure</pluginArgs>
     <info
         displayName="Gene Ontology"
         project=""
@@ -21,7 +21,7 @@
     </info>
   </resource>
 
-  <resource resource="enzymeDB_RSRC" version="2010-09-10"
+  <resource resource="enzymeDB_RSRC" version="2011-02-08"
       plugin="GUS::Community::Plugin::LoadEnzymeDatabase">
     <wgetArgs url="ftp://ftp.expasy.org/databases/enzyme/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --include list  --accept=enzclass.txt,enzyme.dat</wgetArgs>
     <pluginArgs>--InPath @@dataDir@@ --enzymeDbName %RESOURCE_NAME% --enzymeDbRlsVer %RESOURCE_VERSION%</pluginArgs>
@@ -89,7 +89,7 @@
     </info>
   </resource>
 
-  <resource resource="updatePDBTaxon_RSRC" version="2010-09-17"
+  <resource resource="updatePDBTaxon_RSRC" version="2011-01-28"
       plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/source.idx</wgetArgs>
     <unpack>processSourceIdxFile --inFile @@dataDir@@/source.idx --outFile @@dataDir@@/source.idx.processed</unpack>
@@ -257,6 +257,12 @@
         ]]>
       </description>
     <publication pmid="15608177"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_function"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_process"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_component"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByInterproDomain"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
     </info>
   </resource>
 
@@ -313,8 +319,8 @@
     <pluginArgs>--isolateVocabularyFile @@dataDir@@/isolateVocabulary.txt</pluginArgs>
     <info
         displayName="load isolate vocabulary"
-        project="@@AllOrganismNames@@"
-        organisms=""
+        project=""
+        organisms="@@AllOrganismNames@@"
         category="ignore"
         publicUrl=""
         contact="Bindu Gajria"

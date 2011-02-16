@@ -535,9 +535,9 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
 
     <resource resource="T.cruziNonEsmeraldo_chromosomes" version="2009-09-10" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
-        organisms="ignore"
-        displayName="T.cruzi Non-Esmeraldo chromosomes"
-        category="ignore"
+        organisms="T.cruzi"
+        displayName="T.cruzi Non-Esmeraldo chromosomes (strain CL Brenner)"
+        category="Genome"
         extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
         extDbRlsVer="2009-09-10"
         extDbRlsDescrip="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes|2009-09-10"
@@ -561,8 +561,8 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </resource>
 
     <resource resource="T.cruziNonEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
-        displayName="T.cruzi Genome Annotations"
-        category="ignore"
+        displayName="T.cruzi Non-Esmeraldo Genome Annotations (strain CL Brenner)"
+        category="Genome"
         organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Sanger T. cruzi Non-Esmeraldo contigs and chromosomes"
@@ -612,8 +612,8 @@ Sequencing of <i>T. brucei</i> was conducted by <a href="http://www.sanger.ac.uk
     </resource>
 
     <resource resource="T.cruziEsmeraldo_Annotation_Chromosomes" version="2009-09-10"
-        displayName="T.cruzi Esmeraldo Genome Annotations"
-        category="ignore"
+        displayName="T.cruzi Esmeraldo Genome Annotations (strain CL Brenner)"
+        category="Genome"
         organisms="T.cruzi"
         plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
         extDbName="Sanger T. cruzi Esmeraldo chromosomes"
@@ -1355,10 +1355,10 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         </description>
     </resource> 
 
-    <resource resource="Lmajor_seidman_75.1" version="2010-07-20" 
+    <resource resource="Lmajor_SD_75.1" version="2010-07-20" 
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="L.major"
-        displayName="L.major_seidman_75.1"
+        displayName="L.major strain SD 75.1"
         category="Genome"
         extDbName="L.major_seidman_75.1 genome from WUSTL"
         extDbRlsVer="07-20-2010"
@@ -1367,16 +1367,34 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
         <manualGet
            fileOrDir="/files/cbil/data/cbil/TrypDB/manualDelivery/Genomes/WhitePaper_preliminary_genomes/Lmajor_seidman_75.1/FTP/454AllContigs.fna"/>
 
-        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/Lmajor_seidman_75.1/454AllContigs.fna --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 860570 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/Lmajor_seidman_75.1/454AllContigs.fna --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
             <![CDATA[ 
-                 <i>Leishmania major strain Seidman 75.1</i>  genome from WUSTL
+                 <i>Leishmania major strain SD 75.1</i>  genome from WUSTL.
+                 <br><br>The <i>Leishmania major</i> (MHOM/SN/74/SD) was obtained from David Sacks (NIH). The properties of this line are described in  <a href="http://www.ncbi.nlm.nih.gov/pubmed/15728505"> here</a>. 
+<!-- Anderson C.F.,Mendez S., Sacks D.L., (2005), “Nonhealing infection despite Th1 polarization produced by a strain of Leishmania major in C57BL/6 mice”, J Immunol. 2005 174:2934 - 41. -->
+A clonal derivative (75.1) was prepared by Deborah E. Dobson (Washington University School of Medicine) and used for sequencing.
+
+<br><br>Genomic DNA was made by CsCl/Ethidium bromide density gradient centrifugation to minimize the amount of kinetoplast (mitochondrial) DNA; this was prepared by Natalia Akopyants (Washington University School of Medicine).
+
+<br><br>Next-generation sequences on the 454 instruments were produced for a draft assembly. Total sequence coverage of 454 instrument reads was ~31X (Fragments 19X, 3Kb PE 9X, 8Kb PE 3X) using a genome size estimate of 40Mb. The combined sequence reads were assembled using the Newbler software (Roche 454). This first draft assembly was referred to as L_major_SD_1.0. This version has been cleaned of contaminants. The assembly is made up of a total of 1904 scaffolds with an N50 scaffold length of over 691kb (N50 contig length for the 4009 contigs was 27kb). The assembly spans 30.8Mb.
+
+<br><br>This work was supported by NIH grants AI29646 and AI 31078 to SMB and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Center at Washington University.
+
+<br><br>For questions regarding this <i>L_major_SD_1.0</i> assembly please contact Dr. Wes Warren, Washington University School of Medicine (wwarren@watson.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Leishmania major</i> (strain/isolate SD 75.1) genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).
+
+<br><br>DNA source - Drs. Stephen M. Beverley & Natalia Akopyants, Department of Molecular Microbiology, Washington University School of Medicine, St Louis, MO.
+
+<br><br>Sequencing - The Genome Center, Washington University School of Medicine, St Louis, MO. Sequence assembly – The Genome Center, Washington University School of Medicine, St Louis, MO. Citation upon use of this assembly in a manuscript:
+
+<br><br>It is requested that users of this <i>Leishmania major</i> (strain/isolate SD 75.1) sequence assembly acknowledge Stephen M. Beverley and The Genome Center, Washington University School of Medicine in any publications that result from use of this sequence assembly. Any publications that propose to use whole genome or chromosome data should contact The Genome Center at Washington University (gweinsto@wustl.edu or wwarren@wustl.edu) for the use of pre-publication data. Please refer to the <a href="http://genome.wustl.edu/data/data_use_policy">Genome Center Data Use Policy</a> for further information regarding proper use of data and proper citation.
+
           ]]>      
         </description>  
     </resource>
-<resource resource="Lmajor_Seidman_75.1_Scaffolds" version="2010-07-20"
+<resource resource="Lmajor_SD_75.1_Scaffolds" version="2010-07-20"
          plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-         displayName="P. vivax contig to scaffold map"
+         displayName="L.major SD 75.1 contig to scaffold map"
          category="Genome"
          extDbName="L.major Seidman 75.1 scaffolds"
          extDbRlsVer="2010-07-20"
@@ -1386,7 +1404,7 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
          <pluginArgs>--agpFile @downloadDir@/Lmajor_Seidman_75.1_Scaffolds/454Scaffolds.txt --seqPieceExtDbName "L.major_seidman_75.1 genome from WUSTL" --seqPieceExtDbRlsVer "07-20-2010" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "860570" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
          <description>
             <![CDATA[
-         Contig to scaffold map for <i>L. major Seidman 75.1</i>.
+         Contig to scaffold map for <i>L. major SD 75.1</i>.
          ]]>
         </description>
     </resource>
@@ -1407,15 +1425,20 @@ OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
             <pluginArgs>--inputFile @downloadDir@/Lbraziliensis_Proteomics_Promastigotes/Lbraziliensis_proteomics.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Sanger L. braziliensis chromosomes|2009-10-06'</pluginArgs>
          <description>
             <![CDATA[
-          Proteomic characterization of the released/secreted proteins of <i>Leishmania (Viannia) braziliensis</i> promastigotes <a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Cuervo et al.</a>
-          ]]>
+This data represents protein expression evidence from the promastigote
+stage of <i>L. braziliensis</i> as described by <a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Cuervo P et. al.</a>. <br>Data was provided
+by the Laboratorio de Pesquisa em Leishmaniose at the Instituto Oswaldo
+Cruz, FIOCRUZ, Rio de Janeiro, Brazil. <br><br> References:<br>
+<a href="http://www.ncbi.nlm.nih.gov/pubmed/19703603">Proteomic characterization of the released/secreted proteins of Leishmania
+(Viannia) braziliensis promastigotes.</a> Cuervo et al. 2009 J Proteomics.
+2009 Nov 2;73(1):79-92.          ]]>
          </description>		
      </resource>  
 
 <resource resource="Lmajor_Proteomics_Exosomes" version="2010-02-16"
                 plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
 	     displayName="L. major Proteomics-Exosomes"
-	     category="ignore"
+	     category="Proteome"
                 extDbName="L.major Proteomics-Exosomes"
                 extDbRlsVer="2010-02-16"
                 extDbRlsDescrip="L.major Proteomics-Exosomes|2010-02-16"
@@ -2048,7 +2071,7 @@ Contact Peter Myler, peter.myler@sbri.org, Seattle Biomedical Research Institute
   <resource resource="George_Cross_RNA_Seq_Profiles" version="1.0"
             displayName="RNA sequence profiles from George Cross"
             category="Transcriptome"
-            organisms="P.falciparum"
+            organisms="T.brucei"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
             extDbName="George_Cross_RNA_Seq_Profiles"
             extDbRlsVer="1.0"
@@ -2711,7 +2734,7 @@ Laboratory of Molecular Parasitology, The Rockefeller University
         plugin="GUS::Supported::Plugin::LoadFastaSequences"
         organisms="T.cruzi Esmeraldo"
         displayName="T.cruzi Esmeraldo scaffolds"
-        category="Genome"
+        category="ignore"
         extDbName="T.cruzi Esmeraldo scaffolds from WUSTL"
         extDbRlsVer="6.0"
         extDbRlsDescrip="T.cruzi Esmeraldo scaffolds from WUSTL|6.0"
@@ -2721,15 +2744,15 @@ Laboratory of Molecular Parasitology, The Rockefeller University
 
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --ncbiTaxId 366581 --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TcruziEsmeraldo_scaffolds/T_cruzi.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
-            <![CDATA[ 
-                 Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
+         <![CDATA[
+        Scaffold sequences for <i>T.cruzi Esmeraldo</i> version 6.0 from WUSTL
           ]]>      
-        </description>  
+</description>  
     </resource>
 
 <resource resource="L.infantum_Papadoupou_Amastigote_Array_Profiles" version="2009-01-15"
             displayName="L.infantum axenic and intracellular amastigote Array Profiles"
-            category="ignore"
+            category="Transcriptome"
             organisms="Leishmania infantum"
             plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
             extDbName="L.infantum_Papadoupou_Amastigote_Array_Profiles"
@@ -2744,9 +2767,11 @@ Laboratory of Molecular Parasitology, The Rockefeller University
 <pluginArgs>--inputDir @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_Profiles/profile --configFile @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_Profiles/profile/profiles.conf --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
    <description>
          <![CDATA[
-         Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum. 
+         Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum.<br> 
   
-         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellular amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47 
+         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellular amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47
+<br><br>
+Data were accessed from the following GEO Record: <a href="http://www.ncbi.nlm.nih.gov/pubmed?Db=gds&DbFrom=pubmed&Cmd=Link&LinkName=pubmed_gds&IdsFromResult=19393160">GSE13983</a> 
           ]]>
     </description>
     <publication pmid="19393160"/>
@@ -2755,7 +2780,7 @@ Laboratory of Molecular Parasitology, The Rockefeller University
 <resource resource = "L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis" version="2009-01-15"
             displayName="L.infantum axenic and intracellular amastigote Array PaGE analysis"
             organisms="Leishmania infantum"
-            category="ignore"
+            category="Transcriptome"
             plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
             dbCommit = "@dbcommit@">
      <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/Microarray/Papadopoulou_temp/page"
@@ -2766,12 +2791,288 @@ Laboratory of Molecular Parasitology, The Rockefeller University
 <pluginArgs>--inputDir @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis/page --configFile @downloadDir@/L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis/page/page.conf --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
    <description>
          <![CDATA[
-        Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum. 
+                 Epression profiles of axenic and intracellular amastigote forms of Leishmania infantum.<br> 
   
-         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellular amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47
+         Rochette, A., F. Raymond, J. Corbeil, M. Ouellette and B. Papadopoulou  (2009) "Whole-genome comparative RNA expression profiling of axenic and intracellul
+ar amastigote forms of Leishmania infantum" Mol Biochem Parasitol 165: 1 32-47
+<br><br>
+Data were accessed from the following GEO Record: <a href="http://www.ncbi.nlm.nih.gov/pubmed?Db=gds&DbFrom=pubmed&Cmd=Link&LinkName=pubmed_gds&IdsFromResult=193931
+60">GSE13983</a> 
          ]]>
     </description>
     <publication pmid="19393160"/>
   </resource>
+
+
+
+<resource resource = "T.brucei_Carrington_DHH1_induction_wildType_Array_Profiles" version="2009-02-09"
+            displayName="T.brucei induced DHH1 in wild type - Array Profiles"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"             
+            extDbName="Tbrucei_Carrington_wildtype_RSRC"
+            extDbRlsVer="2009-02-09"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/"
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/ --configFile @downloadDir@/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/config_profiles.txt  --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+                	
+Induction of the expression of the DHH1 wild type from pLEW100 for 24 hours (thus, ± 24 hours Tetracycline). Uninduced cells were used as control. 
+         ]]>
+    </description>
+    <publication pmid="20124414"/>
+  </resource>
+
+
+<resource resource = "T.brucei_Carrington_DHH1_induction_wildType_Array_PaGE_Analysis" version="2009-02-09"
+            displayName="T.brucei induced DHH1 in wild type - microarray PaGE analysis"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/"
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/ --configFile @downloadDir@/E-MEXP-2025_DHH1_wt_pLEW100_24H/1.0/final/config_page.txt --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+
+   <description>
+         <![CDATA[
+      Induction of the expression of the DHH1 wild type from pLEW100 for 24 hours (thus, ± 24 hours Tetracycline). Uninduced cells were used as control. 
+         ]]>
+    </description>
+    <publication pmid="20124414"/>
+  </resource>
+
+
+
+<resource resource = "T.brucei_Carrington_DHH1_induction_Mutant_Array_Profiles" version="2009-02-09"
+            displayName="T.brucei induced DHH1 in mutant - Array Profiles"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"             
+            extDbName="Tbrucei_Carrington_DEAD_DQAD_mutant_RSRC"
+            extDbRlsVer="2009-02-09"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final/"
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final/ --configFile @downloadDir@/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final/config_profiles.txt  --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+
+   <description>
+         <![CDATA[	
+Induction of the expression of the DHH1 DEAD:DQAD mutant from pLEW100 for 24 hours (thus, ± 24 hours Tetracycline). Uninduced cells were used as control.
+         ]]>
+    </description>
+    <publication pmid="20124414"/>
+  </resource>
+
+
+<resource resource = "T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis" version="2009-02-09"
+            displayName="T.brucei induced DHH1 in mutant - microarray PaGE analysis"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final"           
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final/ --configFile @downloadDir@/E-MEXP-2026_DHH1_mutant_pLEW100_24H/1.0/final/config_page.txt  --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+         <![CDATA[	
+Induction of the expression of the DHH1 DEAD:DQAD mutant from pLEW100 for 24 hours (thus, ± 24 hours Tetracycline). Uninduced cells were used as control.
+         ]]>
+    </description>
+    <publication pmid="20124414"/>
+  </resource>
+
+
+
+<resource resource = "T.brucei_Carrington_HeatShock_Array_Profiles" version="2008-03-11"
+            displayName="T.brucei treated with heat shock - Array Profiles"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"             
+            extDbName="Tbrucei_Carrington_heatshock_RSRC"
+            extDbRlsVer="2008-03-11"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-1476_heat_shock_stress/1.0/final/"
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-1476_heat_shock_stress/1.0/final/ --configFile @downloadDir@/E-MEXP-1476_heat_shock_stress/1.0/final/config_profiles.txt  --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+
+   <description>
+         <![CDATA[
+Expression profiles of heat shock treated procyclic trypansosomes compared to untreated control.
+         ]]>
+    </description>
+    <publication pmid="18713834"/>
+  </resource>
+
+
+<resource resource = "T.brucei_Carrington_HeatShock_Array_PaGE_Analysis" version="2008-03-11"
+            displayName="T.brucei treated with heat shock - microarray PaGE analysis"
+            organisms="Trypanosoma brucei"
+            category="ignore"
+            plugin = "ApiCommonData::Load::Plugin::InsertAnalysisResult"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/tbrucei/microarrayExpression/E-MEXP-1476_heat_shock_stress/1.0/final/"
+            contact="Mark Carrington"
+            email="c115@cam.ac.uk"
+            institution="Department of Biochemistry, University of Cambridge, UK"
+     />
+
+<pluginArgs>--inputDir @downloadDir@/E-MEXP-1476_heat_shock_stress/1.0/final/ --configFile @downloadDir@/E-MEXP-1476_heat_shock_stress/1.0/final/config_page.txt  --analysisResultView 'DifferentialExpression' --naFeatureView 'GeneFeature'</pluginArgs>
+   <description>
+
+         <![CDATA[
+Expression profiles of heat shock treated procyclic trypansosomes compared to untreated control.
+                         ]]>
+    </description>
+    <publication pmid="18713834"/>
+  </resource>
+
+
+<resource resource = "Tbrucei427_chromosomes_RSRC" version="2010-10-20"
+            displayName="T.brucei strain Lister 427 sequence and annotation"
+            organisms="T.brucei427"
+            category="Genome"
+            plugin = "ApiCommonData::Load::Plugin::LoadNothing"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/"
+            contact=""
+            email=""
+            institution=""
+     />
+<pluginArgs></pluginArgs>
+   <description>
+         <![CDATA[
+DNA was isolated (Nicolai Siegel and Oliver Dreesen) from cultured bloodstream forms of <i>Trypanosoma brucei</i> strain Lister 427 containing various transgenes, and prepared for single-ended sequencing by Illumina and 454 technologies, which yielded read lengths of 76bp and 350bp (average) respectively. The sequences were assembled (George Cross) using individual chromosomes of the genome reference strain <i>Trypanosoma brucei</i> TREU (Trypanosomiasis Research Edinburgh University) 927/4 as templates and SeqMan NGen software (<a href="http://www.dnastar.com/" target="_blank">DNASTAR</a>). The assemblies were evaluated and annotations were transferred from the genome reference strain TREU 927 by Matthew Rogers of <a href="http://www.sanger.ac.uk/Projects/T_brucei/" target="_blank"> The Sanger Institute pathogen sequencing unit</a>.
+      
+         ]]>
+    </description>
+  </resource>
+
+
+<resource resource = "Tbrucei427_AutoMAGI_Annotations_RSRC" version="2010-11-19"
+            displayName="T.brucei strain Lister 427 AutoMAGI annotation"
+            organisms="T.brucei427"
+            category="Genome"
+            plugin = "ApiCommonData::Load::Plugin::LoadNothing"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/"
+            contact=""
+            email=""
+            institution=""
+     />
+<pluginArgs></pluginArgs>
+   <description>
+         <![CDATA[
+Additional gene predictions for <i>T. brucei</i> strain Lister 427 were carried out using the automated gene prediction software AUTOMAGI (G. Aggarwal, P. J. Myler, in Progress in Bioinformatics, F. Columbus, Ed. (Nova Science Publishers, Inc., Hauppauge, NY, 2005)) by <a href="http://www.seattlebiomed.org/bio/myler" target="_blank">Dr. Peter Myler's group</a> at  Seattle Biomed.
+         ]]>
+    </description>
+  </resource>
+
+
+<resource resource = "TcruziEsmeraldo_scaffold_RSRC" version="6.0"
+            displayName="T.cruzi Esmeraldo scaffold sequences (strain cl3)"
+            organisms="T.cruzi Esmeraldo"
+            category="Genome"
+            plugin = "ApiCommonData::Load::Plugin::LoadNothing"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/"
+            contact=""
+            email=""
+            institution=""
+     />
+<pluginArgs></pluginArgs>
+   <description>
+            <![CDATA[ 
+The <i>Trypanosome cruzi</i> Esmeraldo strain cl3 was obtained from Dr. Gregory Buck, Center for the Study of Biological Complexity, Microbiology and Immunology, Virginia Commonwealth University.<br><br>This strain, a representative of the TcII lineage of <i>T. cruzi</i> (Brisse et al., 2000, Zingales et al., 2009), was isolated from a male patient, age ~20, in acute stage of disease (fatal) in Sao Felipe, Bahia, Brazil in 1971. The properties of <i>T. cruzi</i> Esmeraldo are described in Miles et al., 1977.  A clonal derivative was prepared from epimastigote culture by single cell manipulation by M.A.Miles. and used for sequencing.<br><br> 
+Genomic DNA was depleted for kinetoplast (mitochondrial) DNA (kDNA), which represents up to 30-50% of the total DNA in the cell, by Andrey Matveyev. In brief, total DNA was extracted from cultured late log phase <i>T. cruzi</i> Esmeraldo epimastigote forms and submitted to low voltage electrophoresis in 0.8% low melting agarose. The gDNA-containing agarose blocks were excised from the gel, leaving the kDNA networks intact in the gel. Purified gDNA was recovered from the agarose blocks after digestion using Beta-agarase I.<br><br>
+
+The gDNA was fragmented and sequenced using the Roche 454 FLX Titanium technology and a draft assembly was produced. Total sequence coverage from the Roche 454 technology was ~63X (fragments ~47X, 3 Kb paired end (PE) ~11X, 8 Kb PE ~5X) using a genome size estimate of 40 Mbp. The combined sequence reads were assembled using the Newbler software (Roche 454). This first draft assembly was referred to as T_cruzi_Esmeraldo_5.1. This version has been cleaned of contaminants. The assembly is made up of a total of 23,808 scaffolds with an N50 scaffold length of over 52kb (N50 contig length for the 31,945 contigs was 3.3kb). The assembly spans 35.5Mb. This assembly is subject to change due to ongoing assembly improvement efforts.<br><br>
+
+This work was supported by NSF DEB-0830056 grant to Gregory Buck and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Center at Washington University.<br><br>
+
+For questions regarding this T_cruzi_Esmeraldo_5.1 assembly please contact Dr. Wes Warren, Washington University School of Medicine (wwarren@watson.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Trypanosoma cruzi</i> Esmeraldo strain cI3 genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).<br><br>
+
+Credits:
+<br><br>
+DNA source:  Myrna Serrano, Andrey Matveyev, Anal Lara and Gregory Buck Center for the Study of Biological Complexity & the Department of Microbiology and Immunology, Virginia Commonwealth University., Richmond, VA
+<br><br>
+Parasite source:  Michael Miles and Michael D. Lewis, Medical Protozoology, London School of Hygiene & Tropical Medicine, London, England.
+<br><br>
+Sequencing:  The Genome Center, Washington University School of Medicine, St Louis, MO. 
+<br>
+Sequence assembly:  The Genome Center, Washington University School of Medicine, St Louis, MO.
+<br><br>
+Citation upon use of this assembly in a manuscript: 
+<br>
+It is requested that users of this <i>Trypanosoma cruzi</i> Esmeraldo cl3 strain sequence assembly acknowledge Gregory A. Buck, Virginia Commonwealth University, and The Genome Center, Washington University School of Medicine in any publications that result from use of this sequence assembly.  Any publications that propose to use whole genome or chromosome data should contact The Genome Center at Washington University (gweinsto@wustl.edu or wwarren@wustl.edu) for the use of pre-publication data.  Please refer to the <a href="http://genome.wustl.edu/data/data_use_policy">Genome Center Data Use Policy</a> for further information regarding proper use of data and proper citation. 
+<br><br>
+Miles MA, Toye PJ, Oswald SC, Godfrey DG. The identification by isoenzyme patterns of two distinct strain-groups of <i>Trypanosoma cruzi</i>, circulating independently in a rural area of Brazil. Trans R Soc Trop Med Hyg. 1977; 71: 217-25.
+<br><br>
+Brisse S, Barnabe C, Tibayrenc M. Identification of six <i>Trypanosoma cruzi</i> phylogenetic lineages by random amplified polymorphic DNA and multilocus enzyme electrophoresis. Int J Parasitol. 2000; 30: 35-44.
+<br><br>
+Zingales B, Andrade SG, Briones MR, Campbell DA, Chiari E, Fernandes O, Guhl F, Lages-Silva E, Macedo AM, Machado CR, Miles MA, Romanha AJ, Sturm NR, Tibayrenc M, Schijman AG; Second Satellite Meeting. A new consensus for <i>Trypanosoma cruzi</i> intraspecific nomenclature: second revision meeting recommends TcI to TcVI. Mem Inst Oswaldo Cruz. 2009; 104: 1051-4.
+                         ]]>
+    </description>
+  </resource>
+
+<resource resource = "Tbrucei_Ferguson_Phospho_Proteome_RSRC" version="2009-04-04"
+            displayName="T. brucei Bloodstream Form Cytosolic Phosphoproteome (Nett et. al.)"
+            organisms="T.brucei927"
+            category="Proteome"
+            plugin = "ApiCommonData::Load::Plugin::LoadNothing"
+            dbCommit = "@dbcommit@">
+     <manualGet fileOrDir = "/files/cbil/data/cbil/TrypDB/manualDelivery/"
+            contact="Michael Ferguson"
+            email="m.a.j.ferguson@dundee.ac.uk"
+            institution="Isabelle Nett"
+     />
+<pluginArgs></pluginArgs>
+   <description>
+         <![CDATA[
+The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of African sleeping sickness.  
+                         ]]>
+    </description>
+    <publication pmid="19346560"/>
+  </resource>
+
+   <resource resource="Lmajor_LeishCYC_dbxref_RSRC" version="2010-01-07"
+        displayName="dbxref from LeishCyc to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Lmajor_LeishCYC_dbxref_RSRC"
+        extDbRlsVer="2010-01-07"
+        extDbRlsDescrip="."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/TriTrypDB/lmajor/dbxref/LeishCYC/2010-01-07/final/links.out"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/links.out --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
 
 </resourcesPipeline>

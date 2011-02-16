@@ -13,6 +13,7 @@ use ApiCommonData::Load::TuningConfig::TuningIndex;
 use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::TableSuffix;
+use ApiCommonData::Load::TuningConfig::Utils;
 
 my $configDir;
 my $props;
@@ -22,13 +23,16 @@ my $dbaEmail;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
-ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager as "
+
+my $osUser = `whoami`;
+chomp($osUser);
+ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager as OS user \"$osUser\", "
 					       . ApiCommonData::Load::TuningConfig::Log::getProcessInfo()
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -43,7 +47,10 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupAge:i" => \$cleanupAge,
            "cleanupWarnOnly!" => \$debug,
            "maxWait=s" => \$maxWait,
+           "logfile=s" => \$logfile,
 	  );
+
+ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
 
 ApiCommonData::Load::TuningConfig::Log::setDebugFlag()
   if $debug;
@@ -55,6 +62,8 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
 &usage unless ($instance && ($propFile || $password));
 
 $cleanupAge = 0 if !defined $cleanupAge;
+
+$doUpdate = 1 if $forceUpdate;
 
 if ($propFile) {
   my $simple = XML::Simple->new();
@@ -70,13 +79,13 @@ if ($props->{dbaEmail}) {
 }
 
 
-my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
+my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount, $instance_name);
 
 eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = getDbHandle($instance, $props, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
@@ -93,14 +102,12 @@ eval {
 
     $tuningTables{$tuningTable->{name}}
       = ApiCommonData::Load::TuningConfig::InternalTable->
-	new($tuningTable->{name},
-	    $tuningTable->{internalDependency},
-	    $tuningTable->{externalDependency},
-	    $tuningTable->{externalTuningTableDependency},
-	    $tuningTable->{intermediateTable},
-	    $tuningTable->{sql},
-	    $tuningTable->{perl},
-	    $tuningTable->{unionization}, $dbh, $debug, $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate}, $maxRebuildMinutes);
+	new($tuningTable->{name}, $tuningTable->{internalDependency}, $tuningTable->{externalDependency},
+	    $tuningTable->{externalTuningTableDependency}, $tuningTable->{intermediateTable},
+            $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
+            $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
+            $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
+            $maxRebuildMinutes, $instance, $propFile, $password);
   }
 
   if ($doUpdate) {
@@ -323,6 +330,14 @@ eval {
     system(@cmdLine) == 0
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
   }
+
+  # set instance_name and notifyEmail (for log email)
+  $instance_name = $instanceName || $instance;
+  if ($tuningRegistry) {
+    $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
+    $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
+  }
+
 };
 
 # log any errors inside eval
@@ -333,12 +348,9 @@ my $elapsed = time - $startTime;
 my $hms = sprintf('%02d:%02d:%02d', $elapsed / 3600, ($elapsed % 3600) / 60, $elapsed % 60);
 
 ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
-					       " seconds to run tuningManager ($hms)");
-my $instance_name = $instanceName || $instance;
-if ($tuningRegistry) {
-  $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
-  $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
-}
+					       " seconds to run tuningManager ($hms)\n\n");
+
+$notifyEmail = "tuningMgr\@pcbi.upenn.edu" if !$notifyEmail;
 
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
@@ -478,27 +490,6 @@ sub parseConfigFile {
   }
 
   return ($config);
-}
-
-sub getDbHandle {
-  my ($instance, $props, $password) = @_;
-  my $username = 'apidb';
-
-  $password = $props->{password} if !$password;
-  $username = $props->{username} if $props->{username};
-
-  my $dsn = "dbi:Oracle:" . $instance;
-
-  my $dbh = DBI->connect(
-                $dsn,
-                $username,
-                $password,
-                { PrintError => 1, RaiseError => 0}
-                ) or die "Can't connect to the database: $DBI::errstr\n";
-  $dbh->{LongReadLen} = 1000000;
-  $dbh->{LongTruncOk} = 1;
-  print "db info:\n  dsn=$instance\n  login=$username\n\n" if $debug;
-  return $dbh;
 }
 
 sub cleanup {

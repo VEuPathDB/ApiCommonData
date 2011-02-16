@@ -35,11 +35,11 @@ my $dbh = $db->getQueryHandle();
 
 my $RNASeqExtDbRlsId = &getExtDbRlsId($RNASeqExtDbSpecs);
 my $genomeExtDbRlsId = &getExtDbRlsId($genomeExtDbSpecs);
-my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE where external_database_release_id = '$genomeExtDbRlsId'";
+my $sqlSeq = "select na_sequence_id, source_id from dots.NASEQUENCE";
 my %naSeqHash;
 my $sth = $dbh->prepareAndExecute($sqlSeq);
-while (my ($na_seuqnce_id , $source_id) = $sth->fetchrow_array()) {
-    $naSeqHash{$source_id} = $na_seuqnce_id;
+while (my ($na_sequence_id , $source_id) = $sth->fetchrow_array()) {
+    $naSeqHash{$source_id} = $na_sequence_id;
 }
 $sth->finish();
 $dbh->disconnect();
@@ -57,8 +57,13 @@ $dbh->disconnect();
     chomp;
     my ($source_id,$start,$end,$coverage) = split("\t",$_);
 
+    die "Can't reformat coverage plot file, values missing:\n $RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal" unless ($source_id && ($start || $start == 0 ) && $end &&$coverage);
+
     if($naSeqHash{$source_id}){
 	print "$RNASeqExtDbRlsId\t$sample\t$naSeqHash{$source_id}\t$start\t$end\t$coverage\t$multipleVal\t\n";
+    }
+    else {
+      die "Can't find na_sequence_id for source_id = $source_id\n";
     }
   }
   close F;
@@ -69,6 +74,8 @@ sub getExtDbRlsId {
     my $sql = "select external_database_release_id from sres.externaldatabaserelease d, sres.externaldatabase x where x.name = '${extDbName}' and x.external_database_id = d.external_database_id and d.version = '${extDbRlsVer}'";
     my $sth = $dbh->prepareAndExecute($sql);
     my $extDbRlsId = $sth->fetchrow_array();
+    die "Can't retrieve an ext db rls id with $extDbSpecs" unless $extDbRlsId;
+
     $sth->finish();
     return $extDbRlsId;
 }

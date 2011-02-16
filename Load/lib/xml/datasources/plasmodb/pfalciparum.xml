@@ -71,7 +71,7 @@
   <resource resource="Pfalciparum_apicoplast_RSRC" version="@@Pfalciparum_apicoplast_VER@@" parentResource="Pfalciparum_chromosomes_RSRC"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/apicoplast/%RESOURCE_VERSION%/PFC10_API_IRAB.embl"/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @@dataDir@@/PFC10_API_IRAB.embl --fileFormat embl --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "plastid_sequence" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PlasmoDB/PfalciparumEmbl2gus.xml --inputFileOrDir @@dataDir@@/PFC10_API_IRAB.embl --fileFormat embl --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "apicoplast_chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     <info
         displayName="P. falciparum apicoplast sequence and annotation"
         project=""
@@ -162,7 +162,30 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/geneDB_ids/%RESOURCE_VERSION%/geneDB_ids.tab"/>
     <pluginArgs>--MappingFile @@dataDir@@/geneDB_ids.tab</pluginArgs>
     <info
-        displayName="insert rRNA aliases from geneDB Ids"
+        displayName="rRNA aliases from geneDB Ids"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Pfalciparum_ProductName_RSRC" version="@@Pfalciparum_chromosomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff/"/>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/.gff --output_file @@dataDir@@/PfalciparumProduct.tab --feat_with_geneid mRNA --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product</unpack>
+    <unpack>makeProductFile --format gff3 --fileOrDir @@dataDir@@/.gff --output_file @@dataDir@@/PfalciparumProduct.tab --feat_with_geneid pseudogenic_transcript --geneid_qualifier Parent --feat_with_product polypeptide --prodfeatid_qualifier ID --product_qualifier product --append</unpack>
+    <pluginArgs>--file @@dataDir@@/PfalciparumProduct.tab --genomeDbName Pfalciparum_chromosomes_RSRC --genomeDbVer @@Pfalciparum_chromosomes_VER@@ </pluginArgs>
+    <info
+        displayName="Pfalciparum ProductName"
         project="PlasmoDB"
         organisms="@@PfOrganismFullName@@"
         category="ignore"
@@ -222,10 +245,10 @@
     </info>
   </resource>
 
-   <resource resource="Pf_Phenotype_DBRefs_RSRC" version="2010-06-17"
+  <resource resource="Pf_RMgm_Phenotype_DBRefs_RSRC" version="2010-10-25"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/geneid_list.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
+    <manualGet fileOrDir="PlasmoDB/common/dbxref/Phenotype/%RESOURCE_VERSION%/final/geneid_list.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/geneid_list.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNAFeature" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
     <info
         displayName="DBRefs for Phenotype db links"
         project="PlasmoDB"
@@ -359,7 +382,7 @@
     </info>
   </resource>
 
-  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="08-2010"
+  <resource resource="Pf_PathwayMappings_Hagai_RSRC" version="10-2010"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/pathwayMappings.txt"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/pathwayMappings.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
@@ -549,7 +572,7 @@
     </info>
   </resource>
 
-  <resource resource="Pf_EcMappings_Hagai_RSRC" version="08-2010"
+  <resource resource="Pf_EcMappings_Hagai_RSRC" version="10-2010"
       plugin="GUS::Community::Plugin::InsertECMapping">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/dbxref/Hagai_Mappings/%RESOURCE_VERSION%/final/ecMapping.txt"/>
     <pluginArgs>--ECMappingFile @@dataDir@@/Pfid.txt --evidenceCode "Hagai Ginsburg" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id" </pluginArgs>
@@ -1013,7 +1036,7 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_early_gametocytes_I-II.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/lasonder_early_gametocytes_I-II.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'early gametocytes'</pluginArgs>
     <info
-        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        displayName="Mass Spec of P.falciparum Early Gametocytes (Silvestrini &amp; Lasonder)"
         project="PlasmoDB"
         organisms="@@PfOrganismFullName@@"
         category="Proteome"
@@ -1023,6 +1046,7 @@
         institution="Radboud University Nijmegen Medical Centre">
       <description>
         <![CDATA[
+Mass Spec of P.falciparum Early Gametocytes (Silvestrini & Lasonder)
         ]]>
       </description>
     <publication pmid="20332084"/>
@@ -1034,7 +1058,7 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_late_gametocytes_V.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/lasonder_late_gametocytes_V.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'late gametocytes'</pluginArgs>
     <info
-        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        displayName="Mass Spec of P.falciparum Late Gametocytes (Silvestrini &amp; Lasonder)"
         project="PlasmoDB"
         organisms="@@PfOrganismFullName@@"
         category="Ignore"
@@ -1044,6 +1068,7 @@
         institution="Radboud University Nijmegen Medical Centre">
       <description>
         <![CDATA[
+Mass Spec of P.falciparum Late Gametocytes (Silvestrini & Lasonder)
         ]]>
       </description>
     <publication pmid="20332084"/>
@@ -1055,7 +1080,7 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_trophozoites.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/lasonder_trophozoites.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophozoites'</pluginArgs>
     <info
-        displayName="Mass Spec of P. falciparum Blood Stages peptides from the Lasonder Group"
+        displayName="Mass Spec of P.falciparum Trophozoites (Silvestrini &amp; Lasonder)"
         project="PlasmoDB"
         organisms="@@PfOrganismFullName@@"
         category="Ignore"
@@ -1065,6 +1090,7 @@
         institution="Radboud University Nijmegen Medical Centre">
       <description>
         <![CDATA[
+Mass Spec of P.falciparum Trophozoites (Silvestrini & Lasonder)
         ]]>
       </description>
     <publication pmid="20332084"/>
@@ -1619,6 +1645,31 @@
     </info>
   </resource>
 
+  <resource resource="Pf_Jeffares_SNPs_RSRC" version="@@Pf_Jeffares_SNPs_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Jeffares/%RESOURCE_VERSION%/final/Pf_Jeffares_SNPs_RSRC.gff"/>
+    <getAndUnpackOutput file="@@dataDir@@/Pf_Jeffares_SNPs_RSRC.gff"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="SNPs from Sanger (Jeffares et al.)"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Daniel Jeffares"
+        email="d.jeffares@ucl.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+      <description>
+        <![CDATA[
+SNPs from Sanger (Jeffares et al.)
+Nygaard et al (2010) PLoS Genetics
+        ]]>
+      </description>
+    <publication pmid="20838588"/>
+    </info>
+  </resource>
+
+
 <!--pfalciparumSpecific-->
 
   <resource resource="WirthSageTagArrayDesign_RSRC" version="@@WirthSageTagArrayDesign_VER@@"
@@ -1892,6 +1943,7 @@
     <getAndUnpackOutput file="@@dataDir@@/final/10h.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+	<publication pmid="21187892"/>
     <info
         displayName="RNA-Seqs from Henk Stunnenberg"
         project="PlasmoDB"
@@ -2027,7 +2079,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
 
   <resource resource="ChIP_Chip_Winzeler_Westenberger_RSRC" version="@@ChIP_Chip_Winzeler_Westenberger_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Winzeler_Westenberger/%RESOURCE_VERSION%/raw_data"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Winzeler_Westenberger/%RESOURCE_VERSION%/final"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Winzeler/Westenberger"
@@ -2050,7 +2102,7 @@ Contact Henk Stunnenberg, h.stunnenberg@@ncmls.ru.nl, NCMLS Radboud Universiteit
 
   <resource resource="ChIP_Chip_Artur_Scherf_RSRC" version="@@ChIP_Chip_Artur_Scherf_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Artur_Scherf/%RESOURCE_VERSION%/raw_data"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Artur_Scherf/%RESOURCE_VERSION%/final"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Artur Scherf"
@@ -2073,7 +2125,7 @@ Contact Artur Scherf, artur.scherf@@pasteur.fr, Unité de Biologie des Interacti
 
   <resource resource="ChIP_Chip_Till_Voss_RSRC" version="@@ChIP_Chip_Till_Voss_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Till_Voss/%RESOURCE_VERSION%/raw_data"/>
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/chipChip/Till_Voss/%RESOURCE_VERSION%/final"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Till Voss"
@@ -2096,11 +2148,11 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
 
   <resource resource="Pf_array_Affy_scrMalaria_RSRC" version="@@Pf_array_Affy_scrMalaria_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final"/>
+    <manualGet fileOrDir="PlasmoDB/common/microarrayPlatform/Affy-scrMalaria/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/affyArray.cdf"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/scrMalariaa.cdf"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
@@ -2262,6 +2314,7 @@ Contact Till Voss, till.voss@@unibas.ch, for further information
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_Dd2_TimeSeries/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/tp_mapping_Dd2.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="DD2 erythrocytic expression time series (DeRisi)."
@@ -2287,6 +2340,7 @@ Expression data for the <i>P. falciparum</i> DD2 strain during the erythocytic s
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_3D7_TimeSeries/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final/"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/tp_mapping_3D7.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="3D7 erythrocytic expression time series (DeRisi)."
@@ -2312,6 +2366,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HB3_TimeSeries/%RESOURCE_VERSION%/final"/>
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/tp_mapping_HB3.txt"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="HB3 erythrocytic expression time series (DeRisi)."
@@ -2385,7 +2440,7 @@ Expression data for the <i>P. falciparum</i> 3D7 strain during the erythocytic s
     <getAndUnpackOutput dir="@@dataDir@@/final"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probes.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/final/probename2sequence.tab"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/affyArray.cdf"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PFSANGERb520296.cdf"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName=""
@@ -2500,7 +2555,27 @@ Plasmodium falciparum coding specific 70mer oligonucleotides designed by ArrayOl
   </resource>
 
 
-
+  <resource resource="Pf_Derisi_HalfLife_RSRC" version="@@Pf_Derisi_HalfLife_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HalfLife/%RESOURCE_VERSION%/final"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Derisi half life array data."
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
 </resources>
 
 

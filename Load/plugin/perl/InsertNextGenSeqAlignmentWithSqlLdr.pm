@@ -119,7 +119,7 @@ sub writeConfigFile {
 
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
-  $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
+  my $modDate = sprintf('%2d-%s-%02d', $mday, $abbr[$mon], ($year+1900) % 100);
   my $database = $self->getDb();
   my $projectId = $database->getDefaultProjectId();
   my $userId = $database->getDefaultUserId();

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-
+use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 use DBI;
