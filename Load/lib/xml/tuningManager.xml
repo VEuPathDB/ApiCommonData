@@ -1138,7 +1138,7 @@ SELECT gene.source_id,
        protein.max_molecular_weight, protein.hydropathicity_gravy_score,
        protein.aromaticity_score, protein.cds_length, protein.protein_length,
        protein.ec_numbers,
-       protein.signalp_scores,protein.signalp_peptide
+       protein.signalp_scores, protein.signalp_peptide, protein.aa_sequence_id
 FROM (SELECT DISTINCT gene AS source_id from apidb.GeneId) gene,
      (SELECT gf.source_id, taf.na_feature_id, tas.aa_sequence_id,tas.molecular_weight,
              tas.length AS protein_length,
@@ -1265,7 +1265,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        nvl(synsnps.syn_snps,0) as synonymous_snps,
        CASE WHEN (nssnps.nonsyn_snps is null or synsnps.syn_snps is null) THEN 0 
             ELSE round((nssnps.nonsyn_snps / synsnps.syn_snps),2) END as nonsyn_syn_ratio,
-       protein.signalp_scores,protein.signalp_peptide, sequence.taxon_id
+       protein.signalp_scores,protein.signalp_peptide, sequence.taxon_id, protein.aa_sequence_id
 FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t, sres.ExternalDatabase ed,
