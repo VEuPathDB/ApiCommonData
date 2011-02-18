@@ -3,8 +3,8 @@
 
   <resource resource="Cfasci_contigs_RSRC" version="@@Cfasci_contigs_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/cfasci/genome/contig/%RESOURCE_VERSION%/final/test.scf.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/test.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <manualGet fileOrDir="TriTrypDB/cfasci/genome/contig/%RESOURCE_VERSION%/final/supercontigs.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/supercontigs.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="C.fasciculata genome sequence"
         project="TriTrypDB"
