@@ -10,7 +10,7 @@
 
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/@@Ncaninum_chromosomes_VER@@/fromProvider --output_fasta @@dataDir@@/Ncaninum.fasta --output_gff @@dataDir@@/Ncaninum.gff3</unpack>
 
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Linfantum.gff3 --output_gff @@dataDir@@/Linfantum.gff</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Linfantum.gff3 --output_gff @@dataDir@@/Lcaninum.gff</unpack>
 
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 29176 --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/Ncaninum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
@@ -138,13 +138,15 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: Neosporacaninum_Gene_Aliases   OldVersion: 01-27-2010 -->
-  <resource resource="Neosporacaninum_Gene_Aliases" version="@@_VER@@"
+
+  <resource resource="Ncaninum_Gene_Aliases_RSRC" version="@@Ncaninum_Gene_Aliases_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
       internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Genomes/Neosporacaninum/new2oldIds_Ncaninum_new.txt"/>
-    <pluginArgs>--MappingFile @downloadDir@/Neosporacaninum_Gene_Aliases/new2oldIds_Ncaninum.txt </pluginArgs>
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../Ncaninum_chromosomes_RSRC/Ncaninum.gff3 >  @@dataDir@@/previousIdLines</unpack>
+    <unpack>perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds_Ncaninum.txt</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/new2oldIds_Ncaninum.txt</pluginArgs>
     <info
         displayName="Neosporacaninum genes with the previous source_ids"
         project="ToxoDB"
@@ -163,15 +165,16 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
-  <resource resource="ApiLoc_EupathDB_Dbrefs" version="@@_VER@@"
+
+  <resource resource="nc_apiLoc_DbxRefs" version="@@nc_apiLoc_DbxRefs_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/ApiLoc_dbrefs/2010-03-29/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/ApiLoc_EupathDB_Dbrefs/apiLoc_eupathDb_links.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+      internalDescrip="dbxrefs from ApiLoc.org">
+    <manualGet fileOrDir="ToxoDB/ncaninum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/fromProvider/Ncaninum.html"/>
+    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/Ncaninum.html "Neospora caninum" > @@dataDir@@/dbxrefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     <info
-        displayName="ApiLoc and EupathDb links"
+        displayName="ApiLoc cross references"
         project="ToxoDB"
         organism="all"
         category="ignore"
