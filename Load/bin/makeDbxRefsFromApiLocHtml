@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+
+my $apilocHtmlFile = $ARGV[0];
+my $organismFullName = $ARGV[1];
+
+usage() unless $apilocHtmlFile;
+
+open(F, $apilocHtmlFile) || die "can't open html file '$apilocHtmlFile'";
+while(<>){
+  /">(.*)</;
+  print "$1\thttp://apiloc.bio21.unimelb.edu.au/apiloc/apiloc/gene/$organismFullName/$1\n" unless ($ids{$1});
+  $ids{$1}=1;
+}
+
+sub usage {
+  print STDERR "
+
+Scrape IDs from an ApiLoc.org html file.  output dbxrefs.
+
+usage:  makeCbxRefsFromApiLocHtml apiloc_html_file organism_full_name
+
+(organism full name is the one used at ApiLoc.org)
+
+
+";
+
+  exit(1);
+}
