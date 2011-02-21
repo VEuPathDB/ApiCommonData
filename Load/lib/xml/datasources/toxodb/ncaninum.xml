@@ -191,25 +191,24 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
-  <resource resource="Entrez_Gene_dbxref" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_tgondii"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_tgondii --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+  <resource resource="Ncaninum_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="common/dbxref/Gene2Entrez/2010-10-13/fromProvider/gene_info.gz"/>
+    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz 29176 > entrez2gene.tab</unpack>
+    <unpack>rm @@dataDir@@/gene_info.gz</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="ToxoDB"
-        organism=""
+        organisms="@@NcaninumOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
         email=""
         institution="">
       <description>
-        <![CDATA[
-
+        <![CDATA[         
         ]]>
       </description>
     </info>
@@ -218,15 +217,15 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
   <!-- NOT PORTED -->
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
-  <resource resource="Uniprot_Gene_dbxref" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_tgondii"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_tgondii --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+
+ <resource resource="Ncaninum_Uniprot_Gene_dbxref_RSRC" version="@@Ncaninum_Uniprot_Gene_dbxref_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="ToxoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="ToxoDB"
-        organism=""
+        organisms="@@NcaninumOrganismFullName@@"
         category="ignore"
         publicUrl=""
         contact=""
@@ -234,7 +233,7 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
         institution="">
       <description>
         <![CDATA[
-
+         
         ]]>
       </description>
     </info>
