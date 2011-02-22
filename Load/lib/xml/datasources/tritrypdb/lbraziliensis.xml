@@ -340,6 +340,26 @@ Sequencing of <i>L. braziliensis</i> was conducted by <a href="http://www.sanger
     </info>
   </resource>
 
+  <resource resource="LbraziliensisM2903_contigs_RSRC" version="@@LbraziliensisM2903_contigs_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/lbraziliensisM2903/%RESOURCE_VERSION%/final/supercontigs.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 4202450 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/supercontigs.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="Lbraziliensis M2903 genome sequence."
+        project="TriTrypDB"
+        organisms="@@LbraziliensisM2903OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Wes Warren"
+        email="wwarren@genome.wustl.edu"
+        institution="wustl">
+      <description>
+        <![CDATA[
+Lbraziliensis M2903 genome sequence. 
+        ]]>
+      </description>
+    </info>
+  </resource>
 
  <!--ESTResource-->
  <resource resource="Lbraziliensis_dbEST_RSRC" version="@@Lbraziliensis_dbEST_VER@@"
