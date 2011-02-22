@@ -2,31 +2,10 @@
 
 <!--ISFResource-->
 
-  <resource resource="TannulataAnkara_chromosomes_RSRC" version="@@TannulataAnkara_chromosomes_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/genome/tAnnulataAnkara/chromosome/%RESOURCE_VERSION%/"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 353154 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/ --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
-    <info
-        displayName="TannulataAnkara chromosomes sequence and annotation"
-        project="PiroplasmaDB"
-        organisms="@@TannulataAnkaraOrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-  <resource resource="TannulataAnkara_annotations_RSRC" version="@@TannulataAnkara_chromosomes_VER@@" parentResource="TannulataAnkara_chromosomes_RSRC"
+  <resource resource="TannulataAnkara_genomes_RSRC" version="@@TannulataAnkara_genomes_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    <manualGet fileOrDir=""/>
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/ --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Theileria annulata strain Ankara"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/genome/tannulataAnkara/%RESOURCE_VERSION%/gb/"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/PiroplasmaDB/piroGenbank2Gus.xml --inputFileOrDir @@dataDir@@/gb/ --inputFileExtension "gb"  --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism "Theileria annulata strain Ankara"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out </pluginArgs>
     <info
         displayName="TannulataAnkara sequence and annotation"
         project="PiroplasmaDB"
@@ -45,6 +24,228 @@
   </resource>
 
 
+  <resource resource="TannulataAnkara_ECNumbers_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/function/Tannulata_genome_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         EC Number mapping.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_ProductName_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/function/Tannulata_genome_RSRC_product/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --productDbName TannulataAnkara_genomes_RSRC --productDbVer @@TannulataAnkara_genomes_VER@@</pluginArgs>
+    <info
+        displayName="TannulataAnkara Product Name"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_Comment_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/genome/Tannulata_genome_RSRC_geneComment/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName TannulataAnkara_genomes_RSRC --genomeDbVer @@TannulataAnkara_genomes_VER@@ </pluginArgs>
+    <info
+        displayName="TannulataAnkara Comment Name"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_previds_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara previds mappings"
+        project="TriTrypDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_altids_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_altids.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_altids.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara alternate id mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_hssp_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_hssp.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_hssp.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara hssp mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_goa_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_goa.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_goa.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara goa mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_uniprotkb-swiss-prot_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_uniprotkb-swiss-prot.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_uniprotkb-swiss-prot.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara uniprotkb-swiss-prot mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_interpro_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_interpro.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_interpro.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara interpro mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_gi_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_gi.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_gi.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara gi mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TannulataAnkara_uniprotkb-trembl_dbxref_RSRC" version="@@TannulataAnkara_genomes_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="PiroplasmaDB/tannulataAnkara/dbxref/Tannulata_genome_RSRC/%RESOURCE_VERSION%/Tannulata_uniprotkb-trembl.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tannulata_uniprotkb-trembl.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="TannulataAnkara uniprotkb-trembl mappings"
+        project="PiroplasmaDB"
+        organisms="@@TannulataAnkaraOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 <!--ESTResource-->
   <resource resource="TannulataAnkara_dbEST_RSRC" version="@@TannulataAnkara_dbEST_VER@@"
@@ -72,10 +273,10 @@
 
 
 <!--DbxRefsResource-->
-  <resource resource="TannulataAnkara_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+  <resource resource="TannulataAnkara_Entrez_Gene_dbxref_RSRC" version="2011-01-31"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PiroplasmaDB/common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/gene2entrez.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_chromosomes_RSRC|@@TannulataAnkara_chromosomes_VER@@'  --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@'  --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="PiroplasmaDB"
@@ -95,7 +296,7 @@
   <resource resource="TannulataAnkara_Uniprot_Gene_dbxref_RSRC" version="@@TannulataAnkara_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="PiroplasmaDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec ''TannulataAnkara_chromosomes_RSRC|@@'TannulataAnkara_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TannulataAnkara_genomes_RSRC|@@TannulataAnkara_genomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
         project="PiroplasmaDB"
@@ -117,7 +318,7 @@
 
   <resource resource="TannulataAnkara_IEDB_Epitopes_RSRC" version="@@TannulataAnkara_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="PiroplasmaDB/common/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportTannulataAnkara.txt"/>
+    <manualGet fileOrDir="PiroplasmaDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportTannulataAnkara.txt"/>
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
     <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportTannulataAnkara.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTannulataAnkara.txt </unpack>
     <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportTannulataAnkara.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportTannulataAnkara.txt </unpack>
