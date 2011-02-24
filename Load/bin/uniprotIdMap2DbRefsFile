@@ -16,7 +16,12 @@ while(<ENTREZ>) {
 }
 close(ENTREZ);
 
-open(UNIPROT, $uniprotIdMapFile) || die "Can't open uniprot file '$uniprotIdMapFile'";
+if ($uniprotIdMapFile =~ /\.gz$/) {
+  open (UNIPROT, "zcat $uniprotIdMapFile|") || die "Can't open uniprot file '$uniprotIdMapFile'";
+} else {
+  open(UNIPROT, $uniprotIdMapFile) || die "Can't open uniprot file '$uniprotIdMapFile'";
+}
+
 while(<UNIPROT>) {
   chomp; 
   my @uniprot=split(/\t/,$_);
@@ -34,7 +39,7 @@ Convert a uniprot ID mapping file to a format we can load as db xrefs.
 usage: uniprotIdMap2DbRefsFile uniprot_id_map_file gene2entrez_file
 
 where:
-   uniprot_id_map_file is a file we get from uniprot
+   uniprot_id_map_file is a file we get from uniprot (gzipped is ok)
    gene2entrez_file is a file produced by ncbiGeneInfo2DbRefsFile
 
 Use the gene2entrez file to get a mapping of our IDs to entrez, which is
