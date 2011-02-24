@@ -2,6 +2,33 @@
 
   <!-- NOT PORTED -->
   <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
+  <resource resource="Tg_dbEST_RSRC" version="@@_VER@@"
+      plugin="GUS::Supported::Plugin::dbEST"
+      internalDescrip="ESTs from the mirrored dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId 29176 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    <info
+        displayName="dbEST ESTs"
+        project="ToxoDB"
+        organism=""
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+
   <resource resource="dbEST" version="@@_VER@@"
       plugin="GUS::Supported::Plugin::dbEST"
       internalDescrip="ESTs from the mirrored dbEST">
@@ -25,58 +52,6 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/"TARGET="_blan
       </description>
     </info>
   </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: WatanabeTgRH_PredictedTrancripts   OldVersion: 2008-09-24 -->
-  <resource resource="WatanabeTgRH_PredictedTrancripts" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/reffull_tg.fas"/>
-    <pluginArgs>--sourceIdRegex ">(\S+\(\w+\))$" --fastaFile  @downloadDir@/WatanabeTgRH_PredictedTrancripts/reffull_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'transcript' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --putativeFullLength --libraryStage 'tachyzoites' --libraryName 'derivedFromWatanabeTgRH' --libraryDesc "Predicted full length transcript sequence produced after BLAT alignment of the WatanabeTgRH EST library sequences to the genome and correction of the cDNA sequences using annotated gene sequences."</pluginArgs>
-    <info
-        displayName="T. gondii RH predicted full length transcripts"
-        project=""
-        organism="T. gondii"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Junichi Watanabe"
-        email="jwatanab@ims.u-tokyo.ac.jp"
-        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
-      <description>
-        <![CDATA[
-<i>T. gondii</i> RH EST sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: WatanabeTgRH_EstLibrary   OldVersion: 2008-09-24 -->
-  <resource resource="WatanabeTgRH_EstLibrary" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/WatanabeESTs_20080924/onepass_tg.fas"/>
-    <pluginArgs>--sourceIdRegex ">(\w+)$" --fastaFile  @downloadDir@/WatanabeTgRH_EstLibrary/onepass_tg.fas --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVer %EXT_DB_RLS_VER%  --SOTermName 'EST' --ncbiTaxId 383379 --libraryVector 'pME18SFL3' --contactName 'Junichi Watanabe' --contactAddress1 "Institute of Medical Science; The University of Tokyo, Department of Parasitology" --contactAddress2 "4-6-1, Shirokanedai, Minatoku, Tokyo 108-8639, Japan" --libraryName 'WatanabeTgRH' --libraryStage 'tachyzoites' --libraryDesc "Toxoplasma gondii RH tachyzoites were infected into Vero (T25) cells and incubated in EMEM medium supplemented with 8% fetal bovine serum for 72 hours in vitro. Infected cells were collected with a scraper and passed through 27G needle for three times and purified by filtration through Millex SV filters (pore size 5 um, Millipore). Cells were collected by centrifugation at 2,000 rpm for 10 min and washed in EMEM medium without FBS. Parasites were suspended at 1x107/ml in EMEM medium without FBS. Five-week old ICR female mice were infected with 1 ml parasites intraperitoneally.Three days after infection, mice were sacrificed by cervical dislocation. Parasites were collected by washing the peritoneal cavity with 5 ml EMEM, passed through 5 um filter, washed in PBS and suspended at 2-3x109 parasite/ml. 20 ml TRI REGENT (Sigma) was added to 1 ml parasite solution, mixed by pipetting, frozen in liquid nitrogen and kept at -80C until used."</pluginArgs>
-    <info
-        displayName="T. gondii RH EST library"
-        project=""
-        organism="T. gondii"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Junichi Watanabe"
-        email="jwatanab@ims.u-tokyo.ac.jp"
-        institution="Department of Parasitology, Institute of Medical Science, University of Tokyo">
-      <description>
-        <![CDATA[
-<i>T. gondii</i> RH predicted full length transcript sequences (J. Watanabe, H. Wakaguri, M. Sasaki, Y. Suzuki, S. Sugano at <a href="http://fullmal.hgc.jp/tg/docs/toxoplasma.html">Institute of Medical Science, University of Tokyo</a>).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
   <!-- NOT PORTED -->
   <!-- OldName: T.gondiiGT1_contigsGB   OldVersion: 2008-07-23 -->
   <resource resource="T.gondiiGT1_contigsGB" version="@@_VER@@"
@@ -127,30 +102,6 @@ Toxoplasma gondii ME49 sequence and annotation from Lis Caler at the J. Craig Ve
   </resource>
 
 
-  <!-- NOT PORTED -->
-  <!-- OldName: T.gondiiVEG_contigsGB   OldVersion: 2008-07-23 -->
-  <resource resource="T.gondiiVEG_contigsGB" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="T.gondii VEG contig sequence and annotation from Genbank on 2008-07-23">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/new_snapshot_07-17-2008/tgac1.20080717.gbf"/>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/T.gondiiVEG_contigsGB/tgac1.20080717.gbf --fileFormat genbank --soCvsVersion @soVer@ --organism "Toxoplasma gondii VEG" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "supercontig"</pluginArgs>
-    <info
-        displayName="T. gondii VEG contig sequence and annotation from Genbank"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-Toxoplasma gondii VEG sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 
   <!-- NOT PORTED -->
   <!-- OldName: Lindstrom454Sequences   OldVersion: 2009-10-02 -->
@@ -174,34 +125,6 @@ Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg
         ]]>
       </description>
       <publication pmid="19457243"/>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: TgondiiRHChromosome1   OldVersion: 2006-09-25 -->
-  <resource resource="TgondiiRHChromosome1" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="T. gondii RH strain chromosomes retrieved from GenBank">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/chrIa.fa"/>
-    <unpack>mkdir @downloadDir@/TgondiiRHChromosome1_fixed/</unpack>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/chrIb.fa @downloadDir@/TgondiiRHChromosome1/chrIb.fa </unpack>
-    <unpack>cat @downloadDir@/TgondiiRHChromosome1/chrIa.fa @downloadDir@/TgondiiRHChromosome1/chrIb.fa > @downloadDir@/TgondiiRHChromosome1_fixed/chrI.fa</unpack>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 383379 --sequenceFile @downloadDir@/TgondiiRHChromosome1_fixed/chrI.fa --soTermName "chromosome" --regexSourceId "^\>(chrI[a,b])" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. gondii RH strain chromosomes"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-Scaffold genome sequence for <i>T. gondii</i> type I RH strain provided on 2006-09-25, by Matt Berriman (The Wellcome Trust Sanger Institute), Jim Ajioka (University of Cambridge). Contact: Matt Berriman mb4&#64;sanger&#46;ac&#46;uk. (Chromosomes Ia and Ib only).
-        ]]>
-      </description>
     </info>
   </resource>
 
@@ -309,31 +232,7 @@ Chromosome map generated by David Sibley for <i>T. gondii</i> ME49 strain was us
 
 
   <!-- NOT PORTED -->
-  <!-- OldName: VEGChromosomeMap   OldVersion: 2008-08-28 -->
-  <resource resource="VEGChromosomeMap" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ChromosomeMap/agp/veg.agp"/>
-    <pluginArgs>--agpFile @downloadDir@/VEGChromosomeMap/veg.agp --seqPieceExtDbName "T.gondii VEG contigs from Genbank" --seqPieceExtDbRlsVer "2008-07-23" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "432359" --soVer @soVer@ --sourceIdPrefix 'TGVEG_chr'</pluginArgs>
-    <info
-        displayName="T. gondii VEG Chromosome Map"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-Chromosome map generated by David Sibley for <i>T. gondii</i> ME49 strain was used as a template to creat <i>T. gondii</i> VEG chromosomes.  Chromosomes we assembled by the EuPathDB team using <a href="http://www.biostat.wisc.edu/~cdewey/mercator/"TARGET="_blank>Mercator</a> and <a href="http://genome.cshlp.org/content/14/4/693.abstract"TARGET="_blank"MAVID</a>.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
+  <!-- analysis step -->
   <!-- OldName: ContigGapsInScaffolds   OldVersion: 2008-07-23 -->
   <resource resource="ContigGapsInScaffolds" version="@@_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertScaffoldGapFeatures"
@@ -359,6 +258,7 @@ Gaps within scaffolds represented as features.
 
 
   <!-- NOT PORTED -->
+  <!-- analysis step -->
   <!-- OldName: ScaffoldGapsInChromosomes   OldVersion: 2008-07-23 -->
   <resource resource="ScaffoldGapsInChromosomes" version="@@_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertScaffoldGapFeatures"

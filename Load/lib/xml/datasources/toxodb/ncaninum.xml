@@ -1,18 +1,23 @@
 <resources>
 
+  <constant name="orgAbbrev" value="ncaninum"/>
+  <constant name="project" value="ToxoDB"/>
+  <constant name="ncbiTaxId" value="29176"/>
+  <constant name="orgName" value=""/>
+
   <!-- OldName: N.caninum_chromosomes   OldVersion: 2009-10-06 -->
 
-  <resource resource="Ncaninum_chromosomes_RSRC" version="@@Ncaninum_chromosomes_VER@@"
+  <resource resource="$$orgAbbrev$$_chromosomes_RSRC" version="@@$$orgAbbrev$$_chromosomes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Sanger N. caninum chromosomes">
+      internalDescrip="">
 
-    <manualGet fileOrDir="ToxoDB/ncanimum/genome/chromosome/@@Ncaninum_chromosomes_VER@@/fromProvider"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome/%RESOURCE_VERSION%/fromProvider"/>
 
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/@@Ncaninum_chromosomes_VER@@/fromProvider --output_fasta @@dataDir@@/Ncaninum.fasta --output_gff @@dataDir@@/Ncaninum.gff3</unpack>
+    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/%RESOURCE_VERSION%/fromProvider --output_fasta @@dataDir@@/genome.fasta --output_gff @@dataDir@@/genome.gff3</unpack>
 
-    <unpack>preprocessGFF3 --input_gff @@dataDir@@/Linfantum.gff3 --output_gff @@dataDir@@/Lcaninum.gff</unpack>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/genome.gff3 --output_gff @@dataDir@@/genome.gff</unpack>
 
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 29176 --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/Ncaninum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId $$ncbiTaxId$$ --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="N.caninum chromosomes"
         project="ToxoDB"
@@ -59,11 +64,11 @@ Chromosome sequences for <i>N.caninum</i> obtained from the Pathogen Sequencing 
 
   <!-- OldName: dbEST_NC   OldVersion: 2009-09-25 -->
 
-  <resource resource="Nc_dbEST_RSRC" version="@@Nc_dbEST_VER@@"
+  <resource resource="$$orgAbbrev_dbEST_RSRC" version="@@orgAbbrev_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST"
-      internalDescrip="ESTs from the mirrored dbEST">
+      internalDescrip="">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 29176 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId $$ncbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
     <info
@@ -86,15 +91,23 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
   <!-- OldName: IEDB_Epitopes   OldVersion: 2009-06-09 -->
 
-  <resource resource="Ncaninum_IEDB_Epitopes_RSRC" version="@@Ncaninum_IEDB_Epitopes_VER@@"
+  <resource resource="$$orgAbbrev_IEDB_Epitopes_RSRC" version="@@$$orgAbbrev$$_IEDB_Epitopes_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/common/epitope/IEDB/%RESOURCE_VERSION%/final/IEDBExportNc.txt"/>
+
+    <manualGet fileOrDir="$$project$$/common/epitope/IEDB/%RESOURCE_VERSION%/final/$$orgAbbrev$$IEDBExport.txt"/>
+
     <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
-    <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportNc.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportNc.txt </unpack>
-    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportNc.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportNc.fsa </unpack>
+
+    <unpack>extractFromIEDB --inputFile @@dataDir@@/$$orgAbbrev$$IEDBExport.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExport.txt </unpack>
+
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExport.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExport.fsa </unpack>
+
     <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
-    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportNc.txt"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExport.txt"/>
+
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+
     <info
         displayName="IEDB Epitopes"
         project="ToxoDB"
@@ -115,11 +128,15 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
   <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
 
-  <resource resource="Ncaninum_IEDB_Epitopes_DBxRefs_RSRC" version="@@Ncaninum_IEDB_Epitopes_VER@@"
+  <resource resource="$$orgAbbrev$$_IEDB_Epitopes_DBxRefs_RSRC" version="@@$$orgAbbrev$$_IEDB_Epitopes_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
     <manualGet fileOrDir="global/empty"/>
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Ncaninum_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+
     <info
         displayName="IEDB Epitopes"
         project="ToxoDB"
@@ -140,13 +157,17 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
   <!-- OldName: Neosporacaninum_Gene_Aliases   OldVersion: 01-27-2010 -->
 
-  <resource resource="Ncaninum_Gene_Aliases_RSRC" version="@@Ncaninum_Gene_Aliases_VER@@"
+  <resource resource="$$orgAbbrev$$_Gene_Aliases_RSRC" version="@@$$orgAbbrev$$_Gene_Aliases_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
       internalDescrip="">
+
     <manualGet fileOrDir="global/empty"/>
-    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../Ncaninum_chromosomes_RSRC/Ncaninum.gff3 >  @@dataDir@@/previousIdLines</unpack>
-    <unpack>perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds_Ncaninum.txt</unpack>
-    <pluginArgs>--MappingFile @@dataDir@@/new2oldIds_Ncaninum.txt</pluginArgs>
+
+    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../$$orgAbbrev$$_chromosomes_RSRC/genome.gff3 >  @@dataDir@@/previousIdLines</unpack>
+
+    <unpack>perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds.txt</unpack>
+
+    <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
     <info
         displayName="Neosporacaninum genes with the previous source_ids"
         project="ToxoDB"
@@ -167,12 +188,16 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
   <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
 
-  <resource resource="nc_apiLoc_DbxRefs" version="@@nc_apiLoc_DbxRefs_VER@@"
+  <resource resource="$$orgAbbrev$$_apiLoc_DbxRefs" version="@@$$orgAbbrev$$_apiLoc_DbxRefs_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
       internalDescrip="dbxrefs from ApiLoc.org">
-    <manualGet fileOrDir="ToxoDB/ncaninum/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/fromProvider/Ncaninum.html"/>
-    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/Ncaninum.html "Neospora caninum" > @@dataDir@@/dbxrefs.txt</unpack>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/fromProvider/$$orgAbbrev$$.html"/>
+
+    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "Neospora caninum" > @@dataDir@@/dbxrefs.txt</unpack>
+
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+
     <info
         displayName="ApiLoc cross references"
         project="ToxoDB"
@@ -194,10 +219,15 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
   <resource resource="Ncaninum_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="common/dbxref/Gene2Entrez/2010-10-13/fromProvider/gene_info.gz"/>
-    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz 29176 > entrez2gene.tab</unpack>
+
+    <manualGet fileOrDir="common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/fromProvider/gene_info.gz"/>
+
+    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz $$ncbiTaxId$$ > entrez2gene.tab</unpack>
+
     <unpack>rm @@dataDir@@/gene_info.gz</unpack>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '$$orgAbbrev$$_chromosomes_RSRC|@@$$orgAbbrev$$_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+
     <info
         displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
         project="ToxoDB"
@@ -215,11 +245,11 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
 
- <resource resource="Ncaninum_Uniprot_Gene_dbxref_RSRC" version="@@Ncaninum_Uniprot_Gene_dbxref_VER@@"
+ <resource resource="$$orgAbbrev_Uniprot_Gene_dbxref_RSRC" version="@@$$orgAbbrev$$_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
     <manualGet fileOrDir="ToxoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
