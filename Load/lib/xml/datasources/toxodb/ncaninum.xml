@@ -3,7 +3,6 @@
   <constant name="orgAbbrev" value="ncaninum"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
-  <constant name="orgName" value=""/>
 
   <!-- OldName: N.caninum_chromosomes   OldVersion: 2009-10-06 -->
 
@@ -217,7 +216,7 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
 
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
-  <resource resource="Ncaninum_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
+  <resource resource="$$orgAbbrev$$_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
     <manualGet fileOrDir="common/dbxref/Gene2Entrez/%RESOURCE_VERSION%/fromProvider/gene_info.gz"/>
@@ -244,13 +243,17 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
     </info>
   </resource>
 
-
+ 
+  <!-- NOT PORTED -->  TEST!
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
 
  <resource resource="$$orgAbbrev_Uniprot_Gene_dbxref_RSRC" version="@@$$orgAbbrev$$_Uniprot_Gene_dbxref_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
 
-    <manualGet fileOrDir="ToxoDB/common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/gene2uniprot.tab"/>
+    <manualGet fileOrDir="common/dbxref/Gene2Uniprot/%RESOURCE_VERSION%/idmapping_selected.tab.gz"/>
+
+    <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_Entrez_Gene_dbxref_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
+
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
     <info
         displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
