@@ -9,10 +9,12 @@ usage() unless ($uniprotIdMapFile && $gene2entrezFile);
 
 
 open(ENTREZ, $gene2entrezFile) || die "Can't open gene2entrezFile '$gene2entrezFile'";
+
+my (%entrezHash, @uniprot);
 while(<ENTREZ>) {
   chomp; 
   my @entrez=split(/\t/,$_);
-  $entrizHash{$entrez[1]} = $entrez[0]
+  $entrezHash{$entrez[1]} = $entrez[0]
 }
 close(ENTREZ);
 
@@ -33,7 +35,6 @@ while(<UNIPROT>) {
 sub usage {
 
 print STDERR "
-
 Convert a uniprot ID mapping file to a format we can load as db xrefs.
 
 usage: uniprotIdMap2DbRefsFile uniprot_id_map_file gene2entrez_file
@@ -44,6 +45,7 @@ where:
 
 Use the gene2entrez file to get a mapping of our IDs to entrez, which is
 what we get from uniprot.
+
 ";
 
 exit(1);
