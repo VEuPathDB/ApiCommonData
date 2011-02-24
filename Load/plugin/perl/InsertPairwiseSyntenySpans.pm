@@ -26,7 +26,7 @@ my $argsDeclaration =
               constraintFunc=> undef,
               reqd  => 1,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia,Piroplasma",
              }),
 
   ];
@@ -393,7 +393,7 @@ sub findOrthologGroups {
 my $sql;
 
 
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'){
+if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'||$self->getArg('organism') eq 'Piroplasma'){
 
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
