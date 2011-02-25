@@ -6,32 +6,32 @@
 
   <!-- OldName: N.caninum_chromosomes   OldVersion: 2009-10-06 -->
 
-  <resource resource="$$orgAbbrev$$_chromosomes_RSRC" version="@@$$orgAbbrev$$_chromosomes_VER@@"
+  <resource resource="$$orgAbbrev$$_GeneDB_Gff_Genome_RSRC" version="@@$$orgAbbrev$$_GeneDB_Gff_Genome_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
       internalDescrip="">
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome/%RESOURCE_VERSION%/fromProvider"/>
+    <prop name=soTerm">chromosome</prop>
+    <prop name=regex">>(\S+)</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/GeneDB_Gff_Genome/%RESOURCE_VERSION%/fromProvider"/>
 
     <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/%RESOURCE_VERSION%/fromProvider --output_fasta @@dataDir@@/genome.fasta --output_gff @@dataDir@@/genome.gff3</unpack>
 
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/genome.gff3 --output_gff @@dataDir@@/genome.gff</unpack>
 
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId $$ncbiTaxId$$ --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="N.caninum chromosomes"
-        project="ToxoDB"
-        organism="Neospora caninum"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-Chromosome sequences for <i>N.caninum</i> obtained from the Pathogen Sequencing Unit at the Wellcome Trust Sanger Institute. Please visit <a href="http://www.genedb.org/Homepage/Ncaninum">GeneDB</a> for project details and data release policies.
-        ]]>
-      </description>
-    </info>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId $$ncbiTaxId$$ --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/genome.fasta --SOTermName '$$soTerm$$'  --regexSourceId  '$$regex$$' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+  </resource>
+
+
+  <!-- OldName: N.caninum_Annotation   OldVersion: 2009-10-06 -->
+  <resource resource="$$orgAbbrev$$_GeneDB_Gff_Annotation_RSRC" version="@@$$orgAbbrev$$_GeneDB_Gff_Annotation_VER@@"
+      parentResource="$$orgAbbrev$$_GeneDB_Gff_Genome_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      internalDescrip="">
+
+    <manualGet fileOrDir="global/empty"/>
+
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$orgAbbrev$$_GeneDB_Gff_Genome_RSRC/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultNcbiTaxId $$ncbiTaxId$$  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
   </resource>
 
 
@@ -40,24 +40,12 @@ Chromosome sequences for <i>N.caninum</i> obtained from the Pathogen Sequencing 
   <resource resource="updateChromosomeNumberFromMap" version="@@updateChromosomeNumberFromMap_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="update Chromosome Number From Mapping file">
-    <manualGet fileOrDir="ToxoDB/ncaninum/genome/chromosomeNumberMap/1.0/final/neospChrs.txt"/>
-    <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VER%"</pluginArgs>
-    <info
-        displayName="update Chromosome and Chromosome order Number From Mapping file"
-        project="ToxoDB"
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
 
-        ]]>
-      </description>
-    </info>
+    <manualGet fileOrDir="ToxoDB/ncaninum/genome/chromosomeNumberMap/1.0/final/neospChrs.txt"/>
+
+    <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VER%"</pluginArgs>
   </resource>
 
 
@@ -67,24 +55,12 @@ Chromosome sequences for <i>N.caninum</i> obtained from the Pathogen Sequencing 
       plugin="GUS::Supported::Plugin::dbEST"
       internalDescrip="">
     <manualGet fileOrDir="global/empty"/>
+
     <unpack>getSubTaxa --ncbiTaxId $$ncbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
+
     <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+
     <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-    <info
-        displayName="dbEST ESTs"
-        project="ToxoDB"
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
-        ]]>
-      </description>
-    </info>
   </resource>
 
 
@@ -106,22 +82,6 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
     <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExport.txt"/>
 
     <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
-
-    <info
-        displayName="IEDB Epitopes"
-        project="ToxoDB"
-        organisms="@@NcaninumOrganismFullName@@"
-        category="Proteome"
-        publicUrl="http://www.immuneepitope.org"
-        contact="IEDB"
-        email=""
-        institution="IEDB">
-      <description>
-        <![CDATA[
-         IEDB epitopes.
-        ]]>
-      </description>
-    </info>
   </resource>
 
 
@@ -135,53 +95,22 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
     <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
 
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
-
-    <info
-        displayName="IEDB Epitopes"
-        project="ToxoDB"
-        organisms="@@NcaninumOrganismFullName@@"
-        category="ignore"
-        publicUrl="http://www.immuneepitope.org"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         IEDB epitopes.
-        ]]>
-      </description>
-    </info>
   </resource>
 
 
   <!-- OldName: Neosporacaninum_Gene_Aliases   OldVersion: 01-27-2010 -->
 
-  <resource resource="$$orgAbbrev$$_Gene_Aliases_RSRC" version="@@$$orgAbbrev$$_Gene_Aliases_VER@@"
+  <resource resource="$$orgAbbrev$$_GeneDB_Gff_Gene_Aliases_RSRC" version="@@$$orgAbbrev$$_Gene_Aliases_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
       internalDescrip="">
 
     <manualGet fileOrDir="global/empty"/>
 
-    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../$$orgAbbrev$$_chromosomes_RSRC/genome.gff3 >  @@dataDir@@/previousIdLines</unpack>
+    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../$$orgAbbrev$$_genedb_gff_genome_RSRC/genome.gff3 >  @@dataDir@@/previousIdLines</unpack>
 
     <unpack>perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds.txt</unpack>
 
     <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
-    <info
-        displayName="Neosporacaninum genes with the previous source_ids"
-        project="ToxoDB"
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
   </resource>
 
 
@@ -196,22 +125,6 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
     <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "Neospora caninum" > @@dataDir@@/dbxrefs.txt</unpack>
 
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-
-    <info
-        displayName="ApiLoc cross references"
-        project="ToxoDB"
-        organism="all"
-        category="ignore"
-        publicUrl=""
-        contact="Stuart Ralph"
-        email="saralph@unimelb.edu.au"
-        institution="University of Melbourne ">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
   </resource>
 
 
@@ -227,24 +140,9 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
 
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '$$orgAbbrev$$_chromosomes_RSRC|@@$$orgAbbrev$$_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
 
-    <info
-        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
-        project="ToxoDB"
-        organisms="@@NcaninumOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[         
-        ]]>
-      </description>
-    </info>
   </resource>
 
  
-  <!-- NOT PORTED -->  TEST!
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
 
  <resource resource="$$orgAbbrev_Uniprot_Gene_dbxref_RSRC" version="@@$$orgAbbrev$$_Uniprot_Gene_dbxref_VER@@"
@@ -255,21 +153,6 @@ ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> si
     <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_Entrez_Gene_dbxref_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
 
     <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
-    <info
-        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
-        project="ToxoDB"
-        organisms="@@NcaninumOrganismFullName@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         
-        ]]>
-      </description>
-    </info>
   </resource>
 
 </resources>
