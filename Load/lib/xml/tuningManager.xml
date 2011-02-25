@@ -1419,7 +1419,7 @@ WHERE gf.source_id is not null
                       'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Tbrucei427_AutoMAGI_Annotations_RSRC'
+                      'Tbrucei427_AutoMAGI_Annotations_RSRC','neosartorya_fischeri_nrrl181_genome_sequence_RSRC'
 )
   AND gf.na_feature_id = preferred_product.na_feature_id(+)
   AND gf.na_feature_id = preferred_name.na_feature_id(+)
@@ -1668,7 +1668,8 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      (SELECT edr.external_database_release_id,
              edr.version AS database_version, ed.name AS database_name
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-      WHERE edr.external_database_id = ed.external_database_id) db,
+      WHERE edr.external_database_id = ed.external_database_id
+      AND ed.name != 'neosartorya_fischeri_nrrl181_genome_sequence_RSRC') db,
      (SELECT piece_na_sequence_id, 0 as is_top_level
       FROM dots.SequencePiece) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
