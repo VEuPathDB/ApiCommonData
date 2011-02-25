@@ -32,6 +32,9 @@ CREATE TABLE ApiDB.GFF3 (
  PRIMARY KEY (gff3_feature_id)
 );
 
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GFF3 TO gus_w;
+GRANT SELECT ON ApiDB.GFF3 TO gus_r;
+
 CREATE INDEX apidb.gff3_feature_id_idx
 ON ApiDB.GFF3 (gff3_feature_id);
 

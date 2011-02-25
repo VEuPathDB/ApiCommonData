@@ -101,7 +101,7 @@ sub run {
   while (my $line = <FILE>) {
     chomp($line);
 
-    my ($groupId, $membersString) = split(/\:/, $line);
+    my ($groupId, $membersString) = split(/\:\s/, $line);
     my @members = split(/\s+/, $membersString);
     my $taxaInThisGroup = {};
     foreach my $member (@members) {
