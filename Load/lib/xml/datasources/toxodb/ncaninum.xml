@@ -120,9 +120,11 @@
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
       internalDescrip="dbxrefs from ApiLoc.org">
 
+    <prop name="ApiLocOrganism" value="Neospora caninum"/>
+
     <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/fromProvider/$$orgAbbrev$$.html"/>
 
-    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "Neospora caninum" > @@dataDir@@/dbxrefs.txt</unpack>
+    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "$$ApiLocOrganism$$" > @@dataDir@@/dbxrefs.txt</unpack>
 
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
   </resource>
