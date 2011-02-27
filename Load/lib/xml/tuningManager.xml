@@ -441,7 +441,7 @@ CREATE TABLE apidb.GeneId&1 NOLOGGING AS
 SELECT lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) AS id,
        substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS alias,
        gf.source_id AS gene,
-       'Transcript.protein_id' as union_member, ed.name as database_name
+       'Transcript.protein_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM dots.Transcript t, dots.GeneFeature gf,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
 WHERE t.parent_id = gf.na_feature_id
@@ -452,7 +452,7 @@ UNION
 SELECT lower(t.protein_id) AS id,
        t.protein_id AS alias,
        gf.source_id AS gene,
-       'lower(Transcript.protein_id)' as union_member, ed.name as database_name
+       'lower(Transcript.protein_id)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM dots.Transcript t, dots.GeneFeature gf,
      sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
 WHERE t.parent_id = gf.na_feature_id
@@ -463,7 +463,7 @@ UNION
 SELECT LOWER(dr.primary_identifier) AS id, 
        dr.primary_identifier AS alias, 
        gf.source_id AS gene,
-       'lower(DbRef.primary_identifier)' as union_member, ed.name as database_name
+       'lower(DbRef.primary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
      sres.ExternalDatabase ed
@@ -487,7 +487,7 @@ UNION
 SELECT LOWER(dr.secondary_identifier) AS id, 
        dr.secondary_identifier AS alias, 
        gf.source_id AS gene,
-       'lower(DbRef.secondary_identifier)' as union_member, ed.name as database_name
+       'lower(DbRef.secondary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
      sres.ExternalDatabase ed
@@ -507,7 +507,7 @@ UNION
 SELECT lower(dr.primary_identifier) AS id, 
        dr.primary_identifier AS alias, 
        gf.source_id AS gene,
-       'lower(genbank DbRef.primary_identifier)' as union_member, ed.name as database_name
+       'lower(genbank DbRef.primary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
      sres.DbRef dr, sres.ExternalDatabaseRelease edr,
       sres.ExternalDatabase ed
@@ -518,13 +518,13 @@ WHERE gf.na_feature_id = t.parent_id
   AND edr.external_database_id = ed.external_database_id
   AND ed.name = 'GenBank'
 UNION
-SELECT LOWER(alias) AS id, alias, gene, 'GeneAlias' as union_member, database_name
+SELECT LOWER(alias) AS id, alias, gene, 'GeneAlias' as union_member, database_name, cast (null as NUMBER) as unique_mapping
 FROM apidb.GeneAlias
 UNION
 SELECT LOWER(pred_loc.feature_source_id) AS id, 
        pred_loc.feature_source_id AS alias, 
        gene_loc.feature_source_id AS gene,
-       'overlapping predicted gene source_id' as union_member, ed.name as database_name
+       'overlapping predicted gene source_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
 FROM apidb.FeatureLocation gene_loc, apidb.FeatureLocation pred_loc,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
 WHERE pred_loc.feature_type = 'GenePrediction'
@@ -539,13 +539,29 @@ WHERE pred_loc.feature_type = 'GenePrediction'
     </sql>
     <sql>
       <![CDATA[
+update apidb.GeneId&1
+set unique_mapping = 1
+where rowid in (select min_rowid
+                from (select id, min(rowid) as min_rowid
+                      from GeneId&1
+                      group by id))
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
 CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id)
+CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id, gene)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_uniqid_idx&1 ON apidb.GeneId&1 (unique_mapping, id, gene)
 tablespace indx
       ]]>
     </sql>
