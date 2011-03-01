@@ -388,10 +388,10 @@ sub getNaSeqDesc {
 sub undoTables {
   my ($self) = @_;
 
-  return ('Core.Algorithm',
-	  'DoTS.NALocation',
+  return ('DoTS.NALocation',
 	  'DoTS.ArrayElementFeature',
 	  'DoTS.SAGETagFeature',
+          'Core.Algorithm',
 	 );
 }
 
