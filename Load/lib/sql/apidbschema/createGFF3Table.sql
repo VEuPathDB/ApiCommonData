@@ -13,7 +13,7 @@ CREATE TABLE ApiDB.GFF3 (
  score                 FLOAT,
  is_reversed           NUMBER(3),
  phase                 NUMBER(3),
- attributes            CLOB,  
+ attr                  CLOB,  
  external_database_release_id NUMBER(10),
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
