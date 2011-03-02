@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
+use Bio::Tools::GFF;
 
 use GUS::Model::DoTS::NASequence;
 use GUS::Model::SRes::SequenceOntology;
@@ -28,6 +29,13 @@ sub getArgsDeclaration {
          mustExist => 1,
          format => 'Nine column tab delimited file in the order seqid, source, type, start, end, score, strand, phase, attribute',
        }),
+     stringArg({ name => 'gffFormat',
+     descr => 'gff format 1, 2, 3',
+     constraintFunc=> undef,
+     reqd  => 1,
+     isList => 0,
+		 mustExist => 1,
+         }),
      stringArg({ name => 'gff3DbName',
      descr => 'externaldatabase name for gff3 source',
      constraintFunc=> undef,
@@ -104,7 +112,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.5,
-                        cvsRevision => '$Revision: 90 $',
+                        cvsRevision => '$Revision: 89 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -121,209 +129,89 @@ sub run {
   my $gff3ExtDbReleaseId = $self->getExtDbRlsId($self->getArg('gff3DbName'),
              $self->getArg('gff3DbVer')) || $self->error("Can't find external_database_release_id for gff3 data source");
 
-  my $tabFile = $self->getArg('file');
-
-  my ($seqIdHash, $soTermHash) = $self->getUniqueSeqIdandSOTerm($tabFile);
-
   my $processed;
 
-  open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
+	my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
+	                                 -gff_format => $self->getArg('gffFormat'),
+																	);
 
-  while(<FILE>){
-
-      chomp();
-
-      next if /^\s*$/;
-      next if /^##/;
-
-      my ($seqid, $source, $term, $start, $end, $score, $strand, $phase, $attr) = split(/\t/,$_);
-      my $is_reversed = 0;
-      $is_reversed = 1 if $strand =~ /\-/;
-
-      #my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
-      #my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $type });
-
-      #if($naSeq->retrieveFromDB && $SOTerm->retrieveFromDB){
-
-      #   my $naSeqId = $naSeq->getNaSequenceId();
-         my $naSeqId = $seqIdHash->{$seqid};
-         #my $soid = $SOTerm->getSequenceOntologyId();
-         my $soid = $soTermHash->{$term};
-    
-         $self->insertGFF3($naSeqId, $source, $soid, $start, $end, $score, $is_reversed, $phase, $attr, $gff3ExtDbReleaseId);
-  
-         $processed++;
-         #print "$processed gff3 lines loaded\n";
-      #}else{
-         #$self->log("WARNING","NASequence for $gff3ExtDbReleaseId or SO term $type cannot be found");
-      #}
-      
-      $self->undefPointerCache();
-  }        
+  while (my $feature = $gffIO->next_feature()) {
+     $self->insertGFF3($feature, $gff3ExtDbReleaseId);
+		 $processed++;
+     #print "$processed gff3 lines parsed and loaded\n";
+	}
 
   return "$processed gff3 lines parsed and loaded";
 }
 
+sub getNaSequencefromSourceId {
+   my ($self, $seqid) = @_;
+	 if($self->{nasequences}->{$seqid}) {
+	   return $_;
+	 }
+   
+   my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
+   unless ($naSeq->retrieveFromDB) {
+			$self->error("Can't find na_sequence_id for gff3 sequence $seqid");
+	 } 
+	 $self->{nasequences}->{$seqid} = $naSeq;
+   return $naSeq;
+}
+
+sub getSoIdfromSoTerm {
+   my ($self, $soterm) = @_;
+	 if($self->{soids}->{$soterm}) {
+	   return $_;
+	 }
+   
+   my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $soterm });
+	 unless($SOTerm->retrieveFromDB){
+			$self->error("Can't find sequence onotology id for term $soterm");
+	 }
+	 $self->{soids}->{$soterm} = $SOTerm;
+   return $SOTerm;
+}
 
 sub insertGFF3 {
-  my ($self,$naSeqId, $source, $soid, $start, $end, $score, $is_reversed, $phase, $attr, $gff3ExtDbReleaseId) = @_;
+  my ($self,$feature, $gff3ExtDbReleaseId) = @_;
 
-  my $gff3 = GUS::Model::ApiDB::GFF3->new({'na_sequence_id' => $naSeqId,
+	my $seqid = $feature->seq_id;
+  my $naSeq = $self->getNaSequencefromSourceId($seqid);
+
+	my $soterm = $feature->primary_tag;
+  my $sotermObj = $self->getSoIdfromSoTerm($soterm);
+
+	my $snpStart = $feature->location()->start();
+	my $snpEnd = $feature->location()->end();
+	my $strand = $feature->location()->strand() == -1 ? 1 : 0;
+	my $score = $feature->score;
+	
+	my $source = $feature->source_tag;
+	my $frame = $feature->frame;
+
+	my @tags = $feature->get_all_tags();
+
+  my $gff3 = GUS::Model::ApiDB::GFF3->new({ 
                                 'source' => $source,
-                                'sequence_ontology_id' => $soid,
-                                'mapping_start' => $start,
-                                'mapping_end' => $end,
+                                'mapping_start' => $snpStart,
+                                'mapping_end' => $snpEnd,
                                 'score' => $score,
-                                'is_reversed' => $is_reversed,
-                                'phase' => $phase,
+                                'is_reversed' => $strand,
+                                'phase' => $frame,
                                 'external_database_release_id' => $gff3ExtDbReleaseId
                                  });
 
-  unless ($gff3->retrieveFromDB()){
-      $gff3->setAttr($attr);
-      $gff3->submit();
-  }else{
-      $self->log("WARNING","gff3 $gff3 already exists for na_feature_id: $naSeqId");
-  }
+  $gff3->setParent($naSeq);
+  $gff3->setParent($sotermObj);
+  #$gff3->setAttr($attr);
 
-}
+  #print $gff3->toString();
+	#exit;
 
-sub getUniqueSeqIdandSOTerm{
-  my ($self, $f) = @_;
-  my (%seqIdHash, %soTermHash);
-
-  open(F, $f);
-  while(<F>) {
-    chomp();
-    next if /^\s*$/;
-    next if /^##/;
-    my ($seqid, $source, $type, @others) = split(/\t/,$_);
-    $seqIdHash{$seqid}++;
-    $soTermHash{$type}++;
-  }
-  close F;
-
-  while(my ($seqid, $v) = each %seqIdHash) {
-    my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
-    if($naSeq->retrieveFromDB) {
-       my $naSeqId = $naSeq->getNaSequenceId();
-       $seqIdHash{$seqid} = $naSeqId;
-    } else {
-       $self->log("WARNING","NASequence for $seqid cannot be found");
-    }
-  }
-
-  while(my ($term, $v) = each %soTermHash) {
-    my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $term });
-    if($SOTerm->retrieveFromDB){
-      my $soid = $SOTerm->getSequenceOntologyId();
-      $soTermHash{$term} = $soid;
-    } else {
-       $self->log("WARNING","SO term for $term cannot be found");
-    }
-  }
-
-  return (\%seqIdHash, \%soTermHash);
-}
-
-
-=c
-sub getOrCreateExtDbAndDbRls{
-  my ($self, $dbName,$dbVer) = @_;
-
-  my $extDbId=$self->InsertExternalDatabase($dbName);
-
-  my $extDbRlsId=$self->InsertExternalDatabaseRls($dbName,$dbVer,$extDbId);
-
-  return $extDbRlsId;
-}
-
-sub InsertExternalDatabase{
-
-    my ($self,$dbName) = @_;
-    my $extDbId;
-
-    my $sql = "select external_database_id from sres.externaldatabase where lower(name) like '" . lc($dbName) ."'";
-    my $sth = $self->prepareAndExecute($sql);
-    $extDbId = $sth->fetchrow_array();
-
-    if ($extDbId){
-  print STEDRR "Not creating a new entry for $dbName as one already exists in the database (id $extDbId)\n";
-    }
-
-    else {
-  my $newDatabase = GUS::Model::SRes::ExternalDatabase->new({
-      name => $dbName,
-     });
-  $newDatabase->submit();
-  $extDbId = $newDatabase->getId();
-  print STEDRR "created new entry for database $dbName with primary key $extDbId\n";
-    }
-    return $extDbId;
-}
-
-sub InsertExternalDatabaseRls{
-
-    my ($self,$dbName,$dbVer,$extDbId) = @_;
-
-    my $extDbRlsId = $self->releaseAlreadyExists($extDbId,$dbVer);
-
-    if ($extDbRlsId){
-  print STDERR "Not creating a new release Id for $dbName as there is already one for $dbName version $dbVer\n";
-    }
-
-    else{
-        $extDbRlsId = $self->makeNewReleaseId($extDbId,$dbVer);
-  print STDERR "Created new release id for $dbName with version $dbVer and release id $extDbRlsId\n";
-    }
-    return $extDbRlsId;
-}
-=cut
-
-
-sub releaseAlreadyExists{
-    my ($self, $extDbId,$dbVer) = @_;
-
-    my $sql = "select external_database_release_id 
-               from SRes.ExternalDatabaseRelease
-               where external_database_id = $extDbId
-               and version = '$dbVer'";
-
-    my $sth = $self->prepareAndExecute($sql);
-    my ($relId) = $sth->fetchrow_array();
-
-    return $relId; #if exists, entry has already been made for this version
-
-}
-
-sub makeNewReleaseId{
-    my ($self, $extDbId,$dbVer) = @_;
-
-    my $newRelease = GUS::Model::SRes::ExternalDatabaseRelease->new({
-  external_database_id => $extDbId,
-  version => $dbVer,
-  download_url => '',
-  id_type => '',
-  id_url => '',
-  secondary_id_type => '',
-  secondary_id_url => '',
-  description => '',
-  file_name => '',
-  file_md5 => '',
-  
-    });
-
-    $newRelease->submit();
-    my $newReleasePk = $newRelease->getId();
-
-    return $newReleasePk;
-
+  $gff3->submit();
 }
 
 sub undoTables {
-  return ('ApiDB.GFF3',
-    'SRes.ExternalDatabaseRelease',
-    'SRes.ExternalDatabase',
-   );
+  return ('ApiDB.GFF3');
 }
 
