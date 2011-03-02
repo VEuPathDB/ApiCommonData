@@ -104,7 +104,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.5,
-                        cvsRevision => '$Revision: $',
+                        cvsRevision => '$Revision: 90 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -123,6 +123,8 @@ sub run {
 
   my $tabFile = $self->getArg('file');
 
+  my ($seqIdHash, $soTermHash) = $self->getUniqueSeqIdandSOTerm($tabFile);
+
   my $processed;
 
   open(FILE,$tabFile) || $self->error("$tabFile can't be opened for reading");
@@ -134,24 +136,27 @@ sub run {
       next if /^\s*$/;
       next if /^##/;
 
-      my ($seqid, $source, $type, $start, $end, $score, $strand, $phase, $attr) = split(/\t/,$_);
+      my ($seqid, $source, $term, $start, $end, $score, $strand, $phase, $attr) = split(/\t/,$_);
       my $is_reversed = 0;
       $is_reversed = 1 if $strand =~ /\-/;
 
-      my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
-      my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $type });
+      #my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
+      #my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $type });
 
-      if($naSeq->retrieveFromDB && $SOTerm->retrieveFromDB){
+      #if($naSeq->retrieveFromDB && $SOTerm->retrieveFromDB){
 
-         my $naSeqId = $naSeq->getNaSequenceId();
-         my $soid = $SOTerm->getSequenceOntologyId();
+      #   my $naSeqId = $naSeq->getNaSequenceId();
+         my $naSeqId = $seqIdHash->{$seqid};
+         #my $soid = $SOTerm->getSequenceOntologyId();
+         my $soid = $soTermHash->{$term};
     
          $self->insertGFF3($naSeqId, $source, $soid, $start, $end, $score, $is_reversed, $phase, $attr, $gff3ExtDbReleaseId);
   
          $processed++;
-      }else{
-         $self->log("WARNING","NASequence for $gff3ExtDbReleaseId or SO term $type cannot be found");
-      }
+         #print "$processed gff3 lines loaded\n";
+      #}else{
+         #$self->log("WARNING","NASequence for $gff3ExtDbReleaseId or SO term $type cannot be found");
+      #}
       
       $self->undefPointerCache();
   }        
@@ -171,11 +176,11 @@ sub insertGFF3 {
                                 'score' => $score,
                                 'is_reversed' => $is_reversed,
                                 'phase' => $phase,
-                                'attributes' => $attr,
                                 'external_database_release_id' => $gff3ExtDbReleaseId
                                  });
 
   unless ($gff3->retrieveFromDB()){
+      $gff3->setAttr($attr);
       $gff3->submit();
   }else{
       $self->log("WARNING","gff3 $gff3 already exists for na_feature_id: $naSeqId");
@@ -183,7 +188,46 @@ sub insertGFF3 {
 
 }
 
+sub getUniqueSeqIdandSOTerm{
+  my ($self, $f) = @_;
+  my (%seqIdHash, %soTermHash);
 
+  open(F, $f);
+  while(<F>) {
+    chomp();
+    next if /^\s*$/;
+    next if /^##/;
+    my ($seqid, $source, $type, @others) = split(/\t/,$_);
+    $seqIdHash{$seqid}++;
+    $soTermHash{$type}++;
+  }
+  close F;
+
+  while(my ($seqid, $v) = each %seqIdHash) {
+    my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
+    if($naSeq->retrieveFromDB) {
+       my $naSeqId = $naSeq->getNaSequenceId();
+       $seqIdHash{$seqid} = $naSeqId;
+    } else {
+       $self->log("WARNING","NASequence for $seqid cannot be found");
+    }
+  }
+
+  while(my ($term, $v) = each %soTermHash) {
+    my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $term });
+    if($SOTerm->retrieveFromDB){
+      my $soid = $SOTerm->getSequenceOntologyId();
+      $soTermHash{$term} = $soid;
+    } else {
+       $self->log("WARNING","SO term for $term cannot be found");
+    }
+  }
+
+  return (\%seqIdHash, \%soTermHash);
+}
+
+
+=c
 sub getOrCreateExtDbAndDbRls{
   my ($self, $dbName,$dbVer) = @_;
 
@@ -234,6 +278,7 @@ sub InsertExternalDatabaseRls{
     }
     return $extDbRlsId;
 }
+=cut
 
 
 sub releaseAlreadyExists{
