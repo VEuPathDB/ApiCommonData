@@ -34,7 +34,7 @@ sub getArgsDeclaration {
      constraintFunc=> undef,
      reqd  => 1,
      isList => 0,
-		 mustExist => 1,
+     mustExist => 1,
          }),
      stringArg({ name => 'gff3DbName',
      descr => 'externaldatabase name for gff3 source',
@@ -131,65 +131,74 @@ sub run {
 
   my $processed;
 
-	my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
-	                                 -gff_format => $self->getArg('gffFormat'),
-																	);
+  my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
+                                   -gff_format => $self->getArg('gffFormat'),
+                                  );
 
   while (my $feature = $gffIO->next_feature()) {
      $self->insertGFF3($feature, $gff3ExtDbReleaseId);
-		 $processed++;
+     $processed++;
+     $self->undefPointerCache();
+
      #print "$processed gff3 lines parsed and loaded\n";
-	}
+  }
 
   return "$processed gff3 lines parsed and loaded";
 }
 
 sub getNaSequencefromSourceId {
    my ($self, $seqid) = @_;
-	 if($self->{nasequences}->{$seqid}) {
-	   return $_;
-	 }
+   if($self->{nasequences}->{$seqid}) {
+     return $_;
+   }
    
    my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
    unless ($naSeq->retrieveFromDB) {
-			$self->error("Can't find na_sequence_id for gff3 sequence $seqid");
-	 } 
-	 $self->{nasequences}->{$seqid} = $naSeq;
+      $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
+   } 
+   $self->{nasequences}->{$seqid} = $naSeq;
    return $naSeq;
 }
 
 sub getSoIdfromSoTerm {
    my ($self, $soterm) = @_;
-	 if($self->{soids}->{$soterm}) {
-	   return $_;
-	 }
+   if($self->{soids}->{$soterm}) {
+     return $_;
+   }
    
    my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $soterm });
-	 unless($SOTerm->retrieveFromDB){
-			$self->error("Can't find sequence onotology id for term $soterm");
-	 }
-	 $self->{soids}->{$soterm} = $SOTerm;
+   unless($SOTerm->retrieveFromDB){
+      $self->error("Can't find sequence onotology id for term $soterm");
+   }
+   $self->{soids}->{$soterm} = $SOTerm;
    return $SOTerm;
 }
 
 sub insertGFF3 {
   my ($self,$feature, $gff3ExtDbReleaseId) = @_;
 
-	my $seqid = $feature->seq_id;
+  my $seqid = $feature->seq_id;
   my $naSeq = $self->getNaSequencefromSourceId($seqid);
 
-	my $soterm = $feature->primary_tag;
+  my $soterm = $feature->primary_tag;
   my $sotermObj = $self->getSoIdfromSoTerm($soterm);
 
-	my $snpStart = $feature->location()->start();
-	my $snpEnd = $feature->location()->end();
-	my $strand = $feature->location()->strand() == -1 ? 1 : 0;
-	my $score = $feature->score;
-	
-	my $source = $feature->source_tag;
-	my $frame = $feature->frame;
+  my $snpStart = $feature->location()->start();
+  my $snpEnd = $feature->location()->end();
+  my $strand = $feature->location()->strand() == -1 ? 1 : 0;
+  my $score = $feature->score;
+  
+  my $source = $feature->source_tag;
+  my $frame = $feature->frame;
 
-	my @tags = $feature->get_all_tags();
+  my $attr = '';
+  my @tags = $feature->get_all_tags();
+  foreach my $tag(@tags) {
+     my @values = $feature->get_tag_values($tag);
+     $attr .= $tag. '='. join(',', @values) . ';';
+  }
+  $attr =~ s/;$//;
+
 
   my $gff3 = GUS::Model::ApiDB::GFF3->new({ 
                                 'source' => $source,
@@ -203,10 +212,10 @@ sub insertGFF3 {
 
   $gff3->setParent($naSeq);
   $gff3->setParent($sotermObj);
-  #$gff3->setAttr($attr);
+  $gff3->setAttr($attr);
 
   #print $gff3->toString();
-	#exit;
+  #exit;
 
   $gff3->submit();
 }
