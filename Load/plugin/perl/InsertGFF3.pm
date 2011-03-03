@@ -30,7 +30,7 @@ sub getArgsDeclaration {
          format => 'Nine column tab delimited file in the order seqid, source, type, start, end, score, strand, phase, attribute',
        }),
      stringArg({ name => 'gffFormat',
-     descr => 'gff format 1, 2, 3',
+     descr => '1 or 2. not support gff3 format yet',
      constraintFunc=> undef,
      reqd  => 1,
      isList => 0,
@@ -139,8 +139,6 @@ sub run {
      $self->insertGFF3($feature, $gff3ExtDbReleaseId);
      $processed++;
      $self->undefPointerCache();
-
-     #print "$processed gff3 lines parsed and loaded\n";
   }
 
   return "$processed gff3 lines parsed and loaded";
@@ -214,13 +212,9 @@ sub insertGFF3 {
   $gff3->setParent($sotermObj);
   $gff3->setAttr($attr);
 
-  #print $gff3->toString();
-  #exit;
-
   $gff3->submit();
 }
 
 sub undoTables {
   return ('ApiDB.GFF3');
 }
-
