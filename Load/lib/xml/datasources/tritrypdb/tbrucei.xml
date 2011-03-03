@@ -1284,6 +1284,39 @@ Genome-wide analysis of mRNA abundance in two life-cycle stages of <i>Trypanosom
     </info>
   </resource>
 
+  <resource resource="Tbrucei_RNAiSeq_Horn_RSRC" version="@@Tbrucei_RNAiSeq_Horn_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/RNAi_Horn/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/U_R.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/U_F.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PF_R.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PF_F.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/DIF_R.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/DIF_F.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D6_R.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D6_F.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D3_R.fastq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D3_F.fastq"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNAi Seqs from Horn"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="David Horn"
+        email="David.Horn@lshtm.ac.uk"
+        institution="lshtm">
+      <description>
+        <![CDATA[
+RNAi sequence profiles from David Horn.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
 
 
 <!--DbxRefsResource-->
