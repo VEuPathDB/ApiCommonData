@@ -1,141 +1,38 @@
 <resources>
 
-  <constant name="orgAbbrev" value="tgME49"/>
+  <constant name="orgAbbrev" value="tgondiiME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
 
-  <!-- NOT PORTED -->
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
-  <resource resource="T.gondiiME49_contigsGB" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="T.gondii ME49 contig sequence and annotation from Genbank on 2008-07-23">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/new_snapshot_07-17-2008/tga2_20080716.gbf"/>
+  <resource resource="$$orgAbbrev$$_JCVI_genbank_genome_RSRC"
+            version="@@$$orgAbbrev$$_JCVI_genbank_genome_VER@@"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+      internalDescrip="">
 
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/T.gondiiME49_contigsGB/tga2_20080716.gbf --fileFormat genbank --soCvsVersion @soVer@ --organism "Toxoplasma gondii ME49" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01" --seqSoTerm "supercontig"</pluginArgs>
+    <prop name="provider">JCVI</prop>
+    <prop name="soTerm">supercontig</prop>
+    <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
 
-    <info
-        displayName="T. gondii ME49 contig sequence and annotation from Genbank"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-Toxoplasma gondii ME49 sequence and annotation from Lis Caler at the J. Craig Venter Institute (<a href="http://msc.jcvi.org/t_gondii/index.shtml"Target="_blank">JCVI</a>).
-        ]]>
-      </description>
-    </info>
+    <manualGet fileOrDir="ToxoDB/genome/$$provider$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
+
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm"</pluginArgs>
   </resource>
 
 
-
-  <!-- NOT PORTED -->
-  <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
-  <resource resource="Tg_dbEST_RSRC" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::dbEST"
-      internalDescrip="ESTs from the mirrored dbEST">
-    <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 29176 --outputFile @@dataDir@@/taxonIdFile</unpack>
-    <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-    <info
-        displayName="dbEST ESTs"
-        project="ToxoDB"
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/">dbEST</a> site.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-
-
-  <resource resource="dbEST" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::dbEST"
-      internalDescrip="ESTs from the mirrored dbEST">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"/>
-    <unpack>getSubTaxa --ncbiTaxId 5810 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
-    <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
-    <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-    <info
-        displayName="dbEST ESTs"
-        project=""
-        organism=""
-        category="Transcriptome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/"TARGET="_blank">dbEST</a> site.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Lindstrom454Sequences   OldVersion: 2009-10-02 -->
-  <resource resource="Lindstrom454Sequences" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Toxoplasma 454 sequences from Lindstrom|2009-05-04">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Lindstrom_454_seq_snps/454LargeContigs.fna"/>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Toxoplasma gondii TgCkUg2" --sequenceFile @downloadDir@/Lindstrom454Sequences/454LargeContigs.fna --soTermName "contig" --regexSourceId "^>(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. gondii TgCkUg2 sequence"
-        project=""
-        organism="Toxoplasma"
-        category="Genome"
-        publicUrl=""
-        contact="Irene Lindstrom"
-        email="e.i.lindstrom@leeds.ac.uk"
-        institution="University of Leeds">
-      <description>
-        <![CDATA[
-Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Irene Lindstrom Bontell and Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK. TgCkUg2 is a Ugandan recombinant strain, a mix between T. gondii types II and III.
-        ]]>
-      </description>
-      <publication pmid="19457243"/>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
   <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
-  <resource resource="TgondiiApicoplast" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="apicoplast genome by Roos Lab">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Scaffolds/apicoplastSequences_2009-04-15.gb"/>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoGenbank2gus.xml --inputFileOrDir @downloadDir@/TgondiiApicoplast/apicoplastSequences_2009-04-15.gb --fileFormat GenBank --soCvsVersion 2.2 --organism "Toxoplasma gondii RH" --handlerExternalDbs "enzyme:enzymeDB:2009-09-24" --seqSoTerm "apicoplast_chromosome" --bioperlTreeOutput @pipelineDir@/logs/TgondiiApicoplast.bioperl --validationLog @pipelineDir@/logs/TgondiiApicoplast.validation.log</pluginArgs>
-    <info
-        displayName="T. gondii Apicoplast Genome"
-        project=""
-        organism=""
-        category="Organellar"
-        publicUrl=""
-        contact="Vishal Nayak"
-        email="vishalkn@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-Genome sequence and annotation for <i>T. gondii</i> apicoplast provided by David Roos (University of Pennsylvania), Jessica Kissinger (University of Georgia).The apicoplast genome of <i>T. gondii</i> RH (Type I) strain is 34996 bps long (GeneBank accession #: <a href="http://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?db=nucleotide&val=NC_001799"TARGET="_blank">NC_001799</a>). Click <a href="http://roos.bio.upenn.edu/%7Erooslab/jkissing/plastidmap.html"TARGET="_blank">here</a> to view a map of the <i>T. gondii</i> apicoplast. Contact: David Roos droos&#64;sas&#46;upenn&#46;edu.
-        ]]>
-      </description>
-    </info>
+  <resource resource="$$orgAbbrev$$_apicoplast_genbank_genome_RSRC"
+            version="@@$$orgAbbrev$$_apicoplast_genbank_genome_VER@@"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+      internalDescrip="">
+
+    <prop name="provider">apicoplast</prop>
+    <prop name="soTerm">apicoplast_chromosome</prop>
+    <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
+
+    <manualGet fileOrDir="ToxoDB/genome/$$provider$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
+
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm"</pluginArgs>
   </resource>
 
 
@@ -209,7 +106,7 @@ Mapping of gene coordinates from scaffolds to chromosomes for <i>T. gondii</i> t
         institution="">
       <description>
         <![CDATA[
-Chromosome map generated by David Sibley for <i>T. gondii</i> ME49 strain was used as a template to creat <i>T. gondii</i> GT1 chromosomes.  Chromosomes we assembled by the EuPathDB team using <a href="http://www.biostat.wisc.edu/~cdewey/mercator/"TARGET="_blank>Mercator</a> and <a href="http://genome.cshlp.org/content/14/4/693.abstract"TARGET="_blank"MAVID</a>.
+Chromosome map generated by David Sibley for <i>T. gondii</i> ME49 strain was used as a template to creat <i>T. gondii</i> GT1 chromosomes.  Chromosomes we assembled by the EuPathDB team using <a href="http://www.biostat.wisc.edu/~cdewey/mercator/" TARGET="_blank">Mercator</a> and <a href="http://genome.cshlp.org/content/14/4/693.abstract" TARGET="_blank">MAVID</a>.
         ]]>
       </description>
     </info>
@@ -264,6 +161,47 @@ Gaps within scaffolds represented as features.
 Gaps within chromosomes represented as features.
         ]]>
       </description>
+    </info>
+  </resource>
+
+
+  <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
+  <resource resource="$$orgAbbrev_dbEST_RSRC" version="@@orgAbbrev_dbEST_VER@@"
+      plugin="GUS::Supported::Plugin::dbEST"
+      internalDescrip="">
+    <manualGet fileOrDir="global/empty"/>
+
+    <unpack>getSubTaxa --ncbiTaxId $$ncbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
+
+    <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+
+    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+  </resource>
+
+
+
+  <!-- NOT PORTED -->
+  <!-- OldName: Lindstrom454Sequences   OldVersion: 2009-10-02 -->
+  <resource resource="Lindstrom454Sequences" version="@@_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+      internalDescrip="Toxoplasma 454 sequences from Lindstrom|2009-05-04">
+    <manualGet fileOrDir="Lindstrom_454_seq_snps/454LargeContigs.fna"/>
+    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Toxoplasma gondii TgCkUg2" --sequenceFile @downloadDir@/Lindstrom454Sequences/454LargeContigs.fna --soTermName "contig" --regexSourceId "^>(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="T. gondii TgCkUg2 sequence"
+        project=""
+        organism="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="Irene Lindstrom"
+        email="e.i.lindstrom@leeds.ac.uk"
+        institution="University of Leeds">
+      <description>
+        <![CDATA[
+Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Irene Lindstrom Bontell and Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK. TgCkUg2 is a Ugandan recombinant strain, a mix between T. gondii types II and III.
+        ]]>
+      </description>
+      <publication pmid="19457243"/>
     </info>
   </resource>
 
