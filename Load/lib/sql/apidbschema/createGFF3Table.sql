@@ -35,8 +35,8 @@ CREATE TABLE ApiDB.GFF3 (
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GFF3 TO gus_w;
 GRANT SELECT ON ApiDB.GFF3 TO gus_r;
 
-CREATE INDEX apidb.gff3_feature_id_idx
-ON ApiDB.GFF3 (gff3_feature_id);
+CREATE INDEX apidb.gff3_loc_idx
+ON ApiDB.GFF3 (na_sequence_id, mapping_start, mapping_end);
 
 CREATE SEQUENCE apidb.GFF3_sq;
 
