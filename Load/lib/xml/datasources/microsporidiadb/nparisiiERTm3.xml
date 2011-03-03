@@ -2,7 +2,7 @@
   <resource resource="NparisiiERTm3_genome_RSRC" version="@@NparisiiERTm3_genome_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="MicrosporidiaDB/nparisii/genome/nparisiiERTm3/contigs/%RESOURCE_VERSION%/final/Nema_parisii_ERTm3_V1.fsa"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 935791 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/@@NparisiiERTm3_genome_VER@@/Nema_parisii_ERTm3_V1.fsa --SOTermName 'contig'  --regexSourceId  'gb\|(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 935791 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Nema_parisii_ERTm3_V1.fsa --SOTermName 'contig'  --regexSourceId  'gb\|(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="N. parisii ERTm3 contigs"
         project="MicrosporidiaDB"
@@ -24,7 +24,7 @@
   <resource resource="NparisiiERTm3ScaffoldAGP_RSRC" version="@@NparisiiERTm3ScaffoldAGP_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile">
     <manualGet fileOrDir="MicrosporidiaDB/nparisii/genome/nparisiiERTm3/AGP/%RESOURCE_VERSION%/final/Nema_parisii_ERTm3_V1.agp"/>
-    <pluginArgs>--agpFile @@dataDir@@/@@NparisiiERTm3ScaffoldAGP_VER@@/Nema_parisii_ERTm3_V1.agp --seqPieceExtDbName "NparisiiERTm3_genome_RSRC" --seqPieceExtDbRlsVer @@NparisiiERTm3_genome_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "supercontig" --ncbiTaxId "935791" --soVer @@SO_VER@@ --notChromosomes</pluginArgs>
+    <pluginArgs>--agpFile @@dataDir@@/Nema_parisii_ERTm3_V1.agp --seqPieceExtDbName "NparisiiERTm3_genome_RSRC" --seqPieceExtDbRlsVer @@NparisiiERTm3_genome_VER@@ --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm "supercontig" --ncbiTaxId "935791" --soVer @@SO_VER@@ --notChromosomes</pluginArgs>
     <info
         displayName="N. parisii ERTm3 contig to scaffold map"
         project="MicrosporidiaDB"
