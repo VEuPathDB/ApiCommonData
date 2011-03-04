@@ -9,13 +9,15 @@ my $verbose = 0;
 my $inputFile;
 my $outputFile;
 
+# reduce and rearrange columns from IEDB file
+
 GetOptions("verbose!"        => \$verbose,
            "inputFile=s"     => \$inputFile,
            "outputFile=s"    => \$outputFile,
           );
 
 unless (-e $inputFile) {
-  die "Must supply a valid input file!\nUsage: extractFromIEDB --inputFile <FILE> --outputFile <FILE> [--verbose]";
+  die "Must supply a valid input file!\nUsage: simplifyIEDBFile --inputFile <FILE> --outputFile <FILE> [--verbose]";
 }
 
 open(OUT, ">> $outputFile");
