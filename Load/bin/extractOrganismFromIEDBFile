@@ -1,0 +1,151 @@
+#!/usr/bin/perl
+
+use strict;
+
+use XML::LibXML;
+
+use Getopt::Long;
+
+use Data::Dumper;
+
+# this file was copied from manual delivery.  its history is unknown.
+
+my ($fn, $dir, $help,$taxId);
+
+&GetOptions('help|h' => \$help,
+            'outputfile=s' => \$fn,
+            'input_dir=s' => \$dir,
+	    'NCBITaxId=s' => \$taxId,
+           );
+
+&usage() if($help);
+&usage("input dir is required") unless(-e $dir);
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+print STDERR "$subNCBITaxaList\n";
+
+my @taxaLists = split(/\,/,$subNCBITaxaList);
+
+my %taxaListHash;
+    
+foreach (@taxaLists){
+    $taxaListHash{$_}=1;
+}
+
+my $f = `ls $dir | sort`;
+
+my @files = split(/\n/,$f);
+
+my $n=@files;
+
+open (TABF, ">> $fn") or die "could not APPEND to $fn\n";;
+TABF->autoflush(1);
+   print TABF 
+      'Reference',      "\t",
+        'IEDB ID',      "\t",
+          'Epitope Name',         "\t",
+            'Epitope Structure Chemical Type',            "\t",
+              'Epitope Linear Sequence',            "\t",
+                'Epitope Conformational Sequence',  "\t",
+                  'Epitope SMILES Structure',    "\t",
+                    'Epitope Source Species',    "\t",
+	              'Epitope Source Species Strain',    "\t",
+                        'Epitope Source Name',    "\t",
+                          'Epitope Source Accession Number',    "\t",
+                            'Epitope Source PDB ID',       "\n",
+                             ;
+#--------------------------------------------------------------------------------
+
+for(my $i=0; $i<$n; $i++){
+my @results;
+my $parser = XML::LibXML->new();
+my $singleFile = "$dir/$files[$i]";
+print STDERR "checking file $singleFile\n";
+my $tree = $parser->parse_file($singleFile);
+my $root = $tree->getDocumentElement;
+
+my ($result,$GenBankId,$ChemicalType,$LinearSequence,$SourceOrganismId);
+my @epitopes = $root->findnodes('/References/Reference/Epitopes/Epitope') ;
+
+foreach my $epitope (@epitopes) {
+  my $find;
+  my $EpitopeName = $epitope->findvalue('EpitopeName');
+  my $EpitopeId = $epitope->findvalue('EpitopeId');
+  my @EpitopeStructures = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule') ;
+  foreach my $EpitopeStructure (@EpitopeStructures) {
+
+    $ChemicalType = $EpitopeStructure->findvalue('ChemicalType');
+    $LinearSequence = $EpitopeStructure->findvalue('LinearSequence');
+    my @SourceMolecules = $EpitopeStructure->findnodes('SourceMolecule');
+
+    foreach my $SourceMolecule (@SourceMolecules) {
+      $GenBankId = $SourceMolecule->findvalue('GenBankId');
+      $GenBankId = $SourceMolecule->findvalue('IedbAccession') unless $GenBankId;
+    }
+
+    $SourceOrganismId = $EpitopeStructure->findvalue('SourceOrganismId');
+
+  }
+
+    $result = {reference => '' ,
+                  EpitopeId => $EpitopeId,
+                  EpitopeName => $EpitopeName,
+                  ChemicalType => $ChemicalType,
+                  LinearSequence => $LinearSequence,
+                  ConformationalSequence => '',
+                  SMILESStructure => '',
+                  SourceOrganismId => $SourceOrganismId ,
+                  SourceSpeciesStrain => '',
+                  SourceName => '',
+                  GenBankId => $GenBankId,
+                  SourcePDBID => '',
+                 };
+    push(@results, $result) if $LinearSequence && $taxaListHash{$SourceOrganismId};
+  }
+print STDERR "Finished Reading $singleFile file\n";
+writeTabFile(\@results);
+undef @results;
+}
+close TABF;
+#print Dumper (\@results);
+
+#--------------------------------------------------------------------------------
+
+sub writeTabFile {
+  my ($results) = @_;
+
+  for my $h (@$results) {
+
+    print TABF
+      $h->{reference},       "\t",
+        $h->{EpitopeId},     "\t",
+          $h->{EpitopeName},        "\t",
+            $h->{ChemicalType},           "\t",
+              $h->{LinearSequence},           "\t",
+                $h->{ConformationalSequence}, "\t",
+                  $h->{SMILESStructure},   "\t",
+                    $h->{SourceOrganismId},   "\t",
+                      $h->{SourceSpeciesStrain},   "\t",
+                        $h->{SourceName},   "\t",
+                          $h->{GenBankId},   "\t",
+                            $h->{SourcePDBID},   "\n",
+                            ;
+   }
+
+  }
+
+
+#--------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "ERROR:  $m\n" if($m);
+  print STDERR "usage: extractOrganismFromIEDBFile --input_dir INPUT_DIR --outputfile OUTPUT_FILE\n";
+  exit(1);
+}
+
+#--------------------------------------------------------------------------------
+
+
+1;
+
