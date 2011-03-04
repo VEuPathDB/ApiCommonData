@@ -146,8 +146,8 @@ sub run {
 
 sub getNaSequencefromSourceId {
    my ($self, $seqid) = @_;
-   if($self->{nasequences}->{$seqid}) {
-     return $_;
+   if(my $found = $self->{nasequences}->{$seqid}) {
+     return $found;
    }
    
    my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
@@ -160,8 +160,8 @@ sub getNaSequencefromSourceId {
 
 sub getSoIdfromSoTerm {
    my ($self, $soterm) = @_;
-   if($self->{soids}->{$soterm}) {
-     return $_;
+   if(my $found = $self->{soids}->{$soterm}) {
+     return $found;
    }
    
    my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $soterm });
