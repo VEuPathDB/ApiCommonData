@@ -393,7 +393,7 @@ sub findOrthologGroups {
 my $sql;
 
 
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'||$self->getArg('organism') eq 'Piroplasma'){
+if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'||$self->getArg('organism') eq 'Piroplasma'||$self->getArg('organism') eq 'Fungi'){
 
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
@@ -411,8 +411,9 @@ if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'Tr
     and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
     ";
+  }else{
+    $self->error("ERROR: unable to find ortholog groups for organism ".$self->getArg('organism')." ... make sure this organism is a valid one as per the enum param and check method findOrthologousGroups\n");
   }
-
 
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
