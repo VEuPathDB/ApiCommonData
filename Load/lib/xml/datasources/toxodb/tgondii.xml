@@ -5,61 +5,52 @@
   <constant name="ncbiTaxId" value="29176"/>
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
-  <resource resource="$$orgAbbrev$$_JCVI_genbank_genome_RSRC"
-            version="@@$$orgAbbrev$$_JCVI_genbank_genome_VER@@"
+  <resource resource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+            version="@@$$orgAbbrev$$_genome_JCVI_genbank_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
       internalDescrip="">
 
-    <prop name="provider">JCVI</prop>
+    <prop name="name">JCVI</prop>
     <prop name="soTerm">supercontig</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
 
-    <manualGet fileOrDir="ToxoDB/genome/$$provider$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
+    <manualGet fileOrDir="ToxoDB/genome/$$name$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
 
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm"</pluginArgs>
   </resource>
 
 
   <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
-  <resource resource="$$orgAbbrev$$_apicoplast_genbank_genome_RSRC"
-            version="@@$$orgAbbrev$$_apicoplast_genbank_genome_VER@@"
+  <resource resource="$$orgAbbrev$$_genome_apicoplast_genbank_RSRC"
+            version="@@$$orgAbbrev$$_genome_apicoplast_genbank_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
       internalDescrip="">
 
-    <prop name="provider">apicoplast</prop>
+    <prop name="name">apicoplast</prop>
     <prop name="soTerm">apicoplast_chromosome</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
 
-    <manualGet fileOrDir="ToxoDB/genome/$$provider$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
+    <manualGet fileOrDir="ToxoDB/genome/$$name$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
 
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm"</pluginArgs>
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: ME49_Annotation   OldVersion: 3 -->
-  <resource resource="ME49_Annotation" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_genome_Version4_GFF2_RSRC"
+            version="@@$$orgAbbrev$$_genome_Version4_GFF2_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="Old Annotation for the ME49 strain from a Manatee dump from TIGR">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ME49OldAnnotation/tgal_initial.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_Annotation_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$old =~ s/^/TGG_/;$ids{$old} = $new;}; while(<>){if (/^(TGG_\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_Annotation/tgal_initial.gff> @downloadDir@/ME49_Annotation_fixed/tgal.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_Annotation_fixed/tgal.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2009-09-24"</pluginArgs>
-    <info
-        displayName="Old Annotation for T. gondii ME49 (typeII)"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Aaron Mackey"
-        email="amackey@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-Annotation of the <i>T. gondii</i> type II ME49 chromosomes by the Toxoplasma Genome Consortium.  For further information contact Ian Paulsen (The Institute for Genomic Research)  ipaulsen&#64;tigr&#46;org, or David Roos (University of Pennsylvania) droos&#64;sas&#46;upenn&#46;edu.
-        ]]>
-      </description>
-    </info>
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      internalDescrip="">
+
+    <prop name="name">Version4</prop>
+    <prop name="soTerm">chromosome</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/genome.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+
   </resource>
 
 
