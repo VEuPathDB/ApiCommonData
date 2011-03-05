@@ -26,7 +26,7 @@ my $argsDeclaration =
               constraintFunc=> undef,
               reqd  => 1,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia, Fungi",
              }),
 
   ];
