@@ -87,7 +87,7 @@ sub run {
 
   my $mercatorDir = $self->getArg('mercatorDir');
 
-  opendir(DIR,"$mercatorDir") or $self-error("Could not open directory $mercatorDir\n");
+  opendir(DIR,"$mercatorDir") or $self->error("Could not open directory $mercatorDir\n");
 
   foreach my $subdir (readdir DIR){
   
@@ -390,10 +390,9 @@ B<Return Type:> ARRAY
 sub findOrthologGroups {
   my ($self, $extDbRlsIdA) = @_;
 
-my $sql;
+  my $sql;
 
-
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'){
+  if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'||$self->getArg('organism') eq 'Fungi'){
 
     $sql = "
     select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
@@ -411,6 +410,8 @@ if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'Tr
     and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
     ";
+  }else{
+    $self->error("ERROR: unable to find orthologous groups for organism ".$self->getArg('organism')." ... make sure this organism is a valid one as per the enum param and check method findOrthologousGroups\n");
   }
 
 
