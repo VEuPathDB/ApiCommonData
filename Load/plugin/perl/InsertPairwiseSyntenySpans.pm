@@ -31,6 +31,7 @@ my $argsDeclaration =
 
   ];
 
+
 my $purposeBrief = <<PURPOSEBRIEF;
 Create entries for genomic synteny spans.
 PURPOSEBRIEF
