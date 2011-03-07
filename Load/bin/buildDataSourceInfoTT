@@ -1,0 +1,251 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use XML::Simple;
+use Getopt::Long qw(GetOptions);
+use ApiCommonData::Load::TuningConfig::Log;
+use ApiCommonData::Load::TuningConfig::Utils;
+use ReFlow::DataSource::DataSourceInfo;
+use ReFlow::DataSource::DataSourceInfos;
+use CBIL::Util::PropertySet;
+
+BEGIN {
+  # This variable is declared inside a BEGIN block, to make it behave
+  # like a Java "static" variable, whose state persists from one invocation to
+  # another.
+  my $errorFlag;
+
+  sub setErrorFlag {
+    $errorFlag = 1;
+  }
+
+  sub getErrorFlag {
+    return $errorFlag;
+  }
+}
+
+my ($propfile, $instance, $password, $logfile, $suffix, $project, $version, $subversionDir, $debug);
+GetOptions("propfile=s" => \$propfile,
+           "instance=s" => \$instance,
+           "password=s" => \$password,
+           "logfile=s" => \$logfile,
+           "suffix=s" => \$suffix,
+           "project=s" => \$project,
+           "version=s" => \$version,
+           "subversionDir=s" => \$subversionDir,
+           "debug!" => \$debug,
+	  );
+
+ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
+my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, $password);
+
+$|=1;
+
+my $workingDir = $subversionDir . "datasources";
+
+createTables($dbh, $suffix);
+
+chdir "$workingDir";
+
+my $projectQuery = $dbh->prepare(<<SQL);
+  select project_id, lower(project_id) as lower_project_id
+  from (select distinct project_id from apidb.SequenceAttributes)
+SQL
+
+$projectQuery->execute() or die "getting a list of project IDs";
+while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
+
+  loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix, $debug);
+
+  foreach my $file (`ls $lowerProject/*Info.xml`) {
+    loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
+  }
+}
+
+createIndexes($dbh);
+dropConstraints($dbh, $suffix);
+
+die if getErrorFlag();
+
+################################################################################
+
+sub loadDataSources {
+
+    my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
+
+    ApiCommonData::Load::TuningConfig::Log::addLog("loading $infile");
+
+    # my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
+    # $props->addProperty("dataDir", "/tmp");
+    my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile);
+    ApiCommonData::Load::TuningConfig::Log::addLog(Dumper("DataSourceInfos: " . $dataSourceInfos)) if $debug;
+
+    my $insertDs = $dbh->prepare(<<SQL);
+      insert into apidb.DataSourceInfo$suffix
+                  (data_source_id, name, display_name, categories,
+                   project_id, description, contact, institution)
+                  values (?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+
+    my $insertDsp = $dbh->prepare(<<SQL);
+      insert into apidb.DataSourceInfoPublication$suffix
+                  (data_source_publication_id, data_source_id, pmid, doi, citation, abstract)
+      select DataSourceInfoPub_sq$suffix.nextval, ?, ?, ?, ?, ?
+      from dual
+SQL
+
+    my $insertDsr = $dbh->prepare(<<SQL);
+      insert into apidb.DataSourceInfoReference$suffix
+                  (data_source_reference_id, data_source_id, record_type, target_type, target_name)
+      select DataSourceInfoRef_sq$suffix.nextval, ?, ?, ?, ?
+      from dual
+SQL
+
+    my %loadedDatasets = getLoadedDatasets($dbh);
+    foreach my $dsName ($dataSourceInfos->getDataSourceInfoNames()) {
+      chomp($dsName);
+      my $ds = $dataSourceInfos->getDataSourceInfo($dsName);
+      ApiCommonData::Load::TuningConfig::Log::addLog("data source: \"$dsName\"") if $debug;
+      my $id = $loadedDatasets{$dsName};
+      if (!$id) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . skipping because $dsName does not exist in apidb.DataSource") if $debug;
+	next;
+      }
+      my $dataSourceInfoId = getNextDataSourceInfoId($dbh, $suffix);
+      $insertDs->execute($dataSourceInfoId, $dsName, $ds->getDisplayName(),
+                       $ds->getCategory(),
+                       $project, # not $ds->getProject()
+                       $ds->getDescription(), $ds->getContact(),
+                       $ds->getInstitution())
+	or die "inserting a DataSourceInfo record";
+
+      foreach my $publicationList ($ds->getPublications()) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping publication:\n" . Dumper($publicationList)) if $debug;
+	foreach my $publication (@$publicationList) {
+          $insertDsp->execute($dataSourceInfoId, $publication->{pmid}, $publication->{doi}, $publication->{citation}, $publication->{abstract})
+	    or die "inserting a DataSetPublication record";
+	}
+      }
+
+      foreach my $referenceList ($ds->getWdkReferences()) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping referenceList:\n" . Dumper($referenceList) ) if $debug;
+	foreach my $reference (@$referenceList) {
+	    $insertDsr->execute($dataSourceInfoId, $reference->{recordClass}, $reference->{type}, $reference->{name})
+	      or die "inserting a DataSetReference record";
+	}
+      }
+
+    }
+}
+
+sub getLoadedDatasets {
+  my ($dbh) = @_;
+
+  my $query = $dbh->prepare(<<SQL);
+    select name, data_source_id from apidb.DataSource
+SQL
+
+  $query->execute()
+    or die "getting DataSource name/ID pairs";
+
+  my %datasetHash;
+  while (my ($dsName, $dsId) = $query->fetchrow_array()) {
+    $datasetHash{$dsName} = $dsId;
+  }
+
+  return %datasetHash;
+}
+
+sub getNextDataSourceInfoId {
+  my ($dbh, $suffix) = @_;
+
+  my $query = $dbh->prepare(<<SQL);
+    select apidb.DataSourceInfo_sq$suffix.nextval from dual
+SQL
+
+  $query->execute()
+    or die "getting a primary key for DataSourceInfo from its sequence";
+  my ($id) = $query->fetchrow_array();
+
+  return $id;
+}
+
+sub createTables {
+    my ($dbh, $suffix) = @_;
+
+    $dbh->do(<<SQL) or die "creating DataSourceInfo table";
+      create table apidb.DataSourceInfo$suffix (
+        data_source_id               number(12),
+        name                         varchar2(120),
+        external_database_release_id number(12),
+        display_name                 varchar2(200),
+        public_url                   varchar2(80),
+        categories                   varchar2(80),
+        project_id                   varchar2(30),
+        description                  varchar2(4000),
+        contact                      varchar2(80),
+        institution                  varchar2(120),
+        constraint DataSourceInf_pk$suffix primary key (data_source_id),
+        constraint DataSourceInf_extdb_fk$suffix foreign key (external_database_release_id) references sres.ExternalDatabaseRelease
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating DataSourcePublication table";
+      create table apidb.DataSourceInfoPublication$suffix (
+        data_source_publication_id   number(12),
+        data_source_id               number(12),
+        pmid                         varchar2(60),
+        doi                          varchar2(60),
+        citation                     varchar2(1000),
+        abstract                     varchar2(2000),
+        constraint DataSrcInfoPub_pk$suffix primary key (data_source_publication_id),
+        constraint DataSrcInfoPub_parent_fk$suffix foreign key (data_source_id) references apidb.DataSourceInfo$suffix
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating DataSourceReference table";
+      create table apidb.DataSourceInfoReference$suffix (
+        data_source_reference_id     number(12),
+        data_source_id               number(12),
+        record_type                  varchar2(50),
+        target_type                  varchar2(20),
+        target_name                  varchar2(60),
+        constraint DataSrcInfoRef_pk$suffix primary key (data_source_reference_id),
+        constraint DataSrcInfoRef_parent_fk$suffix foreign key (data_source_id) references apidb.DataSourceInfo$suffix
+      )
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSource table";
+      create sequence apidb.DataSourceInfo_sq$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSourcePublication table";
+      create sequence apidb.DataSourceInfoPub_sq$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSourceReference table";
+      create sequence apidb.DataSourceInfoRef_sq$suffix
+SQL
+
+}
+
+sub createIndexes {
+
+}
+
+sub dropConstraints {
+    my ($dbh, $suffix) = @_;
+
+    $dbh->do(<<SQL) or die "dropping foreign-key constraint from DataSourcePublication table";
+        alter table apidb.DataSourceInfoPublication$suffix drop constraint DataSrcInfoPub_parent_fk$suffix
+SQL
+
+    $dbh->do(<<SQL) or die "dropping foreign-key constraint from DataSourceReference table";
+        alter table apidb.DataSourceInfoReference$suffix drop constraint DataSrcInfoRef_parent_fk$suffix
+SQL
+}
+
