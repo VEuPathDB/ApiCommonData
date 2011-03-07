@@ -3254,9 +3254,10 @@ select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_n
        'RhizopusOryzae::RnaSeqHyphalTip' as module,
        'Rhizopus oryzae' as species,
        'RNA Seq' as display_name,
-       'DESCRIPTION' as description,
-       'X_AXIS' as x_axis,
-       'Y_AXIS' as y_axis,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>.' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
         10 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3268,9 +3269,17 @@ select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments
        'SaccharomycesCerevisiae::MicroArrTS' as module,
        'Saccharomyces cerevisiae' as species,
        'Microarray Time Series - Overlay' as display_name,
-       'DESCRIPTION' as description,
-       'X_AXIS' as x_axis,
-       'Y_AXIS' as y_axis,
+       'Microarray data for <i>S. cerevisiae</i> is from the cell cycle regulation microarray from <a href="http://www.ncbi.nlm.nih.gov/pubmed/9843569">Spellman et al</a>.
+<br /><br />
+Pheromone timecourse experiments were performed by synchronizing cells with alpha-factor to arrest them, then removing the alpha factor releasing the cells, and sampling every 7 minutes for the next 140 minutes.
+<br /><br />
+Cdc15 synchronization was performed by arresting cdc15 cells at 37C then releasing by moving to the 20C permissive temperature and sampling every 10 minutes for the next 300 minutes.
+<br /><br />
+Cln3 and Clb2 experiment compared wild-type and cln- or clb- strains. For Cln3 experiment, cln3 cell were arrested in late G1 due by temperature-shift inactivating Cdc43p. Clb2 experiment was performed by growing clb2 cells and arresting at M with nocodazole. These RNA were compared to the control wild-type cells arrested at G1 and M using the same approaches. Values represent the relative expression of the mutant to wild-type. cln3-1 is the 40 minute and cln3-2 is the 30 minute experiment. The clb2-1 and clb2-2 represent replicate experiments of the 40min timepoint.
+<br /><br />
+Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/rawdata/">here</a>.' as description,
+       'Time point (minutes) or Sample Name' as x_axis,
+       'The expression value is log2(sample/common reference)' as y_axis,
         11 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3282,9 +3291,17 @@ select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments
        'SaccharomycesCerevisiae::CombinedTS' as module,
        'Saccharomyces cerevisiae' as species,
        'Microarray Time Series - Single' as display_name,
-       'DESCRIPTION' as description,
-       'X_AXIS' as x_axis,
-       'Y_AXIS' as y_axis,
+       'Microarray data for <i>S. cerevisiae</i> is from the cell cycle regulation microarray from <a href="http://www.ncbi.nlm.nih.gov/pubmed/9843569">Spellman et al</a>.
+<br /><br />
+Pheromone timecourse experiments were performed by synchronizing cells with alpha-factor to arrest them, then removing the alpha factor releasing the cells, and sampling every 7 minutes for the next 140 minutes.
+<br /><br />
+Cdc15 synchronization was performed by arresting cdc15 cells at 37C then releasing by moving to the 20C permissive temperature and sampling every 10 minutes for the next 300 minutes.
+<br /><br />
+Cln3 and Clb2 experiment compared wild-type and cln- or clb- strains. For Cln3 experiment, cln3 cell were arrested in late G1 due by temperature-shift inactivating Cdc43p. Clb2 experiment was performed by growing clb2 cells and arresting at M with nocodazole. These RNA were compared to the control wild-type cells arrested at G1 and M using the same approaches. Values represent the relative expression of the mutant to wild-type. cln3-1 is the 40 minute and cln3-2 is the 30 minute experiment. The clb2-1 and clb2-2 represent replicate experiments of the 40min timepoint.
+<br /><br />
+Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/rawdata/">here</a>.' as description,
+       'Time point (minutes) or Sample Name' as x_axis,
+       'The expression value is log2(sample/common reference)' as y_axis,
         12 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
