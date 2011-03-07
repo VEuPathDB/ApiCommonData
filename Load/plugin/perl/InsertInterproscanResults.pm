@@ -353,6 +353,7 @@ sub buildGOAssociation {
       $self->className2TableId("DoTS::" . $self->getArg('aaSeqTable'));
   }
 
+
   my $goAssociation = {
 		       'tableId' => $self->{'aaTableId'},
 		       'rowId' => $aaId,
