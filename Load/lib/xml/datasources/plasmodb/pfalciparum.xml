@@ -1645,11 +1645,11 @@ Mass Spec of P.falciparum Trophozoites (Silvestrini & Lasonder)
     </info>
   </resource>
 
-  <resource resource="Pf_Jeffares_SNPs_RSRC" version="@@Pf_Jeffares_SNPs_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Jeffares/%RESOURCE_VERSION%/final/Pf_Jeffares_SNPs_RSRC.gff"/>
+  <resource resource="Pf_Jeffares_SNPs_RSRC" version="2011-03-01"
+      plugin="ApiCommonData::Load::Plugin::InsertGFF3">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/SNP/Jeffares/%RESOURCE_VERSION%/final/Pfalciparum_Jeffares_SNPs.gff3"/>
     <getAndUnpackOutput file="@@dataDir@@/Pf_Jeffares_SNPs_RSRC.gff"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <pluginArgs>--file @@dataDir@@/Pfalciparum_Jeffares_SNPs.gff3 --gff3DbName "%RESOURCE_NAME%" --gff3DbVe "%RESOURCE_VERSION%"  --gffFormat</pluginArgs>
     <info
         displayName="SNPs from Sanger (Jeffares et al.)"
         project="PlasmoDB"
