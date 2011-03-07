@@ -14,7 +14,7 @@ sub new {
     my ($class, $name, $internalDependencyNames, $externalDependencyNames,
         $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
         $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
-        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password)
+        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password, $subversionDir)
 	= @_;
 
     my $self = {};
@@ -41,6 +41,7 @@ sub new {
     $self->{instance} = $instance;
     $self->{propfile} = $propfile;
     $self->{password} = $password;
+    $self->{subversionDir} = $subversionDir;
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -298,7 +299,9 @@ sub update {
                       . " -project '" . $registry->getProjectId() . "'"
                       . " -version '" . $registry->getVersion() . "'"
                       . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
+                      . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'";
+
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
 
