@@ -438,6 +438,10 @@ return varchar2
 is
 begin
    case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
+         when 'theileria'
+           then return 'PiroplasmaDB';
+         when 'babesia'
+           then return 'PiroplasmaDB';
          when 'cryptosporidium'
            then return 'CryptoDB';
          when 'plasmodium'
