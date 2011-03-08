@@ -442,4 +442,39 @@
              </description>
           </info>
       </resource>
+  <!-- dbEST -->
+  <resource resource="candida_albicans_sc5314_dbest_RSRC" version="@@candida_albicans_sc5314_DBEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@candida_albicans_sc5314_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
+    <info
+        displayName="Candida albicans SC5314 dbEST ESTs"
+        project="FungiDB"
+        organisms="@@candida_albicans_sc5314_FUNGIDB_DISPLAY_NAME@@"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Candida albicans (SC5314) ESTs from dbEST.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+
 </resources>

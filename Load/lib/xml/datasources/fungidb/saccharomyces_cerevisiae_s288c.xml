@@ -141,6 +141,7 @@
            ALIASES
        ////////////////////// -->
 
+  <!-- FungiDB IDs to non-prefixed IDs: needs to be updated to new plugin -->
   <resource resource="saccharomyces_cerevisiae_s288c_primary_gene_aliases_RSRC" 
             version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
             plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
@@ -163,6 +164,28 @@
       </description>
     </info>
   </resource>
+
+  <!-- GeneIDs to standard (locus) names and aliases -->
+  <resource resource="saccharomyces_cerevisiae_s288c_genes2loci_dbxref_RSRC" version="@@saccharomyces_cerevisiae_s288c_genome_sequence_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tbruceibrucei927_genome_RSRC/%RESOURCE_VERSION%/Tbrucei927_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tbrucei927_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="Tbrucei927 previds mappings"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 
 
@@ -223,7 +246,7 @@
              DBXREFS
        ////////////////////// -->
 
-      <!-- EC numbers -->
+      <!-- EC numbers DONE -->
       <resource
           resource="saccharomyces_cerevisiae_s288c_ec_dbxrefs_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
@@ -326,7 +349,7 @@
      </resource>
 
 
-      <!-- Candida XREFs -->
+      <!-- Candida XREFs READY -->
       <resource
           resource="saccharomyces_cerevisiae_s288c_candida_dbxrefs_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
@@ -339,7 +362,7 @@
              fungidb_unpack_sgd_ids.pl
                  --input @@dataDir@@/dbxref.tab
                  --output @@dataDir@@/candida_ids.tab
-                 --db "Candida DB"
+                 --db   "CGD"
                  --type "Gene ID"
          </unpack>
 
@@ -537,7 +560,7 @@
          </info>
      </resource>
 
-      <!-- MetaCyc XREFs -->
+      <!-- MetaCyc XREFs TODO: need to find correct IDs in dbxrefs-->
       <resource
           resource="saccharomyces_cerevisiae_s288c_metacyc_dbxrefs_RSRC" 
           version="@@saccharomyces_cerevisiae_s288c_VER@@"
