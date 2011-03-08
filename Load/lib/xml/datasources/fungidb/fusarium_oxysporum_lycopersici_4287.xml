@@ -12,7 +12,6 @@
                    fileOrDir="FungiDB/fusarium_oxysporum_lycopersici_4287/genome/%RESOURCE_VERSION%/fusarium_oxysporum_lycopersici_4287_supercontigs.uniquified.fasta"/>
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet 
               fileOrDir="FungiDB/fusarium_oxysporum_lycopersici_4287/genome/%RESOURCE_VERSION%/fusarium_oxysporum_lycopersici_4287_supercontigs.fasta"/>
             <unpack>
@@ -21,7 +20,6 @@
                       --output @@dataDir@@/fusarium_oxysporum_lycopersici_4287_supercontigs_uniquified.fasta
                       --prefix @@fusarium_oxysporum_lycopersici_4287_FUNGIDB_ABBREVIATION@@
             </unpack>
-            -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -63,7 +61,6 @@
         <manualGet fileOrDir="FungiDB/fusarium_oxysporum_lycopersici_4287/genome/%RESOURCE_VERSION%/fusarium_oxysporum_lycopersici_4287_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
-        <!--
         <manualGet fileOrDir="FungiDB/fusarium_oxysporum_lycopersici_4287/genome/%RESOURCE_VERSION%/fusarium_oxysporum_lycopersici_4287_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
@@ -77,7 +74,6 @@
                    --input_gff  @@dataDir@@/fusarium_oxysporum_lycopersici_4287_transcripts.uniquified.gff3
                    --output_gff @@dataDir@@/fusarium_oxysporum_lycopersici_4287_transcripts.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

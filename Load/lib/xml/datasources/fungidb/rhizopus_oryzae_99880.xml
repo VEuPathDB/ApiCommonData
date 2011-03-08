@@ -11,7 +11,7 @@
             <manualGet 
                    fileOrDir="FungiDB/rhizopus_oryzae_99880/genome/%RESOURCE_VERSION%/rhizopus_oryzae_99880_supercontigs.uniquified.fasta"/>
             <!-- or within the workflow iteself... -->
-            <!--
+
             <manualGet 
               fileOrDir="FungiDB/rhizopus_oryzae_99880/genome/%RESOURCE_VERSION%/rhizopus_oryzae_99880_supercontigs.fasta"/>
             <unpack>
@@ -20,7 +20,7 @@
                       --output @@dataDir@@/rhizopus_oryzae_99880_supercontigs_uniquified.fasta
                       --prefix @@rhizopus_oryzae_99880_FUNGIDB_ABBREVIATION@@
             </unpack>
-            -->
+
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -62,7 +62,6 @@
         <manualGet fileOrDir="FungiDB/rhizopus_oryzae_99880/genome/%RESOURCE_VERSION%/rhizopus_oryzae_99880_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
-        <!--
         <manualGet fileOrDir="FungiDB/rhizopus_oryzae_99880/genome/%RESOURCE_VERSION%/rhizopus_oryzae_99880_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
@@ -76,7 +75,6 @@
                    --input_gff  @@dataDir@@/rhizopus_oryzae_99880_transcripts.uniquified.gff3
                    --output_gff @@dataDir@@/rhizopus_oryzae_99880_transcripts.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

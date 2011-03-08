@@ -17,8 +17,8 @@
 
         <!-- Or handle processing in the workflow itself -->
         <!-- Manual delivery: see git:script/mirror_sgd_data.sh -->
-             <!--
-             <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
+
+              <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3"/>
      
              <unpack>
                       fungidb_uniquify_and_standardize_seqids.pl
@@ -35,7 +35,7 @@
                           --output_fasta @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.fasta
                           --output_gff   @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
              </unpack>
-         -->
+
 
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
@@ -77,7 +77,7 @@
          <!-- Manual delivery: see git:script/mirror_sgd_data.sh, which also handles a bunch of preprocessing -->
          <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.transformed.gff3"/>
 
-         <!-- Or processing as part of workflow...
+         <!-- Or processing as part of workflow... -->
                   <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/genome/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c.gff3" />
 
                   <unpack>
@@ -101,7 +101,7 @@
                            --input_gff  @@dataDir@@/saccharomyces_cerevisiae_s288c.unpacked.gff3
                            --output_gff @@dataDir@@/saccharomyces_cerevisiae_s288c.transformed.gff3
                   </unpack>
-         -->
+
 
          <pluginArgs>
                 --extDbName          %PARENT_RESOURCE_NAME%
@@ -168,12 +168,12 @@
   <!-- GeneIDs to standard (locus) names and aliases -->
   <resource resource="saccharomyces_cerevisiae_s288c_genes2loci_dbxref_RSRC" version="@@saccharomyces_cerevisiae_s288c_genome_sequence_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-    <manualGet fileOrDir="TriTrypDB/tbrucei/dbxref/Tbruceibrucei927_genome_RSRC/%RESOURCE_VERSION%/Tbrucei927_previds.txt"/>
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/Tbrucei927_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --idType 'previous id'</pluginArgs>
+    <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/dbxref/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c_gene2locus.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/saccharomyces_cerevisiae_s288c_gene2locus.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'saccharomyces_cerevisiae_s288c_genome_sequence_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@' --idType 'previous id'</pluginArgs>
     <info
-        displayName="Tbrucei927 previds mappings"
-        project="TriTrypDB"
-        organisms="@@Tbrucei927OrganismFullName@@"
+        displayName="Saccharomyces cerevisiae (S288C) Gene ID to Locus mapping"
+        project="FungiDB"
+        organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@""
         category="ignore"
         publicUrl=""
         contact=""

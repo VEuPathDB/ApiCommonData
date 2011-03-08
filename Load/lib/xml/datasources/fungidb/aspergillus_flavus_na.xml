@@ -13,7 +13,6 @@
               fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_supercontigs.uniquified.fasta"/>
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet 
               fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_supercontigs.fasta"/>
              <unpack>
@@ -22,7 +21,6 @@
                       --output @@dataDir@@/aspergillus_flavus_na_supercontigs_uniquified.fasta
                       --prefix @@aspergillus_flavus_na_FUNGIDB_ABBREVIATION@@
              </unpack>
-             -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -63,7 +61,6 @@
          <manualGet fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_transcripts.transformed.gff3" />
 
          <!-- or within the workflow iteself... -->
-         <!--
 
          <manualGet fileOrDir="FungiDB/aspergillus_flavus_na/genome/%RESOURCE_VERSION%/aspergillus_flavus_na_transcripts.gff3" />
          <unpack>
@@ -78,7 +75,6 @@
                    --input_gff  @@dataDir@@/aspergillus_flavus_na_transcripts.uniquified.gff3
                    --output_gff @@dataDir@@/aspergillus_flavus_na_transcripts.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

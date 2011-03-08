@@ -17,7 +17,6 @@
 
                <!-- Or be a glutton for punishment -->
                     <!-- CUSTOMIZE: location/fetching/processing -->
-                    <!--
                     <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h_supercontigs.fasta"/>
 
                     <wgetArgs url="">
@@ -30,10 +29,10 @@
 
                     <unpack>mv @@dataDir@@/schizosaccharomyces_pombi_972h.gff.gz @@dataDir@@/schizosaccharomyces_pombi_972h.gff3.gz</unpack>
                     <unpack>gunzip @@dataDir/schizosaccharomyces_pombi_972h.gff3</unpack>
-                    -->
+
 
                     <!-- Standardize scaffold IDs by prefixing -->
-                    <!--
+
                     <unpack>
                           fungidb_uniquify_and_standardize_seqids.pl
                             --input  @@dataDir@@/schizosaccharomyces_pombi_972h.gff3
@@ -44,7 +43,7 @@
 
                     <!-- CUSTOMIZE: FASTA processing if necessary -->
                     <!-- Split FASTA from GFF -->
-                    <!--
+                    <!--                     --> 
                     <unpack>
                          makeCustomFastaAndGffFromGff3
                             --input_dir @@dataDir@@/schizosaccharomyces_pombi_972h.uniquified.gff3
@@ -52,7 +51,7 @@
                             --output_fasta @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.fasta
                             --output_gff   @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.gff3
                     </unpack>
-                    --> 
+
 
               <!-- CUSTOMIZE: regexChromosome based on structure of IDs, SOTermName -->
               <pluginArgs>
@@ -99,14 +98,13 @@
 
                   <!-- Transcript IDs should already be unique. Created above. -->
                   <!-- Run the standard ISF preprocess step -->
-                  <!--
+                  <!-- -->
                      <manualGet fileOrDir="FungiDB/schizosaccharomyces_pombi_972h/genome/%RESOURCE_VERSION%/schizosaccharomyces_pombi_972h.unpacked.gff3" />
                      <unpack>
                          preprocessGFF3 
                             --input_gff  @@dataDir@@/schizosaccharomyces_pombi_972h.unpacked.gff3
                             --output_gff @@dataDir@@/schizosaccharomyces_pombi_972h.transformed.gff3
                      </unpack>
-                   -->
 
          <!-- CUSTOMIZE: path to map file; seqSoTerm -->
          <pluginArgs>

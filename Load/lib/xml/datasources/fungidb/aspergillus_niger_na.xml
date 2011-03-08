@@ -12,7 +12,6 @@
               fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_supercontigs.uniquified.fasta"/>            
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet 
               fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_supercontigs.fasta"/>
              <unpack>
@@ -21,7 +20,6 @@
                       --output @@dataDir@@/aspergillus_niger_na_supercontigs_uniquified.fasta
                       --prefix @@aspergillus_niger_na_FUNGIDB_ABBREVIATION@@
              </unpack>
--->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -62,7 +60,6 @@
          <manualGet fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
-        <!--
          <manualGet fileOrDir="FungiDB/aspergillus_niger_na/genome/%RESOURCE_VERSION%/aspergillus_niger_na_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
@@ -76,7 +73,6 @@
                    --input_gff  @@dataDir@@/aspergillus_niger_na.uniquified.gff3
                    --output_gff @@dataDir@@/aspergillus_niger_na.transformed.gff3
          </unpack>
--->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

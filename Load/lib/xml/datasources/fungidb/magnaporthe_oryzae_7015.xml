@@ -12,7 +12,6 @@
                    fileOrDir="FungiDB/magnaporthe_oryzae_7015/genome/%RESOURCE_VERSION%/magnaporthe_oryzae_7015_supercontigs.uniquified.fasta"/>
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet 
               fileOrDir="FungiDB/magnaporthe_oryzae_7015/genome/%RESOURCE_VERSION%/magnaporthe_oryzae_7015_supercontigs.fasta"/>
             <unpack>
@@ -21,7 +20,6 @@
                       --output @@dataDir@@/magnaporthe_oryzae_7015_supercontigs_uniquified.fasta
                       --prefix @@magnaporthe_oryzae_7015_FUNGIDB_ABBREVIATION@@
             </unpack>
-            -->
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -64,7 +62,6 @@
         <manualGet fileOrDir="FungiDB/magnaporthe_oryzae_7015/genome/%RESOURCE_VERSION%/magnaporthe_oryzae_7015_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
-        <!--
         <manualGet fileOrDir="FungiDB/magnaporthe_oryzae_7015/genome/%RESOURCE_VERSION%/magnaporthe_oryzae_7015_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
@@ -78,7 +75,7 @@
                    --input_gff  @@dataDir@@/magnaporthe_oryzae_7015_transcripts.uniquified.gff3
                    --output_gff @@dataDir@@/magnaporthe_oryzae_7015_transcripts.transformed.gff3
          </unpack>
-         -->
+
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

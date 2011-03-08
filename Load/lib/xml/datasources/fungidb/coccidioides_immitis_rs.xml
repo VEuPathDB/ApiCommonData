@@ -11,7 +11,6 @@
             <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_supercontigs.uniquified.fasta" />
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_supercontigs.fasta" />
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
@@ -19,7 +18,7 @@
                    --output @@dataDir@@/coccidioides_immitis_rs_supercontigs.uniquified.fasta
                    --prefix @@coccidioides_immitis_rs_FUNGIDB_ABBREVIATION@@
              </unpack>
-             -->
+
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -59,7 +58,6 @@
          <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_transcripts.transformed.gff3"/> 
 
          <!-- or within the workflow iteself... -->
-         <!--
           <manualGet fileOrDir="FungiDB/coccidioides_immitis_rs/genome/%RESOURCE_VERSION%/coccidioides_immitis_rs_transcripts.gff3"/> 
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
@@ -73,7 +71,6 @@
                 --input_gff @@dataDir@@/coccidioides_immitis_rs_transcripts.uniquified.gff3
                 --output_gff @@dataDir@@/coccidioides_immitis_rs.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

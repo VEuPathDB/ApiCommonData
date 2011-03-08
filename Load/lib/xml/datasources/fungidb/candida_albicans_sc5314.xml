@@ -15,7 +15,6 @@
 
          <!-- Or processing as part of workflow...
          <!-- WARNING! Versioned URL. Will need to be updated manually. -->
-         <!-- 
                 <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
                 <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
                 <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
@@ -36,7 +35,6 @@
                         --output_fasta @@dataDir@@/candida_albicans_sc5314.unpacked.fasta
                         --output_gff   @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
                </unpack>
-               -->
 
         <!-- Sequence IDs: Ca21chr1_C_albicans_SC5314" -->
         <pluginArgs>
@@ -78,8 +76,8 @@
          <!-- Fetching / preprocessing occurs upstream of the workflow. I think that's cleaner. -->
         <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/candida_albicans_sc5314.transformed.gff3" />
 
-        <!-- WARNING! Versioned URL. Will need to be updated manually. -->
-        <!-- Or processing as part of workflow...
+         <!-- WARNING! Versioned URL. Will need to be updated manually. -->
+        <!-- Or processing as part of workflow... -->
              <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
              <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
              <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
@@ -106,7 +104,7 @@
                         --input_gff  @@dataDir@@/candida_albicans_sc5314.unpacked.gff3
                         --output_gff @@dataDir@@/candida_albicans_sc5314.transformed.gff3
               </unpack>
-             -->
+
 
          <pluginArgs>
                 --extDbName      %PARENT_RESOURCE_NAME%
@@ -153,7 +151,7 @@
           <!-- Processing occurs upstream of the workflow now -->
           <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/primary_gene_aliases.tab"/> 
 
-         <!-- Or as part of the workflow ...
+         <!-- Or as part of the workflow ... -->
          <manualGet fileOrDir="FungiDB/candida_albicans_sc5314/genome/%RESOURCE_VERSION%/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz" />
          <unpack>mv @@dataDir@@/C_albicans_SC5314_A21_features_with_chromosome_sequences.gff.gz @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
          <unpack>gunzip @@dataDir@@/candida_albicans_sc5314.gff3.gz</unpack>
@@ -166,7 +164,6 @@
                    --ignore_contigs
                    --mapping_file @@dataDir@@/primary_gene_aliases.tab
         </unpack>
-        -->
 
     <pluginArgs>--MappingFile @@dataDir@@/primary_gene_aliases.tab</pluginArgs>
     <info

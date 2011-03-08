@@ -12,7 +12,6 @@
                    fileOrDir="FungiDB/fusarium_verticillioides_na/genome/%RESOURCE_VERSION%/fusarium_verticillioides_na_supercontigs.uniquified.fasta"/>
 
             <!-- or within the workflow iteself... -->
-            <!--
             <manualGet 
               fileOrDir="FungiDB/fusarium_verticillioides_na/genome/%RESOURCE_VERSION%/fusarium_verticillioides_na_supercontigs.fasta"/>
             <unpack>
@@ -21,7 +20,7 @@
                       --output @@dataDir@@/fusarium_verticillioides_na_supercontigs_uniquified.fasta
                       --prefix @@fusarium_verticillioides_na_FUNGIDB_ABBREVIATION@@
             </unpack>
-            -->
+
 
             <pluginArgs>
                    --externalDatabaseName %RESOURCE_NAME%
@@ -63,7 +62,6 @@
         <manualGet fileOrDir="FungiDB/fusarium_verticillioides_na/genome/%RESOURCE_VERSION%/fusarium_verticillioides_na_transcripts.transformed.gff3" />
 
         <!-- or within the workflow iteself... -->
-        <!--
         <manualGet fileOrDir="FungiDB/fusarium_verticillioides_na/genome/%RESOURCE_VERSION%/fusarium_verticillioides_na_transcripts.gff3" />
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
@@ -77,7 +75,6 @@
                    --input_gff  @@dataDir@@/fusarium_verticillioides_na_transcripts.uniquified.gff3
                    --output_gff @@dataDir@@/fusarium_verticillioides_na_transcripts.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName %PARENT_RESOURCE_NAME%

@@ -12,7 +12,6 @@
              <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.uniquified.fasta"/>
 
              <!-- or within the workflow iteself... -->
-             <!--
              <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_supercontigs.fasta"/>
              <unpack>
                    fungidb_uniquify_and_standardize_seqids.pl
@@ -20,7 +19,6 @@
                    --output @@dataDir@@/neurospora_crassa_or74a_supercontigs.uniquified.fasta
                    --prefix @@neurospora_crassa_or74a_FUNGIDB_ABBREVIATION@@
              </unpack>
-             -->
 
              <pluginArgs>
                      --externalDatabaseName %RESOURCE_NAME%
@@ -61,7 +59,6 @@
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.transformed.gff3"/> 
 
           <!-- or within the workflow iteself... -->
-          <!--
           <manualGet fileOrDir="FungiDB/neurospora_crassa_or74a/genome/%RESOURCE_VERSION%/neurospora_crassa_or74a_transcripts.gff3"/> 
           <unpack>
                 fungidb_uniquify_and_standardize_seqids.pl
@@ -76,7 +73,6 @@
                  --input_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.uniquified.gff3
                  --output_gff @@dataDir@@/neurospora_crassa_or74a_transcripts.transformed.gff3
           </unpack>
--->
 
           <pluginArgs>
                  --extDbName %PARENT_RESOURCE_NAME%

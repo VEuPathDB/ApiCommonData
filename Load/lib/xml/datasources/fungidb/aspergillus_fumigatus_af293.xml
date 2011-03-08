@@ -12,7 +12,6 @@
               fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_supercontigs.uniquified.gff3"/>
 
         <!-- or within the workflow iteself... -->
-        <!--  
         <unpack>
                fungidb_uniquify_and_standardize_seqids.pl
                    --input  @@dataDir@@/aspergillus_fumigatus_af293.gff3
@@ -27,7 +26,6 @@
                   --output_fasta @@dataDir@@/aspergillus_fumigatus_af293.unpacked.fasta
                   --output_gff   @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
         </unpack>
-        end unpack -->
 
         <pluginArgs>
              --externalDatabaseName %RESOURCE_NAME%
@@ -70,7 +68,7 @@
               fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293_transcripts.transformed.gff3"/>
 
         <!-- or within the workflow iteself... -->
-        <!--
+
         <manualGet 
               fileOrDir="FungiDB/aspergillus_fumigatus_af293/genome/%RESOURCE_VERSION%/aspergillus_fumigatus_af293.gff3"/>
         <unpack>
@@ -93,7 +91,6 @@
                    --input_gff  @@dataDir@@/aspergillus_fumigatus_af293.unpacked.gff3
                    --output_gff @@dataDir@@/aspergillus_fumigatus_af293.transformed.gff3
          </unpack>
-         -->
 
          <pluginArgs>
                 --extDbName      %PARENT_RESOURCE_NAME%
