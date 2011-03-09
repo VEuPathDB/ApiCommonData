@@ -44,23 +44,28 @@
       internalDescrip="">
 
     <prop name="name">Version4</prop>
-    <prop name="soTerm">chromosome</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/genome.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/annotation.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
 
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: ME49ChromosomeMap   OldVersion: 2008-08-28 -->
-  <resource resource="ME49ChromosomeMap" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp"
+             version="@@$$orgAbbrev$$_genome_chromosome_assembly_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ChromosomeMap/agp/me49.agp"/>
-    <pluginArgs>--agpFile @downloadDir@/ME49ChromosomeMap/me49.agp --seqPieceExtDbName "T.gondii ME49 contigs from Genbank" --seqPieceExtDbRlsVer "2008-07-23" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "508771" --soVer @soVer@ --sourceIdPrefix 'TGME49_chr'</pluginArgs>
+      internalDescrip=""
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC">
+ 
+    <prop name="virtualSeqSOTerm">chromosome</prop>
+    <prop name="sourceIdPrefix">TGME49_chr</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome_assembly_agp/%RESOURCE_VERSION%/final/assembly.agp"/>
+
+    <pluginArgs>--agpFile @@dataDir@@/assembly.agp --seqPieceExtDbName %PARENT_RESOURCE_NAME% --seqPieceExtDbRlsVer %PARENT_RESOURCE_VERSION% --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm $$virtualSeqSOTerm$$  --ncbiTaxId $$ncbiTaxonId$$ --soVer @@SO_VER@@ --sourceIdPrefix $$sourceIdPrefix$$</pluginArgs>
     <info
         displayName="T. gondii ME49 Chromosome Map"
         project=""
@@ -79,29 +84,163 @@ Mapping of gene coordinates from scaffolds to chromosomes for <i>T. gondii</i> t
   </resource>
 
 
-  <!-- NOT PORTED -->
-  <!-- OldName: GT1ChromosomeMap   OldVersion: 2008-08-28 -->
-  <resource resource="GT1ChromosomeMap" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+  <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
+  <resource resource="$$orgAbbrev$$_genome_GLEAN_GFF2_RSRC"
+            version="2003-08-13"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
       internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/ChromosomeMap/agp/gt1.agp"/>
-    <pluginArgs>--agpFile @downloadDir@/GT1ChromosomeMap/gt1.agp --seqPieceExtDbName "T.gondii GT1 contigs from Genbank" --seqPieceExtDbRlsVer "2008-07-23" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "507601" --soVer @soVer@ --sourceIdPrefix 'TGGT1_chr'</pluginArgs>
+
+    <prop name="name">GLEAN</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
     <info
-        displayName="T. gondii GT1 Chromosome Map"
+        displayName="T. gondii ME49 Gene Predictions from GLEAN"
         project=""
         organism=""
         category="Genome"
         publicUrl=""
-        contact=""
-        email=""
-        institution="">
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
       <description>
         <![CDATA[
-Chromosome map generated by David Sibley for <i>T. gondii</i> ME49 strain was used as a template to creat <i>T. gondii</i> GT1 chromosomes.  Chromosomes we assembled by the EuPathDB team using <a href="http://www.biostat.wisc.edu/~cdewey/mercator/" TARGET="_blank">Mercator</a> and <a href="http://genome.cshlp.org/content/14/4/693.abstract" TARGET="_blank">MAVID</a>.
+GLEAN is an automated  gene predictor that integrates different evidence of gene structure to produce a consensus gene. For more informtaion click <a href="http://www.ncbi.nlm.nih.gov/pubmed/17241472">here</a> or to download GLEAN click <a href="http://sourceforge.net/projects/glean-gene/">here</a>. Gene predictions for <i>T. gondii</i> produced by GLEAN, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
         ]]>
       </description>
     </info>
   </resource>
+
+
+  <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
+  <resource resource="$$orgAbbrev$$_genome_GlimmerHMM_GFF2_RSRC"
+            version="2003-08-13"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      internalDescrip="">
+
+    <prop name="name">GlimmerHMM</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+    <info
+        displayName="T. gondii ME49 Gene Predictions from GlimmerHMM"
+        project=""
+        organism=""
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+<a target='new' href="http://cbcb.umd.edu/software/pirate/">GlimmerHMM</a> was  trained against 330+ <a href="#Draft-3-Annotation">manually curated  genes</a>. Gene predictions for <i>T. gondii</i> produced by GlimmerHMM, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
+  <resource resource="$$orgAbbrev$$_genome_TigrScan_GFF2_RSRC"
+            version="2003-08-13"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      internalDescrip="">
+
+    <prop name="name">TigrScan</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+    <info
+        displayName="T. gondii ME49 Gene Predictions from TigrScan"
+        project=""
+        organism=""
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+<a target='new' href="http://cbcb.umd.edu/software/pirate/">TigrScan</a>  was trained for <i>T. gondii</i> by TIGR; the parameters are  available <a target='new'  href="http://cbcb.umd.edu/software/pirate/tigrscan-toxoplasma.tar.gz">here</a>. Gene predictions for <i>T. gondii</i> produced by TigrScan, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+  <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
+  <resource resource="$$orgAbbrev$$_genome_TwinScan_GFF2_RSRC"
+            version="2003-08-13"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      internalDescrip="">
+
+    <prop name="name">TwinScan</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+
+    <info
+        displayName="T. gondii ME49 Gene Predictions from TwinScan"
+        project=""
+        organism=""
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+<a target='new' href="http://genes.cs.wustl.edu">TwinScan</a> (version  2) was trained against 330+ <a href="#Draft-3-Annotation">manually  curated genes</a>.  No informant sequence was used. Gene predictions for <i>T. gondii</i> produced by TwinScan, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- OldName: ME49_TwinScanEt   OldVersion: 2003-08-13 -->
+  <resource resource="$$orgAbbrev$$_genome_TwinScanEt_GFF2_RSRC"
+            version="2003-08-13"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      internalDescrip="">
+
+    <prop name="name">TwinScanEt</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+
+    <info
+        displayName="T. gondii ME49 Gene Predictions from TwinScanEt"
+        project=""
+        organism=""
+        category="ignore"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+Gene predictions for <i>T. gondii</i> produced by TwinScanET, provided by Aaron Mackey, David Roos  (University of Pennsylvania). Contact: <tt>help&#64;toxodb&#46;org</tt>
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 
 
   <!-- NOT PORTED -->
@@ -170,45 +309,16 @@ Gaps within chromosomes represented as features.
   </resource>
 
 
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Lindstrom454Sequences   OldVersion: 2009-10-02 -->
-  <resource resource="Lindstrom454Sequences" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Toxoplasma 454 sequences from Lindstrom|2009-05-04">
-    <manualGet fileOrDir="Lindstrom_454_seq_snps/454LargeContigs.fna"/>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Toxoplasma gondii TgCkUg2" --sequenceFile @downloadDir@/Lindstrom454Sequences/454LargeContigs.fna --soTermName "contig" --regexSourceId "^>(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. gondii TgCkUg2 sequence"
-        project=""
-        organism="Toxoplasma"
-        category="Genome"
-        publicUrl=""
-        contact="Irene Lindstrom"
-        email="e.i.lindstrom@leeds.ac.uk"
-        institution="University of Leeds">
-      <description>
-        <![CDATA[
-Whole genome sequence of the natural recombinant Toxoplasma gondii strain TgCkUg2 was provided by Irene Lindstrom Bontell and Judith E Smith, Institute of Integrative and Comparative Biology, Clarendon Way, University of Leeds, Leeds, LS2 9JT, UK. TgCkUg2 is a Ugandan recombinant strain, a mix between T. gondii types II and III.
-        ]]>
-      </description>
-      <publication pmid="19457243"/>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
+  <!-- need to change getAndAnalyzeSnps to use SNPs.gff -->
   <!-- OldName: GeneticMarkers_Sibley   OldVersion: 1 -->
-  <resource resource="GeneticMarkers_Sibley" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_SNP_Sibley_Tg10x_31_gff" version="2008-10-08"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Gene Markers for T. gondii from David Sibley">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/SNP/Tg10x_31-SibleySNPs.scaff.gff"/>
-    <unpack>mkdir @downloadDir@/GeneticMarkers_Sibley_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/GeneticMarkers_Sibley/Tg10x_31-SibleySNPs.scaff.gff> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff</unpack>
-    <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.newID.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
-    <unpack>formatGFF --inFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.flanking.gff --outFile @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff --regex SNP</unpack>
-    <unpack>egrep 'Sibley' @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.formatted.gff | perl -e 'while(<>) { chomp; my @line = split("\t", $_); $line[8] =~ s/SNP/ID/; my $line = join("\t",@line); print "$line\n";}'> @downloadDir@/GeneticMarkers_Sibley_fixed/Tg10x_31-SibleySNPs.fixed.gff</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">Sibley_Tg10x_31</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Genetic Markers for T. gondii"
         project=""
@@ -228,18 +338,16 @@ Genetic Markers for T. gondii provided by  L. David Sibley (Washington Universit
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: ME49_SNPs   OldVersion: 2004-08 -->
-  <resource resource="ME49_SNPs" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_SNP_Stanford_Tg10x_31_gff" version="2006-09-27"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Aug 2004 ESTs">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/SNP/Tg10x_31-StanfordSNPs.scaff.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_SNPs_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_); $old =~ s/TGG_//g; $ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_SNPs/Tg10x_31-StanfordSNPs.scaff.gff> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff</unpack>
-    <unpack>ga ApiCommonData::Load::Plugin::GetFlankingSequence --naExtDbRlsSpec "T.gondii ME49 contigs from Genbank|2008-07-23" --seqTable DoTS::ExternalNASequence --organism "T. gondii" --snpFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.newID.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff --reference "ME49" --groupTag "SNP" --sourceIdTag "SNP"</unpack>
-    <unpack>egrep 'AffyName' @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.flanking.gff | perl -e 'while(<>) { chomp; $_ =~ s/AffyName/ID/; print "$_\n";}'> @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff</unpack>
-    <unpack>formatGFF --inFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.fixed.gff --outFile @downloadDir@/ME49_SNPs_fixed/Tg10x_31-StanfordSNPs.final.gff --regex ID</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">Stanford_Tg10x_31</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="T. gondii ME49 SNPs"
         project=""
@@ -259,13 +367,17 @@ EST-based SNP data for T. gondii (ME49) provided by Jon Boyle and John Boothroyd
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AmitAlignmentSnps   OldVersion: 2006-10-16 -->
-  <resource resource="AmitAlignmentSnps" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_SNP_Amit_nucmer_gff" version="2006-10-16"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="SNPs generated by Amit Bahl by alignment with nucmer of GT1, VEG and RH resequencing to reference">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/GenomeAligns/nucmerSnps.gff"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">Amit_nucmer</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+
     <info
         displayName="SNPs from alignments of GT1, VEG and RH"
         project=""
@@ -284,14 +396,17 @@ SNPs generated by alignment with nucmer of GT1, VEG and RH resequencing to refer
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: Lindstrom454Snps   OldVersion: 2009-11-06 -->
-  <resource resource="Lindstrom454Snps" version="@@_VER@@"
+
+  <resource resource="$$orgAbbrev$$_SNP_Lindstrom_454_gff" version="2008-07-18"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Lindstrom 454 SNPs|2009-11-06">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Lindstrom_454_seq_snps/snps"/>
-    <unpack>createSNPGff --input_dir @downloadDir@/Lindstrom454Snps/snps/ --output_gff @downloadDir@/LindstromSnps/Lindstrom454Snps.gff  --seq_file /files/cbil/data/cbil/apiSiteFiles/downloadSite/ToxoDB/release-4.3/TgondiiME49/TgondiiGenomic_toxoDB-4.3.fasta</unpack>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">Lindstrom_454</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="T. gondii TgCkUg2 SNPs"
         project=""
@@ -958,146 +1073,6 @@ Lineage and developmental gene expression: type I GT1, type II Me49, and type II
       <description>
         <![CDATA[
 <br>This data was graciously provided to ToxoDB pre-publication by Matt Zack Anderson and John C. Boothroyd.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
-  <resource resource="ME49_GLEAN" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="The GLEAN gene predictions for the ME49 strain.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/genePrediction/Tg10x_31-GLEAN.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_GLEAN_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_GLEAN/Tg10x_31-GLEAN.gff> @downloadDir@/ME49_GLEAN_fixed/Tg10x_31-GLEANNewID.gff</unpack>
-    <unpack>cat @downloadDir@/ME49_GLEAN_fixed/Tg10x_31-GLEANNewID.gff | perl -pe 's/CDS/exon/; s/mRNA/transcript/;' > @downloadDir@/ME49_GLEAN_fixed/Tg10x_31-GLEAN.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_GLEAN_fixed/Tg10x_31-GLEAN.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
-    <info
-        displayName="T. gondii ME49 Gene Predictions from GLEAN"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-GLEAN is an automated  gene predictor that integrates different evidence of gene structure to produce a consensus gene. For more informtaion click <a href="http://www.ncbi.nlm.nih.gov/pubmed/17241472">here</a> or to download GLEAN click <a href="http://sourceforge.net/projects/glean-gene/">here</a>. Gene predictions for <i>T. gondii</i> produced by GLEAN, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
-  <resource resource="ME49_GlimmerHMM" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="The GlimmerHMM gene predictions for the ME49 strain.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/genePrediction/Tg10x_31-GlimmerHMM.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_GlimmerHMM_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_GlimmerHMM/Tg10x_31-GlimmerHMM.gff> @downloadDir@/ME49_GlimmerHMM_fixed/Tg10x_31-GlimmerHMMNewID.gff</unpack>
-    <unpack>cat @downloadDir@/ME49_GlimmerHMM_fixed/Tg10x_31-GlimmerHMMNewID.gff | perl -pe 's/CDS/exon/; s/mRNA/transcript/;' > @downloadDir@/ME49_GlimmerHMM_fixed/Tg10x_31-GlimmerHMM.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_GlimmerHMM_fixed/Tg10x_31-GlimmerHMM.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
-    <info
-        displayName="T. gondii ME49 Gene Predictions from GlimmerHMM"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-<a target='new' href="http://cbcb.umd.edu/software/pirate/">GlimmerHMM</a> was  trained against 330+ <a href="#Draft-3-Annotation">manually curated  genes</a>. Gene predictions for <i>T. gondii</i> produced by GlimmerHMM, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
-  <resource resource="ME49_TigrScan" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="The TigrScan gene predictions for the ME49 strain.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/genePrediction/Tg10x_31-TigrScan.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_TigrScan_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_TigrScan/Tg10x_31-TigrScan.gff> @downloadDir@/ME49_TigrScan_fixed/Tg10x_31-TigrScanNewID.gff</unpack>
-    <unpack>cat @downloadDir@/ME49_TigrScan_fixed/Tg10x_31-TigrScanNewID.gff | perl -pe 's/CDS/exon/; s/mRNA/transcript/;' > @downloadDir@/ME49_TigrScan_fixed/Tg10x_31-TigrScan.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_TigrScan_fixed/Tg10x_31-TigrScan.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
-    <info
-        displayName="T. gondii ME49 Gene Predictions from TigrScan"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-<a target='new' href="http://cbcb.umd.edu/software/pirate/">TigrScan</a>  was trained for <i>T. gondii</i> by TIGR; the parameters are  available <a target='new'  href="http://cbcb.umd.edu/software/pirate/tigrscan-toxoplasma.tar.gz">here</a>. Gene predictions for <i>T. gondii</i> produced by TigrScan, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
-  <resource resource="ME49_TwinScan" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="The TwinScan gene predictions for the ME49 strain.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/genePrediction/Tg10x_31-TwinScan.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_TwinScan_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_TwinScan/Tg10x_31-TwinScan.gff> @downloadDir@/ME49_TwinScan_fixed/Tg10x_31-TwinScanNewID.gff</unpack>
-    <unpack>cat @downloadDir@/ME49_TwinScan_fixed/Tg10x_31-TwinScanNewID.gff | perl -pe 's/CDS/exon/; s/mRNA/transcript/;' > @downloadDir@/ME49_TwinScan_fixed/Tg10x_31-TwinScan.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_TwinScan_fixed/Tg10x_31-TwinScan.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
-    <info
-        displayName="T. gondii ME49 Gene Predictions from TwinScan"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-<a target='new' href="http://genes.cs.wustl.edu">TwinScan</a> (version  2) was trained against 330+ <a href="#Draft-3-Annotation">manually  curated genes</a>.  No informant sequence was used. Gene predictions for <i>T. gondii</i> produced by TwinScan, provided by Aaron Mackey, David Roos  (University of Pennsylvania).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ME49_TwinScanEt   OldVersion: 2003-08-13 -->
-  <resource resource="ME49_TwinScanEt" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="The TwinScanEt predictions for the ME49 strain.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/genePrediction/Tg10x_31-TwinScanEt.gff"/>
-    <unpack>mkdir @downloadDir@/ME49_TwinScanEt_fixed</unpack>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/AnnotationFromJCVI/sequences_without_annotation/me49_id_mapping.tab | perl -e 'while(<STDIN>){chomp;my ($old, $new)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/ME49_TwinScanEt/Tg10x_31-TwinScanEt.gff> @downloadDir@/ME49_TwinScanEt_fixed/Tg10x_31-TwinScanEtNewID.gff</unpack>
-    <unpack>cat @downloadDir@/ME49_TwinScanEt_fixed/Tg10x_31-TwinScanEtNewID.gff | perl -pe 's/CDS/exon/; s/mRNA/transcript/;' > @downloadDir@/ME49_TwinScanEt_fixed/Tg10x_31-TwinScanEt.gff</unpack>
-    <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --seqExtDbName "T.gondii ME49 contigs from Genbank" --seqExtDbRlsVer "2008-07-23" --mapFile @gusHome@/lib/xml/isf/TIGRGffFeatures2gus.xml --inputFileOrDir @downloadDir@/ME49_TwinScanEt_fixed/Tg10x_31-TwinScanEt.gff --fileFormat gff2 --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii ME49" --gff2GroupTag "GenePrediction" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"</pluginArgs>
-    <info
-        displayName="T. gondii ME49 Gene Predictions from TwinScanEt"
-        project=""
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-Gene predictions for <i>T. gondii</i> produced by TwinScanET, provided by Aaron Mackey, David Roos  (University of Pennsylvania). Contact: <tt>help&#64;toxodb&#46;org</tt>
         ]]>
       </description>
     </info>
