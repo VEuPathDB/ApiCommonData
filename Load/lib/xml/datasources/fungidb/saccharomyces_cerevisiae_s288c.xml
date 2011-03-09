@@ -166,14 +166,14 @@
   </resource>
 
   <!-- GeneIDs to standard (locus) names and aliases -->
-  <resource resource="saccharomyces_cerevisiae_s288c_genes2loci_dbxref_RSRC" version="@@saccharomyces_cerevisiae_s288c_genome_sequence_VER@@"
+  <resource resource="saccharomyces_cerevisiae_s288c_genes2loci_dbxref_RSRC" version="@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
     <manualGet fileOrDir="FungiDB/saccharomyces_cerevisiae_s288c/dbxref/%RESOURCE_VERSION%/saccharomyces_cerevisiae_s288c_gene2locus.txt"/>
     <pluginArgs>--DbRefMappingFile @@dataDir@@/saccharomyces_cerevisiae_s288c_gene2locus.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'saccharomyces_cerevisiae_s288c_genome_sequence_RSRC|@@saccharomyces_cerevisiae_s288c_GENOME_SEQUENCE_VER@@' --idType 'previous id'</pluginArgs>
     <info
         displayName="Saccharomyces cerevisiae (S288C) Gene ID to Locus mapping"
         project="FungiDB"
-        organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@""
+        organisms="@@saccharomyces_cerevisiae_s288c_FUNGIDB_DISPLAY_NAME@@"
         category="ignore"
         publicUrl=""
         contact=""

@@ -231,6 +231,20 @@
   </resource>
 
   <!-- dbEST -->
+  <resource resource="aspergillus_fumigatus_af293_dbest_RSRC" version="@@aspergillus_fumigatus_af293_DBEST_VER@@"
+                                                          plugin="GUS::Supported::Plugin::dbEST">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>getSubTaxa --ncbiTaxId @@aspergillus_fumigatus_af293_NCBI_TAXONOMY_ID@@ --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>createPropFile --file  @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+    <pluginArgs>--span 500 
+                --taxonFile @@dataDir@@/taxonIdFile 
+                --extDbName %RESOURCE_NAME% 
+                --extDbRlsVer %RESOURCE_VERSION%
+                --soVer @@SO_VER@@
+                --dbestLoginFile @@dataDir@@/dbest.prop 
+                --dbestConnect @@dbestConnect@@
+    </pluginArgs>
+
      <info
         displayName="Aspergillus fumigatus dbEST ESTs"
         project="FungiDB"
