@@ -32,6 +32,13 @@ sub getArgsDeclaration {
 		 isList => 0,
 		 mustExist => 1,
 	       }),
+     stringArg({ name => 'fileNames',
+		 descr => 'comma-separated bowtie result files that the plugin has to be run on',
+		 constraintFunc=> undef,
+		 reqd  => 0,
+		 isList => 1,
+		 mustExist => 0,
+	       }),
      fileArg({ name => 'configFile',
 	       descr => 'tab delimited file, with file name and corresponding sample name',
 	       constraintFunc=> undef,
@@ -150,14 +157,26 @@ sub run {
 
   my $fileCount = 0;
   opendir(DIR, $self->getArg('dirPath')) || $self->error("Cannot open data directory.");
-  while ( defined (my $file = readdir DIR) ) {
-    if ($file =~ /^(.*)\.bt$/) {  # bowtie output files
-      $fileCount++;
-      $self->processFile($file, $extDbReleaseId);
 
-      $self->{alignCount}={};
-      $self->{mismatches} ={};
+  my @fileArray;
+  #IF no files specified in input, THEN make file list from specified directory
+  if ($self->getArg('fileNames')){
+    @fileArray = split(",", $self->getArg('fileNames'));
+  } else {
+    while ( defined (my $file = readdir DIR) ) {
+      if ($file =~ /^(.*)\.bt$/) {  # bowtie output files
+	push(@fileArray,$file);
+      }
     }
+  }
+
+  foreach my $file (@fileArray){
+    $fileCount++;
+    $self->processFile($file, $extDbReleaseId);
+
+    $self->{alignCount}={};
+    $self->{mismatches} ={};
+
   }
   return "Processed $fileCount files.";
 }
