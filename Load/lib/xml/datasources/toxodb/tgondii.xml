@@ -3,9 +3,10 @@
   <constant name="orgAbbrev" value="tgondiiME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
+  <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
-  <resource resource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+  <resource resource="$$genomeRSRC$$"
             version="@@$$orgAbbrev$$_genome_JCVI_genbank_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
       internalDescrip="">
@@ -40,7 +41,7 @@
   <resource resource="$$orgAbbrev$$_genome_Version4_GFF2_RSRC"
             version="@@$$orgAbbrev$$_genome_Version4_GFF2_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">Version4</prop>
@@ -58,7 +59,7 @@
              version="@@$$orgAbbrev$$_genome_chromosome_assembly_VER@@"
       plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
       internalDescrip=""
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC">
+      parentResource="$$genomeRSRC$$">
  
     <prop name="virtualSeqSOTerm">chromosome</prop>
     <prop name="sourceIdPrefix">TGME49_chr</prop>
@@ -88,7 +89,7 @@ Mapping of gene coordinates from scaffolds to chromosomes for <i>T. gondii</i> t
   <resource resource="$$orgAbbrev$$_genome_GLEAN_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">GLEAN</prop>
@@ -119,7 +120,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
   <resource resource="$$orgAbbrev$$_genome_GlimmerHMM_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">GlimmerHMM</prop>
@@ -150,7 +151,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
   <resource resource="$$orgAbbrev$$_genome_TigrScan_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">TigrScan</prop>
@@ -182,7 +183,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
   <resource resource="$$orgAbbrev$$_genome_TwinScan_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">TwinScan</prop>
@@ -214,7 +215,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
   <resource resource="$$orgAbbrev$$_genome_TwinScanEt_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"
+      parentResource="$$genomeRSRC$$"
       internalDescrip="">
 
     <prop name="name">TwinScanEt</prop>
@@ -268,6 +269,153 @@ Gaps within scaffolds represented as features.
     </info>
   </resource>
 
+  <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
+  <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
+            version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      parentResource="$$genomeRSRC$$">
+
+    <manualGet fileOrDir="common/dbxref/gene2Entrez/%RESOURCE_VERSION%/final/gene_info.gz"/>
+
+    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz $$ncbiTaxId$$ > entrez2gene.tab</unpack>
+
+    <unpack>rm @@dataDir@@/gene_info.gz</unpack>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
+
+  </resource>
+
+
+  <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
+ <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
+            version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      parentResource="$$genomeRSRC$$">
+
+    <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
+
+    <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
+  </resource>
+
+  <!-- OldName: T.gondiiME49_seqDBRefs   OldVersion: 2008-08-11 -->
+  <resource resource="$$orgAbbrev$$_dbxref_genomicSeqs2version4.3_IDs" version=" 2008-08-11"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      internalDescrip="">
+
+    <prop name="name">genomicSeqs2version4.3_IDs</prop>
+    <prop name="columnSpec">primary_identifier</prop>
+    <prop name="table">DbRefNASequence</prop>
+    
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
+
+    <info
+        displayName="T. gondiiME49 Genbank Scaffolds DBRefs"
+        project=""
+        organism="T.gondiiME49"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+A mapping to ToxoDB Version 4.3 genomic sequence identifiers (based on sequence identity).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- OldName: MetabolicDbXRefs_Feng   OldVersion: 1.2 -->
+  <resource resource="$$orgAbbrev$$_dbxref_genomicSeqs2version4.3_IDs" version="2006-04-06"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      internalDescrip="">
+
+    <prop name="name">protein2Pathways_Feng</prop>
+    <prop name="columnSpec">primary_identifier,lowercase_secondary_identifier,remark</prop>
+    <prop name="table">DbRefAAFeature</prop>
+    
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
+
+    <info
+        displayName="Metabolic Pathway Reconstruction"
+        project=""
+        organism=""
+        category="Proteome"
+        publicUrl=""
+        contact="Feng Chen"
+        email="fengchen@sas.upenn.edu"
+        institution="The University of Pennsylvania">
+      <description>
+        <![CDATA[
+Metabolic Pathway Reconstruction for <i>T. gondii</i> gene identifiers, provided on 2006-04-06 by Feng Chen and David Roos (University of Pennsylvania). Contact: David Roos droos&#64;sas&#46;upenn&#46;edu
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
+  <resource resource="$$orgAbbrev$$_dbxref_ApiLoc"
+             version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      internalDescrip="">
+
+    <!-- organism name as found on the ApiLoc site -->
+    <prop name="ApiLocOrganism" value="Toxoplasma gondii"/>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/final/apiloc.html"/>
+
+    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "$$ApiLocOrganism$$" > @@dataDir@@/dbxrefs.txt</unpack>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    <info
+        displayName="ApiLoc and EupathDb links"
+        project=""
+        organism="all"
+        category="ignore"
+        publicUrl=""
+        contact="Stuart Ralph"
+        email="saralph@unimelb.edu.au"
+        institution="University of Melbourne ">
+      <description>
+        <![CDATA[
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- NOT PORTED -->
+  <!-- OldName: Antibody   OldVersion: 1 -->
+  <resource resource="Antibody" version="@@_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      internalDescrip="Antibody references from Albert Einstein College of Medicine">
+    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Antibody/working_dir/Antibody_AllStrains_map_final"/>
+    <pluginArgs>--DbRefMappingFile @downloadDir@/Antibody/Antibody_AllStrains_map_final --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark,secondary_identifier" --tableName "DbRefAAFeature"</pluginArgs>
+    <info
+        displayName="Links to Antibodies from Albert Einstein College of Medicine"
+        project=""
+        organism="Tgondii"
+        category="Proteome"
+        publicUrl="http://www.beiresources.org/"
+        contact="Omar Harb"
+        email="oharb@pcbi.upenn.edu"
+        institution="pcbi">
+      <description>
+        <![CDATA[
+Antibodies against <i>T. gondii</i> epitopes generated by the <a href="http://toro.aecom.yu.edu/biodefense/"TARGET="_blank">Albert Einstein Biodefense Proteomics Research Center</a>.<br>Antibodies may be obatined for free from the Biodefense and Emerging Infections Research Resources Repository.
+        ]]>
+      </description>
+    </info>
+  </resource>
 
   <!-- NOT PORTED -->
   <!-- analysis step -->
@@ -309,7 +457,7 @@ Gaps within chromosomes represented as features.
   </resource>
 
 
-  <!-- need to change getAndAnalyzeSnps to use SNPs.gff -->
+  <!-- FIX WORKFLOW: need to change getAndAnalyzeSnps to use SNPs.gff -->
   <!-- OldName: GeneticMarkers_Sibley   OldVersion: 1 -->
   <resource resource="$$orgAbbrev$$_SNP_Sibley_Tg10x_31_gff" version="2008-10-08"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
@@ -426,15 +574,19 @@ Whole genome sequence of the natural recombinant <i>Toxoplasma gondii</i> strain
   </resource>
 
 
-  <!-- NOT PORTED -->
+  <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
   <!-- OldName: AffymetrixProbes_NuclearCoding   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_NuclearCoding" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Expression-NuclearCoding.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/NuclearCoding.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_NuclearCoding/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_NuclearCoding/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_NuclearCoding/NuclearCoding.fsa 2>> @downloadDir@/AffymetrixProbes_NuclearCoding/NuclearCoding_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_NuclearCoding/NuclearCoding_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_NuclearCoding_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_NuclearCoding</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Expression-NuclearCoding"
         project=""
@@ -453,15 +605,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl abahl&#64;mail&#46;med&
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_estSNPs   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_estSNPs" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Genotyping-estSNPs.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/estSNPs.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_estSNPs/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_estSNPs/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_estSNPs/estSNPs.fsa 2>> @downloadDir@/AffymetrixProbes_estSNPs/estSNPs_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_estSNPs/estSNPs_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_estSNPs_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_estSNPs</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Genotyping-estSNPs"
         project=""
@@ -480,15 +635,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_ChIP   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_ChIP" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - ChIP.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/ChIP.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_ChIP/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_ChIP/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_ChIP/ChIP.fsa 2>> @downloadDir@/AffymetrixProbes_ChIP/ChIP_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_ChIP/ChIP_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_ChIP_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_ChIP</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - ChIP"
         project=""
@@ -507,15 +665,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_Resequencing   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_Resequencing" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Resequencing.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/Resequencing.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Resequencing/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_Resequencing/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Resequencing/Resequencing.fsa 2>> @downloadDir@/AffymetrixProbes_Resequencing/Resequencing_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_Resequencing/Resequencing_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Resequencing_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_Resequencing</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Resequencing"
         project=""
@@ -534,15 +695,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_NuclearNonCoding   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_NuclearNonCoding" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Expression-NuclearNonCoding.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/NuclearNonCoding.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_NuclearNonCoding/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_NuclearNonCoding/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_NuclearNonCoding/NuclearNonCoding.fsa 2>> @downloadDir@/AffymetrixProbes_NuclearNonCoding/NuclearNonCoding_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_NuclearNonCoding/NuclearNonCoding_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_NuclearNonCoding_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_NuclearNonCoding</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Expression-NuclearNonCoding"
         project=""
@@ -561,15 +725,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_Antisense   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_Antisense" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Expresssion-Antisense.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/Antisense.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Antisense/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_Antisense/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Antisense/Antisense.fsa 2>> @downloadDir@/AffymetrixProbes_Antisense/Antisense_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_Antisense/Antisense_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Antisense_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_Antisense</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Expresssion-Antisense"
         project=""
@@ -588,15 +755,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_IbIntron   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_IbIntron" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Expresssion-IbIntron.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/IbIntron.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_IbIntron/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_IbIntron/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_IbIntron/IbIntron.fsa 2>> @downloadDir@/AffymetrixProbes_IbIntron/IbIntron_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_IbIntron/IbIntron_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_IbIntron_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_IbIntron</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Expresssion-IbIntron"
         project=""
@@ -615,15 +785,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_Markers   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_Markers" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Genotyping-Markers.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/Markers.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Markers/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_Markers/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_Markers/Markers.fsa 2>> @downloadDir@/AffymetrixProbes_Markers/Markers_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_Markers/Markers_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Markers_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_Markers</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Genotyping-Markers"
         project=""
@@ -642,15 +815,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_ExonIb   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_ExonIb" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - Expression-ExonIb.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/ExonIb.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_ExonIb/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_ExonIb/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_ExonIb/ExonIb.fsa 2>> @downloadDir@/AffymetrixProbes_ExonIb/ExonIb_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_ExonIb/ExonIb_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_ExonIb_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_ExonIb</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - Expression-ExonIb"
         project=""
@@ -669,15 +845,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_BLASTX-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_BLASTX-TranscriptDiscovery" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - BLASTX-TranscriptDiscovery.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/BLASTX-TranscriptDiscovery.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_BLASTX-TranscriptDiscovery/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_BLASTX-TranscriptDiscovery/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_BLASTX-TranscriptDiscovery/BLASTX-TranscriptDiscovery.fsa 2>> @downloadDir@/AffymetrixProbes_BLASTX-TranscriptDiscovery/BLASTX-TranscriptDiscovery_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_BLASTX-TranscriptDiscovery/BLASTX-TranscriptDiscovery_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_BLASTX-TranscriptDiscovery_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_BLASTX-TranscriptDiscovery</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - BLASTX-TranscriptDiscovery"
         project=""
@@ -696,15 +875,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_EST-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_EST-TranscriptDiscovery" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - EST-TranscriptDiscovery.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/EST-TranscriptDiscovery.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_EST-TranscriptDiscovery/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_EST-TranscriptDiscovery/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_EST-TranscriptDiscovery/EST-TranscriptDiscovery.fsa 2>> @downloadDir@/AffymetrixProbes_EST-TranscriptDiscovery/EST-TranscriptDiscovery_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_EST-TranscriptDiscovery/EST-TranscriptDiscovery_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_EST-TranscriptDiscovery_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_EST-TranscriptDiscovery</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - EST-TranscriptDiscovery"
         project=""
@@ -723,15 +905,18 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: AffymetrixProbes_TBLASTN-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="AffymetrixProbes_TBLASTN-TranscriptDiscovery" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadExpressionFeature"
-      internalDescrip="Affymetrix Probes for T. gondii from Amit Bahl - TBLASTN-TranscriptDiscovery.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TBLASTN-TranscriptDiscovery.fsa"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/fromAmit/Affymetrix_GFF_Files/working_dir/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_TBLASTN-TranscriptDiscovery/.</unpack>
-    <unpack>tagToSeq.pl @downloadDir@/AffymetrixProbes_TBLASTN-TranscriptDiscovery/TgondiiME49Contigs.fsa  @downloadDir@/AffymetrixProbes_TBLASTN-TranscriptDiscovery/TBLASTN-TranscriptDiscovery.fsa 2>> @downloadDir@/AffymetrixProbes_TBLASTN-TranscriptDiscovery/TBLASTN-TranscriptDiscovery_Mapping</unpack>
-    <pluginArgs>--extDbSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --tagToSeqFile @downloadDir@/AffymetrixProbes_TBLASTN-TranscriptDiscovery/TBLASTN-TranscriptDiscovery_Mapping --featureType ArrayElementFeature</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_TBLASTN-TranscriptDiscovery_Affy" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Amit_TBLASTN-TranscriptDiscovery</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Affymetrix Probes - TBLASTN-TranscriptDiscovery"
         project=""
@@ -1315,57 +1500,44 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: IEDB_Epitopes   OldVersion: 2009-06-09 -->
-  <resource resource="IEDB_Epitopes" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Mappings from epitope ids to external websites provided by IEDB.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Toxo"/>
-    <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-    <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Toxo --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
-    <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
-    <info
-        displayName="IEDB Epitopes"
-        project=""
-        organism="T. gondii"
-        category="Proteome"
-        publicUrl="http://www.immuneepitope.org"
-        contact="IEDB"
-        email=""
-        institution="IEDB">
-      <description>
-        <![CDATA[
-Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
-        ]]>
-      </description>
-    </info>
-  </resource>
+  <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
+            version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
+    <manualGet fileOrDir="global/empty"/>
+
+    <!-- validate that IEDB knows about this taxon id -->
+    <unpack> unzip -p @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/fromProvider/OrganismList.zip | grep "<OrganismId>$$speciesNcbiTaxId$$<"</unpack>
+
+    <unpack>iedbMakeTabFileFromXml --input_dir @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/final/iedb_export_fixed --outputfile @@dataDir@@/oneOrganism.txt --NCBITaxId $$speciesNcbiTaxId$$</unpack>
+
+    <unpack>mkdir -p @@dataDir@@/fasta</unpack>
+
+    <unpack>iedbSimplifyTabFile --inputFile @@dataDir@@/oneOrganism.txt --outputFile @@dataDir@@/oneOrganismSimplified.txt </unpack>
+
+    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/oneOrganismimplified.txt --outputFile @@dataDir@@/fasta/IEDBExport.fsa </unpack>
+
+    <getAndUnpackOutput dir="@@dataDir@@/fasta"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/simplified.txt"/>
+
+    <pluginArgs>--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+  </resource>
 
   <!-- NOT PORTED -->
   <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
-  <resource resource="IEDB_Epitopes_DBxRefs" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="Mappings from epitope ids to external websites provided by IEDB.">
-    <manualGet fileOrDir="@downloadDir@/IEDB_Epitopes_fixed"/>
-    <unpack>createEpitopeDbRefFile --inputDir @downloadDir@/IEDB_Epitopes_DBxRefs/IEDB_Epitopes_fixed --outputFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt</unpack>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/IEDB_Epitopes_DBxRefs/dbRefs.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef" --idURL 'http://www.immuneepitope.org/epId/PRIMARY_IDENTIFIER'</pluginArgs>
-    <info
-        displayName="IEDB Epitopes"
-        project=""
-        organism="T. gondii"
-        category="ignore"
-        publicUrl="http://www.immuneepitope.org"
-        contact="IEDB"
-        email=""
-        institution="IEDB">
-      <description>
-        <![CDATA[
-IEDB epitopes.
-        ]]>
-      </description>
-    </info>
+  <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
+            version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+    <manualGet fileOrDir="global/empty"/>
+
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_epitope_IEDB_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
   </resource>
+
 
 
   <!-- NOT PORTED -->
@@ -2148,154 +2320,6 @@ Proteomics data provided by Silvia Moreno lab.
   </resource>
 
 
-  <!-- NOT PORTED -->
-  <!-- OldName: T.gondiiME49_seqDBRefs   OldVersion: 2008-08-11 -->
-  <resource resource="T.gondiiME49_seqDBRefs" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="T.gondiiME49 Genbank Scaffolds DBRefs">
-    <manualGet fileOrDir="@manualDelivery@/AnnotationFromJCVI/sequences_without_annotation/working_dir/me49_id_mapping.txt"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/T.gondiiME49_seqDBRefs/me49_id_mapping.txt --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
-    <info
-        displayName="T. gondiiME49 Genbank Scaffolds DBRefs"
-        project=""
-        organism="T.gondiiME49"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-T.gondiiME49 Genbank Scaffolds DBRefs.
-        ]]>
-      </description>
-    </info>
-  </resource>
 
-
-  <!-- NOT PORTED -->
-  <!-- OldName: MetabolicDbXRefs_Feng   OldVersion: 1.2 -->
-  <resource resource="MetabolicDbXRefs_Feng" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="Mappings from gene ids to external websites provided by Feng.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/PathMappings/tg_metabolicpathway_4toxodb.log"/>
-    <unpack>cat /files/cbil/data/cbil/toxoDb/manualDelivery/PathMappings/TgondiiME49GeneIDMapping.txt | perl -e 'while(<STDIN>){chomp;my ($new, $old)=split(/\t/,$_);$ids{$old} = $new;}; while(<>){if (/^(\d+\.\w+)/ and $ids{$1}){ my $temp=$1;$_ =~ s/$1/$ids{$temp}/g;print $_;}}' @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodb.log> tg_metabolicpathway_4toxodbNewID.log</unpack>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/MetabolicDbXRefs_Feng/tg_metabolicpathway_4toxodbNewID.log --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,lowercase_secondary_identifier,remark" --tableName "DbRefAAFeature"</pluginArgs>
-    <info
-        displayName="Metabolic Pathway Reconstruction"
-        project=""
-        organism=""
-        category="Proteome"
-        publicUrl=""
-        contact="Feng Chen"
-        email="fengchen@sas.upenn.edu"
-        institution="The University of Pennsylvania">
-      <description>
-        <![CDATA[
-Metabolic Pathway Reconstruction for <i>T. gondii</i> gene identifiers, provided on 2006-04-06 by Feng Chen and David Roos (University of Pennsylvania). Contact: David Roos droos&#64;sas&#46;upenn&#46;edu
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
-  <resource resource="ApiLoc_EupathDB_Dbrefs" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/ApiLoc_dbrefs/2010-03-29/apiLoc_eupathDb_links.tab"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/ApiLoc_EupathDB_Dbrefs/apiLoc_eupathDb_links.tab --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-    <info
-        displayName="ApiLoc and EupathDb links"
-        project=""
-        organism="all"
-        category="ignore"
-        publicUrl=""
-        contact="Stuart Ralph"
-        email="saralph@unimelb.edu.au"
-        institution="University of Melbourne ">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Antibody   OldVersion: 1 -->
-  <resource resource="Antibody" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="Antibody references from Albert Einstein College of Medicine">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Antibody/working_dir/Antibody_AllStrains_map_final"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/Antibody/Antibody_AllStrains_map_final --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,remark,secondary_identifier" --tableName "DbRefAAFeature"</pluginArgs>
-    <info
-        displayName="Links to Antibodies from Albert Einstein College of Medicine"
-        project=""
-        organism="Tgondii"
-        category="Proteome"
-        publicUrl="http://www.beiresources.org/"
-        contact="Omar Harb"
-        email="oharb@pcbi.upenn.edu"
-        institution="pcbi">
-      <description>
-        <![CDATA[
-Antibodies against <i>T. gondii</i> epitopes generated by the <a href="http://toro.aecom.yu.edu/biodefense/"TARGET="_blank">Albert Einstein Biodefense Proteomics Research Center</a>.<br>Antibodies may be obatined for free from the Biodefense and Emerging Infections Research Resources Repository.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
-  <resource resource="Entrez_Gene_dbxref" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="dbxref from entrez gene ids to eupathdb gene identifiers.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_tgondii"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_tgondii --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
-    <info
-        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
-        project=""
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
-  <resource resource="Uniprot_Gene_dbxref" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers.">
-    <manualGet fileOrDir="/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_tgondii"/>
-    <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_tgondii --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
-    <info
-        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
-        project=""
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-
-        ]]>
-      </description>
-    </info>
-  </resource>
 
 </resources>

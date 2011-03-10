@@ -4,10 +4,11 @@
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
   <constant name="speciesNcbiTaxId" value="????"/>
+  <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_GeneDB_GFF_RSRC"/>
 
   <!-- OldName: N.caninum_chromosomes   OldVersion: 2009-10-06 -->
 
-  <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_RSRC"
+  <resource resource="$$genomeRSRC$$"
              version="@@$$orgAbbrev$$_genome_GeneDB_GFF_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
       internalDescrip="">
@@ -28,7 +29,7 @@
   <!-- OldName: N.caninum_Annotation   OldVersion: 2009-10-06 -->
   <resource resource="$$orgAbbrev$$_annotation_GeneDB_GFF_RSRC"
              version="@@$$orgAbbrev$$_annotation_GeneDB_GFF_VER@@"
-      parentResource="$$orgAbbrev$$_genome_GeneDB_GFF_RSRC"
+      parentResource="$$genomeRSRC$$"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       internalDescrip="">
 
@@ -148,7 +149,9 @@
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
   <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
             version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      parentResource="$$genomeRSRC$$">
+
 
     <manualGet fileOrDir="common/dbxref/gene2Entrez/%RESOURCE_VERSION%/final/gene_info.gz"/>
 
@@ -156,22 +159,22 @@
 
     <unpack>rm @@dataDir@@/gene_info.gz</unpack>
 
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '$$orgAbbrev$$_chromosomes_RSRC|@@$$orgAbbrev$$_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
 
   </resource>
 
  
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
-
- <resource resource="$$orgAbbrev_dbxref_gene2Uniprot_RSRC"
+ <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
             version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+      parentResource="$$genomeRSRC$$">
 
     <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
 
     <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
 
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'Ncaninum_chromosomes_RSRC|@@Ncaninum_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
   </resource>
 
 </resources>
