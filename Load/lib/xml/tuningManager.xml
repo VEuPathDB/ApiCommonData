@@ -3031,6 +3031,11 @@ from
     from
     (
     -- ToxoDB --
+    select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
+          '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
     select 'M.White Cell Cycle Microarray profiles' as profile_name,
           '' as main_profile_name,
            'ToxoDB' as project_id
@@ -3359,9 +3364,20 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
         'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
-
-
-
+UNION
+select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
+       'Boothroyd::TgME49M4' as module,
+       'Toxoplasma gondii ME49' as species,
+       'Transcriptome analsysis of oocyst, tachyzoite, and bradyzoite development in the type II strain M4' as display_name,
+       'The RMA values in the graph are displayed in log2 scale.' as description,
+       'T. gondii ME49 Developmental Form' as x_axis,
+       'log2 of the transcript levels of' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rma,pct' as visible_parts,
+        'tgME49Boothroyd_RSRC' as attribution
+from dual
 
     UNION
 
