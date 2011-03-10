@@ -6042,7 +6042,7 @@ sub getDbHandle {
     </sql>
   </tuningTable>
 
-<!-- No DataSource table for you, build 9.
+<!-- DataSource table is now static, not a tuning table
 
   <tuningTable name="apidb.DataSource" alwaysUpdate="true">
     <internalDependency name="apidb.SequenceAttributes"/>
@@ -6052,5 +6052,12 @@ sub getDbHandle {
   </tuningTable>
 
 -->
+
+  <tuningTable name="apidb.DataSourceInfo" alwaysUpdate="true">
+    <!-- internalDependency name="apidb.SequenceAttributes"/ -->
+    <ancillaryTable name="apidb.DataSourceInfoPublication"/>
+    <ancillaryTable name="apidb.DataSourceInfoReference"/>
+    <program commandLine="buildDataSourceInfoTT"/>
+  </tuningTable>
 
 </tuningConfig>
