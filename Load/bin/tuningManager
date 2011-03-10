@@ -15,7 +15,7 @@ use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::TableSuffix;
 use ApiCommonData::Load::TuningConfig::Utils;
 
-my $configDir;
+my $subversionDir;
 my $props;
 my $startTime = time;
 my $maxRebuildMinutes = 0;
@@ -107,7 +107,7 @@ eval {
             $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
             $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
             $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
-            $maxRebuildMinutes, $instance, $propFile, $password);
+            $maxRebuildMinutes, $instance, $propFile, $password, $subversionDir);
   }
 
   if ($doUpdate) {
@@ -325,8 +325,8 @@ eval {
     if ($neededUpdateCount && !$doUpdate) || $brokenCount;
 
   # if a temporary config-file dir was checked out from svn, delete it now
-  if ($configDir) {
-    my @cmdLine = ("rm", "-rf", $configDir);
+  if ($subversionDir) {
+    my @cmdLine = ("rm", "-rf", $subversionDir);
     system(@cmdLine) == 0
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
   }
@@ -449,22 +449,22 @@ Sample prop file:
 sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
+  my $configPath;
+  $subversionDir = "/tmp/tMan." . $$ . "." . time . "/";
+  my $subversionUrl = $tuningRegistry->getSubversionUrl();
+  my @cmdLine = ("svn", "checkout", $subversionUrl, $subversionDir);
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
+  ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
+  system(@cmdLine) == 0
+    or die "system @cmdLine failed: $?";
 
-  # if no config file was supplied, get it from Subversion
+  # if no config file was supplied, use one from Subversion
   if (!$configFile) {
-    my $configPath;
-    $configDir = "/tmp/tMan." . $$ . "." . time . "/";
-    my $subversionUrl = $tuningRegistry->getSubversionUrl();
     $configFile = $tuningRegistry->getConfigFile();
-    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
-    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
-    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
-    system(@cmdLine) == 0
-      or die "system @cmdLine failed: $?";
 
     # default to component tuning manager
     $configFile = "tuningManager.xml" if !$configFile; 
-    $configPath = $configDir . '/' . $configFile;
+    $configPath = $subversionDir . '/' . $configFile;
     return $configPath;
   } else {
     return $configFile;
