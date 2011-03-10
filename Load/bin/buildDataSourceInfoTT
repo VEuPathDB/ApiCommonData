@@ -86,9 +86,9 @@ sub loadDataSources {
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSourceInfo$suffix
-                  (data_source_id, name, display_name, categories,
-                   project_id, description, contact, institution)
-                  values (?, ?, ?, ?, ?, ?, ?, ?)
+                  (data_source_id, display_name, categories,
+                   description, contact, institution)
+                   values (?, ?, ?, ?, ?, ?)
 SQL
 
     my $insertDsp = $dbh->prepare(<<SQL);
@@ -110,15 +110,13 @@ SQL
       chomp($dsName);
       my $ds = $dataSourceInfos->getDataSourceInfo($dsName);
       ApiCommonData::Load::TuningConfig::Log::addLog("data source: \"$dsName\"") if $debug;
-      my $id = $loadedDatasets{$dsName};
-      if (!$id) {
+      my $dataSourceId = $loadedDatasets{$dsName};
+      if (!$dataSourceId) {
 	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . skipping because $dsName does not exist in apidb.DataSource") if $debug;
 	next;
       }
-      my $dataSourceInfoId = getNextDataSourceInfoId($dbh, $suffix);
-      $insertDs->execute($dataSourceInfoId, $dsName, $ds->getDisplayName(),
+      $insertDs->execute($dataSourceId, $ds->getDisplayName(),
                        $ds->getCategory(),
-                       $project, # not $ds->getProject()
                        $ds->getDescription(), $ds->getContact(),
                        $ds->getInstitution())
 	or die "inserting a DataSourceInfo record";
@@ -126,7 +124,7 @@ SQL
       foreach my $publicationList ($ds->getPublications()) {
 	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping publication:\n" . Dumper($publicationList)) if $debug;
 	foreach my $publication (@$publicationList) {
-          $insertDsp->execute($dataSourceInfoId, $publication->{pmid}, $publication->{doi}, $publication->{citation}, $publication->{abstract})
+          $insertDsp->execute($dataSourceId, $publication->{pmid}, $publication->{doi}, $publication->{citation}, $publication->{abstract})
 	    or die "inserting a DataSetPublication record";
 	}
       }
@@ -134,7 +132,7 @@ SQL
       foreach my $referenceList ($ds->getWdkReferences()) {
 	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping referenceList:\n" . Dumper($referenceList) ) if $debug;
 	foreach my $reference (@$referenceList) {
-	    $insertDsr->execute($dataSourceInfoId, $reference->{recordClass}, $reference->{type}, $reference->{name})
+	    $insertDsr->execute($dataSourceId, $reference->{recordClass}, $reference->{type}, $reference->{name})
 	      or die "inserting a DataSetReference record";
 	}
       }
@@ -160,37 +158,19 @@ SQL
   return %datasetHash;
 }
 
-sub getNextDataSourceInfoId {
-  my ($dbh, $suffix) = @_;
-
-  my $query = $dbh->prepare(<<SQL);
-    select apidb.DataSourceInfo_sq$suffix.nextval from dual
-SQL
-
-  $query->execute()
-    or die "getting a primary key for DataSourceInfo from its sequence";
-  my ($id) = $query->fetchrow_array();
-
-  return $id;
-}
-
 sub createTables {
     my ($dbh, $suffix) = @_;
 
     $dbh->do(<<SQL) or die "creating DataSourceInfo table";
       create table apidb.DataSourceInfo$suffix (
         data_source_id               number(12),
-        name                         varchar2(120),
-        external_database_release_id number(12),
         display_name                 varchar2(200),
         public_url                   varchar2(80),
         categories                   varchar2(80),
-        project_id                   varchar2(30),
         description                  varchar2(4000),
         contact                      varchar2(80),
         institution                  varchar2(120),
-        constraint DataSourceInf_pk$suffix primary key (data_source_id),
-        constraint DataSourceInf_extdb_fk$suffix foreign key (external_database_release_id) references sres.ExternalDatabaseRelease
+        constraint DataSourceInf_pk$suffix primary key (data_source_id)
       )
 SQL
 
@@ -217,10 +197,6 @@ SQL
         constraint DataSrcInfoRef_pk$suffix primary key (data_source_reference_id),
         constraint DataSrcInfoRef_parent_fk$suffix foreign key (data_source_id) references apidb.DataSourceInfo$suffix
       )
-SQL
-
-    $dbh->do(<<SQL) or die "creating primary-key sequence for DataSource table";
-      create sequence apidb.DataSourceInfo_sq$suffix
 SQL
 
     $dbh->do(<<SQL) or die "creating primary-key sequence for DataSourcePublication table";
