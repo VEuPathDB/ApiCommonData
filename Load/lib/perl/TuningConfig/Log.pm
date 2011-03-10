@@ -40,7 +40,7 @@ BEGIN {
     print "$message\n";
 
     # if log file name is unset, set it to a default
-    $logFile = "tuningManager." . $$ . "." . time . ".log"
+    $logFile = "/tmp/tuningManager." . $$ . "." . time . ".log"
       if !$logFile;
 
     open(my $fh, '>>', $logFile) or die "opening logfile \"$logFile\"for appending";
@@ -171,6 +171,8 @@ sub mailLog {
     print MAIL getLog();
     close(MAIL);
   }
+
+  unlink(getLogfile());
 }
 
 sub getProcessInfo {
