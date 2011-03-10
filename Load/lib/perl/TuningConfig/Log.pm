@@ -217,6 +217,8 @@ The tuning manager encountered the error "$errstr" in the instance $instance.
 Can that tablespace ($tablespace) be made bigger?
 
 Thanks!
+
+(Note: this email was generated automatically by the tuning manager.)
 EMAIL
 
   close(MAIL);
