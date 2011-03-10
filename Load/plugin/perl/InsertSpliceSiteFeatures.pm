@@ -161,7 +161,7 @@ sub run {
   my @fileArray;
   #IF no files specified in input, THEN make file list from specified directory
   if ($self->getArg('fileNames')){
-    @fileArray = split(",", $self->getArg('fileNames'));
+    @fileArray = @{$self->getArg('fileNames')};
   } else {
     while ( defined (my $file = readdir DIR) ) {
       if ($file =~ /^(.*)\.bt$/) {  # bowtie output files
