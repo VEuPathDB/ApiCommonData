@@ -10,11 +10,8 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
-
 use GUS::Model::DoTS::NASequence;
-use GUS::Model::SRes::ExternalDatabase;
-use GUS::Model::SRes::ExternalDatabaseRelease;
-use ApiCommonData::Load::Util;
+use GUS::Model::ApiDB::SpliceSiteFeature;
 
 
 # NEEDED PARAMS:
@@ -158,7 +155,8 @@ sub run {
       $fileCount++;
       $self->processFile($file, $extDbReleaseId);
 
-      $self->undefPointerCache();
+      $self->{alignCount}={};
+      $self->{mismatches} ={};
     }
   }
   return "Processed $fileCount files.";
@@ -200,13 +198,15 @@ sub processFile {
 
     $self->{alignCount}->{$key}++;  # increment alignment count for each occurrence of a particular hash key
 
-    my @misCount = split("\,",$temp[7]); # last field of bowtie output gives comma-separated mis-matches
-    $self->{mismatches}->{$key} += $#misCount + 1;  # increment number of total mis-matches for the same alignment
+
+    if ($temp[7]){
+      my @misCount = split("\,",$temp[7]); # last field of bowtie output gives comma-separated mis-matches
+      $self->{mismatches}->{$key} += $#misCount + 1;  # increment number of total mis-matches for the same alignment
+    }
   }
   close (FILE);
 
-  my $ct = $self->insertSpliceSiteFeatures($file, $extDbReleaseId);
-
+  $self->insertSpliceSiteFeatures($file, $extDbReleaseId);
 }
 
 
@@ -220,14 +220,15 @@ sub insertSpliceSiteFeatures {
   my $type = $self->getArg('type');
   my $sample_name = $self->{$file};
 
-  my %alignments = $self->{alignCount};
+  my %alignments = %{$self->{alignCount}};
   my @matches = sort (keys(%alignments));
   foreach my $hit (@matches) {
-    # NOTE format for $hit IS: "$naSeqId\t$location\t$strand\t$isUniq"
 
+    # NOTE format for $hit IS: "$naSeqId\t$location\t$strand\t$isUniq"
     my @m = split("\t",$hit);
     my $alignCount = $self->{alignCount}->{$hit};
-    my $avg_mismatch = ($self->{mismatches}->{$hit}) / $alignCount;
+    my $mismatch = $self->{mismatches}->{$hit} || 0;
+    my $avg_mismatch = $mismatch / $alignCount;
 
     my $ssfeature = GUS::Model::ApiDB::SpliceSiteFeature->new({external_database_release_id => $extDbReleaseId,
 							       type => $self->getArg('type'),
@@ -241,8 +242,9 @@ sub insertSpliceSiteFeatures {
 							      });
     $ssfeature->submit();
     $count++;
+    $self->undefPointerCache() if $count % 1000 == 0;
   }
-  return "added $count featurs from $file";
+  $self->log("Inserted $count features from $file");
 }
 
 
@@ -265,11 +267,13 @@ sub getNaSequenceFromSourceId {
     return $id;
   }
 
-  my $naSeqId = GUS::Model::DoTS::NASequence->new({source_id => $srcId});
-  unless ($naSeqId->retrieveFromDB) {
+  my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $srcId});
+  unless ($naSeq->retrieveFromDB) {
     $self->error("Can't find na_sequence_id for sequence $srcId");
   }
+  my $naSeqId = $naSeq->getNaSequenceId();
   $self->{naSequence}->{$srcId} = $naSeqId;
+
   return $naSeqId;
 }
 
