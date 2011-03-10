@@ -9,7 +9,7 @@ use XML::Simple;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::Utils;
-use ReFlow::DataSource::DataSource;
+use ReFlow::DataSource::DataSourceNew;
 use ReFlow::DataSource::DataSources;
 use CBIL::Util::PropertySet;
 
@@ -85,9 +85,9 @@ sub loadDataSources {
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSource$suffix
-                  (data_source_id, name, display_name, version, categories, organisms,
-                   project, description, contact, institution)
-                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  (data_source_id, name, display_name, version, categories, organism,
+                   project_id, description, internal_description, contact, institution)
+                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 
     my $insertDsp = $dbh->prepare(<<SQL);
@@ -109,14 +109,14 @@ SQL
       my $ds = $dataSources->getDataSource($dsName);
       ApiCommonData::Load::TuningConfig::Log::addLog("data source: \"$dsName\"") if $debug;
       if (!$loadedDatasets{$dsName}) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . skipping because $dsName does not exist in sres.ExternalDatabase") if $debug;
-	next;
+	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . including, though $dsName does not exist in sres.ExternalDatabase") if $debug;
+# 	next;
       }
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
       $insertDs->execute($dataSourceId, $dsName, $ds->getDisplayName(),
-                       $ds->getVersion(), $ds->getCategory(), $ds->getOrganisms(),
+                       $ds->getVersion(), $ds->getCategory(), $ds->getOrganism(),
                        $project, # not $ds->getProject()
-                       $ds->getDescription(), $ds->getContact(),
+                       $ds->getDescription(), $ds->getInternalDescription(), $ds->getContact(),
                        $ds->getInstitution())
 	or die "inserting a DataSource record";
 
@@ -183,9 +183,10 @@ sub createTables {
         version                      varchar2(60),
         public_url                   varchar2(80),
         categories                   varchar2(80),
-        organisms                    varchar2(1000),
-        project                      varchar2(30),
+        organism                     varchar2(1000),
+        project_id                   varchar2(30),
         description                  varchar2(4000),
+        internal_description         varchar2(4000),
         contact                      varchar2(80),
         institution                  varchar2(120),
         constraint DataSource_pk$suffix primary key (data_source_id),
