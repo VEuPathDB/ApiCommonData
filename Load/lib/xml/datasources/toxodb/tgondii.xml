@@ -935,14 +935,20 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
   </resource>
 
 
-  <!-- NOT PORTED -->
+  <!-- FIX: needs an analysis config file -->
   <!-- OldName: Tg_3_Archetypal_Lineages_ExpressionData   OldVersion: 1.0 -->
-  <resource resource="Tg_3_Archetypal_Lineages_ExpressionData" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-      internalDescrip="Expression profiling of the 3 archetypal T. gondii lineages">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/expressionArrayStudies/ToxoDB-Tz/data_table_newmapping_noSNP_8-27-08_three-snp-min_reps-per-strain-averaged.txt"/>
-    <unpack>cp /files/cbil/data/cbil/toxoDb/manualDelivery/expressionArrayStudies/ToxoDB-Tz/config.txt  @downloadDir@/Tg_3_Archetypal_Lineages_ExpressionData/.</unpack>
-    <pluginArgs>--inputDir @downloadDir@/Tg_3_Archetypal_Lineages_ExpressionData/ --configFile @downloadDir@/Tg_3_Archetypal_Lineages_ExpressionData/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayExpression_Roos-Tz" version="2008-04-25"
+      plugin="ApiCommonData::Load::Plugin::DoNothing"
+      internalDescrip="">
+    
+    <prop name="name">Roos-Tz</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final">
+
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+
     <info
         displayName="Expression profiling of the 3 archetypal T. gondii lineages"
         project=""
@@ -961,63 +967,18 @@ Expression profiling of two strains from each of the 3 archetypal <i>T. gondii</
   </resource>
 
 
-  <!-- NOT PORTED -->
-  <!-- OldName: davis_percentiles   OldVersion: 1.0 -->
-  <resource resource="davis_percentiles" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/expressionArrayStudies/ToxoDB-Tz/working_dir/PERCENTILE/"/>
-    <pluginArgs>--inputDir @downloadDir@/davis_percentiles/PERCENTILE --configFile @downloadDir@/davis_percentiles/PERCENTILE/config.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
-    <info
-        displayName="Expression percentiles from Paul Davis"
-        project=""
-        organism="T.gondii"
-        category="ignore"
-        publicUrl=""
-        contact="Paul H. Davis"
-        email="paulhd@sas.upenn.edu"
-        institution="Department of Biology, University of Pennsylvania">
-      <description>
-        <![CDATA[
-Paul Davis Expression Percentiles for T.gondii.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: davis_page   OldVersion: 1.0 -->
-  <resource resource="davis_page" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/expressionArrayStudies/ToxoDB-Tz/working_dir/PAGE/"/>
-    <pluginArgs>--inputDir @downloadDir@/davis_page/PAGE --configFile @downloadDir@/davis_page/PAGE/config.txt --analysisResultView 'DifferentialExpression'  --naFeatureView 'GeneFeature'</pluginArgs>
-    <info
-        displayName="Expression page analysis from Paul Davis"
-        project=""
-        organism="T.gondii"
-        category="ignore"
-        publicUrl=""
-        contact="Paul H. Davis"
-        email="paulhd@sas.upenn.edu"
-        institution="Department of Biology, University of Pennsylvania">
-      <description>
-        <![CDATA[
-Paul Davis Expression Page Analysis for T.gondii.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
   <!-- OldName: T.gondii_MWhite_CellCycle_Array_Profiles   OldVersion: 2010-03-03 -->
-  <resource resource="T.gondii_MWhite_CellCycle_Array_Profiles" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-      internalDescrip="T.gondii cell cycle microarray profiles from Michael White">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Tgondii_cellCycle_MWhite/workspace/analysis"/>
-    <pluginArgs>--inputDir @downloadDir@/T.gondii_MWhite_CellCycle_Array_Profiles/analysis --configFile @downloadDir@/T.gondii_MWhite_CellCycle_Array_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+  <resource resource="$$orgAbbrev$$_microarrayExpression_GSE19092" version="2009-12-07"
+      plugin="ApiCommonData::Load::Plugin::DoNothing"
+      internalDescrip="">
+    
+    <prop name="name">GSE19092</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final">
+
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="T.gondii M. White Cell Cycle Array Profiles"
         project=""
@@ -1033,6 +994,100 @@ Cell cycle expression profiles from Behnke MS, Wootton JC, Lehmann M, Radke JB, 
         ]]>
       </description>
       <publication pmid="20865045"/>
+    </info>
+  </resource>
+
+
+  <!-- OldName: Brady_Time_Series   OldVersion: 1.0 -->
+  <resource resource="$$orgAbbrev$$_microarrayExpression_Brady" version="2007-06-07"
+      plugin="ApiCommonData::Load::Plugin::DoNothing"
+      internalDescrip="">
+    
+    <prop name="name">Brady</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final">
+
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Bradyzoite Differentiation (Multiple 6-hr time points and Extended time series)"
+        project=""
+        organism="T.gondii"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Paul H. Davis"
+        email="paulhd@sas.upenn.edu"
+        institution="Roos Lab, University of Pennsylvania">
+      <description>
+        <![CDATA[
+Expression profiles of T. gondii time series (Multiple 6-hr time points and Extended time series).<br> This data was graciously provided to ToxoDB pre-publication by Paul Davis, Florence Dzierszinski and David Roos.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- NOT PORTED -->
+  <!-- needs an analysis config -->
+  <!-- OldName: Compound1_pH_avg_pct   OldVersion: 1.0 -->
+  <resource resource="$$orgAbbrev$$_microarrayExpression_GSE16037" version="2009-10-05"
+      plugin="ApiCommonData::Load::Plugin::DoNothing"
+      internalDescrip="">
+    
+    <prop name="name">GSE16037</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final">
+
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Bradyzoite Differentiation (Single Time-Point)"
+        project=""
+        organism="T.gondii"
+        category="Transcriptome"
+        publicUrl=""
+        contact="Michael W White"
+        email="uvsmw@montana.edu"
+        institution="Montana State University">
+      <description>
+        <![CDATA[
+Lineage and developmental gene expression: type I GT1, type II Me49, and type III CTGara strains under normal (tachyzoite) and induced (Compound 1 and pH 8.2) conditions. Click <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE16037"> here for link to GEO</a>.<br>The alkaline condition data set was graciously provided directly by Michael Behnke and Michael White.
+        ]]>
+      </description>
+      <publication pmid="18433450"/>
+    </info>
+  </resource>
+
+
+
+  <!-- OldName: Matt_Tz-Bz_Time_Series   OldVersion: 1.0 -->
+  <resource resource="$$orgAbbrev$$_microarrayExpression_Anderson-Boothroyd-Tz-Bz" version="2008-04-25"
+      plugin="ApiCommonData::Load::Plugin::DoNothing"
+      internalDescrip="">
+    
+    <prop name="name">Anderson-Boothroyd-Tz-Bz</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final">
+
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Bradyzoite Differentiation (3-day time series)"
+        project=""
+        organism="T.gondii"
+        category="Transcriptome"
+        publicUrl=""
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+<br>This data was graciously provided to ToxoDB pre-publication by Matt Zack Anderson and John C. Boothroyd.
+        ]]>
+      </description>
     </info>
   </resource>
 
@@ -1156,108 +1211,6 @@ Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arra
       <description>
         <![CDATA[
 Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip using antibodies to Centromeric Histone 3 (CenH3-HA) colocalized with antibodies to H3K9me2.  (Mathieu Gissot, Carrie F. Brooks, Boris Striepen, Kami Kim. Manuscript in preparation).<br>Albert Einstein College of Medicine, Bronx, NY (MG, KK) and University of Georgia, Athens, GA (CFB, BS)<br>For further information please contacts Kami Kim (kkim@aecom.yu.edu) or Boris Striepen (striepen@cb.uga.edu).
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Brady_Time_Series   OldVersion: 1.0 -->
-  <resource resource="Brady_Time_Series" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-      internalDescrip="Expression profiles of T. gondii time series from Paul Davis">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Brady_Time_Series/working_dir/expression_profiles"/>
-    <pluginArgs>--inputDir @downloadDir@/Brady_Time_Series/expression_profiles/ --configFile @downloadDir@/Brady_Time_Series/expression_profiles/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-    <info
-        displayName="Bradyzoite Differentiation (Multiple 6-hr time points and Extended time series)"
-        project=""
-        organism="T.gondii"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Paul H. Davis"
-        email="paulhd@sas.upenn.edu"
-        institution="Roos Lab, University of Pennsylvania">
-      <description>
-        <![CDATA[
-Expression profiles of T. gondii time series (Multiple 6-hr time points and Extended time series).<br> This data was graciously provided to ToxoDB pre-publication by Paul Davis, Florence Dzierszinski and David Roos.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Compound1_pH_avg_pct   OldVersion: 1.0 -->
-  <resource resource="Compound1_pH_avg_pct" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-      internalDescrip="Averaged expression profiles and percentiles of T. gondii three strains under different conditions from Michael W White">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Compound1_pH/working_dir/r_work"/>
-    <pluginArgs>--inputDir @downloadDir@/Compound1_pH_avg_pct/r_work/ --configFile @downloadDir@/Compound1_pH_avg_pct/r_work/config_pct_avg.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-    <info
-        displayName="Bradyzoite Differentiation (Single Time-Point)"
-        project=""
-        organism="T.gondii"
-        category="Transcriptome"
-        publicUrl=""
-        contact="Michael W White"
-        email="uvsmw@montana.edu"
-        institution="Montana State University">
-      <description>
-        <![CDATA[
-Lineage and developmental gene expression: type I GT1, type II Me49, and type III CTGara strains under normal (tachyzoite) and induced (Compound 1 and pH 8.2) conditions. Click <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE16037"> here for link to GEO</a>.<br>The alkaline condition data set was graciously provided directly by Michael Behnke and Michael White.
-        ]]>
-      </description>
-      <publication pmid="18433450"/>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Compound1_pH_expression_profiles   OldVersion: 1.0 -->
-  <resource resource="Compound1_pH_expression_profiles" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertAnalysisResult"
-      internalDescrip="">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Compound1_pH/working_dir/r_work/"/>
-    <pluginArgs>--inputDir @downloadDir@/Compound1_pH_expression_profiles/r_work --configFile @downloadDir@/Compound1_pH_expression_profiles/r_work/config_expression_profile.txt --analysisResultView 'ExpressionProfile'  --naFeatureView 'GeneFeature'</pluginArgs>
-    <info
-        displayName="Expression profiles from Michael W White"
-        project=""
-        organism="T.gondii"
-        category="ignore"
-        publicUrl=""
-        contact="Michael W White"
-        email="uvsmw@montana.edu"
-        institution="Montana State University">
-      <description>
-        <![CDATA[
-Lineage and developmental gene expression: type I GT1, type II Me49, and type III CTGara strains under normal (tachyzoite) and induced (Compound 1 and pH 8.2) conditions.
-        ]]>
-      </description>
-      <publication pmid="18433450"/>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: Matt_Tz-Bz_Time_Series   OldVersion: 1.0 -->
-  <resource resource="Matt_Tz-Bz_Time_Series" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
-      internalDescrip="Expression profiles of T. gondii Matt_Tz-Bz time series">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Matt_Tz-Bz/working_dir"/>
-    <pluginArgs>--inputDir @downloadDir@/Matt_Tz-Bz_Time_Series/working_dir/ --configFile @downloadDir@/Matt_Tz-Bz_Time_Series/working_dir/config.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER%</pluginArgs>
-    <info
-        displayName="Bradyzoite Differentiation (3-day time series)"
-        project=""
-        organism="T.gondii"
-        category="Transcriptome"
-        publicUrl=""
-        contact="John Brestelli"
-        email="jbrestel@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-<br>This data was graciously provided to ToxoDB pre-publication by Matt Zack Anderson and John C. Boothroyd.
         ]]>
       </description>
     </info>
