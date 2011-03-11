@@ -131,7 +131,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.5,
-                        cvsRevision => '$Revision: 39544 $',
+                        cvsRevision => '$Revision: 39545 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -187,7 +187,7 @@ sub processFile {
   my ($self, $file, $extDbReleaseId) = @_;
   my $key;
 
-  my $filePath = $self->getArg('dirPath') . $file;
+  my $filePath = $self->getArg('dirPath') ."/" . $file;
   open (FILE, $filePath);
 
   while (<FILE>){
