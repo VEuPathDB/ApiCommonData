@@ -22,7 +22,7 @@
     </info>
   </resource>
 
-<resource resource="Toxoplasma_gondii_VAND_genome_contigs_RSRC" version="@@Toxoplasma_gondii_VAND_genome_VER@@ parentResource="Toxoplasma_gondii_rub_genome_RSRC"
+<resource resource="Toxoplasma_gondii_VAND_contigs_RSRC" version="@@Toxoplasma_gondii_VAND_genome_VER@@ parentResource="Toxoplasma_gondii_rub_genome_RSRC"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
     <manualGet fileOrDir="ToxoDB/tgondiiVAND/genome/contigs/%RESOURCE_VERSION%/from_provider/tgvand_orphans.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 933077 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgvand_orphans.fasta --SOTermName 'contig'  --regexSourceId  '(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
