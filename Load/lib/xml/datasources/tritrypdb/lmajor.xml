@@ -676,6 +676,35 @@ Sequencing of <i>L. major</i> was conducted by <a href="http://www.sanger.ac.uk/
     </info>
   </resource>
 
+<!--RNASeq and ChipSeq-->
+
+  <resource resource="Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC" version="@@Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/lmajor/rnaSeq/sbri_myler/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/ah016.seqs"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/ah017.seqs"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/ah047.seqs"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Lmajor RNASeq Spliced Leader And Poly A Sites from Myler"
+        project="TriTrypDB"
+        organisms="@@LmajorFriedlinOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="EupathDB">
+      <description>
+        <![CDATA[
+Lmajor RNASeq Spliced Leader And Poly A Sites from Myler.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--arrayStudies-->
 
   <resource resource="Lmajor_array_GPL7545_RSRC" version="@@Lmajor_array_GPL7545_VER@@"

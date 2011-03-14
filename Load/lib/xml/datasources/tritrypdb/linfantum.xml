@@ -700,6 +700,33 @@ Linfantum Proteomics data from Marc Ouellette (pH5-6).
     </info>
   </resource>
 
+<!--RNASeq and ChipSeq-->
+
+  <resource resource="Linfantum_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC" version="@@Linfantum_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/ldonovani/rnaSeq/sbri_myler/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/ah013.seqs"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Linfantum RNASeq Spliced Leader And Poly A Sites from Myler"
+        project="TriTrypDB"
+        organisms="@@LinfantumOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="EupathDB">
+      <description>
+        <![CDATA[
+Linfantum RNASeq Spliced Leader And Poly A Sites from Myler.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--arrayStudies-->
   <resource resource="Linfantum_array_Myler_RSRC" version="@@Linfantum_array_Myler_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
