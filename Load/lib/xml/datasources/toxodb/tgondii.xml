@@ -37,21 +37,6 @@
   </resource>
 
 
-  <!-- OldName: ME49_Annotation   OldVersion: 3 -->
-  <resource resource="$$orgAbbrev$$_genome_Version4_GFF2_RSRC"
-            version="@@$$orgAbbrev$$_genome_Version4_GFF2_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      parentResource="$$genomeRSRC$$"
-      internalDescrip="">
-
-    <prop name="name">Version4</prop>
-    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
-    <prop name="gff2GroupTag">GenePrediction</prop>
-
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/annotation.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
-
-  </resource>
 
 
   <!-- OldName: ME49ChromosomeMap   OldVersion: 2008-08-28 -->
@@ -86,7 +71,7 @@ Mapping of gene coordinates from scaffolds to chromosomes for <i>T. gondii</i> t
 
 
   <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genome_GLEAN_GFF2_RSRC"
+  <resource resource="$$orgAbbrev$$_genomeFeature_GLEAN_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       parentResource="$$genomeRSRC$$"
@@ -96,7 +81,7 @@ Mapping of gene coordinates from scaffolds to chromosomes for <i>T. gondii</i> t
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
     <info
         displayName="T. gondii ME49 Gene Predictions from GLEAN"
@@ -116,8 +101,24 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
   </resource>
 
 
+  <!-- OldName: ME49_Annotation   OldVersion: 3 -->
+  <resource resource="$$orgAbbrev$$_genomeFeature_Version4_GFF2_RSRC"
+            version="2008-08-15"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$genomeRSRC$$"
+      internalDescrip="">
+
+    <prop name="name">Version4</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+
+    <manualGet fileOrDir"$$project$$/$$orgAbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
+
+  </resource>
+
   <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genome_GlimmerHMM_GFF2_RSRC"
+  <resource resource="$$orgAbbrev$$_genomeFeature_GlimmerHMM_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       parentResource="$$genomeRSRC$$"
@@ -127,7 +128,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
     <info
         displayName="T. gondii ME49 Gene Predictions from GlimmerHMM"
@@ -148,7 +149,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
 
 
   <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genome_TigrScan_GFF2_RSRC"
+  <resource resource="$$orgAbbrev$$_genomeFeature_TigrScan_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       parentResource="$$genomeRSRC$$"
@@ -158,7 +159,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
     <info
         displayName="T. gondii ME49 Gene Predictions from TigrScan"
@@ -180,7 +181,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
 
 
   <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genome_TwinScan_GFF2_RSRC"
+  <resource resource="$$orgAbbrev$$_genomeFeature_TwinScan_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       parentResource="$$genomeRSRC$$"
@@ -190,7 +191,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
 
     <info
@@ -212,7 +213,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
 
 
   <!-- OldName: ME49_TwinScanEt   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genome_TwinScanEt_GFF2_RSRC"
+  <resource resource="$$orgAbbrev$$_genomeFeature_TwinScanEt_GFF2_RSRC"
             version="2003-08-13"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
       parentResource="$$genomeRSRC$$"
@@ -222,7 +223,7 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
 
-    <manualGet fileOrDir"ToxoDB/genome/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id </pluginArgs>
 
     <info
@@ -239,6 +240,57 @@ GLEAN is an automated  gene predictor that integrates different evidence of gene
 Gene predictions for <i>T. gondii</i> produced by TwinScanET, provided by Aaron Mackey, David Roos  (University of Pennsylvania). Contact: <tt>help&#64;toxodb&#46;org</tt>
         ]]>
       </description>
+    </info>
+  </resource>
+
+  <!-- NOT PORTED -->
+  <!-- OldName: ChunleiSuRFLPSequences   OldVersion: 2009-05-04 -->
+  <resource resource="ChunleiSuRFLPSequences" version="@@_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+      internalDescrip="Toxoplasma RFLPs from Chunlei Su|2009-05-04">
+    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/RFLP_Chunlei"/>
+    <unpack>createRFLPGff --input_file  @downloadDir@/ChunleiSuRFLPSequences/RFLP_Chunlei/Table2_formatted.tab --output_fasta  @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --output_gff @downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff </unpack>
+    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5811 --sequenceFile @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --soTermName "region" --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="T. gondii RFLP sequences (Chunlei Su)"
+        project=""
+        organism="Toxoplasma"
+        category="ignore"
+        publicUrl=""
+        contact="Chunlei Su"
+        email="csu1@utk.edu"
+        institution="UTK">
+      <description>
+        <![CDATA[
+<i>T. gondii</i> RFLP sequences (Chunlei Su lab)
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <!-- NOT PORTED -->
+  <!-- OldName: ChunleiSuRFLPs   OldVersion: 2009-05-04 -->
+  <resource resource="ChunleiSuRFLPs" version="@@_VER@@"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      internalDescrip="Toxoplasma RFLPs From Chunlei Su|2009-05-04">
+    <manualGet fileOrDir="@downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff"/>
+    <pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/ChunleiSuRFLPs/RFLPs.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --bioperlTreeOutput @pipelineDir@/logs/ChunleiToxoRFLPs.bioperl</pluginArgs>
+    <info
+        displayName="T. gondii RFLP data"
+        project=""
+        organism="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="Chunlei Su"
+        email="csu1@utk.edu"
+        institution="UTK">
+      <description>
+        <![CDATA[
+T. gondii restriction fragment length polymorphysim (RFLP) data was obtained from <a href="csu1@utk.edu">Chunlei Su</a>.
+        ]]>
+      </description>
+      <publication pmid="16643922"/>
     </info>
   </resource>
 
@@ -576,13 +628,13 @@ Whole genome sequence of the natural recombinant <i>Toxoplasma gondii</i> strain
 
   <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
   <!-- OldName: AffymetrixProbes_NuclearCoding   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_NuclearCoding_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_NuclearCoding" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_NuclearCoding</prop>
+    <prop name="name">Affy-Amit_NuclearCoding</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -606,13 +658,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl abahl&#64;mail&#46;med&
 
 
   <!-- OldName: AffymetrixProbes_estSNPs   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_estSNPs_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_estSNPs" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_estSNPs</prop>
+    <prop name="name">Affy-Amit_estSNPs</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -636,13 +688,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_ChIP   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_ChIP_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_ChIP" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_ChIP</prop>
+    <prop name="name">Affy-Amit_ChIP</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -666,13 +718,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_Resequencing   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Resequencing_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Resequencing" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_Resequencing</prop>
+    <prop name="name">Affy-Amit_Resequencing</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -696,13 +748,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_NuclearNonCoding   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_NuclearNonCoding_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_NuclearNonCoding" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_NuclearNonCoding</prop>
+    <prop name="name">Affy-Amit_NuclearNonCoding</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -726,13 +778,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_Antisense   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Antisense_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Antisense" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_Antisense</prop>
+    <prop name="name">Affy-Amit_Antisense</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -756,13 +808,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_IbIntron   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_IbIntron_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_IbIntron" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_IbIntron</prop>
+    <prop name="name">Affy-Amit_IbIntron</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -786,13 +838,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_Markers   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_Markers_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Markers" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_Markers</prop>
+    <prop name="name">Affy-Amit_Markers</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -816,13 +868,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_ExonIb   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_ExonIb_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_ExonIb" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_ExonIb</prop>
+    <prop name="name">Affy-Amit_ExonIb</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -846,13 +898,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_BLASTX-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_BLASTX-TranscriptDiscovery_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_BLASTX-TranscriptDiscovery" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_BLASTX-TranscriptDiscovery</prop>
+    <prop name="name">Affy-Amit_BLASTX-TranscriptDiscovery</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -876,13 +928,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_EST-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_EST-TranscriptDiscovery_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_EST-TranscriptDiscovery" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_EST-TranscriptDiscovery</prop>
+    <prop name="name">Affy-Amit_EST-TranscriptDiscovery</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -906,13 +958,13 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
 
 
   <!-- OldName: AffymetrixProbes_TBLASTN-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Amit_TBLASTN-TranscriptDiscovery_Affy" version="2006-05-19"
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_TBLASTN-TranscriptDiscovery" version="2006-05-19"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">Amit_TBLASTN-TranscriptDiscovery</prop>
+    <prop name="name">Affy-Amit_TBLASTN-TranscriptDiscovery</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/Affy-$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
 
     <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
 
@@ -929,6 +981,34 @@ Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;
       <description>
         <![CDATA[
 Affymetrix probe data.  Contact: David Roos or Amit Bahl <tt>abahl&#64;mail&#46;med&#46;upenn&#46;edu</tt> (University of Pennsylvania).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Einstein" version="2006-05-19"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <prop name="name">Affy-Einstein</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project=""
+        organism=""
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+
         ]]>
       </description>
     </info>
@@ -1091,13 +1171,13 @@ Lineage and developmental gene expression: type I GT1, type II Me49, and type II
   </resource>
 
 
-  <!-- NOT PORTED -->
   <!-- OldName: ChIP_Chip_einstein   OldVersion: 2008-08 -->
-  <resource resource="ChIP_Chip_einstein" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_chipChip_Einstein" version="2008-08-22"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Chromatin Immunoprecipitation data from Kami Kims lab">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+      internalDescrip="">
+
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="Chromatin Immunoprecipitation Microarray - Einstein"
         project=""
@@ -1115,81 +1195,30 @@ Chromatin Immunoprecipitation chip data identifying regions of active transcript
     </info>
   </resource>
 
-
   <!-- NOT PORTED -->
-  <!-- OldName: ChIP_Chip_einstein_calledPeaks   OldVersion: 2008-08 -->
-  <resource resource="ChIP_Chip_einstein_calledPeaks" version="@@_VER@@"
+  <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
+  <resource resource="$$orgAbbrev$$_chipChip_Einstein_centromeres" version="2009-06-02"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Chromatin Immunoprecipitation called peak data from Kami Kims lab">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-    <info
-        displayName="Chromatin Immunoprecipitation Microarray for Called Peaks"
-        project=""
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact="Kami Kim"
-        email="kkim@aecom.yu.edu"
-        institution="Albert Einstein College of Medicine">
-      <description>
-        <![CDATA[
-Chromatin Immunoprecipitation chip data identifying regions of active transcription. Peak calls were made by the data provider.
-        ]]>
-      </description>
-    </info>
-  </resource>
+      internalDescrip="">
 
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ChIP_Chip_Hakimi   OldVersion: 2009-03 -->
-  <resource resource="ChIP_Chip_Hakimi" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Chromatin Immunoprecipitation data from Hakimi">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
-        displayName="Chromatin Immunoprecipitation Microarray - Hakimi"
+        displayName="T gondii Centromere Identification"
         project=""
-        organism=""
+        organism="Toxoplasma"
         category="Genome"
         publicUrl=""
-        contact="Mohamed-Ali Hakimi"
-        email="Mohamed-Ali.Hakimi@ujf-grenoble.fr"
-        institution="Institut Jean Roget">
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
       <description>
         <![CDATA[
-Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arrays), we analyzed the patterns ofDNA-bound Histone H4(K5-K8-K12-K16) acetylation after 4 hours treatment of RH strain with DMSO (control) or 40 nM of FR235222 (named previously drug A) which is a Toxoplasma-specific HDAC inhibitor. ChIP-on-chip isolated DNA samples (input and immunopurified DNA) were arrayed on custom synthetic oligo arrays (387,000 features per array, 46-50 mer oligos, 2 arrays for the whole genome; Nimblegen).  Peak calls were made by the data provider.  Data provided by <a href="mailto:Mohamed-Ali.Hakimi@ujf-grenoble.fr">Mohamed-Ali Hakimi</a>, Institut Jean Roget.
+Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip using antibodies to Centromeric Histone 3 (CenH3-HA) colocalized with antibodies to H3K9me2.  (Mathieu Gissot, Carrie F. Brooks, Boris Striepen, Kami Kim. Manuscript in preparation).<br>Albert Einstein College of Medicine, Bronx, NY (MG, KK) and University of Georgia, Athens, GA (CFB, BS)<br>For further information please contacts Kami Kim (kkim@aecom.yu.edu) or Boris Striepen (striepen@cb.uga.edu).
         ]]>
       </description>
     </info>
   </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ChIP_Chip_Hakimi_calledPeaks   OldVersion: 2009-03 -->
-  <resource resource="ChIP_Chip_Hakimi_calledPeaks" version="@@_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="Chromatin Immunoprecipitation called peak data from Hakimi">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/empty.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
-    <info
-        displayName="Chromatin Immunoprecipitation Microarray for Called Peaks - Hakimi"
-        project=""
-        organism=""
-        category="ignore"
-        publicUrl=""
-        contact="Mohamed-Ali Hakimi"
-        email="Mohamed-Ali.Hakimi@ujf-grenoble.fr"
-        institution="Institut Jean Roget">
-      <description>
-        <![CDATA[
-Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arrays), we analyzed the patterns ofDNA-bound Histone H4(K5-K8-K12-K16) acetylation after 4 hours treatment of RH strain with DMSO (control) or 40 nM of FR235222 (named previously drug A) which is a Toxoplasma-specific HDAC inhibitor. ChIP-on-chip isolated DNA samples (input and immunopurified DNA) were arrayed on custom synthetic oligo arrays (387,000 features per array, 46-50 mer oligos, 2 arrays for the whole genome; Nimblegen). Peak calls were made by the data provider.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 
   <!-- NOT PORTED -->
   <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
@@ -1215,14 +1244,67 @@ Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip u
     </info>
   </resource>
 
+  <!-- OldName: Einstein_????   OldVersion: 2009-06-18 -->
+  <resource resource="$$orgAbbrev$$_chipChip_Einstein_ME1" version="2010-08-16"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
 
-  <!-- NOT PORTED -->
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName=""
+        project=""
+        organism="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="John Brestelli"
+        email="jbrestel@pcbi.upenn.edu"
+        institution="EuPathDB">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <!-- OldName: ChIP_Chip_Hakimi   OldVersion: 2009-03 -->
+  <resource resource="$$orgAbbrev$$_chipChip_Hakimi.Ali" version="2009-02-06"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+      internalDescrip="">
+
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="Chromatin Immunoprecipitation Microarray - Hakimi"
+        project=""
+        organism=""
+        category="Genome"
+        publicUrl=""
+        contact="Mohamed-Ali Hakimi"
+        email="Mohamed-Ali.Hakimi@ujf-grenoble.fr"
+        institution="Institut Jean Roget">
+      <description>
+        <![CDATA[
+Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arrays), we analyzed the patterns ofDNA-bound Histone H4(K5-K8-K12-K16) acetylation after 4 hours treatment of RH strain with DMSO (control) or 40 nM of FR235222 (named previously drug A) which is a Toxoplasma-specific HDAC inhibitor. ChIP-on-chip isolated DNA samples (input and immunopurified DNA) were arrayed on custom synthetic oligo arrays (387,000 features per array, 46-50 mer oligos, 2 arrays for the whole genome; Nimblegen).  Peak calls were made by the data provider.  Data provided by <a href="mailto:Mohamed-Ali.Hakimi@ujf-grenoble.fr">Mohamed-Ali Hakimi</a>, Institut Jean Roget.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
   <!-- OldName: ME49B7BACEnds   OldVersion: 2001-09-19 -->
-  <resource resource="ME49B7BACEnds" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$_dnaSeq_Sanger_BAC_ends" version="2001-09-19"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Sanger T. gondii ME49 B7 BAC ends">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/CosmidsAndBACs/TgME49B7_GENOMIC-BAC_2001.09.19_SangerCopy.fasta"/>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 508771 --sequenceFile @downloadDir@/ME49B7BACEnds/TgME49B7_GENOMIC-BAC_2001.09.19_SangerCopy.fasta --soTermName "clone_insert_end" --regexSourceId "^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">Sanger_BAC_ends</prop>
+    <prop name="soTermName">clone_insert_end</prop>
+    <prop name="regexSourceId">^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|</prop>
+    <prop name="tableName">DoTS::ExternalNASequence</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
+
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "$$tableName$$"</pluginArgs>
     <info
         displayName="T. gondii ME49 B7 Genomic BAC Ends"
         project=""
@@ -1235,6 +1317,35 @@ Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip u
       <description>
         <![CDATA[
 BAC end genome sequences for <i>T. gondii</i> ME49 B7 generated by the <a href="http://www.sanger.ac.uk/Projects/T_gondii/" TARGET="_blank">The Wellcome Trust Sanger Institute</a>.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
+  <resource resource="$$orgAbbrev$$_dnaSeq_TIGR_Cosmid_ends" version="2005-05-23"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+      internalDescrip="">
+
+    <prop name="name">TIGR_Cosmid_ends</prop>
+    <prop name="soTermName">clone_insert_end</prop>
+    <prop name="regexSourceId">^>(\\w+\\d+T\\w)</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
+
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="T. gondii Genomic Cosmid Ends"
+        project=""
+        organism=""
+        category="Genome"
+        publicUrl=""
+        contact="Bindu Gajria"
+        email="bindu@pcbi.upenn.edu"
+        institution="University of Pennsylvania">
+      <description>
+        <![CDATA[
+<b>Sequence from cosmid ends mapped against <i>T. gondii</i> ME49, VEG and GT1 scaffolds.</b><br>  End-sequence data from cosmid clones were provided by Ian Paulsen at TIGR.  Sequencing was done using T3 and T7 primers represented as TH and TV, respectively, in the sequence IDs.<br>Cosmids with the TOX designation originated from Boris Striepen's laboratory, while those that start with PSB are from David Sibley's group. A detailed description of cosmid libararies from the Sibly lab is available <a href="http://toxomap.wustl.edu/cosmid.html"Target="_blank">here</a>.
         ]]>
       </description>
     </info>
@@ -1324,55 +1435,6 @@ SAGE tag frequencies for <i>T. gondii</i> provided on 2005-04-26, by Aaron Macke
   </resource>
 
 
-  <!-- NOT PORTED -->
-  <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
-  <resource resource="TgCosmidEnds" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="T. gondii cosmid ends">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/CosmidsAndBACs/Tg_sequences_trimmed.fsa"/>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 383379 --sequenceFile @downloadDir@/TgCosmidEnds/Tg_sequences_trimmed.fsa --soTermName "clone_insert_end" --regexSourceId "^>(\\w+\\d+T\\w)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. gondii Genomic Cosmid Ends"
-        project=""
-        organism=""
-        category="Genome"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-<b>Sequence from cosmid ends mapped against <i>T. gondii</i> ME49, VEG and GT1 scaffolds.</b><br>  End-sequence data from cosmid clones were provided by Ian Paulsen at TIGR.  Sequencing was done using T3 and T7 primers represented as TH and TV, respectively, in the sequence IDs.<br>Cosmids with the TOX designation originated from Boris Striepen's laboratory, while those that start with PSB are from David Sibley's group. A detailed description of cosmid libararies from the Sibly lab is available <a href="http://toxomap.wustl.edu/cosmid.html"Target="_blank">here</a>.
-        ]]>
-      </description>
-    </info>
-  </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ChunleiSuRFLPs   OldVersion: 2009-05-04 -->
-  <resource resource="ChunleiSuRFLPs" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="Toxoplasma RFLPs From Chunlei Su|2009-05-04">
-    <manualGet fileOrDir="@downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff"/>
-    <pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/ChunleiSuRFLPs/RFLPs.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --bioperlTreeOutput @pipelineDir@/logs/ChunleiToxoRFLPs.bioperl</pluginArgs>
-    <info
-        displayName="T. gondii RFLP data"
-        project=""
-        organism="Toxoplasma"
-        category="Genome"
-        publicUrl=""
-        contact="Chunlei Su"
-        email="csu1@utk.edu"
-        institution="UTK">
-      <description>
-        <![CDATA[
-T. gondii restriction fragment length polymorphysim (RFLP) data was obtained from <a href="csu1@utk.edu">Chunlei Su</a>.
-        ]]>
-      </description>
-      <publication pmid="16643922"/>
-    </info>
-  </resource>
 
 
   <!-- NOT PORTED -->
@@ -1477,7 +1539,7 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
     <pluginArgs>--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
   </resource>
 
-  <!-- NOT PORTED -->
+
   <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
   <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
             version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
@@ -2244,33 +2306,6 @@ Proteomics data provided by Silvia Moreno lab.
       </description>
     </info>
   </resource>
-
-
-  <!-- NOT PORTED -->
-  <!-- OldName: ChunleiSuRFLPSequences   OldVersion: 2009-05-04 -->
-  <resource resource="ChunleiSuRFLPSequences" version="@@_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Toxoplasma RFLPs from Chunlei Su|2009-05-04">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/RFLP_Chunlei"/>
-    <unpack>createRFLPGff --input_file  @downloadDir@/ChunleiSuRFLPSequences/RFLP_Chunlei/Table2_formatted.tab --output_fasta  @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --output_gff @downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff </unpack>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5811 --sequenceFile @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --soTermName "region" --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. gondii RFLP sequences (Chunlei Su)"
-        project=""
-        organism="Toxoplasma"
-        category="ignore"
-        publicUrl=""
-        contact="Chunlei Su"
-        email="csu1@utk.edu"
-        institution="UTK">
-      <description>
-        <![CDATA[
-<i>T. gondii</i> RFLP sequences (Chunlei Su lab)
-        ]]>
-      </description>
-    </info>
-  </resource>
-
 
 
 
