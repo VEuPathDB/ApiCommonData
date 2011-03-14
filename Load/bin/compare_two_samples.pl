@@ -21,7 +21,7 @@ use strict;
 use IO::File;
 
 if (scalar(@ARGV)==0) {
-  die "Usage:\ncompare_counts_between_two_samples.pl <mapping_stats_file_1> <mapping_stats_file_2> <counts_file_1> <counts_file_2> <min_depth> <output_prefix> <Rscript_path> <min or max>\n";
+  die "Usage:\ncompare_counts_between_two_samples.pl <mapping_stats_file_1> <mapping_stats_file_2> <counts_file_1> <counts_file_2> <min_depth> <output_prefix> <Rscript_path> <min or max> <paired_end yes/no>\n";
 }
 
 my $Rcmd = `which R`;
@@ -32,28 +32,51 @@ if ($Rcmd =~ /Not Found/) {
 
 my ($numMappers1, $numMappers2);
 my $fh = IO::File->new("<$ARGV[0]") || die "Cannot open file $ARGV[0]\n";
+my $startRead = 0;
+my $value = 0;
+
 while (my $line=<$fh>) {
-  if ($line =~ /^TOTAL:\s+(\S+)\s+\(/) {
-    my $value = $1;
-    $value =~ s/,//g;
-    $numMappers1 = $value;
-    STDOUT->print("n1=$numMappers1\n");
+  if (($line =~ /^TOTAL/) && $ARGV[8] eq 'yes'){ 
+      $startRead = 1;
+  } elsif (($line =~ /^TOTAL:\s+(\S+)\s+\(/) && ($ARGV[8] eq 'no')){
+      $value = $1;
+    last;
+  }
+  if (($line =~ /one of forward or reverse mapped:\s+(\S+)\s+\(/) && ($startRead == 1)){
+      $value = $1;
     last;
   }
 }
+
 $fh->close();
 
+$value =~ s/,//g;
+$numMappers1 = $value;
+STDOUT->print("n1=$numMappers1\n");
+
+
 $fh = IO::File->new("<$ARGV[1]") || die "Cannot open file $ARGV[1]\n";
+
+$startRead = 0;
 while (my $line=<$fh>) {
-  if ($line =~ /^TOTAL:\s+(\S+)\s+\(/) {
-    my $value = $1;
-    $value =~ s/,//g;
-    $numMappers2 = $value;
-    STDOUT->print("n2=$numMappers2\n");
+  if (($line =~ /^TOTAL/) && $ARGV[8] eq 'yes'){ 
+      $startRead = 1;
+  } elsif (($line =~ /^TOTAL:\s+(\S+)\s+\(/) && ($ARGV[8] eq 'no')){
+      $value = $1;
     last;
   }
-}
+  if (($line =~ /one of forward or reverse mapped:\s+(\S+)\s+\(/) && ($startRead == 1)){
+      $value = $1;
+    last;
+  }
+}  
+
 $fh->close();
+
+$value =~ s/,//g;
+$numMappers2 = $value;
+STDOUT->print("n2=$numMappers2\n");
+
 
 my $data1;
 $fh = IO::File->new("<$ARGV[2]") || die "Cannot open file $ARGV[2]\n";
