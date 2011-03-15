@@ -1,0 +1,23 @@
+<resources>  
+<resource resource="Ehistolytica_Glycosylation_RSRC" version="2010-09-17"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Glycosylation/%RESOURCE_VERSION%/final/Ehmerged.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Ehmerged.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|@@Ehistolytica_genome_VER@@' --developmentalStage ''</pluginArgs>
+    <info
+        displayName="E. histolytica Mass Spec/Glycosylation (Carpentieri et. al.)"
+        project="TriTrypDB"
+        organisms="@@EhistolyticaOrganismFullName@@"
+        category="Proteome"
+        publicUrl="http://www.trypsproteome.org/"
+        contact = "Andrea Carpentieri,C.E. Costello,John Samuelson"
+        email = "acarpent76@gmail.com"
+        institution = "Boston University Goldman School of Dental Medicine">
+      <description>
+        <![CDATA[
+       Concanavalin A affinity chromatography on the total protein extract, the a triptic digestion and a PNGase F hidrolisys (to release N-linked glycans and identify glycosilation sites) and LCMS/MS (LTQ Orbitrap).
+        ]]>
+      </description>
+    <publication pmid="20852023"/>
+    </info>
+  </resource>
+</resources>
