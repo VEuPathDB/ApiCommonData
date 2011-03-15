@@ -1,89 +1,5 @@
 <tuningConfig>
 
-  <tuningTable name="apidb.GeneAlias">
-    <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="dots.NaFeatureNaGene"/>
-    <externalDependency name="dots.NaGene"/>
-    <externalDependency name="sres.ExternalDatabase"/>
-    <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE apidb.GeneAlias&1 NOLOGGING AS
-SELECT DISTINCT pairs.alias, pairs.gene, pairs.union_member, pairs.database_name FROM
-(
-  SELECT ng.name AS alias, gf.source_id AS gene,
-         'NaGene' as union_member, ed.name as database_name
-  FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
-       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-  WHERE gf.na_feature_id = nfng.na_feature_id
-    AND ng.na_gene_id = nfng.na_gene_id
-    AND gf.external_database_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
- UNION
-  SELECT LOWER(ng.name) AS alias, gf.source_id AS gene,
-         'lower(NaGene)' as union_member, ed.name as database_name
-  FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
-       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-  WHERE gf.na_feature_id = nfng.na_feature_id
-    AND ng.na_gene_id = nfng.na_gene_id
-    AND gf.external_database_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
- UNION
-  SELECT source_id AS alias, source_id AS gene,
-         'GeneFeature' as union_member, ed.name as database_name
-  FROM dots.GeneFeature gf,
-       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-  WHERE gf.external_database_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
- UNION
-  SELECT lower(source_id) AS alias, source_id AS gene,
-         'lower(GeneFeature)' as union_member, ed.name as database_name
-  FROM dots.GeneFeature gf,
-       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-  WHERE gf.external_database_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
- UNION
-  SELECT dr.primary_identifier as alias, gf.source_id as gene,
-         'old vivax IDs' as union_member, ed.name as database_name
-  FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
-       sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed
-  WHERE dr.primary_identifier IS NOT NULL
-    AND gf.na_feature_id = drnf.na_feature_id
-    AND drnf.db_ref_id = dr.db_ref_id
-    AND dr.external_database_release_id
-          = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
-    AND ed.name in ('Pvivax_DBRefs_RSRC','P.vivax Genbank source_Id DBRefs')) pairs,
-       dots.GeneFeature gf, sres.ExternalDatabaseRelease edr,
-       sres.ExternalDatabase ed
- WHERE pairs.gene = gf.source_id
-   AND gf.external_database_release_id = edr.external_database_release_id
-   AND edr.external_database_id = ed.external_database_id
-   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                       'TigrScan', 'TwinScan predictions',
-                       'TwinScanEt predictions', 'P. falciparum Evigan Gene Models','Evigan_RSRC',
-                       'Pfalciparum workshop annotations reviewed and changed',
-                       'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                       'Old annotation for ME49',
-                       'Tbrucei427_AutoMAGI_Annotations_RSRC')
-
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX apidb.GeneAlias_gene_idx&1 ON apidb.GeneAlias&1 (gene)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX apidb.GeneAlias_alias_idx&1 ON apidb.GeneAlias&1 (alias)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
   <tuningTable name="apidb.SequenceAlias">
     <externalDependency name="dots.NaSequenceImp"/>
     <sql>
@@ -427,7 +343,6 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="apidb.GeneId">
-    <internalDependency name="apidb.GeneAlias"/>
     <internalDependency name="apidb.FeatureLocation"/>
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
@@ -438,118 +353,131 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE apidb.GeneId&1 NOLOGGING AS
-SELECT lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) AS id,
-       substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS alias,
-       gf.source_id AS gene,
-       'Transcript.protein_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM dots.Transcript t, dots.GeneFeature gf,
-     sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-WHERE t.parent_id = gf.na_feature_id
-  AND lower(substr(t.protein_id, 1, instr(t.protein_id, '.') - 1)) IS NOT NULL
-  AND gf.external_database_release_id = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
-UNION
-SELECT lower(t.protein_id) AS id,
-       t.protein_id AS alias,
-       gf.source_id AS gene,
-       'lower(Transcript.protein_id)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM dots.Transcript t, dots.GeneFeature gf,
-     sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-WHERE t.parent_id = gf.na_feature_id
-  AND t.protein_id IS NOT NULL
-  AND gf.external_database_release_id = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
-UNION
-SELECT LOWER(dr.primary_identifier) AS id, 
-       dr.primary_identifier AS alias, 
-       gf.source_id AS gene,
-       'lower(DbRef.primary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
-     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-     sres.ExternalDatabase ed
-WHERE dr.primary_identifier IS NOT NULL
-  AND gf.na_feature_id = drnf.na_feature_id
-  AND drnf.db_ref_id = dr.db_ref_id
-  AND dr.external_database_release_id
-        = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
-  AND ed.name not in ('Pf_Phenotype_DBRefs_RSRC','Pb_RMgm_Phenotype_DBRefs_RSRC','Pc_Phenotype_DBRefs_RSRC','Pv_Phenotype_DBRefs_RSRC')
-  AND ed.name != 'Pf_PathwayMappings_Hagai_RSRC'
-  AND ed.name != 'Links to Pathway Maps'
-  AND ed.name != 'Phenotype DBRefs'
-  AND ed.name != 'MPMP'
-  AND ed.name != 'Pf_BRENDAMapping_RSRC'
-  AND ed.name != 'Pf_SGPPMapping_RSRC'
-  AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
-  AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC', 'Pf_Entrez_DBRefs_RSRC')
-  AND ed.name != 'PMID'
-UNION
-SELECT LOWER(dr.secondary_identifier) AS id, 
-       dr.secondary_identifier AS alias, 
-       gf.source_id AS gene,
-       'lower(DbRef.secondary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
-     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-     sres.ExternalDatabase ed
-WHERE dr.secondary_identifier IS NOT NULL
-  AND gf.na_feature_id = drnf.na_feature_id
-  AND drnf.db_ref_id = dr.db_ref_id
-  AND dr.external_database_release_id
-        = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
-  AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
-                  'NRDB_pdb_dbXRefBySeqIdentity',
-                  'NRDB_ref_dbXRefBySeqIdentity',
-                  'NRDB_sp_dbXRefBySeqIdentity',
-                  'Predicted protein structures','Pf_predictedProteinStructures_RSRC',
-                  'GenBank')
-UNION
-SELECT lower(dr.primary_identifier) AS id, 
-       dr.primary_identifier AS alias, 
-       gf.source_id AS gene,
-       'lower(genbank DbRef.primary_identifier)' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
-     sres.DbRef dr, sres.ExternalDatabaseRelease edr,
-      sres.ExternalDatabase ed
-WHERE gf.na_feature_id = t.parent_id
-  AND t.na_sequence_id = drns.na_sequence_id
-  AND drns.db_ref_id = dr.db_ref_id
-  AND dr.external_database_release_id = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
-  AND ed.name = 'GenBank'
-UNION
-SELECT LOWER(alias) AS id, alias, gene, 'GeneAlias' as union_member, database_name, cast (null as NUMBER) as unique_mapping
-FROM apidb.GeneAlias
-UNION
-SELECT LOWER(pred_loc.feature_source_id) AS id, 
-       pred_loc.feature_source_id AS alias, 
-       gene_loc.feature_source_id AS gene,
-       'overlapping predicted gene source_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-FROM apidb.FeatureLocation gene_loc, apidb.FeatureLocation pred_loc,
-     sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-WHERE pred_loc.feature_type = 'GenePrediction'
-  AND gene_loc.feature_type = 'GeneFeature'
-  AND pred_loc.na_sequence_id = gene_loc.na_sequence_id
-  AND gene_loc.start_min <= pred_loc.end_max
-  AND gene_loc.end_max >= pred_loc.start_min
-  AND pred_loc.is_reversed = gene_loc.is_reversed
-  AND pred_loc.external_database_release_id = edr.external_database_release_id
-  AND edr.external_database_id = ed.external_database_id
+SELECT id, gene, unique_mapping,
+       SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
+       SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
+FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
+             gf.source_id AS gene,
+             'Transcript.protein_id before dot' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.Transcript t, dots.GeneFeature gf,
+           sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+      WHERE t.parent_id = gf.na_feature_id
+        AND substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) IS NOT NULL
+        AND gf.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+     UNION
+      SELECT t.protein_id AS id,
+             gf.source_id AS gene,
+             'Transcript.protein_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.Transcript t, dots.GeneFeature gf,
+           sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
+      WHERE t.parent_id = gf.na_feature_id
+        AND t.protein_id IS NOT NULL
+        AND gf.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+     UNION
+      SELECT dr.primary_identifier AS id, 
+             gf.source_id AS gene,
+             'DbRef.primary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+           sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+           sres.ExternalDatabase ed
+      WHERE dr.primary_identifier IS NOT NULL
+        AND gf.na_feature_id = drnf.na_feature_id
+        AND drnf.db_ref_id = dr.db_ref_id
+        AND dr.external_database_release_id
+              = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name not in ('Pf_Phenotype_DBRefs_RSRC','Pb_RMgm_Phenotype_DBRefs_RSRC','Pc_Phenotype_DBRefs_RSRC','Pv_Phenotype_DBRefs_RSRC')
+        AND ed.name != 'Pf_PathwayMappings_Hagai_RSRC'
+        AND ed.name != 'Links to Pathway Maps'
+        AND ed.name != 'Phenotype DBRefs'
+        AND ed.name != 'MPMP'
+        AND ed.name != 'Pf_BRENDAMapping_RSRC'
+        AND ed.name != 'Pf_SGPPMapping_RSRC'
+        AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
+        AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC', 'Pf_Entrez_DBRefs_RSRC')
+        AND ed.name != 'PMID'
+     UNION
+      SELECT dr.secondary_identifier AS id, 
+             gf.source_id AS gene,
+             'DbRef.secondary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
+           sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+           sres.ExternalDatabase ed
+      WHERE dr.secondary_identifier IS NOT NULL
+        AND gf.na_feature_id = drnf.na_feature_id
+        AND drnf.db_ref_id = dr.db_ref_id
+        AND dr.external_database_release_id
+              = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name IN ('NRDB_gb_dbXRefBySeqIdentity',
+                        'NRDB_pdb_dbXRefBySeqIdentity',
+                        'NRDB_ref_dbXRefBySeqIdentity',
+                        'NRDB_sp_dbXRefBySeqIdentity',
+                        'Predicted protein structures','Pf_predictedProteinStructures_RSRC',
+                        'GenBank')
+     UNION
+      SELECT dr.primary_identifier AS id, 
+             gf.source_id AS gene,
+             'genbank DbRef.primary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
+           sres.DbRef dr, sres.ExternalDatabaseRelease edr,
+            sres.ExternalDatabase ed
+      WHERE gf.na_feature_id = t.parent_id
+        AND t.na_sequence_id = drns.na_sequence_id
+        AND drns.db_ref_id = dr.db_ref_id
+        AND dr.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+        AND ed.name = 'GenBank'
+     UNION
+      SELECT pred_loc.feature_source_id AS id,
+             gene_loc.feature_source_id AS gene,
+             'overlapping predicted gene source_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM apidb.FeatureLocation gene_loc, apidb.FeatureLocation pred_loc,
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+      WHERE pred_loc.feature_type = 'GenePrediction'
+        AND gene_loc.feature_type = 'GeneFeature'
+        AND pred_loc.na_sequence_id = gene_loc.na_sequence_id
+        AND gene_loc.start_min <= pred_loc.end_max
+        AND gene_loc.end_max >= pred_loc.start_min
+        AND pred_loc.is_reversed = gene_loc.is_reversed
+        AND pred_loc.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+     UNION
+      SELECT ng.name AS alias, gf.source_id AS gene,
+             'NaGene' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+      WHERE gf.na_feature_id = nfng.na_feature_id
+        AND ng.na_gene_id = nfng.na_gene_id
+        AND gf.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+ UNION
+  SELECT source_id AS alias, source_id AS gene,
+         'same ID' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+  FROM dots.GeneFeature gf,
+       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+  WHERE gf.external_database_release_id = edr.external_database_release_id
+    AND edr.external_database_id = ed.external_database_id
+)
+GROUP BY id, gene, unique_mapping
       ]]>
     </sql>
     <sql>
       <![CDATA[
 update apidb.GeneId&1
 set unique_mapping = 1
-where rowid in (select min_rowid
-                from (select id, min(rowid) as min_rowid
-                      from GeneId&1
-                      group by id))
+where lower(id) in (select lower_id
+                    from (select distinct lower(id) as lower_id, gene
+                          from GeneId&1) case_independent_mapping
+                    group by lower_id
+                    having count(*) = 1)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene)
+CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene, id)
 tablespace indx
       ]]>
     </sql>
@@ -562,6 +490,18 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE INDEX apidb.GeneId_uniqid_idx&1 ON apidb.GeneId&1 (unique_mapping, id, gene)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_lowid_idx&1 ON apidb.GeneId&1 (lower(id), gene)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_uniqlowid_idx&1 ON apidb.GeneId&1 (unique_mapping, lower(id), gene)
 tablespace indx
       ]]>
     </sql>
@@ -908,7 +848,6 @@ tablespace indx
 
   <tuningTable name="apidb.GeneAttributes">
     <internalDependency name="apidb.GeneId"/>
-    <internalDependency name="apidb.GeneAlias"/>
     <internalDependency name="apidb.FeatureLocation"/>
     <internalDependency name="apidb.GenomicSequence"/>
     <internalDependency name="apidb.TaxonSpecies"/>
@@ -6316,16 +6255,5 @@ sub getDbHandle {
       ]]>
     </sql>
   </tuningTable>
-
-<!-- No DataSource table for you, build 9.
-
-  <tuningTable name="apidb.DataSource" alwaysUpdate="true">
-    <internalDependency name="apidb.SequenceAttributes"/>
-    <ancillaryTable name="apidb.DataSourcePublication"/>
-    <ancillaryTable name="apidb.DataSourceReference"/>
-    <program commandLine="buildDataSourceTT"/>
-  </tuningTable>
-
--->
 
 </tuningConfig>
