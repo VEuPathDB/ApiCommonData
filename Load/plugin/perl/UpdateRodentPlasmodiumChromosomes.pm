@@ -183,7 +183,7 @@ sub getActiveGeneId {
   my ($self, $gene_id) = @_;
   my $dbh = $self->getQueryHandle();
 
-  my $stmt = $dbh->prepare("SELECT distinct gene FROM apidb.GeneAlias WHERE lower(alias) = lower(?) ");
+  my $stmt = $dbh->prepare("SELECT distinct gene FROM apidb.GeneId WHERE lower(id) = lower(?) and unique_mapping = 1");
   $stmt->execute($gene_id);
   my ($id) = $stmt->fetchrow_array();
 

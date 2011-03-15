@@ -10,11 +10,11 @@ use GUS::Model::RAD::CompositeElementNASequence;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
-Read the source_id from the RAD.ShortOligoFamily table, find the corresponding gene (using ApiDb.GeneAlias), and link the ShortOligoFamily to the gene's transcript's DoTS.SplicedNaSequence, using RAD.CompositeElementNaSequence
+Read the source_id from the RAD.ShortOligoFamily table, find the corresponding gene (using ApiDb.GeneId), and link the ShortOligoFamily to the gene's transcript's DoTS.SplicedNaSequence, using RAD.CompositeElementNaSequence
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Read the source_id from the RAD.ShortOligoFamily table, find the corresponding gene (using ApiDb.GeneAlias), and link the ShortOligoFamily to the gene's transcript's DoTS.SplicedNaSequence, using RAD.CompositeElementNaSequence
+Read the source_id from the RAD.ShortOligoFamily table, find the corresponding gene (using ApiDb.GeneId), and link the ShortOligoFamily to the gene's transcript's DoTS.SplicedNaSequence, using RAD.CompositeElementNaSequence
 PLUGIN_PURPOSE
 
 my $tablesAffected =
@@ -22,7 +22,7 @@ my $tablesAffected =
 
 
 my $tablesDependedOn = [['RAD.ShortOligoFamily', ''],
-		       ['ApiDb.GeneAlias', ''],
+		       ['ApiDb.GeneId', ''],
 		       ['DoTS.GeneFeature', ''],
 		       ['DoTS.Transcript', ''],
 		       ['DoTS.SplicedNaSequence', ''],
