@@ -243,14 +243,17 @@ Gene predictions for <i>T. gondii</i> produced by TwinScanET, provided by Aaron 
     </info>
   </resource>
 
-  <!-- NOT PORTED -->
   <!-- OldName: ChunleiSuRFLPSequences   OldVersion: 2009-05-04 -->
-  <resource resource="ChunleiSuRFLPSequences" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_isolate_ChunleiSu_RFLP_fasta" version="2009-05-04"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Toxoplasma RFLPs from Chunlei Su|2009-05-04">
-    <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/RFLP_Chunlei"/>
-    <unpack>createRFLPGff --input_file  @downloadDir@/ChunleiSuRFLPSequences/RFLP_Chunlei/Table2_formatted.tab --output_fasta  @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --output_gff @downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff </unpack>
-    <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 5811 --sequenceFile @downloadDir@/ChunleiSuRFLPSequences/RFLPs.fasta --soTermName "region" --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="regexSourceId">^>(.*)</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/final/RFLPs.fasta"/>
+
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $$ncbiTaxonId$$ --sequenceFile @@dataDir@@/RFLPs.fasta --soTermName "region" --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="T. gondii RFLP sequences (Chunlei Su)"
         project=""
@@ -271,11 +274,16 @@ Gene predictions for <i>T. gondii</i> produced by TwinScanET, provided by Aaron 
 
   <!-- NOT PORTED -->
   <!-- OldName: ChunleiSuRFLPs   OldVersion: 2009-05-04 -->
-  <resource resource="ChunleiSuRFLPs" version="@@_VER@@"
+  <resource resource="$$orgAbbrev$$_isolate_ChunleiSu_RFLP_gff" version="2009-05-04"
       plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="Toxoplasma RFLPs From Chunlei Su|2009-05-04">
-    <manualGet fileOrDir="@downloadDir@/ChunleiSuRFLPSequences/RFLPs.gff"/>
-    <pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @downloadDir@/ChunleiSuRFLPs/RFLPs.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --bioperlTreeOutput @pipelineDir@/logs/ChunleiToxoRFLPs.bioperl</pluginArgs>
+      internalDescrip="">
+
+    <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/final/RFLPs.gff"/>
+
+    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/RFLPs.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --bioperlTreeOutput  @@dataDir@@/bioperlTree.out</pluginArgs>
     <info
         displayName="T. gondii RFLP data"
         project=""
