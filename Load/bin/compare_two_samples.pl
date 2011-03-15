@@ -177,34 +177,27 @@ unlink("$tmpOutFile");
 #}
 
 my $wfh1 = IO::File->new(">$ARGV[5]_pvalues.txt");
-#my $wfh2 = IO::File->new(">$ARGV[7]_down.txt");
-#$wfh1->print("GENE ID\tEXPRESSION 1\tEXPRESSION 2\tADJUSTED RATIO\tP-VALUE\n");
-$wfh1->print("GENE ID\tP-VALUE\n");
-#$wfh2->print("GENE ID\tEXPRESSION 1\tEXPRESSION 2\tADJUSTED INVERSE RATIO\tP-VALUE\n");
-#$wfh2->print("GENE ID\tP-VALUE\n");
+$wfh1->print("row_id\tpvalue_mant\tpvalue_exp\n");
+
 foreach my $id (sort sortByFisherRatio keys %{$data1}) {
   if ($data1->{$id}->{'count'}>=$ARGV[4] || $data2->{$id}->{'count'}>=$ARGV[4]) {
-#    my $r = $ratio{$id}>=1 ? $ratio{$id} : 1/$ratio{$id};
-#    my $string = "$id\t$data1->{$id}->{'expr'}\t$data2->{$id}->{'expr'}\t". sprintf("%.4f", $r) . "\t$p{$id}\n";
-    my $string = "$id\t$p{$id}\n";
-#    if ($ratio{$id}>=1) {
-      $wfh1->print($string);
-#    }
-#    else {
-#      $wfh2->print($string);
-#    }
+
+    my @valueSplit = split(/e/,$p{$id});
+    my ($string);
+
+    if ($valueSplit[0] =~ /\./) {
+       $string = "$id\t".sprintf("%.2f", $valueSplit[0])."\t$valueSplit[1]\n";
+    } else {
+       $string = "$id\t$valueSplit[0]\t$valueSplit[1]\n";
+    }
+    $wfh1->print($string);
   }
 }
 $wfh1->close();
-#$wfh2->close();
 
 sub sortByFisherRatio {
   my $p1 = $p{$a};
   my $p2 = $p{$b};
-#  my $r1 = $ratio{$a};
-#  my $r2 = $ratio{$b};
-
-#  ($p1 <=> $p2 or $r2 <=> $r1);
    ($p1 <=> $p2);
 }
 
