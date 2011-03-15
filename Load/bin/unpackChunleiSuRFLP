@@ -141,3 +141,18 @@ foreach my $line (<IN>){
 close(IN);
 close(GFF);
 close(FASTA);
+
+sub usage {
+print STDERR "
+
+parse the tab file containing RFLP data from Chunlei Su (Tgondii ME49).
+
+the output is a .fasta file with deflines but NO sequence.
+
+and a .gff file that has the RFLPs as features on those sequences (location 0-0).
+
+usage:  unpackChunleiSuRFLP --input_file --output_fasta --output_gff
+
+";
+exit(1);
+}
