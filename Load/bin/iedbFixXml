@@ -4,18 +4,22 @@
 # by extractOrganismFromIEDBFile (seems like that script should be fixed to
 # handle the original <reference> tag).  
 
-$dir = $ARGV[0];
-$outDir = $ARGV[1];
+use strict;
 
-$f = `ls $dir | sort`;
+my $dir = $ARGV[0];
+my $outDir = $ARGV[1];
 
-@files = split(/\n/,$f);
+usage() unless ($dir && $outDir);
 
-$n = @files;
+my $f = `ls $dir | sort`;
 
-for($i=0; $i<$n; $i++) {
-    $file = $files[$i];
-    $outfn = "$outDir/$file";
+my @files = split(/\n/,$f);
+
+my $n = @files;
+
+for(my $i=0; $i<$n; $i++) {
+    my $file = $files[$i];
+    my $outfn = "$outDir/$file";
     print "-----------\n";
     print "checking file $dir/$file\n";
     open (TABFILE, "$dir/$file") || die "File '$dir/$file' not found\n";
@@ -29,4 +33,21 @@ for($i=0; $i<$n; $i++) {
     }
 }
 
+sub usage {
+
+print STDERR "
+fix xml files downloaded from IEDB.
+
+replace the <reference> tag in each file with a simple one that can be parsed
+by extractOrganismFromIEDBFile (seems like that script should be fixed to
+handle the original <reference> tag).
+
+usage: iedbFixXml input_dir output_dir
+
+where input_dir contains a set of iedb xml files
+
+";
+exit(1);
+
+}
 

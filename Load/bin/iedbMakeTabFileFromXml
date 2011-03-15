@@ -139,8 +139,13 @@ sub writeTabFile {
 sub usage {
   my ($m) = @_;
 
+  print STDERR "
+Make a tab file for a specified organism, from a set of IEDB xml files
+(that have been fixed with iedbFixXml).
+
+usage: iedbMakeTabFileFromXml --input_dir INPUT_DIR --outputfile OUTPUT_FILE --NCBITaxId tax_id
+";
   print STDERR "ERROR:  $m\n" if($m);
-  print STDERR "usage: extractOrganismFromIEDBFile --input_dir INPUT_DIR --outputfile OUTPUT_FILE\n";
   exit(1);
 }
 

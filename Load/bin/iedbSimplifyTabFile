@@ -17,7 +17,13 @@ GetOptions("verbose!"        => \$verbose,
           );
 
 unless (-e $inputFile) {
-  die "Must supply a valid input file!\nUsage: simplifyIEDBFile --inputFile <FILE> --outputFile <FILE> [--verbose]";
+  die "Must supply a valid input file!
+
+Usage: iedbSimplifyTabFile --inputFile <FILE> --outputFile <FILE> [--verbose]
+
+Rearrange the columns in an IEDB tab file produced by iedbMakeTabFileFromXml
+
+\n";
 }
 
 open(OUT, ">> $outputFile");
