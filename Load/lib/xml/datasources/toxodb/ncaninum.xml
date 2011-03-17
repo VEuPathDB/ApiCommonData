@@ -41,17 +41,20 @@
   </resource>
 
 
-  <!-- NOT PORTED -->
+  <!-- This resource does an update, so is not undoable.  in flow must use undoRoot -->
   <!-- OldName: updateChromosomeNumberFromMap   OldVersion: 2009-11-23 -->
-  <resource resource="updateChromosomeNumberFromMap" version="@@updateChromosomeNumberFromMap_VER@@"
+  <resource resource="$$orgAbbrev$$_genome_chromosome_number_map" version="2009-11-23"
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="update Chromosome Number From Mapping file">
+      internalDescrip="">
 
-    <manualGet fileOrDir="ToxoDB/ncaninum/genome/chromosomeNumberMap/1.0/final/neospChrs.txt"/>
+    <prop name="name">chromosome_number_map</prop>
+    <prop name="sequence_table">ExternalNaSequence</prop>
 
-    <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/neospChrs.txt --sequence_table ExternalNaSequence </unpack>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/$$name$$/%RESOURCE_VERSION%/final/chromosomeNumberMap.txt"/>
 
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VER%"</pluginArgs>
+    <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/chromosomeMap.txt --sequence_table $$sequence_table$$ --ncbiTaxId $$ncbiTaxId$$ </unpack>
+
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
 
 
