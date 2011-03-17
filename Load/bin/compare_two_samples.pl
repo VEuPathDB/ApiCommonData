@@ -186,10 +186,10 @@ foreach my $id (sort sortByFisherRatio keys %{$data1}) {
     my @valueSplit = split(/e/,$p{$id});
     my ($string);
 
+    $valueSplit[1] = $valueSplit[1] ? $valueSplit[1]:0;
     if ($valueSplit[0] =~ /\./) {
        $string = "$id\t".sprintf("%.2f", $valueSplit[0])."\t$valueSplit[1]\n";
     } else {
-       $valueSplit[1] = $valueSplit[1] ? $valueSplit[1]:0;
        $string = "$id\t$valueSplit[0]\t$valueSplit[1]\n";
     }
     $wfh1->print($string);
