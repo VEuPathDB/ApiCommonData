@@ -226,6 +226,16 @@ close(OUT);
 
 
 sub usage{
+  my ($m) = @_;
 
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl preprocessGFF3 \\
+--input_gff <input gff3 file (required)> \\
+--output_gff <output custom gff file (required)> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
 
 }
