@@ -7,9 +7,9 @@ use GUS::Supported::GusConfig;
 
 my ($gusConfigFile, $drop, $create, $db);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	   "drop!" => \$drop,
-	   "create!" => \$create,
-	   "db=s" => \$db);
+           "drop!" => \$drop,
+           "create!" => \$create,
+           "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
   die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
@@ -51,16 +51,17 @@ my @create = qw( enterDbVersion.sql
                  createSpliceSiteFeature.sql
                  createTuningManager.sql
                  createContinents.sql
-		 createWorkflow.sql
-		 createsiRNA.sql
-		 createNextGenSeqCoverage.sql
-		 createNextGenSeq_Align.sql
-		 createPlasmoPfalLocations.sql
-		 createPlasmoMapp.sql
-		 createGeneGenomicSequence_Split.sql
-		 createOrganismProject.sql
+                 createWorkflow.sql
+                 createsiRNA.sql
+                 createNextGenSeqCoverage.sql
+                 createNextGenSeq_Align.sql
+                 createPlasmoPfalLocations.sql
+                 createPlasmoMapp.sql
+                 createGeneGenomicSequence_Split.sql
+                 createOrganismProject.sql
                  createIsolateMapping.sql
-	       );
+                 createDifferentialExpression.sql
+               );
 
 my @delete = qw( dropTuningManager.sql
                  dropAnalysisMethodInvocation.sql
@@ -81,14 +82,14 @@ my @delete = qw( dropTuningManager.sql
                  dropToxodbGenesView.sql
                  dropSpliceSiteFeature.sql
                  dropTransmembraneTable.sql
-		 dropWorkflow.sql
+                 dropWorkflow.sql
                  dropOrganismProject.sql
-		 dropGenegenomicsequence.sql
+                 dropGenegenomicsequence.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
                  dropStoredProcedures.sql
                  dropApidbSchema.sql
-	       );
+               );
 
 if ($create) {
 
