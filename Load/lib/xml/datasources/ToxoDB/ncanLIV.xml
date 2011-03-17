@@ -47,10 +47,9 @@
       plugin="ApiCommonData::Load::Plugin::LoadNothing"
       internalDescrip="">
 
-    <prop name="name">chromosome_number_map</prop>
     <prop name="sequence_table">ExternalNaSequence</prop>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/$$name$$/%RESOURCE_VERSION%/final/chromosomeNumberMap.txt"/>
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome_number_map/%RESOURCE_VERSION%/final/chromosomeNumberMap.txt"/>
 
     <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/chromosomeMap.txt --sequence_table $$sequence_table$$ --ncbiTaxId $$ncbiTaxId$$ </unpack>
 
@@ -60,7 +59,7 @@
 
   <!-- OldName: dbEST_NC   OldVersion: 2009-09-25 -->
 
-  <resource resource="$$orgAbbrev_dbEST_RSRC" version="@@orgAbbrev_dbEST_VER@@"
+  <resource resource="$$orgAbbrev$$_dbEST_RSRC" version="@@$$orgAbbrev$$_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST"
       internalDescrip="">
     <manualGet fileOrDir="global/empty"/>
