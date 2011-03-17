@@ -190,6 +190,8 @@ sub processFile {
   my $filePath = $self->getArg('dirPath') ."/" . $file;
   open (FILE, $filePath);
 
+  my $all_uniq_counts = 0; # to keep count of ALL unique alignments; needed for normalizing counts later
+
   while (<FILE>){
     chomp;
 
@@ -211,6 +213,7 @@ sub processFile {
 
     my $isUniq = 0;
     $isUniq = 1 if ($temp[6] == 0);
+    $all_uniq_counts++ if ($isUniq);
 
     # set hash key as the unique combination of seq_id, location, strand and isUniq
     $key = "$naSeqId\t$location\t$temp[1]\t$isUniq";
@@ -225,12 +228,12 @@ sub processFile {
   }
   close (FILE);
 
-  $self->insertSpliceSiteFeatures($file, $extDbReleaseId);
+  $self->insertSpliceSiteFeatures($file, $extDbReleaseId, $all_uniq_counts);
 }
 
 
 sub insertSpliceSiteFeatures {
-  my ($self, $file, $extDbReleaseId) = @_;
+  my ($self, $file, $extDbReleaseId, $all_uniq_counts) = @_;
   my $count;
 
   # get sample name corresponding to data file
@@ -246,8 +249,11 @@ sub insertSpliceSiteFeatures {
     # NOTE format for $hit IS: "$naSeqId\t$location\t$strand\t$isUniq"
     my @m = split("\t",$hit);
     my $alignCount = $self->{alignCount}->{$hit};
+
     my $mismatch = $self->{mismatches}->{$hit} || 0;
-    my $avg_mismatch = $mismatch / $alignCount;
+    my $avg_mismatch = sprintf "%.2f", ($mismatch / $alignCount);
+
+    my $countPerMill = sprintf "%.2f", ($alignCount * 1000000) / ($all_uniq_counts);
 
     my $ssfeature = GUS::Model::ApiDB::SpliceSiteFeature->new({external_database_release_id => $extDbReleaseId,
 							       type => $self->getArg('type'),
@@ -256,8 +262,9 @@ sub insertSpliceSiteFeatures {
 							       strand => $m[2],
 							       sample_name => $sample_name,
 							       count => $alignCount,
-							       is_uniq => $m[3],
+							       is_unique => $m[3],
 							       avg_mismatches => $avg_mismatch,
+							       count_per_million => $countPerMill,
 							      });
     $ssfeature->submit();
     $count++;
