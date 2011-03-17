@@ -1,0 +1,525 @@
+<tuningConfig>
+
+  <tuningTable name="apidb.AnnotationChange" alwaysUpdate="true">
+    <perl>
+      <![CDATA[ 
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use LWP::UserAgent;
+use HTTP::Request;
+use HTTP::Response;
+use ApiCommonData::Load::TuningConfig::Log;
+use XML::Simple;
+
+my $insertStatement;
+
+# my $dbh = getDbHandle();
+
+createEmptyTable($dbh);
+
+my $genomeListRef = getGenomeList($dbh);
+my @genomeList = @$genomeListRef;
+my $totalChangedGenes;
+
+foreach my $genome (@genomeList) {
+  $totalChangedGenes += processChangedGenes($dbh, $genome->{'taxonomyId'}, $genome->{'sinceDate'});
+}
+
+renameOldChanges($dbh);
+indexChanges($dbh);
+
+ApiCommonData::Load::TuningConfig::Log::addLog("Saved $totalChangedGenes total changed genes from web service");
+
+sub getGenomeList {
+
+    my ($dbh) = @_;
+    my $taxa = getOfferedTaxa();
+
+    my $stmt = $dbh->prepare(<<SQL);
+select taxonomyId as "taxonomyId", min(sinceDate) as "sinceDate"
+from (select distinct t.ncbi_tax_id as taxonomyId, edr.version as sinceDate
+      from dots.GeneFeature gf, dots.NaSequence ns,
+           sres.Taxon t, sres.ExternalDatabaseRelease edr
+      where gf.external_database_release_id = edr.external_database_release_id
+        and gf.na_sequence_id = ns.na_sequence_id
+        and ns.taxon_id = t.taxon_id
+        and edr.version like '____-__-__'
+        and t.ncbi_tax_id in ($taxa)
+      union
+      select distinct YouSayPotato.sanger_taxon as "taxonomyId", edr.version as "sinceDate"
+      from dots.GeneFeature gf, dots.NaSequence ns,
+           sres.Taxon t, sres.ExternalDatabaseRelease edr,
+           (select 'Trypanosoma cruzi'       as organism, 353153 as eupath_taxon,   5693 as sanger_taxon from dual
+             union
+            select 'Leishmania major'        as organism,   5664 as eupath_taxon, 347515 as sanger_taxon from dual
+             union
+            select 'Leishmania braziliensis' as organism,   5660 as eupath_taxon, 420245 as sanger_taxon from dual
+             union
+            select 'Plasmodium berghei'      as organism,   5823 as eupath_taxon,   5821 as sanger_taxon from dual
+             union
+            select 'Plasmodium chabaudi'     as organism,  31271 as eupath_taxon,   5825 as sanger_taxon from dual
+             union
+            select 'Plasmodium falciparum'   as organism,  36329 as eupath_taxon,   5833 as sanger_taxon from dual
+             union
+            select 'Plasmodium knowlesi'     as organism,   5851 as eupath_taxon,   5850 as sanger_taxon from dual
+             union
+            select 'Plasmodium vivax'        as organism, 126793 as eupath_taxon,   5855 as sanger_taxon from dual
+             union
+            select 'Plasmodium yoelii'       as organism, 352914 as eupath_taxon,   5861 as sanger_taxon from dual) YouSayPotato
+      where gf.external_database_release_id = edr.external_database_release_id
+        and gf.na_sequence_id = ns.na_sequence_id
+        and ns.taxon_id = t.taxon_id
+        and edr.version like '____-__-__'
+        and t.ncbi_tax_id = YouSayPotato.eupath_taxon
+        and YouSayPotato.sanger_taxon in ($taxa))
+group by taxonomyId
+SQL
+
+  $stmt->execute();
+  my @genomeList;
+  while (my $ref = $stmt->fetchrow_hashref()) {
+    push(@genomeList, $ref);
+  }
+
+  # old, hardwired taxon/date pairs
+  #   my @genomeList = (
+  # 		    {taxonomyId => 185431, sinceDate => '2008-11-13'},  # T. brucei
+  # 		    {taxonomyId => 5671, sinceDate => '2008-11-24'} );  # L. infantum
+
+  return \@genomeList;
+}
+
+
+sub getOfferedTaxa {
+
+  # returns a comma-separated string of NCBI taxon IDs for which the Sanger web
+  # service can show changes.  The service itself will provide this list, as a
+  # response to the URL in the code.  But since it changes slowly, and every
+  # component runs the tuning manager, it's hardwired into this RETURN statement
+
+  # short, TriTrypDB-specific list: 
+  # return '5671, 5692, 5693, 5699, 31285, 185431, 347515, 420245';
+
+  # old, longer list
+  return <<SANGERTAXA;
+   5085, 360910, 518, 95486, 272559, 97084, 519, 520, 28450,
+   83555, 1491, 1496, 1717, 42374, 197, 28447, 813, 44689,
+   554, 216592, 5759, 5802, 420245, 5661, 5671,347515, 5665,
+   1765, 1769, 1781, 1773, 487, 272831, 5821, 5825,          -- skip "29176" (Neospora caninum)
+   5833, 294,5850, 5855, 5861, 384, 46170, 282458, 282459,
+   54736, 4932, 1902, 592, 40324, 6183, 615, 561276, 373153,
+   1313, 170187, 4896, 1314, 90370, 568708, 1349, 5874,
+   5761, 185431, 31285, 5692, 5693, 5699, 2039, 630, 632
+SANGERTAXA
+
+  my $ua = new LWP::UserAgent;
+  my $url = "http://www.genedb.org/service/genomes/changes.xml?since=2008-12-01";
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of available taxa from = $url");
+  my $request = new HTTP::Request('GET', $url);
+  my $response = $ua->request($request);
+  if (!$response->is_success) {
+    die "trying to get taxon list with URL ->>\"$url\<<-.  Got response ->>" . $response->content . "<<- (end of response to taxon-list request)";
+  }
+
+  my $simple = XML::Simple->new();
+  my $changeList = $simple->XMLin($response->content, KeyAttr => 'taxonomyID');
+  my $results = $changeList->{results};
+
+  my $organisms = $results->{organism};
+
+  my @taxa;
+  map {my $taxonomyID = $_->{'taxonomyID'}; push(@taxa, $taxonomyID) if $taxonomyID} @$organisms;
+
+  my $taxa = join(', ', @taxa);
+  return $taxa;
+}
+
+sub processChangedGenes {
+
+  my ($dbh, $taxonomyId, $sinceDate) = @_;
+
+  die "bad taxonomyId" if !defined($taxonomyId);
+
+  my $ua = new LWP::UserAgent;
+  my $url = "http://www.genedb.org/testservice/genes/annotation_changes?since=$sinceDate&taxonomyID=$taxonomyId";
+  ApiCommonData::Load::TuningConfig::Log::addLog("getting list of gene changes from = $url");
+
+  my $request;
+  my $response;
+
+  my $retries = 0;
+  my $MAX_RETRIES = 10;
+  do {
+    ApiCommonData::Load::TuningConfig::Log::addLog("trying again (retry $retries) with \"$url\"") if $retries;
+    $request = new HTTP::Request('GET', $url);
+    $response = $ua->request($request);
+
+      if (!$response->is_success # request failed
+         || $response->content =~ /<error / ) {  # response was an error message
+        ApiCommonData::Load::TuningConfig::Log::addLog("unsuccessful when trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url .  Got response ->>"
+            . $response->content . "<<- (end of response to gene-list request for taxonomy ID $taxonomyId)");
+      }
+
+  } until (++$retries >= $MAX_RETRIES || ($response->content && $response->is_success && !($response->content =~ /<error /)));
+
+  if (!$response->is_success || $response->content =~ /<error /) {
+    die "trying to get changed-gene list for taxonomy ID $taxonomyId with URL $url";
+  }
+
+  my $simple = XML::Simple->new();
+  my $changeList = $simple->XMLin($response->content, forcearray => 1);
+  my $results = $changeList->{results};
+
+  my $details = $results->{'genes/annotation_changes'};
+  my $changes = $details->{gene};
+  my %geneSet;
+  my $insertStatement = getInsertStatement($dbh);
+  my $changeCount = 0;
+
+  foreach my $change (@$changes) {
+      
+      $changeCount++;
+      my $gene = $change->{geneuniquename};
+      $geneSet{$gene} = 1;
+      my $changeDate = $change->{date};
+      my $changeDescription = $change->{change};
+      my $source = $change->{source};
+ 
+      $insertStatement->execute($gene, $changeDate, $changeDescription, $source)
+	  or die "Can't insert AnnotationChange record (gene $gene, date $changeDate, change \"$changeDescription\")";
+  }
+
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("$changeCount changes for " . keys(%geneSet) . " genes from web service for taxonomy ID $taxonomyId");
+
+  return keys(%geneSet);
+
+}
+
+sub getDbHandle {
+
+  my $username = 'apidb';
+  my $password = '<password>';
+  my $instance = '<instance>';
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  return $dbh;
+}
+
+sub getInsertStatement {
+
+    my ($dbh) = @_;
+    if (!$insertStatement) {
+    $insertStatement = $dbh->prepare(<<SQL);
+      insert into apidb.AnnotationChange&1 (gene, change_date, change, source)
+      values (?, to_date(?, 'yyyy-mm-dd'), ?, ?)
+SQL
+  }
+
+  return $insertStatement;
+}
+
+sub createEmptyTable {
+    my ($dbh) = @_;
+
+    $dbh->do(<<SQL);
+create table apidb.AnnotationChange&1 (
+   gene          varchar2(50),
+   change_date date,
+   change      varchar2(2000),
+   source      varchar2(7)
+)
+SQL
+
+}
+
+sub renameOldChanges {
+# suppress changes (by changing the gene ID to "old change: <gene ID>") for genes whose data-load is newer than the newest change
+
+    my ($dbh) = @_;
+    $dbh->do(<<SQL);
+update apidb.AnnotationChange&1 -- should use &1 macro
+set gene = 'old change: ' || gene
+where change_date < (select to_date(edr.version, 'yyyy-mm-dd')
+                       from apidb.GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
+                       where ga.source_id = AnnotationChange&1.gene
+                         and nf.na_feature_id = ga.na_feature_id
+                         and edr.external_database_release_id = nf.external_database_release_id
+                         and edr.version like '____-__-__')
+SQL
+
+}
+
+sub indexChanges {
+
+# index AnnotationChange table
+    my ($dbh) = @_;
+    $dbh->do(<<SQL);
+      create index AnotCh_ix&1 -- should use &1 macro
+      on apidb.AnnotationChange&1 (gene, change_date) tablespace INDX
+SQL
+
+}
+      ]]> 
+    </perl>
+  </tuningTable>
+
+  <tuningTable name="apidb.ChangedGeneProduct" alwaysUpdate="true">
+    <externalTuningTableDependency name="apidb.GeneAttributes"/>
+    <perl>
+      <![CDATA[
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use DBI;
+use Data::Dumper;
+use LWP::UserAgent;
+use HTTP::Request;
+use HTTP::Response;
+use ApiCommonData::Load::TuningConfig::Log;
+use XML::Simple;
+
+BEGIN {
+  # This variable is declared inside a BEGIN block, to make it behave
+  # like a Java "static" variable, whose state persists from one invocation to
+  # another.
+  my $errorFlag;
+
+  sub setErrorFlag {
+    $errorFlag = 1;
+  }
+
+  sub getErrorFlag {
+    return $errorFlag;
+  }
+}
+
+
+# my $dbh = getDbHandle();
+
+createEmptyTable($dbh);
+storeProducts($dbh);
+createIndex($dbh);
+
+die if getErrorFlag();
+
+################################################################################
+
+sub logError {
+    my ($msg) = @_;
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($msg);
+    setErrorFlag();
+}
+
+sub storeProducts {
+
+    my ($dbh) = @_;
+
+    # get list of genes with changes
+    my $stmt = $dbh->prepare(<<SQL) or die "preparing to get changed-gene list from AnnotationChange";
+      select distinct gene
+      from apidb.AnnotationChange
+      order by gene
+SQL
+
+  $stmt->execute() or die "getting changed-gene list from AnnotationChange";
+  my $requestUrl = "http://www.genedb.org/testservice/features/hierarchy.json";
+  my $request = new HTTP::Request('POST', $requestUrl);
+  $request->content_type('application/x-www-form-urlencoded');
+  my $exampleUrl;
+  my @params;
+  my $geneCount = 0;
+  while (my ($gene) = $stmt->fetchrow_array()) {
+      $geneCount++;
+      push(@params, "features=$gene");
+      $exampleUrl = $requestUrl . '?' . "features=$gene";
+  }
+
+  return if !$geneCount;
+
+  my $requestContent = join('&', @params);
+  $request->content($requestContent);
+  $request->content_length(length($requestContent));
+
+    # use web service to find polypeptides for given genes
+    my $ua = new LWP::UserAgent;
+    my $response;
+    my $MAX_ATTEMPTS = 30;
+    for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
+	$response = $ua->request($request);
+	last if $response->is_success;
+        ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
+        die "getting polypeptides from web service (example URL: $exampleUrl)" if $attempt == $MAX_ATTEMPTS;
+        ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
+    }
+
+    # parse response
+    my %genePeps;
+    my %geneNames;
+    foreach my $geneDescription (split(/\n                    \{/, $response->content)) {
+        $geneDescription =~ /\n                "uniquename": "(.*)"/;
+        my $gene = $1;
+        $geneDescription =~ /\n                "name": "(.*)"/;
+        my $geneName = $1;
+        foreach my $genePart (split(/}/, $geneDescription)) {
+            if ($genePart =~ /"type": "polypeptide", \n.*uniquename": "(.*)"/) {
+		my $polypeptide = $1;
+                $genePeps{$polypeptide} = $gene;
+                $geneNames{$polypeptide} = $geneName;
+	    }
+        }
+    }
+
+  # use web service to find products for polypeptides
+  my $requestUrl = "http://www.genedb.org/testservice/features/terms.json";
+  my $request = new HTTP::Request('POST', $requestUrl);
+  $request->content_type('application/x-www-form-urlencoded');
+  my $cvParm = "controlled_vocabularies=genedb_products";
+  $request->content($cvParm);
+  my @params;
+  foreach my $pep (keys(%genePeps)) {
+      push(@params, "features=$pep");
+      $exampleUrl = $requestUrl . '?' . "features=$pep" . '&' . $cvParm;
+  }
+  my $requestContent = join('&', @params);
+  $request->content($requestContent);
+  $request->content_length(length($requestContent));
+
+  for (my $attempt = 1; $attempt <= $MAX_ATTEMPTS; $attempt++) {
+       $response = $ua->request($request);
+       logError("error message from web service: " . $response->content)
+         if $response->content =~ /"error": \{/;
+       last if $response->is_success;
+       ApiCommonData::Load::TuningConfig::Log::addLog("response: \"" . $response->content . "\"");
+       die "getting product names from web service (example URL: $exampleUrl)" if $attempt == $MAX_ATTEMPTS;
+       ApiCommonData::Load::TuningConfig::Log::addLog("attempt $attempt failed; retrying");
+    }
+
+  my $insertStatement = $dbh->prepare(<<SQL);
+      insert into apidb.ChangedGeneProduct&1 (gene, gene_name, polypeptide, product) values (?, ?, ?, ?)
+SQL
+
+  my $products = 0;
+  foreach my $polypepInfo (split(/ "feature": "/, $response->content)) {
+      $polypepInfo =~ /^([^"]*)"/;
+      my $pep = $1;
+      if ($polypepInfo =~ /"accession": "(.*)",\s*\n\s*"cv": "genedb_products",\s*\n\s*"cvterm": "(.*)", \s*\n/) {
+          my $accession = $1;
+          my $cvterm = $2;
+          $insertStatement->execute($genePeps{$pep}, $geneNames{$pep}, $pep, $accession) or die("inserting a ChangedGeneProduct record");
+          $products++;
+          ApiCommonData::Load::TuningConfig::Log::addLog("mismatch: accession \"$accession\" CV term \"$cvterm\"") if (lc($accession) ne lc($cvterm));
+      }
+    }
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("Stored products for $products changed genes.");
+
+  my $noProd = changedGenesWithoutProduct($dbh);
+  logError($noProd . " genes are in the current ChangedGeneProduct but not the newly-created one.")
+    if $noProd;
+}
+
+sub createEmptyTable {
+    my ($dbh) = @_;
+
+    $dbh->do(<<SQL) or die "creating ChangedGeneProductXXXX table";
+      create table apidb.ChangedGeneProduct&1 (
+         gene        varchar2(50),
+         gene_name   varchar2(50),
+         polypeptide varchar2(60),
+         product     varchar2(300)
+      )
+SQL
+
+}
+
+sub changedGenesWithoutProduct {
+    my ($dbh) = @_;
+
+    my $stmt;
+
+    # query will fail if tuning manager has never been run on this instance,
+    # so take sql error to mean that the changed-gene list was formerly empty.
+    eval {
+    $stmt = $dbh->prepare(<<SQL)
+      select cgp.gene from apidb.ChangedGeneProduct cgp, apidb.GeneAttributes ga
+                  where cgp.gene = ga.source_id
+    minus
+      select gene from apidb.ChangedGeneProduct&1
+    order by gene
+SQL
+
+    };
+
+  return 0 if !$stmt;
+
+  $stmt->execute() or die "checking for changed genes without product";
+
+    my @missing;
+    while (my ($gene) = $stmt->fetchrow_array()) {
+      push(@missing, $gene);
+  }
+
+    my $numberMissing = scalar(@missing);
+
+    if ($numberMissing > 10) {
+	# error message listing a subset of missing genes, as examples
+	  ApiCommonData::Load::TuningConfig::Log::addLog("$numberMissing genes, including the examples below, are in the current version ofChangedGeneProduct, but not the new version:");
+	    my $listString;
+	    my $SAMPLE_SIZE = 10; # list $SAMPLE_SIZE missing genes in the log
+	    for (my $i = 0; $i < $numberMissing; $i += $numberMissing / $SAMPLE_SIZE) {
+		$listString .= $missing[$i] . " ";
+	    }
+	    ApiCommonData::Load::TuningConfig::Log::addLog($listString);
+      } elsif ($numberMissing > 0) {
+	  # error message listing all missing genes 
+        ApiCommonData::Load::TuningConfig::Log::addLog("The following $numberMissing genes are in the current ChangedGeneProduct, but not the new one:");
+	  ApiCommonData::Load::TuningConfig::Log::addLog(join(' ', @missing));
+	}
+
+    return $numberMissing;
+}
+
+sub createIndex {
+
+# index ChangedGeneProduct table
+    my ($dbh) = @_;
+    $dbh->do(<<SQL) or die "indexing ChangedGeneProductXXXX table";
+      create index cgp_ix&1 -- should use &1 macro
+      on apidb.ChangedGeneProduct&1 (gene, polypeptide, product) tablespace INDX
+SQL
+
+}
+
+sub getDbHandle {
+
+  my $username = 'apidb';
+  my $password = '<password>';
+  my $instance = '<instance>';
+  my $dsn = "dbi:Oracle:" . $instance;
+
+  my $dbh = DBI->connect(
+                $dsn,
+                $username,
+                $password,
+                { PrintError => 1, RaiseError => 0}
+                ) or die "Can't connect to the database: $DBI::errstr\n";
+
+  return $dbh;
+}
+      ]]> 
+    </perl>
+  </tuningTable>
+
+</tuningConfig>
