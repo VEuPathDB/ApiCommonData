@@ -14,6 +14,7 @@ my ($help, $fn, $gusConfigFile, $sequenceTable);
             'map_file=s' => \$fn,
             'gus_config_file=s' => \$gusConfigFile,
             'sequence_table=s' => \$sequenceTable,
+            'ncbiTaxId=s' => \$ncbiTaxId,
             );
 
 #============================================
@@ -38,7 +39,15 @@ $dbh->{AutoCommit} = 0;
 
 open(FILE, $fn) or die "Cannot open file $fn for reading:$!";
 
-my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ?, modification_date=sysdate where source_id = ?";
+# get taxon_id
+$sth = $dbh->prepare("select taxon_id from sres.taxon where ncbi_tax_id = $ncbiTaxId") || die "Couldn't prepare the SQL statement: " . $$handle->errstr;  
+$sth->execute ||  die "Couldn't execute statement: " . $sth->errstr;
+
+my  ($taxon_id)  = $sth->fetchrow_array();
+
+die "can't find taxon_id for ncbiTaxId ''\n" unless $taxon_id;
+
+my $sql = "update dots.$sequenceTable set chromosome = ?, chromosome_order_num = ?, modification_date=sysdate where source_id = ? and taxon_id = $taxon_id";
 my $sh = $dbh->prepare($sql);
 
 my $error;
@@ -61,7 +70,7 @@ while(<FILE>) {
 
 if($error) {
   $dbh->rollback();
-  print STDERR "Errors!  Rolled back database\n";
+  die ("Errors!  Rolled back database\n");
 }
 
 $dbh->commit;
