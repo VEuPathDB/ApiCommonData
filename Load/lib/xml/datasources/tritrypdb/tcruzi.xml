@@ -1287,6 +1287,48 @@ TcSNP is an online resource/database with information on genetic variation(polym
     </info>
   </resource>
 
+  <resource resource="TcruziEsmeraldoLike_geneDB_NewID_dbxref_RSRC" version="@@Tcruzi_geneDB_NewID_dbxref_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/geneDBNewIDMapping/%RESOURCE_VERSION%/final/tcruzi_names"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/tcruzi_names --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TcruziEsmeraldoLike_chromosomes_RSRC|@@TcruziEsmeraldoLike_chromosomes_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="GeneDB has come up with a new schema (requested by the TriTryp advisors) for IDs."
+        project="TriTrypDB"
+        organisms="@@TcruziEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TcruziNonEsmeraldoLike_geneDB_NewID_dbxref_RSRC" version="@@Tcruzi_geneDB_NewID_dbxref_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/dbxref/geneDBNewIDMapping/%RESOURCE_VERSION%/final/tcruzi_names"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/tcruzi_names --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'TcruziNonEsmeraldoLike_genome_RSRC|@@TcruziNonEsmeraldoLike_genome_VER@@' --idType 'alternate id'</pluginArgs>
+    <info
+        displayName="GeneDB has come up with a new schema (requested by the TriTryp advisors) for IDs."
+        project="TriTrypDB"
+        organisms="@@TcruziNonEsmeraldoLikeOrganismFullName@@"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--Proteome-->
 
   <resource resource="TcruziEsmeraldoLike_IEDB_Epitopes_RSRC" version="@@TcruziEsmeraldoLike_IEDB_Epitopes_VER@@"
