@@ -1,0 +1,61 @@
+<resources>
+
+  <library name="standardClasses.xml"/>
+
+  <constant name="orgAbbrev" value="ncanLIV"/>
+  <constant name="project" value="ToxoDB"/>
+  <constant name="ncbiTaxId" value="572307"/>
+  <constant name="speciesNcbiTaxId" value="29176"/>
+  <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_GeneDB_GFF_sequence_RSRC"/>
+
+  <resourceInstance class="GeneDB_GFF_genome_sequence"
+      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@">
+    <prop name="soTerm">chromosome</prop>
+    <prop name="regex">>(\S+)</prop>
+  </resourceInstance>
+
+
+  <resourceInstance class="GeneDB_GFF_genome_features"
+      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@"
+      parentResource="$$genomeRSRC$$">
+    <prop name="soTerm">chromosome</prop>
+  </resourceInstance>
+
+
+  <resourceInstance class="dbEST"
+      version="@@$$orgAbbrev$$_dbEST_VER@@">
+  </resourceInstance>
+
+
+  <resourceInstance class="IEDB_sequences"
+      version="@@$$orgAbbrev$$_epitope_IEDB_VER@@">
+  </resourceInstance>
+
+
+  <resourceInstance class="IEDB_dbxrefs"
+      version="@@$$orgAbbrev$$_epitope_IEDB_VER@@">
+  </resourceInstance>
+
+
+  <resourceInstance class="GeneDB_GFF_aliases"
+      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@"
+  </resourceInstance>
+
+
+  <resourceInstance class="dbxref_ApiLoc"
+      version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@">
+    <!-- organism name as found on the ApiLoc site -->
+    <prop name="ApiLocOrganism" value="Neospora caninum"/>
+  </resourceInstance>
+
+
+  <resourceInstance class="dbxref_gene2Entrez"
+      version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@">
+  </resourceInstance>
+
+ 
+ <resourceInstance class="dbxref_gene2Uniprot"
+      version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@">
+ </resourceInstance>
+
+</resources>
