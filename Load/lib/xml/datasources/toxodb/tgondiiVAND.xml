@@ -1,10 +1,10 @@
 <resources>
 
 
-<resource resource="Toxoplasma_gondii_VAND_genome_RSRC" version="@@Toxoplasma_gondii_VAND_genome_VER@@"
+<resource resource="TgondiiVAND_genome_RSRC" version="@@TgondiiVAND_genome_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="ToxoDB/tgondiiVAND/genome/scaffolds/%RESOURCE_VERSION%/from_provider/tgvand_scaffolds.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 933077 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgvandscaffolds.fasta --SOTermName 'scaffold'  --regexSourceId  '(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <manualGet fileOrDir="ToxoDB/tgondiiVAND/genome/scaffolds/%RESOURCE_VERSION%/fromProvider/tgvand_scaffolds.fsa"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 933077 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgvand_scaffolds.fsa --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="Toxoplasma gondii VAND scaffolds"
         project="ToxoDB"
@@ -22,10 +22,10 @@
     </info>
   </resource>
 
-<resource resource="Toxoplasma_gondii_VAND_contigs_RSRC" version="@@Toxoplasma_gondii_VAND_genome_VER@@ parentResource="Toxoplasma_gondii_rub_genome_RSRC"
+<resource resource="TgondiiVAND_contigs_RSRC" version="@@TgondiiVAND_genome_VER@@" parentResource="TgondiiVAND_genome_RSRC"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="ToxoDB/tgondiiVAND/genome/contigs/%RESOURCE_VERSION%/from_provider/tgvand_orphans.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 933077 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgvand_orphans.fasta --SOTermName 'contig'  --regexSourceId  '(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <manualGet fileOrDir="ToxoDB/tgondiiVAND/genome/contigs/%RESOURCE_VERSION%/fromProvider/tgvand_orphans.fsa"/>
+    <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 933077 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgvand_orphans.fsa --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="Toxoplasma gondii VAND contigs"
         project="ToxoDB"
