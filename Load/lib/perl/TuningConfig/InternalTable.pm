@@ -188,6 +188,15 @@ sub getState {
     }
   }
 
+  # try querying the table; if it can't be SELECTed from, it should be rebuild
+  my $stmt = $dbh->prepare(<<SQL);
+    select count(*) from $self->{name} where rownum=1
+SQL
+  if (!$stmt) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    query against $self->{name} failed -- update needed.");
+	$needUpdate = 1
+  }
+
 
   if ($self->{alwaysUpdate}) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    " . $self->{name} . " has alwaysUpdate attribute.");
