@@ -8,54 +8,31 @@
   <constant name="speciesNcbiTaxId" value="29176"/>
   <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_GeneDB_GFF_sequence_RSRC"/>
 
-  <resourceInstance class="GeneDB_GFF_genome_sequence"
-      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@">
+  <resourceInstance class="GeneDB_GFF_genome_sequence">
     <prop name="soTerm">chromosome</prop>
     <prop name="regex">>(\S+)</prop>
   </resourceInstance>
 
-
-  <resourceInstance class="GeneDB_GFF_genome_features"
-      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@"
-      parentResource="$$genomeRSRC$$">
+  <resourceInstance class="GeneDB_GFF_genome_features">
+    <prop name="parentResource">$$genomeRSRC$$</prop>
     <prop name="soTerm">chromosome</prop>
   </resourceInstance>
 
+  <resourceInstance class="dbEST"/>
 
-  <resourceInstance class="dbEST"
-      version="@@$$orgAbbrev$$_dbEST_VER@@">
-  </resourceInstance>
+  <resourceInstance class="IEDB_sequences"/>
 
+  <resourceInstance class="IEDB_dbxrefs"/>
 
-  <resourceInstance class="IEDB_sequences"
-      version="@@$$orgAbbrev$$_epitope_IEDB_VER@@">
-  </resourceInstance>
+  <resourceInstance class="GeneDB_GFF_aliases"/>
 
-
-  <resourceInstance class="IEDB_dbxrefs"
-      version="@@$$orgAbbrev$$_epitope_IEDB_VER@@">
-  </resourceInstance>
-
-
-  <resourceInstance class="GeneDB_GFF_aliases"
-      version="@@$$orgAbbrev$$_GeneDB_GFF_VER@@"
-  </resourceInstance>
-
-
-  <resourceInstance class="dbxref_ApiLoc"
-      version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@">
+  <resourceInstance class="dbxref_ApiLoc">
     <!-- organism name as found on the ApiLoc site -->
     <prop name="ApiLocOrganism" value="Neospora caninum"/>
   </resourceInstance>
 
-
-  <resourceInstance class="dbxref_gene2Entrez"
-      version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@">
-  </resourceInstance>
-
+  <resourceInstance class="dbxref_gene2Entrez"/>
  
- <resourceInstance class="dbxref_gene2Uniprot"
-      version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@">
- </resourceInstance>
+  <resourceInstance class="dbxref_gene2Uniprot"/>
 
 </resources>
