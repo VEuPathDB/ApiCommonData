@@ -2125,7 +2125,7 @@ sub getReversedTstarts {
     <internalDependency name="apidb.GeneAttributes"/>
     <sql>
       <![CDATA[
-CREATE TABLE apidb.GeneNeighbors AS 
+CREATE TABLE apidb.GeneNeighbors&1 AS 
 SELECT a.prev_id, a.source_id, b.next_id
 FROM
 (SELECT  ga.source_id, ga2.source_id AS prev_id
