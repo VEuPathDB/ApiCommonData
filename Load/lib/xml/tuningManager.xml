@@ -2120,6 +2120,60 @@ sub getReversedTstarts {
     </perl>
   </tuningTable>
 
+
+  <tuningTable name="apidb.GeneNeighbors">
+    <internalDependency name="apidb.GeneAttributes"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE apidb.GeneNeighbors AS 
+SELECT a.prev_id, a.source_id, b.next_id
+FROM
+(SELECT  ga.source_id, ga2.source_id AS prev_id
+ FROM apidb.geneattributes ga, apidb.geneattributes ga2,
+  (SELECT max(prev.end_max) AS alpha, ga.source_id
+   FROM apidb.geneattributes ga, apidb.geneattributes  prev
+   WHERE ga.na_sequence_id = prev.na_sequence_id 
+   AND prev.end_max < ga.start_min  GROUP BY ga.source_id) sub
+ WHERE ga.source_id = sub.source_id
+ AND ga2.end_max = sub.alpha
+ AND ga.na_sequence_id = ga2.na_sequence_id
+ UNION
+ SELECT  source_id, 'null' as prev_id 
+ FROM (
+  SELECT ga.na_sequence_id , ga.source_id
+  FROM apidb.geneattributes ga, 
+    (SELECT min(start_min) as min_start_min, na_sequence_id
+     FROM apidb.geneattributes
+     GROUP BY na_sequence_id) sub
+  WHERE ga.na_sequence_id = sub.na_sequence_id
+  AND ga.start_min = sub.min_start_min )
+) a,
+(SELECT ga.source_id, ga2.source_id as next_id
+ FROM apidb.geneattributes ga, apidb.geneattributes ga2,
+  (SELECT min(nxt.start_min) AS alpha, ga.source_id
+   FROM apidb.geneattributes ga, apidb.geneattributes  nxt
+   WHERE ga.na_sequence_id = nxt.na_sequence_id 
+   AND nxt.start_min > ga.end_max group by ga.source_id) sub
+ WHERE ga.source_id = sub.source_id
+ AND ga2.start_min = sub.alpha
+ AND ga.na_sequence_id = ga2.na_sequence_id
+ UNION
+ SELECT  source_id, 'null' as next_id
+ FROM (
+   SELECT ga.na_sequence_id , ga.source_id, 0 as alpha
+   FROM apidb.geneattributes ga, 
+     (SELECT max(end_max) AS max_end_max, na_sequence_id
+      FROM apidb.geneattributes
+      GROUP BY na_sequence_id)  sub
+   WHERE ga.na_sequence_id = sub.na_sequence_id
+   AND ga.end_max = sub.max_end_max )
+) b
+WHERE a.source_id = b.source_id
+ORDER BY a.source_id
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="apidb.EstAlignmentGeneSummary">
     <internalDependency name="apidb.GenomicSequence"/>
     <internalDependency name="apidb.GeneAttributes"/>
