@@ -465,6 +465,8 @@ sub insertSageTagResults {
 
     open(OUT, "> $sqlLdrFn") or die "Cannot open file $sqlLdrFn for writing:$!";
 
+    print STDERR "$sqlLdrFn\n";
+
   }
 
   my $num;
@@ -622,7 +624,7 @@ row_user_id integer external,
 row_group_id integer external, 
 row_project_id integer external, 
 row_alg_invocation_id integer external, 
-COMPOSITE_ELEMENT_RESULT_ID \"rad.SAGETagResult_sq.nextval\"
+COMPOSITE_ELEMENT_RESULT_ID \"rad.compositeelementresultimp_sq.nextval\"
 )
 ";
 
