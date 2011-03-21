@@ -448,6 +448,26 @@ sub getTableId {
   }
 }
 
+sub makeSageTagHash {
+  my ($self,$arrayDesign) = @_;
+
+  my $arrayDesignId = $arrayDesign->get('array_design_id');
+  my %sageTagHash;
+  my $sql = "
+SELECT COMPOSITE_ELEMENT_ID, TAG
+FROM rad.sagetag
+WHERE ARRAY_DESIGN_ID = '$arrayDesignId'
+";
+
+  my $sth = $self->prepareAndExecute($sql);
+
+  $self->log("Reading sage tags into memory");
+  while (my ($composite_element_id, $tag) = $sth->fetchrow_array()) {
+    $sageTagHash{$tag} = $composite_element_id;
+  }
+  return\%sageTagHash;
+}
+
 sub insertSageTagResults {
   my ($self,$quantificationIds, $arrayDesign) = @_;
 
@@ -456,6 +476,12 @@ sub insertSageTagResults {
   my $useSqlLdr = $self->getArg('useSqlLdr');
 
   my $inputDir;
+
+  my $arrayDesignId = $arrayDesign->get('array_design_id');
+
+    print STDERR "making sage tag hash\n";
+
+  my $sageTagHash = $self->makeSageTagHash($arrayDesign);
 
   if($useSqlLdr) {
 
@@ -497,13 +523,12 @@ sub insertSageTagResults {
 
   my $numQ = @$quantificationIds;
 
-  my $arrayDesignId = $arrayDesign->get('array_design_id');
 
   for (my $i=1;$i < @line;$i++) {
 
     my $sageTag = GUS::Model::RAD::SAGETag->new({'tag'=>$line[0], 'array_design_id'=>$arrayDesignId});
 
-    if (! $sageTag->retrieveFromDB()) {
+    if (! $sageTagHash->{$line[0]}) {
       $self->userError("SAGE tag $line[0] with array_design_id = $arrayDesignId not in db\n");
     } 
 
@@ -512,11 +537,11 @@ sub insertSageTagResults {
                      tag_count => $line[$i]
                     };
 
-      $self->writeSqlLdrInput($sageTag, $hashRef,\*OUT);
+      $self->writeSqlLdrInput($sageTagHash->{$line[0]}, $hashRef,\*OUT);
     } else{
-	 my $sageTagResult = GUS::Model::RAD::SAGETagResult->new({'subclass_view'=>"SAGETagResult", 'quantification_id'=>$quantificationIds->[$i],'tag_count'=>$line[$i]});
-         $sageTagResult->setParent($sageTag);
-         $num += $sageTagResult->submit();
+	# my $sageTagResult = GUS::Model::RAD::SAGETagResult->new({'subclass_view'=>"SAGETagResult", 'quantification_id'=>$quantificationIds->[$i],'tag_count'=>$line[$i]});
+        # $sageTagResult->setParent($sageTag);
+        # $num += $sageTagResult->submit();
       }
     }
 
@@ -555,11 +580,9 @@ sub insertSageTagResults {
 }
 
 sub writeSqlLdrInput { 
-  my ($self, $sageTag, $hashRef, $fh) = @_;
+  my ($self, $sageTagId, $hashRef, $fh) = @_;
 
   my $subclassView = 'SAGETagResult';
-
-  my $sageTagId = $sageTag->getId();
 
   my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
   my @abbr = qw(JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC);
