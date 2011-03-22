@@ -206,6 +206,7 @@ AND p.profile_set_id = ps.profile_set_id
   $self->log("  First pass to read profiles and compute statistics");
   while (my ($sourceId, $profileString, $dud, $profileId)
 	 = $sth->fetchrow_array()) {
+
     if ($dud == 1) {
       $dudCount++;
       next;
@@ -225,6 +226,7 @@ AND p.profile_set_id = ps.profile_set_id
     my $percentHash = $self->makeProfileHash($sourceId,
 					     $percentsHash->{$sourceId},
 					     $header) if $self->getArg('percentProfileSet');
+
 
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
@@ -276,9 +278,6 @@ sub makeProfileHash {
     my $h = $header->[$i];
 
     my $profileKey = $h;
-    if($h =~ /0?(\d+)/) {
-      $profileKey = $1;
-    }
 
     $h{$profileKey} = $profile->[$i];
   }
