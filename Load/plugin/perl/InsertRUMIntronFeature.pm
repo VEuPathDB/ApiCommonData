@@ -131,7 +131,7 @@ sub run {
   my $extDbReleaseId = $self->getExtDbRlsId($self->getArg('extDbName'),$self->getArg('extDbVer'))
     || $self->error("Cannot find external_database_release_id for the data source");
 
-  my $file = $self->getArg('fileNames');
+  my $file = $self->getArg('inputFile');
 
   my $sampleName = $self->getArg('sampleName');
 
@@ -147,10 +147,12 @@ sub processFileAndInsertRUMIntronFeatures {
 
   open (FILE, $file);
 
-  my $counts = 0; 
+  my $count = 0; 
 
   while (<FILE>){
     chomp;
+
+    next if (/^intron/);
 
     # -----------------------------------------------------------------------------------------------------------------------
     # intron  score   known   standard_splice_signal  signal_not_canonical    ambiguous       long_overlap_unique_reads       short_overlap_unique_reads      long_overlap_nu_reads short_overlap_nu_reads
@@ -170,7 +172,7 @@ sub processFileAndInsertRUMIntronFeatures {
 							       na_sequence_id => $naSeqId,
 							       mapping_start => $mapping_start,
 							       mapping_end => $mapping_end,
-							       sample_name => $sample_name,
+							       sample_name => $sampleName,
 							       score => $temp[1],
 							       known_intron => $temp[2],
 							       standard_splice_signal => $temp[3],
@@ -184,7 +186,6 @@ sub processFileAndInsertRUMIntronFeatures {
     $rifeature->submit();
     $count++;
     $self->undefPointerCache() if $count % 1000 == 0;
-  }
   }
   close (FILE);
 
