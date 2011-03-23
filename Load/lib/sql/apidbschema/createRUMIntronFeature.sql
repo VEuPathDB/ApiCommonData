@@ -2,10 +2,10 @@
 CREATE TABLE apidb.RUMIntronFeature (
  RUM_intron_feature_id       NUMBER(10),
  external_database_release_id NUMBER(10) NOT NULL,
+ sample_name                  VARCHAR2(100) NOT NULL,
  na_sequence_id               NUMBER(10) NOT NULL,
  mapping_start                     NUMBER(10) NOT NULL,
  mapping_end                     NUMBER(10) NOT NULL,
- sample_name                  VARCHAR2(100) NOT NULL,
  score                    NUMBER(10),
  known_intron                    NUMBER(10),
  standard_splice_signal                    NUMBER(10),
