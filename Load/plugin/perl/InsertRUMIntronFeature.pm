@@ -169,10 +169,10 @@ sub processFileAndInsertRUMIntronFeatures {
     my ($mapping_start,$mapping_end) = split("\-", $location);
 
     my $rifeature = GUS::Model::ApiDB::RUMIntronFeature->new({external_database_release_id => $extDbReleaseId,
+							       sample_name => $sampleName,
 							       na_sequence_id => $naSeqId,
 							       mapping_start => $mapping_start,
 							       mapping_end => $mapping_end,
-							       sample_name => $sampleName,
 							       score => $temp[1],
 							       known_intron => $temp[2],
 							       standard_splice_signal => $temp[3],
