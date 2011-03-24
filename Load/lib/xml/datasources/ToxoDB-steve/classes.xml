@@ -35,7 +35,7 @@
 
       <manualGet fileOrDir="global/empty"/>
 
-      <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$orgAbbrev$$_genome_GeneDB_GFF_RSRC/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$  --seqSoTerm '$$soTerm$$' --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+      <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$parentResource$$/final/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$  --seqSoTerm '$$soTerm$$' --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     </resource>
   </resourceClass>
 
@@ -103,8 +103,6 @@
   </resourceClass>
 
 
-  <!-- OldName: Neosporacaninum_Gene_Aliases   OldVersion: 01-27-2010 -->
-
   <resourceClass class="GeneDB_GFF_gene_aliases">
     <prop name="orgAbbrev"/>
     <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
@@ -144,7 +142,6 @@
   </resourceClass>
 
 
-  <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
   <resourceClass class="dbxref_gene2Entrez">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -178,6 +175,7 @@
 
       <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
 
+      <!-- need to use the gene2entrez file to get map of NCBI ids -->
       <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
 
       <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>

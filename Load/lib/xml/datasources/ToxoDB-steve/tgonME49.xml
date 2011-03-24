@@ -1548,6 +1548,121 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
 
 
 
+  <!-- OldName: ToxoIsolatesFromGenbank   OldVersion: 2009-10-09 -->
+
+  <resource resource="$$orgAbbrev$$_isolates_genbank_RSRC" version="TODAY"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      internalDescrip="Toxoplasma isolates From Genbank">
+
+    <manualGet fileOrDir="ToxoDB/common/isolate/ToxoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences.gb"/>
+
+    <unpack>fixIsolateSequences --seq_file @@dataDir@@/fromProvider/sequences.gb --fixed_seq_file @@dataDir@@/sequences_fixed.gb --removed_seq_file @@dataDir@@/sequences_excluded.gb</unpack>
+
+    <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @@dataDir@@/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @@dataDir@@/sequences_fixed.gb.1</unpack>
+
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/sequences_fixed.gb.1 --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism "Toxoplasma gondii"  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    <info
+        displayName="T. gondii isolates from Genbank"
+        project="ToxoDB"
+        organism="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="GenBank"
+        email="info@ncbi.nlm.nih.gov"
+        institution="NCBI">
+      <description>
+        <![CDATA[
+<i>Toxoplasma gondii</i> and <i>Neospora caninum</i> isolate data was obtained from Genbank.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+
+  <!-- OldName: ToxoIsolatesFromDardre   OldVersion: 2009-05-04 -->
+
+  <resource resource="$$orgAbbrev$$_isolates_updates_Dardre" version="2009-05-04"
+      plugin="ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre"
+      internalDescrip="">
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/dardre_updates/final/updates.txt"/>
+    <pluginArgs>--extDbRlsSpec '%RESOURCE_NAME%|%RESOURCE_VER%' --inputFile @@dataDir@@/updates.txt</pluginArgs>
+    <info
+        displayName="T. gondii isolates"
+        project="ToxoDB"
+        organism="Toxoplasma"
+        category="Ignore"
+        publicUrl=""
+        contact="GenBank"
+        email="info@ncbi.nlm.nih.gov"
+        institution="NCBI">
+      <description>
+        <![CDATA[
+Several isolate records were obtained from GenBank and updated with additional information provided by the authors.  See references for additional information.Toxoplasma isolates from Marie-Laure Dardre.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->
+
+  <resource resource="$$orgAbbrev$$_isolate_sibley_GFF_sequences" version="2009-03-23"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+      internalDescrip="">
+
+    <prop name="regexSourceId">^>(\S+)</prop>
+
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolates/$$name$$/%RESOURCE_VERSION%/final">
+
+    <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $$ncbiTaxId$$ --sequenceFile @@dataDir@@/final/isolates.fasta --soTermName "region" --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="T. gondii isolates (Sibley)"
+        project="ToxoDB"
+        organism="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="David Sibley"
+        email="khan@borcim.wustl.edu"
+        institution="WUSTL">
+      <description>
+        <![CDATA[
+Toxoplasma isolates and sequences obtained from David Sibley (Contact: L. David Sibley sibley&#64;borcim&#46;wustl&#46;edu)..
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+<!-- OldName: SibleyToxoIsolates   OldVersion: 2009-03-23  (wrong as: 2009-05-04) -->
+
+  <resource resource="$$orgAbbrev$$_isolate_sibley_GFF_features" version="2009-03-23"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+      parentResource="$$orgAbbrev$$_isolate_sibley_GFF_sequences"
+      internalDescrip="">
+
+    <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+
+    <manualGet fileOrDir="global/empty"/>
+
+    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/../$$parentResource$$/final/isolates.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @SO_VER@ --defaultOrganism $$ncbiTaxId --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    <info
+        displayName="Toxoplasma isolates from David Sibley"
+        project="ToxoDB"
+        organism="Toxoplasma"
+        category="ignore"
+        publicUrl=""
+        contact="David Sibley"
+        email="khan@borcim.wustl.edu"
+        institution="WUSTL">
+      <description>
+        <![CDATA[
+Toxoplasma isolates from David Sibley Lab.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
   <!-- NOT PORTED -->
   <!-- OldName: Wastling-Rhoptry   OldVersion: 2007-05-12 -->
   <resource resource="Wastling-Rhoptry" version="@@_VER@@"
