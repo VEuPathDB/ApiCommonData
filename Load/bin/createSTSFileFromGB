@@ -7,12 +7,13 @@ use Bio::SeqIO;
 use File::Basename;
 
 
-my ($verbose, $help, $genbankFileOrDir, $outFile);
+my ($verbose, $help, $genbankFileOrDir, $outFile,$nameRegex);
 
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
             'genbank_file_or_dir=s' => \$genbankFileOrDir,
             'output_file=s' => \$outFile,
+	    'name_regex=s' => \$nameRegex,
            );
 
 
@@ -51,6 +52,11 @@ sub _makeSTSRow{
      
      my ($accession, $rightPrimer, $leftPrimer, $size);
      $accession = $seq->accession_number;
+     my $definition = $seq->desc;
+
+     $definition =~ /($nameRegex)/;
+
+     my $name = $1;
      $size = $seq->length;
      for my $feature ($seq->get_SeqFeatures) { 
        if($feature->primary_tag eq "primer_bind" && $feature->location->strand eq "1"){
@@ -62,7 +68,7 @@ sub _makeSTSRow{
         }
      }
      
-     print STS "$accession\t$leftPrimer\t$rightPrimer\t$size\n";
+     print STS "${accession}:${name}\t$leftPrimer\t$rightPrimer\t$size\n";
    }
 }
 
@@ -75,6 +81,7 @@ sub usage {
   my $usage = "usage:  perl createSTSFileFromGB \\
 --genbank_file_or_dir <s-directory of genbank files or genbank file> \\
 --output_file <sts file> \\
+--name_regex <extract microsatellite names from definition> \\
 --verbose <boolean-a little extra STDERR out> \\
 --help|h
 ";
