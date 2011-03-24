@@ -58,11 +58,10 @@ Several isolate records were obtained from GenBank and updated with additional i
 
   <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->
 
-  <resource resource="sibleyToxoIsolateSequences" version="@@sibleyToxoIsolateSequences_VER@@"
+  <resource resource="$$project$$_common_isolate_sibley_GFF_sequences" version="2009-03-23"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
-      internalDescrip="Toxoplasma isolates From David Sibley">
-    <manualGet fileOrDir="ToxoDB/common/isolates/Sibley/@@sibleyToxoIsolateSequences_VER@@"/>
-    <unpack>createSibleyIsolateGff --strain_file  @@dataDir@@/@@sibleyToxoIsolateSequences_VER@@/final/Strains_list.tab --input_dir @@dataDir@@/fromProvider/@@sibleyToxoIsolateSequences_VER@@ --output_gff @@dataDir@@/sibleyIsolates.gff </unpack>
+      internalDescrip="">
+    <manualGet fileOrDir="$$project$$/common/isolates/$$name$$/%RESOURCE_VERSION%/final/isolates.fasta">
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VER% --ncbiTaxId 5811 --sequenceFile @@dataDir@@/isolates_fixed.fasta --soTermName "region" --regexSourceId "^>(\S+)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="T. gondii isolates (Sibley)"

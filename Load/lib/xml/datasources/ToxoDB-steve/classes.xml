@@ -22,157 +22,186 @@
   </resourceClass>
 
 
-  <!-- OldName: N.caninum_Annotation   OldVersion: 2009-10-06 -->
-  <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_features_RSRC"
-             version="@@$$orgAbbrev$$_genome_GeneDB_GFF_features_VER@@"
-      parentResource="$$genomeRSRC$$"
-      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-      internalDescrip="">
+  <resourceClass class="GeneDB_GFF_genome_features">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="soTerm"/>
+    <prop name="parentResource"/>
+    <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_features_RSRC"
+              version="@@$$orgAbbrev$$_genome_GeneDB_GFF_features_VER@@"
+	      parentResource="$$parentResource$$"
+	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+	      internalDescrip="">
 
-    <prop name="soTerm">chromosome</prop>
+      <manualGet fileOrDir="global/empty"/>
 
-    <manualGet fileOrDir="global/empty"/>
-
-    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$orgAbbrev$$_genome_GeneDB_GFF_RSRC/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$  --seqSoTerm '$$soTerm$$' --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
-  </resource>
-
-
-  <!-- This resource does an update, so is not undoable.  in flow must use undoRoot -->
-  <!-- OldName: updateChromosomeNumberFromMap   OldVersion: 2009-11-23 -->
-  <resource resource="$$orgAbbrev$$_genome_chromosome_number_map" version="2009-11-23"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing"
-      internalDescrip="">
-
-    <prop name="sequence_table">ExternalNaSequence</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome_number_map/%RESOURCE_VERSION%/final/chromosomeNumberMap.txt"/>
-
-    <unpack>updateChromosomeNumberFromMap.pl --map_file @@dataDir@@/chromosomeMap.txt --sequence_table $$sequence_table$$ --ncbiTaxId $$ncbiTaxId$$ </unpack>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+      <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$orgAbbrev$$_genome_GeneDB_GFF_RSRC/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$  --seqSoTerm '$$soTerm$$' --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    </resource>
+  </resourceClass>
 
 
-  <!-- OldName: dbEST_NC   OldVersion: 2009-09-25 -->
 
-  <resource resource="$$orgAbbrev$$_dbEST_RSRC" version="@@$$orgAbbrev$$_dbEST_VER@@"
-      plugin="GUS::Supported::Plugin::dbEST"
-      internalDescrip="">
-    <manualGet fileOrDir="global/empty"/>
+  <resourceClass class="dbEST">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <resource resource="$$orgAbbrev$$_dbEST_RSRC" version="@@$$orgAbbrev$$_dbEST_VER@@"
+	      plugin="GUS::Supported::Plugin::dbEST"
+	      internalDescrip="">
+      <manualGet fileOrDir="global/empty"/>
 
-    <unpack>getSubTaxa --ncbiTaxId $$speciesNcbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
+      <unpack>getSubTaxa --ncbiTaxId $$ncbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
 
-    <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
+      <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
 
-    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-  </resource>
-
-
-  <!-- OldName: IEDB_Epitopes   OldVersion: 2009-06-09 -->
-
-  <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
-            version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-
-    <manualGet fileOrDir="global/empty"/>
-
-    <!-- validate that IEDB knows about this taxon id -->
-    <unpack> unzip -p @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/fromProvider/OrganismList.zip | grep "<OrganismId>$$speciesNcbiTaxId$$<"</unpack>
-
-    <unpack>iedbMakeTabFileFromXml --input_dir @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/final/iedb_export_fixed --outputfile @@dataDir@@/oneOrganism.txt --NCBITaxId $$speciesNcbiTaxId$$</unpack>
-
-    <unpack>mkdir -p @@dataDir@@/fasta</unpack>
-
-    <unpack>iedbSimplifyTabFile --inputFile @@dataDir@@/oneOrganism.txt --outputFile @@dataDir@@/oneOrganismSimplified.txt </unpack>
-
-    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/oneOrganismimplified.txt --outputFile @@dataDir@@/fasta/IEDBExport.fsa </unpack>
-
-    <getAndUnpackOutput dir="@@dataDir@@/fasta"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/simplified.txt"/>
-
-    <pluginArgs>--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
-  </resource>
+      <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
+    </resource>
+  </resourceClass>
 
 
-  <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
+  <resourceClass class="IEDB_sequences">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
+              version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
+	      plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
-  <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
-            version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+      <manualGet fileOrDir="global/empty"/>
 
-    <manualGet fileOrDir="global/empty"/>
+      <!-- FIX: these unpacks need to navigate up to the species taxon id -->
+      <!-- validate that IEDB knows about this taxon id.  this unpack just greps IEDB's taxon list -->
+      <unpack><![CDATA[unzip -p @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/fromProvider/OrganismList.zip | grep "<OrganismId>$$ncbiTaxId$$<"]]></unpack>
 
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_epitope_IEDB_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+      <unpack>iedbMakeTabFileFromXml --input_dir @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/final/iedb_export_fixed --outputfile @@dataDir@@/oneOrganism.txt --NCBITaxId $$ncbiTaxId$$</unpack>
 
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
-  </resource>
+      <unpack>mkdir -p @@dataDir@@/fasta</unpack>
+
+      <unpack>iedbSimplifyTabFile --inputFile @@dataDir@@/oneOrganism.txt --outputFile @@dataDir@@/oneOrganismSimplified.txt </unpack>
+
+      <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/oneOrganismimplified.txt --outputFile @@dataDir@@/fasta/IEDBExport.fsa </unpack>
+
+      <getAndUnpackOutput dir="@@dataDir@@/fasta"/>
+
+      <getAndUnpackOutput file="@@dataDir@@/simplified.txt"/>
+
+      <pluginArgs><![CDATA[--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"]]></pluginArgs>
+    </resource>
+  </resourceClass>
+
+
+  <resourceClass class="IEDB_dbxrefs">
+    <prop name="orgAbbrev"/>
+    <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
+	      version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
+	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+      <manualGet fileOrDir="global/empty"/>
+
+      <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_epitope_IEDB_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+
+      <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    </resource>
+  </resourceClass>
 
 
   <!-- OldName: Neosporacaninum_Gene_Aliases   OldVersion: 01-27-2010 -->
 
-  <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
-             version="@@$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC@@"
-      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
-      internalDescrip="">
+  <resourceClass class="GeneDB_GFF_gene_aliases">
+    <prop name="orgAbbrev"/>
+    <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
+	      version="@@$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC@@"
+	      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
+	      internalDescrip="">
 
-    <manualGet fileOrDir="global/empty"/>
+      <manualGet fileOrDir="global/empty"/>
 
-    <unpack>grep 'previous_systematic_id=' @@dataDir@@/../$$orgAbbrev$$_genedb_gff_genome_RSRC/genome.gff3 >  @@dataDir@@/previousIdLines</unpack>
+      <unpack>grep 'previous_systematic_id=' @@dataDir@@/../$$orgAbbrev$$_genedb_gff_genome_RSRC/genome.gff3 >  @@dataDir@@/previousIdLines</unpack>
 
-    <unpack>perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds.txt</unpack>
+      <unpack><![CDATA[perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds.txt]]></unpack>
 
-    <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
-  </resource>
+      <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
+    </resource>
+  </resourceClass>
 
 
-  <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
+  <resourceClass class="dbxref_ApiLoc">
+    <prop name="orgAbbrev"/>
+    <prop name="project"/>
+    <prop name="ApiLocOrganism"/>
+    <resource resource="$$orgAbbrev$$_dbxref_ApiLoc"
+	      version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
+	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+	      internalDescrip="">
 
-  <resource resource="$$orgAbbrev$$_dbxref_ApiLoc"
-             version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      internalDescrip="">
+      <!-- organism name as found on the ApiLoc site -->
+      <prop name="ApiLocOrganism" value="Neospora caninum"/>
 
-    <!-- organism name as found on the ApiLoc site -->
-    <prop name="ApiLocOrganism" value="Neospora caninum"/>
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/final/$$orgAbbrev$$.html"/>
 
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/final/$$orgAbbrev$$.html"/>
+      <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "$$ApiLocOrganism$$" > @@dataDir@@/dbxrefs.txt</unpack>
 
-    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "$$ApiLocOrganism$$" > @@dataDir@@/dbxrefs.txt</unpack>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-  </resource>
+      <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
+    </resource>
+  </resourceClass>
 
 
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
-  <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
-            version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      parentResource="$$genomeRSRC$$">
+  <resourceClass class="dbxref_gene2Entrez">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="parentResource"/>
+    <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
+	      version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
+	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+	      parentResource="$$parentResource$$">
 
 
-    <manualGet fileOrDir="common/dbxref/gene2Entrez/%RESOURCE_VERSION%/final/gene_info.gz"/>
+      <manualGet fileOrDir="common/dbxref/gene2Entrez/%RESOURCE_VERSION%/final/gene_info.gz"/>
 
-    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz $$ncbiTaxId$$ > entrez2gene.tab</unpack>
+      <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz $$ncbiTaxId$$ > entrez2gene.tab</unpack>
 
-    <unpack>rm @@dataDir@@/gene_info.gz</unpack>
+      <unpack>rm @@dataDir@@/gene_info.gz</unpack>
 
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
+      <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
 
-  </resource>
+    </resource>
+  </resourceClass>
 
- 
-  <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
- <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
-            version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
-      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-      parentResource="$$genomeRSRC$$">
+  
+  <resourceClass class="dbxref_gene2Uniprot">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="parentResource"/>
+    <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
+	      version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
+	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+	      parentResource="$$parentResource$$">
 
-    <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
+      <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
 
-    <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
+      <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
 
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
-  </resource>
+      <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
+    </resource>
+  </resourceClass>
 
-</resources>
+  <resourceClass class="isolates_genbank">
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <resource resource="$$orgAbbrev$$_isolates_genbank_RSRC" version="TODAY"
+	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="global/empty"/>
+
+      <!-- get the file from genbank, querying by ncbiTaxonId -->
+      <unpack>getIsolatesFromGenbank --ncbiTaxonId $$ncbiTaxonId$$ --outputFile @@dataDir@@/isolates.gb</unpack>
+
+      <unpack>fixIsolateSequences --seq_file @@dataDir@@/isolates.gb --fixed_seq_file @@dataDir@@/isolates_fixed.gb --removed_seq_file @@dataDir@@/isolates_excluded.gb</unpack>
+
+      <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @@dataDir@@/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @@dataDir@@/sequences_fixed.gb.1</unpack>
+
+      <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/isolates_fixed.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    </resource>
+  </resourceClass>
+
+</resourceClasses>
