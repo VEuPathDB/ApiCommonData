@@ -4,42 +4,12 @@
       plugin="GUS::Supported::Plugin::InsertGeneOntology">
     <manualGet fileOrDir="global/ontology/geneOntology/%RESOURCE_VERSION%/gene_ontology.obo"/>
     <pluginArgs>--oboFile @@dataDir@@/gene_ontology.obo --extDbRlsName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --calcTransitiveClosure</pluginArgs>
-    <info
-        displayName="Gene Ontology"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://www.geneontology.org"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="enzymeDB_RSRC" version="2011-02-08"
       plugin="GUS::Community::Plugin::LoadEnzymeDatabase">
     <wgetArgs url="ftp://ftp.expasy.org/databases/enzyme/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --include list  --accept=enzclass.txt,enzyme.dat</wgetArgs>
     <pluginArgs>--InPath @@dataDir@@ --enzymeDbName %RESOURCE_NAME% --enzymeDbRlsVer %RESOURCE_VERSION%</pluginArgs>
-    <info
-        displayName="Enzyme nomenclature database"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://www.expasy.org/enzyme"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="PDBProteinSequences_RSRC" version="@@PDBProteinSequences_VER@@"
@@ -49,21 +19,6 @@
     <unpack>filterPdbFile --inputFile @@dataDir@@/pdb_seqres.txt --outputFile  @@dataDir@@/pdb.fsa</unpack>
      <getAndUnpackOutput file="@@dataDir@@/pdb.fsa"/>   
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile  @@dataDir@@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
-    <info
-        displayName="Protein Sequences from PDB"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Proteome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="taxonomy_RSRC" version="@@taxonomy_VER@@"
@@ -72,21 +27,6 @@
     <unpack>gunzip @@dataDir@@/gi_taxid_prot.dmp.gz</unpack>
     <unpack>$currDir=`pwd`; cd @@dataDir@@ ; tar -xzf taxdump.tar.gz ; rm -f taxdump.tar ; cd $currDir</unpack>
     <pluginArgs>--names @@dataDir@@/names.dmp --nodes @@dataDir@@/nodes.dmp --gencode @@dataDir@@/gencode.dmp --merged @@dataDir@@/merged.dmp --verbose</pluginArgs>
-    <info
-        displayName="NCBI Taxonomy"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="updatePDBTaxon_RSRC" version="2011-01-28"
@@ -94,147 +34,42 @@
     <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/source.idx</wgetArgs>
     <unpack>processSourceIdxFile --inFile @@dataDir@@/source.idx --outFile @@dataDir@@/source.idx.processed</unpack>
     <pluginArgs>--fileName @@dataDir@@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDBProteinSequences_RSRC|@@PDBProteinSequences_VER@@'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
-    <info
-        displayName=""
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         PDB Identifiers
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="SO_RSRC" version="@@SO_VER@@"
       plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO">
     <wgetArgs url="http://song.cvs.sourceforge.net/viewvc/song/ontology/so.obo">--tries=5 --output-document=@@dataDir@@/so.obo</wgetArgs>
     <pluginArgs>--inputFile @@dataDir@@/so.obo --soVersion @@SO_VER@@ --soCvsVersion @@SO_VER@@</pluginArgs>
-    <info
-        displayName="Sequence Ontology"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://song.sourceforge.net"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="Mged_Ontology_Term_Types_RSRC" version="1.3"
       plugin="GUS::Supported::Plugin::InsertOntologyTermType">
     <manualGet fileOrDir="global/ontology/Mged/%RESOURCE_VERSION%/MgedOntologyTermTypes.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/MgedOntologyTermTypes.tab</pluginArgs>
-    <info
-        displayName="MGED Ontology Term Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Term Type
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="Mged_Ontology_Relationship_Types_RSRC" version="1.3"
       plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType">
     <manualGet fileOrDir="global/ontology/Mged/%RESOURCE_VERSION%/MgedOntologyRelationshipTypes.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/MgedOntologyRelationshipTypes.tab</pluginArgs>
-    <info
-        displayName="MGED Ontology Relationship Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Relationship Types
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="MGED_Ontology_RSRC" version="1.3"
       plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships">
     <wgetArgs url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl">--tries=5 --no-directories --no-host-directories --accept=@@dataDir@@/MGEDOntology.owl </wgetArgs>
     <pluginArgs>--inFile @@dataDir@@/MGEDOntology.owl --extDbName %RESOURCE_NAME% --extDbVersion %RESOURCE_VERSION% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
-    <info
-        displayName="The MGED Ontology"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="Mged_Ontology_Entry_RSRC" version="1.3"
       plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO">
     <manualGet fileOrDir="global/empty"/>
     <pluginArgs>--externalDatabase MGED_Ontology_RSRC --externalDatabaseRls 1.3</pluginArgs>
-    <info
-        displayName="MGED Ontology Entry"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Entry
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="GO_evidence_codes_RSRC" version="1.21"
       plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo">
     <wgetArgs url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo">--tries=5 --output-document=@@dataDir@@/evidence_code.obo</wgetArgs>
     <pluginArgs>--oboFile @@dataDir@@/evidence_code.obo</pluginArgs>
-    <info
-        displayName="Gene Ontology evidence codes"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://song.sourceforge.net"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="InterproscanData_RSRC" version="@@InterproscanData_VER@@"
@@ -242,28 +77,6 @@
     <manualGet fileOrDir="global/domain/iprscanData/%RESOURCE_VERSION%/iprscan"/>
     <unpack>fixSuperfamily @@dataDir@@/iprscan/data/</unpack>
     <pluginArgs>--inPath @@dataDir@@/iprscan/data/</pluginArgs>
-    <info
-        displayName="InterPro Database"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Proteome"
-        publicUrl="http://www.ebi.ac.uk/interpro"
-        contact="EBI"
-        email="interhelp@@ebi.ac.uk"
-        institution="EBI">
-      <description>
-        <![CDATA[
-         InterPro family of databases
-        ]]>
-      </description>
-    <publication pmid="15608177"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_function"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_process"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_component"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByInterproDomain"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
-    </info>
   </resource>
 
   <resource resource="NRDB_RSRC" version="@@NRDB_VER@@"
@@ -274,42 +87,12 @@
     <getAndUnpackOutput file="@@dataDir@@/nrdb-short-defline.fsa"/>
     <getAndUnpackOutput file="@@dataDir@@/nr"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="GenBank NRDB"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Proteome"
-        publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="blatAlignmentQuality_RSRC" version="2010-02-01"
       plugin="GUS::Supported::Plugin::LoadGusXml">
     <manualGet fileOrDir="global/ontology/alignmentQuality/%RESOURCE_VERSION%/blatalignmentquality.xml"/>
     <pluginArgs>--filename @@dataDir@@/blatalignmentquality.xml</pluginArgs>
-    <info
-        displayName=""
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ontology"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Blat alignment quality
-        ]]>
-      </description>
-    </info>
   </resource>
 
 <!--plasmoIsolatesResource-->
@@ -317,62 +100,17 @@
       plugin="ApiCommonData::Load::Plugin::InsertIsolateVocabulary">
     <manualGet fileOrDir="global/ontology/isolate/%RESOURCE_VERSION%/isolateVocabulary.txt"/>
     <pluginArgs>--isolateVocabularyFile @@dataDir@@/isolateVocabulary.txt</pluginArgs>
-    <info
-        displayName="load isolate vocabulary"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Bindu Gajria"
-        email="bindu@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         Isolate Vocabulary
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="Continents_RSRC" version="2008-08-26"
       plugin="ApiCommonData::Load::Plugin::InsertContinents">
     <manualGet fileOrDir="global/ontology/Continents/%RESOURCE_VERSION%/continents.txt"/>
     <pluginArgs>--continentsFile @@dataDir@@/continents.txt</pluginArgs>
-    <info
-        displayName="IsolatesByCountry"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ontology"
-        publicUrl=""
-        contact="John Brestelli"
-        email="jbrestel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         IsolatesByCountry
-        ]]>
-      </description>
-    </info>
   </resource>
 
   <resource resource="BibRefType_RSRC" version="1.0"
       plugin="GUS::Supported::Plugin::LoadGusXml">
     <manualGet fileOrDir="global/ontology/bibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml"/>
     <pluginArgs>--filename @@dataDir@@/ncbiPublicationTypes.xml</pluginArgs>
-    <info
-        displayName="Bibliographic Reference Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="John Brestelli"
-        email="jbrestel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         IsolatesByCountry
-        ]]>
-      </description>
-    </info>
   </resource>
 </resources>
