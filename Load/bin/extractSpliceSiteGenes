@@ -42,21 +42,24 @@ $dbh->{AutoCommit} = 0;
 
 my %sample;
 my @shortNames; # array of sample_name for output
+my @relevantSamples;
 
 open(CONF,"$cfgFile");
 while(<CONF>){
   chomp;
   my @temp = split("\t", $_);
-  push (@shortNames, $temp[3]) if ($temp[2]);
+  push (@relevantSamples, "\'".$temp[1]."\'") if ($temp[2]); #long names to be used in sql
+  push (@shortNames, $temp[3]) if ($temp[2]); #short names to be used for output file
 
   # hash with keys as long sample_names and values as short ones
   $sample{"$temp[1]"} = $temp[3] if ($temp[2]);
 }
 close(CONF);
 
+my $rlvntSamples = join( ',', @relevantSamples ); 
 
 #------ get gene list ------
-my $sql = &getGeneListQuery;
+my $sql = &getGeneListQuery($rlvntSamples);
 my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
 $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
@@ -66,13 +69,11 @@ while (my ($source_id) = $sth->fetchrow_array()) {
   push (@geneList,$source_id);
 }
 
-
 #------ for UNIQUE (or minimum) alignments ------
 my $is_unique = 1;
-$sql = &getSpliceSitesQuery;
+$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
 $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
-$sth->execute($is_unique) ||  die "Couldn't execute statement: " . $sth->errstr;
-
+$sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
 my %geneSpliceSites;
 my $name;
@@ -100,10 +101,10 @@ close(UNIQ);
 
 
 #------ for NON-UNIQUE (or diff) alignments ------
-$sql = &getSpliceSitesQuery;
+$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
 $is_unique = 0;
 $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
-$sth->execute($is_unique) ||  die "Couldn't execute statement: " . $sth->errstr;
+$sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
 my %geneSpliceSites2;
 my $name2;
@@ -131,19 +132,20 @@ close(NONUNIQ);
 
 $dbh->disconnect;
 
-
 sub getGeneListQuery {
+  my ($rlvntSamples) = @_;
   return ("SELECT distinct source_id
            FROM apidb.splicesitegenes
-           WHERE sample_name NOT IN ('L. major procyclic promastigotes PolyA','L. infantum procyclic promastigotes SL - NSR')
+           WHERE sample_name IN ( $rlvntSamples )
            ORDER BY source_id");
 }
 
 
 sub getSpliceSitesQuery {
+  my ($rlvntSamples,$is_unique) = @_;
   return ("SELECT source_id, sample_name, sum(count_per_million)
            FROM apidb.splicesitegenes
-           WHERE sample_name NOT IN ('L. major procyclic promastigotes PolyA','L. infantum procyclic promastigotes SL - NSR')
-           AND is_unique = ?
+           WHERE sample_name IN ( $rlvntSamples )
+           AND is_unique = $is_unique
            GROUP BY source_id, sample_name ORDER BY sample_name");
 }
