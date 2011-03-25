@@ -82,6 +82,12 @@ while (my ($source_id, $sample_name_full, $count) = $sth->fetchrow_array()) {
 }
 
 open(UNIQ,">$uniqFile");
+print UNIQ "id";
+for my $x (@shortNames){
+    print UNIQ "\t$x";
+}
+print UNIQ "\n";
+
 for my $gene ( @geneList ){
   print UNIQ "$gene";
   for my $name ( @shortNames) {
@@ -107,6 +113,12 @@ while (my ($source_id, $sample_name_full, $count) = $sth->fetchrow_array()) {
 }
 
 open(NONUNIQ,">$nonuniqFile");
+print NONUNIQ "id";
+for my $x (@shortNames){
+    print NONUNIQ "\t$x";
+}
+print NONUNIQ "\n";
+
 for my $gene ( @geneList ){
   print NONUNIQ "$gene";
   for my $name ( @shortNames) {
@@ -123,7 +135,7 @@ $dbh->disconnect;
 sub getGeneListQuery {
   return ("SELECT distinct source_id
            FROM apidb.splicesitegenes
-           WHERE NOT sample_name='L. major procyclic promastigotes PolyA'
+           WHERE sample_name NOT IN ('L. major procyclic promastigotes PolyA','L. infantum procyclic promastigotes SL - NSR')
            ORDER BY source_id");
 }
 
@@ -131,7 +143,7 @@ sub getGeneListQuery {
 sub getSpliceSitesQuery {
   return ("SELECT source_id, sample_name, sum(count_per_million)
            FROM apidb.splicesitegenes
-           WHERE NOT sample_name='L. major procyclic promastigotes PolyA'
+           WHERE sample_name NOT IN ('L. major procyclic promastigotes PolyA','L. infantum procyclic promastigotes SL - NSR')
            AND is_unique = ?
            GROUP BY source_id, sample_name ORDER BY sample_name");
 }
