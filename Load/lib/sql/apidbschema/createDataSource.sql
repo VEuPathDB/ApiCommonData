@@ -1,6 +1,6 @@
 CREATE TABLE apidb.DataSource (
  data_source_id               NUMBER(12) NOT NULL,
- project                      VARCHAR2(20) NOT NULL,
+ project_id                   VARCHAR2(20) NOT NULL,
  name                         VARCHAR2(60) NOT NULL,
  version                      VARCHAR2(20) NOT NULL,
  internal_descrip             VARCHAR2(200) NOT NULL,
