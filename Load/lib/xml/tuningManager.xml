@@ -5487,7 +5487,7 @@ select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_att
                                                THEN syn.b_end ELSE syn_fl.end_max
                                           END))
                                       * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                                      / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+                                      / (-1 * (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) ))
             ELSE anch_left.ref_loc
                  + (((CASE WHEN syn_fl.start_min < syn.b_start
                            THEN syn.b_start
@@ -5503,7 +5503,7 @@ select  /*+ ordered no_expand use_nl(syn syn_fl) use_nl(syn_fl syntenic_gene_att
                              THEN syn.b_start
                              ELSE syn_fl.start_min
                         END)) * (anch_right.ref_loc - anch_left.ref_loc + 1)
-                              / (anch_right.syntenic_loc - anch_left.syntenic_loc - 1))
+                              / (-1 * (anch_right.syntenic_loc - anch_left.syntenic_loc + 1) ))
             ELSE anch_left.ref_loc + (((CASE WHEN syn_fl.end_max > syn.b_end
                                              THEN syn.b_end
                                              ELSE syn_fl.end_max
