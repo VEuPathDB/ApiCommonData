@@ -1,5 +1,6 @@
 <resourceInfos>
 
+
   <resourceInfo resource="GO_RSRC"
         displayName="Gene Ontology"
         project=""
@@ -14,10 +15,37 @@
          The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTextSearch"/>
+
   </resourceInfo>
 
+  <resourceInfo resource="GO_evidence_codes_RSRC" 
+        displayName="Gene Ontology Evidence Codes"
+        project=""
+        organisms="@@AllOrganismNames@@"
+        category="Ontology"
+        publicUrl="http://song.sourceforge.net"
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support.
+        ]]>
+      </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTextSearch"/>
+
+  </resourceInfo>
+
+
   <resourceInfo resource="enzymeDB_RSRC"
-        displayName="Enzyme nomenclature database"
+        displayName="Enzyme Nomenclature Database"
         project=""
         organisms="@@AllOrganismNames@@"
         category="Ontology"
@@ -30,6 +58,11 @@
          ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="EcNumber"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByEcNumber"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTextSearch"/>
+
   </resourceInfo>
 
   <resourceInfo resource="PDBProteinSequences_RSRC"
@@ -46,6 +79,10 @@
          Protein sequences from the Protein Data Bank (PDB) used for mapping Plasmodium protein sequences to crystal structures in PDB.
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="PdbSimilarities"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByPdbSimilarity"/>
+
   </resourceInfo>
 
   <resourceInfo resource="taxonomy_RSRC" 
@@ -62,8 +99,17 @@
          The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTaxon"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="overview"/>
+
+    <wdkReference recordClass="IsolateRecordClasses.IsolateRecordClass" type="question" name="IsolateQuestions.IsolateByTaxon"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequencesByTaxon"/>
+
   </resourceInfo>
 
+
+<!--
   <resourceInfo resource="updatePDBTaxon_RSRC" 
         displayName=""
         project=""
@@ -79,6 +125,7 @@
         ]]>
       </description>
   </resourceInfo>
+-->
 
   <resourceInfo resource="SO_RSRC" 
         displayName="Sequence Ontology"
@@ -94,39 +141,12 @@
          The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="overview"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGeneType"/>
+
   </resourceInfo>
 
-  <resourceInfo resource="Mged_Ontology_Term_Types_RSRC" 
-        displayName="MGED Ontology Term Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Term Type
-        ]]>
-      </description>
-  </resourceInfo>
-
-  <resourceInfo resource="Mged_Ontology_Relationship_Types_RSRC" 
-        displayName="MGED Ontology Relationship Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Relationship Types
-        ]]>
-      </description>
-  </resourceInfo>
 
   <resourceInfo resource="MGED_Ontology_RSRC" 
         displayName="The MGED Ontology"
@@ -140,38 +160,6 @@
       <description>
         <![CDATA[
          Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1
-        ]]>
-      </description>
-  </resourceInfo>
-
-  <resourceInfo resource="Mged_Ontology_Entry_RSRC" 
-        displayName="MGED Ontology Entry"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="Trish Whetzel"
-        email="whetzel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         MGED Ontology Entry
-        ]]>
-      </description>
-  </resourceInfo>
-
-  <resourceInfo resource="GO_evidence_codes_RSRC" 
-        displayName="Gene Ontology evidence codes"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="Ontology"
-        publicUrl="http://song.sourceforge.net"
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Every GO annotation must indicate the type of evidence that supports it; these evidence codes correspond to broad categories of experimental or other support.
         ]]>
       </description>
   </resourceInfo>
@@ -192,11 +180,10 @@
       </description>
     <publication pmid="15608177"/>
     <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_function"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_process"/>
-    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_component"/>
     <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByInterproDomain"/>
     <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTextSearch"/>
+
   </resourceInfo>
 
   <resourceInfo resource="NRDB_RSRC" 
@@ -213,27 +200,15 @@
          The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
         ]]>
       </description>
+
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTextSearch"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByProteinDbAccession"/>
+
   </resourceInfo>
 
-  <resourceInfo resource="blatAlignmentQuality_RSRC" 
-        displayName=""
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ontology"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-         Blat alignment quality
-        ]]>
-      </description>
-  </resourceInfo>
 
-<!--plasmoIsolatesResource-->
   <resourceInfo resource="isolateVocabulary_RSRC" 
-        displayName="load isolate vocabulary"
+        displayName="Isolate Vocabulary"
         project=""
         organisms="@@AllOrganismNames@@"
         category="ignore"
@@ -243,9 +218,13 @@
         institution="University of Pennsylvania">
       <description>
         <![CDATA[
-         Isolate Vocabulary
+         Vocabulary of Isolates manually curated by EuPathDB Staff.
         ]]>
       </description>
+
+    <wdkReference recordClass="IsolateRecordClasses.IsolateRecordClass" type="question" name="IsolateQuestions.IsolateByHost"/>
+    <wdkReference recordClass="IsolateRecordClasses.IsolateRecordClass" type="question" name="IsolateQuestions.IsolateByIsolationSource"/>
+
   </resourceInfo>
 
   <resourceInfo resource="Continents_RSRC" 
@@ -253,31 +232,20 @@
         project=""
         organisms="@@AllOrganismNames@@"
         category="ontology"
-        publicUrl=""
-        contact="John Brestelli"
-        email="jbrestel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
+        publicUrl="http://www.worldatlas.com/aatlas/infopage/contnent.htm"
+        contact=""
+        email=""
+        institution="">
       <description>
         <![CDATA[
-         IsolatesByCountry
+        World Atlas is a geography website and is used by EuPathDB for a country-continent lookup.
         ]]>
       </description>
+
+    <wdkReference recordClass="IsolateRecordClasses.IsolateRecordClass" type="question" name="IsolateQuestions.IsolateByCountry"/>
+
   </resourceInfo>
 
-  <resourceInfo resource="BibRefType_RSRC" 
-        displayName="Bibliographic Reference Types"
-        project=""
-        organisms="@@AllOrganismNames@@"
-        category="ignore"
-        publicUrl=""
-        contact="John Brestelli"
-        email="jbrestel@@pcbi.upenn.edu"
-        institution="University of Pennsylvania">
-      <description>
-        <![CDATA[
-         IsolatesByCountry
-        ]]>
-      </description>
-  </resourceInfo>
+
 </resourceInfos>
 
