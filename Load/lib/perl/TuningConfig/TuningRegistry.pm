@@ -179,6 +179,11 @@ SQL
 sub getDblinkSuffix {
   my ($self) = @_;
 
+  # never append suffixes to db links
+
+  return "";
+
+  # old code:
   if ($self->getIsLive()) {
     return "";
   } else {
