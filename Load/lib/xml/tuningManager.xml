@@ -347,6 +347,7 @@ tablespace indx
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
     <externalDependency name="dots.NaFeatureImp"/>
+    <externalDependency name="dots.GeneFeature"/>
     <externalDependency name="sres.DbRef"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
@@ -460,6 +461,14 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
        sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
   WHERE gf.external_database_release_id = edr.external_database_release_id
     AND edr.external_database_id = ed.external_database_id
+ UNION
+     SELECT n.name AS alias, gf.source_id AS gene,
+         'gene name' as union_member, d.name as database_name, cast (null as NUMBER) as unique_mapping
+      from apidb.GeneFeatureName n, dots.genefeature gf, sres.externaldatabaserelease r, sres.externaldatabase d
+      where n.na_feature_id = gf.na_feature_id
+      and gf.external_database_release_id =r.external_database_release_id
+      and r.external_database_id = d.external_database_id
+      and n.is_preferred = 1
 )
 GROUP BY id, gene, unique_mapping
       ]]>
