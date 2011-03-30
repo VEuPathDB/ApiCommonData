@@ -3344,6 +3344,11 @@ from
     UNION
 
     --TriTrypDB --
+    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
+    UNION
     select 'Linfantum promastigote time-course biorep01' as profile_name,
            '' as main_profile_name,
            'TriTrypDB' as project_id
@@ -3792,6 +3797,20 @@ select 'EhistolyticaNugenProfiles' as profile_name,
 from dual
 UNION
 --TriTrypDB --
+select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
+       'Horn::TbRNAiRNASeq' as module,
+       'Trypanosoma brucei' as species,
+       'RNAi Target Sequencing - Induced vs Uninduced' as display_name,
+       '' as description,
+       'Stage/Sample' as x_axis,
+       'Fold Change Coverage (vs. uninduced)' as y_axis,
+        180 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'expr_val,pct' as visible_parts,
+        '' as attribution
+from dual
+UNION
 select 'Linfantum promastigote time-course biorep01' as profile_name,
        'MylerLinfantum::Ver1' as module,
        'Leishmania infantum' as species,
