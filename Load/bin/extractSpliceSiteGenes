@@ -102,8 +102,8 @@ close(UNIQ);
 
 
 #------ for NON-UNIQUE (or diff) alignments ------
-$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
 $is_unique = 0;
+$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
 $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
 $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
