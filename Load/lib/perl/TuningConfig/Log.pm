@@ -37,7 +37,7 @@ BEGIN {
     $message = $indentString . $message;
 
     $| = 1;
-    print "$message\n";
+    print STDERR "$message\n";
 
     # if log file name is unset, set it to a default
     $logFile = "/tmp/tuningManager." . $$ . "." . time . ".log"
@@ -55,7 +55,7 @@ BEGIN {
     $message = $indentString . $message;
 
     $| = 1;
-    print "$message\n";
+    print STDERR "$message\n";
     $logPreamble .= "$message\n";
   }
 
