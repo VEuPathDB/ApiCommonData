@@ -6,748 +6,369 @@
   <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
-  <resource resource="$$genomeRSRC$$"
-            version="@@$$orgAbbrev$$_genome_JCVI_genbank_VER@@"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    internalDescrip="">
-
+  <resourceInstance class="genbank_genome">
     <prop name="name">JCVI</prop>
+    <prop name="version">???</prop>
     <prop name="soTerm">supercontig</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
-
-    <manualGet fileOrDir="ToxoDB/genome/$$name$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
-
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
-  <resource resource="$$orgAbbrev$$_genome_apicoplast_genbank_RSRC"
-            version="@@$$orgAbbrev$$_genome_apicoplast_genbank_VER@@"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
-    internalDescrip="">
-
+  <resourceInstance class="genbank_genome">
     <prop name="name">apicoplast</prop>
+    <prop name="version">???</prop>
     <prop name="soTerm">apicoplast_chromosome</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
-
-    <manualGet fileOrDir="ToxoDB/genome/$$name$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
-
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm "$soTerm" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: ME49ChromosomeMap   OldVersion: 2008-08-28 -->
-  <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp"
-            version="2008-08-28"
-	    plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
-	    internalDescrip=""
-	    parentResource="$$genomeRSRC$$">
-    
+  <resourceInstance class="genome_chromosome_assembly_agp">
+    <prop name="version">2008-08-28</prop>
     <prop name="virtualSeqSOTerm">chromosome</prop>
     <prop name="sourceIdPrefix">TGME49_chr</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome_assembly_agp/%RESOURCE_VERSION%/final/assembly.agp"/>
-
-    <pluginArgs>--agpFile @@dataDir@@/assembly.agp --seqPieceExtDbName %PARENT_RESOURCE_NAME% --seqPieceExtDbRlsVer %PARENT_RESOURCE_VERSION% --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm $$virtualSeqSOTerm$$  --ncbiTaxId $$ncbiTaxonId$$ --soVer @@SO_VER@@ --sourceIdPrefix $$sourceIdPrefix$$</pluginArgs>
-  </resource>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_GLEAN_GFF2_RSRC"
-            version="2003-08-13"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">GLEAN</prop>
+    <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: ME49_Annotation   OldVersion: 3 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_Version4_GFF2_RSRC"
-            version="2008-08-15"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">Version4</prop>
+    <prop name="version">2008-08-15</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-
-  </resource>
+  </resourceInstance>
 
   <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_GlimmerHMM_GFF2_RSRC"
-            version="2003-08-13"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">GlimmerHMM</prop>
+    <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_TigrScan_GFF2_RSRC"
-            version="2003-08-13"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">TigrScan</prop>
+    <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id --bioperlTreeOutput @@dataDir@@/bioperlTree.out </pluginArgs>
-  </resource>
-
-
+  </resourceInstance>
 
   <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_TwinScan_GFF2_RSRC"
-            version="2003-08-13"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">TwinScan</prop>
+    <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id --bioperlTreeOutput @@dataDir@@/bioperlTree.out </pluginArgs>
-
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: ME49_TwinScanEt   OldVersion: 2003-08-13 -->
-  <resource resource="$$orgAbbrev$$_genomeFeature_TwinScanEt_GFF2_RSRC"
-            version="2003-08-13"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">TwinScanEt</prop>
+    <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
     <prop name="naSequenceSubclass">ExternalNASequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --gff2GroupTag "$$gff2GroupTag$$" --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id --bioperlTreeOutput @@dataDir@@/bioperlTree.out </pluginArgs>
-
-  </resource>
+  </resourceInstance>
 
   <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
-  <resource resource="$$orgAbbrev$$_genomeFeatures_Einstein_centromeres_RSRC" version="2009-06-18"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$orgAbbrev$$_genome_chromosome_assembly_agp"
-	    internalDescrip="">
-
+  <resourceInstance class="genomeFeatures_GFF2">
     <prop name="name">Einstein_centromeres</prop>
-    <prop name="mapFile">/ToxoDB/toxoFeatures2gus.xml</prop>
+    <prop name="version">2009-06-18</prop>
+    <prop name="mapFile">ToxoDB/toxoFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">ID</prop>
     <prop name="naSequenceSubclass">VirtualSequence</prop>
-
-    <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
-
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2 --gff2GroupTag $$gff2GroupTag$$ --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --soCvsVersion @@SO_VER@ --defaultOrganism $$ncbiTaxonId$$  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
-  <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
-            version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    parentResource="$$genomeRSRC$$">
-
-    <manualGet fileOrDir="common/dbxref/gene2Entrez/%RESOURCE_VERSION%/final/gene_info.gz"/>
-
-    <unpack>ncbiGeneInfo2DbRefsFile @@dataDir@@/gene_info.gz $$ncbiTaxId$$ > entrez2gene.tab</unpack>
-
-    <unpack>rm @@dataDir@@/gene_info.gz</unpack>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
-
-  </resource>
-
+  <resourceInstance class="dbxref_gene2Entrez">
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
 
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
-  <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
-            version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    parentResource="$$genomeRSRC$$">
-
-    <manualGet fileOrDir="common/dbxref/gene2Uniprot/%RESOURCE_VERSION%/final/idmapping_selected.tab.gz"/>
-
-    <unpack>uniprotIdMap2DbRefsFile @@dataDir@@/idmapping_selected.tab.gz @@dataDir@@/../$$orgAbbrev$$_dbxref_gene2Entrez_RSRC/entrez2gene.tab > @@dataDir@@/gene2uniprot.tab</unpack>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
-  </resource>
+  <resourceInstance class="dbxref_gene2Uniprot">
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
 
 
   <!-- OldName: Antibody   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_dbxref_protein2EinsteinAntibodies_RSRC"
-	    version=" 2008-08-11"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    internalDescrip="">
-
+  <resourceInstance class="dbxref_simple">
     <prop name="name">genes2EinsteinAntibodies</prop>
+    <prop name="version">2008-08-26</prop>
     <prop name="columnSpec">primary_identifier,remark,secondary_identifier</prop>
     <prop name="table">DbRefAASequence</prop>
-    
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: T.gondiiME49_seqDBRefs   OldVersion: 2008-08-11 -->
-  <resource resource="$$orgAbbrev$$_dbxref_genomicSeqs2version4.3_IDs_RSRC" version=" 2008-08-11"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    internalDescrip="">
-
+  <resourceInstance class="dbxref_simple">
     <prop name="name">genomicSeqs2version4.3_IDs</prop>
+    <prop name="version">2008-08-11</prop>
     <prop name="columnSpec">primary_identifier</prop>
     <prop name="table">DbRefNASequence</prop>
-    
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
-
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: MetabolicDbXRefs_Feng   OldVersion: 1.2 -->
-  <resource resource="$$orgAbbrev$$_dbxref_protein2Pathways_Feng_RSRC" version="2006-04-06"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    internalDescrip="">
-
+  <resourceInstance class="dbxref_simple">
     <prop name="name">protein2Pathways_Feng</prop>
+    <prop name="version">2006-04-06</prop>
     <prop name="columnSpec">primary_identifier,lowercase_secondary_identifier,remark</prop>
     <prop name="table">DbRefAAFeature</prop>
-    
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
-
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
-  <resource resource="$$orgAbbrev$$_dbxref_ApiLoc"
-            version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
-	    internalDescrip="">
-
+  <resourceInstance class="dbxref_ApiLoc">
     <!-- organism name as found on the ApiLoc site -->
     <prop name="ApiLocOrganism" value="Toxoplasma gondii"/>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/ApiLoc_dbrefs/%RESOURCE_VERSION%/final/apiloc.html"/>
-
-    <unpack>makeDbxRefsFromApiLocHtml @@dataDir@@/$$orgAbbrev$$.html "$$ApiLocOrganism$$" > @@dataDir@@/dbxrefs.txt</unpack>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
-  <resource resource="$$orgAbbrev_dbEST_RSRC" version="@@orgAbbrev_dbEST_VER@@"
-	    plugin="GUS::Supported::Plugin::dbEST"
-	    internalDescrip="">
-    <manualGet fileOrDir="global/empty"/>
-
-    <unpack>getSubTaxa --ncbiTaxId $$ncbiTaxId$$ --outputFile @@dataDir@@/taxonIdFile</unpack>
-
-    <unpack>createPropFile --file @@dataDir@@/dbestProp --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
-
-    <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
-  </resource>
+  <resourceInstance class="dbEST"/>
 
 
-  <!-- FIX WORKFLOW: need to change getAndAnalyzeSnps to use SNPs.gff -->
   <!-- OldName: GeneticMarkers_Sibley   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_SNP_Sibley_Tg10x_31_gff_RSRC" version="2008-10-08"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="SNPs_GFF">
     <prop name="name">Sibley_Tg10x_31</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2008-10-08</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ME49_SNPs   OldVersion: 2004-08 -->
-  <resource resource="$$orgAbbrev$$_SNP_Stanford_Tg10x_31_gff_RSRC" version="2006-09-27"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="SNPs_GFF">
     <prop name="name">Stanford_Tg10x_31</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-09-27</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AmitAlignmentSnps   OldVersion: 2006-10-16 -->
-  <resource resource="$$orgAbbrev$$_SNP_Amit_nucmer_gff_RSRC" version="2006-10-16"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="SNPs_GFF">
     <prop name="name">Amit_nucmer</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-
-  </resource>
+    <prop name="version">2006-10-16</prop>
+  </resourceInstance>
 
 
   <!-- OldName: Lindstrom454Snps   OldVersion: 2009-11-06 -->
-
-  <resource resource="$$orgAbbrev$$_SNP_Lindstrom_454_gff_RSRC" version="2008-07-18"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="SNPs_GFF">
     <prop name="name">Lindstrom_454</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2008-07-18</prop>
+  </resourceInstance>
 
 
   <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
   <!-- OldName: AffymetrixProbes_NuclearCoding   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_NuclearCoding_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_NuclearCoding</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_estSNPs   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_estSNPs_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_estSNPs</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_ChIP   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_ChIP_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_ChIP</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_Resequencing   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Resequencing_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_Resequencing</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_NuclearNonCoding   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_NuclearNonCoding_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_NuclearNonCoding</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_Antisense   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Antisense_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_Antisense</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_IbIntron   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_IbIntron_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_IbIntron</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_Markers   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_Markers_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_Markers</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_ExonIb   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_ExonIb_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_ExonIb</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_BLASTX-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_BLASTX-TranscriptDiscovery_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_BLASTX-TranscriptDiscovery</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_EST-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_EST-TranscriptDiscovery_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_EST-TranscriptDiscovery</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
 
 
   <!-- OldName: AffymetrixProbes_TBLASTN-TranscriptDiscovery   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Amit_TBLASTN-TranscriptDiscovery_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayPlatform">
     <prop name="name">Affy-Amit_TBLASTN-TranscriptDiscovery</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
-
-  <resource resource="$$orgAbbrev$$_microarrayPlatform_Affy-Einstein_RSRC" version="2006-05-19"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
-    <prop name="name">Affy-Einstein</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance> 
 
 
-  <!-- FIX: needs an analysis config file -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">NimbleGen-Einstein</prop>
+    <prop name="version">2009-04-22</prop>
+  </resourceInstance>
+
+
+  <!-- FIX: needs an analysis config -->
   <!-- OldName: Tg_3_Archetypal_Lineages_ExpressionData   OldVersion: 1.0 -->
-  <resource resource="$$orgAbbrev$$_microarrayExpression_Roos-Tz_RSRC" version="2008-04-25"
-	    plugin="ApiCommonData::Load::Plugin::DoNothing"
-	    internalDescrip="">
-    
+  <resourceInstance class="microarrayExpression">
     <prop name="name">Roos-Tz</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-
-  </resource>
+    <prop name="version">2008-04-25</prop>
+  </resourceInstance>
 
 
   <!-- OldName: T.gondii_MWhite_CellCycle_Array_Profiles   OldVersion: 2010-03-03 -->
-  <resource resource="$$orgAbbrev$$_microarrayExpression_GSE19092_RSRC" version="2009-12-07"
-	    plugin="ApiCommonData::Load::Plugin::DoNothing"
-	    internalDescrip="">
-    
+  <resourceInstance class="microarrayExpression">
     <prop name="name">GSE19092</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2009-12-07</prop>
+  </resourceInstance>
 
 
   <!-- OldName: Brady_Time_Series   OldVersion: 1.0 -->
-  <resource resource="$$orgAbbrev$$_microarrayExpression_Brady_RSRC" version="2007-06-07"
-	    plugin="ApiCommonData::Load::Plugin::DoNothing"
-	    internalDescrip="">
-    
+  <resourceInstance class="microarrayExpression">
     <prop name="name">Brady</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2007-06-07</prop>
+  </resourceInstance>
 
 
-  <!-- needs an analysis config -->
+  <!-- FIX: needs an analysis config -->
   <!-- OldName: Compound1_pH_avg_pct   OldVersion: 1.0 -->
-  <resource resource="$$orgAbbrev$$_microarrayExpression_GSE16037_RSRC" version="2009-10-05"
-	    plugin="ApiCommonData::Load::Plugin::DoNothing"
-	    internalDescrip="">
-    
+  <resourceInstance class="microarrayExpression">
     <prop name="name">GSE16037</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
-
+    <prop name="version">2009-10-05</prop>
+  </resourceInstance>
 
 
   <!-- OldName: Matt_Tz-Bz_Time_Series   OldVersion: 1.0 -->
-  <resource resource="$$orgAbbrev$$_microarrayExpression_Anderson-Boothroyd-Tz-Bz_RSRC" version="2008-04-25"
-	    plugin="ApiCommonData::Load::Plugin::DoNothing"
-	    internalDescrip="">
-    
+  <resourceInstance class="microarrayExpression">
     <prop name="name">Anderson-Boothroyd-Tz-Bz</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2008-04-25</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ChIP_Chip_einstein   OldVersion: 2008-08 -->
-  <resource resource="$$orgAbbrev$$_chipChip_Einstein_RSRC" version="2008-08-22"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
-    <prop name="name">Einstein</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/chipChip/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-
-  </resource>
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein</prop>
+    <prop name="version">2008-08-22</prop>
+  </resourceInstance>
 
   <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
-  <resource resource="$$orgAbbrev$$_chipChip_Einstein_centromeres_RSRC" version="2009-06-02"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
-    <prop name="name">Einstein_centromeres</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/chipChip/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein_centromeres</prop>
+    <prop name="version">2009-06-02</prop>
+  </resourceInstance>
 
   <!-- OldName: Einstein_????   OldVersion: 2009-06-18 -->
-  <resource resource="$$orgAbbrev$$_chipChip_Einstein_ME1_RSRC" version="2010-08-16"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
-    <prop name="name">Einstein_ME1</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/chipChip/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein_ME1</prop>
+    <prop name="version">2010-08-16</prop>
+  </resourceInstance>
 
   <!-- OldName: ChIP_Chip_Hakimi   OldVersion: 2009-03 -->
-  <resource resource="$$orgAbbrev$$_chipChip_Hakimi.Ali_RSRC" version="2009-02-06"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
-
+  <resourceInstance class="microarrayExpression">
     <prop name="name">Hakimi.Ali</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/chipChip/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-  </resource>
+    <prop name="version">2009-02-06</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ME49B7BACEnds   OldVersion: 2001-09-19 -->
-  <resource resource="$$orgAbbrev$_dnaSeq_Sanger_BAC_ends_RSRC" version="2001-09-19"
-	    plugin="GUS::Supported::Plugin::LoadFastaSequences"
-	    internalDescrip="">
-
+  <resourceInstance class="dnaSequence">
     <prop name="name">Sanger_BAC_ends</prop>
+    <prop name="version">2001-09-19</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|</prop>
-    <prop name="tableName">DoTS::ExternalNASequence</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
-
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "$$tableName$$"</pluginArgs>
-  </resource>
+  </resourceInstance>
 
   <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
-  <resource resource="$$orgAbbrev$$_dnaSeq_TIGR_Cosmid_ends_RSRC" version="2005-05-23"
-	    plugin="GUS::Supported::Plugin::LoadFastaSequences"
-	    internalDescrip="">
-
+  <resourceInstance class="dnaSequence">
     <prop name="name">TIGR_Cosmid_ends</prop>
+    <prop name="version">2005-05-23</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>(\\w+\\d+T\\w)</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
-
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: 3primeToxoSageTags   OldVersion: 2005-04-26 -->
-  <resource resource="$$orgAbbrev$$_sageTag_White_3prime_RSRC" version="2005-04-26"
-	    plugin="GUS::Supported::Plugin::LoadSagePrimers"
-	    internalDescrip="">
-
+  <resourceInstance class="sageTagPrimers">
     <prop name="name">White</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/sageTag/$$name$$/%RESOURCE_VERSION%/final/primers.txt"/>
-
-    <pluginArgs>--primers_file @@dataDir@@/primers.txt</pluginArgs>
-
-  </resource>
-
-
+    <prop name="version">2005-04-26</prop>
+  </resourceInstance>
 
   <!-- OldName: ToxoSageTagFreqs   OldVersion: 2005-04-26 -->
-  <resource resource="$$orgAbbrev$$_sageTag_White_frequencies_RSRC" version="2005-04-26"
-	    plugin="GUS::Supported::Plugin::LoadSageFrequencies"
-	    internalDescrip="">
-
+  <resourceInstance class="sageTagFrequencies">
     <prop name="name">White</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/sageTag/$$name$$/%RESOURCE_VERSION%/final/freqs.txt"/>
-
-    <pluginArgs>--primers_file @@dataDir@@/freqs.txt</pluginArgs>
-  </resource>
+    <prop name="version">2005-04-26</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ToxoDB_Kinome_productNames   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_function_Kinome_product_names_RSRC" version="1"
-	    plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
-    <prop name="name">Kinome_product_names</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/function/$$name$$/%RESOURCE_VERSION%/final/product.txt"/>
-
-    <pluginArgs>--file @@dataDir@@/product.txt  --productDbName %PARENT_RESOURCE_NAME% --productDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
-
-  </resource>
+  <resourceInstance class="productNames">
+    <prop name="name">Kinome</prop>
+    <prop name="version">1</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
 
 
   <!-- OldName: ToxoDB_SRS_productNames   OldVersion: 1 -->
-  <resource resource="$$orgAbbrev$$_function_SRS_product_names_RSRC" version="1"
-	    plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
-    <prop name="name">SRS_product_names</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/function/$$name$$/%RESOURCE_VERSION%/final/product.txt"/>
-
-    <pluginArgs>--file @@dataDir@@/product.txt  --productDbName %PARENT_RESOURCE_NAME% --productDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
-
-  </resource>
+  <resourceInstance class="productNames">
+    <prop name="name">SRS</prop>
+    <prop name="version">1</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
 
 
   <!-- OldName: TASKAnnotation   OldVersion: 2006-07-20 -->
@@ -760,43 +381,10 @@
 
 
   <!-- OldName: IEDB_Epitopes   OldVersion: 2009-06-09 -->
-  <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
-	    version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
-	    plugin="GUS::Supported::Plugin::LoadFastaSequences">
-
-    <manualGet fileOrDir="global/empty"/>
-
-    <!-- validate that IEDB knows about this taxon id -->
-    <unpack><![CDATA[unzip -p @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/fromProvider/OrganismList.zip | grep "<OrganismId>$$speciesNcbiTaxId$$<"]]></unpack>
-
-    <unpack>iedbMakeTabFileFromXml --input_dir @@manualDelivery@@/common/epitope/IEDB/@@$$orgAbbrev$$_epitope_IEDB_VER@@/final/iedb_export_fixed --outputfile @@dataDir@@/oneOrganism.txt --NCBITaxId $$speciesNcbiTaxId$$</unpack>
-
-    <unpack>mkdir -p @@dataDir@@/fasta</unpack>
-
-    <unpack>iedbSimplifyTabFile --inputFile @@dataDir@@/oneOrganism.txt --outputFile @@dataDir@@/oneOrganismSimplified.txt </unpack>
-
-    <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/oneOrganismimplified.txt --outputFile @@dataDir@@/fasta/IEDBExport.fsa </unpack>
-
-    <getAndUnpackOutput dir="@@dataDir@@/fasta"/>
-
-    <getAndUnpackOutput file="@@dataDir@@/simplified.txt"/>
-
-    <pluginArgs><![CDATA[--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"]]></pluginArgs>
-  </resource>
-
+  <resourceInstance class="IEDB_sequences"/>
 
   <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
-  <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
-	    version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
-	    plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
-
-    <manualGet fileOrDir="global/empty"/>
-
-    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../$$orgAbbrev$$_epitope_IEDB_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
-
-    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
-  </resource>
-
+  <resourceInstance class="IEDB_dbxrefs"/>
 
 
   <!-- OldName: ToxoIsolatesFromGenbank   OldVersion: 2009-10-09 -->

@@ -1,15 +1,37 @@
 <resourceClasses>
 
+  <!-- Category: genome -->
+
+  <resourceClass class="genbank_genome">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="soTerm"/>
+    <prop name="mapFile"/>
+
+    <resource resource="$$orgAbbrev$$_genome_$$name$$_genbank_RSRC"
+              version="$$version$$"
+	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/$$name$$_genbank/%RESOURCE_VERSION%/final/genome.gbf"/>
+
+      <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm $$soTerm$$ --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    </resource>
+  </resourceClass>
+
+
   <resourceClass class="GeneDB_GFF_genome_sequence">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
+    <prop name="version"/>
     <prop name="soTerm"/>
     <prop name="regex"/>
     <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_sequence_RSRC"
-              version="@@$$orgAbbrev$$_genome_GeneDB_GFF_sequence_VER@@"
-	      plugin="GUS::Supported::Plugin::LoadFastaSequences"
-	      internalDescrip="">
+              version="$$version$$"
+	      plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
       <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/GeneDB_GFF/%RESOURCE_VERSION%/final"/>
 
@@ -25,10 +47,11 @@
   <resourceClass class="GeneDB_GFF_genome_features">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
+    <prop name="version"/>
     <prop name="soTerm"/>
     <prop name="parentResource"/>
     <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_features_RSRC"
-              version="@@$$orgAbbrev$$_genome_GeneDB_GFF_features_VER@@"
+              version="$$version$$"
 	      parentResource="$$parentResource$$"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
 	      internalDescrip="">
@@ -39,7 +62,50 @@
     </resource>
   </resourceClass>
 
+  <resourceClass class="genome_chromosome_assembly_agp">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="version"/>
+    <prop name="parentResource"/>
+    <prop name="virtualSeqSOTerm"/>
+    <prop name="sourceIdPrefix"/>
 
+    <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp"
+              version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+	      parentResource="$$parentResource$$">
+      
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/chromosome_assembly_agp/%RESOURCE_VERSION%/final/assembly.agp"/>
+
+      <pluginArgs>--agpFile @@dataDir@@/assembly.agp --seqPieceExtDbName %PARENT_RESOURCE_NAME% --seqPieceExtDbRlsVer %PARENT_RESOURCE_VERSION% --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm $$virtualSeqSOTerm$$  --ncbiTaxId $$ncbiTaxId$$ --soVer @@SO_VER@@ --sourceIdPrefix $$sourceIdPrefix$$</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <!-- Category: genomeFeature -->
+
+  <resourceClass class="genomeFeatures_GFF2">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="version"/>
+    <prop name="parentResource"/>
+    <prop name="mapFile"/>
+    <prop name="gff2GroupTag"/>
+    <prop name="naSequenceSubclass"/>
+    <resource resource="$$orgAbbrev$$_genomeFeature_$$name$$_GFF2_RSRC"
+              version="$version"
+	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+	      parentResource="$$parentResource$$">
+
+      <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+
+      <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2  --gff2GroupTag "$$gff2GroupTag$$" --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    </resource>
+  </resourceClass>
+
+
+  <!-- Category: ESTs -->
 
   <resourceClass class="dbEST">
     <prop name="orgAbbrev"/>
@@ -57,6 +123,7 @@
     </resource>
   </resourceClass>
 
+  <!-- Category: IEDB epitpotes -->
 
   <resourceClass class="IEDB_sequences">
     <prop name="orgAbbrev"/>
@@ -103,6 +170,8 @@
   </resourceClass>
 
 
+  <!-- Category: gene aliases -->
+
   <resourceClass class="GeneDB_GFF_gene_aliases">
     <prop name="orgAbbrev"/>
     <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
@@ -117,6 +186,25 @@
       <unpack><![CDATA[perl -e '%hsh;while(<>){chomp; @arr=split(/\t/,$_); $arr[8]=~ /ID=(\w+)\:.+previous_systematic_id\=(\w+)/; $hsh{$1}=$2;} foreach $k(keys %hsh){print "$k\t$hsh{$k}\n";}' @@dataDir@@/previousIdLines > @@dataDir@@/new2oldIds.txt]]></unpack>
 
       <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
+    </resource>
+  </resourceClass>
+
+
+  <!-- Category: dbxrefs -->
+  <resourceClass class="dbxref_simple">
+    <prop name="orgAbbrev"/>
+    <prop name="project"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="columnSpec"/>
+    <prop name="table"/>
+    <resource resource="$$orgAbbrev$$_dbxref_$$name$$_RSRC"
+	      version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dbxref/$$name$$/final/mapping.txt"/>
+
+      <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
     </resource>
   </resourceClass>
 
@@ -181,6 +269,156 @@
       <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
     </resource>
   </resourceClass>
+
+  <!-- Category: SNPs -->
+
+  <!-- FIX WORKFLOW: need to change getAndAnalyzeSnps to use SNPs.gff -->
+  <resourceClass class="SNPs_GFF">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <resource resource="$$orgAbbrev$$_SNP_$$name$$_gff_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
+      <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <!-- Category: microarrayPlatform -->
+
+  <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
+  <resourceClass class="microarrayPlatform">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <resource resource="$$orgAbbrev$$_microarrayPlatform_$$name$$_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayPlatform/$$name$$/%RESOURCE_VERSION%/final/probes.fsa"/>
+
+      <getAndUnpackOutput file="@@dataDir@@/probes.fsa"/>
+
+      <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <!-- Category: microarrayExpression -->
+
+  <!-- FIX: needs an analysis config file -->
+  <resourceClass class="microarrayExpression">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+
+    <resource resource="$$orgAbbrev$$_microarrayExpression_$$name$$_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::DoNothing"
+	      internalDescrip="">
+      
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/microarrayExpression/$$name$$/%RESOURCE_VERSION%/final"/>
+
+      <getAndUnpackOutput dir="@@dataDir@@/final"/>
+      <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt"/>
+      <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+
+    </resource>
+  </resourceClass>
+
+
+  <!-- Category: ChIP Chip-->
+
+  <resourceClass class="chipChip">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+
+    <resource resource="$$orgAbbrev$$_chipChip_$$name$$_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/chipChip/$$name$$/%RESOURCE_VERSION%/final"/>
+
+      <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+
+    </resource>
+  </resourceClass>
+
+  <!-- Category: fasta sequence -->
+
+  <resourceClass class="dnaSequence">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="soTermName"/>
+    <prop name="regexSourceId"/>
+    <resource resource="$$orgAbbrev$_dnaSeq_$$name$$_RSRC" version="2001-09-19"
+	      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
+
+      <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <!-- Category: SAGE tags -->
+
+  <resourceClass class="sageTagPrimers">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <resource resource="$$orgAbbrev$$_sageTag_$$name$$_RSRC" version="$$version$$"
+	      plugin="GUS::Supported::Plugin::LoadSagePrimers">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/sageTag/$$name$$/%RESOURCE_VERSION%/final/primers.txt"/>
+
+      <pluginArgs>--primers_file @@dataDir@@/primers.txt</pluginArgs>
+
+    </resource>
+
+  </resourceClass>
+
+  <resourceClass class="sageTagFrequencies">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <resource resource="$$orgAbbrev$$_sageTag_$$name$$_frequencies_RSRC" version="$$version$$"
+	      plugin="GUS::Supported::Plugin::LoadSageFrequencies"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/sageTag/$$name$$/%RESOURCE_VERSION%/final/freqs.txt"/>
+
+      <pluginArgs>--freq_file @@dataDir@@/freqs.txt</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <!-- Category: product names -->
+
+  <resourceClass class="productNames">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="parentResource"/>
+    <resource resource="$$orgAbbrev$$_function_$$name$$_product_names_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile"
+	      parentResource="$$parentResource$$">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/function/$$name$$_product_names/%RESOURCE_VERSION%/final/product.txt"/>
+
+      <pluginArgs>--file @@dataDir@@/product.txt  --productDbName %PARENT_RESOURCE_NAME% --productDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
+    </resource>
+  </resourceClass>
+
 
   <resourceClass class="isolates_genbank">
     <prop name="orgAbbrev"/>
