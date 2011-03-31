@@ -326,17 +326,21 @@
 
 
   <!-- OldName: ME49B7BACEnds   OldVersion: 2001-09-19 -->
-  <resourceInstance class="dnaSequence">
+  <resourceInstance class="fastaSequence">
     <prop name="name">Sanger_BAC_ends</prop>
     <prop name="version">2001-09-19</prop>
+    <prop name="category">dnaSeq</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|</prop>
   </resourceInstance>
 
   <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
-  <resourceInstance class="dnaSequence">
+  <resourceInstance class="fastaSequence">
     <prop name="name">TIGR_Cosmid_ends</prop>
     <prop name="version">2005-05-23</prop>
+    <prop name="category">dnaSeq</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>(\\w+\\d+T\\w)</prop>
   </resourceInstance>
@@ -373,8 +377,7 @@
 
   <!-- OldName: TASKAnnotation   OldVersion: 2006-07-20 -->
   <resource resource="$$orgAbbrev$$_function_TASK_annotation_RSRC" version="2006-07-20"
-	    plugin="ApiCommonData::Load::Plugin::LoadNothing"
-	    internalDescrip="">
+	    plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="global/empty"/>
     <pluginArgs></pluginArgs>
   </resource>
@@ -413,139 +416,79 @@
     <pluginArgs>--extDbRlsSpec '%RESOURCE_NAME%|%RESOURCE_VER%' --inputFile @@dataDir@@/updates.txt</pluginArgs>
   </resource>
 
+  <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
   <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->
-
-  <resource resource="$$orgAbbrev$$_isolate_sibley_GFF_sequences" version="2009-03-23"
-	    plugin="GUS::Supported::Plugin::LoadFastaSequences"
-	    internalDescrip="">
-
+  <resourceInstance class="fastaSequence">
+    <prop name="name">sibley_GFF</prop>
+    <prop name="version">2009-03-23</prop>
+    <prop name="category">isolate</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">region</prop>
     <prop name="regexSourceId">^>(\S+)</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolates/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $$ncbiTaxId$$ --sequenceFile @@dataDir@@/final/isolates.fasta --soTermName "region" --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: SibleyToxoIsolates   OldVersion: 2009-03-23  (wrong as: 2009-05-04) -->
-
-  <resource resource="$$orgAbbrev$$_isolate_sibley_GFF_features" version="2009-03-23"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    parentResource="$$orgAbbrev$$_isolate_sibley_GFF_sequences"
-	    internalDescrip="">
-
+  <resourceInstance class="isolateFeaturesGFF2">
+    <prop name="name">sibley_GFF</prop>
+    <prop name="version">2009-03-23</prop>
     <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+  </resourceInstance>
 
-    <manualGet fileOrDir="global/empty"/>
-
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/../$$parentResource$$/final/isolates.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @SO_VER@ --defaultOrganism $$ncbiTaxId --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
-
-
-  <resource resource="$$orgAbbrev$$_isolate_ChunleiSu_RFLP_fasta_RSRC" version="2009-05-04"
-	    plugin="GUS::Supported::Plugin::LoadFastaSequences"
-	    internalDescrip="">
-
+   <!-- OldName: ChunleiSuRFLPSequences" OldVersion: 2009-05-04 -->
+ <resourceInstance class="fastaSequence">
     <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="version">2009-05-04</prop>
+    <prop name="category">isolate</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">region</prop>
     <prop name="regexSourceId">^>(.*)</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/final/RFLPs.fasta"/>
-
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $$ncbiTaxonId$$ --sequenceFile @@dataDir@@/RFLPs.fasta --soTermName "region" --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: ChunleiSuRFLPs   OldVersion: 2009-05-04 -->
-  <resource resource="$$orgAbbrev$$_isolate_ChunleiSu_RFLP_gff_RSRC" version="2009-05-04"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    internalDescrip="">
-
+  <resourceInstance class="isolateFeaturesGFF2">
     <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="version">2009-05-04</prop>
     <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/final/RFLPs.gff"/>
-
-    <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/RFLPs.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --bioperlTreeOutput  @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: Wastling-Rhoptry   OldVersion: 2007-05-12 -->
-  <resource resource="$$orgAbbrev$$_massSpec_Wastling-Rhoptry_RSRC" version="2007-05-11"
-	    plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="massSpecPreprocessed">
     <prop name="name">Wastling-rhoptry_preprocessed</prop>
+    <prop name="version">2007-05-11</prop>
     <prop name="flag">--testPredictedGeneModels</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: Murray-Roos_Proteomics_Conoid-enriched   OldVersion: 2007-04-23 -->
-  <resource resource="$$orgAbbrev$$_massSpec_Murray-Roos_RSRC" version="2007-03-30"
-	    plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="massSpecPreprocessed">
     <prop name="name">MurrayRoos_preprocessed</prop>
+    <prop name="version">2007-03-30</prop>
     <prop name="flag">--testPredictedGeneModels</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: Dec2006_Tg_membrane_Fayun_Proteomics   OldVersion: 1.1 -->
-  <resource resource="$$orgAbbrev$$_massSpec_Einstein_RSRC" version="2008-10-08"
-	    plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="massSpecPreprocessed">
     <prop name="name">Einstein_preprocessed</prop>
+    <prop name="version">2008-10-08</prop>
     <prop name="flag"></prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
-
-
-  </resource>
+  </resourceInstance>
 
 
   <!-- OldName: massspec_Carruthers_2destinct_peptides   OldVersion: 08-22-2008 -->
-  <resource resource="$$orgAbbrev$$_massSpec_massspec_Carruthers_RSRC" version="2008-08-28"
-	    plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
+  <resourceInstance class="massSpecPreprocessed">
     <prop name="name">Carruthers_preprocessed</prop>
+    <prop name="version">2008-08-28</prop>
     <prop name="flag">--testPredictedGeneModels</prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
-
-  </resource>
-
+  </resourceInstance>
 
   <!-- OldName: Moreno-1-annotated   OldVersion: 2008-09-03 -->
-  <resource resource="$$orgAbbrev$$_massSpec_Moreno_RSRC" version="2008-08-06"
-	    plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
-	    parentResource="$$genomeRSRC$$"
-	    internalDescrip="">
-
-    <prop name="name">Einstein_preprocessed</prop>
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">Moreno_preprocessed</prop>
+    <prop name="version">2008-08-06</prop>
     <prop name="flag"></prop>
-
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
-
-    <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
-  </resource>
+  </resourceInstance>
 
 </resources>

@@ -351,20 +351,23 @@
 
   <!-- Category: fasta sequence -->
 
-  <resourceClass class="dnaSequence">
+  <resourceClass class="fastaSequence">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
     <prop name="name"/>
     <prop name="version"/>
+    <prop name="category"/>
+    <prop name="table"/>
     <prop name="soTermName"/>
     <prop name="regexSourceId"/>
-    <resource resource="$$orgAbbrev$_dnaSeq_$$name$$_RSRC" version="2001-09-19"
+    <resource resource="$$orgAbbrev$_$$category$$_$$name$$_sequences_RSRC" version="2001-09-19"
 	      plugin="GUS::Supported::Plugin::LoadFastaSequences"
 	      internalDescrip="">
 
-      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/dnaSeq/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/$$category$$/$$name$$/%RESOURCE_VERSION%/final/seqs.fasta"/>
 
-      <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "DoTS::ExternalNASequence"</pluginArgs>
+      <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "$$table$$"</pluginArgs>
     </resource>
   </resourceClass>
 
@@ -419,6 +422,7 @@
     </resource>
   </resourceClass>
 
+  <!-- Category: isolates -->
 
   <resourceClass class="isolates_genbank">
     <prop name="orgAbbrev"/>
@@ -439,5 +443,40 @@
       <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/isolates_fixed.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
   </resourceClass>
+
+  <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
+  <resourceClass class="isolatesFeaturesGFF2">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="mapfile"/>
+    <resource resource="$$orgAbbrev$$_isolate_$$name$$_features" version="2009-03-23"
+	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/%RESOURCE_VERSION%/final/isolates.gff"/>
+
+      <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/isolates.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @SO_VER@ --defaultOrganism $$ncbiTaxId --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+    </resource>
+  </resourceClass>
+
+  <resourceClass class="massSpecPreprocessed">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="name"/>
+    <prop name="version"/>
+    <prop name="flag"/>
+    <resource resource="$$orgAbbrev$$_massSpec_Wastling-Rhoptry_RSRC" version="2007-05-11"
+	      plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
+	      parentResource="$$genomeRSRC$$"
+	      internalDescrip="">
+
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/massSpec/$$name$$/%RESOURCE_VERSION%/final"/>
+
+      <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
+    </resource>
+  </resourceClass>
+
 
 </resourceClasses>
