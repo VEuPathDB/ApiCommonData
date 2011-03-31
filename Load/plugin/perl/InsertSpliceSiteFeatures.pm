@@ -208,6 +208,9 @@ sub processFile {
 
     my $location = $temp[3];
     my $seqLen = length($temp[4]);
+
+    # bowtie results have zero-based offset
+    $location = $location + 1;
     # for reverse strand, location = location in bowtie result + length of match - 1
     $location = $location + $seqLen - 1 if ($temp[1] eq "-");
 
