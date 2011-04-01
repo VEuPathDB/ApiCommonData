@@ -123,6 +123,29 @@
     </resource>
   </resourceClass>
 
+  <resourceClass class="ESTsFromFasta">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
+    <prop name="version"/>
+    <prop name="sourceIdRegex"/>
+    <prop name="flag"/> <!-- -\-\putativeFullLength or null -->
+    <prop name="libraryVector"/>
+    <prop name="libraryStage"/>
+    <prop name="libraryName"/>
+    <prop name="libraryDesc"/>
+    <prop name="contactName"/>
+    <prop name="contactAddress1"/>
+    <prop name="contactAddress2"/>
+    <resource resource="$$orgAbbrev_EST_$$name$$_sequences_RSRC" version="$$version$$"
+	      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+	      internalDescrip="">
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/EST/$$name$$/$$version$$/final/ests.fasta"/>
+      <pluginArgs>--sourceIdRegex "$$sourceIdRegex$$" --fastaFile @@dataDir@@/ests.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId $$ncbiTaxId$$ --libraryVector '$$libraryVector$$' --contactName '$$contactName$$' --contactAddress1 "$$contactAddress1$$" --contactAddress2 "$$contactAddress2$$" $$flag$$ --libraryStage '$$libraryStage$$' --libraryName '$$libraryName$$' --libraryDesc "$$libraryDesc$$"</pluginArgs>
+    </resource>
+  </resourceClass>
+
+
   <!-- Category: IEDB epitpotes -->
 
   <resourceClass class="IEDB_sequences">
