@@ -1,6 +1,6 @@
 <resources>
 
-  <constant name="orgAbbrev" value="tgondiiME49"/>
+  <constant name="orgAbbrev" value="tgonME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
   <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
@@ -408,13 +408,13 @@
 
 
   <!-- OldName: ToxoIsolatesFromDardre   OldVersion: 2009-05-04 -->
-
   <resource resource="$$orgAbbrev$$_isolates_updates_Dardre" version="2009-05-04"
 	    plugin="ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre"
 	    internalDescrip="">
     <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/dardre_updates/final/updates.txt"/>
     <pluginArgs>--extDbRlsSpec '%RESOURCE_NAME%|%RESOURCE_VER%' --inputFile @@dataDir@@/updates.txt</pluginArgs>
   </resource>
+
 
   <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
   <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->

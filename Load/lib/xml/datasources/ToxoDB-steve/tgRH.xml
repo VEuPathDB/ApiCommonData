@@ -1,8 +1,21 @@
 <resources>
 
+  <constant name="orgAbbrev" value="tgonRH"/>
+  <constant name="project" value="ToxoDB"/>
+  <constant name="ncbiTaxId" value="383379"/>
+  <constant name="genomeRSRC" value="$$orgAbbrev$$__RSRC"/>
+
 
   <!-- NOT PORTED -->
   <!-- OldName: TgondiiRHChromosome1   OldVersion: 2006-09-25 -->
+  <resourceInstance class="fastaSequence">
+    <prop name="name">genbank_chrI</prop>
+    <prop name="version">2006-09-25</prop>
+    <prop name="category">genome</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">chromosome</prop>
+    <prop name="regexSourceId">^\>(chrI[a,b])</prop>
+  </resourceInstance>
   <resource resource="TgondiiRHChromosome1_RSRC" version="@@TgondiiRHChromosome1_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences"
       internalDescrip="T. gondii RH strain chromosomes retrieved from GenBank">
