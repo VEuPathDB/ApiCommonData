@@ -3136,4 +3136,27 @@ The phosphoproteome of bloodstream form trypanonosoma brucei, causative agent of
         </description>
     </resource>
 
+   <resource resource="Lmexicana_Proteomics_Aebischer_GelFree_RSRC" version="2010-01-07"
+        displayName="Gel free analysis of the proteome of intracellular Leishmania mexicana"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+        extDbName="Lmexicana_Proteomics_Aebischer_GelFree_RSRC"
+        extDbRlsVer="2010-01-07"
+        extDbRlsDescrip="."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "Leishmania_Protein_Peptides1.tab"
+            contact="Toni Aebischer"
+            email="AebischerA@rki.de"
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/links.out --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+			Gel free analysis of the proteome of intracellular Leishmania mexicana.
+
+          ]]>
+        </description>
+       <publication pmid="19900490"/>
+    </resource>
 </resourcesPipeline>
