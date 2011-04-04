@@ -71,7 +71,7 @@
     <prop name="virtualSeqSOTerm"/>
     <prop name="sourceIdPrefix"/>
 
-    <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp"
+    <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp_RSRC"
               version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
 	      parentResource="$$parentResource$$">
@@ -236,7 +236,7 @@
     <prop name="orgAbbrev"/>
     <prop name="project"/>
     <prop name="ApiLocOrganism"/>
-    <resource resource="$$orgAbbrev$$_dbxref_ApiLoc"
+    <resource resource="$$orgAbbrev$$_dbxref_ApiLoc_RSRC"
 	      version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
 	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
 	      internalDescrip="">
@@ -475,7 +475,7 @@
     <prop name="name"/>
     <prop name="version"/>
     <prop name="mapfile"/>
-    <resource resource="$$orgAbbrev$$_isolate_$$name$$_features" version="2009-03-23"
+    <resource resource="$$orgAbbrev$$_isolate_$$name$$_features_RSRC" version="2009-03-23"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
       <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/$$name$$/%RESOURCE_VERSION%/final/isolates.gff"/>
