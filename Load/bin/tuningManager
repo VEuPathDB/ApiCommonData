@@ -466,6 +466,9 @@ sub getConfigFileName {
     $configFile = "tuningManager.xml" if !$configFile; 
     $configPath = $subversionDir . '/' . $configFile;
     return $configPath;
+  } elsif (substr($configFile, 0, 1) ne "/") {
+    $configPath = $subversionDir . '/' . $configFile;
+    return $configPath;
   } else {
     return $configFile;
   }
