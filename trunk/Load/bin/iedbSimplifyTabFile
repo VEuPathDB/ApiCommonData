@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+
+use strict;
+use Bio::Seq;
+use Bio::Tools::GFF;
+use Getopt::Long qw(GetOptions);
+
+my $verbose = 0;
+my $inputFile;
+my $outputFile;
+
+# reduce and rearrange columns from IEDB file
+
+GetOptions("verbose!"        => \$verbose,
+           "inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $inputFile) {
+  die "Must supply a valid input file!
+
+Usage: iedbSimplifyTabFile --inputFile <FILE> --outputFile <FILE> [--verbose]
+
+Rearrange the columns in an IEDB tab file produced by iedbMakeTabFileFromXml
+
+\n";
+}
+
+open(OUT, ">> $outputFile");
+
+print OUT "Accession\tIEDB ID\tStrain\tSequence\tEpitope Name\n";
+
+open (TAB, "$inputFile") || die "$inputFile not found\n";
+
+while(<TAB>){
+
+    chomp;
+    next if (/^\n/);
+
+    my @data=split(/\t/, $_);
+
+  my $iedbId = $data[1];
+  my $epiName = $data[2];
+  my $seq = $data[4];
+  my $accession = $data[10];
+  my $strain = $data[7];
+
+  print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
+}
+
+close (OUT);
+
+
+###TODO####
+# Generalize plugin by making columns to take and order to print in
+# customizable via the command line
+###########

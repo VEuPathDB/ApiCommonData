@@ -1,0 +1,139 @@
+#!/usr/bin/perl
+
+## unloads user-comment flat file for keyword search to grep through
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+my ($outDir, $prefix, $commentSchema, $gusConfigFile, $debug, $verbose, 
+    $projectId, $useWdkModel);
+&GetOptions("outputDir=s" => \$outDir,
+            "outputPrefix=s" => \$prefix,
+            "projectId=s" => \$projectId,
+            "commentSchema=s" => \$commentSchema,
+            "verbose!"=> \$verbose,
+            "debug!" => \$debug,
+            "gusConfigFile=s" => \$gusConfigFile,
+            "useWdkModel!" => \$useWdkModel,
+            );
+
+if (!$outDir || !$commentSchema){
+	die "usage: $0 --projectId <projectId> --outputDir <outputDirectory>"
+            . " [--outputPrefix <file-prefix>]"
+            . " --commentSchema <commentSchema>"
+            . " [--verbose] [--debug]"
+            . " [--gusConfigFile  <config (default=\$GUS_HOME/config/gus.config)>]\n"
+            . " [--useWdkModel]\n"
+            ;
+}
+
+print "options: --outputDir=\"$outDir\" "
+      . "outputPrefix=\"$prefix\""
+      . "projectId=\"$projectId\""
+      . "commentSchema=\"$commentSchema\""
+      . "verbose=\$verbose\""
+      . "debug=\"$debug\""
+      . "gusConfigFile=\"$gusConfigFile\"" if $verbose;
+
+print "Establishing dbi login\n" if $verbose;
+
+my $dbh = getDbHandle();
+$dbh->{LongReadLen} = 8192 * 1024;
+
+my $sql;
+
+# comments
+$sql = <<SQL;
+SELECT '', substr(c.organism, 1, instr(c.organism || '  ', ' ', 1, 2)-1),
+       c.stable_id, c.content,
+       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+FROM userlogins2.users u, ${commentSchema}.comments c
+WHERE u.email(+) = c.email
+  AND c.comment_target_id='gene'
+  AND c.review_status_id != 'rejected'
+  AND project_name = '${projectId}'
+  AND c.comment_target_id = 'gene'
+ORDER BY substr(c.organism, 1, instr(c.organism || '  ', ' ', 1, 2)-1),
+       c.stable_id,
+       u.first_name || ' ' || u.last_name || ', ' || u.title || ', ' || u.organization
+SQL
+
+&extractFile($dbh, $outDir, "comments.txt", $sql);
+
+sub extractFile {
+  my ($dbh, $outDir, $outFile, $sql) = @_;
+
+  print "SQL: $sql\n" if $verbose;
+
+  my $count = 0;
+  my $statement = $dbh->prepare($sql);
+  $statement->execute();
+  my @ids;
+
+  my $tempfile = "${outDir}/keywordQueryFlatfile.$$";
+
+  print "tempfile: $tempfile\n" if $verbose;
+  open(OUT,">$tempfile");
+
+  while(my @row = $statement->fetchrow_array()){
+    $count++;
+    print "Processing record $count\n" if $verbose && $count % 10000 == 0;
+
+    map { s/\s+/ /g } @row;
+    print OUT join("\t", @row), " \n";
+  }
+
+  $statement->finish();
+
+  close(OUT);
+  my $datafile = "${outDir}/${prefix}${outFile}";
+  print "renaming $tempfile to $datafile\n" if $verbose;
+  rename($tempfile, $datafile);
+}
+ 
+sub getDbHandle {
+   
+  my ($dbh, $dsn, $login, $passwd);
+  
+  if ($useWdkModel) {
+    
+    require ApiCommonWebsite::Model::CommentConfig;
+    my $c = new ApiCommonWebsite::Model::CommentConfig($projectId);
+
+    $dsn    = $c->getDbiDsn();
+    $login  = $c->getLogin();
+    $passwd = $c->getPassword();
+    
+    $dbh = DBI->connect(
+                  $dsn, 
+                  $login, 
+                  $passwd,
+                  { PrintError => 1, RaiseError => 0}
+                  ) or die "Can't connect to the database: $DBI::errstr\n";
+  
+  } else {
+  
+    require GUS::ObjRelP::DbiDatabase;
+    require GUS::Supported::GusConfig;
+    
+    my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+    
+    $dsn    = $gusconfig->getDbiDsn();
+    $login  = $gusconfig->getReadOnlyDatabaseLogin();
+    $passwd = $gusconfig->getReadOnlyDatabasePassword();
+    
+    my $db = GUS::ObjRelP::DbiDatabase->new($dsn,
+             $login,
+             $passwd,
+             $verbose,0,1,
+             $gusconfig->getCoreSchemaName,
+             $gusconfig->getOracleDefaultRollbackSegment());
+    
+    $dbh = $db->getQueryHandle();
+  }
+
+  print "db info:\n  dsn=$dsn\n  login=$login\n\n" if $verbose;
+  return $dbh;
+  
+}

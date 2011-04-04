@@ -1,0 +1,89 @@
+#!/usr/bin/perl
+
+
+#########################################################################
+#########################################################################
+#
+# A wrapper to intall gus schema and apidb schema by one command.
+# intall gusSchema -> install apidb schema -> bld gus objects
+#
+#########################################################################
+#########################################################################
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+
+my ($gusConfigFile, $restart,$db);
+
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	   "restart!" => \$restart,
+	   "db=s" => \$db);
+
+if (!$db) {
+  die "usage: apidbPrepareInstance --db database [--restart] [--gusConfigFile gus_config_file]\n";
+}
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+#my $db = $1 if ($gusconfig->getDbiDsn()=~ m/:(\w+\-*\w*)$/);
+
+if ($restart){
+
+    my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+    my $login = $gusconfig->getDatabaseLogin();
+
+    my $password = $gusconfig->getDatabasePassword();
+
+    &runSql($login, $password, $db, 'dropMultiDbUsers.sql');
+}
+
+    my $gusInstall='build GUS install  -append -installDBSchema';
+
+    system($gusInstall);
+
+    my $status = $? >>8;
+
+    die "Failed with status '$status running cmd: $gusInstall'" if $status;
+
+    my $apidbInstall="installApidbSchema --db $db --create";
+
+    system($apidbInstall);
+
+    my $status = $? >>8;
+
+    die "Failed with status '$status running cmd: $apidbInstall'" if $status;
+
+    my $gusBld='build GUS install -append';
+
+    system($gusBld);
+
+    my $status = $? >>8;
+
+    die "Failed with status '$status running cmd: $gusBld'" if $status;
+
+#############################################################################
+
+sub runSql {
+
+  my ($login, $password, $db, $file) = @_;
+
+  my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
+
+  -e $fullFile || die "File '$fullFile' does not exist";
+
+  my $cmd = "sqlplus $login\@$db/$password \@$fullFile";
+
+  system($cmd);
+
+  my $status = $? >> 8;
+
+  die "Failed with status '$status running cmd: $cmd'" if $status;
+}
+
+exit 1;
+
+
+

@@ -1,0 +1,49 @@
+#####################################
+# properties file for toxo pipeline
+
+#stopBefore=copycontigs-nrdbResultsFromCluster
+commit = ""
+
+genusNickname=toxo
+
+speciesNickname=Tgondii
+
+ncbiTaxId=Tgondii:5811  
+
+buildDir = /files/cbil/data/cbil/toxoDb
+
+nodeClass=DJob::DistribJob::BprocNode
+
+blastsimilarity.taskSize=1                                                                                                      
+wuBlastBinPathCluster=/genomics/share/pkg/bio/wu-blast/current                                                                                                                                                                                
+release = 1.0.0
+
+# pipelineDir will be buildDir/release/analysis_pipeline
+
+# FQDN or none
+clusterServer = alpha.genomics.liniac.upenn.edu
+
+# login for cluster
+clusterUser = bindu
+
+# pre-existing dir on cluster where pipeline dir will be copied to
+serverPath=/genomics/binf/scratch/toxoDb
+
+# location of DistribJob temp node directories
+nodePath=/scratch/user/$ENV{USER}
+
+gusConfigFile = $ENV{HOME}/projects/gus.properties
+
+chromDbName=T. gondii chroms
+
+chromDbRlsVer=2005-04-26
+
+nrdbDbName=NRDB
+
+nrdbDbRlsVer=2005-07-08
+
+contact = ,Deborah,Pinney
+
+SignalPDir = unknown
+
+TMHmmDir = unknown

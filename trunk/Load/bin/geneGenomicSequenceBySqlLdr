@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+use Bio::Seq;
+use Bio::SeqIO;
+
+my ($verbose,$outFile,$inFile);
+&GetOptions("verbose!"=> \$verbose,
+            "outFile=s"=> \$outFile,
+	    "inFile=s"=> \$inFile);
+
+
+
+
+open (IN,$inFile) || die "Can't open input file $inFile for reading\n";
+
+open (OUT,"> $outFile") || die "Can't open output file $outFile for writing\n";
+
+print OUT "LOAD DATA
+INFILE *
+INTO TABLE apidb.GeneGenomicSequence
+FIELDS TERMINATED BY '\\t' OPTIONALLY ENCLOSED BY ' '
+TRAILING NULLCOLS
+(source_id,
+ gene_genomic_sequence char(40000)
+)
+BEGINDATA\n";
+
+my $seqIn  = Bio::SeqIO->new( '-format' =>  "fasta", -file => $inFile);
+
+my %seqHash;
+
+while (my $mySeq = $seqIn->next_seq){
+
+$seqHash{$mySeq->id}.=$mySeq->seq;
+
+}
+
+foreach (keys %seqHash){
+
+print OUT "$_\t$seqHash{$_}\n";
+
+}

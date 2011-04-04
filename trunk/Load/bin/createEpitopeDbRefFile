@@ -1,0 +1,48 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use Switch;
+use strict;
+
+my ($inputDir, $outputFile, $verbose);
+
+&GetOptions("inputDir=s" => \$inputDir,
+	    "outputFile=s" => \$outputFile,
+	    "verbose!" => \$verbose,
+	   );
+
+if (!$inputDir ||!$outputFile) {
+  die "usage: createEpitopeDbRefFile --inputDir <DIRPATH> --outputFile <DIRPATH> [--verbose]\n";
+}
+
+
+opendir(EDIR, $inputDir) or die "Cannot opendir '$inputDir': $!";
+
+open(OUT, ">>$outputFile") or die "Cannot open file '$outputFile': $!";
+
+my $file;
+while (defined($file = readdir(EDIR))) {
+  next if $file =~ /^\.\.?$/;     # skip . and ..
+  next if $file =~ /fasta/;       # skip the fasta dir
+
+  $file = "$inputDir/$file";
+  open(FILE, $file) or die "Cannot open file '$file' for reading: $!\n";
+
+  while(<FILE>){
+    chomp;
+
+    my @data = split('\t',$_);
+
+    next if ($data[0] eq 'Accession');
+
+    print OUT $data[1]."\t".$data[1]."\t".$data[2]."\n";
+
+  }
+
+  close(FILE);
+
+}
+
+close(OUT);
+close(EDIR);

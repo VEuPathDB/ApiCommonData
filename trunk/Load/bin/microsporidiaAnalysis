@@ -1,0 +1,122 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use File::Basename;
+use ApiCommonData::Load::Steps;
+use ApiCommonData::Load::MakeTaskDirs;
+
+my $propertiesFile = shift(@ARGV);
+my $optionalArgs = \@ARGV;
+
+
+my ($mgr, $projectDir, $release, $allSpecies)
+  = &initAmoebAnalysis($propertiesFile, $optionalArgs);
+
+my $dataDir=$mgr->{dataDir};
+
+
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Eintestinalis", "EintestinalisAnnotatedCDS","E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23","ubc","MicrosporidiaDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Eintestinalis", "EintestinalisAnnotatedTranscripts", "E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23","ubc","MicrosporidiaDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Eintestinalis", "EintestinalisAnnotatedProteins", "E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23","ubc","MicrosporidiaDB",0);
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Eintestinalis", "EintestinalisORFs", "E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23", 50, "MicrosporidiaDB");
+
+&writeGeneAliasFile($mgr,"E. intestinalis chromosomes and annotations from Patrick Keeling|2009-11-23","MicrosporidiaDB","Eintestinalis");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Eintestinalis", "EintestinalisORFNAs", "E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23", 50, "MicrosporidiaDB");
+
+&makeCodonUsage($mgr, "Eintestinalis", "AnnotatedCDS");
+
+&makeMixedGenomicDownloadFile($mgr, "Eintestinalis", "EintestinalisGenomic", "E. intestinalis chromosomes and annotations from Patrick Keeling","2009-11-23", "ubc","MicrosporidiaDB");
+
+
+&makeESTDownloadFileFromAllSources($mgr,"Ecuniculi", 6035, 1, "MicrosporidiaDB");
+
+&makeDoTSAssemblyDownloadFile ($mgr, 'Ecuniculi', 'assemblies',284813, 'MicrosporidiaDB');
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Ecuniculi", "EcuniculiAnnotatedCDS","E. cuniculi chromosomes and annotations from Genbank","2008-06-19","gb","MicrosporidiaDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Ecuniculi", "EcuniculiAnnotatedTranscripts", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19","gb","MicrosporidiaDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Ecuniculi", "EcuniculiAnnotatedProteins", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19","gb","MicrosporidiaDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Ecuniculi", "EcuniculiGenomic", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19", "gb","MicrosporidiaDB");
+
+#&makeInterproDownloadFile ($mgr, 'Ecuniculi', "Interpro", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19", "INTERPRO", "23.0", "MicrosporidiaDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Ecuniculi", "EcuniculiORFs", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19", 50, "MicrosporidiaDB");
+
+&writeGeneAliasFile($mgr,"E. cuniculi chromosomes and annotations from Genbank|2008-06-19","MicrosporidiaDB","Ecuniculi");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Ecuniculi", "EcuniculiORFNAs", "E. cuniculi chromosomes and annotations from Genbank","2008-06-19", 50, "MicrosporidiaDB");
+
+&makeCodonUsage($mgr, "Ecuniculi", "AnnotatedCDS");
+
+
+
+&makeDerivedCdsDownloadFileTransformed($mgr, "Ebieneusi", "EbieneusiAnnotatedCDS","E.bieneusi_Genbank_contigs_and_annotations","2009-01-13","gb","MicrosporidiaDB",0);
+
+&makeTranscriptDownloadFileTransformed($mgr, "Ebieneusi", "EbieneusiAnnotatedTranscripts", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13","gb","MicrosporidiaDB",0);
+
+&makeAnnotatedProteinDownloadFileTransformed($mgr, "Ebieneusi", "EbieneusiAnnotatedProteins", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13","gb","MicrosporidiaDB",0);
+
+&makeMixedGenomicDownloadFile($mgr, "Ebieneusi", "EbieneusiGenomic", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13", "gb","MicrosporidiaDB");
+
+&makeInterproDownloadFile ($mgr, 'Ebieneusi', "Interpro", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13", "INTERPRO", "23.0", "MicrosporidiaDB");
+
+&makeOrfDownloadFileWithAbrevDeflineTransformed($mgr, "Ebieneusi", "EbieneusiORFs", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13", 50, "MicrosporidiaDB");
+
+&writeGeneAliasFile($mgr,"E.bieneusi_Genbank_contigs_and_annotations|2009-01-13","MicrosporidiaDB","Ebieneusi");
+
+&makeOrfNaDownloadFileWithAbrevDeflineTransformed($mgr, "Ebieneusi", "EbieneusiORFNAs", "E.bieneusi_Genbank_contigs_and_annotations","2009-01-13", 50, "MicrosporidiaDB");
+
+&makeCodonUsage($mgr, "Ebieneusi", "AnnotatedCDS");
+
+&makeGSSDownloadFile($mgr, "Microsporidia", "GSS", "cloned_genomic", "70536,27978,42399,723287", "GSS", "2010-06-07", "MicrosporidiaDB");
+
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Microsporidia", "MicrosporidiaGSS_MicrosporidiaDB-1.2.fasta","MicrosporidiaGSS","-n -t release-1.2/MicrosporidiaGSS");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis", "EintestinalisAnnotatedTranscripts_MicrosporidiaDB-1.1.fasta","EintestinalisTranscripts","-n -t release-1.1/EintestinalisTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis", "EintestinalisAnnotatedProteins_MicrosporidiaDB-1.1.fasta","EintestinalisProteins","-p -C X -t release-1.1/EintestinalisProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis","EintestinalisORFs_MicrosporidiaDB-1.1.fasta","EintestinalisORF","-p -C X -t release-1.1/EintestinalisORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis", "EintestinalisGenomic_MicrosporidiaDB-1.1.fasta","EintestinalisGenomics","-n -t release-1.1/EintestinalisGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Eintestinalis", "EintestinalisAnnotatedCDS_MicrosporidiaDB-1.1.fasta","EintestinalisCDS","-n -t release-1.1/EintestinalisCDS");
+
+
+&xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiEST_MicrosporidiaDB-1.1.fasta","EcuniculiEST","-n -t release-1.1/EcuniculiEST");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiAssemblies_MicrosporidiaDB-1.1.fasta","EcuniculiAssemblies","-n -t release-1.1/EcuniculiAssemblies");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiAnnotatedTranscripts_MicrosporidiaDB-1.1.fasta","EcuniculiTranscripts","-n -t release-1.1/EcuniculiTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiAnnotatedProteins_MicrosporidiaDB-1.1.fasta","EcuniculiProteins","-p -C X -t release-1.1/EcuniculiProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi","EcuniculiORFs_MicrosporidiaDB-1.1.fasta","EcuniculiORF","-p -C X -t release-1.1/EcuniculiORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiGenomic_MicrosporidiaDB-1.1.fasta","EcuniculiGenomics","-n -t release-1.1/EcuniculiGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ecuniculi", "EcuniculiAnnotatedCDS_MicrosporidiaDB-1.1.fasta","EcuniculiCDS","-n -t release-1.1/EcuniculiCDS");
+ 
+
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ebieneusi", "EbieneusiAnnotatedTranscripts_MicrosporidiaDB-1.1.fasta","EbieneusiTranscripts","-n -t release-1.1/EbieneusiTranscripts");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ebieneusi", "EbieneusiAnnotatedProteins_MicrosporidiaDB-1.1.fasta","EbieneusiProteins","-p -C X -t release-1.1/EbieneusiProteins");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ebieneusi","EbieneusiORFs_MicrosporidiaDB-1.1.fasta","EbieneusiORF","-p -C X -t release-1.1/EbieneusiORF");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ebieneusi", "EbieneusiGenomic_MicrosporidiaDB-1.1.fasta","EbieneusiGenomics","-n -t release-1.1/EbieneusiGenomics");
+
+ &xdformatDownloadFileForBlastSite($mgr,"Ebieneusi", "EbieneusiAnnotatedCDS_MicrosporidiaDB-1.1.fasta","EbieneusiCDS","-n -t release-1.1/EbieneusiCDS");
+
+$mgr->goodbye("Pipeline complete!\n");

@@ -1,0 +1,18 @@
+#!@perl@
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use CBIL::Util::GenomeDir;
+
+my ($downloadSubDir, $genomeSrcIdRegEx);
+&GetOptions("downloadSubDir=s"=> \$downloadSubDir,
+            "$genomeSrcIdRegEx=s"=> \$genomeSrcIdRegEx);
+
+die "usage: splitGenomeFile --downloadSubDir <directory containing the downloaded genome file> --genomeSrcIdRegEx <regex for source_id> \n" 
+  unless ($downloadSubDir && $genomeSrcIdRegEx);
+
+my $gd = CBIL::Util::GenomeDir->new($downloadSubDir, $genomeSrcIdRegEx);
+
+if ($genomeSrcIdRegEx) {
+  $gd->splitUp();
+}

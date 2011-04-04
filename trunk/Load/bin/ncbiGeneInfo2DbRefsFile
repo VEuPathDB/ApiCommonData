@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+
+use strict;
+
+use XML::LibXML;
+
+use Getopt::Long;
+
+use Data::Dumper;
+
+my ($file, $taxId) = @ARGV;
+
+
+usage() unless ($file, $taxId);
+
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+
+die "\nError calling 'getSubNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
+#print STDERR "$subNCBITaxaList\n";
+
+my @taxaLists = split(/\,/,$subNCBITaxaList);
+
+my %taxaListHash;
+
+foreach (@taxaLists) {
+  chomp;
+  $taxaListHash{$_}=1;
+}
+
+my (@myVals);
+
+if ($file =~ /\.gz$/) {
+  open (TABFILE, "zcat $file|") || die "File '$file' not found\n";
+} else {
+  open (TABFILE, "$file") || die "File '$file' not found\n";
+}
+
+<TABFILE>;
+
+while (<TABFILE>) {
+
+  chomp;
+  @myVals = split(/\t/, $_);
+
+  if ($taxaListHash{$myVals[0]} && $myVals[3] ne "-") {
+    print "$myVals[3]\t$myVals[1]\t$myVals[2]\t$myVals[4]\n";
+  }
+}
+
+sub usage {
+  print STDERR "
+usage: ncbiGeneInfo2DbRefsFile gene_info_file ncbi_tax_id
+
+(gene_info_file is allowed to be gzipped)
+
+parse a gene_info file from genbank to produce rows of info pertinent to the
+provided ncbi tax id.  this is typically consumed by a program to find
+dbxrefs.
+
+see here for a sample gene_info file:  ftp://ftp.ncbi.nih.gov/gene/DATA/gene_info.gz
+
+output columns:  LocusTag GeneID Symbol Synonyms
+
+";
+
+  exit(1);
+}
+

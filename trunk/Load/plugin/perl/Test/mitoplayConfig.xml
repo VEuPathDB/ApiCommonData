@@ -1,0 +1,44 @@
+<mapping>
+
+  <bioperlSeqPreprocessor
+           class="PlasmoDBData::Load::BioperlReshaper"/>
+
+  <gusSkeletonMaker class="PlasmoDBData::Load::GusSkeletonMaker"/>
+
+  <specialCaseQualifierHandler name="plasmo" 
+           class="PlasmoDBData::Load::SpecialCaseQualifierHandlers"/>
+
+  <specialCaseQualifierHandler name="standard" 
+           class="GUS::Supported::SpecialCaseQualifierHandlers"/>
+
+  <feature name="coding_gene" so="protein_coding_gene">
+    <qualifier name="gene" column="source_id"/>
+    <qualifier name="note" handler="standard" method="note"/>
+    <qualifier name="product" handler="plasmo" method="product"/>
+    <qualifier name="protein_id" handler="standard" method="dbXRef"/>
+    <qualifier name="db_xref" handler="standard" method="dbXRef"/>
+    <qualifier name="codon_start" handler="plasmo" method="mapAllExonSequenceToCoding"/>
+    <qualifier name="translation" handler="plasmo" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" ignore="true"/>
+  </feature>
+
+  <feature name="rRNA_gene" table="DoTS::GeneFeature" so="rRNA_gene">
+    <qualifier name="gene" column="source_id"/>
+    <qualifier name="product" handler="plasmo" method="product"/>
+  </feature>
+
+  <feature name="source" ignore="true"/>
+ 
+  <feature name="tRNA_gene" table="DoTS::GeneFeature" so="tRNA_gene">
+    <qualifier name="gene" column="source_id"/>
+    <qualifier name="note" handler="standard" method="note"/>
+    <qualifier name="product" handler="plasmo" method="product"/>
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="exon">
+  </feature>
+
+  <feature name="transcript" table="DoTS::Transcript" so="transcript">
+  </feature>
+
+</mapping>

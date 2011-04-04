@@ -1,0 +1,29 @@
+#!@perl@
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+
+my ($inputFile,$outputFile);
+&GetOptions("inputFile=s"=> \$inputFile,
+            "outputFile=s"=> \$outputFile);
+
+die "usage: filterPdbFile --inputFile --outputFile\n" 
+  unless ($inputFile && $outputFile);
+
+open (INPUT, $inputFile) || die "Can't open $inputFile forreading\n";
+
+open (OUTPUT,">$outputFile") || die "Can't open $outputFile for writing\n";
+
+my $flag = 0;
+
+while(<INPUT>){
+  if($_ =~ />/){
+    if($_ =~ /mol:protein/)
+      {$flag=1;}
+    else{$flag=0;}
+  }
+  if($flag==1)
+    {print OUTPUT "$_";}
+}
+
+

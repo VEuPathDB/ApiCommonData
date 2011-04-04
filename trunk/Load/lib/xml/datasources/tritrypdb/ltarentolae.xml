@@ -1,0 +1,25 @@
+<resources>
+<!--ISFResource-->
+
+  <resource resource="Ltarentolae_contigs_RSRC" version="@@Ltarentolae_contigs_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="TriTrypDB/ltarentolae/genome/contig/%RESOURCE_VERSION%/L_tarentolae_dna_r1596.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5689 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/L_tarentolae_dna_r1596.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="L. tarentolae contig sequence"
+        project="TriTrypDB"
+        organisms="@@LtarentolaeOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+Chromosome sequence for Leishmania tarentolae is provided by  the CIHR Group on host pathogen interactions (Marc Ouellette, Jacques Corbeil, Barbara Papadopoulou, Michel J. Tremblay, Fr&#233;d&#233;ric Raymond, S&#233;bastien Boisvert from Universit&#233; Laval, and Martin Olivier from McGill University). The CIHR group plans on publishing the completed and annotated sequences in a peer-reviewed journal as soon as possible. Permission  should be obtained from Marc Ouellette before publishing analyses of the  sequence/open reading frames/genes on a chromosome or genome scale.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>

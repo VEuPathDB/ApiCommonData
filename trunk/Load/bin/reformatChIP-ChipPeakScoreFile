@@ -1,0 +1,33 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use Data::Dumper;
+use List::Util qw(sum);
+
+my ($outputFile,$inputFile,$verbose, $sampleName);
+&GetOptions("inputFile=s" => \$inputFile,
+            "verbose!" => \$verbose,
+	    "sampleName=s" => \$sampleName,
+            "outputFile=s" => \$outputFile);
+
+my %featureHash;
+
+open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
+open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
+print OUT "ID_REF\tfloat_value\tint_value\n";
+while (<TABFILE>){
+  chomp;
+  next if /^#/; 
+  my @arr = split(/\t/, $_);
+  print OUT "$arr[0]_$arr[1]_$arr[2]-$sampleName\t$arr[4]\t$arr[3]\n";
+}
+
+close(TABFILE);
+close(OUT);
+
+
+

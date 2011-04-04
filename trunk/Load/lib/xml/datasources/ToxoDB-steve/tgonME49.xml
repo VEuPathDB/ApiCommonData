@@ -1,0 +1,481 @@
+<resources>
+
+  <constant name="orgAbbrev" value="tgonME49"/>
+  <constant name="project" value="ToxoDB"/>
+  <constant name="ncbiTaxId" value="29176"/>
+  <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
+
+  <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
+  <resourceInstance class="genbank_genome">
+    <prop name="name">JCVI</prop>
+    <prop name="version">???</prop>
+    <prop name="soTerm">supercontig</prop>
+    <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
+  </resourceInstance>
+
+  <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
+  <resourceInstance class="genbank_genome">
+    <prop name="name">apicoplast</prop>
+    <prop name="version">???</prop>
+    <prop name="soTerm">apicoplast_chromosome</prop>
+    <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
+  </resourceInstance>
+
+  <!-- OldName: ME49ChromosomeMap   OldVersion: 2008-08-28 -->
+  <resourceInstance class="genome_chromosome_assembly_agp">
+    <prop name="version">2008-08-28</prop>
+    <prop name="virtualSeqSOTerm">chromosome</prop>
+    <prop name="sourceIdPrefix">TGME49_chr</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">GLEAN</prop>
+    <prop name="version">2003-08-13</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+  <!-- OldName: ME49_Annotation   OldVersion: 3 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">Version4</prop>
+    <prop name="version">2008-08-15</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+  <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">GlimmerHMM</prop>
+    <prop name="version">2003-08-13</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+  <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">TigrScan</prop>
+    <prop name="version">2003-08-13</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+  <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">TwinScan</prop>
+    <prop name="version">2003-08-13</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ME49_TwinScanEt   OldVersion: 2003-08-13 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">TwinScanEt</prop>
+    <prop name="version">2003-08-13</prop>
+    <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="naSequenceSubclass">ExternalNASequence</prop>
+  </resourceInstance>
+
+  <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
+  <resourceInstance class="genomeFeatures_GFF2">
+    <prop name="name">Einstein_centromeres</prop>
+    <prop name="version">2009-06-18</prop>
+    <prop name="mapFile">ToxoDB/toxoFeatures2gus.xml</prop>
+    <prop name="gff2GroupTag">ID</prop>
+    <prop name="naSequenceSubclass">VirtualSequence</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
+  <resourceInstance class="dbxref_gene2Entrez">
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
+
+  <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
+  <resourceInstance class="dbxref_gene2Uniprot">
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Antibody   OldVersion: 1 -->
+  <resourceInstance class="dbxref_simple">
+    <prop name="name">genes2EinsteinAntibodies</prop>
+    <prop name="version">2008-08-26</prop>
+    <prop name="columnSpec">primary_identifier,remark,secondary_identifier</prop>
+    <prop name="table">DbRefAASequence</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: T.gondiiME49_seqDBRefs   OldVersion: 2008-08-11 -->
+  <resourceInstance class="dbxref_simple">
+    <prop name="name">genomicSeqs2version4.3_IDs</prop>
+    <prop name="version">2008-08-11</prop>
+    <prop name="columnSpec">primary_identifier</prop>
+    <prop name="table">DbRefNASequence</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: MetabolicDbXRefs_Feng   OldVersion: 1.2 -->
+  <resourceInstance class="dbxref_simple">
+    <prop name="name">protein2Pathways_Feng</prop>
+    <prop name="version">2006-04-06</prop>
+    <prop name="columnSpec">primary_identifier,lowercase_secondary_identifier,remark</prop>
+    <prop name="table">DbRefAAFeature</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
+  <resourceInstance class="dbxref_ApiLoc">
+    <!-- organism name as found on the ApiLoc site -->
+    <prop name="ApiLocOrganism" value="Toxoplasma gondii"/>
+  </resourceInstance>
+
+
+  <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
+  <resourceInstance class="dbEST"/>
+
+
+  <!-- OldName: GeneticMarkers_Sibley   OldVersion: 1 -->
+  <resourceInstance class="SNPs_GFF">
+    <prop name="name">Sibley_Tg10x_31</prop>
+    <prop name="version">2008-10-08</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ME49_SNPs   OldVersion: 2004-08 -->
+  <resourceInstance class="SNPs_GFF">
+    <prop name="name">Stanford_Tg10x_31</prop>
+    <prop name="version">2006-09-27</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AmitAlignmentSnps   OldVersion: 2006-10-16 -->
+  <resourceInstance class="SNPs_GFF">
+    <prop name="name">Amit_nucmer</prop>
+    <prop name="version">2006-10-16</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Lindstrom454Snps   OldVersion: 2009-11-06 -->
+  <resourceInstance class="SNPs_GFF">
+    <prop name="name">Lindstrom_454</prop>
+    <prop name="version">2008-07-18</prop>
+  </resourceInstance>
+
+
+  <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
+  <!-- OldName: AffymetrixProbes_NuclearCoding   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_NuclearCoding</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_estSNPs   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_estSNPs</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_ChIP   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_ChIP</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_Resequencing   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_Resequencing</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_NuclearNonCoding   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_NuclearNonCoding</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_Antisense   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_Antisense</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_IbIntron   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_IbIntron</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_Markers   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_Markers</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_ExonIb   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_ExonIb</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_BLASTX-TranscriptDiscovery   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_BLASTX-TranscriptDiscovery</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_EST-TranscriptDiscovery   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_EST-TranscriptDiscovery</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: AffymetrixProbes_TBLASTN-TranscriptDiscovery   OldVersion: 1 -->
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">Affy-Amit_TBLASTN-TranscriptDiscovery</prop>
+    <prop name="version">2006-05-19</prop>
+  </resourceInstance> 
+
+
+  <resourceInstance class="microarrayPlatform">
+    <prop name="name">NimbleGen-Einstein</prop>
+    <prop name="version">2009-04-22</prop>
+  </resourceInstance>
+
+
+  <!-- FIX: needs an analysis config -->
+  <!-- OldName: Tg_3_Archetypal_Lineages_ExpressionData   OldVersion: 1.0 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Roos-Tz</prop>
+    <prop name="version">2008-04-25</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: T.gondii_MWhite_CellCycle_Array_Profiles   OldVersion: 2010-03-03 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">GSE19092</prop>
+    <prop name="version">2009-12-07</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Brady_Time_Series   OldVersion: 1.0 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Brady</prop>
+    <prop name="version">2007-06-07</prop>
+  </resourceInstance>
+
+
+  <!-- FIX: needs an analysis config -->
+  <!-- OldName: Compound1_pH_avg_pct   OldVersion: 1.0 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">GSE16037</prop>
+    <prop name="version">2009-10-05</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Matt_Tz-Bz_Time_Series   OldVersion: 1.0 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Anderson-Boothroyd-Tz-Bz</prop>
+    <prop name="version">2008-04-25</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ChIP_Chip_einstein   OldVersion: 2008-08 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein</prop>
+    <prop name="version">2008-08-22</prop>
+  </resourceInstance>
+
+  <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein_centromeres</prop>
+    <prop name="version">2009-06-02</prop>
+  </resourceInstance>
+
+  <!-- OldName: Einstein_????   OldVersion: 2009-06-18 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Eintstein_ME1</prop>
+    <prop name="version">2010-08-16</prop>
+  </resourceInstance>
+
+  <!-- OldName: ChIP_Chip_Hakimi   OldVersion: 2009-03 -->
+  <resourceInstance class="microarrayExpression">
+    <prop name="name">Hakimi.Ali</prop>
+    <prop name="version">2009-02-06</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ME49B7BACEnds   OldVersion: 2001-09-19 -->
+  <resourceInstance class="fastaSequence">
+    <prop name="name">Sanger_BAC_ends</prop>
+    <prop name="version">2001-09-19</prop>
+    <prop name="category">dnaSeq</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">clone_insert_end</prop>
+    <prop name="regexSourceId">^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|</prop>
+  </resourceInstance>
+
+  <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
+  <resourceInstance class="fastaSequence">
+    <prop name="name">TIGR_Cosmid_ends</prop>
+    <prop name="version">2005-05-23</prop>
+    <prop name="category">dnaSeq</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">clone_insert_end</prop>
+    <prop name="regexSourceId">^>(\\w+\\d+T\\w)</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: 3primeToxoSageTags   OldVersion: 2005-04-26 -->
+  <resourceInstance class="sageTagPrimers">
+    <prop name="name">White</prop>
+    <prop name="version">2005-04-26</prop>
+  </resourceInstance>
+
+  <!-- OldName: ToxoSageTagFreqs   OldVersion: 2005-04-26 -->
+  <resourceInstance class="sageTagFrequencies">
+    <prop name="name">White</prop>
+    <prop name="version">2005-04-26</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ToxoDB_Kinome_productNames   OldVersion: 1 -->
+  <resourceInstance class="productNames">
+    <prop name="name">Kinome</prop>
+    <prop name="version">1</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ToxoDB_SRS_productNames   OldVersion: 1 -->
+  <resourceInstance class="productNames">
+    <prop name="name">SRS</prop>
+    <prop name="version">1</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: TASKAnnotation   OldVersion: 2006-07-20 -->
+  <resource resource="$$orgAbbrev$$_function_TASK_annotation_RSRC" version="2006-07-20"
+	    plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs></pluginArgs>
+  </resource>
+
+
+  <!-- OldName: IEDB_Epitopes   OldVersion: 2009-06-09 -->
+  <resourceInstance class="IEDB_sequences"/>
+
+  <!-- OldName: IEDB_Epitopes_DBxRefs   OldVersion: 2009-06-09 -->
+  <resourceInstance class="IEDB_dbxrefs"/>
+
+
+  <!-- OldName: ToxoIsolatesFromGenbank   OldVersion: 2009-10-09 -->
+  <resourceInstance class="isolates_genbank"/>
+
+
+  <!-- OldName: ToxoIsolatesFromDardre   OldVersion: 2009-05-04 -->
+  <resource resource="$$orgAbbrev$$_isolates_updates_Dardre" version="2009-05-04"
+	    plugin="ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre"
+	    internalDescrip="">
+    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/dardre_updates/final/updates.txt"/>
+    <pluginArgs>--extDbRlsSpec '%RESOURCE_NAME%|%RESOURCE_VER%' --inputFile @@dataDir@@/updates.txt</pluginArgs>
+  </resource>
+
+
+  <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
+  <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->
+  <resourceInstance class="fastaSequence">
+    <prop name="name">sibley_GFF</prop>
+    <prop name="version">2009-03-23</prop>
+    <prop name="category">isolate</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">region</prop>
+    <prop name="regexSourceId">^>(\S+)</prop>
+  </resourceInstance>
+
+  <!-- OldName: SibleyToxoIsolates   OldVersion: 2009-03-23  (wrong as: 2009-05-04) -->
+  <resourceInstance class="isolateFeaturesGFF2">
+    <prop name="name">sibley_GFF</prop>
+    <prop name="version">2009-03-23</prop>
+    <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+  </resourceInstance>
+
+   <!-- OldName: ChunleiSuRFLPSequences" OldVersion: 2009-05-04 -->
+ <resourceInstance class="fastaSequence">
+    <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="version">2009-05-04</prop>
+    <prop name="category">isolate</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">region</prop>
+    <prop name="regexSourceId">^>(.*)</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: ChunleiSuRFLPs   OldVersion: 2009-05-04 -->
+  <resourceInstance class="isolateFeaturesGFF2">
+    <prop name="name">ChunleiSu_RFLP</prop>
+    <prop name="version">2009-05-04</prop>
+    <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Wastling-Rhoptry   OldVersion: 2007-05-12 -->
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">Wastling-rhoptry_preprocessed</prop>
+    <prop name="version">2007-05-11</prop>
+    <prop name="flag">--testPredictedGeneModels</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Murray-Roos_Proteomics_Conoid-enriched   OldVersion: 2007-04-23 -->
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">MurrayRoos_preprocessed</prop>
+    <prop name="version">2007-03-30</prop>
+    <prop name="flag">--testPredictedGeneModels</prop>
+  </resourceInstance>
+
+
+  <!-- OldName: Dec2006_Tg_membrane_Fayun_Proteomics   OldVersion: 1.1 -->
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">Einstein_preprocessed</prop>
+    <prop name="version">2008-10-08</prop>
+    <prop name="flag"></prop>
+  </resourceInstance>
+
+
+  <!-- OldName: massspec_Carruthers_2destinct_peptides   OldVersion: 08-22-2008 -->
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">Carruthers_preprocessed</prop>
+    <prop name="version">2008-08-28</prop>
+    <prop name="flag">--testPredictedGeneModels</prop>
+  </resourceInstance>
+
+  <!-- OldName: Moreno-1-annotated   OldVersion: 2008-09-03 -->
+  <resourceInstance class="massSpecPreprocessed">
+    <prop name="name">Moreno_preprocessed</prop>
+    <prop name="version">2008-08-06</prop>
+    <prop name="flag"></prop>
+  </resourceInstance>
+
+</resources>

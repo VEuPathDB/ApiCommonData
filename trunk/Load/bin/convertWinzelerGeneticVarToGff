@@ -1,0 +1,95 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+my ($fn, $help, $out, %strains, @strainsArg);
+
+=pod
+
+=head1 Purpose
+
+The purpose of this script is to unpack a Tab del file of Winzeler Snp Array Data.
+The strains are specified at the command line. 1 = polymorhphism, 0 = not polymorphism
+
+The input file is essentially an affy probe_tab file with the polymorphism data thrown on the end
+
+Example:
+SFPdata_1.tab   Unique ID       Name    Probeset        X       Y       Chr     EXPOS   Direction       Sequence        DescriptionSense   7G8     D6      W2      HB3     Dd2     FCR3    FCB     C188    18.02   31.01   41.02   48.02   51.02
+375_182 intergenic      chr1_1_at       375     182     1       2519    -       CATATACGTGCACCTCAAGAGACAG       between beginning of chr1 and PFA0005w              0       0       1       1       1       1       1       1       1       1       1       1       1
+
+=cut
+
+&GetOptions('help|h' => \$help,
+            'input_file=s' => \$fn, 
+            'output_file=s' => \$out,
+            'strain=s' => \@strainsArg,
+           );
+
+foreach(@strainsArg) {
+  $strains{$_} = 1;
+}
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(-e $fn && $out && scalar(@strainsArg) > 1);
+
+open(FILE, $fn) or die "Canot open file $fn for reading: $!";
+open(OUT, "> $out") or die "Cannot open file $out for writing: $!";
+
+chomp(my $header = <FILE>);
+my $strainsIndex = &_getStrainsIndex($header, \%strains);
+
+while(<FILE>) {
+  chomp;
+
+  my @ar = split(/\t/, $_);
+
+  my $chrom = "MAL".$ar[5];
+  my $id = $ar[2]."_".$ar[3]."_".$ar[4];
+
+  my $pos = $ar[6];
+  my $start = $pos - 12;
+  my $end = $pos + 12;
+
+  my $strand = $ar[7];
+  my $sequence = $ar[8];
+  $sequence =~ s/ //g; #there is one probe which has a space in int
+
+  print OUT "$chrom\tWinzler\tGeneticVariation\t$start\t$end\t.\t$strand\t.\tID $id; Allele \"3D7:$sequence\" ";
+
+  foreach my $strain (keys %strains) {
+    my $isPolymorphic = $ar[$strains{$strain}];
+
+    my $allele = $isPolymorphic ? "\"$strain:\" " : "\"$strain:$sequence\" ";
+    print OUT $allele;
+  }
+  print OUT " ; FivePrimeFlank \"\" ; ThreePrimeFlank \"\" \n";
+}
+
+#--------------------------------------------------------------------------------
+
+sub _getStrainsIndex {
+  my ($header, $strains) = @_;
+
+  $header =~ s/SFPdata_1.tab\t//;
+
+  my @ar = split(/\t/, $header);
+  for(my $i = 0; $i < scalar(@ar); $i++) {
+    if(exists $strains->{$ar[$i]}) {
+      $strains->{$ar[$i]} = $i;
+    }
+  }
+}
+
+#--------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  print STDERR "usage: perl convertProbeToGff.pl --input_file <SFPdata_1.tab.txt> --output_file <OUT> --strain <list of strains in the file>\n";
+  exit();
+}
+
+1;

@@ -1,0 +1,2056 @@
+<tuningConfig>
+
+  <tuningTable name="apidb.AssemblyAttributes">
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.AssemblyAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.AssemblyAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
+ON apidb.AssemblyAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.EstAttributes">
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.EstAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.EstAttributes@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.EstAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.EstAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON apidb.EstAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON apidb.EstAttributes&1 (assembly_source_id, source_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.GeneAttributes">
+    <unionization>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="crypto.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="giardia.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="plasmo.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="toxo.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="tritryp.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="trich.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="amoeba.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="micro.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="orphan.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneAttributes" dblink="piro.tuning"/>
+
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.GeneAttributes@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.GeneAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.GeneAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.GeneAttr_srcPrj&1
+       ON apidb.GeneAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.GeneId">
+    <unionization>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="crypto.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="giardia.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="plasmo.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="toxo.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="tritryp.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="trich.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="amoeba.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="micro.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="orphan.tuning"/>
+      <externalTuningTableDependency name="apidb.GeneId" dblink="piro.tuning"/>
+
+      <externalTuningTableDependency name="apidb.GeneAttributes"/>
+
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.gene
+            from apidb.GeneId@trich.tuning gi,
+                 apidb.GeneAttributes@trich.tuning ga
+            where gi.gene = ga.source_id
+              and ga.project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.gene
+            from apidb.GeneId@amoeba.tuning gi,
+                 apidb.GeneAttributes@amoeba.tuning ga
+            where gi.gene = ga.source_id
+              and ga.project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.gene
+            from apidb.GeneId@micro.tuning gi,
+                 apidb.GeneAttributes@micro.tuning ga
+            where gi.gene = ga.source_id
+              and ga.project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+    </unionization>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_gene_idx&1 ON apidb.GeneId&1 (gene)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.GeneId_id_idx&1 ON apidb.GeneId&1 (id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.IsolateAttributes">
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+    </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON apidb.IsolateAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.OrfAttributes">
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.OrfAttributes@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.OrfAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.OrfAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+    </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON apidb.OrfAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.OrfAttr_location_idx&1 ON apidb.OrfAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.SageTagAttributes">
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.SageTagAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="piro.tuning"/>
+    </unionization>
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON apidb.SageTagAttributes&1
+             (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON apidb.SageTagAttributes&1
+             (na_sequence_id, start_min, end_max, is_reversed, source_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.SequenceAttributes">
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select * from apidb.SequenceAttributes@trich.tuning where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.SequenceAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.SequenceAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON apidb.SequenceAttributes&1 (source_id, project_id)
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+
+  <tuningTable name="apidb.SequenceId">
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="trich.tuning"/> 
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.SequenceId" dblink="piro.tuning"/>
+    <internalDependency name="apidb.SequenceAttributes"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.sequence
+            from apidb.sequenceid@trich.tuning gi,
+                 apidb.sequenceattributes@trich.tuning ga
+            where gi.sequence = ga.source_id
+              and ga.project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.sequence
+            from apidb.sequenceid@amoeba.tuning gi,
+                 apidb.sequenceattributes@amoeba.tuning ga
+            where gi.sequence = ga.source_id
+              and ga.project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select gi.id,gi.sequence
+            from apidb.sequenceid@micro.tuning gi,
+                 apidb.sequenceattributes@micro.tuning ga
+            where gi.sequence = ga.source_id
+              and ga.project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+   </unionization>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SequenceId_sequence_idx&1 ON apidb.SequenceId&1 (sequence)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.SequenceId_id_idx&1 ON apidb.SequenceId&1 (id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.SnpAttributes">
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.SnpAttributes" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.SnpAttributes@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.SnpAttributes@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.SnpAttributes@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+    </unionization>
+
+    <sql>
+      <![CDATA[
+CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON apidb.SnpAttributes&1 (source_id, project_id)
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+ 
+  <tuningTable name="apidb.GeneGFF">
+    <externalDependency name="apidb.GeneGFF" dblink="giardia.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="plasmo.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="toxo.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="crypto.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="tritryp.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="trich.tuning"/>
+<!--    <externalDependency name="apidb.GeneGFF" dblink="micro.tuning"/>
+    <externalDependency name="apidb.GeneGFF" dblink="amoeba.tuning"/> -->
+    <externalDependency name="apidb.GeneGFF" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.GeneGFFGiardia"/>
+    <intermediateTable name="apidb.GeneGFFPlasmo"/>
+    <intermediateTable name="apidb.GeneGFFToxo"/>
+    <intermediateTable name="apidb.GeneGFFCrypto"/>
+    <intermediateTable name="apidb.GeneGFFTriTryp"/>
+    <intermediateTable name="apidb.GeneGFFTrich"/>
+    <intermediateTable name="apidb.GeneGFFPiro"/>
+<!--    <intermediateTable name="apidb.GeneGFFAmoeba"/>
+    <intermediateTable name="apidb.GeneGFFMicro"/> -->
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFGiardia nologging as
+        select SOURCE_ID,PROJECT_ID as PROJECT_ID,TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFPlasmo nologging as
+        select SOURCE_ID,PROJECT_id, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@plasmo.tuning
+       ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneGFFToxo nologging as
+        select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
+        CONTENT, MODIFICATION_DATE from apidb.GeneGFF@toxo.tuning
+       ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFTriTryp nologging as
+        select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@tritryp.tuning
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFCrypto nologging as
+        select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@crypto.tuning
+      ]]>
+    </sql>
+
+     <sql>
+      <![CDATA[
+        create table apidb.GeneGFFTrich nologging as
+        select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+<!--
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFAmoeba nologging as
+        select SOURCE_ID,'EuPathDB' as PROJECT_ID,
+               TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFFMicro nologging as
+        select SOURCE_ID,'EuPathDB' as PROJECT_ID,
+               TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+-->
+
+     <sql>
+      <![CDATA[
+        create table apidb.GeneGFFPiro nologging as
+        select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
+               CONTENT, MODIFICATION_DATE from apidb.GeneGFF@piro.tuning where project_id = 'PiroDB'
+      ]]>
+    </sql>
+
+      <sql>
+      <![CDATA[
+        create table apidb.GeneGFF&1 nologging as
+        (
+        select * from apidb.GeneGFFGiardia
+        union all
+        select * from apidb.GeneGFFPlasmo
+        union all
+        select * from apidb.GeneGFFToxo
+        union all
+        select * from apidb.GeneGFFTritryp
+        union all
+        select * from apidb.GeneGFFTrich
+        union all
+        select * from apidb.GeneGFFCrypto
+        union all
+        select * from apidb.GeneGFFPiro
+/*        union all
+        select * from apidb.GeneGFFAmoeba
+        union all
+        select * from apidb.GeneGFFMicro */
+        )
+      ]]>
+    </sql>
+  </tuningTable>
+
+ 
+  <tuningTable name="apidb.GeneDetail">
+    <internalDependency name="apidb.ProteinSequence"/>
+    <externalDependency name="apidb.GeneDetail" dblink="crypto.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="giardia.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="plasmo.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="toxo.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="tritryp.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="trich.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="amoeba.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="micro.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="orphan.tuning"/>
+    <externalDependency name="apidb.GeneDetail" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.GeneDetailCrypto"/>
+    <intermediateTable name="apidb.GeneDetailGiardia"/>
+    <intermediateTable name="apidb.GeneDetailPlasmo"/>
+    <intermediateTable name="apidb.GeneDetailToxo"/>
+    <intermediateTable name="apidb.GeneDetailTrich"/>
+    <intermediateTable name="apidb.GeneDetailTriTryp"/>
+    <intermediateTable name="apidb.GeneDetailAmoeba"/>
+    <intermediateTable name="apidb.GeneDetailMicro"/>
+    <intermediateTable name="apidb.GeneDetailOrphan"/>
+    <intermediateTable name="apidb.GeneDetailPiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailCrypto nologging as
+        select * from apidb.GeneDetail@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailGiardia nologging as
+        select * from apidb.GeneDetail@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailPlasmo nologging as
+        select * from apidb.GeneDetail@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailToxo nologging as
+        select * from apidb.GeneDetail@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailTrich nologging as
+        select * from apidb.GeneDetail@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+    
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailAmoeba nologging as
+        select * from apidb.GeneDetail@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailMicro nologging as
+        select * from apidb.GeneDetail@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailTriTryp nologging as
+        select * from apidb.GeneDetail@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailOrphan nologging as
+        select * from apidb.GeneDetail@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetailPiro nologging as
+        select * from apidb.GeneDetail@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.GeneDetail&1 nologging as
+        (
+        select * from apidb.GeneDetailCrypto
+        union all
+        select * from apidb.GeneDetailGiardia
+        union all
+        select * from apidb.GeneDetailPlasmo
+        union all
+        select * from apidb.GeneDetailToxo
+        union all
+        select * from apidb.GeneDetailTrich
+        union all
+        select * from apidb.GeneDetailTritryp
+        union all
+        select * from apidb.GeneDetailAmoeba
+        union all
+        select * from apidb.GeneDetailMicro
+        union all
+        select * from apidb.GeneDetailOrphan
+        union all
+        select * from apidb.GeneDetailPiro
+        )
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="apidb.TranscriptSequence">
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.TranscriptSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.TranscriptSequenceCrypto"/>
+    <intermediateTable name="apidb.TranscriptSequenceGiardia"/>
+    <intermediateTable name="apidb.TranscriptSequencePlasmo"/>
+    <intermediateTable name="apidb.TranscriptSequenceToxo"/>
+    <intermediateTable name="apidb.TranscriptSequenceTrich"/>
+    <intermediateTable name="apidb.TranscriptSequenceTriTryp"/>
+    <intermediateTable name="apidb.TranscriptSequenceAmoeba"/>
+    <intermediateTable name="apidb.TranscriptSequenceMicro"/>
+    <intermediateTable name="apidb.TranscriptSequenceOrphan"/>
+    <intermediateTable name="apidb.TranscriptSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceToxo nologging as
+        select * from apidb.TranscriptSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceCrypto nologging as
+        select * from apidb.TranscriptSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceGiardia nologging as
+        select * from apidb.TranscriptSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequencePlasmo nologging as
+        select * from apidb.TranscriptSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceTrich nologging as
+        select * from apidb.TranscriptSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceTriTryp nologging as
+        select * from apidb.TranscriptSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceAmoeba nologging as
+        select * from apidb.TranscriptSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceMicro nologging as
+        select * from apidb.TranscriptSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequenceOrphan nologging as
+        select * from apidb.TranscriptSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequencePiro nologging as
+        select * from apidb.TranscriptSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.TranscriptSequence&1 nologging as
+        (
+        select * from apidb.TranscriptSequenceCrypto
+        union all
+        select * from apidb.TranscriptSequenceGiardia
+        union all
+        select * from apidb.TranscriptSequencePlasmo
+        union all
+        select * from apidb.TranscriptSequenceToxo
+        union all
+        select * from apidb.TranscriptSequenceTrich
+        union all
+        select * from apidb.TranscriptSequenceTritryp
+        union all
+        select * from apidb.TranscriptSequenceAmoeba
+        union all
+        select * from apidb.TranscriptSequenceMicro
+        union all
+        select * from apidb.TranscriptSequenceOrphan
+        union all
+        select * from apidb.TranscriptSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.XScriptSeq_ix&1 on apidb.TranscriptSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.CodingSequence">
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.CodingSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.CodingSequenceCrypto"/>
+    <intermediateTable name="apidb.CodingSequenceGiardia"/>
+    <intermediateTable name="apidb.CodingSequencePlasmo"/>
+    <intermediateTable name="apidb.CodingSequenceToxo"/>
+    <intermediateTable name="apidb.CodingSequenceTrich"/>
+    <intermediateTable name="apidb.CodingSequenceTriTryp"/>
+    <intermediateTable name="apidb.CodingSequenceAmoeba"/>
+    <intermediateTable name="apidb.CodingSequenceMicro"/>
+    <intermediateTable name="apidb.CodingSequenceOrphan"/>
+    <intermediateTable name="apidb.CodingSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceCrypto nologging as
+        select * from apidb.CodingSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceGiardia nologging as
+        select * from apidb.CodingSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequencePlasmo nologging as
+        select * from apidb.CodingSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceToxo nologging as
+        select * from apidb.CodingSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceTrich nologging as
+        select * from apidb.CodingSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceTriTryp nologging as
+        select * from apidb.CodingSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceAmoeba nologging as
+        select * from apidb.CodingSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceMicro nologging as
+        select * from apidb.CodingSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequenceOrphan nologging as
+        select * from apidb.CodingSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequencePiro nologging as
+        select * from apidb.CodingSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.CodingSequence&1 nologging as
+        (
+        select * from apidb.CodingSequenceCrypto
+        union all
+        select * from apidb.CodingSequenceGiardia
+        union all
+        select * from apidb.CodingSequencePlasmo
+        union all
+        select * from apidb.CodingSequenceToxo
+        union all
+        select * from apidb.CodingSequenceTrich
+        union all
+        select * from apidb.CodingSequenceTritryp
+        union all
+        select * from apidb.CodingSequenceAmoeba
+        union all
+        select * from apidb.CodingSequenceMicro
+        union all
+        select * from apidb.CodingSequenceOrphan
+        union all
+        select * from apidb.CodingSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.cds_ix&1 on apidb.CodingSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.ProteinSequence">
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.ProteinSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.ProteinSequenceCrypto"/>
+    <intermediateTable name="apidb.ProteinSequenceGiardia"/>
+    <intermediateTable name="apidb.ProteinSequencePlasmo"/>
+    <intermediateTable name="apidb.ProteinSequenceToxo"/>
+    <intermediateTable name="apidb.ProteinSequenceTrich"/>
+    <intermediateTable name="apidb.ProteinSequenceTriTryp"/>
+    <intermediateTable name="apidb.ProteinSequenceAmoeba"/>
+    <intermediateTable name="apidb.ProteinSequenceMicro"/>
+    <intermediateTable name="apidb.ProteinSequenceOrphan"/>
+    <intermediateTable name="apidb.ProteinSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceCrypto nologging as
+        select * from apidb.ProteinSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceGiardia nologging as
+        select * from apidb.ProteinSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequencePlasmo nologging as
+        select * from apidb.ProteinSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceToxo nologging as
+        select * from apidb.ProteinSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceTrich nologging as
+        select * from apidb.ProteinSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceTriTryp nologging as
+        select * from apidb.ProteinSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceAmoeba nologging as
+        select * from apidb.ProteinSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceMicro nologging as
+        select * from apidb.ProteinSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequenceOrphan nologging as
+        select * from apidb.ProteinSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequencePiro nologging as
+        select * from apidb.ProteinSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.ProteinSequence&1 nologging as
+        (
+        select * from apidb.ProteinSequenceCrypto
+        union all
+        select * from apidb.ProteinSequenceGiardia
+        union all
+        select * from apidb.ProteinSequencePlasmo
+        union all
+        select * from apidb.ProteinSequenceToxo
+        union all
+        select * from apidb.ProteinSequenceTrich
+        union all
+        select * from apidb.ProteinSequenceTritryp
+        union all
+        select * from apidb.ProteinSequenceAmoeba
+        union all
+        select * from apidb.ProteinSequenceMicro
+        union all
+        select * from apidb.ProteinSequenceOrphan
+        union all
+        select * from apidb.ProteinSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.ProtSeq_ix&1 on apidb.ProteinSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.NaSequence">
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.NaSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.NaSequenceCrypto"/>
+    <intermediateTable name="apidb.NaSequenceGiardia"/>
+    <intermediateTable name="apidb.NaSequencePlasmo"/>
+    <intermediateTable name="apidb.NaSequenceToxo"/>
+    <intermediateTable name="apidb.NaSequenceTrich"/>
+    <intermediateTable name="apidb.NaSequenceTriTryp"/>
+    <intermediateTable name="apidb.NaSequenceAmoeba"/>
+    <intermediateTable name="apidb.NaSequenceMicro"/>
+    <intermediateTable name="apidb.NaSequenceOrphan"/>
+    <intermediateTable name="apidb.NaSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceCrypto nologging as
+        select * from apidb.NaSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceGiardia nologging as
+        select * from apidb.NaSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequencePlasmo nologging as
+        select * from apidb.NaSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceToxo nologging as
+        select * from apidb.NaSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceTrich nologging as
+        select * from apidb.NaSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceTriTryp nologging as
+        select * from apidb.NaSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceAmoeba nologging as
+        select * from apidb.NaSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceMicro nologging as
+        select * from apidb.NaSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequenceOrphan nologging as
+        select * from apidb.NaSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequencePiro nologging as
+        select * from apidb.NaSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.NaSequence&1 nologging as
+        (
+        select * from apidb.NaSequenceCrypto
+        union all
+        select * from apidb.NaSequenceGiardia
+        union all
+        select * from apidb.NaSequencePlasmo
+        union all
+        select * from apidb.NaSequenceToxo
+        union all
+        select * from apidb.NaSequenceTrich
+        union all
+        select * from apidb.NaSequenceTritryp
+        union all
+        select * from apidb.NaSequenceAmoeba
+        union all
+        select * from apidb.NaSequenceMicro
+        union all
+        select * from apidb.NaSequenceOrphan
+        union all
+        select * from apidb.NaSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.NaSeq_ix&1 on apidb.NaSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.OrfSequence">
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.OrfSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.OrfSequenceCrypto"/>
+    <intermediateTable name="apidb.OrfSequenceGiardia"/>
+    <intermediateTable name="apidb.OrfSequencePlasmo"/>
+    <intermediateTable name="apidb.OrfSequenceToxo"/>
+    <intermediateTable name="apidb.OrfSequenceTrich"/>
+    <intermediateTable name="apidb.OrfSequenceTriTryp"/>
+    <intermediateTable name="apidb.OrfSequenceAmoeba"/>
+    <intermediateTable name="apidb.OrfSequenceMicro"/>
+    <intermediateTable name="apidb.OrfSequenceOrphan"/>
+    <intermediateTable name="apidb.OrfSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceCrypto nologging as
+        select * from apidb.OrfSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceGiardia nologging as
+        select * from apidb.OrfSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequencePlasmo nologging as
+        select * from apidb.OrfSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceToxo nologging as
+        select * from apidb.OrfSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceTrich nologging as
+        select * from apidb.OrfSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceTriTryp nologging as
+        select * from apidb.OrfSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceAmoeba nologging as
+        select * from apidb.OrfSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceMicro nologging as
+        select * from apidb.OrfSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequenceOrphan nologging as
+        select * from apidb.OrfSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequencePiro nologging as
+        select * from apidb.OrfSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.OrfSequence&1 nologging as
+        (
+        select * from apidb.OrfSequenceCrypto
+        union all
+        select * from apidb.OrfSequenceGiardia
+        union all
+        select * from apidb.OrfSequencePlasmo
+        union all
+        select * from apidb.OrfSequenceToxo
+        union all
+        select * from apidb.OrfSequenceTrich
+        union all
+        select * from apidb.OrfSequenceTritryp
+        union all
+        select * from apidb.OrfSequenceAmoeba
+        union all
+        select * from apidb.OrfSequenceMicro
+        union all
+        select * from apidb.OrfSequenceOrphan
+        union all
+        select * from apidb.OrfSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.OrfSeq_ix&1 on apidb.OrfSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.EstSequence">
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.EstSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.EstSequenceCrypto"/>
+    <intermediateTable name="apidb.EstSequenceGiardia"/>
+    <intermediateTable name="apidb.EstSequencePlasmo"/>
+    <intermediateTable name="apidb.EstSequenceToxo"/>
+    <intermediateTable name="apidb.EstSequenceTrich"/>
+    <intermediateTable name="apidb.EstSequenceTriTryp"/>
+    <intermediateTable name="apidb.EstSequenceAmoeba"/>
+    <intermediateTable name="apidb.EstSequenceMicro"/>
+    <intermediateTable name="apidb.EstSequenceOrphan"/>
+    <intermediateTable name="apidb.EstSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceCrypto nologging as
+        select * from apidb.EstSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceGiardia nologging as
+        select * from apidb.EstSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequencePlasmo nologging as
+        select * from apidb.EstSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceToxo nologging as
+        select * from apidb.EstSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceTrich nologging as
+        select * from apidb.EstSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceTriTryp nologging as
+        select * from apidb.EstSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceAmoeba nologging as
+        select * from apidb.EstSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceMicro nologging as
+        select * from apidb.EstSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequenceOrphan nologging as
+        select * from apidb.EstSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequencePiro nologging as
+        select * from apidb.EstSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.EstSequence&1 nologging as
+        (
+        select * from apidb.EstSequenceCrypto
+        union all
+        select * from apidb.EstSequenceGiardia
+        union all
+        select * from apidb.EstSequencePlasmo
+        union all
+        select * from apidb.EstSequenceToxo
+        union all
+        select * from apidb.EstSequenceTrich
+        union all
+        select * from apidb.EstSequenceTritryp
+        union all
+        select * from apidb.EstSequenceAmoeba
+        union all
+        select * from apidb.EstSequenceMicro
+        union all
+        select * from apidb.EstSequenceOrphan
+        union all
+        select * from apidb.EstSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.EstSeq_ix&1 on apidb.EstSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.AssemblySequence">
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.AssemblySequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.AssemblySequenceCrypto"/>
+    <intermediateTable name="apidb.AssemblySequenceGiardia"/>
+    <intermediateTable name="apidb.AssemblySequencePlasmo"/>
+    <intermediateTable name="apidb.AssemblySequenceToxo"/>
+    <intermediateTable name="apidb.AssemblySequenceTrich"/>
+    <intermediateTable name="apidb.AssemblySequenceTriTryp"/>
+    <intermediateTable name="apidb.AssemblySequenceAmoeba"/>
+    <intermediateTable name="apidb.AssemblySequenceMicro"/>
+    <intermediateTable name="apidb.AssemblySequenceOrphan"/>
+    <intermediateTable name="apidb.AssemblySequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceCrypto nologging as
+        select * from apidb.AssemblySequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceGiardia nologging as
+        select * from apidb.AssemblySequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequencePlasmo nologging as
+        select * from apidb.AssemblySequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceToxo nologging as
+        select * from apidb.AssemblySequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceTrich nologging as
+        select * from apidb.AssemblySequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceTriTryp nologging as
+        select * from apidb.AssemblySequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceAmoeba nologging as
+        select * from apidb.AssemblySequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceMicro nologging as
+        select * from apidb.AssemblySequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequenceOrphan nologging as
+        select * from apidb.AssemblySequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequencePiro nologging as
+        select * from apidb.AssemblySequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.AssemblySequence&1 nologging as
+        (
+        select * from apidb.AssemblySequenceCrypto
+        union all
+        select * from apidb.AssemblySequenceGiardia
+        union all
+        select * from apidb.AssemblySequencePlasmo
+        union all
+        select * from apidb.AssemblySequenceToxo
+        union all
+        select * from apidb.AssemblySequenceTrich
+        union all
+        select * from apidb.AssemblySequenceTritryp
+        union all
+        select * from apidb.AssemblySequenceAmoeba
+        union all
+        select * from apidb.AssemblySequenceMicro
+        union all
+        select * from apidb.AssemblySequenceOrphan
+        union all
+        select * from apidb.AssemblySequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.AssemblySeq_ix&1 on apidb.AssemblySequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.IsolateSequence">
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.IsolateSequence" dblink="piro.tuning"/>
+    <intermediateTable name="apidb.IsolateSequenceCrypto"/>
+    <intermediateTable name="apidb.IsolateSequenceGiardia"/>
+    <intermediateTable name="apidb.IsolateSequencePlasmo"/>
+    <intermediateTable name="apidb.IsolateSequenceToxo"/>
+    <intermediateTable name="apidb.IsolateSequenceTrich"/>
+    <intermediateTable name="apidb.IsolateSequenceTriTryp"/>
+    <intermediateTable name="apidb.IsolateSequenceAmoeba"/>
+    <intermediateTable name="apidb.IsolateSequenceMicro"/>
+    <intermediateTable name="apidb.IsolateSequenceOrphan"/>
+    <intermediateTable name="apidb.IsolateSequencePiro"/>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceCrypto nologging as
+        select * from apidb.IsolateSequence@crypto.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceGiardia nologging as
+        select * from apidb.IsolateSequence@giardia.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequencePlasmo nologging as
+        select * from apidb.IsolateSequence@plasmo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceToxo nologging as
+        select * from apidb.IsolateSequence@toxo.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceTrich nologging as
+        select * from apidb.IsolateSequence@trich.tuning where project_id = 'TrichDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceTriTryp nologging as
+        select * from apidb.IsolateSequence@tritryp.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceAmoeba nologging as
+        select * from apidb.IsolateSequence@amoeba.tuning where project_id = 'AmoebaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceMicro nologging as
+        select * from apidb.IsolateSequence@micro.tuning where project_id = 'MicrosporidiaDB'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequenceOrphan nologging as
+        select * from apidb.IsolateSequence@orphan.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequencePiro nologging as
+        select * from apidb.IsolateSequence@piro.tuning
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table apidb.IsolateSequence&1 nologging as
+        (
+        select * from apidb.IsolateSequenceCrypto
+        union all
+        select * from apidb.IsolateSequenceGiardia
+        union all
+        select * from apidb.IsolateSequencePlasmo
+        union all
+        select * from apidb.IsolateSequenceToxo
+        union all
+        select * from apidb.IsolateSequenceTrich
+        union all
+        select * from apidb.IsolateSequenceOrphan
+        union all
+        select * from apidb.IsolateSequenceAmoeba
+        union all
+        select * from apidb.IsolateSequenceMicro
+        union all
+        select * from apidb.IsolateSequenceTritryp
+        union all
+        select * from apidb.IsolateSequencePiro
+        )
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+create index apidb.IsolateSeq_ix&1 on apidb.IsolateSequence&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.Statistics">
+    <internalDependency name="apidb.AssemblyAttributes" />
+    <internalDependency name="apidb.AssemblySequence" />
+    <internalDependency name="apidb.CodingSequence" />
+    <internalDependency name="apidb.EstAttributes" />
+    <internalDependency name="apidb.EstSequence" />
+    <internalDependency name="apidb.GeneAttributes" />
+    <internalDependency name="apidb.NaSequence" />
+    <internalDependency name="apidb.OrfAttributes" />
+    <internalDependency name="apidb.OrfSequence" />
+    <internalDependency name="apidb.ProteinSequence" />
+    <internalDependency name="apidb.SequenceAttributes" />
+    <internalDependency name="apidb.TranscriptSequence" />
+
+    <sql>
+      <![CDATA[
+create table apidb.Statistics&1 nologging as
+select taxa.project_id, taxa.organism, genes.gene_count,
+       transcripts.transcript_count, cdss.cds_count, proteins.protein_count,
+       sequences.sequence_count, sequences.total_sequence_length,
+       orfs.orf_count, ests.est_count, assemblies.assembly_count
+from (select project_id, organism from apidb.GeneAttributes
+     union
+        select project_id, organism from apidb.SequenceAttributes
+     union
+        select project_id, organism from apidb.EstAttributes
+     union
+        select project_id, organism from apidb.OrfAttributes
+     union
+        select project_id, organism from apidb.AssemblyAttributes
+     union
+        select project_id, organism from apidb.OrfAttributes) taxa,
+     (select project_id, organism, count(*) gene_count
+      from apidb.GeneAttributes
+      group by project_id, organism) genes,
+     (select ga.project_id, ga.organism, count(*) transcript_count
+      from apidb.GeneAttributes ga, apidb.TranscriptSequence ts
+      where ga.source_id = ts.source_id
+        and ga.project_id = ts.project_id
+        and ts.sequence is not null
+      group by ga.project_id, ga.organism) transcripts,
+     (select ga.project_id, ga.organism, count(*) cds_count
+      from apidb.GeneAttributes ga, apidb.CodingSequence seq
+      where ga.source_id = seq.source_id
+        and ga.project_id = seq.project_id
+        and seq.sequence is not null
+      group by ga.project_id, ga.organism) cdss,
+     (select ga.project_id, ga.organism, count(*) protein_count
+      from apidb.GeneAttributes ga, apidb.ProteinSequence seq
+      where ga.source_id = seq.source_id
+        and ga.project_id = seq.project_id
+        and seq.sequence is not null
+      group by ga.project_id, ga.organism) proteins,
+     (select sa.project_id, sa.organism, count(*) sequence_count, sum(length(seq.sequence)) total_sequence_length
+      from apidb.SequenceAttributes sa, apidb.NaSequence seq
+      where sa.source_id = seq.source_id
+        and sa.project_id = seq.project_id
+        and seq.sequence is not null
+      group by sa.project_id, sa.organism) sequences,
+     (select attrs.project_id, attrs.organism, count(*) orf_count
+      from apidb.OrfAttributes attrs, apidb.OrfSequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) orfs,
+     (select attrs.project_id, attrs.organism, count(*) est_count
+      from apidb.EstAttributes attrs, apidb.EstSequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) ests,
+     (select attrs.project_id, attrs.organism, count(*) assembly_count
+      from apidb.AssemblyAttributes attrs, apidb.AssemblySequence seq
+      where attrs.source_id = seq.source_id
+        and attrs.project_id = seq.project_id
+        and seq.sequence is not null
+      group by attrs.project_id, attrs.organism) assemblies
+where taxa.project_id = genes.project_id(+)
+  and taxa.organism = genes.organism(+)
+  and taxa.project_id = transcripts.project_id(+)
+  and taxa.organism = transcripts.organism(+)
+  and taxa.project_id = cdss.project_id(+)
+  and taxa.organism = cdss.organism(+)
+  and taxa.project_id = proteins.project_id(+)
+  and taxa.organism = proteins.organism(+)
+  and taxa.project_id = sequences.project_id(+)
+  and taxa.organism = sequences.organism(+)
+  and taxa.project_id = orfs.project_id(+)
+  and taxa.organism = orfs.organism(+)
+  and taxa.project_id = ests.project_id(+)
+  and taxa.organism = ests.organism(+)
+  and taxa.project_id = assemblies.project_id(+)
+  and taxa.organism = assemblies.organism(+)
+order by taxa.project_id, taxa.organism
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.IsolateStatistics">
+    <internalDependency name="apidb.IsolateAttributes" />
+    <internalDependency name="apidb.IsolateSequence" />
+
+    <sql>
+      <![CDATA[
+create table apidb.IsolateStatistics&1 nologging as
+select project_id, genus, count(*) isolate_count
+from (select ia.project_id, substr(ia.organism, 1, instr(ia.organism||' ', ' ') - 1) genus
+      from apidb.IsolateAttributes ia, apidb.IsolateSequence iseq
+      where ia.source_id = iseq.source_id
+        and ia.project_id = iseq.project_id)
+group by project_id, genus
+order by project_id, genus
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+  <tuningTable name="apidb.FeatureLocation">
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="orphan.tuning"/>
+    <externalTuningTableDependency name="apidb.FeatureLocation" dblink="piro.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="orphan.tuning"/>
+      <source dblink="piro.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.FeatureLocation@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.FeatureLocation@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.FeatureLocation@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+
+    <sql>
+      <![CDATA[
+create index apidb.featloc_ix&1 on apidb.FeatureLocation&1
+             (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc2_ix&1 on apidb.FeatureLocation&1
+             (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.fl_seq_st_end_feat_idx&1
+      on apidb.FeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc3_ix&1 on apidb.FeatureLocation&1
+             (na_feature_id, na_sequence_id, is_top_level)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc4_ix&1 on apidb.FeatureLocation&1
+             (feature_type, is_top_level, na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc5_ix&1
+on apidb.FeatureLocation&1 
+(na_sequence_id, feature_type, start_min, end_max, parent_id, na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc6_ix&1 on apidb.FeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
+tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+</tuningConfig>

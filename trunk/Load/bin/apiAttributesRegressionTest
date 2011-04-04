@@ -1,0 +1,336 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use DBI;
+
+my $outputDir = $ARGV[0];
+my $dblinkName = $ARGV[1];
+my $summaryOnly = $ARGV[2];
+
+# SKIP THESE ATTRIBUTE TABLES
+my $tableExceptions = {'ARRAYELEMENTATTRIBUTES' => 1,
+		       'SAGETAGANALYSISATTRIBUTES' => 1};
+
+
+$| = 1;
+
+usage() unless $outputDir && $dblinkName;
+
+if ($summaryOnly) {
+  makeSummaryFile($outputDir);
+  exit(0);
+}
+
+die "Error: output dir '$outputDir' not found\n" unless -d $outputDir;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dsn = $gusconfig->getDbiDsn();
+
+my $dbh = DBI->connect($dsn,
+		       $login,
+		       $password,
+		       { PrintError => 1, RaiseError => 0}
+		      )
+  or die "Can't connect to the tracking database: $DBI::errstr\n";
+
+my @tables = getAttributeTables();
+
+print STDERR "\n\n\n================================================================ \n";
+print STDERR localtime().  "Starting test on $dsn \n";
+print STDERR "================================================================ \n";
+
+
+for my $table (@tables) {
+  print STDERR "\n" . localtime() . "processing table $table\n";
+  my @organisms = getTableOrganisms($table);
+  for my $org (@organisms) {
+    print STDERR localtime() . "  $org\n";
+    my $org_dir_name = $org;
+    $org_dir_name =~ s/ /_/g;
+    if (! -d "$outputDir/$org_dir_name") {
+      mkdir("$outputDir/$org_dir_name")
+	|| die "Can't make output dir '$outputDir/$org_dir_name'\n";
+    }
+    my $outfile = "$outputDir/$org_dir_name/$table.out";
+    if (-e $outfile && `grep "TEST COMPLETE" $outfile`) {
+      print STDERR localtime() . "    Found completed test file.  Skipping test...\n";
+      next;
+    }
+    open(OUT, ">$outfile")
+      || die "Can't make open output file '$outfile'\n";
+
+    runTest($table, $org, \*OUT);
+  }
+}
+makeSummaryFile($outputDir);
+
+
+##################################################################
+
+sub getAttributeTables {
+
+  my $sql = 
+"select synonym_name from all_synonyms
+where table_owner = 'APIDB'
+and synonym_name like '\%ATTRIBUTES'
+";
+
+  my @tables;
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($tableName) = $stmt->fetchrow_array()) {
+    push(@tables, $tableName) unless $tableExceptions->{$tableName};
+  }
+  return @tables;
+}
+
+sub getTableOrganisms {
+  my ($tableName) = @_;
+
+  my $sql = 
+"select distinct organism from apidb.$tableName
+";
+
+  my @organisms;
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  while (my ($organism) = $stmt->fetchrow_array()) {
+    push(@organisms, $organism);
+  }
+  return @organisms;
+}
+
+sub runTest {
+  my ($tableName, $organism, $out) = @_;
+
+  print $out "Checking counts\n";
+  my $oldCount = getIdCount($tableName, '', $organism);
+  my $newCount = getIdCount($tableName, $dblinkName, $organism);
+  if ($oldCount == $newCount) {
+    print $out "ID Counts OK ($oldCount)\n\n";
+  } else {
+    print $out "DIFFS: ID count. (old: $oldCount new: $newCount)\n\n";
+  }
+  my $idCount = compareSourceIds($oldCount, $newCount, $tableName, $organism, $out);
+
+  if ($idCount) {
+
+    my @attrCols = getAttrCols($tableName);
+    foreach my $column (@attrCols) {
+      my $sql = "
+select old.source_id, old.$column as old$column, new.$column as new$column
+from apidb.$tableName old, apidb.${tableName}\@$dblinkName new
+where old.source_id = new.source_id
+and old.$column != new.$column
+and old.organism = '$organism'";
+
+      my $stmt = $dbh->prepare($sql);
+      $stmt->execute();
+      print $out "Checking $column\n";
+      my $diffCount = 0;
+      while (my @row = $stmt->fetchrow_array()) {
+	print $out "\t" . join("\t",@row) . "\n";
+	$diffCount++;
+      }
+      print $out "DIFFS: Column $column has $diffCount differences\n\n" if $diffCount;
+      print $out "Column $column OK\n\n" unless $diffCount;
+    }
+  }
+  print $out "TEST COMPLETE\n";
+}
+
+sub getIdCount {
+  my ($tableName, $dblinkName, $organism) = @_;
+
+  my $dbl = $dblinkName? "\@$dblinkName" : "";
+  my $sql = "select count(*) from apidb.$tableName$dbl where organism = '$organism'";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($idCnt) = $stmt->fetchrow_array();
+
+  return $idCnt;
+}
+
+sub compareSourceIds {
+  my ($oldIdCount, $newIdCount, $tableName, $organism, $out) = @_;
+
+  print $out "Checking for identical source ids\n";
+
+  my $sql = 
+"select count(*)
+ from apidb.$tableName old, apidb.$tableName\@$dblinkName new
+ where old.organism= '$organism'
+ and new.source_id = old.source_id";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($idCnt) = $stmt->fetchrow_array();
+
+  my $minIds = $oldIdCount < $newIdCount? $oldIdCount : $newIdCount;
+
+  if (!$idCnt) {
+    print $out "DIFFS: No rows found with identical source_ids\n\n";
+  } elsif ($idCnt == $minIds) {
+    print $out "Source_id identity ($idCnt) OK\n\n";
+  } else {
+    print $out "DIFFS: non-identical source_ids: " . ($minIds - $idCnt) . "\n\n";
+  }
+  return $idCnt;
+}
+
+sub getAttrCols {
+  my ($tableName) = @_;
+
+  my $sql = 
+"SELECT column_name FROM all_tab_cols tc, all_synonyms s
+where s.synonym_name = '$tableName'
+and tc.table_name = s.table_name
+";
+
+  my @columns;
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my $columnExceptions = getColumnExceptions($tableName);
+  while (my ($columnName) = $stmt->fetchrow_array()) {
+    push(@columns, $columnName) unless $columnExceptions->{$columnName};
+  }
+  return @columns;
+}
+
+sub getColumnExceptions {
+  my ($tableName) = @_;
+
+  my $columnExceptions =
+    {
+     'GENEATTRIBUTES'=> {
+			 'PROJECT_ID' => 1,
+			 'SOURCE_ID' => 1,
+			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
+			 'SO_VERSION' => 1,
+			 'EXTERNAL_DB_VERSION' => 1,
+			 'TAXON_ID' => 1,
+			},
+     'SNPATTRIBUTES' => {
+			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'SAGETAGATTRIBUTES' => {
+			 'NA_FEATURE_ID' => 1,
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'ORFATTRIBUTES' => {
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'SEQUENCEATTRIBUTES' => {
+			 'NA_SEQUENCE_ID' => 1,
+			},
+     'ESTATTRIBUTES' => {
+			 'ASSEMBLY_NA_SEQUENCE_ID' => 1,
+			},
+    };
+
+  return $columnExceptions->{$tableName} if ($columnExceptions->{$tableName});
+  return {};
+}
+
+sub makeSummaryFile {
+  my ($outputDir) = @_;
+
+  open(SUM, ">$outputDir/summary.txt") || die "Can't open summary file '$outputDir/summary.txt' for writing\n";
+  my $fh;
+  opendir($fh, $outputDir);
+  my @d = readdir($fh);
+  my $dir;
+  foreach $dir (@d) {
+    next if $dir =~ /^\./;
+    next unless -d $dir;
+    my $org_fh;
+    opendir($org_fh, $dir);
+    my @orgDir = readdir($org_fh);
+    foreach my $testfile (@orgDir) {
+      next if $testfile =~ /^\./;
+      print SUM "$dir/$testfile\n";
+      print SUM `grep DIFFS $dir/$testfile` . "\n";
+    }
+    closedir($org_fh);
+  }
+  close(SUM);
+}
+
+
+sub detailCols {
+  return (
+	  'ExpressionGraphsData',
+	  'GoTerms',
+	  'Y2hInteractions',
+	  'Product',
+	  'Alias',
+	  'Epitopes',
+	  'UserComments',
+	  'EcNumber',
+	  'ArrayElements',
+	  'PdbSimilarities',
+	  'ProteinDatabase',
+	  'GeneModelDump',
+	  'LowComplexity',
+	  'PlasmoVer5Genes',
+	  'BlastP',
+	  'GeneLinkouts',
+	  'InterPro',
+	  'SNPs',
+	  'SageTags',
+	  'TwoChannelDiffExpr',
+	  'MassSpecDownload',
+	  'SignalP',
+	  'Notes',
+	  'Aliases',
+	  'GeneId',
+	  'MassSpec',
+	  'TMHMM',
+	  'ProteinExpression'
+	 );
+
+}
+
+sub usage {
+
+  print STDERR "
+Usage:  apiGeneRegressionTest outputDir dblinkName [-summaryOnly]
+
+Example:  apiGeneRegressionTest your_home/regressionTests plasrbld
+
+Uses meta information in the database to discover all the synonyms that end in
+'ATTRIBUTES'.  Treats these as testable tables.  The perl code file has a 
+place to put the names of such tables that should not be tested (look for
+\$tableExceptions).  For each of these tables, it discovers the organisms in
+that table and iterates over those.  It also discovers the columns in the
+tables, and, for each organism iterates over those, and tests them.  There
+is also a spot in the code to specify columns to exclude from a particular
+table.
+
+The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
+
+The 'new' database is accessed from the old via the dblink whose name is
+provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+
+Writes the results to the provided outputDir.  Each organism gets its own
+subdir there, with each test getting its own result file.  The last line has 
+the phrase TEST COMPLETED.
+
+If the tester finds an existing result file that contains the phrase 
+TEST COMPLETED it skips that test.
+
+The summary.txt file contains a concise report of differences.
+
+The -summaryOnly option prints only the summary file, and does not run any tests.
+
+";
+
+  exit(1);
+}

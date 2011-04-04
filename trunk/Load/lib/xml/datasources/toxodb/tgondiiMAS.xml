@@ -1,0 +1,49 @@
+<resources>
+
+
+ <resource resource="TgondiiMAS_genome_RSRC" version="@@TgondiiMAS_genome_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="ToxoDB/tgondiiMAS/genome/scaffolds/%RESOURCE_VERSION%/fromProvider/tgmasScaffolds.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 943118 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgmasScaffolds.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="Toxoplasma gondii MAS scaffoldss"
+        project="ToxoDB"
+        organisms="@@TgondiiMASFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Scaffold sequences for <i>Toxoplasma gondii MAS</i> obtained from Washington University in St. Louis 
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+<resource resource="TgondiiMAS_contigs_RSRC" version="@@TgondiiMAS_genome_VER@@" parentResource="TgondiiMAS_genome_RSRC"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="ToxoDB/tgondiiMAS/genome/contigs/%RESOURCE_VERSION%/fromProvider/tgmasOrphanContigs.fasta"/>
+    <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 943118 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgmasOrphanContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="Toxoplasma gondii MAS contigs"
+        project="ToxoDB"
+        organisms="@@TgondiiMASFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Contig sequences for <i>Toxoplasma gondii MAS</i> obtained from Washington University in St. Louis 
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>
+
+
+

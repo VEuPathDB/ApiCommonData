@@ -1,0 +1,156 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use Data::Dumper;
+
+my ($verbose, $help, $inputDir, $outputFile,$strainFile,$inputFileExt);
+
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'strain_file=s' => \$strainFile,
+            'input_dir=s' => \$inputDir,
+	    'output_gff=s' => \$outputFile,
+	    'inputFileExt=s' => \$inputFileExt,
+ 
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputDir && $outputFile && $strainFile);
+
+
+
+if(!($inputFileExt)){
+	$inputFileExt = "txt";
+}
+open(STRAIN,"$strainFile");
+
+open(OUT,">$outputFile");
+
+opendir(DIR, $inputDir) || die "can't opendir $inputDir: $!";
+
+
+my %strainList;
+foreach my $line (<STRAIN>){
+	chomp($line);
+	$line =~ s/\cM//g;
+	my @cols = split(/\t/,$line);
+
+	if(scalar(@cols) == 5 && !($line =~ /^Strain/ || $line =~ /^Sup/ || $line =~ /^\*/ )){
+	  my $alt;
+	  if($cols[0] eq 'RH-88'){
+	    $alt = 'RH';
+	}elsif($cols[0] eq 'Me49'){
+	    $alt = 'ME49';
+	}elsif($cols[0] eq 'GUY-DOS'){
+	    $alt = 'GUYDOS';
+	}elsif($cols[0] eq 'GUY-KOE'){
+	    $alt = 'GUYKOE';
+	}elsif($cols[0] eq 'GUY-MAT'){
+	    $alt = 'GUYMAT';
+	}elsif($cols[0] eq 'P89'){
+	    $alt = 'p89';
+	}elsif($cols[0] eq 'TgCatBr18'){
+	    $alt = 'Br18';
+	}elsif($cols[0] eq 'TgCatBr1'){
+	    $alt = 'Br1';
+	}elsif($cols[0] eq 'TgCatBr2'){
+	    $alt = 'Br2';
+	}elsif($cols[0] eq 'TgCatBr3'){
+	    $alt = 'Br3';
+	}elsif($cols[0] eq 'TgCatBr6'){
+	    $alt = 'Br6';
+	}elsif($cols[0] eq 'TgCatBr9'){
+	    $alt = 'Br9';
+	}elsif($cols[0] eq 'TgCatBr10'){
+	    $alt = 'Br10';
+	}
+
+	  $cols[0] =~ s/\s+$//;
+	  $cols[0] =~ s/^\s+//;
+
+
+
+
+	  push(@{$strainList{uc($cols[0])}},@cols);
+
+	  
+
+	  if($alt){
+	     push(@{$strainList{uc($alt)}},@cols);
+
+
+	  }
+	}
+}
+
+
+open(OUTFILE,">$inputDir/isolates_fixed.fasta");
+foreach my $file (readdir(DIR)){
+  if($file =~ /\.$inputFileExt$/){
+    open(FILE,"$inputDir/$file");
+
+    
+    my $suffix = '';
+    my $header = '';
+    $file =~ s/\.$inputFileExt$//;
+    my $seq = '';
+    foreach my $line (<FILE>){
+      chomp $line;
+      
+      if($line =~ /^>(\S+)/){
+	if($suffix ne ''){
+
+	  print OUT "$header\tSibey Isolate Data\tsource\t1\t".length($seq)."\t.\t+\t.\tlocus_tag \"${header}-1\" ; host \"".${$strainList{uc($suffix)}}[1]."\" ; collection_date \"".${$strainList{uc($suffix)}}[2]."\" ; country \"".${$strainList{uc($suffix)}}[3]."\"; haplotype \"".${$strainList{uc($suffix)}}[4]."\" ; strain \"$suffix\"\n" ;
+	  print OUT "$header\tSibey Isolate Data\tcoding_gene\t1\t".length($seq)."\t.\t+\t.\tlocus_tag \"${header}-1\" ; protein_id \"$file\"\n";
+	  
+	}
+
+	$suffix = $1;
+
+	$suffix = ${$strainList{uc($suffix)}}[0];
+
+	if(!($suffix)){
+	    print STDERR "Warning! $1 not found in strain list\n";
+	    $suffix = '';
+
+	}
+	
+
+	if($suffix ne ''){
+	    $header = "${file}_$suffix";
+
+	    print OUTFILE ">$header\n";
+	}
+      }else{
+	$line =~ s/\s+//g;
+	$seq .= $line;
+	if($suffix ne ''){
+	    print OUTFILE "$line\n";
+	}
+      }
+            
+    }
+
+    if($suffix ne ''){
+	print OUT "$header\tSibey Isolate Data\tsource\t1\t".length($seq)."\t.\t+\t.\tlocus_tag \"${header}-1\" ; host \"".${$strainList{uc($suffix)}}[1]."\" ; collection_date \"".${$strainList{uc($suffix)}}[2]."\" ; country \"".${$strainList{uc($suffix)}}[3]."\"; haplotype \"".${$strainList{uc($suffix)}}[4]."\" ; strain \"$suffix\"\n" ;
+      print OUT "$header\tSibey Isolate Data\tcoding_gene\t1\t".length($seq)."\t.\t+\t.\tlocus_tag \"${header}-1\" ; protein_id \"$file\"\n";
+	  
+    }
+    close(FILE);
+
+  }
+}
+
+close(OUTFILE);
+close(STRAIN);
+close(OUT);
+
+
+sub usage{
+
+}

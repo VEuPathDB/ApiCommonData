@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+# script to generated two column tab delimited file from tab delimited file with multiple columns
+
+use strict;
+use Getopt::Long qw(GetOptions);
+
+my $inputFile;
+my $outputFile;
+
+GetOptions("inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+unless (-e $inputFile) {
+  die "\nERROR:  Must supply a valid input file!\nUsage: createTwoColumnFromMultipleColumn --inputFile <FILE> --outputFile <FILE>\n\n\n";
+}
+
+open(IN, "< $inputFile");
+open(OUT, "> $outputFile");
+
+while(<IN>){
+    next if /^\n$/;
+    chomp;
+    my @cols=split('\t', $_);
+    my $primaryId= shift @cols;
+    foreach (@cols){
+	print OUT "$primaryId\t$_\n";
+    }
+
+}

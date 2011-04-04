@@ -1,0 +1,88 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+
+
+my ($verbose, $help, $genbankFileOrDir, $outFile);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'genbank_file_or_dir=s' => \$genbankFileOrDir,
+            'output_file=s' => \$outFile,
+           );
+
+
+&usage() if($help);
+&usage("Missing Argument") unless(defined $genbankFileOrDir && $outFile);
+
+open(STS,">$outFile") or die "Cannot open $outFile for writing";
+
+if (-d $genbankFileOrDir){
+  opendir (GBDIR,"$genbankFileOrDir") || die "Unable to open $genbankFileOrDir\n";
+
+  while(my $gbFile = readdir(GBDIR)) {
+     &_makeSTSRow($gbFile,$outFile);
+
+  }
+
+  closedir(GBDIR);
+
+}elsif (-f $genbankFileOrDir){
+  &_makeSTSRow($genbankFileOrDir,$outFile);
+}else{
+   die("$genbankFileOrDir cannot be opened for reading\n");
+}
+
+close(STS);
+
+#-------------------------------------------------------------------------------
+
+sub _makeSTSRow{
+  my ($gbFile) = @_;
+
+  my $stream = Bio::SeqIO->new(-file => $gbFile,
+                               -format => 'GenBank' );
+  
+  while (my $seq = $stream->next_seq()){
+     
+     my ($accession, $rightPrimer, $leftPrimer, $size);
+     $accession = $seq->accession_number;
+     $size = $seq->length;
+     for my $feature ($seq->get_SeqFeatures) { 
+       if($feature->primary_tag eq "primer_bind" && $feature->location->strand eq "1"){
+          my $location = $feature->location;
+          $leftPrimer = $seq->subseq($location);
+	}elsif($feature->primary_tag eq "primer_bind" && $feature->location->strand eq "-1"){
+          my $location = $feature->location;
+          $rightPrimer = $seq->subseq($location);
+        }
+     }
+     
+     print STS "$accession\t$leftPrimer\t$rightPrimer\t$size\n";
+   }
+}
+
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl createSTSFileFromGB \\
+--genbank_file_or_dir <s-directory of genbank files or genbank file> \\
+--output_file <sts file> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
+
+1;

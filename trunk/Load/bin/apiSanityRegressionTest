@@ -1,0 +1,203 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+my $model = $ARGV[0];
+my $trustedSite = $ARGV[1];
+my $newSite = $ARGV[2];
+my $outputDir = $ARGV[3];
+my $skip = $ARGV[4];
+
+$| = 1;
+
+usage() unless $trustedSite && $newSite && $model && $outputDir;
+usage() if ($skip && $skip ne '-skipWdk' && $skip ne '-skipGbrowse');
+
+die "Error: output dir '$outputDir' already exists\n" if -e $outputDir;
+mkdir $outputDir || die "Error: can't create output dir '$outputDir'\n";
+
+my $sitesDir = '/var/www';
+my $trustedSiteDir = "$sitesDir/$trustedSite";
+my $newSiteDir = "$sitesDir/$newSite";
+my $logFile = "$outputDir/test.log";
+
+&checkSiteExists($trustedSite);
+&checkSiteExists($newSite);
+
+open(LOG, ">$logFile") || die "Can't open log file '$logFile'\n";
+print LOG "\nSkip flag:  $skip\n" if $skip;
+
+&runSanityTests('trusted', $trustedSiteDir, $trustedSite, $outputDir, $model, $skip);
+&runSanityTests('new', $newSiteDir, $newSite, $outputDir, $model, $skip);
+
+# wdk
+if ($skip ne '-skipWdk') {
+  print LOG "\ncomparing WDK tests\n";
+  my ($trustedPassedHash, $trustedFailedHash) = parseWdkTest("$outputDir/wdk.trusted.out");
+  my ($newPassedHash, $newFailedHash) = parseWdkTest("$outputDir/wdk.new.out");
+  my $issueCount = &compareSanityTests($trustedPassedHash, $newPassedHash, $newFailedHash, "$outputDir/wdk.result");
+  print LOG "found $issueCount issues\n";
+}
+
+# gbrowse
+if ($skip ne '-skipGbrowse') {
+  print LOG "\ncomparing GBrowse tests\n";
+  my ($trustedPassedHash, $trustedFailedHash) = parseGbrowseTest("$outputDir/gbrowse.trusted.out");
+  my ($newPassedHash, $newFailedHash) = parseGbrowseTest("$outputDir/gbrowse.new.out");
+  my $issueCount = &compareSanityTests($trustedPassedHash, $newPassedHash, $newFailedHash, "$outputDir/gbrowse.result");
+  print LOG "found $issueCount issues\n";
+}
+print LOG "\ndone\n";
+
+############################################################################################
+
+sub runSanityTests {
+  my ($name, $siteDir, $site, $outputDir, $model, $skip) = @_;
+
+  my $gbrowseFile = "$siteDir/conf/gbrowse.conf/gbrowseQueries.xml";
+
+  print LOG "\n$site ($name)\n";
+
+  if ($skip ne '-skipWdk') {
+    &runSshCmd("wdkSanityTest -model $model", "$outputDir/wdk.$name.out", "$outputDir/wdk.$name.err", $site);
+  }
+
+  if ($skip ne '-skipGbrowse') {
+    &runSshCmd("gbrowseSanityTest --model $model --gbrowseFile $gbrowseFile", "$outputDir/gbrowse.$name.out", "$outputDir/gbrowse.$name.err", $site);
+  }
+}
+
+sub compareSanityTests {
+  my ($trustedPassedHash, $newPassedHash, $newFailedHash, $resultFile) = @_;
+  open(F, ">$resultFile") || "can't open '$resultFile'\n";
+
+  my $count;
+  my $issueCount = 0;
+  foreach my $trustedTest (keys(%$trustedPassedHash)) {
+    $count++;
+    my $trustedTestInfo = $trustedPassedHash->{$trustedTest};
+    my $newTestInfo = $newPassedHash->{$trustedTest};
+    my $test = "[test: $trustedTestInfo->[1]] $trustedTest";
+    if (!$newTestInfo) {
+      if ($newFailedHash->{$trustedTest}) {
+	print F "FAILED - $test\n\n";
+	$issueCount++;
+      } else {
+	print F "NOT FOUND - $test\n\n";
+	$issueCount++;
+      }
+    } else {
+      if ($newTestInfo->[2] != $trustedTestInfo->[2]) {
+	print F "ROW COUNT - trusted:$trustedTestInfo->[2] new:$newTestInfo->[2] $test\n\n";
+	$issueCount++;
+      }
+      if ($newTestInfo->[0] > 5*$trustedTestInfo->[0]) {
+	print F "TIME - trusted:$trustedTestInfo->[0] new:$newTestInfo->[0] $test\n\n";
+	$issueCount++;
+      }
+    }
+  }
+  print F "Compared $count tests.  Found $issueCount issues.\n";
+  close(F);
+  return $issueCount;
+}
+
+sub parseWdkTest {
+  my ($file) = @_;
+
+  open(F, $file) || die "can't find file '$file'\n";
+
+  my $passedHash;
+  my $failedHash;
+  while(<F>) {
+    # 0.142 [test: 100] TABLE QUERY GeneTables.BlastP passed. It returned 22 rows.  [ wdkQuery -model TriTrypDB -query GeneTables.BlastP -params source_id "Tb927.7.4060" project_id "TriTrypDB"  ]
+    if (/(\d+\.\d+) \[test\: (\d+)\] .* passed.* returned (\d+) .* \[(.*)\]/) {
+      my $time = $1;
+      my $testNum = $2;
+      my $rows = $3;
+      my $cmd = $4;
+      $passedHash->{$cmd} = [$time, $testNum, $rows];
+    }
+    elsif (/ \[test\: (\d+)\] .* FAILED.* \[(.*)\]/) {
+      my $testNum = $1;
+      my $cmd = $2;
+      $failedHash->{$cmd} = $testNum;
+    }
+  }
+  close(F);
+  return ($passedHash, $failedHash);
+}
+
+sub parseGbrowseTest {
+  my ($file) = @_;
+
+  open(F, $file) || die "can't find file '$file'\n";
+
+  my $passedHash;
+  my $failedHash;
+  while(<F>) {
+    # 0.002 PASSED ChIP:AcetylH3_Log_vs_Stationary -srcfeature_id '$$na_feat_id_LmjF24_01_20050601_V5.2$$' -rend '204367' -base_star (returned 1) [test: 42]
+
+    if (/(\d+\.\d+) PASSED (.*) \(returned (\d+)\) \[test\: (\d+)\]/) {
+      my $time = $1;
+      my $nameAndParams = $2;
+      my $rows = $3;
+      my $testNum = $4;
+      $passedHash->{$nameAndParams} = [$time, $testNum, $rows];
+    }
+    elsif (/FAILED (.*) \[test\: (\d+)\]/) {
+      my $nameAndParams = $1;
+      my $testNum = $2;
+      $failedHash->{$nameAndParams} = $testNum;
+    }
+  }
+  close(F);
+  return ($passedHash, $failedHash);
+}
+
+sub usage {
+
+  print STDERR "
+Usage:  apiSanityRegressionTest model trustedSite newSite outputDir [-skipWdk | -skipGbrowse]
+
+Example:  apiSanityRegressionTest PlasmoDB w1.plasmodb.org q1.plasmodb.org my_output_dir
+
+Runs the wdk and gbrowse sanity test in both the trustedSite and newSite environments.  (It uses ssh to go the appropriate web server.)
+
+Compares the results.  Reports the following class of issues with the new tests:
+   - NOT FOUND   (a trusted test has no match in the new results)
+   - FAILED      (a trusted test that passed failed in the new results)
+   - ROW COUNT   (the row counts don't match)
+   - TIME        (the new test took more than 5x longer than the trusted test)
+
+Results are stored in files in the provided outputDir.
+
+The log is written to outputDir/test.log
+
+";
+
+  exit(1);
+}
+
+sub checkSiteExists {
+  my ($site) = @_;
+
+  my $user = $ENV{USER};
+  my $sshcmd = qq{ssh -2 $user\@$site '/bin/bash -login -c ""'};
+  system($sshcmd);
+  my $status = $? >> 8;
+  die "Error: cannot ssh to site '$site'\n" if ($status);
+}
+
+sub runSshCmd {
+  my ($cmd, $outFile, $errFile, $site) = @_;
+  my $user = $ENV{USER};
+  my $env = "source /var/www/$site/etc/setenv";
+  my $sshcmd = qq{ssh -2 $user\@$site '/bin/bash -login -c "$env;$cmd"' >$outFile 2>$errFile};
+
+  print LOG "  running: $sshcmd\n";
+  system($sshcmd);
+  my $status = $? >> 8;
+  die "Failed with status $status running: \n$sshcmd" if ($status);
+}
