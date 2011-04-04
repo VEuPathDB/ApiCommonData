@@ -391,20 +391,7 @@
 
 
   <!-- OldName: ToxoIsolatesFromGenbank   OldVersion: 2009-10-09 -->
-
-  <resource resource="$$orgAbbrev$$_isolates_genbank_RSRC" version="TODAY"
-	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
-	    internalDescrip="Toxoplasma isolates From Genbank">
-
-    <manualGet fileOrDir="ToxoDB/common/isolate/ToxoIsolatesFromGenbank/%RESOURCE_VERSION%/sequences.gb"/>
-
-    <unpack>fixIsolateSequences --seq_file @@dataDir@@/fromProvider/sequences.gb --fixed_seq_file @@dataDir@@/sequences_fixed.gb --removed_seq_file @@dataDir@@/sequences_excluded.gb</unpack>
-
-    <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @@dataDir@@/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @@dataDir@@/sequences_fixed.gb.1</unpack>
-
-    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/sequences_fixed.gb.1 --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism "Toxoplasma gondii"  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
-  </resource>
-
+  <resourceInstance class="isolates_genbank"/>
 
 
   <!-- OldName: ToxoIsolatesFromDardre   OldVersion: 2009-05-04 -->

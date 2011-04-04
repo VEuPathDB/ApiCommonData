@@ -459,11 +459,11 @@
       <!-- get the file from genbank, querying by ncbiTaxonId -->
       <unpack>getIsolatesFromGenbank --ncbiTaxonId $$ncbiTaxonId$$ --outputFile @@dataDir@@/isolates.gb</unpack>
 
-      <unpack>fixIsolateSequences --seq_file @@dataDir@@/isolates.gb --fixed_seq_file @@dataDir@@/isolates_fixed.gb --removed_seq_file @@dataDir@@/isolates_excluded.gb</unpack>
+      <unpack>fixIsolateSequences --seq_file @@dataDir@@/isolates.gb --fixed_seq_file @@dataDir@@/isolates_fixed_1.gb --removed_seq_file @@dataDir@@/isolates_excluded.gb</unpack>
 
-      <unpack>sed "s/plastid Toxoplasma gondii/Toxoplasma gondii/g" @@dataDir@@/sequences_fixed.gb | sed "s/apicoplast Neospora caninum/Neospora caninum/g" | sed "s/mitochondrion Toxoplasma gondii/Toxoplasma gondii/g" | sed "s/plastid Neospora caninum/Neospora caninum/g" > @@dataDir@@/sequences_fixed.gb.1</unpack>
+      <unpack>sed "s/SOURCE\tplastid/SOURCE\t/" @@dataDir@@/sequences_fixed.gb | sed "s/SOURCE\tapicoplast/SOURCE\t/" | sed "s/SOURCE\tmitochondrion/SOURCE\t/" > @@dataDir@@/isolates_fixed_2.gb</unpack>
 
-      <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/isolates_fixed.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
+      <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/isolates_fixed_2.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
   </resourceClass>
 
