@@ -486,10 +486,6 @@ begin
            then return 'OrphanDB';
          when 'eimeria'
            then return 'OrphanDB';
-         when 'theileria'
-           then return 'OrphanDB';
-         when 'babesia'
-           then return 'OrphanDB';
          when 'gibberella'
            then return 'FungiDB';
          when 'neurospora'
