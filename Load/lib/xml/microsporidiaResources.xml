@@ -325,6 +325,42 @@ WGS assembly for Octosporea bayeri OER-3-3 was described by <a target="_blank" h
         </description>
     </resource>
 
+   <resource resource="NparisiiERTm3_genome_RSRC" version="2011-02-23"
+        displayName="N. parisii ERTm3 genome"
+        category="Genome"
+        organisms="Nematocida parisii ERTm3"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="NparisiiERTm3_genome_RSRC"
+        extDbRlsVer="2011-02-23"
+        extDbRlsDescrip="N.parisii ERTm3 Genome from Genbank|2011-02-23"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/MicrosporidiaDB/nparisii/genome/nparisiiERTm3/contigs/2011-02-23/final/Nema_parisii_ERTm3_V1.fsa"
+        />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Nematocida parisii ERTm3" --sequenceFile @downloadDir@/NparisiiERTm3_genome_RSRC/Nema_parisii_ERTm3_V1.fsa --soTermName "contig" --regexSourceId 'gb\|(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+.
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="NparisiiERTm3ScaffoldAGP_RSRC" version="2011-02-23"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="N. parisii ERTm3 contig to scaffold map"
+         category="Genome"
+         extDbName="NparisiiERTm3ScaffoldAGP_RSRC"
+         extDbRlsVer="2011-02-23"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/EuPathDB/manualDelivery/MicrosporidiaDB/nparisii/genome/nparisiiERTm3/AGP/2011-02-23/final/Nema_parisii_ERTm3_V1.agp"
+         />
+         <pluginArgs>--agpFile @downloadDir@/Nema_parisii_ERTm3_V1.agp --seqPieceExtDbName "NparisiiERTm3_genome_RSRC" --seqPieceExtDbRlsVer "2011-02-23" --virSeqExtDbName %EXT_DB_NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "supercontig" --ncbiTaxId "935791" --soVer @soVer@ --sqlVerbose --notChromosomes</pluginArgs> 
+         <description>
+            <![CDATA[
+         Contig to scaffold map for <i>Nematocida parisii ERTm3</i>.
+         ]]>
+        </description>
+    </resource>
+
    <resource resource="IEDB_Epitopes" version="2009-12-09"
         publicUrl="http://www.immuneepitope.org"
         displayName="IEDB Epitopes"
