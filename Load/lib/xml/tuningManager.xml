@@ -347,6 +347,13 @@ create index apidb.featloc6_ix&1 on apidb.FeatureLocation&1 (feature_source_id, 
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index apidb.featloc7_ix&1 on apidb.FeatureLocation&1
+             (feature_type, sequence_source_id, start_min, is_reversed, end_max, feature_source_id, na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="apidb.GeneId">
@@ -1604,7 +1611,7 @@ UNION
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.GS_sourceId&1 ON apidb.GenomicSequence&1 (source_id)
+CREATE INDEX apidb.GS_sourceId&1 ON apidb.GenomicSequence&1 (source_id, na_sequence_id)
 tablespace indx
       ]]>
     </sql>
