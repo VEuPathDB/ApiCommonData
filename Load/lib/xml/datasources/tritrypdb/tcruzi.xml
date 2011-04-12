@@ -1479,4 +1479,37 @@ Data provided by Rick Tarleton. Contact: tarleton@cb.uga.edu
     </info>
   </resource>
 
+  <resource resource="Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC" version="@@Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/rnaSeq/Nilsson_Spliced_Leader/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094782.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094783.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094784.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094785.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094786.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094787.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094788.fasta"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/SRR094789.fasta"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="T.cruzi RNASeq Spliced Leader Sites from Nilsson"
+        project="TriTrypDB"
+        organisms="@@TcruziEsmeraldoLikeOrganismFullName@@,@@TcruziNonEsmeraldoLikeOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="EupathDB">
+      <description>
+        <![CDATA[
+<i>T. cruzi</i> RNASeq Spliced Leader Sites from Nilsson.
+
+        ]]>
+      </description>
+      <publication pmid="20700444"/>
+    </info>
+  </resource>
+
 </resources>
