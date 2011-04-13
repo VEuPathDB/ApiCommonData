@@ -1,8 +1,8 @@
-<resourceClasses>
+<datasetClasses>
 
   <!-- Category: genome -->
 
-  <resourceClass class="genbank_genome" graphPlanFile="loadGenome.xml">
+  <datasetClass class="genbank_genome" graphPlanFile="loadGenome.xml">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -19,10 +19,10 @@
 
       <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/genome.gbf --fileFormat genbank --soCvsVersion @@SO_VER@@ --organism $$ncbiTaxId$$ --seqSoTerm $$soTerm$$ --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-  <resourceClass class="GeneDB_GFF_genome_sequence" graphClass="genomeSequence" graphPlanFile="loadGenome.xml"  finalGraphName="$$experimentName$$.xml">
+  <datasetClass class="GeneDB_GFF_genome_sequence" graphPlanFile="loadGenome.xml"  graphClass="genomeSequence" finalGraphName="$$experimentName$$.xml">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -41,10 +41,10 @@
 
       <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId $$ncbiTaxId$$ --externalDatabaseVersion %RESOURCE_VER% --sequenceFile @@dataDir@@/genome.fasta --SOTermName '$$soTerm$$'  --regexSourceId  '$$regex$$' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-  <resourceClass class="GeneDB_GFF_genome_features">
+  <datasetClass class="GeneDB_GFF_genome_features" graphPlanFile="loadGenome.xml">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="version"/>
@@ -60,9 +60,9 @@
 
       <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/../$$parentResource$$/final/genome.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$  --seqSoTerm '$$soTerm$$' --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
-  <resourceClass class="genome_chromosome_assembly_agp">
+  <datasetClass class="genome_chromosome_assembly_agp" graphPlanFile="loadGenome.xml">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -80,11 +80,11 @@
 
       <pluginArgs>--agpFile @@dataDir@@/assembly.agp --seqPieceExtDbName %PARENT_RESOURCE_NAME% --seqPieceExtDbRlsVer %PARENT_RESOURCE_VERSION% --virSeqExtDbName %RESOURCE_NAME% --virSeqExtDbRlsVer %RESOURCE_VERSION% --virtualSeqSOTerm $$virtualSeqSOTerm$$  --ncbiTaxId $$ncbiTaxId$$ --soVer @@SO_VER@@ --sourceIdPrefix $$sourceIdPrefix$$</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: genomeFeature -->
 
-  <resourceClass class="genomeFeatures_GFF2">
+  <datasetClass class="genomeFeatures_GFF2" graphPlanFile="optional.xml">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -102,12 +102,12 @@
 
       <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2  --gff2GroupTag "$$gff2GroupTag$$" --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
   <!-- Category: ESTs -->
 
-  <resourceClass class="dbEST">
+  <datasetClass class="dbEST">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <resource resource="$$orgAbbrev$$_dbEST_RSRC" version="@@$$orgAbbrev$$_dbEST_VER@@"
@@ -121,9 +121,9 @@
 
       <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %%RESOURCE_VER% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbestProp --dbestConnect "dbi:Oracle:musbld" </pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
-  <resourceClass class="ESTsFromFasta">
+  <datasetClass class="ESTsFromFasta">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -143,12 +143,12 @@
       <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/EST/$$name$$/$$version$$/final/ests.fasta"/>
       <pluginArgs>--sourceIdRegex "$$sourceIdRegex$$" --fastaFile @@dataDir@@/ests.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION%  --SOTermName 'transcript' --ncbiTaxId $$ncbiTaxId$$ --libraryVector '$$libraryVector$$' --contactName '$$contactName$$' --contactAddress1 "$$contactAddress1$$" --contactAddress2 "$$contactAddress2$$" $$flag$$ --libraryStage '$$libraryStage$$' --libraryName '$$libraryName$$' --libraryDesc "$$libraryDesc$$"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
   <!-- Category: IEDB epitpotes -->
 
-  <resourceClass class="IEDB_sequences">
+  <datasetClass class="IEDB_sequences">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
@@ -175,10 +175,10 @@
 
       <pluginArgs><![CDATA[--seqFileDir @@dataDir@@/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"]]></pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-  <resourceClass class="IEDB_dbxrefs">
+  <datasetClass class="IEDB_dbxrefs">
     <prop name="orgAbbrev"/>
     <resource resource="$$orgAbbrev$$_dbxref_epitope_IEDB_RSRC"
 	      version="@@$$orgAbbrev$$_dbxref_epitope_VER@@"
@@ -190,12 +190,12 @@
 
       <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
   <!-- Category: gene aliases -->
 
-  <resourceClass class="GeneDB_GFF_gene_aliases">
+  <datasetClass class="GeneDB_GFF_gene_aliases">
     <prop name="orgAbbrev"/>
     <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
 	      version="@@$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC@@"
@@ -210,11 +210,11 @@
 
       <pluginArgs>--MappingFile @@dataDir@@/new2oldIds.txt</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
   <!-- Category: dbxrefs -->
-  <resourceClass class="dbxref_simple">
+  <datasetClass class="dbxref_simple">
     <prop name="orgAbbrev"/>
     <prop name="project"/>
     <prop name="name"/>
@@ -229,10 +229,10 @@
 
       <pluginArgs>--DbRefMappingFile @@dataDir@@/mapping.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "$$columnSpec$$" --tableName $$table$$</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-  <resourceClass class="dbxref_ApiLoc">
+  <datasetClass class="dbxref_ApiLoc">
     <prop name="orgAbbrev"/>
     <prop name="project"/>
     <prop name="ApiLocOrganism"/>
@@ -250,10 +250,10 @@
 
       <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VER% --columnSpec "remark" --tableName "DbRefNAFeature"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-  <resourceClass class="dbxref_gene2Entrez">
+  <datasetClass class="dbxref_gene2Entrez">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
@@ -272,10 +272,10 @@
       <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2entrez.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%'  --idType 'alternate id'</pluginArgs>
 
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   
-  <resourceClass class="dbxref_gene2Uniprot">
+  <datasetClass class="dbxref_gene2Uniprot">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
@@ -291,12 +291,12 @@
 
       <pluginArgs>--DbRefMappingFile @@dataDir@@/gene2uniprot.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' --idType 'alternate id'</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: SNPs -->
 
   <!-- FIX WORKFLOW: need to change getAndAnalyzeSnps to use SNPs.gff -->
-  <resourceClass class="SNPs_GFF">
+  <datasetClass class="SNPs_GFF">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -308,12 +308,12 @@
       <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/SNP/$$name$$_gff/final/SNPs.gff"/>
       <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: microarrayPlatform -->
 
   <!-- FIX WORKFLOW: need to change getAndMapProbes.xml to lose final/ -->
-  <resourceClass class="microarrayPlatform">
+  <datasetClass class="microarrayPlatform">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -328,12 +328,12 @@
 
       <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: microarrayExpression -->
 
   <!-- FIX: needs an analysis config file -->
-  <resourceClass class="microarrayExpression">
+  <datasetClass class="microarrayExpression">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -350,12 +350,12 @@
       <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
 
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
   <!-- Category: ChIP Chip-->
 
-  <resourceClass class="chipChip">
+  <datasetClass class="chipChip">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -370,11 +370,11 @@
       <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
 
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: fasta sequence -->
 
-  <resourceClass class="fastaSequence">
+  <datasetClass class="fastaSequence">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -392,11 +392,11 @@
 
       <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId $ncbiTaxId$$$ --sequenceFile @@dataDir@@/seqs.fasta --soTermName $$soTermName$$ --regexSourceId "$$regexSourceId$$" --tableName "$$table$$"</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: SAGE tags -->
 
-  <resourceClass class="sageTagPrimers">
+  <datasetClass class="sageTagSequences">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -410,13 +410,14 @@
 
     </resource>
 
-  </resourceClass>
+  </datasetClass>
 
-  <resourceClass class="sageTagFrequencies">
+  <datasetClass class="sageTagFrequencies">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+    <prop name="normalizeFrequencies"/>
     <resource resource="$$orgAbbrev$$_sageTag_$$name$$_frequencies_RSRC" version="$$version$$"
 	      plugin="GUS::Supported::Plugin::LoadSageFrequencies"
 	      internalDescrip="">
@@ -425,11 +426,11 @@
 
       <pluginArgs>--freq_file @@dataDir@@/freqs.txt</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: product names -->
 
-  <resourceClass class="productNames">
+  <datasetClass class="productNames">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -443,11 +444,11 @@
 
       <pluginArgs>--file @@dataDir@@/product.txt  --productDbName %PARENT_RESOURCE_NAME% --productDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- Category: isolates -->
 
-  <resourceClass class="isolates_genbank">
+  <datasetClass class="isolates_genbank">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <resource resource="$$orgAbbrev$$_isolates_genbank_RSRC" version="TODAY"
@@ -465,10 +466,10 @@
 
       <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VER% --mapFile @@gusHome@@/lib/xml/isf/GenbankIsolates2gus.xml --inputFileOrDir @@dataDir@@/isolates_fixed_2.gb --fileFormat genbank --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxonId$$  --seqSoTerm "region" --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
   <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
-  <resourceClass class="isolatesFeaturesGFF2">
+  <datasetClass class="isolatesFeaturesGFF2">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -482,9 +483,9 @@
 
       <pluginArgs> --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/isolates.gff --fileFormat gff2 --gff2GroupTag locus_tag --naSequenceSubclass ExternalNASequence --seqIdColumn source_id  --soCvsVersion @SO_VER@ --defaultOrganism $$ncbiTaxId --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
-  <resourceClass class="massSpecPreprocessed">
+  <datasetClass class="massSpecPreprocessed">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
@@ -499,7 +500,7 @@
 
       <pluginArgs>--inputDir @@dataDir@@/final --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec '%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%' $$flag$$ </pluginArgs>
     </resource>
-  </resourceClass>
+  </datasetClass>
 
 
-</resourceClasses>
+</datasetClasses>
