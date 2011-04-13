@@ -131,7 +131,7 @@ sub new {
 
       my $args = &getArgsDeclaration();
 
-      $self->initialize({requiredDbVersion => 3.5,
+      $self->initialize({requiredDbVersion => 3.6,
                      cvsRevision => '$Revision$',
                      name => ref($self),
                      argsDeclaration   => $args,
@@ -553,7 +553,7 @@ Institution:    San Francisco General Hospital-University of California, San
                 Francisco
 Address:        Box 0811, San Francisco, CA 94143-0811, USA
 Tel:            415 206 8846
-Fax:            415 206 3353
+Fax:            415 206 3.53
 E-mail:         malaria@itsa.ucsf.edu
                                                                                                                              
 CITATIONS

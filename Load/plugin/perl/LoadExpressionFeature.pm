@@ -29,7 +29,7 @@ sub getArgumentsDeclaration{
 	      reqd  => 1,
 	      isList => 0,
 	      mustExist => 1,
-	      format => 'Ex:395 (composite_element_id) matched against 4 (na_sequence_id) from 1405549 to 1405563 on forward strand'
+	      format => 'Ex:3.5 (composite_element_id) matched against 4 (na_sequence_id) from 1405549 to 1405563 on forward strand'
 	     }),
 
      integerArg({name  => 'restart',
@@ -124,10 +124,10 @@ sub new {
   my $documentation = &getDocumentation();
   my $arguments     = &getArgumentsDeclaration();
 
-  my $configuration = {requiredDbVersion => 3.5,
+  my $configuration = {requiredDbVersion => 3.6,
 	               cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
-		       revisionNotes => 'make consistent with GUS 3.5',
+		       revisionNotes => 'make consistent with GUS 3.6',
 		       argsDeclaration   => $arguments,
 		       documentation     => $documentation
 		       };

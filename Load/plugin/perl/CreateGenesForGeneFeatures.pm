@@ -24,7 +24,7 @@ sub getArgumentsDeclaration{
 	      reqd  => 1,
 	      isList => 0,
 	      mustExist => 1,
-	      format => 'cluster_1009: [5] (TGRH_093550, TGVEG_101000, TGME49_115860, TGME49_115870, TGRH_093560)'
+	      format => 'cluster_1009: [5] (TGRH_093.50, TGVEG_101000, TGME49_115860, TGME49_115870, TGRH_093560)'
 	     }),
 
      integerArg({name  => 'restart',
@@ -103,10 +103,10 @@ sub new {
   my $documentation = &getDocumentation();
   my $arguments     = &getArgumentsDeclaration();
 
-  my $configuration = {requiredDbVersion => 3.5,
+  my $configuration = {requiredDbVersion => 3.6,
 	               cvsRevision => '$Revision: 38813 $', # cvs fills this in!
 		       name => ref($self),
-		       revisionNotes => 'make consistent with GUS 3.5',
+		       revisionNotes => 'make consistent with GUS 3.6',
 		       argsDeclaration   => $arguments,
 		       documentation     => $documentation
 		       };
