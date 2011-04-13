@@ -24,7 +24,7 @@ sub getArgumentsDeclaration{
 	      reqd  => 1,
 	      isList => 0,
 	      mustExist => 1,
-	      format => 'cluster_1009: [5] (TGRH_093.50, TGVEG_101000, TGME49_115860, TGME49_115870, TGRH_093560)'
+	      format => 'cluster_1009: [5] (TGRH_093550, TGVEG_101000, TGME49_115860, TGME49_115870, TGRH_093560)'
 	     }),
 
      integerArg({name  => 'restart',

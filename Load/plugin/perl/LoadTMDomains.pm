@@ -357,4 +357,4 @@ sub undoTables {
 
 =cut
 	#Single line, tab delimited, output
-        #5H2A_CRIGR	len=471	ExpAA=159.47	First60=0.02	PredHel=7	Topology=o77-99i112-134o149-171i192-214o234-256i3.5-347o357-379i
+        #5H2A_CRIGR	len=471	ExpAA=159.47	First60=0.02	PredHel=7	Topology=o77-99i112-134o149-171i192-214o234-256i325-347o357-379i

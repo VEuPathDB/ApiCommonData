@@ -28,7 +28,7 @@ sub getArgumentsDeclaration{
 	      reqd  => 1,
 	      isList => 0,
 	      mustExist => 1,
-	      format => 'Ex:3.5 (composite_element_id) matched against 4 (na_sequence_id) from 1405549 to 1405563 on forward strand'
+	      format => 'Ex:395 (composite_element_id) matched against 4 (na_sequence_id) from 1405549 to 1405563 on forward strand'
 	     }),
 
      integerArg({name  => 'restart',
