@@ -1,7 +1,7 @@
 <tuningConfig>
 
-  <tuningTable name="apidb.OrganismAbbreviation">
-    <externalTuningTableDependency name="apidb.OrganismAbbreviation" dblink="tritryp.tuning"/>
+  <tuningTable name="apidb.OrganismAbbreviationWS">
+    <externalTuningTableDependency name="apidb.OrganismAbbreviationWS" dblink="tritryp.tuning"/>
 
     <unionization>
       <source dblink="tritryp.tuning"/>
@@ -10,7 +10,25 @@
         <query>
           <![CDATA[
             select *
-            from apidb.OrganismAbbreviation@tritryp.tuning
+            from apidb.OrganismAbbreviationWS@tritryp.tuning
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+  </tuningTable>
+
+  <tuningTable name="apidb.OrganismAbbreviationBlast">
+    <externalTuningTableDependency name="apidb.OrganismAbbreviationBlast" dblink="tritryp.tuning"/>
+
+    <unionization>
+      <source dblink="tritryp.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.OrganismAbbreviationBlast@tritryp.tuning
           ]]>
         </query>
       </source>
