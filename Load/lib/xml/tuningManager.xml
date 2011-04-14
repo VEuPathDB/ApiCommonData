@@ -6055,4 +6055,93 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+  <tuningTable name="apidb.OrganismAbbreviation">
+    <sql>
+      <![CDATA[
+       CREATE TABLE apidb.OrganismAbbreviation&1 NOLOGGING AS
+       select organism, abbreviation
+       From (
+  -- ToxoDB Annotated Genomes
+  select 'Neospora caninum' as organism, 'NeosporaCaninum' as abbreviation from dual union  
+  select 'Toxoplasma gondii GT1' as organism, 'TgondiiGT1' as abbreviation from dual union  
+  select 'Toxoplasma gondii ME49' as organism, 'TgondiiME49' as abbreviation from dual union  
+  select 'Toxoplasma gondii VEG' as organism, 'TgondiiVEG' as abbreviation from dual union  
+  -- ToxoDB Un-Annotated Genomes
+  select 'Toxoplasma gondii RH' as organism, 'TgondiiRH' as abbreviation from dual union  
+  select 'Toxoplasma gondii MAS' as organism, 'TgondiiMAS' as abbreviation from dual union  
+  select 'Toxoplasma gondii TgCkUg2' as organism, 'TgondiiTgCkUg2' as abbreviation from dual union  
+  select 'Toxoplasma gondii VAND' as organism, 'TgondiiVAND' as abbreviation from dual union  
+  select 'Toxoplasma gondii p89' as organism, 'Tgondiip89' as abbreviation from dual union  
+  -- PiroplasmaDB Annotated Genomes
+  select 'Babesia bovis T2Bo' as organism, 'BbovisT2Bo' as abbreviation from dual union  
+  select 'Theileria annulata strain Ankara' as organism, 'TannulataAnkara' as abbreviation from dual union
+  select 'Theileria parva strain Muguga' as organism, 'TparvaMuguga' as abbreviation from dual union
+  -- CryptoDB Annotated Genomes
+  select 'Cryptosporidium parvum Iowa II' as organism, 'Cparvum' as abbreviation from dual union  
+  select 'Cryptosporidium parvum' as organism, 'CparvumChr6' as abbreviation from dual union  
+  select 'Cryptosporidium hominis' as organism, 'Chominis' as abbreviation from dual union  
+  select 'Cryptosporidium muris' as organism, 'Cmuris' as abbreviation from dual union  
+  -- GiardiaDB Annotated Genomes
+  select 'Giardia Assemblage A isolate WB' as organism, 'Glamblia' as abbreviation from dual union  
+  select 'Giardia Assemblage B isolate GS' as organism, 'GintestinalisAssemblageB' as abbreviation from dual union  
+  select 'Giardia Assemblage E isolate P15' as organism, 'GintestinalisAssemblageE' as abbreviation from dual union  
+  -- TrichDB Annotated Genomes
+  select 'Trichomonas vaginalis G3' as organism, 'Tvaginalis' as abbreviation from dual union  
+  -- MicrosporidiaDB Annotated Genomes
+  select 'Encephalitozoon cuniculi GB-M1' as organism, 'Ecuniculi' as abbreviation from dual union  
+  select 'Encephalitozoon intestinalis' as organism, 'Eintestinalis' as abbreviation from dual union  
+  select 'Enterocytozoon bieneusi H348' as organism, 'Ebieneusi' as abbreviation from dual union  
+  -- MicrosporidiaDB Un-Annotated Genomes
+  select 'Nematocida parisii ERTm1' as organism, 'Nparisii' as abbreviation from dual union  
+  select 'Nematocida parisii ERTm3' as organism, 'NparisiiERTm3' as abbreviation from dual union  
+  select 'Octosporea bayeri OER-3-3' as organism, 'Obayeri' as abbreviation from dual union  
+  -- AmoebaDB Un-Annotated Genomes
+  select 'Entamoeba histolytica DS4' as organism, 'EhistolyticaDS4' as abbreviation from dual union  
+  select 'Entamoeba histolytica HM-1:CA' as organism, 'EhistolyticaHM1_CA' as abbreviation from dual union  
+  select 'Entamoeba histolytica KU27' as organism, 'EhistolyticaKU27' as abbreviation from dual union  
+  select 'Entamoeba histolytica KU48' as organism, 'EhistolyticaKU48' as abbreviation from dual union  
+  select 'Entamoeba histolytica KU50' as organism, 'EhistolyticaKU50' as abbreviation from dual union  
+  select 'Entamoeba histolytica MS96' as organism, 'EhistolyticaMS96' as abbreviation from dual union  
+  -- AmoebaDB Annotated Genomes
+  select 'Entamoeba invadens IP1' as organism, 'Einvadens' as abbreviation from dual union  
+  select 'Entamoeba histolytica HM-1:IMSS' as organism, 'Ehistolytica' as abbreviation from dual union  
+  select 'Entamoeba dispar SAW760' as organism, 'Edispar' as abbreviation from dual union  
+  -- PlasmoDB Un-Annotated Genomes
+  select 'Plasmodium gallinaceum' as organism, 'Pgallinaceum' as abbreviation from dual union  
+  select 'Plasmodium reichenowi' as organism, 'Preichenowi' as abbreviation from dual union  
+  -- PlasmoDB Annotated Genomes
+  select 'Plasmodium berghei str. ANKA' as organism, 'Pberghei' as abbreviation from dual union
+  select 'Plasmodium chabaudi chabaudi' as organism, 'Pchabaudi' as abbreviation from dual union
+  select 'Plasmodium falciparum 3D7' as organism, 'Pfalciparum' as abbreviation from dual union
+  select 'Plasmodium knowlesi strain H' as organism, 'Pknowlesi' as abbreviation from dual union
+  select 'Plasmodium vivax SaI-1' as organism, 'Pvivax' as abbreviation from dual union
+  select 'Plasmodium yoelii yoelii str. 17XNL' as organism, 'Pyoelii' as abbreviation from dual union
+     -- TriTrypDD UN-Annotated Genomes
+  select 'Crithidia fasciculata' as organism, 'Cfasciculata' as abbreviation from dual union
+  select 'Leishmania braziliensis M2903' as organism, 'LbraziliensisM2903' as abbreviation from dual union
+  select 'Leishmania major strain SD 75.1' as organism, 'LmajorSD75.1' as abbreviation from dual union
+  select 'Leishmania tarentolae' as organism, 'Ltarentolae' as abbreviation from dual union
+  select 'Trypanosoma cruzi JR cl. 4' as organism, 'TcruziJRcl4' as abbreviation from dual union
+  select 'Trypanosoma cruzi Sylvio X10/1' as organism, 'TcruziSylvioX10-1' as abbreviation from dual union
+  select 'Trypanosoma cruzi strain esmeraldo' as organism, 'TcruziEsmeraldo' as abbreviation from dual union
+   -- TriTrypDD Annotated Genomes
+  select 'Leishmania braziliensis' as organism, 'Lbraziliensis' as abbreviation from dual union
+  select 'Leishmania infantum' as organism, 'Linfantum' as abbreviation from dual union
+  select 'Leishmania major strain Friedlin' as organism, 'LmajorFriedlin' as abbreviation from dual union
+  select 'Leishmania mexicana' as organism, 'Lmexicana' as abbreviation from dual union
+  select 'Trypanosoma brucei Lister strain 427' as organism, 'Tbrucei427' as abbreviation from dual union
+  select 'Trypanosoma brucei TREU927' as organism, 'TbruceiTreu927' as abbreviation from dual union
+  select 'Trypanosoma brucei gambiense' as organism, 'TbruceiGambiense' as abbreviation from dual union
+  select 'Trypanosoma congolense' as organism, 'Tcongolense' as abbreviation from dual union
+  select 'Trypanosoma cruzi CL Brener Esmeraldo-like' as organism, 'TcruziEsmeraldo-Like' as abbreviation from dual union
+  select 'Trypanosoma cruzi CL Brener Non-Esmeraldo-like' as organism, 'TcruziNonEsmeraldo-Like' as abbreviation from dual union
+  select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
+  select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual
+       )
+      ]]>
+    </sql>
+  </tuningTable>
+
+
 </tuningConfig>
