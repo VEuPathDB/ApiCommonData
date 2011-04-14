@@ -6055,7 +6055,7 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
+  <!-- This table will eventually be replaced by workflow -->
   <tuningTable name="apidb.OrganismAbbreviation">
     <sql>
       <![CDATA[
@@ -6139,6 +6139,86 @@ tablespace indx
   select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
   select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual
        )
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+ <!-- Special webservice abbreviations which are not standard organism names -->
+  <tuningTable name="apidb.OrganismAbbreviationWS">
+    <internalDependency name="apidb.OrganismAbbreviation"/>
+    <sql>
+      <![CDATA[
+       create table apidb.OrganismAbbreviationWS&1 nologging as
+       select organism, abbreviation from apidb.organismabbreviation
+       union
+  -- ToxoDB Apicoplast
+  select 'Toxoplasma gondii apicoplast' as organism, 'TgondiiApicoplast' as abbreviation from dual union  
+  -- PiroplasmaDB Plastid and Mitochondrial
+  select 'Babesia bovis T2Bo mitochondrial' as organism, 'BbovisT2BoMito' as abbreviation from dual union
+  select 'Babesia bovis T2Bo plastid' as organism, 'BbovisT2BoPlastid' as abbreviation from dual union
+  select 'Theileria annulata strain Ankara mitochondrial' as organism, 'TannulataAnkaraMito' as abbreviation from dual union
+  select 'Theileria parva strain Muguga mitochondrial' as organism, 'TparvaMugugaMito' as abbreviation from dual union
+  select 'Theileria parva strain Muguga plastid' as organism, 'TparvaMugugaPlastid' as abbreviation from dual union
+  -- Giardia Deprecated
+  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GlambliaDeprecated' as abbreviation from dual union
+  -- TrichDB Repeat Genes
+  select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'TvaginalisRG' as abbreviation from dual union  
+  -- PlasmoDB Plasmid And Mitochondrial
+  select 'Plasmodium falciparum 3D7 mitochondrial' as organism, 'PfalciparumMito' as abbreviation from dual union
+  select 'Plasmodium falciparum 3D7 plastid' as organism, 'PfalciparumPlastid' as abbreviation from dual union
+  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'PvivaxMito' as abbreviation from dual       
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+ <!-- Special BLAST  abbreviations which are not standard organism names -->
+  <tuningTable name="apidb.OrganismAbbreviationBlast">
+    <internalDependency name="apidb.OrganismAbbreviationWS"/>
+    <sql>
+      <![CDATA[
+       create table apidb.OrganismAbbreviationBlast&1 nologging as
+       select organism, abbreviation from apidb.organismabbreviationWS
+       union
+  -- ToxoDB ESTs
+  select 'Toxoplasma gondii' as organism, 'Tgondii' as abbreviation from dual union  
+  -- ToxoDB Isolates TODO !!
+  select 'All Toxoplasma Isolates' as organism, '??' as abbreviation from dual union  
+  -- CryptoDB ESTs
+  select 'Cryptosporidium muris RN66' as organism, 'Cmuris' as abbreviation from dual union  
+  -- CryptoDB ESTORFs
+  select 'Cryptosporidium parvum EST' as organism, 'CparvumEST' as abbreviation from dual union  
+  select 'Cryptosporidium muris EST' as organism, 'CmurisEST' as abbreviation from dual union  
+  -- CryptoDB Isolates
+  select 'Cryptosporidium Reference Isolates' as organism, 'CryptoReference' as abbreviation from dual union  
+  select 'Cryptosporidium Isolates minus Reference' as organism, 'Crypto' as abbreviation from dual union  
+  -- GiardiaDB Isolates
+  select 'All Giardia Isolates' as organism, 'GiardiaGenbank' as abbreviation from dual union  
+  -- TrichDB EST
+  select 'Trichomonas vaginalis' as organism, 'Tvaginalis' as abbreviation from dual union  
+  -- MicrosporidiaDB EST  
+  select 'Encephalitozoon cuniculi' as organism, 'Ecuniculi' as abbreviation from dual union  
+  -- MicrosporidiaDB Genome Survey Sequences
+  select 'Genome Survey Sequences' as organism, 'Microsporidia' as abbreviation from dual union
+  -- AmoebaDB EST
+  select 'Entamoeba dispar' as organism, 'Edispar' as abbreviation from dual union  
+  select 'Entamoeba histolytica' as organism, 'Ehistolytica' as abbreviation from dual union  
+  -- PlasmoDB ESTs where the name differs from above
+  select 'Plasmodium berghei' as organism, 'Pberghei' as abbreviation from dual union
+  select 'Plasmodium falciparum' as organism, 'Pfalciparum' as abbreviation from dual union
+  select 'Plasmodium vivax' as organism, 'Pvivax' as abbreviation from dual union
+  select 'Plasmodium yoelii' as organism, 'Pyoelii' as abbreviation from dual union
+  -- PlasmoDB Isolates
+  select 'Plasmodium Barcode Isolates' as organism, 'PlasmodiumBarcode' as abbreviation from dual union
+  select 'Plasmodium Popset/Genbank Isolates' as organism, 'Plasmodium' as abbreviation from dual union
+   -- TriTrypDD ESTs which are different than above
+  select 'Trypanosoma brucei' as organism, 'Tbrucei' as abbreviation from dual union
+  select 'Trypanosoma cruzi' as organism, 'Tcruzi' as abbreviation from dual union
+  select 'Leishmania major' as organism, 'LmajorFriedlin' as abbreviation from dual union
+  select 'Leishmania mexicana mexicana' as organism, 'Lmexicana' as abbreviation from dual union
+  -- EuPathDB Other ESTs
+  select 'Other Apicomplexan ESTs' as organism, 'Other' as abbreviation from dual
       ]]>
     </sql>
   </tuningTable>
