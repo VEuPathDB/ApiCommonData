@@ -1,5 +1,23 @@
 <tuningConfig>
 
+  <tuningTable name="apidb.OrganismAbbreviation">
+    <externalTuningTableDependency name="apidb.OrganismAbbreviation" dblink="tritryp.tuning"/>
+
+    <unionization>
+      <source dblink="tritryp.tuning"/>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.OrganismAbbreviation@tritryp.tuning
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+  </tuningTable>
+
   <tuningTable name="apidb.AssemblyAttributes">
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="crypto.tuning"/>
     <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="giardia.tuning"/>
