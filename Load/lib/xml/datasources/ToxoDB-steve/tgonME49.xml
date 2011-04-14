@@ -1,6 +1,7 @@
 <datasets>
 
   <constant name="orgAbbrev" value="tgonME49"/>
+  <constant name="strainAbbrev" value="ME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
   <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
@@ -326,7 +327,7 @@
 
 
   <!-- OldName: ME49B7BACEnds   OldVersion: 2001-09-19 -->
-  <dataset class="fastaSequence" graphClass="mapDnaSeqToGenome">
+  <dataset class="clonedInsertEnds">
     <prop name="name">Sanger_BAC_ends</prop>
     <prop name="version">2001-09-19</prop>
     <prop name="category">dnaSeq</prop>
@@ -336,7 +337,7 @@
   </dataset>
 
   <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
-  <dataset class="fastaSequence">
+  <dataset class="clonedInsertEnds">
     <prop name="name">TIGR_Cosmid_ends</prop>
     <prop name="version">2005-05-23</prop>
     <prop name="category">dnaSeq</prop>
@@ -406,20 +407,15 @@
 
   <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
   <!-- OldName: SibleyToxoIsolateSequences   OldVersion: 2009-03-23 (wrong as: 2009-05-04) -->
-  <dataset class="fastaSequence">
-    <prop name="name">sibley_GFF</prop>
-    <prop name="version">2009-03-23</prop>
-    <prop name="category">isolate</prop>
-    <prop name="table">DoTS::ExternalNaSequence</prop>
-    <prop name="soTermName">region</prop>
-    <prop name="regexSourceId">^>(\S+)</prop>
-  </dataset>
-
   <!-- OldName: SibleyToxoIsolates   OldVersion: 2009-03-23  (wrong as: 2009-05-04) -->
   <dataset class="isolateFeaturesGFF2">
     <prop name="name">sibley_GFF</prop>
     <prop name="version">2009-03-23</prop>
     <prop name="mapFile">ToxoDB/toxoIsolatesGenbank2gus.xml</prop>
+    <prop name="category">isolate</prop>
+    <prop name="table">DoTS::ExternalNaSequence</prop>
+    <prop name="soTermName">region</prop>
+    <prop name="regexSourceId">^>(\S+)</prop>
   </dataset>
 
    <!-- OldName: ChunleiSuRFLPSequences" OldVersion: 2009-05-04 -->

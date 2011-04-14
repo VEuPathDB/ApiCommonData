@@ -1,8 +1,10 @@
+<!-- by default, generated graph files are put in $$project$$/$$orgAbbrev$$/ -->
+
 <datasetClasses>
 
   <!-- Category: genome -->
 
-  <datasetClass class="genbank_genome" graphPlanFile="loadGenome.xml">
+  <datasetClass class="genbank_genome">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -10,6 +12,8 @@
     <prop name="version"/>
     <prop name="soTerm"/>
     <prop name="mapFile"/>
+
+    <graphFile planFile="loadGenome.xml" dir="$$project&&/&&orgAbbrev&&" name="&&experimentName&&_analyzeChipChipSamples.xml"/>
 
     <resource resource="$$orgAbbrev$$_genome_$$name$$_genbank_RSRC"
               version="$$version$$"
@@ -22,13 +26,16 @@
   </datasetClass>
 
 
-  <datasetClass class="GeneDB_GFF_genome_sequence" graphPlanFile="loadGenome.xml"  graphClass="genomeSequence" finalGraphName="$$experimentName$$.xml">
+  <datasetClass class="GeneDB_GFF_genome_sequence">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="version"/>
     <prop name="soTerm"/>
     <prop name="regex"/>
+
+    <graphFile planFile="loadGenome.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_sequence_RSRC"
               version="$$version$$"
 	      plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -44,12 +51,16 @@
   </datasetClass>
 
 
-  <datasetClass class="GeneDB_GFF_genome_features" graphPlanFile="loadGenome.xml">
+  <datasetClass class="GeneDB_GFF_genome_features">
+    <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="version"/>
     <prop name="soTerm"/>
     <prop name="parentResource"/>
+
+    <graphFile planFile="loadGenome.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_genome_GeneDB_GFF_features_RSRC"
               version="$$version$$"
 	      parentResource="$$parentResource$$"
@@ -62,7 +73,7 @@
     </resource>
   </datasetClass>
 
-  <datasetClass class="genome_chromosome_assembly_agp" graphPlanFile="loadGenome.xml">
+  <datasetClass class="genome_chromosome_assembly_agp">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -70,6 +81,8 @@
     <prop name="parentResource"/>
     <prop name="virtualSeqSOTerm"/>
     <prop name="sourceIdPrefix"/>
+
+    <graphFile planFile="loadGenome.xml" dir="$$project&&/&&orgAbbrev&&"/>
 
     <resource resource="$$orgAbbrev$$_genome_chromosome_assembly_agp_RSRC"
               version="$$version$$"
@@ -84,7 +97,7 @@
 
   <!-- Category: genomeFeature -->
 
-  <datasetClass class="genomeFeatures_GFF2" graphPlanFile="optional.xml">
+  <datasetClass class="genomeFeatures_GFF2">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
@@ -93,6 +106,9 @@
     <prop name="mapFile"/>
     <prop name="gff2GroupTag"/>
     <prop name="naSequenceSubclass"/>
+
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_genomeFeature_$$name$$_GFF2_RSRC"
               version="$version"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -110,6 +126,9 @@
   <datasetClass class="dbEST">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
+
+    <graphFile planFile="loadESTs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_dbEST_RSRC" version="@@$$orgAbbrev$$_dbEST_VER@@"
 	      plugin="GUS::Supported::Plugin::dbEST"
 	      internalDescrip="">
@@ -137,6 +156,9 @@
     <prop name="contactName"/>
     <prop name="contactAddress1"/>
     <prop name="contactAddress2"/>
+
+    <graphFile planFile="loadESTs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev_EST_$$name$$_sequences_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
 	      internalDescrip="">
@@ -148,9 +170,10 @@
 
   <!-- Category: IEDB epitpotes -->
 
-  <datasetClass class="IEDB_sequences">
+  <datasetClass class="IEDB_sequences" >
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
+
     <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
               version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
 	      plugin="GUS::Supported::Plugin::LoadFastaSequences">
@@ -197,6 +220,9 @@
 
   <datasetClass class="GeneDB_GFF_gene_aliases">
     <prop name="orgAbbrev"/>
+
+    <graphFile planFile="geneAliases.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC"
 	      version="@@$$orgAbbrev$$_GeneDB_GFF_gene_aliases_RSRC@@"
 	      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene"
@@ -214,13 +240,16 @@
 
 
   <!-- Category: dbxrefs -->
-  <datasetClass class="dbxref_simple">
-    <prop name="orgAbbrev"/>
+  <datasetClass class="dbxref_simple" graphPlanFile="dbXRefs.xml">
     <prop name="project"/>
+    <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
     <prop name="columnSpec"/>
     <prop name="table"/>
+
+    <graphFile planFile="dbXRefs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_dbxref_$$name$$_RSRC"
 	      version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
@@ -232,10 +261,13 @@
   </datasetClass>
 
 
-  <datasetClass class="dbxref_ApiLoc">
+  <datasetClass class="dbxref_ApiLoc" graphPlanFile="dbXRefs.xml">
     <prop name="orgAbbrev"/>
     <prop name="project"/>
     <prop name="ApiLocOrganism"/>
+
+    <graphFile planFile="dbXRefs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_dbxref_ApiLoc_RSRC"
 	      version="@@$$orgAbbrev$$_dbxref_ApiLoc_VER@@"
 	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
@@ -253,10 +285,13 @@
   </datasetClass>
 
 
-  <datasetClass class="dbxref_gene2Entrez">
+  <datasetClass class="dbxref_gene2Entrez" graphPlanFile="dbXRefs.xml">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
+
+    <graphFile planFile="dbXRefs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_dbxref_gene2Entrez_RSRC"
 	      version="@@$$orgAbbrev$$_dbxref_gene2Entrez_VER@@"
 	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
@@ -275,10 +310,13 @@
   </datasetClass>
 
   
-  <datasetClass class="dbxref_gene2Uniprot">
+  <datasetClass class="dbxref_gene2Uniprot" graphPlanFile="dbXRefs.xml">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
+
+    <graphFile planFile="dbXRefs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_dbxref_gene2Uniprot_RSRC"
 	      version="@@$$orgAbbrev$$_dbxref_gene2Uniprot_VER@@"
 	      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
@@ -299,8 +337,12 @@
   <datasetClass class="SNPs_GFF">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
+    <prop name="strainAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+
+    <graphFile planFile="SNPs.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_SNP_$$name$$_gff_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
 	      internalDescrip="">
@@ -318,6 +360,9 @@
     <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+
+    <graphFile planFile="arrayStudies.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_microarrayPlatform_$$name$$_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
 	      internalDescrip="">
@@ -339,6 +384,8 @@
     <prop name="name"/>
     <prop name="version"/>
 
+    <graphFile planFile="arrayStudies.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_microarrayExpression_$$name$$_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::DoNothing"
 	      internalDescrip="">
@@ -355,11 +402,13 @@
 
   <!-- Category: ChIP Chip-->
 
-  <datasetClass class="chipChip">
+  <datasetClass class="chipChipExperiment" graphPlanFile="arrayStudies.xml">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+
+    <graphFile planFile="arrayStudies.xml" dir="$$project&&/&&orgAbbrev&&"/>
 
     <resource resource="$$orgAbbrev$$_chipChip_$$name$$_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::LoadNothing"
@@ -372,7 +421,29 @@
     </resource>
   </datasetClass>
 
+
+  <datasetClass class="chipChipSample">
+    <prop name="project"/>
+    <prop name="orgAbbrev"/>
+    <prop name="experimentName"/>
+    <prop name="sampleName"/>
+    <prop name="sampleOrder"/>
+    <prop name="peakFinderArgs"/>
+    <prop name="runPeakCalls"/>
+ 
+    <graphFile planFile="analyzeChipChipSample.xml" dir="$$project&&/&&orgAbbrev&&" name="&&experimentName&&_analyzeChipChipSamples.xml"/>
+
+  </datasetClass>
+
+
   <!-- Category: fasta sequence -->
+
+  <datasetSubclass class="clonedInsertEnds" includesClass="fastaSequence">
+    <prop name="category">dnaSeq</prop>
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
+  </datasetSubclass>
 
   <datasetClass class="fastaSequence">
     <prop name="project"/>
@@ -384,6 +455,7 @@
     <prop name="table"/>
     <prop name="soTermName"/>
     <prop name="regexSourceId"/>
+
     <resource resource="$$orgAbbrev$_$$category$$_$$name$$_sequences_RSRC" version="2001-09-19"
 	      plugin="GUS::Supported::Plugin::LoadFastaSequences"
 	      internalDescrip="">
@@ -401,6 +473,9 @@
     <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_sageTag_$$name$$_RSRC" version="$$version$$"
 	      plugin="GUS::Supported::Plugin::LoadSagePrimers">
 
@@ -418,6 +493,9 @@
     <prop name="name"/>
     <prop name="version"/>
     <prop name="normalizeFrequencies"/>
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_sageTag_$$name$$_frequencies_RSRC" version="$$version$$"
 	      plugin="GUS::Supported::Plugin::LoadSageFrequencies"
 	      internalDescrip="">
@@ -436,6 +514,9 @@
     <prop name="name"/>
     <prop name="version"/>
     <prop name="parentResource"/>
+ 
+    <graphFile planFile="productNames.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_function_$$name$$_product_names_RSRC" version="$$version$$"
 	      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile"
 	      parentResource="$$parentResource$$">
@@ -469,13 +550,14 @@
   </datasetClass>
 
   <!-- the ncbi taxon ID is not important.  isolate strain info is provided by dedicated isolate info tables -->
-  <datasetClass class="isolatesFeaturesGFF2">
+  <datasetClass class="isolatesFeaturesGFF2" includesClass="fastaSequence">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="name"/>
     <prop name="version"/>
     <prop name="mapfile"/>
+
     <resource resource="$$orgAbbrev$$_isolate_$$name$$_features_RSRC" version="2009-03-23"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
 
