@@ -310,8 +310,11 @@ sub secondPass {
 
     $profile->submit();
     
-    $self->log("    submitted $profileCount so far for this profile set")
-      if ($profileCount % 1000 == 0);
+    if ($profileCount % 1000 == 0){
+	$self->log("    submitted $profileCount so far for this profile set");
+	$self->undefPointerCache();
+    }
+      
   }
 }
 
