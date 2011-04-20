@@ -5,11 +5,53 @@
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxId" value="29176"/>
   <constant name="genomeRSRC" value="$$orgAbbrev$$_genome_JCVI_genbank_RSRC"/>
+  <constant name="genomeVersion" value="????"/>
+
+  <datasetTemplate class="organism">
+    <prop name="project">$$project$$</prop>
+    <prop name="nameLower">pfalciparum</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxId$$</prop>
+    <prop name="organismFullName">@@PfOrganismFullName@@</prop>
+    <prop name="twoLetterAbbrev">Pf</prop>
+    <prop name="parentNcbiTaxonId">5833</prop>
+    <prop name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</prop>
+    <prop name="extractProteins">true</prop>
+    <prop name="hasOrganelleSeq">true</prop>
+    <prop name="organelleInitDownloadDirSubgraph">initMitoAndApicoplastDownloadDirs.xml</prop>
+    <prop name="genomeExtDbRlsSpec">$$genomeRSRC$$|$$genomeVersion$$</prop>
+    <prop name="genomeVirtualSeqsExtDbRlsSpec"></prop>
+    <prop name="insertVirtualSeqFromAgpFileResourceName"></prop>
+    <prop name="insertVirtualSeqFromAgpFile"></prop>
+    <prop name="repeatMaskSpecies">-species Plasmodium</prop>
+    <prop name="loadDbest">true</prop>
+    <prop name="usePredictedTranscripts">true</prop>
+    <prop name="predictedTranscriptsExtDbRlsSpec">WatanabePf3D7_PredictedTranscripts_RSRC|@@WatanabePf3D7_PredictedTranscripts_VER@@</prop>
+    <prop name="runtRNAScan">false</prop>
+    <prop name="runExportPred">true</prop>
+    <prop name="maxIntronSize">20000</prop>
+    <prop name="genomeSize">23310514</prop>
+    <prop name="skipProteomeAnalysis">false</prop>
+    <prop name="skipGenomeAnalysis">false</prop>
+    <prop name="loadEpitope">true</prop>
+    <prop name="loadOrganismSpecificESTResource">true</prop>
+    <prop name="loadOrganismSpecificMassSpecResource">true</prop>
+    <prop name="loadProductName">true</prop>
+    <prop name="distanceBetweenStartsForAlignmentsInSameCluster">30000</prop>
+    <prop name="minOrfLength">50</prop>
+    <prop name="deprecated">false</prop>
+    <prop name="soTermIdsOrNames">chromosome</prop>
+    <prop name="makeESTDownloadFile">true</prop>
+    <prop name="makeProteomeDownloadFile">true</prop>
+    <prop name="makeGenomicDownloadFile">true</prop>
+    <prop name="hasMito">true</prop>
+    <prop name="hasPlastid">true</prop>
+  </dataset>
+
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
   <dataset class="genbank_genome">
     <prop name="name">JCVI</prop>
-    <prop name="version">???</prop>
+    <prop name="version">$$genomeVersion$$</prop>
     <prop name="soTerm">supercontig</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
   </dataset>
@@ -334,6 +376,7 @@
     <prop name="table">DoTS::ExternalNaSequence</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>ME49B7\\|(Tge36_\\d+\\w\\d+\\w+)\\|</prop>
+    <prop name="repeatMaskSpecies">????</prop>
   </dataset>
 
   <!-- OldName: TgCosmidEnds   OldVersion: 2005-05-23 -->
@@ -344,6 +387,8 @@
     <prop name="table">DoTS::ExternalNaSequence</prop>
     <prop name="soTermName">clone_insert_end</prop>
     <prop name="regexSourceId">^>(\\w+\\d+T\\w)</prop>
+    <prop name="repeatMaskSpecies">????</prop>
+
   </dataset>
 
 

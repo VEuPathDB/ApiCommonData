@@ -1,6 +1,50 @@
-<!-- by default, generated graph files are put in $$project$$/$$orgAbbrev$$/ -->
-
 <datasetClasses>
+
+  <datasetTemplate class="organism">
+    <prop name="project"/>
+    <prop name="nameLower"/>
+    <prop name="ncbiTaxonId"/>
+    <prop name="extractProteins"/>
+    <prop name="hasOrganelleSeq"/>
+    <prop name="organismFullName"/>
+    <prop name="organelleInitDownloadDirSubgraph"/>
+    <prop name="genomeExtDbRlsSpec"/>
+    <prop name="genomeVirtualSeqsExtDbRlsSpec"/>
+    <prop name="insertVirtualSeqFromAgpFileResourceName"/>
+    <prop name="insertVirtualSeqFromAgpFile"/>
+    <prop name="repeatMaskSpecies"/>
+    <prop name="twoLetterAbbrev"/>
+    <prop name="loadDbest"/>
+    <prop name="parentNcbiTaxonId"/>
+    <prop name="usePredictedTranscripts"/>
+    <prop name="predictedTranscriptsExtDbRlsSpec"/>
+    <prop name="runtRNAScan"/>
+    <prop name="runExportPred"/>
+    <prop name="maxIntronSize"/>
+    <prop name="taxonHierarchyForBlastxFilter"/>
+    <prop name="genomeSize"/>
+    <prop name="skipProteomeAnalysis"/>
+    <prop name="skipGenomeAnalysis"/>
+    <prop name="loadEpitope"/>
+    <prop name="makeAssemblySeqs"/>
+    <prop name="makeAssemblies"/>
+    <prop name="mapAssemblySeqsAndAssemblies"/>
+    <prop name="loadOrganismSpecificESTResource"/>
+    <prop name="loadOrganismSpecificMassSpecResource"/>
+    <prop name="loadProductName"/>
+    <prop name="distanceBetweenStartsForAlignmentsInSameCluster"/>
+    <prop name="minOrfLength"/>
+    <prop name="deprecated"/>
+    <prop name="soTermIdsOrNames"/>
+    <prop name="makeESTDownloadFile"/>
+    <prop name="makeProteomeDownloadFile"/>
+    <prop name="makeGenomicDownloadFile"/>
+    <prop name="hasMito"/>
+    <prop name="hasPlastid"/>
+
+    <graphFile planFile="project.xml" dir="$$project&&"/>
+
+  </datasetClass>
 
   <!-- Category: genome -->
 
@@ -124,6 +168,7 @@
   <!-- Category: ESTs -->
 
   <datasetClass class="dbEST">
+    <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
 
@@ -174,7 +219,7 @@
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
 
-    <resource resource="$$orgAbbrev_epitope_IEDB_RSRC"
+    <resource resource="$$orgAbbrev$$_epitope_IEDB_RSRC"
               version="@@$$orgAbbrev$$_epitope_IEDB_VER@@"
 	      plugin="GUS::Supported::Plugin::LoadFastaSequences">
 
@@ -219,6 +264,7 @@
   <!-- Category: gene aliases -->
 
   <datasetClass class="GeneDB_GFF_gene_aliases">
+    <prop name="project"/>
     <prop name="orgAbbrev"/>
 
     <graphFile planFile="geneAliases.xml" dir="$$project&&/&&orgAbbrev&&"/>
@@ -286,6 +332,7 @@
 
 
   <datasetClass class="dbxref_gene2Entrez" graphPlanFile="dbXRefs.xml">
+    <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
@@ -311,6 +358,7 @@
 
   
   <datasetClass class="dbxref_gene2Uniprot" graphPlanFile="dbXRefs.xml">
+    <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
     <prop name="parentResource"/>
@@ -378,11 +426,21 @@
   <!-- Category: microarrayExpression -->
 
   <!-- FIX: needs an analysis config file -->
-  <datasetClass class="microarrayExpression">
+  <datasetClass class="microarrayExpressionExperiment">
     <prop name="project"/>
     <prop name="orgAbbrev"/>
     <prop name="name"/>
     <prop name="version"/>
+    <prop name="experimentName"/>
+    <prop name="experimentVersion"/>
+    <prop name="experimentNameForFiles"/>
+    <prop name="microArrayPlatformName"/>
+    <prop name="microArrayPlatformVersion"/>
+    <prop name="insertAnalysisResult"/>
+    <prop name="profileSetNames"/>
+    <prop name="profileSetSpecs"//>
+    <prop name="isLogged"/>
+    <prop name="mappingFileForExpressionStats"/>
 
     <graphFile planFile="arrayStudies.xml" dir="$$project&&/&&orgAbbrev&&"/>
 
@@ -440,6 +498,7 @@
 
   <datasetSubclass class="clonedInsertEnds" includesClass="fastaSequence">
     <prop name="category">dnaSeq</prop>
+    <prop name="repeatMaskSpecies"/>
  
     <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
 
@@ -532,6 +591,9 @@
   <datasetClass class="isolates_genbank">
     <prop name="orgAbbrev"/>
     <prop name="ncbiTaxId"/>
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
     <resource resource="$$orgAbbrev$$_isolates_genbank_RSRC" version="TODAY"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
 	      internalDescrip="">
@@ -557,6 +619,8 @@
     <prop name="name"/>
     <prop name="version"/>
     <prop name="mapfile"/>
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
 
     <resource resource="$$orgAbbrev$$_isolate_$$name$$_features_RSRC" version="2009-03-23"
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
@@ -573,7 +637,10 @@
     <prop name="name"/>
     <prop name="version"/>
     <prop name="flag"/>
-    <resource resource="$$orgAbbrev$$_massSpec_Wastling-Rhoptry_RSRC" version="2007-05-11"
+ 
+    <graphFile planFile="optional.xml" dir="$$project&&/&&orgAbbrev&&"/>
+
+    <resource resource="$$orgAbbrev$$_massSpec_$$name$$_RSRC" version="2007-05-11"
 	      plugin="ApiCommonData::Load::Plugin::InsertMassSpecPreprocessed"
 	      parentResource="$$genomeRSRC$$"
 	      internalDescrip="">
