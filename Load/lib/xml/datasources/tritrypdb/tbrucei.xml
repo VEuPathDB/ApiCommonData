@@ -1191,6 +1191,34 @@ RNA sequence profiles from Christine Clayton.
     </info>
   </resource>
 
+  <resource resource="Tbrucei_RNASeq_ArcherStuart_CellCycle_RSRC" version="@@Tbrucei_RNASeq_ArcherStuart_CellCycle_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/ArcherStuartCellCycle/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/G2_M_phase.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/S_phase.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/late_G1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/early_G1.fsq"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNA-Seqs from Archer Stuart"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Archer Stuart"
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+RNA sequence profiles from Archer Stuart.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
   <resource resource="Tbrucei_ChIPSeq_George_Cross_RSRC" version="@@Tbrucei_ChIPSeq_George_Cross_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/chipSeq/George_Cross/%RESOURCE_VERSION%/final/"/>

@@ -36,4 +36,27 @@
     </info>
   </resource>
 
+  <resource resource="Cfasci_RNASeq_Beverley_RSRC" version="@@Cfasci_RNASeq_Beverley_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/cfasci/rnaSeq/Beverley_Crithidia/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_sequence.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_sequence.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNASeq from Beverley"
+        project="TriTrypDB"
+        organisms="@@CfasciOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="Steve Beverley"
+        email="beverley@borcim.wustl.edu"
+        institution="wustl">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>
