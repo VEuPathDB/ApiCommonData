@@ -158,7 +158,7 @@
 	      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
 	      parentResource="$$parentResource$$">
 
-      <manualGet fileOrDir"$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
+      <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genomeFeature/$$name$$_GFF/%RESOURCE_VERSION%/final/features.gff"/>
 
       <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --seqExtDbName %PARENT_RESOURCE_NAME% --seqExtDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @gusHome@/lib/xml/isf/$$mapFile$$ --inputFileOrDir @@dataDir@@/features.gff --fileFormat gff2  --gff2GroupTag "$$gff2GroupTag$$" --soCvsVersion @@SO_VER@@ --defaultOrganism $$ncbiTaxId$$ --naSequenceSubclass $$naSequenceSubclass$$ --seqIdColumn source_id  --bioperlTreeOutput @@dataDir@@/bioperlTree.out</pluginArgs>
     </resource>
@@ -438,7 +438,7 @@
     <prop name="microArrayPlatformVersion"/>
     <prop name="insertAnalysisResult"/>
     <prop name="profileSetNames"/>
-    <prop name="profileSetSpecs"//>
+    <prop name="profileSetSpecs"/>
     <prop name="isLogged"/>
     <prop name="mappingFileForExpressionStats"/>
 
