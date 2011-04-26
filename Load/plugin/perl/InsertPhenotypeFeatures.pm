@@ -7,8 +7,11 @@ use DBI;
 use Data::Dumper;
 use XML::Simple;
 use GUS::PluginMgr::Plugin;
-#use GUS::Model::ApiDB::PhenotypeFeature;
+use GUS::Model::ApiDB::PhenotypeFeature;
 use Data::Dumper;
+use ApiCommonData::Load::Util;
+use Scalar::Util 'reftype';
+
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -103,7 +106,9 @@ sub run {
 
   my $conf = $self->parseSimple($file);
 
-  print Dumper($conf);
+  my $rmgms = $conf->{'rmgm'};	#list of rmgms
+
+  $self->insertPhenotypeFeature($rmgms,$extDbReleaseId);
 
   return "Processed $file.";
 }
@@ -112,9 +117,54 @@ sub parseSimple{
   my ($self,$file) = @_;
 
   my $simple = XML::Simple->new();
-  my $tree = $simple->XMLin($file);
-
+  my $tree = $simple->XMLin($file, forcearray=>['modification']);
   return $tree;
+}
+
+sub insertPhenotypeFeature {
+  my ($self, $rmgms, $extDbReleaseId) = @_;
+  my ($suc_of_gen_mod,$reference_pubmed,$phenotype_asexual,$phenotype_gametocyte,$phenotype_ookinete,$phenotype_oocyst,$phenotype_sporozoite, $phenotype_liverstage,$phenotype_remarks,$mod_type,$reftype);
+  my $count = 0; 
+  foreach my $rmgm (@$rmgms) {
+      my $modifications=$rmgm->{'modifications'}->{'modification'};
+      foreach my $modification (@$modifications){
+	   my $sourceId = $modification->{'gene_model'};
+           my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId) ;
+	   if ($naFeatureId){
+	       $suc_of_gen_mod = $rmgm->{'success_of_genetic_modification'} unless (reftype $rmgm->{'success_of_genetic_modification'});
+	       $reference_pubmed = $rmgm->{'reference_pubmed1'} unless (reftype $rmgm->{'reference_pubmed1'});
+	       $phenotype_asexual = $rmgm->{'phenotype'}->{'phenotype_asexual'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_asexual'});
+	       $phenotype_gametocyte = $rmgm->{'phenotype'}->{'phenotype_gametocyte'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_gametocyte'});
+	       $phenotype_ookinete = $rmgm->{'phenotype'}->{'phenotype_ookinete'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_ookinete'});
+	       $phenotype_oocyst = $rmgm->{'phenotype'}->{'phenotype_oocyst'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_oocyst'});
+	       $phenotype_sporozoite = $rmgm->{'phenotype'}->{'phenotype_sporozoite'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_sporozoite'});
+	       $phenotype_liverstage = $rmgm->{'phenotype'}->{'phenotype_liverstage'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_liverstage'});
+	       $mod_type = $modification->{'mod_type'} unless (reftype $modification->{'mod_type'});
+	       $phenotype_remarks = $rmgm->{'phenotype'}->{'phenotype_remarks'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_remarks'});
+	       $phenotype_remarks =~ s/\n//g;
+	       $phenotype_remarks =substr($phenotype_remarks, 1, 2000);
+	       my $phenofeature = GUS::Model::ApiDB::PhenotypeFeature->new({external_database_release_id => $extDbReleaseId,
+							       na_feature_id => $naFeatureId,
+							       suc_of_gen_mod => $suc_of_gen_mod,
+							       reference_pubmed => $reference_pubmed,
+							       phenotype_asexual => $phenotype_asexual,
+							       phenotype_gametocyte => $phenotype_gametocyte,
+							       phenotype_ookinete => $phenotype_ookinete,
+							       phenotype_oocyst => $phenotype_oocyst,
+							       phenotype_sporozoite => $phenotype_sporozoite,
+							       phenotype_liverstage => $phenotype_liverstage,
+							       phenotype_remarks => $phenotype_remarks,
+							       mod_type => $mod_type,
+							      });
+	       $phenofeature->submit();
+	       $count++;
+	       $self->undefPointerCache() if $count % 1000 == 0;
+	   }
+      }
+}
+
+  $self->log("Inserted $count features");
+
 }
 
 
