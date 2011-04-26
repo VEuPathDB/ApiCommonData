@@ -11,7 +11,7 @@ CREATE TABLE apidb.PhenotypeFeature (
  phenotype_oocyst                     varchar(2000),
  phenotype_sporozoite                     varchar(2000),
  phenotype_liverstage                     varchar(2000),
- phenotype_remarks                     varchar(2000),
+ phenotype_remarks                     CLOB,
  mod_type                     varchar(100),
  MODIFICATION_DATE            DATE,
  USER_READ                    NUMBER(1),
