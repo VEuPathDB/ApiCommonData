@@ -1786,6 +1786,28 @@ Nygaard et al (2010) PLoS Genetics
       </description>
     </info>
   </resource>
+
+  <resource resource="Pf_Rod_Mal_Phenotype_RSRC" version="2011-03-17"
+      plugin="ApiCommonData::Load::Plugin::InsertPhenotypeFeatures">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/phenotype/Rod_Mal_Phenotype/%RESOURCE_VERSION%/final/rmgm_phenotype_list_pfalciparum.xml"/>
+    <pluginArgs>--inputFile @@dataDir@@/rmgm_phenotype_list_pfalciparum.xml --extDbName %RESOURCE_NAME% --extDbVer %RESOURCE_VERSION% </pluginArgs>
+    <info
+        displayName="P. falicparum Rod mal phenotypes"
+        project="PlasmoDB"
+        organisms="@@PfOrganismFullName@@"
+        category=""
+        publicUrl="http://www.pberghei.eu/csv/rmgm_phenotype_list.php"
+        contact="Chris J. Janse"
+        email="C.J.Janse@lumc.nl"
+        institution="Leiden Malaria Research Group">
+      <description>
+        <![CDATA[
+         P. falicparum Rod mal phenotypes.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--pfalciparumProteome-->
 
   <resource resource="Pf_IEDB_Epitopes_RSRC" version="@@Pf_IEDB_Epitopes_VER@@"
