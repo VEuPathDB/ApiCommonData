@@ -142,7 +142,7 @@ sub insertPhenotypeFeature {
 	       $mod_type = $modification->{'mod_type'} unless (reftype $modification->{'mod_type'});
 	       $phenotype_remarks = $rmgm->{'phenotype'}->{'phenotype_remarks'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_remarks'});
 	       $phenotype_remarks =~ s/\n//g;
-	       $phenotype_remarks =substr($phenotype_remarks, 1, 2000);
+	       $phenotype_remarks =~ s/<(.*?)>//gi;
 	       my $phenofeature = GUS::Model::ApiDB::PhenotypeFeature->new({external_database_release_id => $extDbReleaseId,
 							       na_feature_id => $naFeatureId,
 							       suc_of_gen_mod => $suc_of_gen_mod,
