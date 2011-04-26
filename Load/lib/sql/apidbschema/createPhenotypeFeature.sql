@@ -3,6 +3,7 @@ CREATE TABLE apidb.PhenotypeFeature (
  phenotype_feature_id       NUMBER(10),
  external_database_release_id NUMBER(10) NOT NULL,
  na_feature_id               NUMBER(10) NOT NULL,
+ rmgmid               NUMBER(10) NOT NULL,
  suc_of_gen_mod                  varchar(10),
  reference_pubmed               varchar(50),
  phenotype_asexual                     varchar(2000),
