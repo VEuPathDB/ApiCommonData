@@ -1,36 +1,36 @@
 <datasets>
 
-  <constant name="orgAbbrev" value="tgonME49"/>
+  <constant name="organismAbbrev" value="tgonME49"/>
   <constant name="strainAbbrev" value="ME49"/>
   <constant name="project" value="ToxoDB"/>
-  <constant name="ncbiTaxId" value="29176"/>
+  <constant name="ncbiTaxonId" value="29176"/>
   <constant name="genomeRSRC" value="tgonME49_genome_JCVI_genbank_RSRC"/>
   <constant name="genomeVersion" value="????"/>
 
   <dataset class="organism">
     <prop name="project">$$project$$</prop>
-    <prop name="nameLower">pfalciparum</prop>
-    <prop name="ncbiTaxonId">$$ncbiTaxId$$</prop>
-    <prop name="organismFullName">@@PfOrganismFullName@@</prop>
-    <prop name="twoLetterAbbrev">Pf</prop>
-    <prop name="parentNcbiTaxonId">5833</prop>
+    <prop name="publicOrganismAbbrev">tgME49</prop>
+    <prop name="organismFullName">Toxoplasma gondii ME49</prop>
+    <prop name="organismNameForFiles">TgondiiME49</prop>
+    <prop name="speciesNcbiTaxonId">????</prop>
+    <prop name="isReferenceStrain">true</prop>
+    <prop name="isDraftGenome">false</prop>
+    <prop name="orthomclAbbrev">tgon</prop>
+    <prop name="strainAbbrev">$$strainAbbrev$$</prop>
+    <prop name="hasOrganelleSeq">????</prop>
+    <prop name="hasMito">true</prop>
+    <prop name="hasPlastid">true</prop>
+    <prop name="isAnnotatedGenome">true</prop>
     <prop name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</prop>
-    <prop name="extractProteins">true</prop>
-    <prop name="hasOrganelleSeq">true</prop>
-    <prop name="organelleInitDownloadDirSubgraph">initMitoAndApicoplastDownloadDirs.xml</prop>
-    <prop name="genomeExtDbRlsSpec">$$genomeRSRC$$|$$genomeVersion$$</prop>
-    <prop name="genomeVirtualSeqsExtDbRlsSpec"></prop>
-    <prop name="insertVirtualSeqFromAgpFileResourceName"></prop>
-    <prop name="insertVirtualSeqFromAgpFile"></prop>
     <prop name="repeatMaskSpecies">-species Plasmodium</prop>
+    <prop name="insertVirtualSeqFromAgpFile"></prop>
     <prop name="loadDbest">true</prop>
     <prop name="usePredictedTranscripts">true</prop>
-    <prop name="predictedTranscriptsExtDbRlsSpec">WatanabePf3D7_PredictedTranscripts_RSRC|@@WatanabePf3D7_PredictedTranscripts_VER@@</prop>
     <prop name="runtRNAScan">false</prop>
     <prop name="runExportPred">true</prop>
+    <!-- can we discover these next two from the database? -->
     <prop name="maxIntronSize">20000</prop>
     <prop name="genomeSize">23310514</prop>
-    <prop name="skipProteomeAnalysis">false</prop>
     <prop name="skipGenomeAnalysis">false</prop>
     <prop name="loadEpitope">true</prop>
     <prop name="loadOrganismSpecificESTResource">true</prop>
@@ -43,13 +43,19 @@
     <prop name="makeESTDownloadFile">true</prop>
     <prop name="makeProteomeDownloadFile">true</prop>
     <prop name="makeGenomicDownloadFile">true</prop>
-    <prop name="hasMito">true</prop>
-    <prop name="hasPlastid">true</prop>
+    <prop name="organelleInitDownloadDirSubgraph">initMitoAndApicoplastDownloadDirs.xml</prop>
+    <prop name="genomeExtDbRlsSpec">$$genomeRSRC$$|$$genomeVersion$$</prop>
+    <prop name="genomeVirtualSeqsExtDbRlsSpec"></prop>
+    <prop name="insertVirtualSeqFromAgpFileResourceName"></prop>
+    <prop name="predictedTranscriptsExtDbRlsSpec">WatanabePf3D7_PredictedTranscripts_RSRC|@@WatanabePf3D7_PredictedTranscripts_VER@@</prop>
   </dataset>
 
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
   <dataset class="genbank_genome">
+    <prop name="project">$$project$$</prop>
+    <prop name="orgAbbrev">$$orgAbbrev$$</prop>
+    <prop name="ncbiTaxId">$$ncbiTaxId$$</prop>
     <prop name="name">JCVI</prop>
     <prop name="version">$$genomeVersion$$</prop>
     <prop name="soTerm">supercontig</prop>
@@ -179,7 +185,7 @@
   <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
   <dataset class="dbxref_ApiLoc">
     <!-- organism name as found on the ApiLoc site -->
-    <prop name="ApiLocOrganism">Toxoplasma gondii"</prop>
+    <prop name="ApiLocOrganism">Toxoplasma gondii</prop>
   </dataset>
 
 
@@ -423,7 +429,7 @@
 
 
   <!-- OldName: TASKAnnotation   OldVersion: 2006-07-20 -->
-  <resource resource="$$orgAbbrev$$_function_TASK_annotation_RSRC" version="2006-07-20"
+  <resource resource="$$organismAbbrev$$_function_TASK_annotation_RSRC" version="2006-07-20"
 	    plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="global/empty"/>
     <pluginArgs></pluginArgs>
@@ -442,10 +448,10 @@
 
 
   <!-- OldName: ToxoIsolatesFromDardre   OldVersion: 2009-05-04 -->
-  <resource resource="$$orgAbbrev$$_isolates_updates_Dardre" version="2009-05-04"
+  <resource resource="$$organismAbbrev$$_isolates_updates_Dardre" version="2009-05-04"
 	    plugin="ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre"
 	    internalDescrip="">
-    <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/isolate/dardre_updates/final/updates.txt"/>
+    <manualGet fileOrDir="$$project$$/$$organismAbbrev$$/isolate/dardre_updates/final/updates.txt"/>
     <pluginArgs>--extDbRlsSpec '%RESOURCE_NAME%|%RESOURCE_VER%' --inputFile @@dataDir@@/updates.txt</pluginArgs>
   </resource>
 
