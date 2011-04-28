@@ -4,55 +4,12 @@
   <constant name="strainAbbrev" value="ME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxonId" value="29176"/>
-  <constant name="genomeRSRC" value="tgonME49_genome_JCVI_genbank_RSRC"/>
+  <constant name="genomeRSRC" value="tgonME49_supercontig_JCVI_RSRC"/>
   <constant name="genomeVersion" value="????"/>
-
-  <dataset class="organism">
-    <prop name="project">$$project$$</prop>
-    <prop name="publicOrganismAbbrev">tgME49</prop>
-    <prop name="organismFullName">Toxoplasma gondii ME49</prop>
-    <prop name="organismNameForFiles">TgondiiME49</prop>
-    <prop name="speciesNcbiTaxonId">????</prop>
-    <prop name="isReferenceStrain">true</prop>
-    <prop name="isDraftGenome">false</prop>
-    <prop name="orthomclAbbrev">tgon</prop>
-    <prop name="strainAbbrev">$$strainAbbrev$$</prop>
-    <prop name="hasOrganelleSeq">????</prop>
-    <prop name="hasMito">true</prop>
-    <prop name="hasPlastid">true</prop>
-    <prop name="isAnnotatedGenome">true</prop>
-    <prop name="taxonHierarchyForBlastxFilter">Eukaryota Apicomplexa Plasmodium</prop>
-    <prop name="repeatMaskSpecies">-species Plasmodium</prop>
-    <prop name="insertVirtualSeqFromAgpFile"></prop>
-    <prop name="loadDbest">true</prop>
-    <prop name="usePredictedTranscripts">true</prop>
-    <prop name="runtRNAScan">false</prop>
-    <prop name="runExportPred">true</prop>
-    <!-- can we discover these next two from the database? -->
-    <prop name="maxIntronSize">20000</prop>
-    <prop name="genomeSize">23310514</prop>
-    <prop name="skipGenomeAnalysis">false</prop>
-    <prop name="loadEpitope">true</prop>
-    <prop name="loadOrganismSpecificESTResource">true</prop>
-    <prop name="loadOrganismSpecificMassSpecResource">true</prop>
-    <prop name="loadProductName">true</prop>
-    <prop name="distanceBetweenStartsForAlignmentsInSameCluster">30000</prop>
-    <prop name="minOrfLength">50</prop>
-    <prop name="deprecated">false</prop>
-    <prop name="soTermIdsOrNames">chromosome</prop>
-    <prop name="makeESTDownloadFile">true</prop>
-    <prop name="makeProteomeDownloadFile">true</prop>
-    <prop name="makeGenomicDownloadFile">true</prop>
-    <prop name="organelleInitDownloadDirSubgraph">initMitoAndApicoplastDownloadDirs.xml</prop>
-    <prop name="genomeExtDbRlsSpec">$$genomeRSRC$$|$$genomeVersion$$</prop>
-    <prop name="genomeVirtualSeqsExtDbRlsSpec"></prop>
-    <prop name="insertVirtualSeqFromAgpFileResourceName"></prop>
-    <prop name="predictedTranscriptsExtDbRlsSpec">WatanabePf3D7_PredictedTranscripts_RSRC|@@WatanabePf3D7_PredictedTranscripts_VER@@</prop>
-  </dataset>
 
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
-  <dataset class="genbank_genome">
+  <dataset class="genbank_primary_genome">
     <prop name="project">$$project$$</prop>
     <prop name="orgAbbrev">$$orgAbbrev$$</prop>
     <prop name="ncbiTaxId">$$ncbiTaxId$$</prop>
@@ -63,32 +20,36 @@
   </dataset>
 
   <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
-  <dataset class="genbank_genome">
+  <dataset class="genbank_secondary_genome">
     <prop name="project">$$project$$</prop>
     <prop name="orgAbbrev">$$orgAbbrev$$</prop>
     <prop name="ncbiTaxId">$$ncbiTaxId$$</prop>
-    <prop name="name">apicoplast</prop>
+    <prop name="name">genbank</prop>
     <prop name="version">???</prop>
     <prop name="soTerm">apicoplast_chromosome</prop>
     <prop name="mapFile">ToxoDB/toxoGenbank2gus.xml</prop>
+    <prop name="parentDataset">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: ME49ChromosomeMap   OldVersion: 2008-08-28 -->
-  <dataset class="genome_chromosome_assembly_agp">
+  <dataset class="genome_virtual_sequence_agp">
     <prop name="version">2008-08-28</prop>
     <prop name="virtualSeqSOTerm">chromosome</prop>
     <prop name="sourceIdPrefix">TGME49_chr</prop>
-    <prop name="parentResource">$$genomeRSRC$$</prop>
+    <prop name="parentDataset">$$genomeRSRC$$</prop>
   </dataset>
 
 
   <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
   <dataset class="genomeFeatures_GFF2">
+    <prop name="project">$$project$$</prop>
+    <prop name="orgAbbrev"/>
+    <prop name="ncbiTaxId"/>
     <prop name="name">GLEAN</prop>
     <prop name="version">2003-08-13</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
   <!-- OldName: ME49_Annotation   OldVersion: 3 -->
@@ -97,7 +58,6 @@
     <prop name="version">2008-08-15</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
   <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
@@ -106,7 +66,6 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
   <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
@@ -115,7 +74,6 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
   <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
@@ -124,7 +82,6 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
 
@@ -134,16 +91,15 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-    <prop name="naSequenceSubclass">ExternalNASequence</prop>
   </dataset>
 
   <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
   <dataset class="genomeFeatures_GFF2">
+    <!-- FIX in manual delivery, must move these features onto contigs -->
     <prop name="name">Einstein_centromeres</prop>
     <prop name="version">2009-06-18</prop>
     <prop name="mapFile">ToxoDB/toxoFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">ID</prop>
-    <prop name="naSequenceSubclass">VirtualSequence</prop>
   </dataset>
 
 
