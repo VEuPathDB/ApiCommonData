@@ -1439,6 +1439,12 @@ WHERE gf.source_id is not null
     </sql>
     <sql>
       <![CDATA[
+CREATE table apidb.geneattributeduplicates nologging as
+select ga.source_id, count(*) as id_count from apidb.geneattributes&1 ga group by ga.source_id having count(*) > 1
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
 CREATE UNIQUE INDEX apidb.GeneAttr_sourceId&1
        ON apidb.GeneAttributes&1 (source_id)
 tablespace indx
@@ -3557,15 +3563,15 @@ UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
        'Reid::TgME49RnaSeq' as module,
        'Toxoplasma gondii ME49' as species,
-       '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
-       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
+       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'rpkm,pct' as visible_parts,
         'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3573,15 +3579,15 @@ UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
        'Reid::TgVEGRnaSeq' as module,
        'Toxoplasma gondii VEG' as species,
-       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
-       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
+       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'rpkm,pct' as visible_parts,
         'TgVEG_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3589,15 +3595,15 @@ UNION
 select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
        'Reid::NcRnaSeq' as module,
        'Neospora caninum' as species,
-       '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence Coverage' as display_name,
-       'The coverage values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+       '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence' as display_name,
+       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'rpkm,pct' as visible_parts,
         'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3963,15 +3969,15 @@ UNION
 select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
        'Cross::TbRnaSeqBfPf' as module,
        'Trypanosoma brucei' as species,
-       '<i>T. brucei</i> blood and procyclic forms RNA Sequence Coverage' as display_name,
-       'The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>T. brucei</i> blood and procyclic forms RNA Sequence' as display_name,
+       'The values in the graph are displayed in log2 scale' as description,
        'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'rpkm,pct' as visible_parts,
         'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
 from dual
 UNION
