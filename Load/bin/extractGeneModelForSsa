@@ -128,7 +128,7 @@ return ("SELECT ga.source_id, ga.na_feature_id,
                   greatest(ga.coding_start,ga.coding_end) as end_max,
                   decode(ga.is_reversed, 1, '-', '+') as strand,
                   ga.sequence_id AS sequence_id,ga.na_sequence_id,
-                  ga.exon_count
+                  (select count(*) from apidb.featurelocation fl where fl.feature_type = 'ExonFeature' and fl.coding_start is not null and fl.parent_id = ga.na_feature_id) as exon_count
              FROM apidb.geneattributes ga
             WHERE ga.source_id is not null
               and ga.taxon_id = ?
