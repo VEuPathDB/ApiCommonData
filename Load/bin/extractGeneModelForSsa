@@ -144,6 +144,7 @@ sub GetExonQueryOnCDS {
             WHERE fl.feature_type = 'ExonFeature'
               AND fl.parent_id = ?
               AND fl.na_sequence_id = ?
+              AND fl.coding_start is not NULL
          ORDER BY start_min,end_max");
 }
 
