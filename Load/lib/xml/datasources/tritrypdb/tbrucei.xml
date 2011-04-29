@@ -1346,6 +1346,40 @@ RNAi sequence profiles from David Horn.
     </info>
   </resource>
 
+  <resource resource="Tbrucei_RNAiSeq_Horn_CDS_RSRC" version="@@Tbrucei_RNAiSeq_Horn_CDS_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/RNAi_Horn/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/config.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/U_1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/U_2.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PF_1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/PF_2.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/DIF_1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/DIF_2.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D6_1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D6_2.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D3_1.fsq"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/D3_2.fsq"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="RNAi Seqs from Horn"
+        project="TriTrypDB"
+        organisms="@@Tbrucei927OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="David Horn"
+        email="David.Horn@lshtm.ac.uk"
+        institution="lshtm">
+      <description>
+        <![CDATA[
+RNAi sequence profiles from David Horn.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
   <resource resource="Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC" version="@@Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
     <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/Nilsson_Spliced_Leader/%RESOURCE_VERSION%/final/"/>

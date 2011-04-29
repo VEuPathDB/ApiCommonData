@@ -66,6 +66,7 @@ if(uc $coordinates eq "CDS"){
 my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
 
 while (my ($source_id, $na_feature_id,$start_min,$end_max, $strand, $sequence_id, $na_sequence_id, $exon_count ) = $sth->fetchrow_array()) {
+  next unless ($exon_count);
 
   print OUTINDX $sequence_id."\t".$strand."\t".$start_min."\t".$end_max."\t".$exon_count."\t";
 
