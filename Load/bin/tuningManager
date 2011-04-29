@@ -20,6 +20,7 @@ my $props;
 my $startTime = time;
 my $maxRebuildMinutes = 0;
 my $dbaEmail;
+my $fromEmail;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
@@ -74,8 +75,10 @@ $maxRebuildMinutes = $props->{maxRebuildMinutes};
 
 if ($props->{dbaEmail}) {
   $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+  $fromEmail = $props->{fromEmail} if $props->{fromEmail};
 } else {
   $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+  $fromEmail = 'tuningMgr@pcbi.upenn.edu';
 }
 
 
@@ -354,7 +357,7 @@ $notifyEmail = "tuningMgr\@pcbi.upenn.edu" if !$notifyEmail;
 
 ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
 
-ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance_name, $dbaEmail)
+ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance_name, $dbaEmail, $fromEmail)
   if ApiCommonData::Load::TuningConfig::Log::getOutOfSpaceMessage();
 
 die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
@@ -442,6 +445,7 @@ Sample prop file:
   <username>apidb</username>
   <maxRebuildMinutes>180</maxRebuildMinutes>
   <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
+  <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
 </tuningProps>
 });
 }
