@@ -4,15 +4,23 @@
   <constant name="strainAbbrev" value="ME49"/>
   <constant name="project" value="ToxoDB"/>
   <constant name="ncbiTaxonId" value="29176"/>
+  <constant name="ncbiSpeciesTaxonId" value="29176"/>
   <constant name="genomeRSRC" value="tgonME49_supercontig_JCVI_RSRC"/>
   <constant name="genomeVersion" value="????"/>
 
+  <dataset class="validateOrganismInfo">
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="strainAbbrev">$$strainAbbrev$$</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="ncbiSpeciesTaxonId">$$ncbiSpeciesTaxonId$$</prop>
+  </dataset>
 
   <!-- OldName: T.gondiiME49_contigsGB   OldVersion: 2008-07-23 -->
   <dataset class="genbank_primary_genome">
     <prop name="project">$$project$$</prop>
-    <prop name="orgAbbrev">$$orgAbbrev$$</prop>
-    <prop name="ncbiTaxId">$$ncbiTaxId$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
     <prop name="name">JCVI</prop>
     <prop name="version">$$genomeVersion$$</prop>
     <prop name="soTerm">supercontig</prop>
@@ -22,8 +30,8 @@
   <!-- OldName: TgondiiApicoplast   OldVersion: 2009-04-15 -->
   <dataset class="genbank_secondary_genome">
     <prop name="project">$$project$$</prop>
-    <prop name="orgAbbrev">$$orgAbbrev$$</prop>
-    <prop name="ncbiTaxId">$$ncbiTaxId$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
     <prop name="name">genbank</prop>
     <prop name="version">???</prop>
     <prop name="soTerm">apicoplast_chromosome</prop>
@@ -42,14 +50,14 @@
 
   <!-- OldName: ME49_GLEAN   OldVersion: 2003-08-13 -->
   <dataset class="genomeFeatures_GFF2">
-    <prop name="project">$$project$$</prop>
-    <prop name="orgAbbrev"/>
-    <prop name="ncbiTaxId"/>
     <prop name="name">GLEAN</prop>
     <prop name="version">2003-08-13</prop>
-    <prop name="parentResource">$$genomeRSRC$$</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: ME49_Annotation   OldVersion: 3 -->
@@ -58,6 +66,10 @@
     <prop name="version">2008-08-15</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: ME49_GlimmerHMM   OldVersion: 2003-08-13 -->
@@ -66,7 +78,11 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
-  </dataset>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
+     </dataset>
 
   <!-- OldName: ME49_TigrScan   OldVersion: 2003-08-13 -->
   <dataset class="genomeFeatures_GFF2">
@@ -74,6 +90,10 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: ME49_TwinScan   OldVersion: 2003-08-13 -->
@@ -82,6 +102,10 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
 
@@ -91,6 +115,10 @@
     <prop name="version">2003-08-13</prop>
     <prop name="mapFile">TIGRGffFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">GenePrediction</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: Einstein_Centromeres   OldVersion: 2009-06-18 -->
@@ -100,26 +128,38 @@
     <prop name="version">2009-06-18</prop>
     <prop name="mapFile">ToxoDB/toxoFeatures2gus.xml</prop>
     <prop name="gff2GroupTag">ID</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
+    <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
 
   <!-- OldName: Entrez_Gene_dbxref   OldVersion: 12-01-2009 -->
   <dataset class="dbxref_gene2Entrez">
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
     <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
   <!-- OldName: Uniprot_Gene_dbxref   OldVersion: 11-24-2009 -->
   <dataset class="dbxref_gene2Uniprot">
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiTaxonId">$$ncbiTaxonId$$</prop>
     <prop name="parentResource">$$genomeRSRC$$</prop>
   </dataset>
 
 
   <!-- OldName: Antibody   OldVersion: 1 -->
   <dataset class="dbxref_simple">
-    <prop name="name">genes2EinsteinAntibodies</prop>
+    <prop name="name">gene2EinsteinAntibodies</prop>
     <prop name="version">2008-08-26</prop>
     <prop name="columnSpec">primary_identifier,remark,secondary_identifier</prop>
     <prop name="table">DbRefAASequence</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
   </dataset>
 
 
@@ -129,6 +169,8 @@
     <prop name="version">2008-08-11</prop>
     <prop name="columnSpec">primary_identifier</prop>
     <prop name="table">DbRefNASequence</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
   </dataset>
 
 
@@ -138,18 +180,27 @@
     <prop name="version">2006-04-06</prop>
     <prop name="columnSpec">primary_identifier,lowercase_secondary_identifier,remark</prop>
     <prop name="table">DbRefAAFeature</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
   </dataset>
 
 
+  <!-- move this to dbxref_simple and do the unpack in man dev -->
   <!-- OldName: ApiLoc_EupathDB_Dbrefs   OldVersion: 2010-03-29 -->
-  <dataset class="dbxref_ApiLoc">
+  <dataset class="dbxref_gene2ApiLoc">
     <!-- organism name as found on the ApiLoc site -->
     <prop name="ApiLocOrganism">Toxoplasma gondii</prop>
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
   </dataset>
 
 
   <!-- OldName: dbEST   OldVersion: 2009-09-25 -->
-  <dataset class="dbEST"/>
+  <dataset class="dbEST">
+    <prop name="project">$$project$$</prop>
+    <prop name="organismAbbrev">$$organismAbbrev$$</prop>
+    <prop name="ncbiSpeciesTaxonId">$$ncbiSpeciesTaxonId$$</prop>
+  </dataset>
 
 
   <!-- OldName: GeneticMarkers_Sibley   OldVersion: 1 -->
