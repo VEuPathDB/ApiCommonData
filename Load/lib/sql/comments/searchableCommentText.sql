@@ -4,9 +4,14 @@ is
     smooshed clob;
 begin
     select c.headline || '|' || c.content || '|' || 
-           u.first_name || ' ' || u.last_name || '(' || u.organization || ')' into smooshed
-    from comments2.comments c, userlogins3.users u
+           u.first_name || ' ' || u.last_name || '(' || u.organization || ')' || authors.authors into smooshed
+    from comments2.comments c, userlogins3.users u,
+         (select comment_id, apidb.tab_to_string(set(CAST(COLLECT(source_id) AS apidb.varchartab)), ', ') as authors
+          from comments2.CommentReference
+          where database_name = 'author'
+          group by comment_id) authors
     where c.user_id = u.user_id(+)
+      and c.comment_id = authors.comment_id(+)
       and c.comment_id = p_comment_id;
     return smooshed;
 end;
