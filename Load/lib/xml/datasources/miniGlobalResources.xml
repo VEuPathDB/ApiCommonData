@@ -57,6 +57,7 @@
   <resource resource="PDBProteinSequences_RSRC" version="@@PDBProteinSequences_VER@@"
       plugin="ApiCommonData::Load::Plugin::LoadNothing">
      <manualGet fileOrDir="global/pdb/%RESOURCE_VERSION%/pdb.fsa"/>
+   <getAndUnpackOutput file="@@dataDir@@/pdb.fsa"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
 
