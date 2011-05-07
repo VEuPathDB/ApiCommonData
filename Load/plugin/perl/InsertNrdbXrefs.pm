@@ -119,7 +119,7 @@ sub createExtDbAndExtDbRls{
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
   my (%dbAbbrevList,%dbRlsList);
-  while (<XREFMAP>){ #first scan of mapping file to cread extDbAndextDbRls for each dbAbbrev
+  while (<XREFMAP>){ #first scan of mapping file to cread extDbAndextDbRls for each dbAbbreviation
 
     $self->undefPointerCache(); #if at bottom, not always hit
 
