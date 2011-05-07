@@ -22,6 +22,11 @@
     <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName EtenellaHoughton_genome_RSRC --genomeDbVer @@EtenellaHoughton_genome_VER@@ </pluginArgs>
   </resource>
 
+  <resource resource="EtenellaHoughton_previds_dbxref_RSRC" version="@@EtenellaHoughton_genome_VER@@"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="ToxoDB/etenellaHoughton/dbxref/EtenellaHoughton_genome_RSRC/%RESOURCE_VERSION%/EtenellaHoughton_previds.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/EtenellaHoughton_previds.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'EtenellaHoughton_genome_RSRC|@@EtenellaHoughton_genome_VER@@' --idType 'previous id'</pluginArgs>
+  </resource>
 
 <!--ESTResource-->
   <resource resource="EtenellaHoughton_dbEST_RSRC" version="@@EtenellaHoughton_dbEST_VER@@"
