@@ -476,6 +476,8 @@ begin
            then return 'MicrosporidiaDB';
          when 'vittaforma'
            then return 'MicrosporidiaDB';
+         when 'vavraia'
+           then return 'MicrosporidiaDB';
          when 'nematocida'
            then return 'MicrosporidiaDB';
          when 'octosporea'
