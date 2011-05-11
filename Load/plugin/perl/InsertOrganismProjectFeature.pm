@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertOrganismProjectFeature;
+package ApiCommonData::Load::Plugin::InsertOrganism;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -7,7 +7,7 @@ use warnings;
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 use GUS::PluginMgr::Plugin;
-use GUS::Model::ApiDB::OrganismProject;
+use GUS::Model::ApiDB::Organism;
 
 
 
@@ -18,14 +18,68 @@ use GUS::Model::ApiDB::OrganismProject;
 
   my $argsDeclaration  =
     [
-     stringArg({ name => 'organism',
-		 descr => 'organism name',
+     stringArg({ name => 'fullName',
+		 descr => 'organism full name (must match',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'ncbiTaxonId',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'speciesNcbiTaxonId',
+		 descr => '',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
 	       }),
      stringArg({ name => 'projectName',
-		 descr => 'project name',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'abbrev',
+		 descr => 'eg tgonME49',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'abbrevPublic',
+		 descr => 'eg tgME49',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'abbrevForFilenames',
+		 descr => 'eg TgondiiME49',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'abbrevOrthomcl',
+		 descr => 'eg tgon',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'abbrevStrain',
+		 descr => 'eg ME49',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     intArg({ name => 'isReferenceGenome',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     intArg({ name => 'isDraftGenome',
+		 descr => '',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
@@ -38,7 +92,7 @@ use GUS::Model::ApiDB::OrganismProject;
 # ----------------------------------------------------------
 
   my $description = <<DESCR;
-Plugin to load organism and project mappings
+Load organism names and project mappings.  Validate organism full name and species ncbi taxon id against ncbi taxon id.
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -93,16 +147,46 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  my $organism = $self->getArg('organism');
+  my $fullName = $self->getArg('fullName');
+  my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
+  my $speciesNcbiTaxonId = $self->getArg('speciesNcbiTaxonId');
+  my $abbrev = $self->getArg('abbrev');
+  my $abbrevPublic = $self->getArg('abbrevPublic');
+  my $abbrevForFilenames = $self->getArg('abbrevForFilenames');
+  my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
+  my $abbrevStrain = $self->getArg('abbrevStrain');
+  my $isReferenceGenome = $self->getArg('isReferenceGenome');
+  my $isDraftGenome = $self->getArg('isDraftGenome');
+  my $projectName = $self->getArg('projectName');
 
-  my $project = $self->getArg('projectName');
+  # validate full name against ncbi taxon id
+  my $sql = "select t.taxon_id, t.ncbi_tax_id 
+             from sres.taxonname tn, sres.taxon t
+             where tn.name = '$fullName'
+             and tn.name_class = 'scientific name'
+             and t.taxon_id = tn.taxon_id";
+  my $sth = $self->prepareAndExecute($sql);
+  my ($taxon_id, $ncbi_tax_id) = $sth->fetchrow_array();
+  
+  $self->error("fullName '$fullName' and ncbiTaxonId '$ncbiTaxonId' do not match, according to SRes.TaxonName") unless $ncbi_tax_id eq $ncbiTaxonId;
+  
+  # validate species ncbi taxon id against ncbi taxon id
 
-  my $organismProject =  GUS::Model::ApiDB::OrganismProject->new({'organism' => $organism,
-					     'project' => $project,});
+  my $organism =  GUS::Model::ApiDB::Organism->new({'taxon_id' => $taxon_id,
+						    'project_name' => $projectName,
+						    'abbrev' => $abbrev,
+						    'abbrev_public' => $abbrevPublic,
+						    'abbrev_for_filenames' => $abbrevForFilenames,
+						    'abbrev_orthomcl' => $abbrevOrthomcl,
+						    'abbrev_strain' => $abbrevStrain,
+						    'is_reference_genome' => $isReferenceGenome,
+						    'is_draft_genome' => $isDraftGenome,
+						    '' => $,
+						   });
 
   $organismProject->submit() unless $organismProject->retrieveFromDB();
 
-  my $msg = "$project -> $organism added to apidb.OrganismProject.";
+  my $msg = "$fullName added to apidb.Organism.";
 
   $self->log("$msg \n");
 
@@ -112,6 +196,6 @@ sub run {
 
 
 sub undoTables {
-  return qw(ApiDB.OrganismProject
+  return qw(ApiDB.Organism
            );
 }
