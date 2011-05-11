@@ -419,7 +419,9 @@ SQL
           my $cvterm = $2;
           $insertStatement->execute($genePeps{$pep}, $geneNames{$pep}, $pep, $accession) or die("inserting a ChangedGeneProduct record");
           $products++;
-          ApiCommonData::Load::TuningConfig::Log::addLog("mismatch: accession \"$accession\" CV term \"$cvterm\"") if (lc($accession) ne lc($cvterm));
+          # this happens all the time because of white-space differences, and isn't worth mentioning.
+          # ApiCommonData::Load::TuningConfig::Log::addLog("mismatch: accession \"$accession\" CV term \"$cvterm\"")
+          #   if (lc($accession) ne lc($cvterm));
       }
     }
 
