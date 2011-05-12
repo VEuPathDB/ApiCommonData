@@ -50,5 +50,50 @@ Expression profiling of Tgondii ME49 Boothroyd data
     </info>
   </resource>
 
+
+  <resource resource="Toxoplasma_RFLP_Su_RSRC" version="2011-05-05"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="ToxoDB/tgondiiME49/isolate/ChunleiSu_RFLP/%RESOURCE_VERSION%/final/140RFLPGenotypes.txt"/>
+    <unpack>createRFLPGff --input_file @@dataDir@@/140RFLPGenotypes.txt --output_fasta  @@dataDir@@/RFLPs.fasta --output_gff @@dataDir@@/RFLPs.gff</unpack>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5811 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/RFLPs.fasta --SOTermName 'region'  --regexSourceId "^>(.*)" --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <info
+        displayName="T. gondii RFLP data"
+        project="ToxoDB"
+        organisms="Toxoplasma"
+        category="Genome"
+        publicUrl=""
+        contact="Chunlei Su"
+        email="csu1@utk.edu"
+        institution="UTK">
+      <description>
+        <![CDATA[
+  <i>T. gondii</i> RFLP sequences (Chunlei Su lab)
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="Toxoplasma_RFLP_feature_Su_RSRC" version="2011-05-05" parentResource="Toxoplasma_RFLP_Su_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/ToxoDB/toxoIsolatesGenbank2gus.xml --inputFileOrDir @@dataDir@@/../Toxoplasma_RFLP_Su_RSRC/RFLPs.gff --inputFileExtension "gff"  --fileFormat gff2 --gff2GroupTag locus_tag --soCvsVersion @@SO_VER@@ --defaultOrganism "Toxoplasma gondii"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        displayName="T. gondii RFLP data"
+        project="ToxoDB"
+        organisms="Toxoplasma"
+        category="Ignore"
+        publicUrl=""
+        contact="Chunlei Su"
+        email="csu1@utk.edu"
+        institution="UTK">
+      <description>
+        <![CDATA[
+  <i>T. gondii</i> RFLP sequences (Chunlei Su lab).
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 </resources>
    
