@@ -72,15 +72,18 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     intArg({ name => 'isReferenceGenome',
+     booleanArg({ name => 'isReferenceGenome',
 		 descr => '',
-		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     intArg({ name => 'isDraftGenome',
+     booleanArg({ name => 'isDraftGenome',
 		 descr => '',
-		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     booleanArg({ name => 'hasTemporaryNcbiTaxonId',
+		 descr => '',
 		 reqd  => 1,
 		 isList => 0,
 	       }),
@@ -157,6 +160,7 @@ sub run {
   my $abbrevStrain = $self->getArg('abbrevStrain');
   my $isReferenceGenome = $self->getArg('isReferenceGenome');
   my $isDraftGenome = $self->getArg('isDraftGenome');
+  my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
   my $projectName = $self->getArg('projectName');
 
   # validate full name against ncbi taxon id
@@ -171,6 +175,24 @@ sub run {
   $self->error("fullName '$fullName' and ncbiTaxonId '$ncbiTaxonId' do not match, according to SRes.TaxonName") unless $ncbi_tax_id eq $ncbiTaxonId;
   
   # validate species ncbi taxon id against ncbi taxon id
+  my $sql = "select ncbi_tax_id 
+             from 
+              (select ncbi_tax_id, rank from sres.taxon
+               connect by taxon_id = prior parent_id 
+               start with taxon_id = $ncbiTaxonId) t
+             where t.rank = 'species'";
+  my $sth = $self->prepareAndExecute($sql);
+  my ($species_ncbi_tax_id) = $sth->fetchrow_array();
+  
+  $self->error("speciesNcbiTaxonId '$speciesNcbiTaxonId' is not the species ncbi taxon id for ncbi taxon id '$ncbiTaxonId'.  (The species in the taxonomy table is '$species_ncbi_tax_id')") unless $species_ncbi_tax_id eq $speciesNcbiTaxonId;
+
+  # validate temp ncbi taxon id
+  if ($hasTemporaryNcbiTaxonId && $ncbiTaxonId < 9000000000) {
+      $self->error("hasTemporaryNcbiTaxonId is true but the provided ncbi taxon ID does not look like a temporary one.  (It must be greater than 9000000000 to be a temp ID)");
+  }
+  if (!$hasTemporaryNcbiTaxonId && $ncbiTaxonId >= 9000000000) {
+      $self->error("hasTemporaryNcbiTaxonId is false but the provided ncbi taxon ID looks like a temporary one.  (It must be greater than 9000000000 to be a temp ID)");
+  }
 
   my $organism =  GUS::Model::ApiDB::Organism->new({'taxon_id' => $taxon_id,
 						    'project_name' => $projectName,
@@ -181,7 +203,7 @@ sub run {
 						    'abbrev_strain' => $abbrevStrain,
 						    'is_reference_genome' => $isReferenceGenome,
 						    'is_draft_genome' => $isDraftGenome,
-						    '' => $,
+						    'has_temp_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
 						   });
 
   $organismProject->submit() unless $organismProject->retrieveFromDB();
