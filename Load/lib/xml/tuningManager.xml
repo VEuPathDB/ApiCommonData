@@ -2421,6 +2421,31 @@ TABLESPACE indx
 ALTER TABLE apidb.SpliceSiteGenes&1 ADD ( is_dominant number(1), percent_diff_from_next number(3) )
       ]]>
     </sql>
+    <perl>
+      <![CDATA[ 
+      use strict;
+      use lib "$ENV{GUS_HOME}/lib/perl";
+# set is_dominant for splice site with max count_per_million for each (sample_name, source_id)
+      my $sql = <<SQL;
+UPDATE apidb.spliceSiteGenes&1 SET is_dominant=1, percent_diff_from_next=100
+WHERE splice_site_feature_id in
+ (SELECT splice_site_feature_id
+  FROM apidb.spliceSiteGenes ssg,
+      (SELECT max(count_per_million) as max_max, sample_name, source_id
+       FROM apidb.spliceSiteGenes
+       GROUP BY source_id, sample_name) x
+  WHERE ssg.count_per_million=x.max_max
+  AND ssg.sample_name = x.sample_name
+  AND ssg.source_id =x.source_id
+  GROUP BY ssg.source_id, ssg.sample_name,x.max_max,splice_site_feature_id
+ )
+SQL
+      my $queryHandle = $dbh->prepare($sql);
+      $queryHandle->execute();
+
+      $queryHandle->finish();
+      ]]> 
+    </perl>
   </tuningTable>
 
   <tuningTable name="apidb.EstAlignmentGeneSummary">
