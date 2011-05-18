@@ -142,7 +142,6 @@ sub insertManuallyMappedTerms {
     # Get na_sequence_id for the orig, BUT isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $isolateVocabularyIds->{$mapTerm}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
-
     $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $naSequenceIds);
   }
   return $count;
@@ -212,13 +211,13 @@ Sql
 select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
 Sql
 # probably not needed anymore
-#             'ExternalNaSequence' => <<Sql,
-#select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
-#Sql
+             'ExternalNaSequence' => <<Sql,
+select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
+Sql
             );
 
   my @tables = ('IsolateFeature', 'IsolateSource',
-#		'ExternalNaSequence'
+		'ExternalNaSequence'
       );
 
   my $dbh = $self->getDbh();
