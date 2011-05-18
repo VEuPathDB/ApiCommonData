@@ -113,10 +113,13 @@ sub makeHashFromTerms {
 
 sub getXml {
   my ($self, $value, $type) = @_;
+  my $typeInTable = $type;
+  $typeInTable = 'country' if ($type eq 'geographic_location');
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$type\" original=\"$value\">
+  <initial table=\"IsolateSource\" field=\"$type\">
+   <original>$value<\/original>
     <maps>
-      <row type=\"$type\" value=\"\" \/>
+      <row type=\"$typeInTable\" value=\"\" \/>
     <\/maps>
   <\/initial>
 END
