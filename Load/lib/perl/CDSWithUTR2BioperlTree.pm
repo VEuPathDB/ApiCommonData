@@ -110,6 +110,18 @@ sub preprocess {
       my $geneLoc = $gene->location();
       my $codingLoc = $geneLoc;
       my @codingLocs = $codingLoc->each_Location();
+      my @subLocs = $geneLoc->each_Location();
+      
+      my(@utr5Locs,@utr3Locs);
+      if($UTR5Prime{$systematicId}){
+	  @utr5Locs = $UTR5Prime{$systematicId}->location->each_Location();
+	  
+      }
+
+      if($UTR3Prime{$systematicId}){
+	  @utr3Locs = $UTR3Prime{$systematicId}->location->each_Location();
+	  
+      }
 
       
       my (@codingStart,@codingEnd);
@@ -126,73 +138,76 @@ sub preprocess {
 	  }
 	  $codingLocCtr++;
       }
-      
+
+      my @exonLocs;
+
+ 
+
+      if($geneLoc->strand == -1){
+
+	  push(@exonLocs,@utr3Locs,@codingLocs,@utr5Locs);
 
 
-      my @subLocs = $geneLoc->each_Location();
+      }else{
+	  push(@exonLocs,@utr5Locs,@codingLocs,@utr3Locs);
 
-
-
-      if($UTR5Prime{$systematicId}){
-	  my $sysId;
-	  if($UTR5Prime{$systematicId}){
-	      $sysId = $systematicId;
-	      $sysId = $altSysId;
-	  }
 	  
-          if($geneLoc->strand == -1){
-              
-              if(($UTR5Prime{$sysId}->start() -1) != $subLocs[$#subLocs]->end() && ($UTR5Prime{$sysId}->start()) != $subLocs[$#subLocs]->end()){
-                  $UTR5PExon = $UTR5Prime{$sysId};
-              }else{
-                  $subLocs[$#subLocs]->end($UTR5Prime{$sysId}->end);
-                  
-              }
-
-
-          }else{
-              if(($UTR5Prime{$sysId}->end() + 1) != $subLocs[0]->start() && ($UTR5Prime{$sysId}->end()) != $subLocs[0]->start()){
-                  $UTR5PExon = $UTR5Prime{$sysId};
-              }else{
-                  $subLocs[0]->start($UTR5Prime{$sysId}->start);
-              }
-
-          }
-
       }
 
-      if($UTR3Prime{$systematicId}){
-	  
-	  my $sysId;
-	  if($UTR3Prime{$systematicId}){
-	      $sysId = $systematicId;
-
-	  }
-          if($geneLoc->strand == -1){
-              if((($UTR3Prime{$sysId}->end() + 1) != $subLocs[0]->start())&&(($UTR3Prime{$sysId}->end()) != $subLocs[0]->start())){
-                  $UTR3PExon = $UTR3Prime{$sysId};
-              }else{
-                  $subLocs[0]->start($UTR3Prime{$sysId}->start);   
-              }
-
-
-          }else{
-              if((($UTR3Prime{$sysId}->start() - 1) != $subLocs[$#subLocs]->end())&&(($UTR3Prime{$sysId}->start()) != $subLocs[$#subLocs]->end())){
-                  $UTR3PExon = $UTR3Prime{$sysId};
-              }else{
-                  $subLocs[$#subLocs]->end($UTR3Prime{$sysId}->end);
-              }
-
-
-          }
-
-      }
-
-
-
+      print "Hello\n";
+      print Dumper @exonLocs;
 
       
-      my $transcriptLoc = Bio::Location::Split->new();
+
+      
+  #    print Dumper $geneLoc;
+
+      print "------------------------\n";
+
+      my @exonLocations;
+
+ #     my $prevStart = 0;
+      my $prevEnd = 0;
+      
+      my $exonCtr = 0;
+      foreach my $exonLoc (@exonLocs){
+
+	  if($prevEnd == $exonLoc->start() || $prevEnd == $exonLoc->start()-1){
+#	      splice(@exonLocations,$exonCtr-2,1);
+	      print "$prevEnd ".$exonLoc->start();
+	      $exonLocations[$exonCtr-1]->end($exonLoc->end());
+	  }else{
+	      push(@exonLocations,$exonLoc);
+	      $exonCtr++;
+	  }
+
+	  $prevEnd = $exonLoc->end();
+	   
+      }
+
+     print Dumper @exonLocations;
+
+      if($geneLoc->strand == -1){
+
+
+
+	  if($utr3Locs[0]){
+	      $subLocs[0]->start($utr3Locs[0]->start());
+	  }
+	  if($utr5Locs[0]){
+	      $subLocs[$#subLocs]->end($utr5Locs[$#utr5Locs]->end());
+	  }	  
+      }else{
+
+
+	  if($utr5Locs[0]){
+	      $subLocs[0]->start($utr5Locs[0]->start());
+	  }
+	  if($utr3Locs[0]){
+	      $subLocs[$#subLocs]->end($utr3Locs[$#utr3Locs]->end());
+	  }	  
+      }
+            my $transcriptLoc = Bio::Location::Split->new();
 
 
       foreach my $loc (@subLocs){
@@ -200,10 +215,16 @@ sub preprocess {
       }
       
       $transcriptLoc->seq_id($geneLoc->seq_id);
+      
+ 
       my $transcript = &makeBioperlFeature("transcript", $transcriptLoc, $bioperlSeq);
 
 
-
+#     foreach my $tag (@geneTags){
+#	  if($tag ne 'shared_id' && $tag ne 'temporary_systematic_id' && $tag ne 'temporary_temporary_systematic_id'){
+#	      $transcript->add_tag_value($tag,$gene->get_tag_values($tag));
+#	  }
+#     }
 
 
 
@@ -213,97 +234,41 @@ sub preprocess {
 #      print STDERR Dumper $transcriptLoc;
 
       $gene->add_SeqFeature($transcript);
-      my @exonLocations = $transcriptLoc->each_Location();
+  #    my @exonLocations2 = $transcriptLoc->each_Location();
 
 
       $codingLocCtr = 0;
       foreach my $exonLoc (@exonLocations) {
 	my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
 	if($type eq 'coding'){
-	    if($exonLoc->strand == -1){
-		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] - $codonStart);
-		$exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
-	    }else{
-		$exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] + $codonStart);
-		$exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
-	    }
-	}
+	   if($codingStart[$codingLocCtr] >= $exonLoc->start() && $codingStart[$codingLocCtr] <= $exonLoc->end()){  
+	       if($exonLoc->strand == -1){
+		   $exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] - $codonStart);
+		   $exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
+	       }else{
+		   $exon->add_tag_value('CodingStart',$codingStart[$codingLocCtr] + $codonStart);
+		   $exon->add_tag_value('CodingEnd',$codingEnd[$codingLocCtr]);
+	       }
+	       $codingLocCtr++;
+	   }else{
+	       $exon->add_tag_value('CodingStart','');
+	       $exon->add_tag_value('CodingEnd','');
+	   }
 
-	$codingLocCtr++;
+       }else{
+	   $exon->add_tag_value('CodingStart','');
+	   $exon->add_tag_value('CodingEnd','');
+       }
 
 	$transcript->add_SeqFeature($exon);
-      }
-
-      if($UTR5PExon){
-	  if($gene->location->strand() == -1){
-               $subLocs[$#subLocs]->end($UTR3PExon->end);
-#	      $gene->location->end($UTR5PExon->end());
-	  }else{
-               $subLocs[0]->start($UTR3PExon->start());
-	#      $gene->location->start($UTR5PExon->start());
-	  }
-
-	  if(ref($transcript) == 'Bio::Location::Simple'){
-	      my $newTranscriptLoc = Bio::Location::Split->new();
-	      $newTranscriptLoc->add_sub_Location($transcript->location());
-	      $newTranscriptLoc->add_sub_Location($UTR5PExon->location());	      
-	      $transcript->location($newTranscriptLoc);
-
-	  }else{
-	      $transcript->location()->add_sub_Location($UTR5PExon->location());
-	  }
-          my $exon = &makeBioperlFeature("exon",$UTR5PExon->location(), $bioperlSeq);
-          $exon->add_tag_value('CodingStart','');
-          $exon->add_tag_value('CodingEnd','');
-          $transcript->add_SeqFeature($exon);
-      }
-
-      if($UTR3PExon){
-
-	  if($gene->location->strand() == -1){
-               $subLocs[0]->start($UTR3PExon->start());
-	    #  $gene->location->start($UTR3PExon->start());
-#	      print Dumper $gene->location();
-	  }else{
-               $subLocs[$#subLocs]->end($UTR3PExon->end);
-	      #$gene->location->end($UTR3PExon->end());
-	  }
-
-	  if(ref($transcript) == 'Bio::Location::Simple'){
-	      my $newTranscriptLoc = Bio::Location::Split->new();
-	      $newTranscriptLoc->add_sub_Location($transcript->location());
-	      $newTranscriptLoc->add_sub_Location($UTR3PExon->location());	      
-	      $transcript->location($newTranscriptLoc);
-
-	  }else{
-	      $transcript->location()->add_sub_Location($UTR3PExon->location());
-	  }
-
-          my $exon = &makeBioperlFeature("exon", $UTR3PExon->location(), $bioperlSeq);
-          $exon->add_tag_value('CodingStart','');
-          $exon->add_tag_value('CodingEnd','');
-          $transcript->add_SeqFeature($exon);
-      }
+    }
 
 
-#      if($sharedId){
+#      print Dumper $gene;
+      $bioperlSeq->add_SeqFeature($gene);
 
-#	  $gene->remove_tag('systematic_id');
-#	  $gene->add_tag_value('systematic_id',$sharedId);
+      
 
-#	  $prevSharedId = $sharedId;
-#	  $sharedGene = $gene;
-#	  undef $gene;
-	  
-#      }else{
-#	  if($sharedGene){
-#	      $bioperlSeq->add_SeqFeature($sharedGene);
-#	  }
-	  $bioperlSeq->add_SeqFeature($gene);
-#	  $prevSharedId = '';
-#	  undef $sharedGene;
-
-#      }
   }else{
 
       $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
