@@ -59,4 +59,26 @@
     </info>
   </resource>
 
+  <resource resource="Cfasci_contigs_DBRefs_RSRC" version="12.0"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/cfasci/dbxref/dbRefNASequence/%RESOURCE_VERSION%/final/dbxref_contig_id.tab"/>
+    <pluginArgs>-DbRefMappingFile @@dataDir@@/dbxref_contig_id.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence" --geneExternalDatabaseSpec 'Cfasci_contigs_RSRC|@@Cfasci_contigs_VER@@'</pluginArgs>
+    <info
+        displayName="C.fasciculata contig source_id DBRefs"
+        project="TriTrypDB"
+        organisms="@@CfasciOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+The sequence source ids for Crithidia now have Cf_ prepended.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 </resources>

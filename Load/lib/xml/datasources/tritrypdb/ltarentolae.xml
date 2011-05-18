@@ -22,4 +22,25 @@ Chromosome sequence for Leishmania tarentolae is provided by  the CIHR Group on 
     </info>
   </resource>
 
+  <resource resource="Ltarentolae_contigs_DBRefs_RSRC" version="2009-04-07"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="TriTrypDB/ltarentolae/dbxref/dbRefNASequence/%RESOURCE_VERSION%/final/dbxref_contig_id.tab"/>
+    <pluginArgs>-DbRefMappingFile @@dataDir@@/dbxref_contig_id.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence" --geneExternalDatabaseSpec 'Ltarentolae_contigs_RSRC|@@Ltarentolae_contigs_VER@@'</pluginArgs>
+    <info
+        displayName="L. tarentolae contig source_id DBRefs"
+        project="TriTrypDB"
+        organisms="@@LtarentolaeOrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+The sequence source ids for L tarentolae source_ids prepended with Lt_.
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 </resources>
