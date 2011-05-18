@@ -2359,7 +2359,7 @@ order by na_sequence_id, alpha
       <![CDATA[
 CREATE TABLE apidb.SpliceSiteGenes&1 NOLOGGING AS
 select * from
-(select ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
+(select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
 CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
@@ -2369,7 +2369,7 @@ and ga.strand='forward'
 and ssf.strand ='+' and ssf.type='Splice Site' 
 and ssf.location<= ga.gamma and ssf.location>= ga.alpha
 UNION
-select ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
+select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.beta-ssf.location) as dist_to_cds,
 CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
@@ -2379,7 +2379,7 @@ and ga.strand='reverse'
 and ssf.strand ='-' and ssf.type='Splice Site' 
 and ssf.location<= ga.gamma and ssf.location>= ga.alpha
 UNION
-select ssf.location, ssf.strand, ga.source_id, abs(ga.gamma-ssf.location) as dist_to_cds,
+select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.gamma-ssf.location) as dist_to_cds,
 CASE WHEN (ssf.location<ga.gamma) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
@@ -2389,7 +2389,7 @@ and ga.strand='forward'
 and ssf.strand ='-' and ssf.type='Poly A' 
 and ssf.location<= ga.delta and ssf.location>= ga.beta
 UNION
-select ssf.location, ssf.strand, ga.source_id, abs(ga.alpha-ssf.location) as dist_to_cds,
+select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.alpha-ssf.location) as dist_to_cds,
 CASE WHEN (ssf.location>ga.alpha) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
@@ -2404,9 +2404,21 @@ order by na_sequence_id, location
     </sql>
     <sql>
       <![CDATA[
-create index apidb.ssg_ix&1
-on apidb.SpliceSiteGenes&1 (source_id, na_sequence_id, location, type)
-tablespace indx
+CREATE INDEX apidb.ssg_ix&1
+ON apidb.SpliceSiteGenes&1 (source_id, na_sequence_id, location, type)
+TABLESPACE indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX apidb.ssg_2_ix&1
+ON apidb.SpliceSiteGenes&1 (splice_site_feature_id, count_per_million, sample_name, source_id)
+TABLESPACE indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+ALTER TABLE apidb.SpliceSiteGenes&1 ADD ( is_dominant number(1), percent_diff_from_next number(3) )
       ]]>
     </sql>
   </tuningTable>
