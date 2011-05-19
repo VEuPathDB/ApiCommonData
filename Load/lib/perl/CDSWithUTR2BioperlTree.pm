@@ -154,15 +154,15 @@ sub preprocess {
 	  
       }
 
-      print "Hello\n";
-      print Dumper @exonLocs;
+      #print "Hello\n";
+      #print Dumper @exonLocs;
 
       
 
       
   #    print Dumper $geneLoc;
 
-      print "------------------------\n";
+      #print "------------------------\n";
 
       my @exonLocations;
 
@@ -174,7 +174,7 @@ sub preprocess {
 
 	  if($prevEnd == $exonLoc->start() || $prevEnd == $exonLoc->start()-1){
 #	      splice(@exonLocations,$exonCtr-2,1);
-	      print "$prevEnd ".$exonLoc->start();
+	      #print "$prevEnd ".$exonLoc->start();
 	      $exonLocations[$exonCtr-1]->end($exonLoc->end());
 	  }else{
 	      push(@exonLocations,$exonLoc);
@@ -185,7 +185,7 @@ sub preprocess {
 	   
       }
 
-     print Dumper @exonLocations;
+     #print Dumper @exonLocations;
 
       if($geneLoc->strand == -1){
 
