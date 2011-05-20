@@ -2443,6 +2443,39 @@ SQL
       my $queryHandle = $dbh->prepare($sql);
       $queryHandle->execute();
 
+# fix  percent_diff_from_next for cases when there is another (lower count) splice site
+      $sql = <<SQL;
+SELECT y.splice_site_feature_id,
+round( ( (x.max_max - max(ssg.count_per_million)) / x.max_max*100), 2) as diff
+FROM apidb.spliceSiteGenes ssg, apidb.spliceSiteGenes y,
+ (SELECT max(count_per_million) as max_max, sample_name, source_id
+  FROM apidb.spliceSiteGenes
+  GROUP BY source_id, sample_name) x
+WHERE ssg.count_per_million < x.max_max
+AND ssg.sample_name = x.sample_name
+AND ssg.source_id = x.source_id
+AND y.sample_name = ssg.sample_name and y.source_id = ssg.source_id and y.count_per_million = x.max_max
+GROUP BY ssg.source_id, ssg.sample_name,x.max_max,y.splice_site_feature_id
+SQL
+
+      $queryHandle = $dbh->prepare($sql);
+      $queryHandle->execute();
+
+      $sql = <<SQL;
+UPDATE apidb.spliceSiteGenes&1
+   SET percent_diff_from_next = ?
+ WHERE splice_site_feature_id = ?
+SQL
+
+      my $updateHandle = $dbh->prepare($sql);
+      while (my ($splice_site_na_feat_id, $diff)
+             = $queryHandle->fetchrow_array()) {
+
+        if ($splice_site_na_feat_id) {
+	  $updateHandle->execute($diff, $splice_site_na_feat_id);
+	}
+      }
+      $updateHandle->finish();
       $queryHandle->finish();
       ]]> 
     </perl>
