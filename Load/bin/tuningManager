@@ -668,7 +668,7 @@ sub clearDeadLock {
     return;
   }
 
-  my $pid_test = ` ps -fp $pid|tail +2|wc -l`;
+  my $pid_test = ` ps -fp $pid|tail -n +2|wc -l`;
   chomp($pid_test);
   if (!$pid_test) {
     # named process no longer exists; null out CURRENT_UPDATER
