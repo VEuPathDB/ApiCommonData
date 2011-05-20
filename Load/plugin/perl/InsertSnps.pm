@@ -113,6 +113,14 @@ sub getArgumentsDeclaration{
                 default => 'gff2',
 		isList => 0,
 	       }),
+     booleanArg({name => 'NGS_SNP',
+		descr => 'these snps are being generated as NGS snps and will reuse the snp at this location',
+		constraintFunc=> undef,
+		reqd  => 0,
+                default => 0,
+		isList => 0,
+	       }),
+
     ];
   return $argsDeclaration;
 }
@@ -122,9 +130,9 @@ sub getArgumentsDeclaration{
 # ----------------------------------------------------------------------
 
 sub getDocumentation {
-  my $purposeBrief = "Inserts SNP data into DoTS.SeqVariation and the location into DoTS.NALocation";
+  my $purposeBrief = "Inserts SNP data into DoTS.SeqVariation and DoTS.SnpFeature and the location into DoTS.NALocation";
 
-  my $purpose = "Inserts SNP information from a gff formatted file into into DoTS.SeqVariation and the location into DoTS.NALocation.";
+  my $purpose = "Inserts SNP information from a gff formatted file into into DoTS.SeqVariation and DoTS.SnpFeature and the location into DoTS.NALocation.";
 
   my $tablesAffected = [['DoTS::SeqVariation', 'One or more rows inserted per SNP, row number equal to strain number'],['DoTS::NALocation', 'A single row inserted per SNP']];
 
@@ -177,6 +185,9 @@ sub run {
 
   $dbh = $self->getQueryHandle();
   $dbh->{'LongReadLen'} = 10_000_000;
+
+  ##set so doesn't update the algorithminvocation of updated objects
+  $self->getDb()->setDoNotUpdateAlgoInvoId(1);
 
   my $termName = $self->getArg('ontologyTerm');
   $self->{'soId'} = $self->getSoId($termName);
@@ -489,22 +500,26 @@ sub createSnpFeature {
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
     new({name => $name,
          sequence_ontology_id => $soId,
-         external_database_release_id => $extDbRlsId,
          source_id => $sourceId,
          reference_strain => $ref,
          organism => $organism,
 	});
 
-  $snpFeature->retrieveFromDB() if $self->getArg('restart');
+  ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
+  ## so can generate complete picture of snp.
+  $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
+  $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
+
+  $snpFeature->setExternalDatabaseReleaseId($extDbRlsId); ## set after retrieveFromDB ... noter that for ngs snps we will need to use the seqvariation to determine the source of the snp.
 
   my $naSeq = $self->getNaSeq($feature->seq_id());
   my $naLoc = $self->getNaLoc($start, $end);
 
-  $naSeq->setChild($snpFeature);
+  $snpFeature->setParent($naSeq);
   $snpFeature->addChild($naLoc);
 
   foreach ($feature->get_tag_values('Allele')) {
-    my ($strain, $base) = split(':', $_);
+    my ($strain, $base, $coverage, $percent, $quality, $pvalue) = split(':', $_);
 
     # Reverse Compliment if it is on the Reverse Strand
     if($strand == -1) {
@@ -535,11 +550,19 @@ sub createSnpFeature {
           });
 
     $seqVar->retrieveFromDB() if $self->getArg('restart');
+
+    ## deal with atts for NGS SNPs .. 
+    $seqVar->setCoverage($coverage) if $coverage;
+    $seqVar->setAllelePercent($percent) if $percent;
+    $seqVar->setPvalue($pvalue) if defined $pvalue;
+    $seqVar->setQuality($quality) if $quality;
+
     $seqVar->setParent($snpFeature);
     $seqVar->setParent($naSeq);
 
-    $naLoc = $self->getNaLoc($start, $end);
-    $seqVar->addChild($naLoc);
+## don't know why we need all these locations for seqvariations ... they are always the same as the parent snpfeature
+#    my $svLoc = $self->getNaLoc($start, $end);
+#    $seqVar->addChild($svLoc);
 
   }
   return $snpFeature;
@@ -553,7 +576,7 @@ sub getSoId {
   my $so = GUS::Model::SRes::SequenceOntology->new({'term_name'=>$termName});
 
   if (!$so->retrieveFromDB()) {
-    $self->error("No row has been added for term_name = SNP in the sres.sequenceontology table\n");
+    $self->error("No row has been added for term_name = $termName in the sres.sequenceontology table\n");
   }
 
   my $soId = $so->getId();
