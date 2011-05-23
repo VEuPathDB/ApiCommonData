@@ -1702,7 +1702,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
     </sql>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON apidb.SequenceAttributes&1 (source_id, project_id)
+CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON apidb.SequenceAttributes&1 (lower(source_id), project_id)
       ]]>
     </sql>
   </tuningTable>
