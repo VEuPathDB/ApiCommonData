@@ -508,6 +508,8 @@ begin
            then return 'FungiDB';
          when 'fusarium'
            then return 'FungiDB';
+         when 'rhizopus'
+           then return 'FungiDB';
          else raise_application_error(-20101,
                                       'project_id() function called with unknown organism "'
                                       || organism || '"' );
