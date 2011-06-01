@@ -570,4 +570,100 @@ GRANT execute ON apidb.gff_format_sequence TO gus_r;
 GRANT execute ON apidb.gff_format_sequence TO gus_w;
 
 -------------------------------------------------------------------------------
+create or replace function apidb.syntenic_location_mapping (syntenic_point in number,
+                                                            left_ref_loc in number,
+                                                            right_ref_loc in number,
+                                                            left_syntenic_loc in number,
+                                                            right_syntenic_loc in number,
+                                                            syn_is_reversed in number)
+return number
+is
+    offset number;
+    scaling_factor number;
+begin
+    if syn_is_reversed = 0
+    then
+            scaling_factor := (right_ref_loc - left_ref_loc + 1) / (right_syntenic_loc - left_syntenic_loc + 1);
+    else
+            scaling_factor := (right_ref_loc - left_ref_loc + 1) / (right_syntenic_loc - left_syntenic_loc - 1);
+    end if;
+
+    offset := (syntenic_point - left_syntenic_loc) * scaling_factor;
+
+    return left_ref_loc + offset;
+end syntenic_location_mapping;
+/
+
+show errors;
+
+GRANT execute ON apidb.syntenic_location_mapping TO gus_r;
+GRANT execute ON apidb.syntenic_location_mapping TO gus_w;
+
+-------------------------------------------------------------------------------
+create or replace function apidb.compute_startm (syn_is_reversed in number,
+                                              start_min in number,
+                                              end_max in number,
+                                              left_ref_loc in number,
+                                              right_ref_loc in number,
+                                              left_syntenic_loc in number,
+                                              right_syntenic_loc in number,
+                                              b_start in number,
+                                              b_end in number)
+return number
+is
+    syntenic_min   number;
+    syntenic_max   number;
+    syntenic_point number;
+begin
+    -- trim the syntenic gene as needed to fit onto the region of synteny
+    syntenic_min := greatest(start_min, b_start);
+    syntenic_max := least(end_max, b_end);
+
+    -- which end of the gene is the "start" in reference space?
+    syntenic_point := case when syn_is_reversed = 0 then syntenic_min else syntenic_max end;
+
+    return syntenic_location_mapping(syntenic_point, left_ref_loc, right_ref_loc, left_syntenic_loc, right_syntenic_loc, syn_is_reversed);
+
+end compute_startm;
+/
+
+show errors;
+
+GRANT execute ON apidb.compute_startm TO gus_r;
+GRANT execute ON apidb.compute_startm TO gus_w;
+
+-------------------------------------------------------------------------------
+create or replace function apidb.compute_end (syn_is_reversed in number,
+                                              start_min in number,
+                                              end_max in number,
+                                              left_ref_loc in number,
+                                              right_ref_loc in number,
+                                              left_syntenic_loc in number,
+                                              right_syntenic_loc in number,
+                                              b_start in number,
+                                              b_end in number)
+return number
+is
+    syntenic_min   number;
+    syntenic_max   number;
+    syntenic_point number;
+begin
+    -- trim the syntenic gene as needed to fit onto the region of synteny
+    syntenic_min := greatest(start_min, b_start);
+    syntenic_max := least(end_max, b_end);
+
+    -- which end of the gene is the "end" in reference space
+    syntenic_point := case when syn_is_reversed = 0 then syntenic_max else syntenic_min end;
+
+    return syntenic_location_mapping(syntenic_point, left_ref_loc, right_ref_loc, left_syntenic_loc, right_syntenic_loc, syn_is_reversed);
+
+end compute_end;
+/
+
+show errors;
+
+GRANT execute ON apidb.compute_end TO gus_r;
+GRANT execute ON apidb.compute_end TO gus_w;
+
+-------------------------------------------------------------------------------
 exit;
