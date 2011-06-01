@@ -6,7 +6,11 @@ package ApiCommonData::Load::Plugin::InsertSnps;
 use strict;
 
 use GUS::PluginMgr::Plugin;
+
 use GUS::Model::SRes::SequenceOntology;
+use GUS::Model::SRes::ExternalDatabase;
+use GUS::Model::SRes::ExternalDatabaseRelease;
+
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
@@ -180,6 +184,7 @@ sub new {
 sub run {
   my ($self) = @_;
 
+
   my $dbh = $self->getDbHandle();
   $dbh->{'LongReadLen'} = 10_000_000;
 
@@ -193,6 +198,10 @@ sub run {
   $self->{'soId'} = $self->getSoId($termName);
 
   die "The term $termName was not found in the Sequence Ontology.\n" unless $self->{'soId'};
+
+  if($self->getArg('NGS_SNP')) {
+    $self->{'ngsSnpExtDbRlsId'} = $self->getOrMakeNgsSnpExtDbRlsId();
+  }
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
   $self->{'naExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('naExternalDatabaseName'),$self->getArg('naExternalDatabaseVersion'));
@@ -212,6 +221,39 @@ sub run {
 }
 
 # ----------------------------------------------------------------------
+
+sub getOrMakeNgsSnpExtDbRlsId {
+  my ($self) = @_;
+
+  my $reference = $self->getArg('reference');
+
+  my $NGS_SNP_DB_NAME = "InsertSnps.pm NGS SNPs INTERNAL";
+  my $NGS_SNP_DB_VERSION = "Ref:  $reference";
+
+  my $extDb = GUS::Model::SRes::ExternalDatabase->new({name => $NGS_SNP_DB_NAME});
+  my $extDbRls = GUS::Model::SRes::ExternalDatabaseRelease->new({version => $NGS_SNP_DB_VERSION});
+
+  my $foundExtDb = $extDb->retrieveFromDB();
+  if($extDb->getNumberOfDatabaseRows() > 1) {
+    $self->error("Found multiple rows in the database for SRes.ExternalDatabase name:  $NGS_SNP_DB_NAME");
+  }
+
+  $extDbRls->setParent($extDb);
+
+  my $foundExtDbRls = $extDbRls->retrieveFromDB();
+  if($extDbRls->getNumberOfDatabaseRows() > 1) {
+    $self->error("Found multiple rows in the database for SRes.ExternalDatabase name:  $NGS_SNP_DB_NAME");
+  }
+
+  # submit if we didn't find the db or rls
+  if(!$foundExtDb || !$foundExtDbRls) {
+    $extDb->submit();
+  }
+
+  return $extDbRls->getId();
+}
+
+
 
 sub processSnpFile{
   my ($self, $gffIO, $naSeqToLocationsHashRef) = @_;
@@ -481,6 +523,8 @@ sub createSnpFeature {
   my ($self,$feature) = @_;
 
   my $name = $feature->primary_tag();
+
+  my $ngsExtDbRlsId = $self->{'ngsSnpExtDbRlsId'};
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
   my $soId = $self->{'soId'};
 
@@ -510,7 +554,13 @@ sub createSnpFeature {
   $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
   $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
 
-  $snpFeature->setExternalDatabaseReleaseId($extDbRlsId); ## set after retrieveFromDB ... noter that for ngs snps we will need to use the seqvariation to determine the source of the snp.
+
+  if($self->getArg('NGS_SNP')) {
+    $snpFeature->setExternalDatabaseReleaseId($ngsExtDbRlsId); 
+  } 
+  else {
+    $snpFeature->setExternalDatabaseReleaseId($extDbRlsId); 
+  }
 
   my $naSeq = $self->getNaSeq($feature->seq_id());
   my $naLoc = $self->getNaLoc($start, $end);
