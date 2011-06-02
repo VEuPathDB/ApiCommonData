@@ -2426,9 +2426,9 @@ ALTER TABLE apidb.SpliceSiteGenes&1 ADD ( is_dominant number(1), percent_diff_fr
 UPDATE apidb.spliceSiteGenes&1 SET is_dominant=1, percent_diff_from_next=100
 WHERE splice_site_feature_id in
  (SELECT splice_site_feature_id
-  FROM apidb.spliceSiteGenes ssg,
+  FROM apidb.spliceSiteGenes&1 ssg,
       (SELECT max(count_per_million) as max_max, sample_name, source_id
-       FROM apidb.spliceSiteGenes
+       FROM apidb.spliceSiteGenes&1
        GROUP BY source_id, sample_name) x
   WHERE ssg.count_per_million=x.max_max
   AND ssg.sample_name = x.sample_name
@@ -2457,9 +2457,9 @@ WHERE splice_site_feature_id in
       my $sql = <<SQL;
 SELECT y.splice_site_feature_id,
 round( ( (x.max_max - max(ssg.count_per_million)) / x.max_max*100), 2) as diff
-FROM apidb.spliceSiteGenes ssg, apidb.spliceSiteGenes y,
+FROM apidb.spliceSiteGenes&1 ssg, apidb.spliceSiteGenes&1 y,
  (SELECT max(count_per_million) as max_max, sample_name, source_id
-  FROM apidb.spliceSiteGenes
+  FROM apidb.spliceSiteGenes&1
   WHERE is_dominant=1 
   GROUP BY source_id, sample_name) x
 WHERE ssg.count_per_million < x.max_max
