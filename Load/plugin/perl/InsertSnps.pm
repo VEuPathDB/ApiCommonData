@@ -549,11 +549,6 @@ sub createSnpFeature {
          organism => $organism,
 	});
 
-  ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
-  ## so can generate complete picture of snp.
-  $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
-  $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
-
 
   if($self->getArg('NGS_SNP')) {
     $snpFeature->setExternalDatabaseReleaseId($ngsExtDbRlsId); 
@@ -561,6 +556,12 @@ sub createSnpFeature {
   else {
     $snpFeature->setExternalDatabaseReleaseId($extDbRlsId); 
   }
+
+  ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
+  ## so can generate complete picture of snp.
+  $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
+  $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
+
 
   my $naSeq = $self->getNaSeq($feature->seq_id());
   my $naLoc = $self->getNaLoc($start, $end);
