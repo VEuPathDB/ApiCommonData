@@ -223,7 +223,7 @@ SQL
       if ($triggerText =~ m/modification_date/i) {
 	$gotModDateTrigger = 1;
       } else {
-	ApiCommonData::Load::TuningConfig::Log::addLog("Trigger $triggerName, on $table.$schema doesn't update modification_date");
+	ApiCommonData::Load::TuningConfig::Log::addLog("Trigger $triggerName, on $schema.$table doesn't update modification_date");
       }
     }
     $stmt->finish();
