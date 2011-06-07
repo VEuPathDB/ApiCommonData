@@ -577,10 +577,16 @@ create or replace function apidb.syntenic_location_mapping (syntenic_point in nu
                                                             right_syntenic_loc in number,
                                                             syn_is_reversed in number)
 return number
+-- this function lets Gbrowse map a location in a syntenic region onto the
+-- reference space, using a linear interpolation (or extrapolation) from two
+-- pairs of "anchor" points which align.
 is
     offset number;
     scaling_factor number;
 begin
+    -- It seems wrong that the scaling factor is different when the synteny is
+    -- reversed, but this is how the existing SQL worked. Changes here require
+    -- parallel changes in the calling SQL, which checks that the divisor is not zero.
     if syn_is_reversed = 0
     then
             scaling_factor := (right_ref_loc - left_ref_loc + 1) / (right_syntenic_loc - left_syntenic_loc + 1);
@@ -610,6 +616,9 @@ create or replace function apidb.compute_startm (syn_is_reversed in number,
                                               b_start in number,
                                               b_end in number)
 return number
+-- this function, a companion to compute_end, lets Gbrowse map a feature in a
+-- syntenic region onto the reference space, by choosing a starting location
+-- (in syntenic space) and passing it to syntenic_location_mapping
 is
     syntenic_min   number;
     syntenic_max   number;
@@ -643,6 +652,9 @@ create or replace function apidb.compute_end (syn_is_reversed in number,
                                               b_start in number,
                                               b_end in number)
 return number
+-- this function, a companion to compute_start, lets Gbrowse map a feature in a
+-- syntenic region onto the reference space, by choosing an end location
+-- (in syntenic space) and passing it to syntenic_location_mapping
 is
     syntenic_min   number;
     syntenic_max   number;
@@ -652,7 +664,7 @@ begin
     syntenic_min := greatest(start_min, b_start);
     syntenic_max := least(end_max, b_end);
 
-    -- which end of the gene is the "end" in reference space
+    -- which end of the gene is the "end" in reference space?
     syntenic_point := case when syn_is_reversed = 0 then syntenic_max else syntenic_min end;
 
     return syntenic_location_mapping(syntenic_point, left_ref_loc, right_ref_loc, left_syntenic_loc, right_syntenic_loc, syn_is_reversed);
