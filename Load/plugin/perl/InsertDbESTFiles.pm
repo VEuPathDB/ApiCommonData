@@ -492,8 +492,7 @@ sub undoTables {
     );
 }
 
-DoTS::ExternalNASequence;
-use GUS::Model::DoTS::Source;
+
 
 1;
 
