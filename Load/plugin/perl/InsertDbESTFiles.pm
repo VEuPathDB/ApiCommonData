@@ -162,6 +162,7 @@ sub run {
             #}
             $estCt++;
             undef $est;
+            $gusSeq->undefPointerCache();
          }
          else {
             ($section, $subCat, $content) = $self->parseLine(
