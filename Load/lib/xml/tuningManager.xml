@@ -5754,6 +5754,9 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
   AND syntenic_gene_attrs.na_feature_id = syn_fl.na_feature_id
   AND (
        (syn.is_reversed = 0
+        -- test that the divisor used in synteny scaling is nonzero. It's odd
+        -- that this varies with is_reversed. But any changes must happen both
+        -- here and in the PL/SQL
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
         AND apidb.compute_startm(syn.is_reversed, syn_fl.start_min, syn_fl.end_max,
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
@@ -5765,6 +5768,9 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
             >= context_gene_attrs.context_start) 
       OR
        (syn.is_reversed = 1 
+        -- test that the divisor used in synteny scaling is nonzero. It's odd
+        -- that this varies with is_reversed. But any changes must happen both
+        -- here and in the PL/SQL
         AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1) > 0
         AND apidb.compute_startm(syn.is_reversed, syn_fl.start_min, syn_fl.end_max,
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
@@ -5874,6 +5880,9 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
   AND exfloc.na_sequence_id = syn.b_na_sequence_id 
   AND (
        (syn.is_reversed = 0
+        -- test that the divisor used in synteny scaling is nonzero. It's odd
+        -- that this varies with is_reversed. But any changes must happen both
+        -- here and in the PL/SQL
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc + 1) > 0
         AND apidb.compute_startm(syn.is_reversed, exfloc.start_min, exfloc.end_max,
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
@@ -5887,6 +5896,9 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
        ) 
        OR
        (syn.is_reversed = 1 
+        -- test that the divisor used in synteny scaling is nonzero. It's odd
+        -- that this varies with is_reversed. But any changes must happen both
+        -- here and in the PL/SQL
         AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1) > 0
         AND apidb.compute_startm(syn.is_reversed, exfloc.start_min, exfloc.end_max,
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
