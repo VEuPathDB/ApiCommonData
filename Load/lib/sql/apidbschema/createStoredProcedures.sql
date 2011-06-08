@@ -487,7 +487,7 @@ begin
          when 'sarcocystis'
            then return 'OrphanDB';
          when 'eimeria'
-           then return 'OrphanDB';
+           then return 'ToxoDB';
          when 'gibberella'
            then return 'FungiDB';
          when 'neurospora'
