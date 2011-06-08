@@ -77,6 +77,11 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
+     booleanArg({ name => 'isAnnotatedGenome',
+		 descr => '',
+		 reqd  => 1,
+		 isList => 0,
+	       }),
      booleanArg({ name => 'isDraftGenome',
 		 descr => '',
 		 reqd  => 1,
@@ -160,6 +165,7 @@ sub run {
   my $abbrevStrain = $self->getArg('abbrevStrain');
   my $isReferenceGenome = $self->getArg('isReferenceGenome');
   my $isDraftGenome = $self->getArg('isDraftGenome');
+  my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
   my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
   my $projectName = $self->getArg('projectName');
 
@@ -202,6 +208,7 @@ sub run {
 						    'abbrev_orthomcl' => $abbrevOrthomcl,
 						    'abbrev_strain' => $abbrevStrain,
 						    'is_reference_genome' => $isReferenceGenome,
+						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'is_draft_genome' => $isDraftGenome,
 						    'has_temp_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
 						   });
