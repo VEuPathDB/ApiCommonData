@@ -2104,7 +2104,7 @@ tablespace indx
           and virtualseq.subclass_view = vti.name
 SQL
       
-      my $queryHandle = $dbh->prepare($sql);
+      my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
       $queryHandle->execute();
 
       $sql = <<SQL;
@@ -2123,7 +2123,7 @@ SQL
                  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
 SQL
 
-      my $insertHandle = $dbh->prepare($sql);
+      my $insertHandle = $dbh->prepare($sql) or die $dbh->errstr;
       my ($virtual_target_start, $virtual_target_end, $virtual_tstarts);
 
       while (my ($blat_alignment_id, $query_na_sequence_id, $target_na_sequence_id,
@@ -2474,8 +2474,8 @@ AND y.sample_name = ssg.sample_name and y.source_id = ssg.source_id and y.count_
 GROUP BY ssg.source_id, ssg.sample_name,x.max_max,y.splice_site_feature_id,y.sample_name, z.mySum
 SQL
 
-      my $queryHandle = $dbh->prepare($sql);
-      $queryHandle->execute();
+      my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
+      $queryHandle->execute() or die $dbh->errstr;
 
       $sql = <<SQL;
 UPDATE apidb.spliceSiteGenes&1
@@ -2488,7 +2488,7 @@ SQL
              = $queryHandle->fetchrow_array()) {
 
         if ($splice_site_na_feat_id) {
-	  $updateHandle->execute($frac, $diff, $splice_site_na_feat_id);
+	  $updateHandle->execute($frac, $diff, $splice_site_na_feat_id) or die $dbh->errstr;
 	}
       }
       $updateHandle->finish();
