@@ -26,6 +26,15 @@ sub getArgumentsDeclaration{
                isList         => 0,
              }),
 
+     fileArg({ name           => 'isReversed',
+               descr          => '',
+               reqd           => 1,
+               mustExist      => 1,
+               format         => '',
+               constraintFunc => undef,
+               isList         => 0,
+             }),
+
     ];
   return $argsDeclaration;
 }
@@ -65,7 +74,7 @@ sub new {
   my $argumentDeclaration = &getArgumentsDeclaration();
 
   $self->initialize({requiredDbVersion => 3.6,
-		             cvsRevision => '$Revision$',
+		     cvsRevision => '$Revision$',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -117,7 +126,7 @@ sub writeConfigFile {
   my $groupWrite = $database->getDefaultGroupWrite();
   my $otherRead = $database->getDefaultOtherRead();
   my $otherWrite = $database->getDefaultOtherWrite();
-
+  my $is_reversed = $self->getArg('isReversed');
   open(CONFIG, "> $configFile") or die "Cannot open file $configFile For writing:$!";
 
   print CONFIG "LOAD DATA
@@ -134,6 +143,7 @@ MAPPING_START,
 MAPPING_END,
 coverage,
 multiple,
+is_reversed constant $is_reversed,
 modification_date constant \"$modDate\", 
 user_read constant $userRead, 
 user_write constant $userWrite, 
