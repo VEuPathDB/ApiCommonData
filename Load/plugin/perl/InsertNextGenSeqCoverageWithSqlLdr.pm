@@ -26,7 +26,7 @@ sub getArgumentsDeclaration{
                isList         => 0,
              }),
 
-     fileArg({ name           => 'isReversed',
+     stringArg({ name           => 'isReversed',
                descr          => '',
                reqd           => 1,
                mustExist      => 1,
