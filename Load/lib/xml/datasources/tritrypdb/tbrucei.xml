@@ -1413,6 +1413,32 @@ RNAi sequence profiles from David Horn.
     </info>
   </resource>
 
+  <resource resource="Tb427_SNPs_George_Cross_RSRC" version="@@Tb427_SNPs_George_Cross_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/SNP/Tb427_GeorgeCross/%RESOURCE_VERSION%/final/"/>
+    <getAndUnpackOutput dir="@@dataDir@@/final"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_gDNA_lane1_76bp_fastq.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_gDNA_lane2_76bp_fastq.txt"/>
+    <getAndUnpackOutput file="@@dataDir@@/final/Input_gDNA_lane3_76bp_fastq.txt"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+    <info
+        displayName="TriTryp Tb 927-427 SNPs from George Cross"
+        project="TriTrypDB"
+        organisms="@@Tbrucei427OrganismFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact="George Cross"
+        email="george.cross@mail.rockefeller.edu"
+        institution="">
+      <description>
+        <![CDATA[
+TriTryp Tb 927-427 SNPs from George Cross.
+
+        ]]>
+      </description>
+    </info>
+  </resource>
+
 <!--DbxRefsResource-->
   <resource resource="Tbrucei_Entrez_Gene_dbxref_RSRC" version="2010-10-13"
       plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
