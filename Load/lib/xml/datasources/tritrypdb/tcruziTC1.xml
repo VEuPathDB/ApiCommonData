@@ -1,26 +1,8 @@
 <resources>
-<!--ISFResource-->
-
-  <resource resource="TcruziTC1_contigs_RSRC" version="@@TcruziTC1_contigs_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziTC1/%RESOURCE_VERSION%/final/silvio.fa"/>
+  <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            resource="TcruziTC1_contigs_RSRC"
+            version="@@TcruziTC1_contigs_VER@@">
+    <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziTC1/%RESOURCE_VERSION%/final/silvio.fa" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5693000 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/silvio.fa --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="T. cruzi TC1 Silvio genome sequence."
-        project="TriTrypDB"
-        organisms="@@TcruziTC1OrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact="Bjorn Andersson"
-        email="bjorn.andersson@ki.se"
-        institution="">
-      <description>
-        <![CDATA[
-<i>Trypanosoma cruzi TcI strain Sylvio X10/1</i> shotgun sequence and assembly. Franzen et. al.
-        ]]>
-      </description>
-    <publication pmid="21408126"/>
-    </info>
   </resource>
-
 </resources>
