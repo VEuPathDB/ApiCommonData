@@ -2141,16 +2141,12 @@ while ( $hash_ref = $queryHandle->fetchrow_hashref ) {
 	$maxDbLink = $dbLink;
     }
 }
-#requires dblink with most updated table
-$select = "SELECT * FROM apidb.orthomcltaxon@" . $maxDbLink;
-$sqlQueries->{createTableSql} = <<EOSQL;
-    CREATE TABLE apidb.OrthomclTaxon&1 AS $select
-EOSQL
+# requires dblink with most updated table
+# (we'll assume that's the most populous one, since orthoMCL tends to grow monotonically)
 
-$sql = $sqlQueries->{createTableSql};
-$queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
-$queryHandle->execute();
-$queryHandle->finish();
+$dbh->do(<<EOSQL) or die $dbh->errstr;
+    CREATE TABLE apidb.OrthomclTaxon&1 AS SELECT * FROM apidb.orthomcltaxon\@$maxDbLink
+EOSQL
 
       ]]> 
     </perl>
