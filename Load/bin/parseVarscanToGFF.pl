@@ -49,16 +49,17 @@ my %iupac = ('A' => ['A'],
 
 ##first determine the depthCutoff
 open(F, "$file") || die "unable to open file $file\n";
-my @lines;
 my @covArr;
 while(<F>){
   next if /^Chrom\s+Position/;
   chomp;
   my @tmp = split("\t",$_);
-  push(@lines,\@tmp);
+  ##don't want to include positons where reference is N
+  next if $tmp[2] =~ /N/i;
   push(@covArr,$tmp[4] + $tmp[5]);
 
 }
+close F;
 
 ##determine median..
 my @sorted = sort{$a <=> $b}@covArr;
@@ -66,8 +67,15 @@ my $median = $sorted[int(scalar(@sorted) / 2)];
 my $depthCutoff = int($median * $depthCutoffMult);
 print STDERR "Maximum depth cutoff for considering SNPs = $depthCutoff\n";
 
+open(F, "$file") || die "unable to open file $file\n";
 my @tmpLines;
-foreach my $line (@lines){
+while(<F>){
+  next if /^Chrom\s+Position/;
+  chomp;
+  my @tmp = split("\t",$_);
+  ##don't want to include positons where reference is N
+  next if $tmp[2] =~ /N/i;
+  my $line = \@tmp;
   if(scalar(@tmpLines) > 0 && $tmpLines[-1]->[1] == $line->[1] && $tmpLines[-1]->[0] eq $line->[0]){  ##same position
     push(@tmpLines,$line);
   }else{
@@ -77,6 +85,7 @@ foreach my $line (@lines){
   }
 }
 
+close F;
 close O;
 
 #process this one and print to O 
