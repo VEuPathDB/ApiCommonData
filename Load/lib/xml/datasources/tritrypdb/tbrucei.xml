@@ -410,8 +410,8 @@
             version="@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@">
     <manualGet fileOrDir="TriTrypDB/tbrucei/rnaSeq/George_Cross_pas_sas/%RESOURCE_VERSION%/final/" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%"</pluginArgs>
-    <unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set intron_size = regexp_replace(regexp_substr(query_id,'\(\d+\)','1'),'[\(|\)]','') where intron_size is null and sample in ('curated_polyA','curated_splice')"</unpack>
-    <unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set strand = decode(strand,'+','-','-','+') where sample = 'curated_polyA'"</unpack>
+    <unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set intron_size = regexp_replace(regexp_substr(query_id,'\(\d+\)','1'),'[\(|\)]','') where intron_size is null and sample in ('curated_long_polyA','curated_long_splice')"</unpack>
+    <unpack>executeIdSQL.pl --idSQL "update apidb.NEXTGENSEQ_ALIGN set strand = decode(strand,'+','-','-','+') where sample = 'curated_long_polyA'"</unpack>
     <unpack>assignQueryIdToSplicePolyA.pl --type splice --o @@Tbrucei927OrganismFullName@@ --sample curated_long_splice --extDbSpecs 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC|@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@' --v --commit</unpack>
     <unpack>assignQueryIdToSplicePolyA.pl --type polyA --o @@Tbrucei927OrganismFullName@@ --sample curated_long_polyA --extDbSpecs 'Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_RSRC|@@Tbrucei_RNASeq_Splice_Leader_And_Poly_A_Sites_George_Cross_VER@@' --v --commit</unpack>
   </resource>
