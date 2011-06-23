@@ -140,7 +140,7 @@ row_user_id constant $userId,
 row_group_id constant $groupId, 
 row_project_id constant $projectId, 
 row_alg_invocation_id constant $algInvocationId,
-PLASMOMAPP_ID  \"ApiDB.PlasmoPfalLocations_sq.nextval\"
+PLASMOPFALLOCATIONS_ID  \"ApiDB.PlasmoPfalLocations_sq.nextval\"
 )\n";
   close CONFIG;
 }
