@@ -97,7 +97,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.6,
-                     cvsRevision => '$Revision$',
+                     cvsRevision => '$Revision: 41220 $',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -139,7 +139,7 @@ sub run {
     }
     $arrayDesign->submit();
     $self->undefPointerCache();
-
+  }
     return("I inserted one RAD.ArrayDesign and $count RAD.SageTag(s)");
   }
 
@@ -150,7 +150,7 @@ sub undoTables {
 	  'RAD.ArrayDesign',
 	 );
 }
-}
+
 
 1;
 
