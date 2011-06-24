@@ -136,6 +136,7 @@ sub run {
     $sageTag->setParent($arrayDesign);
     if(++$count % 100000 == 0) {
       $arrayDesign->submit();
+      $self->log('$count RAD.SageTag(s) inserted' );
     }
     $arrayDesign->submit();
     $self->undefPointerCache();
