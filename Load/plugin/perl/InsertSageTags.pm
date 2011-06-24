@@ -97,7 +97,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.6,
-                     cvsRevision => '0',
+                     cvsRevision => '$Revision$',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
