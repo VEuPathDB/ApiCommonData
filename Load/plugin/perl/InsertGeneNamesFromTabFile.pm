@@ -145,6 +145,8 @@ sub run{
   while(<FILE>){
       next if (/^\s*$/);
 
+      chomp;
+
       my ($sourceId, $geneName) = split(/\t/,$_);
 
       my $preferred = 0;
