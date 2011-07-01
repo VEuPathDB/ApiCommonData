@@ -480,14 +480,14 @@ return $seqOntologyId;
 sub undoTables {
   qw(
     DoTS.EST
-    DoTS.NASequenceRef,
-    DoTS.Source,
+    DoTS.NASequenceRef
+    DoTS.Source
     DoTS.ExternalNASequence
     DoTS.Library
     SRes.Contact
-    DoTS.Clone,
-    DoTS.CloneSet,
-    DoTS.CloneInSet,
+    DoTS.Clone
+    DoTS.CloneSet
+    DoTS.CloneInSet
     SRes.Reference
     );
 }
