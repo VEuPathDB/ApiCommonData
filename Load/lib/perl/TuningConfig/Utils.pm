@@ -66,7 +66,13 @@ sub sqlBugWorkaroundExecute {
     ApiCommonData::Load::TuningConfig::Log::addLog("executing sql at $timestamp")
 	if $debug;
 
-    $sqlReturn = $stmt->execute();
+    eval {
+      $sqlReturn = $stmt->execute();
+    };
+
+    # log any errors inside eval
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog($@)
+	if $@;
 
     ApiCommonData::Load::TuningConfig::Log::addLog("sql returned \"$sqlReturn\"; \$dbh->errstr = \"" . $dbh->errstr . "\"")
 	if $debug;
