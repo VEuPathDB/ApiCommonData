@@ -123,27 +123,35 @@ sub parseSimple{
 
 sub insertPhenotypeFeature {
   my ($self, $rmgms, $extDbReleaseId) = @_;
-  my ($suc_of_gen_mod,$rmgmid,$reference_pubmed,$phenotype_asexual,$phenotype_gametocyte,$phenotype_ookinete,$phenotype_oocyst,$phenotype_sporozoite, $phenotype_liverstage,$phenotype_remarks,$mod_type,$reftype);
+
   my $count = 0; 
+
   foreach my $rmgm (@$rmgms) {
-      my $modifications=$rmgm->{'modifications'}->{'modification'};
+
+    my $suc_of_gen_mod = $rmgm->{'success_of_genetic_modification'};
+    my $rmgmid = $rmgm->{'rmgmid'};
+    my $reference_pubmed = $rmgm->{'reference_pubmed1'};
+    my $phenotype_asexual = $rmgm->{'phenotype'}->{'phenotype_asexual'};
+    my $phenotype_gametocyte = $rmgm->{'phenotype'}->{'phenotype_gametocyte'};
+    my $phenotype_ookinete = $rmgm->{'phenotype'}->{'phenotype_ookinete'};
+    my $phenotype_oocyst = $rmgm->{'phenotype'}->{'phenotype_oocyst'};
+    my $phenotype_sporozoite = $rmgm->{'phenotype'}->{'phenotype_sporozoite'};
+    my $phenotype_liverstage = $rmgm->{'phenotype'}->{'phenotype_liverstage'};
+
+    my $phenotype_remarks = $rmgm->{'phenotype'}->{'phenotype_remarks'};
+
+    $phenotype_remarks =~ s/\n//g;
+    $phenotype_remarks =~ s/<(.*?)>//gi;
+
+    my $modifications = $rmgm->{'modifications'}->{'modification'};
+
       foreach my $modification (@$modifications){
 	   my $sourceId = $modification->{'gene_model'};
+           my $mod_type = $modification->{'mod_type'};
+
            my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId) ;
 	   if ($naFeatureId){
-	       $suc_of_gen_mod = $rmgm->{'success_of_genetic_modification'} unless (reftype $rmgm->{'success_of_genetic_modification'});
-	       $rmgmid = $rmgm->{'rmgmid'} unless (reftype $rmgm->{'rmgmid'});
-	       $reference_pubmed = $rmgm->{'reference_pubmed1'} unless (reftype $rmgm->{'reference_pubmed1'});
-	       $phenotype_asexual = $rmgm->{'phenotype'}->{'phenotype_asexual'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_asexual'});
-	       $phenotype_gametocyte = $rmgm->{'phenotype'}->{'phenotype_gametocyte'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_gametocyte'});
-	       $phenotype_ookinete = $rmgm->{'phenotype'}->{'phenotype_ookinete'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_ookinete'});
-	       $phenotype_oocyst = $rmgm->{'phenotype'}->{'phenotype_oocyst'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_oocyst'});
-	       $phenotype_sporozoite = $rmgm->{'phenotype'}->{'phenotype_sporozoite'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_sporozoite'});
-	       $phenotype_liverstage = $rmgm->{'phenotype'}->{'phenotype_liverstage'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_liverstage'});
-	       $mod_type = $modification->{'mod_type'} unless (reftype $modification->{'mod_type'});
-	       $phenotype_remarks = $rmgm->{'phenotype'}->{'phenotype_remarks'} unless (reftype $rmgm->{'phenotype'}->{'phenotype_remarks'});
-	       $phenotype_remarks =~ s/\n//g;
-	       $phenotype_remarks =~ s/<(.*?)>//gi;
+
 	       my $phenofeature = GUS::Model::ApiDB::PhenotypeFeature->new({external_database_release_id => $extDbReleaseId,
 							       na_feature_id => $naFeatureId,
 							       rmgmid => $rmgmid,
