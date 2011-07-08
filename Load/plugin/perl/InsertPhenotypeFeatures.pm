@@ -117,7 +117,7 @@ sub parseSimple{
   my ($self,$file) = @_;
 
   my $simple = XML::Simple->new();
-  my $tree = $simple->XMLin($file, forcearray=>['modification']);
+  my $tree = $simple->XMLin($file, forcearray=>['modification'], SuppressEmpty=>undef);
   return $tree;
 }
 
@@ -148,6 +148,8 @@ sub insertPhenotypeFeature {
       foreach my $modification (@$modifications){
 	   my $sourceId = $modification->{'gene_model'};
            my $mod_type = $modification->{'mod_type'};
+
+
 
            my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId) ;
 	   if ($naFeatureId){
