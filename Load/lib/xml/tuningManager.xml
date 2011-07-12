@@ -1280,7 +1280,8 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        nvl(totsnps.total_snps,0) as total_snps, 
        nvl(nssnps.nonsyn_snps,0) as nonsynonymous_snps,
        nvl(synsnps.syn_snps,0) as synonymous_snps,
-       CASE WHEN (nssnps.nonsyn_snps is null or synsnps.syn_snps is null) THEN 0 
+       CASE WHEN (nssnps.nonsyn_snps is null) THEN 0
+            WHEN (synsnps.syn_snps is null) THEN null
             ELSE round((nssnps.nonsyn_snps / synsnps.syn_snps),2) END as nonsyn_syn_ratio,
        protein.signalp_scores,protein.signalp_peptide, sequence.taxon_id, protein.aa_sequence_id
 FROM dots.GeneFeature gf, apidb.FeatureLocation nl, sres.SequenceOntology so,
