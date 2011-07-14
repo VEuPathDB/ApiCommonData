@@ -102,6 +102,12 @@
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/function/Lbraziliensis_chromosomes_RSRC_ecnumbers/%RESOURCE_VERSION%/ec.txt" />
     <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
   </resource>
+  <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            resource="LbraziliensisM2903_contigs_RSRC"
+            version="@@LbraziliensisM2903_contigs_VER@@">
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/lbraziliensisM2903/%RESOURCE_VERSION%/final/supercontigs.fasta" />
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 4202450 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/supercontigs.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+  </resource>
   <resource plugin="GUS::Supported::Plugin::dbEST"
             resource="Lbraziliensis_dbEST_RSRC"
             version="@@Lbraziliensis_dbEST_VER@@">
