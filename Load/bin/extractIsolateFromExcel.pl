@@ -6,6 +6,11 @@ use strict;
 
 use Spreadsheet::ParseExcel;
 
+use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
+use pcbiPubmed;
+
+#use lib '/var/www/hwang.giardiadb.org/cgi-lib/';
+
 use Bio::SeqIO;
 use Bio::Seq::RichSeq;
 use Bio::SeqFeature::Generic;
@@ -92,10 +97,13 @@ while(my ($k, $v) = each %hash) {
   $year        .= "-$month" if $month;
   $year        .= "-$day" if $day;
 
+  $seq1 =~ s/\W+//g;  
+
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
   $note .= "; PCR_primers: $seq1_primer" if $seq1_primer; 
+  $note =~ s/^; //;
   # NCBI format /note="subtype: IIaA22G1R1; PCR_primers=fwd_name: AL3532"
 
   die "Cannot find isolate species. Please check column E\n" unless $species;
@@ -147,12 +155,28 @@ while(my ($k, $v) = each %hash) {
                                                              }
                                                 );
 
-  my $ref = Bio::Annotation::Reference->new( -title => 'Direct Submission',
-                                             -authors => $authors,
-                                             -pubmed  => $pmid,
-                                             -location => 'Unpublished' );
+
+
 
   my $ann = Bio::Annotation::Collection->new(); 
+
+  if($pmid) {
+    my $content = pcbiPubmed::setPubmedID($pmid);
+    my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
+    my $journal = pcbiPubmed::fetchPublication($content, "Journal");
+    my $authors = pcbiPubmed::fetchAuthorListLong($content, "Author");
+
+    my $ref = Bio::Annotation::Reference->new( -title    => $title,
+                                               -authors  => $authors,
+                                               -pubmed   => $pmid,
+                                               -location => $journal );
+    $ann->add_Annotation('reference', $ref); 
+  } 
+
+  my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
+                                             -authors  => $authors,
+                                             -location => "Contact: $submitter $affiliation" );
+
   $ann->add_Annotation('reference', $ref); 
   $seq->add_SeqFeature($feat); 
   $seq->add_SeqFeature($gene_feat); 
