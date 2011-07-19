@@ -9,7 +9,7 @@ use Spreadsheet::ParseExcel;
 use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
 use pcbiPubmed;
 
-#use lib '/var/www/hwang.giardiadb.org/cgi-lib/';
+use lib '/var/www/hwang.giardiadb.org/cgi-lib/';
 
 use Bio::SeqIO;
 use Bio::Seq::RichSeq;
@@ -19,12 +19,27 @@ use Bio::Annotation::Reference;
 use Bio::Location::Simple;
 use Bio::Location::Fuzzy;
 use Bio::Species;
+use Bio::DB::Taxonomy;
+use Getopt::Long qw(GetOptions);
 # Bio::Species is deprecated using Bio::Taxon for BioPerl version 1.60
 
-my %hash;
-my %cn;  # column name
-my $usage = "Usage: extractIsolateFromExcel isolate_submission_form_Excel\n";
-my $file = shift or die $usage;
+my (%hash, %cn);  # column name
+my ($file, $taxon);
+
+GetOptions( "inputfile=s" => \$file,
+            "species=s"   => \$taxon );
+
+unless($file && $taxon) {
+  die
+print <<EOL;
+Usage: extractIsolateFromExcel.pl --inputfile isolateSubmissimnExcelFile --species speciesName
+
+Where:
+  inputfile  - Isolate Submission Excel File (in Excel 2000-2004 format .xls)
+  species    - valid NCBI taxomomy name, e.g Cryptosporidium, Toxoplasma, Plasmodium
+
+EOL
+}
 
 while(<DATA>) {
   chomp;
@@ -51,6 +66,7 @@ sub cell_handler {
   $hash{$row}{$col} = $value;
 }
 
+
 my $submitter    = $hash{1}{1};
 my $email        = $hash{2}{1};
 my $affiliation  = $hash{3}{1};
@@ -65,29 +81,29 @@ while(my ($k, $v) = each %hash) {
   next if $k < 13;   # isolate data starts from row 15
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ; 
 
-  my $isolate_id  = $hash{$k}{$cn{isolate_id}}; 
-  my $species     = $hash{$k}{$cn{species}};
-  my $seq1        = $hash{$k}{$cn{seq1}};
-  my $product1    = $hash{$k}{$cn{seq1_product}};
-  my $country     = $hash{$k}{$cn{country}};
-  my $state       = $hash{$k}{$cn{state}};
-  my $county      = $hash{$k}{$cn{county}};
-  my $city        = $hash{$k}{$cn{city}};
-  my $day         = $hash{$k}{$cn{day}};
-  my $month       = $hash{$k}{$cn{month}};
-  my $year        = $hash{$k}{$cn{year}};
-  my $host        = $hash{$k}{$cn{host}};
-  my $genotype    = $hash{$k}{$cn{genotype}};
-  my $subtype     = $hash{$k}{$cn{subtype}};
-  my $age         = $hash{$k}{$cn{age}};
-  my $sex         = $hash{$k}{$cn{sex}};
-  my $breed       = $hash{$k}{$cn{breed}};
-  my $gps         = $hash{$k}{$cn{gps}};
-  my $symptoms    = $hash{$k}{$cn{symptoms}};
-  my $habitat     = $hash{$k}{$cn{habitat}};
-  my $seq1_primer = $hash{$k}{$cn{seq1_primer}};
-  my $note        = $hash{$k}{$cn{note}};
-  my $source      = $hash{$k}{$cn{isolation_source}};
+  my $isolate_id   = $hash{$k}{$cn{isolate_id}}; 
+  my $species      = $hash{$k}{$cn{species}};
+  my $country      = $hash{$k}{$cn{country}};
+  my $state        = $hash{$k}{$cn{state}};
+  my $county       = $hash{$k}{$cn{county}};
+  my $city         = $hash{$k}{$cn{city}};
+  my $day          = $hash{$k}{$cn{day}};
+  my $month        = $hash{$k}{$cn{month}};
+  my $year         = $hash{$k}{$cn{year}};
+  my $host         = $hash{$k}{$cn{host}};
+  my $genotype     = $hash{$k}{$cn{genotype}};
+  my $subtype      = $hash{$k}{$cn{subtype}};
+  my $age          = $hash{$k}{$cn{age}};
+  my $sex          = $hash{$k}{$cn{sex}};
+  my $breed        = $hash{$k}{$cn{breed}};
+  my $gps          = $hash{$k}{$cn{gps}};
+  my $symptoms     = $hash{$k}{$cn{symptoms}};
+  my $habitat      = $hash{$k}{$cn{habitat}};
+  my $note         = $hash{$k}{$cn{note}};
+  my $source       = $hash{$k}{$cn{isolation_source}};
+  my $seq1         = $hash{$k}{$cn{seq1}};
+  my $seq1_primer  = $hash{$k}{$cn{seq1_primer}};
+  my $seq1_product = $hash{$k}{$cn{seq1_product}};
 
   $country    .= ", $city" if $city;
   $country    .= ", $state" if $state;
@@ -103,14 +119,21 @@ while(my ($k, $v) = each %hash) {
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
   $note .= "; PCR_primers: $seq1_primer" if $seq1_primer; 
+  $note .= "; purpose of sample collection: $purpose" if $purpose; 
   $note =~ s/^; //;
   # NCBI format /note="subtype: IIaA22G1R1; PCR_primers=fwd_name: AL3532"
 
   die "Cannot find isolate species. Please check column E\n" unless $species;
 
-  # crypto specific classification
-  my @class = ($species, 'Cryptosporidium', 'Cryptosporidiidae', 'Eimeriorina', 'Eucoccidiorida', 'Coccidia', 'Apicomplexa', 'Alveolata', 'Eukaryota');
-  my $taxon = Bio::Species->new(-classification => \@class); 
+  my @class = ();
+  my $db = Bio::DB::Taxonomy->new(-source => 'entrez');
+  foreach my $node ($db->get_tree(($taxon))->get_nodes()) {
+    push @class, $node->node_name();
+  }
+
+  shift @class;
+  push  @class, $species;
+  my $taxon = Bio::Species->new(-classification => [reverse @class]); 
 
   $study =~ s/(\r|\n)/ /g;
 
@@ -151,7 +174,7 @@ while(my ($k, $v) = each %hash) {
                                                  -location => $location,
                                                   -tag    => { 
                                                                codon_start => 1,
-                                                               product => $product1,
+                                                               product => $seq1_product,
                                                              }
                                                 );
 
@@ -166,18 +189,34 @@ while(my ($k, $v) = each %hash) {
     my $journal = pcbiPubmed::fetchPublication($content, "Journal");
     my $authors = pcbiPubmed::fetchAuthorListLong($content, "Author");
 
+    # reference 1: pubmed if available, otherwise, use study title
     my $ref = Bio::Annotation::Reference->new( -title    => $title,
                                                -authors  => $authors,
                                                -pubmed   => $pmid,
                                                -location => $journal );
     $ann->add_Annotation('reference', $ref); 
-  } 
+  } else {
+    my $ref = Bio::Annotation::Reference->new( -title    => $study,
+                                               -authors  => $authors,
+                                               -location => 'Unpublished');
+    $ann->add_Annotation('reference', $ref); 
+  }
 
+  # reference 2 from submitter and affliation
   my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
                                              -authors  => $authors,
                                              -location => "Contact: $submitter $affiliation" );
 
   $ann->add_Annotation('reference', $ref); 
+
+  # reference 3: other reference links if available
+  if($other_ref) {
+    my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
+                                               -location => $other_ref);
+    $ann->add_Annotation('reference', $ref); 
+
+  }
+
   $seq->add_SeqFeature($feat); 
   $seq->add_SeqFeature($gene_feat); 
   $seq->add_SeqFeature($cds_feat); 
