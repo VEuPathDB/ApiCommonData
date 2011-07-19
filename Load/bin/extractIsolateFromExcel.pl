@@ -9,7 +9,8 @@ use Spreadsheet::ParseExcel;
 use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
 use pcbiPubmed;
 
-use lib '/var/www/hwang.giardiadb.org/cgi-lib/';
+# enforce to use bioperl version 1.60
+use lib "$ENV{BASE_GUS}/cgi-lib/";
 
 use Bio::SeqIO;
 use Bio::Seq::RichSeq;
@@ -137,9 +138,9 @@ while(my ($k, $v) = each %hash) {
 
   $study =~ s/(\r|\n)/ /g;
 
-  my $seq = Bio::Seq::RichSeq->new(-seq => $seq1,
-                                  -desc => $study,  # DEFINITION
-                                  -id => $isolate_id);
+  my $seq = Bio::Seq::RichSeq->new( -seq  => $seq1,
+                                    -desc => $study,        # DEFINITION
+                                    -id   => $isolate_id );
 
   $seq->add_date("$day-$month-$year");
   $seq->species($taxon);
@@ -177,9 +178,6 @@ while(my ($k, $v) = each %hash) {
                                                                product => $seq1_product,
                                                              }
                                                 );
-
-
-
 
   my $ann = Bio::Annotation::Collection->new(); 
 
