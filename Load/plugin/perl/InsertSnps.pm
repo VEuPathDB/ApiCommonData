@@ -557,16 +557,17 @@ sub createSnpFeature {
     $snpFeature->setExternalDatabaseReleaseId($extDbRlsId); 
   }
 
+
+
+  my $naSeq = $self->getNaSeq($feature->seq_id());
+  $snpFeature->setParent($naSeq);
+
   ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
   ## so can generate complete picture of snp.
   $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
   $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
 
-
-  my $naSeq = $self->getNaSeq($feature->seq_id());
   my $naLoc = $self->getNaLoc($start, $end);
-
-  $snpFeature->setParent($naSeq);
   $snpFeature->addChild($naLoc);
 
   foreach ($feature->get_tag_values('Allele')) {
@@ -616,6 +617,29 @@ sub createSnpFeature {
 #    $seqVar->addChild($svLoc);
 
   }
+
+## need to add a seqvar for the reference genome if that hasn't been added already.
+  my $haveRef = 0;
+  foreach my $c ($snpFeature->getChildren()){
+    $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $base);
+  }
+  if(!$haveRef){  ##create a reference seqvar here ...
+    my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
+    my $seqVar =  GUS::Model::DoTS::SeqVariation->
+      new({'source_id' => $sourceId,
+           'external_database_release_id' => $extDbRlsId,
+           'name' => $name,
+           'sequence_ontology_id' => $soId,
+           'strain' => $ref,
+           'allele' => $referenceBase,
+           'organism' => $organism
+          });
+    $seqVar->setParent($snpFeature);
+    $seqVar->setParent($naSeq);
+    $snpFeature->setReferenceNa($base);
+
+  }
+
   return $snpFeature;
 }
 
@@ -830,7 +854,7 @@ sub _isSnpPositionOk {
   my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
 
   if($referenceBase ne $base) {
-    $self->userError("The snp base: $base doesn't match expected base $referenceBase for sourceId $sourceId");
+    $self->log("WARNING: The snp base: $base doesn't match expected base $referenceBase for sourceId $sourceId .. is organism diploid?");
   }
   return(1);
 }
