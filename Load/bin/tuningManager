@@ -32,12 +32,13 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $password, $tables,
+my ($configFile, $propFile, $instance, $schema, $password, $tables,
     $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
+           "schema=s" => \$schema,
            "password=s" => \$password,
            "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
@@ -70,6 +71,10 @@ if ($propFile) {
   $props = $simple->XMLin($propFile);
 }
 
+# prefer schema from command line, then prop file, then hardwired default
+$schema = $props->{schema} if !$schema;
+$schema = 'apidb' if !$schema;
+
 $maxRebuildMinutes = $props->{maxRebuildMinutes};
 
 if ($props->{dbaEmail}) {
@@ -87,7 +92,7 @@ eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $schema, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
@@ -113,7 +118,7 @@ eval {
             $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
             $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
             $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
-            $maxRebuildMinutes, $instance, $propFile, $password, $subversionDir);
+            $maxRebuildMinutes, $instance, $propFile, $schema, $password, $subversionDir);
   }
 
   if ($doUpdate) {
@@ -397,20 +402,20 @@ Sample config file XML:
      source_id, subclass_id
   </tuningIndex>
 
-  <tuningTable name="apidb.EstAlignmentGeneSummary">
-    <internalDependency name="apidb.BlatAlignmentLocation"/>
-    <internalDependency name="apidb.GeneAttributes"/>
+  <tuningTable name="EstAlignmentGeneSummary">
+    <internalDependency name="BlatAlignmentLocation"/>
+    <internalDependency name="GeneAttributes"/>
     <externalDependency name="sres.SequenceOntology"/>
-    <intermediateTables name="apidb.EstAlignmentGene"/>
+    <intermediateTables name="EstAlignmentGene"/>
     <sql>
-      CREATE TABLE apidb.EstAlignmentGene AS
+      CREATE TABLE EstAlignmentGene AS
       SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
                e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
                ba.query_bases_aligned / (query_sequence.length)
                * 100 AS percent_est_bases_aligned,
                ga.source_id AS gene
-        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
-             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+        FROM BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
+             GeneAttributes ga, GenomicSequence sequence,
              dots.NaSequence query_sequence, sres.SequenceOntology so
         WHERE e.na_sequence_id = ba.query_na_sequence_id
           AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
@@ -419,19 +424,19 @@ Sample config file XML:
     </sql>
     <sql>
       CREATE TABLE EstAlignmentGeneSummary&1 AS
-      SELECT * FROM apidb.EstAlignmentNoGene
+      SELECT * FROM EstAlignmentNoGene
       UNION
-      SELECT * FROM apidb.EstAlignmentGene
+      SELECT * FROM EstAlignmentGene
     </sql>
     <sql>
-      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
+      CREATE INDEX EstSumm_libOverlap_ix&1
+                   ON EstAlignmentGeneSummary&1
                       (library_id, percent_identity, is_consistent,
                        est_gene_overlap_length, percent_est_bases_aligned)
     </sql>
     <sql>
-      CREATE INDEX apidb.EstSumm_estSite_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
+      CREATE INDEX EstSumm_estSite_ix&1
+                   ON EstAlignmentGeneSummary&1
                       (target_sequence_source_id, target_start, target_end,
                        library_id)
     </sql>

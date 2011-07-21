@@ -93,8 +93,7 @@ sub sqlBugWorkaroundExecute {
 }
 
 sub getDbHandle {
-  my ($instance, $propFile, $password) = @_;
-  my $username = 'apidb';
+  my ($instance, $propFile, $username, $password) = @_;
   my $props;
 
 if ($propFile) {
@@ -103,7 +102,8 @@ if ($propFile) {
 }
 
   $password = $props->{password} if !$password;
-  $username = $props->{username} if $props->{username};
+  $username = $props->{username} if !$username;
+  $username = 'apidb' if !$username;
 
   my $dsn = "dbi:Oracle:" . $instance;
 
