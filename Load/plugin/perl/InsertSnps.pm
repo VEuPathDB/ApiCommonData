@@ -533,7 +533,7 @@ sub createSnpFeature {
 
   my $start = $feature->location()->start();
   my $end = $feature->location()->end();
-
+  my $lengthOfSnp = $end - $start + 1;
   # Start and Stop are absolute genomic coordinates !!
   $self->userError("Snp end is less than snp start in file: $!") if($end < $start);
 
@@ -616,15 +616,13 @@ sub createSnpFeature {
 #    my $svLoc = $self->getNaLoc($start, $end);
 #    $seqVar->addChild($svLoc);
 
-  }
-
-## need to add a seqvar for the reference genome if that hasn't been added already.
+    ## need to add a seqvar for the reference genome if that hasn't been added already.
   my $haveRef = 0;
-  foreach my $c ($snpFeature->getChildren()){
+  foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
     $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $base);
   }
   if(!$haveRef){  ##create a reference seqvar here ...
-    my $referenceBase = $naSeq->getSubstrFromClob('sequence', $snpStart, $lengthOfSnp);
+    my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
            'external_database_release_id' => $extDbRlsId,
@@ -640,6 +638,7 @@ sub createSnpFeature {
 
   }
 
+  }
   return $snpFeature;
 }
 
