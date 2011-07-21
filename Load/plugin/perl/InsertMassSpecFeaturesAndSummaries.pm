@@ -1,6 +1,5 @@
 package ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries;
 
-
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -8,7 +7,6 @@ use File::Find;
 use FileHandle;
 
 use GUS::PluginMgr::Plugin;
-
 
 # read from
 use GUS::Model::DoTS::Transcript;
@@ -24,6 +22,7 @@ use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::MassSpecFeature;
 use GUS::Model::ApiDB::MassSpecSummary;
 use GUS::Model::DoTS::NAFeature;
+use GUS::Model::DoTS::PostTranslationalModFeature;
 
 # utility
 use Bio::Location::Split;
@@ -40,7 +39,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 38629 $',
+                     cvsRevision       => '$Revision: $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -56,6 +55,8 @@ sub run {
   my $record = {};
   my $recordSet = [];
   my $mss;
+  my $peptide;
+  my $state;
     
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('externalDatabaseSpec'));
   $self->{geneExtDbRlsId} = join ',', map{$self->getExtDbRlsId($_)} split (/,/,$self->getArg('geneExternalDatabaseSpec'));
@@ -66,21 +67,35 @@ sub run {
   $self->prepareSQLStatements();
 
   open(F, $inputFile) or die "Could not open $inputFile: $!\n";
+
   while (<F>) {
     chomp;
-    next if m/^\s*$/;
-    if (m/^# /) {
-      chomp(my $ln = <F>);
+
+    next if /^\s*$/;
+    if (/^# /) {
+      $state = 'gene';
       undef $record;
-      $record = $self->initRecord($ln);
+      next;
+    } elsif(/^## start/) {
+      $state = 'peptide';
+      undef $peptide;
+      next;
+    } elsif(/^## relative_position/) {
+      $state = 'residue';
+      next;
+    } elsif($state eq 'gene') {
+      $record = $self->initRecord($_);
       push @{$recordSet}, $record;
+    } elsif($state eq 'peptide') {
+      $peptide = $self->addMassSpecFeatureToRecord($_, $record);
+    } elsif($state eq 'residue') {
+      &addResidueToPeptide($_, $peptide);
     } else {
-      m/^## / and next;
-      $self->addMassSpecFeatureToRecord($_, $record);
+      die "Something wrong in the file on this line: $_\n";
     }
     $self->undefPointerCache();
   }
-        
+
   ##now need to loop through records and assign to genes ..
   $self->addRecordsToGenes($recordSet);
     
@@ -208,13 +223,13 @@ sub addRecordsToGenes {
     foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
       if ($naFeature->retrieveFromDB()) {
-	my $isOfficial=0;
-	my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
-	foreach (@geneExtDbRlsIdList){
-	    if ($naFeature->getExternalDatabaseReleaseId()==$_){
-		$isOfficial=1;
-	    }
-	}
+  my $isOfficial=0;
+  my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
+  foreach (@geneExtDbRlsIdList){
+      if ($naFeature->getExternalDatabaseReleaseId()==$_){
+    $isOfficial=1;
+      }
+  }
 
         if ($isOfficial) {
           ##this one is the official one ...
@@ -637,8 +652,23 @@ sub addMassSpecFeatureToRecord {
 
 
   push @{$record->{peptides}}, $pep;
+
+  return $pep;
 }
 
+sub addResidueToPeptide {
+  my ($ln, $pep) = @_;
+
+  my $residue = {};
+  ( $residue->{relative_position},
+    $residue->{order},
+    $residue->{description},
+    $residue->{modification_type}
+  ) = split "\t", $ln;
+
+  push @{$pep->{residues}}, $residue;
+
+}
 sub setPepDescription {
   my($self,$pep,$record) = @_;
   $pep->{description} = join '', (
@@ -732,7 +762,7 @@ sub insertMassSpecFeatures {
   for my $pep (@{$record->{peptides}}) {
     next if $pep->{failed};
     $ct++;
-        
+
     my $msFeature = GUS::Model::DoTS::MassSpecFeature->new({
                                                             'aa_sequence_id'          => $record->{aaSequenceId},
                                                             'parent_id'               => $record->{aaFeatParentId},
@@ -764,11 +794,46 @@ sub insertMassSpecFeatures {
     $msFeature->setParent($naLoc);
     $msFeature->addChild($aaLoc);    
         
-    $msFeature->submit();
-        
-    $self->{featuresAdded}++;
-  }
+    #$msFeature->submit();
 
+    ## insert residues data into PostTranslationalModFeature and AALocation
+    for my $res (@{$pep->{residues}}) {
+      &fetchSequenceOntologyId($res, $res->{modification_type});
+      my $resFeature = GUS::Model::DoTS::PostTranslationalModFeature->new({
+                                                            'aa_sequence_id'               => $record->{aaSequenceId},
+                                                            'parent_id'                    => $msFeature->getAaFeatureId(),
+                                                            'prediction_algorithm_id'      => $self->getPredictionAlgId,
+                                                            'external_database_release_id' => $self->{extDbRlsId},
+                                                            'sequence_ontology_id'         => $res->{sequenceOntologyId},
+                                                            'is_predicted'                 => 0,
+                                                            'description'                  => $res->{description},
+                                                           });
+        
+      my $aaLoc = GUS::Model::DoTS::AALocation->new({ 'start_min' => $pep->{start} + $res->{relative_position} - 1,
+                                                      'start_max' => $pep->{start} + $res->{relative_position} - 1, 
+                                                      'end_min'   => $pep->{start} + $res->{relative_position} - 1,
+                                                      'end_max'   => $pep->{start} + $res->{relative_position} - 1,
+                                                    });
+      $resFeature->setParent($msFeature);    
+      $resFeature->addChild($aaLoc);    
+
+    } 
+
+    $msFeature->submit();
+    $self->{featuresAdded}++;
+  } 
+}
+
+sub fetchSequenceOntologyId {
+  my ($res, $name) = @_; 
+
+  my $SOTerm = GUS::Model::SRes::SequenceOntology->new({'term_name' => $name }); 
+  $SOTerm->retrieveFromDB;
+  $res->{sequenceOntologyId} = $SOTerm->getId();
+
+  if (! $SOTerm->getId()) {
+    warn "Error: Can't find SO term '$name' in database.";
+  } 
 }
 
 sub addNALocation {
@@ -1046,6 +1111,7 @@ sub undoTables {
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
+    DoTS.PostTranslationalModFeature
     );
 }
 
@@ -1115,6 +1181,10 @@ NOTES
      [
       'DoTS.NAFeature' =>
       'NALocations are associated with MassSpecFeatures by NAFeature.'
+     ],
+     [
+      'DoTS.PostTranslationalModFeature' =>
+      'PostTranslationalModFeature handles the phosphorylated residue - score, residue and modification type.'
      ],
      [
       'Core.Algorithm' =>
