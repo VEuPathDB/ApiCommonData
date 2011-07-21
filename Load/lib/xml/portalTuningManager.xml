@@ -36,55 +36,6 @@
     </unionization>
   </tuningTable>
 
-  <tuningTable name="apidb.AssemblyAttributes">
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="crypto.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="giardia.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="plasmo.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="toxo.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="tritryp.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="amoeba.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="orphan.tuning"/>
-    <externalTuningTableDependency name="apidb.AssemblyAttributes" dblink="piro.tuning"/>
-
-    <unionization>
-      <source dblink="crypto.tuning"/>
-      <source dblink="giardia.tuning"/>
-      <source dblink="plasmo.tuning"/>
-      <source dblink="toxo.tuning"/>
-      <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
-      <source dblink="piro.tuning"/>
-
-      <source>
-        <query>
-          <![CDATA[
-            select *
-            from apidb.AssemblyAttributes@amoeba.tuning
-            where project_id = 'AmoebaDB'
-          ]]>
-        </query>
-      </source>
-
-      <source>
-        <query>
-          <![CDATA[
-            select *
-            from apidb.AssemblyAttributes@micro.tuning
-            where project_id = 'MicrosporidiaDB'
-          ]]>
-        </query>
-      </source>
-
-    </unionization>
-    <sql>
-      <![CDATA[
-CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
-ON apidb.AssemblyAttributes&1 (source_id, project_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
 
   <tuningTable name="apidb.EstAttributes">
     <externalTuningTableDependency name="apidb.EstAttributes" dblink="crypto.tuning"/>
@@ -1867,7 +1818,6 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="apidb.Statistics">
-    <internalDependency name="apidb.AssemblyAttributes" />
     <internalDependency name="apidb.AssemblySequence" />
     <internalDependency name="apidb.CodingSequence" />
     <internalDependency name="apidb.EstAttributes" />
@@ -1886,7 +1836,7 @@ create table apidb.Statistics&1 nologging as
 select taxa.project_id, taxa.organism, genes.gene_count,
        transcripts.transcript_count, cdss.cds_count, proteins.protein_count,
        sequences.sequence_count, sequences.total_sequence_length,
-       orfs.orf_count, ests.est_count, assemblies.assembly_count
+       orfs.orf_count, ests.est_count
 from (select project_id, organism from apidb.GeneAttributes
      union
         select project_id, organism from apidb.SequenceAttributes
@@ -1894,8 +1844,6 @@ from (select project_id, organism from apidb.GeneAttributes
         select project_id, organism from apidb.EstAttributes
      union
         select project_id, organism from apidb.OrfAttributes
-     union
-        select project_id, organism from apidb.AssemblyAttributes
      union
         select project_id, organism from apidb.OrfAttributes) taxa,
      (select project_id, organism, count(*) gene_count
@@ -1936,13 +1884,7 @@ from (select project_id, organism from apidb.GeneAttributes
       where attrs.source_id = seq.source_id
         and attrs.project_id = seq.project_id
         and seq.sequence is not null
-      group by attrs.project_id, attrs.organism) ests,
-     (select attrs.project_id, attrs.organism, count(*) assembly_count
-      from apidb.AssemblyAttributes attrs, apidb.AssemblySequence seq
-      where attrs.source_id = seq.source_id
-        and attrs.project_id = seq.project_id
-        and seq.sequence is not null
-      group by attrs.project_id, attrs.organism) assemblies
+      group by attrs.project_id, attrs.organism) ests
 where taxa.project_id = genes.project_id(+)
   and taxa.organism = genes.organism(+)
   and taxa.project_id = transcripts.project_id(+)
@@ -1957,8 +1899,6 @@ where taxa.project_id = genes.project_id(+)
   and taxa.organism = orfs.organism(+)
   and taxa.project_id = ests.project_id(+)
   and taxa.organism = ests.organism(+)
-  and taxa.project_id = assemblies.project_id(+)
-  and taxa.organism = assemblies.organism(+)
 order by taxa.project_id, taxa.organism
       ]]>
     </sql>

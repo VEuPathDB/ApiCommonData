@@ -1980,37 +1980,6 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="apidb.AssemblyAttributes">
-    <externalDependency name="dots.Assembly"/>
-    <externalDependency name="sres.TaxonName"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE apidb.AssemblyAttributes&1 NOLOGGING AS
-SELECT a.source_id, cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
-       SUBSTR(CASE
-                WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
-                ELSE tn.name
-              END, 1, 100) AS organism,
-       a.number_of_contained_sequences AS est_count,
-       a.length,
-       a.a_count,
-       a.c_count,
-       a.g_count,
-       a.t_count,
-       a.other_count
-FROM  dots.Assembly a, sres.TaxonName tn
-WHERE a.taxon_id = tn.taxon_id
-  AND tn.name_class = 'scientific name'
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE UNIQUE INDEX apidb.AsmAttr_source_id&1
-ON apidb.AssemblyAttributes&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
 
   <tuningTable name="apidb.ArrayElementAttributes">
     <externalDependency name="dots.NaSequenceImp"/>
