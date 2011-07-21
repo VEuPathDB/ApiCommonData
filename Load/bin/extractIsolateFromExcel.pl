@@ -28,16 +28,16 @@ my (%hash, %cn);  # column name
 my ($file, $taxon);
 
 GetOptions( "inputfile=s" => \$file,
-            "species=s"   => \$taxon );
+            "genus=s"     => \$taxon );
 
 unless($file && $taxon) {
   die
 print <<EOL;
-Usage: extractIsolateFromExcel.pl --inputfile isolateSubmissimnExcelFile --species speciesName
+Usage: extractIsolateFromExcel.pl --inputfile isolateSubmissimnExcelFile --genus genusName
 
 Where:
-  inputfile  - Isolate Submission Excel File (in Excel 2000-2004 format .xls)
-  species    - valid NCBI taxomomy name, e.g Cryptosporidium, Toxoplasma, Plasmodium
+  inputfile - Isolate Submission Excel File (in Excel 2000-2004 format .xls)
+  genus     - valid NCBI taxomomy name, e.g Cryptosporidium, Toxoplasma, Plasmodium
 
 EOL
 }
@@ -65,8 +65,7 @@ sub cell_handler {
 
   my $value = $cell->Value(); 
   $hash{$row}{$col} = $value;
-}
-
+} 
 
 my $submitter    = $hash{1}{1};
 my $email        = $hash{2}{1};
@@ -79,7 +78,7 @@ my $purpose      = $hash{8}{1};
 my $release_date = $hash{9}{1};
 
 while(my ($k, $v) = each %hash) {
-  next if $k < 13;   # isolate data starts from row 15
+  next if $k < 13;   # isolate data starts from row 15, k is the row num
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ; 
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}}; 
@@ -102,24 +101,45 @@ while(my ($k, $v) = each %hash) {
   my $habitat      = $hash{$k}{$cn{habitat}};
   my $note         = $hash{$k}{$cn{note}};
   my $source       = $hash{$k}{$cn{isolation_source}};
-  my $seq1         = $hash{$k}{$cn{seq1}};
-  my $seq1_primer  = $hash{$k}{$cn{seq1_primer}};
-  my $seq1_product = $hash{$k}{$cn{seq1_product}};
+
+  my $seq1                 = $hash{$k}{$cn{seq1}};
+  my $seq1_fwd_primer_name = $hash{$k}{$cn{seq1_fwd_primer_name}};
+  my $seq1_fwd_primer_seq  = $hash{$k}{$cn{seq1_fwd_primer_seq}};
+  my $seq1_rev_primer_name = $hash{$k}{$cn{seq1_rev_primer_name}};
+  my $seq1_rev_primer_seq  = $hash{$k}{$cn{seq1_rev_primer_seq}};
+  my $seq1_product         = $hash{$k}{$cn{seq1_product}};
+
+  my $seq2                 = $hash{$k}{$cn{seq2}};
+  my $seq2_fwd_primer_name = $hash{$k}{$cn{seq2_fwd_primer_name}};
+  my $seq2_fwd_primer_seq  = $hash{$k}{$cn{seq2_fwd_primer_seq}};
+  my $seq2_rev_primer_name = $hash{$k}{$cn{seq2_rev_primer_name}};
+  my $seq2_rev_primer_seq  = $hash{$k}{$cn{seq2_rev_primer_seq}};
+  my $seq2_product         = $hash{$k}{$cn{seq2_product}};
+
+  my $seq3                 = $hash{$k}{$cn{seq3}};
+  my $seq3_fwd_primer_name = $hash{$k}{$cn{seq3_fwd_primer_name}};
+  my $seq3_fwd_primer_seq  = $hash{$k}{$cn{seq3_fwd_primer_seq}};
+  my $seq3_rev_primer_name = $hash{$k}{$cn{seq3_rev_primer_name}};
+  my $seq3_rev_primer_seq  = $hash{$k}{$cn{seq3_rev_primer_seq}};
+  my $seq3_product         = $hash{$k}{$cn{seq3_product}};
+
+  my $seq4                 = $hash{$k}{$cn{seq4}};
+  my $seq4_fwd_primer_name = $hash{$k}{$cn{seq4_fwd_primer_name}};
+  my $seq4_fwd_primer_seq  = $hash{$k}{$cn{seq4_fwd_primer_seq}};
+  my $seq4_rev_primer_name = $hash{$k}{$cn{seq4_rev_primer_name}};
+  my $seq4_rev_primer_seq  = $hash{$k}{$cn{seq4_rev_primer_seq}};
+  my $seq4_product         = $hash{$k}{$cn{seq4_product}};
 
   $country    .= ", $city" if $city;
   $country    .= ", $state" if $state;
   $country    .= ", $county" if $county;
   $isolate_id  =~ s/\s//g;
-  my $length   = length($seq1);
   $year        .= "-$month" if $month;
   $year        .= "-$day" if $day;
-
-  $seq1 =~ s/\W+//g;  
 
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
-  $note .= "; PCR_primers: $seq1_primer" if $seq1_primer; 
   $note .= "; purpose of sample collection: $purpose" if $purpose; 
   $note =~ s/^; //;
   # NCBI format /note="subtype: IIaA22G1R1; PCR_primers=fwd_name: AL3532"
@@ -136,94 +156,121 @@ while(my ($k, $v) = each %hash) {
   push  @class, $species;
   my $taxon = Bio::Species->new(-classification => [reverse @class]); 
 
-  $study =~ s/(\r|\n)/ /g;
+  $study =~ s/(\r|\n)/ /g; 
 
-  my $seq = Bio::Seq::RichSeq->new( -seq  => $seq1,
-                                    -desc => $study,        # DEFINITION
-                                    -id   => $isolate_id );
+  my @seqs = (
+         [$seq1, $seq1_fwd_primer_name, $seq1_fwd_primer_seq, $seq1_rev_primer_name, $seq1_rev_primer_seq, $seq1_product],
+         [$seq2, $seq2_fwd_primer_name, $seq2_fwd_primer_seq, $seq2_rev_primer_name, $seq2_rev_primer_seq, $seq2_product],
+         [$seq3, $seq3_fwd_primer_name, $seq3_fwd_primer_seq, $seq3_rev_primer_name, $seq3_rev_primer_seq, $seq3_product],
+         [$seq4, $seq4_fwd_primer_name, $seq4_fwd_primer_seq, $seq4_rev_primer_name, $seq4_rev_primer_seq, $seq4_product]
+             );
 
-  $seq->add_date("$day-$month-$year");
-  $seq->species($taxon);
+  my $count = 0;
+  foreach my $s (@seqs) {
+   
+    my $sequence        = $s->[0]; 
+    my $fwd_primer_name = $s->[1];
+    my $fwd_primer_seq  = $s->[2];
+    my $rev_primer_name = $s->[3];
+    my $rev_primer_seq  = $s->[4];
+    my $product         = $s->[5];
+    my $file_name       = $isolate_id;            
 
-  my $feat =  Bio::SeqFeature::Generic->new( -start => 1,
-                                             -end   => $length,
-                                             -primary_tag  => 'source',
-                                             -tag    => { 
-                                                          mol_type => 'genomic DNA',
-                                                        }
-                                            );
+    next unless $sequence;
 
-  $feat->add_tag_value('organism', $species) if $species;
-  $feat->add_tag_value('genotype', $genotype) if $genotype;
-  $feat->add_tag_value('subtype', $subtype) if $subtype;
-  $feat->add_tag_value('isolation_source', $source) if $source;
-  $feat->add_tag_value('collection_date', $year) if $year;
-  $feat->add_tag_value('host', $host) if $host;
-  $feat->add_tag_value('country', $country) if $country;
-  $feat->add_tag_value('sex', $sex) if $sex;
-  $feat->add_tag_value('breed', $breed) if $breed;
-  $feat->add_tag_value('lat-lon', $gps) if $gps;
-  $feat->add_tag_value('note', $note) if $note;
+    $sequence =~ s/\W+//g;  
+    my $length   = length($sequence);
 
-  my $location = Bio::Location::Fuzzy->new( -start => '<1', -end => ">$length", -location_type => '..');
+    $file_name = "$isolate_id.$count" unless $count == 0;
 
-  my $gene_feat =  Bio::SeqFeature::Generic->new( -primary_tag  => 'gene',
-                                                  -location => $location,
-                                                );
+    my $seq = Bio::Seq::RichSeq->new( -seq  => $sequence,
+                                      -desc => $study,        # DEFINITION
+                                      -id   => $isolate_id );
 
-  my $cds_feat =  Bio::SeqFeature::Generic->new( -primary_tag  => 'CDS',
-                                                 -location => $location,
-                                                  -tag    => { 
-                                                               codon_start => 1,
-                                                               product => $seq1_product,
-                                                             }
-                                                );
+    $seq->add_date("$day-$month-$year");
+    $seq->species($taxon);
 
-  my $ann = Bio::Annotation::Collection->new(); 
+    my $feat =  Bio::SeqFeature::Generic->new( -start => 1,
+                                               -end   => $length,
+                                               -primary_tag  => 'source',
+                                               -tag    => { 
+                                                            mol_type => 'genomic DNA',
+                                                          }
+                                              );
 
-  if($pmid) {
-    my $content = pcbiPubmed::setPubmedID($pmid);
-    my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
-    my $journal = pcbiPubmed::fetchPublication($content, "Journal");
-    my $authors = pcbiPubmed::fetchAuthorListLong($content, "Author");
+    $feat->add_tag_value('organism', $species) if $species;
+    $feat->add_tag_value('genotype', $genotype) if $genotype;
+    $feat->add_tag_value('subtype', $subtype) if $subtype;
+    $feat->add_tag_value('isolation_source', $source) if $source;
+    $feat->add_tag_value('collection_date', $year) if $year;
+    $feat->add_tag_value('host', $host) if $host;
+    $feat->add_tag_value('country', $country) if $country;
+    $feat->add_tag_value('sex', $sex) if $sex;
+    $feat->add_tag_value('breed', $breed) if $breed;
+    $feat->add_tag_value('lat-lon', $gps) if $gps;
+    $feat->add_tag_value('note', $note) if $note;
+    $feat->add_tag_value('fwd-PCR-primer-name', $fwd_primer_name) if $fwd_primer_name;
+    $feat->add_tag_value('fwd-PCR-primer-seq', $fwd_primer_seq) if $fwd_primer_seq;
+    $feat->add_tag_value('rev-PCR-primer-name', $rev_primer_name) if $rev_primer_name;
+    $feat->add_tag_value('rev-PCR-primer-seq', $rev_primer_seq) if $rev_primer_seq;
 
-    # reference 1: pubmed if available, otherwise, use study title
-    my $ref = Bio::Annotation::Reference->new( -title    => $title,
-                                               -authors  => $authors,
-                                               -pubmed   => $pmid,
-                                               -location => $journal );
-    $ann->add_Annotation('reference', $ref); 
-  } else {
-    my $ref = Bio::Annotation::Reference->new( -title    => $study,
-                                               -authors  => $authors,
-                                               -location => 'Unpublished');
-    $ann->add_Annotation('reference', $ref); 
-  }
+    my $location = Bio::Location::Fuzzy->new( -start => '<1', -end => ">$length", -location_type => '..');
 
-  # reference 2 from submitter and affliation
-  my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
-                                             -authors  => $authors,
-                                             -location => "Contact: $submitter $affiliation" );
+    my $gene_feat =  Bio::SeqFeature::Generic->new( -primary_tag  => 'gene',
+                                                    -location     => $location );
 
-  $ann->add_Annotation('reference', $ref); 
+    my $cds_feat =  Bio::SeqFeature::Generic->new( -primary_tag  => 'CDS',
+                                                   -location     => $location,
+                                                   -tag          => { codon_start => 1,
+                                                                      product => $product 
+                                                                    }
+                                                 );
 
-  # reference 3: other reference links if available
-  if($other_ref) {
+    my $ann = Bio::Annotation::Collection->new(); 
+
+    if($pmid) {
+      my $content = pcbiPubmed::setPubmedID($pmid);
+      my $title   = pcbiPubmed::fetchTitle($content, "ArticleTitle");
+      my $journal = pcbiPubmed::fetchPublication($content, "Journal");
+      my $authors = pcbiPubmed::fetchAuthorListLong($content, "Author");
+
+      # reference 1: pubmed if available, otherwise, use study title
+      my $ref = Bio::Annotation::Reference->new( -title    => $title,
+                                                 -authors  => $authors,
+                                                 -pubmed   => $pmid,
+                                                 -location => $journal );
+      $ann->add_Annotation('reference', $ref); 
+    } else {
+      my $ref = Bio::Annotation::Reference->new( -title    => $study,
+                                                 -authors  => $authors,
+                                                 -location => 'Unpublished');
+      $ann->add_Annotation('reference', $ref); 
+    }
+
+    # reference 2 from submitter and affliation
     my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
-                                               -location => $other_ref);
+                                               -authors  => $authors,
+                                               -location => "Contact: $submitter $affiliation" );
+
     $ann->add_Annotation('reference', $ref); 
 
+    # reference 3: other reference links if available
+    if($other_ref) {
+      my $ref = Bio::Annotation::Reference->new( -title    => 'Direct Submission',
+                                                 -location => $other_ref);
+      $ann->add_Annotation('reference', $ref); 
+    }
+
+    $seq->add_SeqFeature($feat); 
+    $seq->add_SeqFeature($gene_feat); 
+    $seq->add_SeqFeature($cds_feat); 
+
+    $seq->annotation($ann);
+
+    my $out = Bio::SeqIO->new(-file => ">$file_name", -format => 'Genbank' );
+    $out->write_seq($seq); 
+    $count++;
   }
-
-  $seq->add_SeqFeature($feat); 
-  $seq->add_SeqFeature($gene_feat); 
-  $seq->add_SeqFeature($cds_feat); 
-
-  $seq->annotation($ann);
-
-  my $out = Bio::SeqIO->new(-file => ">$isolate_id",
-                            -format => 'Genbank' );
-  $out->write_seq($seq); 
 } 
 
 __DATA__
@@ -251,18 +298,30 @@ __DATA__
 21,Non-human Habitat,habitat
 22,Additional Notes,note
 23,Sequence 1 Product or Locus Name,seq1_product
-24,Sequence 1 Primer Pairs,seq1_primer
-25,Sequence 1 description,seq1_desc
-26,Sequence 1,seq1
-27,Sequence 2 Product or Locus Name,seq2_product
-28,Sequence 2 Primer Pairs,seq2_primer
-29,Sequence 2 description,seq2_desc
-30,Sequence 2,seq2
-31,Sequence 3 Product or Locus Name,seq3_product
-32,Sequence 3 Primer Pairs,seq3_primer
-33,Sequence 3 description,seq3_desc
-34,Sequence 3,seq3
-35,Sequence 4 Product or Locus Name,seq4_product
-36,Sequence 4 Primer Pairs,seq4_primer
-37,Sequence 4 description,seq4_desc
-38,Sequence 4,seq4
+24,Sequence 1 Forward Primer Name,seq1_fwd_primer_name
+25,Sequence 1 Forward Primer Seq,seq1_fwd_primer_seq
+26,Sequence 1 Reverse Primer Name,seq1_rev_primer_name
+27,Sequence 1 Reverse Primer Seq,seq1_rev_primer_seq
+28,Sequence 1 Description,seq1_desc
+29,Sequence 1,seq1
+30,Sequence 2 Product or Locus Name,seq2_product
+31,Sequence 2 Forward Primer Name,seq2_fwd_primer_name
+32,Sequence 2 Forward Primer Seq,seq2_fwd_primer_seq
+33,Sequence 2 Reverse Primer Name,seq2_rev_primer_name
+34,Sequence 2 Reverse Primer Seq,seq2_rev_primer_seq
+35,Sequence 2 Description,seq2_desc
+36,Sequence 2,seq2
+37,Sequence 3 Product or Locus Name,seq3_product
+38,Sequence 3 Forward Primer Name,seq3_fwd_primer_name
+39,Sequence 3 Forward Primer Seq,seq3_fwd_primer_seq
+40,Sequence 3 Reverse Primer Name,seq3_rev_primer_name
+41,Sequence 3 Reverse Primer Seq,seq3_rev_primer_seq
+42,Sequence 3 Description,seq3_desc
+43,Sequence 3,seq3
+44,Sequence 4 Product or Locus Name,seq4_product
+45,Sequence 4 Forward Primer Name,seq4_fwd_primer_name
+46,Sequence 4 Forward Primer Seq,seq4_fwd_primer_seq
+47,Sequence 4 Reverse Primer Name,seq4_rev_primer_name
+48,Sequence 4 Reverse Primer Seq,seq4_rev_primer_seq
+49,Sequence 4 Description,seq4_desc
+50,Sequence 4,seq4 
