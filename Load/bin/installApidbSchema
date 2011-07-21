@@ -22,6 +22,7 @@ my $password = $gusconfig->getDatabasePassword();
 
 my @create = qw( enterDbVersion.sql
                  createApidbSchema.sql
+                 createApidbTuningSchema.sql
                  removeNullConstraintsFromSimilarityTables.sql
                  createAnalysisMethodInvocation.sql
                  createChromosome6Orthology.sql
@@ -92,6 +93,7 @@ my @delete = qw( dropTuningManager.sql
                  dropGusTuning.sql
                  dropStoredProcedures.sql
                  dropApidbSchema.sql
+                 dropApidbTuningSchema.sql
                );
 
 if ($create) {
