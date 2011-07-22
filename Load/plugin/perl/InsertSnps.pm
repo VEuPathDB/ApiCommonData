@@ -561,6 +561,7 @@ sub createSnpFeature {
 
   my $naSeq = $self->getNaSeq($feature->seq_id());
   $snpFeature->setParent($naSeq);
+  $snpFeature->setNaSequenceId($naSeq->getNaSequenceId()); ##don't remember if retrieveFromDB sets this before retrieving so do explicitly here.
 
   ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
   ## so can generate complete picture of snp.
