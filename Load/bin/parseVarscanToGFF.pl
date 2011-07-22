@@ -8,14 +8,16 @@ use Getopt::Long;
 my $file; 
 my $strain;
 my $output = 'snps.gff';
-my $percentCutoff = 25;
+my $percentCutoff = 34;
 my $pvalueCutoff = .01;
-my $depthCutoffMult = 2;
+my $depthCutoffMult = 3;
+my $minDepth = 3;
 
 &GetOptions("file|f=s" => \$file, 
             "percentCutoff|pc=i"=> \$percentCutoff,
             "pvalueCutoff|pvc=i"=> \$pvalueCutoff,
             "depthCutoff|dc=i"=> \$depthCutoffMult,
+            "minDepth|md=i"=> \$minDepth,
             "output|o=s"=> \$output,
             "strain|s=s"=> \$strain,
             );
@@ -24,7 +26,7 @@ if (! -e $file || !$strain){
 print <<endOfUsage;
 parseVarscanToGFF.pl usage:
 
-  parseVarscanToGFF.pl --file|f <varscan file> --strain <strain for snps> --percentCutoff|pc <frequency percent cutoff [25]> --pvalueCutoff|pvc <pvalue cutoff [0.01]> --depthCutoff|dc <multiplier times medidan for depth cutoff [2]> --output|o <outputFile [snps.gff]>
+  parseVarscanToGFF.pl --file|f <varscan file> --strain <strain for snps> --percentCutoff|pc <frequency percent cutoff [34]> --pvalueCutoff|pvc <pvalue cutoff [0.01]> --depthCutoff|dc <multiplier times median for depth cutoff [3] NOTE: absolute cutoff set to 50 if median * multiplier < 50> --minDepth|md <minimum coverage before call SNP [3]>--output|o <outputFile [snps.gff]>
 endOfUsage
 }
 
@@ -65,7 +67,18 @@ close F;
 my @sorted = sort{$a <=> $b}@covArr;
 my $median = $sorted[int(scalar(@sorted) / 2)];
 my $depthCutoff = int($median * $depthCutoffMult);
+##should we make some minimum here .. perhaps 50?
+$depthCutoff = 50 if $depthCutoff < 50;
 print STDERR "Maximum depth cutoff for considering SNPs = $depthCutoff\n";
+##what is the distribution of coverage?
+print STDERR "Depth coverage distribution by percentile\n";
+my $numSlices = 100;
+my $s = 100 / $numSlices;
+my $mult = int(scalar(@sorted) / $numSlices);
+for(my$a=0;$a<$numSlices;$a++){
+  print STDERR ($s*$a),": $sorted[$a*$mult]\n";
+}
+print STDERR "last: $sorted[-1]\n";
 
 open(F, "$file") || die "unable to open file $file\n";
 my @tmpLines;
@@ -93,7 +106,7 @@ sub process {
   my($lines) = @_;
     
   my $cov =  &getCoverage($lines);
-  return if $cov > $depthCutoff;  ## exceeds depthCutoff
+  return if $cov > $depthCutoff || $cov < $minDepth;  ## exceeds depthCutoff
 
   ##want to reprint with percent properly computed if multiple lines
 #  if(scalar(@{$lines}) > 1){
