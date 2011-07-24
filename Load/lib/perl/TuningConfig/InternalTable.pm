@@ -149,7 +149,7 @@ sub getState {
     ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningTable record exists in database for $self->{name} -- update needed.");
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name} -- update needed.");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record (dated $self->{timestamp}) differs from current definition for $self->{name} -- update needed.");
     $needUpdate = 1;
     ApiCommonData::Load::TuningConfig::Log::addLog("stored:\n-------\n" . $self->{dbDef} . "\n-------")
 	if $self->{debug};
