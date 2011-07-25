@@ -2,7 +2,7 @@
 
   <resource resource="TgondiiFOU_genome_RSRC" version="@@TgondiiFOU_genome_VER@@"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="ToxoDB/tgondiiFOU/genome/scaffolds/%RESOURCE_VERSION%/fromProvider/tgfouScaffolds.fasta"/>
+    <manualGet fileOrDir="ToxoDB/tgondiiFOU/genome/scaffolds/%RESOURCE_VERSION%/final/tgfouScaffolds.fasta"/>
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 943167 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgfouScaffolds.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="Toxoplasma gondii FOU scaffoldss"
@@ -23,7 +23,7 @@
 
 <resource resource="TgondiiFOU_contigs_RSRC" version="@@TgondiiFOU_genome_VER@@" parentResource="TgondiiFOU_genome_RSRC"
       plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="ToxoDB/tgondiiFOU/genome/contigs/%RESOURCE_VERSION%/fromProvider/tgfouOrphanContigs.fasta"/>
+    <manualGet fileOrDir="ToxoDB/tgondiiFOU/genome/contigs/%RESOURCE_VERSION%/final/tgfouOrphanContigs.fasta"/>
     <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 943167 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/tgfouOrphanContigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
     <info
         displayName="Toxoplasma gondii FOU contigs"
