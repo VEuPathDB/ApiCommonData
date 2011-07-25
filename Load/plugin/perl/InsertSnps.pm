@@ -635,7 +635,7 @@ sub createSnpFeature {
           });
     $seqVar->setParent($snpFeature);
     $seqVar->setParent($naSeq);
-    $snpFeature->setReferenceNa($base);
+    $snpFeature->setReferenceNa($referenceBase);
 
   }
 
