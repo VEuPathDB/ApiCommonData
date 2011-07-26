@@ -9,7 +9,7 @@ use XML::Simple;
 use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::Utils;
-use ReFlow::DataSource::DataSourceNew;
+use ReFlow::DataSource::DataSource;
 use ReFlow::DataSource::DataSources;
 use CBIL::Util::PropertySet;
 
@@ -84,9 +84,9 @@ sub loadDataSources {
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSource$suffix
-                  (data_source_id, name, display_name, version, categories, organism,
-                   project_id, description, internal_description, contact, institution, external_database_release_id)
-                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  (data_source_id, name, display_name, version, categories,
+                   project_id, description, contact, institution, external_database_release_id)
+                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 
     my %loadedDatasets = getLoadedDatasets($dbh);
@@ -101,9 +101,9 @@ SQL
       print "data source \"$dsName\" has external database release ID $rlsId\n";
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
       $insertDs->execute($dataSourceId, $dsName, $ds->getDisplayName(),
-                       $ds->getVersion(), $ds->getCategory(), $ds->getOrganism(),
+                       $ds->getVersion(), $ds->getCategory(),
                        $project, # not $ds->getProject()
-                       $ds->getDescription(), $ds->getInternalDescription(), $ds->getContact(),
+                       $ds->getDescription(), $ds->getContact(),
                        $ds->getInstitution(), $rlsId)
 	or die "inserting a DataSource record";
     }
@@ -154,12 +154,10 @@ sub createTables {
         project_id                   varchar2(30),
         name                         varchar2(120),
         version                      varchar2(60),
-        internal_description         varchar2(4000),
         external_database_release_id number(12),
         display_name                 varchar2(200),
         public_url                   varchar2(80),
         categories                   varchar2(80),
-        organism                     varchar2(1000),
         description                  varchar2(4000),
         contact                      varchar2(80),
         institution                  varchar2(120),
