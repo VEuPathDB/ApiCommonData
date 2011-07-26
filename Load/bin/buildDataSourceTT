@@ -40,7 +40,7 @@ GetOptions("propfile=s" => \$propfile,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
-my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, $password);
+my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, 'apidb', $password);
 
 
 createTables($dbh, $suffix);
