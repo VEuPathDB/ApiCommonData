@@ -339,6 +339,18 @@
     <unpack>createSTSFileFromGB --genbank_file_or_dir @@dataDir@@/sequences.gb.fixed --output_file @@dataDir@@/sequences.sts </unpack>
     <unpack> ePCRMicrosatelliteForLocations --sts_file @@dataDir@@/sequences.sts --output_file @@dataDir@@/Pf_ms.gff --seq_file @@dataDir@@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/bin --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
   </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Boothroyd_Elias_Moritz_Phosphoroteome_RSRC"
+            version="2011-06-20">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Boothroyd_Elias_Moritz_Phosphoproteome/%RESOURCE_VERSION%/Pf_Phosphoproteome.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/Pf_Phosphoproteome.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"
+            version="2011-06-20">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Boothroyd_Elias_Moritz_Phosphoproteome/%RESOURCE_VERSION%/Pf_TotalProteome.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/Pf_TotalProteome.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@'</pluginArgs>
+  </resource>
   <resource plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
             resource="Pfalciparum_old_annotations_RSRC"
             version="5.5">
