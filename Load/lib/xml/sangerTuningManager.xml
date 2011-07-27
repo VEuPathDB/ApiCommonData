@@ -252,7 +252,7 @@ sub renameOldChanges {
 update apidb.AnnotationChange&1 -- should use &1 macro
 set gene = 'old change: ' || gene
 where change_date < (select to_date(edr.version, 'yyyy-mm-dd')
-                       from apidb.GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
+                       from ApidbTuning.GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
                        where ga.source_id = AnnotationChange&1.gene
                          and nf.na_feature_id = ga.na_feature_id
                          and edr.external_database_release_id = nf.external_database_release_id
@@ -276,7 +276,7 @@ SQL
   </tuningTable>
 
   <tuningTable name="apidb.ChangedGeneProduct" alwaysUpdate="true">
-    <externalTuningTableDependency name="apidb.GeneAttributes"/>
+    <externalTuningTableDependency name="ApidbTuning.GeneAttributes"/>
     <perl>
       <![CDATA[
 use strict;
@@ -455,7 +455,7 @@ sub changedGenesWithoutProduct {
     # so take sql error to mean that the changed-gene list was formerly empty.
     eval {
     $stmt = $dbh->prepare(<<SQL)
-      select cgp.gene from apidb.ChangedGeneProduct cgp, apidb.GeneAttributes ga
+      select cgp.gene from apidb.ChangedGeneProduct cgp, ApidbTuning.GeneAttributes ga
                   where cgp.gene = ga.source_id
     minus
       select gene from apidb.ChangedGeneProduct&1

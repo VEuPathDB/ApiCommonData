@@ -1,3 +1,3 @@
-DROP VIEW apidb.scaffold_map;
+DROP VIEW ApidbTuning.Scaffold_Map;
 
 exit

@@ -1628,11 +1628,11 @@ sub makeTranscriptDownloadFileTransformed {
             snas.length
             as defline,
             snas.sequence
-           FROM apidb.geneattributes gf,
+           FROM ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
-                apidb.featurelocation fl,
+                ApidbTuning.FeatureLocation fl,
                 dots.nasequence ns
       WHERE gf.na_feature_id = t.parent_id
         AND gf.na_sequence_id = ns.na_sequence_id
@@ -2053,8 +2053,8 @@ sub makeDerivedCdsDownloadFileTransformed {
            SUBSTR(snas.sequence,
                   taaf.translation_start,
                   taaf.translation_stop - taaf.translation_start + 1)
-           FROM apidb.featurelocation fl,
-                apidb.geneattributes gf,
+           FROM ApidbTuning.FeatureLocation fl,
+                ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
 	        sres.taxonname tn,
@@ -2296,8 +2296,8 @@ sub makeAnnotatedProteinDownloadFileTransformed {
             taas.length
             as defline,
             taas.sequence
-           FROM apidb.featurelocation fl,
-                apidb.geneattributes gf,
+           FROM ApidbTuning.FeatureLocation fl,
+                ApidbTuning.GeneAttributes gf,
                 dots.transcript t,
                 dots.splicednasequence snas,
                 dots.translatedaafeature taaf,
@@ -2530,7 +2530,7 @@ sub makeOrfDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            apidb.featurelocation fl,
+            ApidbTuning.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -2597,7 +2597,7 @@ sub makeOrfNaDownloadFileWithAbrevDeflineTransformed {
             sres.sequenceontology so,
             sres.externaldatabase ed,
             sres.externaldatabaserelease edr,
-            apidb.featurelocation fl,
+            ApidbTuning.FeatureLocation fl,
             dots.nasequence enas
       WHERE m.na_feature_id = taaf.na_feature_id
         AND taaf.aa_sequence_id = taas.aa_sequence_id
@@ -2785,7 +2785,7 @@ sub makeMixedGenomicDownloadFile {
                ns.sequence
            FROM dots.nasequence ns,
 	        sres.taxonname tn,
-                apidb.sequenceattributes sa
+                ApidbTuning.SequenceAttributes sa
           WHERE ns.na_sequence_id = sa.na_sequence_id
 	    AND ns.taxon_id = tn.taxon_id
             AND tn.name_class = 'scientific name'

@@ -17,15 +17,15 @@ insert into comments2.CommentStableId@apidb.login_comment
             (stable_id, comment_id, comment_stable_id) -- shouldn't that be "comment_stable_id_id"?
 select gene, comment_id, comments2.CommentStableId_pkseq.nextval@apidb.login_comment
 from (  select gi.gene, comment_id
-        from apidb.GeneId gi,
+        from ApidbTuning.GeneId gi,
              (  select stable_id, comment_id
                 from comments2.comments@apidb.login_comment
-                where project_name in (select project_id from apidb.GeneAttributes)
+                where project_name in (select project_id from ApidbTuning.GeneAttributes)
               union
                 select csi.stable_id, csi.comment_id
                 from comments2.comments@apidb.login_comment c, comments2.commentStableId@apidb.login_comment csi
                 where csi.comment_id = c.comment_id
-                  and c.project_name in (select project_id from apidb.GeneAttributes)) apicomm_pairs
+                  and c.project_name in (select project_id from ApidbTuning.GeneAttributes)) apicomm_pairs
         where apicomm_pairs.stable_id = gi.id
       minus
         (  select stable_id, comment_id from comments2.comments@apidb.login_comment

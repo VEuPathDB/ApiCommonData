@@ -41,7 +41,7 @@ FROM Dots.GeneFeature
 
     my $sql = "
 select gi.id, gf.na_feature_id
-from apidb.geneid gi, dots.genefeature gf
+from ApidbTuning.GeneId gi, dots.genefeature gf
 where gi.gene = gf.source_id
 ";
 
@@ -54,7 +54,7 @@ where external_database_release_id in ($geneExtDbRlsId)
 ";
     $sql = "
 select gi.id, gf.na_feature_id
-from apidb.geneid gi, dots.genefeature gf
+from ApidbTuning.GeneId gi, dots.genefeature gf
 where gi.gene = gf.source_id
 and gf.external_database_release_id in ($geneExtDbRlsId)
 ";

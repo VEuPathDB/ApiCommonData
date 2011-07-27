@@ -2,62 +2,62 @@
 prompt **** creating local geneDetail tables from component databases
 ---------------------------------------------------------------------
 
-create table apidb.GenedetailCrypto as
+create table ApidbTuning.GeneDetailCrypto as
  ( select * from apidb.Genedetail@CRYPTO);
 
-prompt **** count for apidb.genedetailcrypto
+prompt **** count for ApidbTuning.GeneDetailCrypto
 
-select count(*) from apidb.genedetailcrypto;
-
-
+select count(*) from ApidbTuning.GeneDetailCrypto;
 
 
-create table apidb.GenedetailGiardia as
+
+
+create table ApidbTuning.GeneDetailGiardia as
  ( select * from apidb.Genedetail@GIARDIA);
 
-prompt **** count for apidb.genedetailgiardia
+prompt **** count for ApidbTuning.GeneDetailGiardia
 
-select count(*) from apidb.genedetailgiardia;
-
-
+select count(*) from ApidbTuning.GeneDetailGiardia;
 
 
 
-create table apidb.GenedetailPlasmo as
+
+
+create table ApidbTuning.GeneDetailPlasmo as
  ( select * from apidb.Genedetail@PLASMO);
 
-prompt **** count for apidb.genedetailplasmo
+prompt **** count for ApidbTuning.GeneDetailPlasmo
 
-select count(*) from apidb.genedetailplasmo;
-
-
+select count(*) from ApidbTuning.GeneDetailPlasmo;
 
 
-create table apidb.GenedetailToxo as
+
+
+create table ApidbTuning.GeneDetailToxo as
  ( select * from apidb.Genedetail@TOXO);
 
-prompt **** count for apidb.genedetailtoxo
+prompt **** count for ApidbTuning.GeneDetailToxo
 
-select count(*) from apidb.genedetailtoxo;
-
-
+select count(*) from ApidbTuning.GeneDetailToxo;
 
 
-create table apidb.GenedetailTrich as
+
+
+create table ApidbTuning.GeneDetailTrich as
  ( select * from apidb.Genedetail@AMITO where project_id = 'TrichDB' );
 
-prompt **** count for apidb.genedetailtrich
+prompt **** count for ApidbTuning.GeneDetailTrich
 
-select count(*) from apidb.genedetailtrich;
+select count(*) from ApidbTuning.GeneDetailTrich;
 
 
 
-create table apidb.GenedetailTriTryp as
+create table ApidbTuning.GeneDetailTriTryp as
  ( select * from apidb.Genedetail@TRITRYP);
 
-prompt **** count for apidb.genedetailtritryp
+prompt **** count for ApidbTuning.GeneDetailTriTryp
 
-select count(*) from apidb.genedetailtritryp;
+select count(*) from ApidbTuning.GeneDetailTriTryp;
 
 
 --------------------------------------------------
@@ -66,27 +66,27 @@ prompt **** creating apidb.genedetail for eupathdb
 
 create table apidb.Genedetail as
 (
-select * from apidb.GenedetailCRYPTO 
+select * from ApidbTuning.GeneDetailCrypto 
 union all 
-select * from apidb.GenedetailGIARDIA 
+select * from ApidbTuning.GeneDetailGiardia 
 union all
-select * from apidb.GenedetailPLASMO  
+select * from ApidbTuning.GeneDetailPlasmo  
 union all
-select * from apidb.GenedetailTOXO 
+select * from ApidbTuning.GeneDetailToxo 
 union all
-select * from apidb.GenedetailTRICH 
+select * from ApidbTuning.GeneDetailTrich 
 union all
-select * from apidb.GenedetailTRITRYP 
+select * from ApidbTuning.GeneDetailTriTryp 
 );
 
 --------------------------------------------------------------
 prompt **** NOT removing genedetail tables from component databases
 --------------------------------------------------------------
 
--- drop table apidb.GenedetailCrypto;
--- drop table apidb.GenedetailGiardia;
--- drop table apidb.GenedetailPlasmo;
--- drop table apidb.GenedetailToxo;
--- drop table apidb.GenedetailTrich;
+-- drop table ApidbTuning.GeneDetailCrypto;
+-- drop table ApidbTuning.GeneDetailGiardia;
+-- drop table ApidbTuning.GeneDetailPlasmo;
+-- drop table ApidbTuning.GeneDetailToxo;
+-- drop table ApidbTuning.GeneDetailTrich;
 -- commit;
 

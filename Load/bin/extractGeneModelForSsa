@@ -103,7 +103,7 @@ return ("SELECT ga.source_id, ga.na_feature_id,
                   decode(ga.is_reversed, 1, '-', '+') as strand,
                   ga.sequence_id AS sequence_id,ga.na_sequence_id,
                   ga.exon_count
-             FROM apidb.geneattributes ga
+             FROM ApidbTuning.GeneAttributes ga
             WHERE ga.source_id is not null
               and ga.taxon_id = ?
             ORDER BY sequence_id,start_min,end_max,source_id");
@@ -114,7 +114,7 @@ sub GetExonQuery {
 
   return ("SELECT least(fl.start_min, fl.end_max)-1 as start_min,
                   greatest(fl.start_min, fl.end_max) as end_max
-             FROM apidb.featurelocation fl
+             FROM ApidbTuning.FeatureLocation fl
             WHERE fl.feature_type = 'ExonFeature'
               AND fl.parent_id = ?
               AND fl.na_sequence_id = ?
@@ -131,7 +131,7 @@ return ("SELECT ga.source_id, ga.na_feature_id,
                   ga.sequence_id AS sequence_id,ga.na_sequence_id,
                   (select count(*) from dots.exonfeature ef where ef.coding_start is not null and ef.parent_id = ga.na_feature_id) as exon_count
 
-             FROM apidb.geneattributes ga
+             FROM ApidbTuning.GeneAttributes ga
             WHERE ga.source_id is not null
               and ga.taxon_id = ?
             ORDER BY sequence_id,start_min,end_max,source_id");
@@ -142,7 +142,7 @@ sub GetExonQueryOnCDS {
 
   return ("SELECT least(fl.coding_start,fl.coding_end)-1 as start_min,
                   greatest(fl.coding_start,fl.coding_end) as end_max
-             FROM apidb.featurelocation fl
+             FROM ApidbTuning.FeatureLocation fl
             WHERE fl.feature_type = 'ExonFeature'
               AND fl.parent_id = ?
               AND fl.na_sequence_id = ?

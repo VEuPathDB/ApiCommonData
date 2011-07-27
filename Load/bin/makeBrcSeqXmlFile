@@ -85,7 +85,7 @@ sub makeSeqXml {
 
 my $sql = "
   SELECT distinct sa.source_id
-    FROM apidb.sequenceattributes sa
+    FROM ApidbTuning.SequenceAttributes sa
    WHERE sa.database_name in ($dbName) AND sa.database_version in ($dbVer)
      AND sa.is_top_level = 1
 ORDER By sa.source_id

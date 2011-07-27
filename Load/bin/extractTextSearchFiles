@@ -72,7 +72,7 @@ my $sql;
 #    AND ns.taxon_id = tn.taxon_id
 #    AND tn.name_class = 'scientific name'
 #    AND gf.source_id IN (SELECT source_id
-#                         FROM apidb.GeneAttributes
+#                         FROM ApidbTuning.GeneAttributes
 #                         WHERE project_id = '${projectId}')
 #  ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
 #         gf.source_id,
@@ -111,7 +111,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY gf.source_id,
          dr.primary_identifier || ' ' || dr.secondary_identifier
@@ -125,13 +125,13 @@ $sql = <<SQL;
 SELECT DISTINCT '', substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
                 gf.source_id,
                 gts.go_id || ' ' ||  gts.go_term_name
-FROM apidb.GoTermSummary gts, dots.GeneFeature gf, dots.NaSequence ns, sres.TaxonName tn
+FROM ApidbTuning.GoTermSummary gts, dots.GeneFeature gf, dots.NaSequence ns, sres.TaxonName tn
 WHERE gts.source_id = gf.source_id
   AND gf.na_sequence_id = ns.na_sequence_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY substr(tn.name, 1, instr(tn.name || '  ', ' ', 1, 2)-1),
                 gf.source_id,
@@ -160,7 +160,7 @@ WHERE gf.na_feature_id = drnf.na_feature_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 UNION
 -- . . . and toxo uses AaFeatures
@@ -183,7 +183,7 @@ WHERE gf.na_feature_id = t.parent_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY 2, 3, 4  -- union-style order-by
 SQL
@@ -203,7 +203,7 @@ WHERE gf.na_feature_id = nfc.na_feature_id
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY tn.name, gf.source_id,
          regexp_replace(dbms_lob.substr(nfc.comment_string, 4000, 1),
@@ -226,7 +226,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND tas.taxon_id = tn.taxon_id(+)
   AND tn.name_class(+) = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY tn.name, gf.source_id, ec.description
 SQL
@@ -245,7 +245,7 @@ WHERE gf.source_id IS NOT NULL
   AND ns.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY tn.name, gf.source_id, gf.product
 SQL
@@ -274,7 +274,7 @@ WHERE t.parent_id = gf.na_feature_id
   AND tas.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
   AND gf.source_id IN (SELECT source_id
-                       FROM apidb.GeneAttributes
+                       FROM ApidbTuning.GeneAttributes
                        WHERE project_id = '${projectId}')
 ORDER BY pvalue_exp, tn.name, gf.source_id, eas.description
 SQL

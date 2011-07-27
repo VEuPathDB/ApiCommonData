@@ -362,7 +362,7 @@ sub prepareGenesLocStmt {
   my ($self) = @_;
 
   my $sql = "select na_feature_id, start_min, end_max
-from apidb.FEATURELOCATION
+from ApidbTuning.FeatureLocation
 where feature_type = 'GeneFeature'
 and na_sequence_id = ?
 and start_min > ?
@@ -406,7 +406,7 @@ sub findOrthologGroups {
     ";
   }else{
     $sql = "select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
-    from apidb.geneattributes ga, dots.genefeature gf
+    from ApidbTuning.GeneAttributes ga, dots.genefeature gf
     where ga.na_feature_id = gf.na_feature_id
     ";
   }

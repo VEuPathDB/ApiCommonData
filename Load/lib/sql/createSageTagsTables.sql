@@ -41,7 +41,7 @@ SELECT decode((l.is_reversed + sm.strand_orientation),
                  1, (sm.startm + l.start_min),
                 -1, (sm.end - l.end_max +1),
                  0, (sm.end - l.end_max +1) )
-FROM  dots.nalocation l, apidb.scaffold_map sm
+FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
 WHERE l.na_feature_id = stc.na_feature_id   
   AND sm.piece_na_sequence_id = stc.na_sequence_id);
 
@@ -52,20 +52,20 @@ SELECT decode((l.is_reversed + sm.strand_orientation),
                  1, (sm.startm + l.end_max -1),
                 -1, (sm.end - l.start_min),
                  0, (sm.end - l.start_min) )
-FROM  dots.nalocation l, apidb.scaffold_map sm
+FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
 WHERE l.na_feature_id = stc.na_feature_id   
   AND sm.piece_na_sequence_id = stc.na_sequence_id); 
 
 UPDATE 	apidb.SageTags_3prime stc
 SET     strand = (
 (SELECT  decode((l.is_reversed + sm.strand_orientation), '-1', '+1', 0, '-1', 1, '+1', 2, '-1', '.')
- FROM  dots.nalocation l, apidb.scaffold_map sm
+ FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
  WHERE l.na_feature_id = stc.na_feature_id   
    AND sm.piece_na_sequence_id = stc.na_sequence_id 
    AND sm.virtual_source_id NOT LIKE 'TGG_%' )
  UNION 
 (SELECT  decode((l.is_reversed), 0, '+1', 1, '-1', '.')
- FROM  dots.nalocation l, apidb.scaffold_map sm
+ FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
  WHERE l.na_feature_id = stc.na_feature_id   
    AND sm.piece_na_sequence_id = stc.na_sequence_id 
    AND sm.virtual_source_id LIKE 'TGG_%'));
@@ -217,7 +217,7 @@ SELECT decode((l.is_reversed + sm.strand_orientation),
                  1, (sm.startm + l.start_min),
                 -1, (sm.end - l.end_max +1),
                  0, (sm.end - l.end_max +1) )
-FROM  dots.nalocation l, apidb.scaffold_map sm
+FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
 WHERE l.na_feature_id = stc.na_feature_id   
   AND sm.piece_na_sequence_id = stc.na_sequence_id); 
 
@@ -228,20 +228,20 @@ SELECT decode((l.is_reversed + sm.strand_orientation),
                  1, (sm.startm + l.end_max -1),
                 -1, (sm.end - l.start_min),
                  0, (sm.end - l.start_min) )
-FROM  dots.nalocation l, apidb.scaffold_map sm
+FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
 WHERE l.na_feature_id = stc.na_feature_id   
   AND sm.piece_na_sequence_id = stc.na_sequence_id); 
 
 UPDATE 	apidb.SageTags_5prime stc
 SET     strand = (
 (SELECT  decode((l.is_reversed + sm.strand_orientation), '-1', '+1', 0, '-1', 1, '+1', 2, '-1', '.')
- FROM  dots.nalocation l, apidb.scaffold_map sm
+ FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
  WHERE l.na_feature_id = stc.na_feature_id   
    AND sm.piece_na_sequence_id = stc.na_sequence_id 
    AND sm.virtual_source_id NOT LIKE 'TGG_%' )
  UNION 
 (SELECT  decode((l.is_reversed), 0, '+1', 1, '-1', '.')
- FROM  dots.nalocation l, apidb.scaffold_map sm
+ FROM  dots.nalocation l, ApidbTuning.Scaffold_Map sm
  WHERE l.na_feature_id = stc.na_feature_id   
    AND sm.piece_na_sequence_id = stc.na_sequence_id 
    AND sm.virtual_source_id LIKE 'TGG_%'));

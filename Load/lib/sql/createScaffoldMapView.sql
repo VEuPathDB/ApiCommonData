@@ -7,7 +7,7 @@ grant select on dots.VirtualSequence to apidb with grant option;
 grant select on dots.SequencePiece to apidb with grant option;
 grant select on dots.ExternalNaSequence to apidb with grant option;
 
-CREATE MATERIALIZED VIEW apidb.scaffold_map AS (
+CREATE MATERIALIZED VIEW ApidbTuning.Scaffold_Map AS (
      SELECT 
       na_sequence_id as virtual_na_sequence_id, 
       parent_id as virtual_source_id,
@@ -51,8 +51,8 @@ ORDER by na_sequence_id, offset, sequence_order)
 );
 
 
-GRANT insert, select, update, delete ON apidb.scaffold_map to gus_w;
-GRANT select ON apidb.scaffold_map TO gus_r;
+GRANT insert, select, update, delete ON ApidbTuning.Scaffold_Map to gus_w;
+GRANT select ON ApidbTuning.Scaffold_Map TO gus_r;
 
 
 exit;

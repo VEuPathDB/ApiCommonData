@@ -165,7 +165,7 @@ sub GetTaxonQuery {
     my($organism) = @_;
 
   my $sql = "SELECT distinct ga.organism as organism, nas.taxon_id as taxon_id
-           FROM   apidb.geneattributes ga,dots.nasequence nas
+           FROM   ApidbTuning.GeneAttributes ga,dots.nasequence nas
            WHERE  ga.na_sequence_id = nas.na_sequence_id";
 
     if($organism){
@@ -191,7 +191,7 @@ sub GetExonQuery {
                   '.' as gff_frame,
                   ef.source_id as gff_group
            FROM   DoTS.ExonFeature ef,
-                  ApiDB.FeatureLocation nl,
+                  ApidbTuning.FeatureLocation nl,
                   DoTS.NaSequence ns
            WHERE  ef.na_feature_id = nl.na_feature_id
            AND    nl.is_top_level = 1
@@ -221,7 +221,7 @@ sub GetCDSQuery {
            FROM   DoTS.GeneFeature gf,
                   DoTS.Transcript rna,
                   DoTS.ExonFeature ef,
-                  apidb.FeatureLocation nl,
+                  ApidbTuning.FeatureLocation nl,
                   DoTS.NaSequence ns,
                   sres.SequenceOntology so,
                   dots.RnaFeatureExon rfe
