@@ -384,6 +384,7 @@ options:
   configFile      an xml file describing the tables to be created
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
+  schema          the schema (database user) to login and craete objects in
   password        database login password
   tables          check/update only listed tables (and their antecedants)
   doUpdate        update any tables found to be out of date
@@ -447,7 +448,7 @@ Sample config file XML:
 Sample prop file:
 <tuningProps>
   <password>JoeSentMe</password>
-  <username>apidb</username>
+  <schema>ApidbTuning</schema>
   <maxRebuildMinutes>180</maxRebuildMinutes>
   <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
   <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
