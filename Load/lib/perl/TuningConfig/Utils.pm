@@ -103,7 +103,7 @@ if ($propFile) {
 
   $password = $props->{password} if !$password;
   $username = $props->{username} if !$username;
-  $username = 'apidb' if !$username;
+  $username = 'ApidbTuning' if !$username;
 
   my $dsn = "dbi:Oracle:" . $instance;
 
