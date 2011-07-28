@@ -1,0 +1,1126 @@
+<resourcesPipeline repository="/files/efr"
+        downloadDir="@downloadDir@">
+
+    <cleanups>
+
+    </cleanups>
+
+  <resource resource="GO_RSRC" version="1.1969"
+        displayName="Gene Ontology"
+        publicUrl="http://www.geneontology.org"
+        category="Ontology"
+        url="http://www.geneontology.org/ontology/gene_ontology.obo"
+        extDbName="Gene Ontology"
+        extDbRlsVer="1.1969"
+        extDbRlsDescrip="The Gene Ontology from Jul, 2011"
+        dbCommit="@dbcommit@"
+	plugin="GUS::Supported::Plugin::InsertGeneOntology">
+    <manualGet fileOrDir="global/ontology/geneOntology/%RESOURCE_VERSION%/gene_ontology.obo"/>
+    <pluginArgs>--oboFile @@dataDir@@/gene_ontology.obo --extDbRlsName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --calcTransitiveClosure</pluginArgs>  
+     <description>
+            <![CDATA[
+  		 The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+      </description>
+</resource>
+
+  <resource resource="enzymeDB_RSRC" version="2011-02-08"
+	 displayName="Enzyme nomenclature database"
+        publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
+        category="Ontology"
+        url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
+    plugin="GUS::Community::Plugin::LoadEnzymeDatabase">
+    <wgetArgs url="ftp://ftp.expasy.org/databases/enzyme/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --include list  --accept=enzclass.txt,enzyme.dat</wgetArgs>
+    <pluginArgs>--InPath @@dataDir@@ --enzymeDbName %RESOURCE_NAME% --enzymeDbRlsVer %RESOURCE_VERSION%</pluginArgs>
+	<description>
+            <![CDATA[
+    	ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+        </description>
+ </resource>
+
+  <resource resource="PDBProteinSequences_RSRC" version="2011-05-12"
+	url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        extDbName="PDB protein sequences"
+        extDbRlsVer="2011-05-12"
+        extDbRlsDescrip="PDB protein sequences"
+  	plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=@@dataDir@@/pdb_seqres.txt.gz</wgetArgs>
+    <unpack>gunzip @@dataDir@@/pdb_seqres.txt.gz</unpack>
+    <unpack>filterPdbFile --inputFile @@dataDir@@/pdb_seqres.txt --outputFile  @@dataDir@@/pdb.fsa</unpack>
+     <getAndUnpackOutput file="@@dataDir@@/pdb.fsa"/>   
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile  @@dataDir@@/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+	 <description>
+         <![CDATA[
+		Protein sequences from the Protein Data Bank (PDB) used for mapping protein sequences to crystal structures in PDB.
+          ]]>
+        </description>
+</resource>
+
+  <resource resource="taxonomy_RSRC" version="2011-05-12"
+      plugin="GUS::Supported::Plugin::LoadTaxon"
+        displayName="NCBI Taxonomy"
+        publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        category="Ontology"
+        url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">
+
+    <wgetArgs url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --include list --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+    <unpack>gunzip @@dataDir@@/gi_taxid_prot.dmp.gz</unpack>
+    <unpack>$currDir=`pwd`; cd @@dataDir@@ ; tar -xzf taxdump.tar.gz ; rm -f taxdump.tar ; cd $currDir</unpack>
+    <pluginArgs>--names @@dataDir@@/names.dmp --nodes @@dataDir@@/nodes.dmp --gencode @@dataDir@@/gencode.dmp --merged @@dataDir@@/merged.dmp --verbose</pluginArgs>
+     <description>
+            <![CDATA[
+   			 The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
+          ]]>
+        </description>
+  </resource>
+  
+<resource resource="updatePDBTaxon_RSRC" version="2011-01-28"
+      plugin="ApiCommonData::Load::Plugin::UpdateTaxonFieldFromFile">
+    <wgetArgs url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/source.idx">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=4 --output-document=@@dataDir@@/source.idx</wgetArgs>
+    <unpack>processSourceIdxFile --inFile @@dataDir@@/source.idx --outFile @@dataDir@@/source.idx.processed</unpack>
+    <pluginArgs>--fileName @@dataDir@@/source.idx.processed --sourceIdRegex  '^(\w+)' --taxonNameRegex '^\w+\s+(.+)' --idSql 'select substr(lower(source_id),0,4),aa_sequence_id from dots.externalaasequence' --extDbRelSpec 'PDBProteinSequences_RSRC|2011-05-12'  --tableName 'DoTS::ExternalAASequence'</pluginArgs>
+  </resource>
+
+  <resource resource="SO_RSRC" version="1.45"
+      plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+	displayName="Sequence Ontology"
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.45">
+
+    <wgetArgs url="http://song.cvs.sourceforge.net/viewvc/song/ontology/so.obo">--tries=5 --output-document=@@dataDir@@/so.obo</wgetArgs>
+    <pluginArgs>--inputFile @@dataDir@@/so.obo --soVersion 1.45 --soCvsVersion 1.45</pluginArgs>
+<description>
+            <![CDATA[
+	    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+        </description>
+  </resource>
+
+  <resource resource="Mged_Ontology_Term_Types_RSRC" version="1.3"
+      plugin="GUS::Supported::Plugin::InsertOntologyTermType">
+    <manualGet fileOrDir="global/ontology/Mged/%RESOURCE_VERSION%/MgedOntologyTermTypes.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/MgedOntologyTermTypes.tab</pluginArgs>
+  </resource>
+
+  <resource resource="Mged_Ontology_Relationship_Types_RSRC" version="1.3"
+      plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType">
+    <manualGet fileOrDir="global/ontology/Mged/%RESOURCE_VERSION%/MgedOntologyRelationshipTypes.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/MgedOntologyRelationshipTypes.tab</pluginArgs>
+  </resource>
+
+  <resource resource="MGED_Ontology_RSRC" version="1.3"
+              displayName="The MGED Ontology"
+              category="Ontology"
+              publicUrl="http://mged.sourceforge.net/ontologies/MGEDontology.owl"
+              url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl"
+              extDbName="MGED_Ontology"
+              extDbRlsVer="1.3"
+              extDbRlsDescrip="MGED Ontology"
+	      plugin="GUS::Supported::Plugin::InsertOntologyTermsAndRelationships">
+    <wgetArgs url="http://mged.sourceforge.net/ontologies/MGEDOntology.owl">--tries=5 --no-directories --no-host-directories --accept=@@dataDir@@/MGEDOntology.owl </wgetArgs>
+    <pluginArgs>--inFile @@dataDir@@/MGEDOntology.owl --extDbName %RESOURCE_NAME% --extDbVersion %RESOURCE_VERSION% --uri 'http://mged.sourceforge.net/ontologies/MGEDontology.php' --parserType MgedRdfRow</pluginArgs>
+	<description>
+	       <![CDATA[
+		Concepts, definitions, terms, and resources for standardized description of a microarray experiment in support of MAGE v.1. The MGED ontology is divided into the MGED Core ontology which is intended to be stable and in synch with MAGE v.1; and the MGED Extended ontology which adds further associations and classes not found in MAGE v.1 ]]>
+        </description>
+
+  </resource>
+
+  <resource resource="Mged_Ontology_Entry_RSRC" version="1.3"
+      plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO">
+    <manualGet fileOrDir="global/empty"/>
+    <pluginArgs>--externalDatabase MGED_Ontology_RSRC --externalDatabaseRls 1.3</pluginArgs>
+  </resource>
+
+  <resource resource="GO_evidence_codes_RSRC" version="1.21"
+	 displayName="Gene Ontology evidence codes"        
+        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
+        category="Ontology"            
+        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+      plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo">
+    <wgetArgs url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo">--tries=5 --output-document=@@dataDir@@/evidence_code.obo</wgetArgs>
+    <pluginArgs>--oboFile @@dataDir@@/evidence_code.obo</pluginArgs>
+	 <description>
+            <![CDATA[
+  		 Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
+          ]]>
+        </description>
+</resource>
+
+  <resource resource="InterproscanData_RSRC" version="32.0"
+	 displayName="InterPro Database"
+        category="Proteome"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+ 	plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs">
+    <manualGet fileOrDir="global/domain/iprscanData/%RESOURCE_VERSION%/iprscan"/>
+    <unpack>fixSuperfamily @@dataDir@@/iprscan/data/</unpack>
+    <pluginArgs>--inPath @@dataDir@@/iprscan/data/</pluginArgs>
+	<description>
+            <![CDATA[
+        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+                ]]>
+        </description>
+	<publication pmid="15608177"/>
+  </resource>
+
+  <resource resource="NRDB_RSRC" version="2011-05-12"
+ 	displayName="GenBank NRDB"
+        publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        category="Proteome"
+        url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        extDbName="NRDB"
+        extDbRlsVer="2011-05-12"
+        extDbRlsDescrip="The nr file from 2011-05-12"
+	plugin="ApiCommonData::Load::Plugin::LoadNothing">
+    <wgetArgs url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/">--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+    <unpack>gunzip @@dataDir@@/nr.gz </unpack>
+    <unpack>shortenDefLine --inputFile @@dataDir@@/nr --outputFile @@dataDir@@/nrdb-short-defline.fsa --taxonIdMappingFile @@dataDir@@/../taxonomy_RSRC/gi_taxid_prot.dmp</unpack>
+    <getAndUnpackOutput file="@@dataDir@@/nrdb-short-defline.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/nr"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+	<description>
+            <![CDATA[
+   		The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+        </description>
+
+  </resource>
+
+  <resource resource="blatAlignmentQuality_RSRC" version="2010-02-01"
+      plugin="GUS::Supported::Plugin::LoadGusXml">
+    <manualGet fileOrDir="global/ontology/alignmentQuality/%RESOURCE_VERSION%/blatalignmentquality.xml"/>
+    <pluginArgs>--filename @@dataDir@@/blatalignmentquality.xml</pluginArgs>
+  </resource>
+
+<!--plasmoIsolatesResource-->
+  <resource resource="isolateVocabulary_RSRC" version="2009-06-14"
+      plugin="ApiCommonData::Load::Plugin::InsertIsolateVocabulary">
+    <manualGet fileOrDir="global/ontology/isolate/%RESOURCE_VERSION%/isolateVocabulary.txt"/>
+    <pluginArgs>--isolateVocabularyFile @@dataDir@@/isolateVocabulary.txt</pluginArgs>
+  </resource>
+
+  <resource resource="Continents_RSRC" version="2008-08-26"
+      plugin="ApiCommonData::Load::Plugin::InsertContinents">
+    <manualGet fileOrDir="global/ontology/Continents/%RESOURCE_VERSION%/continents.txt"/>
+    <pluginArgs>--continentsFile @@dataDir@@/continents.txt</pluginArgs>
+  </resource>
+
+  <resource resource="BibRefType_RSRC" version="1.0"
+      plugin="GUS::Supported::Plugin::LoadGusXml">
+    <manualGet fileOrDir="global/ontology/bibliographicReferenceType/%RESOURCE_VERSION%/ncbiPublicationTypes.xml"/>
+    <pluginArgs>--filename @@dataDir@@/ncbiPublicationTypes.xml</pluginArgs>
+  </resource>
+
+
+<!-- common resources -->
+  <resource resource="OrthoMCL_Phyletic_RSRC" version="5"
+        displayName="OrthoMCL phyletic profiles"
+        organisms="S. mansoni, S. japonicum"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
+        publicUrl="http://orthomcl.cbil.upenn.edu">
+    <manualGet fileOrDir="SchistoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
+    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "smas,sjap"</pluginArgs>
+	<description>
+            <![CDATA[
+		OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+          ]]>
+        </description>
+        <publication pmid="16381887"/>
+  </resource>
+
+  <resource resource="OrthoMCL_RSRC" version="5"
+	displayName="Orthologous groups generated using OrthoMCL"
+        organisms="S. mansoni, S. japonicum"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+      plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups">
+    <manualGet fileOrDir="SchistoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt"/>
+    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "smas,sjap" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+	  <description>
+            <![CDATA[
+   		OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+</resource>
+
+  <resource resource="OrthoMCLTree_RSRC" version="5"
+      plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon">
+    <manualGet fileOrDir="SchistoDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclClades.txt"/>
+    <pluginArgs>--cladeFile @@dataDir@@/%RESOURCE_VERSION%/orthomclClades.txt --speciesFile @@dataDir@@/%RESOURCE_VERSION%/orthomclTaxons.txt </pluginArgs>
+  </resource>
+
+
+
+<!--Schistosoma mansoni Puerto Rico-->
+	<resource resource="SmanPuertoRico_supercontig_RSRC" version="2011-05-19"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+       displayName="Schistosoma mansoni Puerto Rico supercontigs and annotation"
+        project="SchistoDB"
+	category="Genome"
+        organisms="Schistosoma mansoni"
+>
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/supercontig_Sanger_gff/%RESOURCE_VERSION%/final/genome.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 6183 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome 'Chr_([\dwW])\s' </pluginArgs>
+    <info
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+   Sequence data for <i>Schistosoma mansoni</i> strain Puerto Rico were downloaded from <a href="http://www.sanger.ac.uk/resources/downloads/helminths/schistosoma-mansoni.html">Sanger</a> (sequence and annotated features).<br>Sequencing of <i>S. mansoni</i> was conducted by <a href="http://www.sanger.ac.uk/resources/downloads/helminths/schistosoma-mansoni.html">Sanger Institue</a>.
+        ]]>
+      </description>
+<publication pmid="19606141"/>
+    
+  </resource>
+
+  <resource resource="SmanPuertoRico_annotations_RSRC" version="2011-05-19" parentResource="SmanPuertoRico_supercontig_RSRC" plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="Schistosoma mansoni Puerto Rico supercontigs and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/supercontig_Sanger_gff/%RESOURCE_VERSION%/workspace/v5.19.05.11.chado.manual.fixed.gff"/>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/v5.19.05.11.chado.manual.fixed.gff --output_gff @@dataDir@@/genome..gff3</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/SchistoDB/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/genome..gff3 --inputFileExtension "gff3"  --fileFormat gff3 --soCvsVersion 1.45 --defaultOrganism "Schistosoma mansoni"  --seqSoTerm "supercontig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence </pluginArgs>
+    <info
+        displayName="Schistosoma mansoni Puerto Rico supercontigs and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+ Sequence data for <i>Schistosoma mansoni</i> strain Puerto Rico were downloaded from <a href="http://www.sanger.ac.uk/resources/
+downloads/helminths/schistosoma-mansoni.html">Sanger</a> (sequence and annotated features).<br>Sequencing of <i>S. mansoni</i> was 
+conducted by <a href="http://www.sanger.ac.uk/resources/downloads/helminths/schistosoma-mansoni.html">Sanger Institue</a>.
+ ]]>
+      </description>
+<publication pmid="19606141"/>
+    
+  </resource>
+
+  <resource resource="SmanPuertoRico_ProductName_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/function/SmanPuertoRico_product_Sanger_RSRC/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --productDbName SmanPuertoRico_supercontig_RSRC --productDbVer 2011-05-19</pluginArgs>
+    <info
+        displayName="SmanPuertoRico Product Name"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--ECnumber -->
+<resource resource="SmanPuertoRico_ECNumbers_RSRC" version="2011-05-19"
+      plugin="GUS::Community::Plugin::InsertECMapping">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/function/SmanPuertoRico_ecnumber_Sanger_RSRC/%RESOURCE_VERSION%/ec.txt"/>
+    <pluginArgs>--ECMappingFile @@dataDir@@/ec.txt --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
+    <info
+        displayName="EC Number Mapping for Schistosoma mansoni "
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="Proteome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         EC Number mapping for <i>S. mansoni</i> genes.
+        ]]>
+      </description>
+    
+  </resource>
+
+
+  <resource resource="SmanPuertoRico_Comment_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/SmanPuertoRico_comment_Sanger_RSRC/%RESOURCE_VERSION%/comment.txt"/>
+    <pluginArgs>--file @@dataDir@@/comment.txt --genomeDbName SmanPuertoRico_supercontig_RSRC --genomeDbVer 2011-05-19 </pluginArgs>
+    <info
+        displayName="SmanPuertoRico Comment"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--PubMed ID resource -->
+  <resource resource="SmanPuertoRico_Pubmed_DBRefs_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/SmanPuertoRico_literature.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/SmanPuertoRico_literature.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'SmanPuertoRico_supercontig_RSRC|2011-05-19'</pluginArgs>
+    <info
+        displayName="DBRefs for pubmed links"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         DBRefs for pubmed links.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--Uniprot resource-->
+  <resource resource="SmanPuertoRico_Uniprot_Gene_dbxref_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/dbxrefs_Uniprot.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs_Uniprot.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'SmanPuertoRico_supercontig_RSRC|2011-05-19'</pluginArgs>
+    <info
+        displayName="dbxref from Uniprot genes to schistodb gene identifiers"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+
+
+
+<!--MEROPS DbxRef resource-->
+
+  <resource resource="SmanPuertoRico_MEROPS_Gene_dbxref_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/dbxrefs_MEROPS.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs_MEROPS.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'SmanPuertoRico_supercontig_RSRC|2011-05-19'</pluginArgs>
+    <info
+        displayName="dbxref from MEROPs genes to schistodb gene identifiers"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+
+<!--PDB resource-->
+  <resource resource="SmanPuertoRico_predictedProteinStructures_RSRC" version="2011-05-19"  plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        displayName="Predicted protein structures (PDB) "
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="Proteome"
+        publicUrl="http://bioinfo.icgeb.res.in/codes/model.html">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/dbxrefs_PDB.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs_PDB.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefAAFeature"</pluginArgs>
+    <info
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         Computationally generated 3-D structure models, seeded with structures from PDB.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--Previous system Id resource-->
+  <resource resource="SmanPuertoRico_previds_dbxref_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/SmanPuertoRico_previous_systematic_id.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/SmanPuertoRico_previous_systematic_id.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'SmanPuertoRico_supercontig_RSRC|2011-05-19' --idType 'previous id'</pluginArgs>
+    <info
+        displayName="SmanPuertoRico previous id mappings"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[         
+        ]]>
+      </description>
+    
+  </resource>
+
+<!-- gene name Alias -->
+<resource resource="SmanPuertoRico_aliases_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/SmanPuertoRico_name_Sanger_RSRC/%RESOURCE_VERSION%/genename.txt"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/genename.txt --outputFile @@dataDir@@/genenameTwoColumns.txt</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/genenameTwoColumns.txt</pluginArgs>
+    <info
+        displayName="insert gene name aliases"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+<!-- Mitochondrial genome -->
+   <resource resource="SmanPuertoRico_mito_RSRC" version="2011-05-19" plugin="GUS::Supported::Plugin::LoadFastaSequences" parentResource="SmanPuertoRico_supercontig_RSRC"
+        displayName="Schistosoma mansoni Puerto Rico mitochondrial genome and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore">
+
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/mitochondrial/%RESOURCE_VERSION%/final/genome.fasta"/>
+    <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --ncbiTaxId 6183 --sequenceFile  @@dataDir@@/genome.fasta --SOTermName 'mitochondrial_chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome 'Schisto_mansoni.(\S+)' </pluginArgs>
+    <info        displayName="Schistosoma mansoni Puerto Rico mitochondrial genome and annotation"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+   Sequence data for <i>Schistosoma mansoni</i> strain Puerto Rico were downloaded from <a href="http://www.sanger.ac.uk/resources/
+downloads/helminths/schistosoma-mansoni.html">Sanger</a> (sequence and annotated features).<br>Sequencing of <i>S. mansoni</i> was 
+conducted by <a href="http://www.sanger.ac.uk/resources/downloads/helminths/schistosoma-mansoni.html">Sanger Institue</a>.
+        ]]>
+      </description>
+<publication pmid="19606141"/>
+    
+  </resource>
+
+<resource resource="SmanPuertoRico_mito_annotations_RSRC" version="2011-05-19" parentResource="SmanPuertoRico_supercontig_RSRC" plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="Schistosoma mansoni Puerto Rico mitochondrial genome and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/genome/mitochondrial/%RESOURCE_VERSION%/workspace/genome.mito.manual.fixed.gff"/>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/genome.mito.manual.fixed.gff --output_gff @@dataDir@@/genome.mito.gff3</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/SchistoDB/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/genome.mito.gff3 --inputFileExtension "gff3"  --fileFormat gff3 --soCvsVersion 1.45 --defaultOrganism "Schistosoma mansoni"  --seqSoTerm "mitochondrial_chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+ Sequence data for <i>Schistosoma mansoni</i> strain Puerto Rico were downloaded from <a href="http://www.sanger.ac.uk/resources/
+downloads/helminths/schistosoma-mansoni.html">Sanger</a> (sequence and annotated features).<br>Sequencing of <i>S. mansoni</i> was 
+conducted by <a href="http://www.sanger.ac.uk/resources/downloads/helminths/schistosoma-mansoni.html">Sanger Institue</a>.
+ ]]>
+      </description>
+<publication pmid="19606141"/>
+    
+  </resource>
+
+<!-- -->
+
+
+<!-- epitope -->
+ <resource resource="SmanPuertoRico_IEDB_Epitopes_RSRC" version="2.6"   plugin="GUS::Supported::Plugin::LoadFastaSequences"
+       displayName="IEDB Epitopes"
+       project="SchistoDB"
+       organisms="Schistosoma mansoni"
+       category="Proteome"
+       publicUrl="http://www.immuneepitope.org"
+       contact="IEDB"
+       email=""
+       institution="IEDB">
+   <manualGet fileOrDir="SchistoDB/SmanPuertoRico/epitope/IEDB/%RESOURCE_VERSION%/epitopeSmansoni.txt"/>
+   <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+   <unpack>extractFromIEDB --inputFile @@dataDir@@/epitopeSmansoni.txt  --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSman.txt</unpack>
+   <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSman.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportSman.fsa </unpack>
+   <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+   <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSman.txt"/>
+   <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+   <info
+       email=""
+       institution="IEDB">
+     </info>  <description>
+       <![CDATA[
+        IEDB epitopes.
+       ]]>
+     </description>
+   
+ </resource>
+
+  <resource resource="SmanPuertoRico_IEDB_Epitopes_DBxRefs_RSRC" version="2.6"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../SmanPuertoRico_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    
+  </resource>
+
+ 
+ <resource resource="SmanPuertoRico_EstLibrary_RSRC" version="2011-06-03"
+      plugin="ApiCommonData::Load::Plugin::InsertDbESTFiles"
+        displayName="S. mansoni NCBI EST sequences"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="Transcriptome">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/NCBI/%RESOURCE_VERSION%/sman.fixed.est"/>
+    <pluginArgs> --inputFile  @@dataDir@@/sman.fixed.est --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% </pluginArgs>
+    <info
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> NCBI EST sequences. Link to <a href='http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=NucEst&cmd=Search&dopt=DocSum&term=txid6183[Organism:noexp]'>Sequences</a>.  
+        ]]>
+      </description>
+    
+  </resource>
+
+
+<!-- Annotations -->
+<resource resource="SmanPuertoRico_NCBI_Gene_dbxref_RSRC" version="2011-05-19"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/dbxref/SmanPuertoRico_dbxref_Sanger_RSRC/%RESOURCE_VERSION%/dbxrefs_NCBI.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxrefs_NCBI.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"  --geneExternalDatabaseSpec 'SmanPuertoRico_supercontig_RSRC|2011-05-19'</pluginArgs>
+    <info
+        displayName="dbxref from NCBI genes to schistodb"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         
+        ]]>
+      </description>
+    
+  </resource>
+
+
+
+<!-- EST ##########################-->
+
+<resource resource="cercaria_EstLibrary_RSRC" version="2008-06-16"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        displayName=" S. mansoni Welcome Sanger Institute EST Library"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="Transcriptome"
+        publicUrl="ftp://ftp.sanger.ac.uk/pub/pathogens/Schistosoma/mansoni/ESTs/"
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/cercaria/%RESOURCE_VERSION%/smce_vec_trimmed.fa"/>
+    <pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/smce_vec_trimmed.fa --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183 --contactName 'Matt Berriman' --libraryName 'cercaria'   --libraryStage 'cercaria' </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+  </resource>
+
+
+<resource resource="d21mouse_EstLibrary_RSRC" version="2007-06-07"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+       displayName="Matt Berriman S. mansoni b EST Library (d21 mouse)"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/d21mouse/%RESOURCE_VERSION%/sm_m21_vectorclippedreads.fasta"/>    <pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/sm_m21_vectorclippedreads.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183  --libraryName 'd21mouse'  --libraryStage 'd21mouse'  --contactName 'Matt Berriman'    </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<resource resource="d28mouse_EstLibrary_RSRC" version="2007-06-07"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        displayName="Matt Berriman S. mansoni b EST Library (d28 mouse)"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+
+
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/d28mouse/%RESOURCE_VERSION%/sm_m28_vectorclippedreads.fasta"/>    <pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/sm_m28_vectorclippedreads.fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183  --libraryName 'd28mouse' --libraryStage 'd28mouse'  --contactName 'Matt Berriman'    </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<resource resource="d28rat_EstLibrary_RSRC" version="2007-06-07"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile (d28 rat)"
+        displayName="Matt Berriman S. mansoni b EST Library"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+
+
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/d28rat/%RESOURCE_VERSION%/sm_r28_vectorclippedreads.fasta"/>    <pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/sm_r28_vectorclippedreads.fasta  --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183  --libraryName 'd28rat' --libraryStage 'd28rat'   --contactName 'Matt Berriman'    </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<resource resource="d3schistosomula_EstLibrary_RSRC" version="2008-07-16"
+      plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+       displayName="Matt Berriman S. mansoni b EST Library (d3 schistosomula)"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+
+
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/d3schistosomula/%RESOURCE_VERSION%/sm3d_vec_trimmed.fa"/>    <pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/sm3d_vec_trimmed.fa  --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --libraryStage 'd3schistosomula' --ncbiTaxId 6183  --libraryName 'd3schistosomula'  --contactName 'Matt Berriman'    </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<resource resource="d7lung_EstLibrary_RSRC" version="2007-06-19" plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+       displayName="Matt Berriman S. mansoni b EST Library (d7 lung)"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute">
+  <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/d7lung/%RESOURCE_VERSION%/sm_d7.vc.fasta"/>    
+<pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/sm_d7.vc.fasta  --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183 --libraryStage 'd7lung'  --libraryName 'd7lung'  --contactName 'Matt Berriman'  </pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<resource resource="germball_EstLibrary_RSRC" version="2008-06-16" plugin="ApiCommonData::Load::Plugin::LoadEstsFromFastaFile"
+        displayName="Matt Berriman S. mansoni b EST Library (germball)"
+        project="SchistoDB"
+        organisms="Schistosoma mansoni"
+        category="ignore"
+        publicUrl=""
+        contact="Matt Berriman"
+        email="mb4@sanger.ac.uk"
+        institution="Wellcome Trust Sanger Institute"
+>
+  <manualGet fileOrDir="SchistoDB/SmanPuertoRico/EST/germball/%RESOURCE_VERSION%/smgb_vec_trimmed.fa"/><pluginArgs>--sourceIdRegex ">(\S+)" --fastaFile  @@dataDir@@/smgb_vec_trimmed.fa  --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVer %RESOURCE_VERSION% --SOTermName 'EST' --ncbiTaxId 6183  --contactName 'Matt Berriman'   --libraryName 'germball' --libraryStage 'germball'</pluginArgs>
+    <info>
+      </info>  <description>
+        <![CDATA[
+         <i>S. mansoni</i> b stage EST library.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!-- ESTs -->
+
+<!-- RnaSeq -->
+
+ <resource plugin="ApiCommonData::Load::Plugin::LoadNothing" resource="SmanPuertoRico_RNASeq_Sanger_RSRC"  version="2010-12-03">
+    <getAndUnpackOutput dir="@@dataDir@@/2010-12-03/final" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3012_1.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3012_1.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3224_1.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3224_1.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3224_3.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/3224_3.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4441_1.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4441_1.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4485_5.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4485_5.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4485_6.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4485_6.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_3.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_3.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_5.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_5.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_6.bam__1.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/4912_6.bam__2.fastq" />
+    <getAndUnpackOutput file="@@dataDir@@/2010-12-03/final/config.txt" />
+    <manualGet fileOrDir="SchistoDB/SmanPuertoRico/rnaSeq/%RESOURCE_VERSION%/final/" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+
+
+
+<!-- Schistosoma japonicum Anhui -->
+	<resource resource="SjapAnhui_supercontig_RSRC" version="2009-12-17"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        displayName="Schistosoma japonicum Anhui supercontigs and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="Genome">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/genome/supercontig_CHGC_gff/%RESOURCE_VERSION%/final/genome.fasta"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 6182 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
+    <info
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+   Sequence data for <i>Schistosoma japonicum</i> strain Anhui were downloaded from <a href="http://www.chgc.sh.cn/japonicum/">CHGC</a> (sequence and annotated features).<br>Sequencing of <i>S. japonicum</i> was conducted by <a href="http://www.chgc.sh.cn/japonicum">The Chinese National Human Genome Center at Shanghai</a>.
+        ]]>
+      </description>
+	<publication pmid="19606140"/>
+    
+  </resource>
+
+  <resource resource="SjapAnhui_annotations_RSRC" version="2009-12-17" parentResource="SjapAnhui_supercontig_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+       displayName="Schistosoma japonicum Anhui supercontigs and annotation"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+
+>
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/genome/supercontig_CHGC_gff/%RESOURCE_VERSION%/workspace/GeneDB_Sjaponicum_Gff.v3.fixed.gff3"/>
+    <unpack>preprocessGFF3 --input_gff @@dataDir@@/GeneDB_Sjaponicum_Gff.v3.fixed.gff3 --output_gff @@dataDir@@/genome.gff3</unpack>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/SchistoDB/schistoGeneGFF2Gus.xml --inputFileOrDir @@dataDir@@/genome.gff3 --inputFileExtension "gff3"  --fileFormat gff3 --soCvsVersion 1.45 --defaultOrganism "Schistosoma japonicum"  --seqSoTerm "supercontig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+    <info
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+	Sequence data for <i>Schistosoma japonicum</i> strain Anhui were downloaded from <a href="http://www.chgc.sh.cn/japon
+icum/">CHGC</a> (sequence and annotated features).<br>Sequencing of <i>S. japonicum</i> was conducted by <a href="http:/
+/www.chgc.sh.cn/japonicum">The Chinese National Human Genome Center at Shanghai</a>.      
+ ]]>
+      </description>
+	<publication pmid="19606140"/>
+    
+  </resource>
+
+  <resource resource="SjapAnhui_ProductName_RSRC" version="2009-12-17"
+      plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/function/SjapAnhui_product_CHGC_RSRC/%RESOURCE_VERSION%/product.txt"/>
+    <pluginArgs>--file @@dataDir@@/product.txt --productDbName SjapAnhui_supercontig_RSRC --productDbVer 2009-12-17</pluginArgs>
+    <info
+        displayName="Schistosoma japonicum Anhui Product Name"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+          SjapAnhui  product name
+        ]]>
+      </description>
+    
+  </resource>
+
+  <resource resource="SjapAnhui_Comment_RSRC" version="2009-12-17"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatCommentFromTabFile">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/genome/SjapAnhui_comment_CHGC_RSRC/%RESOURCE_VERSION%/comments.txt"/>
+    <pluginArgs>--file @@dataDir@@/comments.txt --genomeDbName SjapAnhui_supercontig_RSRC --genomeDbVer 2009-12-17 </pluginArgs>
+    <info
+        displayName="Schistosoma japonicum Anhui Comment"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         Comment information.
+        ]]>
+      </description>
+    
+  </resource>
+
+
+<!--SjapAnhuiSupercontigDbxRefsResource-->
+
+  <resource resource="SjapAnhui_xRefs_RSRC" version="2009-12-17"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/dbxref/%RESOURCE_VERSION%/dbxref.txt"/>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbxref.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier,lowercase_primary_identifier" --tableName "DbRefNASequence" </pluginArgs>
+    <info
+        displayName="Schistosoma japonicum Anhui DBRefs"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         <i>S. japonicum</i> DBRefs.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--- Sjap aliases information -->
+  <resource resource="SjapAnhui_aliases_RSRC" version="2009-12-17"
+      plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/genome/SjapAnhui_name_CHGC_RSRC/%RESOURCE_VERSION%/name.txt"/>
+    <unpack>createTwoColumnFromMultipleColumn --inputFile @@dataDir@@/name.txt --outputFile @@dataDir@@/nameAliasesWithTwoCols.txt</unpack>
+    <pluginArgs>--MappingFile @@dataDir@@/nameAliasesWithTwoCols.txt</pluginArgs>
+    <info
+        displayName="insert gene aliases"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         SjapAnhui gene aliases information.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--- Sjap Mitochondrion information -->
+  <resource resource="SjapAnhui_mito_RSRC" version="2000-10-02" parentResource="SjapAnhui_supercontig_RSRC"
+      plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        displayName="S. japonicum mitochondrial sequence and annotation"
+        project=""
+        organisms="Schistosoma japonicum"
+        category="Organellar"
+
+>
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/genome/mitochondrial/%RESOURCE_VERSION%/sequence.gb"/>
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/SchistoDB/schistoMitoGenbank2Gus.xml --inputFileOrDir @@dataDir@@/sequence.gb --fileFormat genbank --soCvsVersion 1.45 --defaultOrganism "Schistosoma japonicum"  --seqSoTerm "mitochondrial_chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out  </pluginArgs>
+    <info
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         Sequence data from NCBI for <i>S. japonicum</i> Anhui in GBK (sequence and annotated features) format. 
+        ]]>
+      </description>
+    
+  </resource>
+
+<!-- epitope -->
+ <resource resource="SjapAnhui_IEDB_Epitopes_RSRC" version="2.6"   plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        displayName="Schistosoma japonicum IEDB Epitopes"
+       project="SchistoDB"
+       organisms="Schistosoma japonicum"
+       category="Proteome"
+       publicUrl="http://www.immuneepitope.org"
+       contact="IEDB"
+       email=""
+       institution="IEDB">
+   <manualGet fileOrDir="SchistoDB/SjapAnhui/epitope/IEDB/%RESOURCE_VERSION%/IEDBExportSjap.txt"/>
+   <unpack>mkdir -p @@dataDir@@/IEDB_Epitopes_fixed/fasta</unpack>
+   <unpack>extractFromIEDB --inputFile @@dataDir@@/IEDBExportSjap.txt  --outputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSjap.txt</unpack>
+   <unpack>generateEpitopeFastaFile --inputFile @@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSjap.txt --outputFile @@dataDir@@/IEDB_Epitopes_fixed/fasta/IEDBExportSjap.fsa </unpack>
+   <getAndUnpackOutput dir="@@dataDir@@/IEDB_Epitopes_fixed"/>
+   <getAndUnpackOutput file="@@dataDir@@/IEDB_Epitopes_fixed/IEDBExportSjap.txt"/>
+   <pluginArgs>--seqFileDir @@dataDir@@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+   <info>
+     </info>  <description>
+       <![CDATA[
+        IEDB epitopes.
+       ]]>
+     </description>
+   
+ </resource>
+
+  <resource resource="SjapAnhui_IEDB_Epitopes_DBxRefs_RSRC" version="2.6"
+      plugin="ApiCommonData::Load::Plugin::InsertDBxRefs">
+    <manualGet fileOrDir="global/empty"/>
+    <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../SjapAnhui_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
+    <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
+    <info
+        displayName="IEDB Epitopes"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="ignore"
+        publicUrl="http://www.immuneepitope.org"
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         IEDB epitopes.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--- Sjap EST information -->
+  <resource resource="SjapAnhui_EstLibrary_RSRC" version="2011-06-03"
+      plugin="ApiCommonData::Load::Plugin::InsertDbESTFiles" 
+       displayName="S. japonicum NCBI EST sequences"
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        category="Transcriptome">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/EST/NCBI/%RESOURCE_VERSION%/sequence.fixed.est"/>
+    <pluginArgs> --inputFile  @@dataDir@@/sequence.fixed.est --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% </pluginArgs>
+    <info
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      </info>  <description>
+        <![CDATA[
+         <i>S. japonicum</i> NCBI EST sequences with EST format. Link to <a href= 'http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=NucEst&cmd=Search&dopt=DocSum&term=txid6182[Organism:noexp]'>Sequences </a>.
+        ]]>
+      </description>
+    
+  </resource>
+
+<!--- Mass Spec data information -->
+
+ <resource resource="Sjaponicum_Proteomics_Mix_Sex_Adult_RSRC" version="2009-06-01"
+      displayName="Mass Spec Analysis of S.japonicum Mixed sex Adult"
+      category="Proteome"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="SchistoDB/SjapAnhui/massSpec/%RESOURCE_VERSION%/final/sja_mix_adult_MS.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/sja_mix_adult_MS.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'SjapAnhui_supercontig_RSRC|2009-12-17' --developmentalStage 'mixed adult'</pluginArgs>
+    <info
+        project="SchistoDB"
+        organisms="Schistosoma japonicum"
+        publicUrl=""
+        contact="Ze-Guang Han"
+        email="hanzg@chgc.sh.cn"
+        institution="Chinese National Human Genome Center at Shanghai">
+    
+      </info>  <description>
+        <![CDATA[
+	<i>S. japonicum.</i> Mass Spectometry.
+        ]]>
+      </description>
+    <publication pmid="19299421"/>
+  </resource>
+
+<!-- Schistosoma haematobium -->
+<resource plugin="GUS::Supported::Plugin::LoadFastaSequences" resource="Shae_contigs_RSRC" version="2011-07-12"
+	displayName="S. haematobium"
+	category="Genome">
+    <manualGet fileOrDir="SchistoDB/Shae/genome/contigs_UGA_fasta/%RESOURCE_VERSION%/final/Shaematobium.contigs.fasta" />
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 6185 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Shaematobium.contigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+	<description>
+        <![CDATA[
+         <i>S. haematobium</i> contigs from UGA.
+        ]]>
+      </description>
+
+  </resource>
+
+ <categoryOrder>
+   <categoryRef name="Genome"/>
+   <categoryRef name="Organellar"/>
+   <categoryRef name="Proteome"/>
+   <categoryRef name="Transcriptome"/>
+   <categoryRef name="Polymorphisms"/>
+   <categoryRef name="Alignments"/>
+   <categoryRef name="Ontology"/>
+ </categoryOrder>
+
+
+</resourcesPipeline>
