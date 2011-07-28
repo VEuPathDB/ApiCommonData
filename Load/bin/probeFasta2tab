@@ -4,7 +4,7 @@ my $fastaFile = $ARGV[0];
 
 usage() unless $fastaFile;
 
-open(F, $fastaFile);
+open(F, $fastaFile) || die "Can't open fasta file '$fastaFile'\n";
 
 my $id;
 while (<F>) {
