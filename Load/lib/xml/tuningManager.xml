@@ -6055,38 +6055,39 @@ tablespace indx
     <sql>
       <![CDATA[
         CREATE TABLE SpeciesTaxonLevel&1 NOLOGGING AS
-	  SELECT term, parentTerm, project_id
+	  SELECT term, parentTerm, project_id, internal
 	  FROM (
 		SELECT distinct t.name AS term,
-                    substr(sa.organism,0,(instr(sa.organism,' ')))  AS parentTerm,
-                    sa.project_id AS project_id,
-                    t.taxon_id AS internal
+                                substr(sa.organism,0,(instr(sa.organism,' ')))  AS parentTerm,
+                                sa.project_id AS project_id,
+                                t.taxon_id AS internal
 		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
-                     TaxonSpecies ts, sres.TaxonName tn, sres.TaxonName t
+                     TaxonSpecies ts, SRES.TaxonName tn, SRES.TaxonName t
 		WHERE sa.project_id = ptl.project_id 
 		  AND tn.name = sa.organism
 		  AND ts.taxon_id = tn.taxon_id
 		  AND t.taxon_id = ts.species_taxon_id
+                  AND t.name_class= 'scientific name'
 		UNION 
 		SELECT distinct substr(sa.organism,0,(instr(sa.organism,' '))) AS term,
-                     ptl.taxon_node AS parentTerm,
-                     ptl.project_id AS project_id,
-                     -1 as internal
+                                ptl.taxon_node AS parentTerm,
+                                ptl.project_id AS project_id,
+                                -1 as internal
 		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
-	   	     TaxonSpecies ts, sres.TaxonName tn, sres.TaxonName t
+                     TaxonSpecies ts, SRES.TaxonName tn, SRES.TaxonName t
 		WHERE sa.project_id = ptl.project_id 
 		  AND tn.name = sa.organism
 		  AND ts.taxon_id = tn.taxon_id
 		  AND t.taxon_id = ts.species_taxon_id
 		UNION 
 		SELECT distinct ptl.taxon_node AS term,
-                    '' AS parentTerm,
-                    ptl.project_id as project_id,
-                    -1 as internal
+                                '' AS parentTerm,
+                                ptl.project_id as project_id,
+                                -1 as internal
 		FROM  ProjectIdTaxonLevel ptl, SequenceAttributes sa
 		WHERE sa.project_id = ptl.project_id 
 		)
-	  GROUP BY term, parentTerm, project_id	 
+	  GROUP BY term, parentTerm, project_id, internal	 
 	]]>
     </sql>
   </tuningTable>
