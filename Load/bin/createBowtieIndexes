@@ -5,17 +5,22 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($inputFile, $outputIndexDir);
+my ($inputFile, $outputIndexDir,$colorspace);
 
 &GetOptions("inputFile=s" => \$inputFile,
 	    "outputIndexDir=s"=> \$outputIndexDir,
+	    "colorspace!"=> \$colorspace,
 	   );
 
 if (!$inputFile || !$outputIndexDir) {
   die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH>\n";
 }
 
-my $cmd = "/files/software/bowtie/current/bowtie-build $inputFile $outputIndexDir";
+my $cmd = "/files/software/bowtie/current/bowtie-build";
+
+$cmd .= " -C" if $colorspace;
+
+$cmd .= " $inputFile $outputIndexDir";
 
 &exeCmd($cmd);
 

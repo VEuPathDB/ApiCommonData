@@ -80,7 +80,7 @@ ELSE least(min(fle.coding_start),min(fle.coding_end)) END as start_min,
 CASE WHEN min(fle.coding_start) is null THEN fl.end_max 
 ELSE  greatest(max(fle.coding_end),max(fle.coding_start)) END as end_max,
 decode(fl.is_reversed,0,'+',1,'-') as strand 
-from apidb.geneattributes gf, apidb.featurelocation fl, apidb.featurelocation fle
+from ApidbTuning.GeneAttributes gf, ApidbTuning.FeatureLocation fl, ApidbTuning.FeatureLocation fle
 where gf.so_term_name $type 'protein_coding' 
 and fl.na_feature_id = gf.na_feature_id 
 and fl.is_top_level = 1

@@ -20,6 +20,7 @@ my $props;
 my $startTime = time;
 my $maxRebuildMinutes = 0;
 my $dbaEmail;
+my $fromEmail;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
@@ -31,13 +32,13 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
+my ($configFile, $propFile, $instance, $schema, $password, $tables,
     $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
-           "instanceName=s" => \$instanceName,
+           "schema=s" => \$schema,
            "password=s" => \$password,
            "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
@@ -70,25 +71,35 @@ if ($propFile) {
   $props = $simple->XMLin($propFile);
 }
 
+# prefer schema from command line, then prop file, then hardwired default
+$schema = $props->{schema} if !$schema;
+$schema = 'apidb' if !$schema;
+
 $maxRebuildMinutes = $props->{maxRebuildMinutes};
 
 if ($props->{dbaEmail}) {
   $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+  $fromEmail = $props->{fromEmail} if $props->{fromEmail};
 } else {
   $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+  $fromEmail = 'tuningMgr@pcbi.upenn.edu';
 }
 
 
-my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount, $instance_name);
+my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
 eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $schema, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
+
+  if ($instance ne $tuningRegistry->getInstanceName()) {
+    die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
+  }
 
   $configFile = getConfigFileName($configFile, $tuningRegistry);
   ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
@@ -107,7 +118,7 @@ eval {
             $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
             $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
             $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
-            $maxRebuildMinutes, $instance, $propFile, $password, $subversionDir);
+            $maxRebuildMinutes, $instance, $propFile, $schema, $password, $subversionDir);
   }
 
   if ($doUpdate) {
@@ -331,10 +342,8 @@ eval {
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
   }
 
-  # set instance_name and notifyEmail (for log email)
-  $instance_name = $instanceName || $instance;
+  # set notifyEmail (for log email)
   if ($tuningRegistry) {
-    $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
     $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
   }
 
@@ -352,9 +361,9 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
 
 $notifyEmail = "tuningMgr\@pcbi.upenn.edu" if !$notifyEmail;
 
-ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
+ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance);
 
-ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance_name, $dbaEmail)
+ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance, $dbaEmail, $fromEmail)
   if ApiCommonData::Load::TuningConfig::Log::getOutOfSpaceMessage();
 
 die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
@@ -375,7 +384,7 @@ options:
   configFile      an xml file describing the tables to be created
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
-  instanceName    what the instance should be called in the log (useful if the Oracle name is unwieldy)
+  schema          the schema (database user) to login and craete objects in
   password        database login password
   tables          check/update only listed tables (and their antecedants)
   doUpdate        update any tables found to be out of date
@@ -394,20 +403,20 @@ Sample config file XML:
      source_id, subclass_id
   </tuningIndex>
 
-  <tuningTable name="apidb.EstAlignmentGeneSummary">
-    <internalDependency name="apidb.BlatAlignmentLocation"/>
-    <internalDependency name="apidb.GeneAttributes"/>
+  <tuningTable name="EstAlignmentGeneSummary">
+    <internalDependency name="BlatAlignmentLocation"/>
+    <internalDependency name="GeneAttributes"/>
     <externalDependency name="sres.SequenceOntology"/>
-    <intermediateTables name="apidb.EstAlignmentGene"/>
+    <intermediateTables name="EstAlignmentGene"/>
     <sql>
-      CREATE TABLE apidb.EstAlignmentGene AS
+      CREATE TABLE EstAlignmentGene AS
       SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
                e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
                ba.query_bases_aligned / (query_sequence.length)
                * 100 AS percent_est_bases_aligned,
                ga.source_id AS gene
-        FROM apidb.BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
-             apidb.GeneAttributes ga, apidb.GenomicSequence sequence,
+        FROM BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
+             GeneAttributes ga, GenomicSequence sequence,
              dots.NaSequence query_sequence, sres.SequenceOntology so
         WHERE e.na_sequence_id = ba.query_na_sequence_id
           AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
@@ -416,19 +425,19 @@ Sample config file XML:
     </sql>
     <sql>
       CREATE TABLE EstAlignmentGeneSummary&1 AS
-      SELECT * FROM apidb.EstAlignmentNoGene
+      SELECT * FROM EstAlignmentNoGene
       UNION
-      SELECT * FROM apidb.EstAlignmentGene
+      SELECT * FROM EstAlignmentGene
     </sql>
     <sql>
-      CREATE INDEX apidb.EstSumm_libOverlap_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
+      CREATE INDEX EstSumm_libOverlap_ix&1
+                   ON EstAlignmentGeneSummary&1
                       (library_id, percent_identity, is_consistent,
                        est_gene_overlap_length, percent_est_bases_aligned)
     </sql>
     <sql>
-      CREATE INDEX apidb.EstSumm_estSite_ix&1
-                   ON apidb.EstAlignmentGeneSummary&1
+      CREATE INDEX EstSumm_estSite_ix&1
+                   ON EstAlignmentGeneSummary&1
                       (target_sequence_source_id, target_start, target_end,
                        library_id)
     </sql>
@@ -439,9 +448,10 @@ Sample config file XML:
 Sample prop file:
 <tuningProps>
   <password>JoeSentMe</password>
-  <username>apidb</username>
+  <schema>ApidbTuning</schema>
   <maxRebuildMinutes>180</maxRebuildMinutes>
   <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
+  <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
 </tuningProps>
 });
 }
@@ -664,7 +674,7 @@ sub clearDeadLock {
     return;
   }
 
-  my $pid_test = ` ps -fp $pid|tail +2|wc -l`;
+  my $pid_test = ` ps -fp $pid|tail -n +2|wc -l`;
   chomp($pid_test);
   if (!$pid_test) {
     # named process no longer exists; null out CURRENT_UPDATER

@@ -61,7 +61,7 @@ ON apidb.AaSequenceAttribute (max_molecular_weight, aa_sequence_attribute_id);
 
 ------------------------------------------------------------------------------
 
-CREATE TABLE ApiDB.NaSequenceAttribute (
+CREATE TABLE ApidbTuning.NaSequenceAttribute (
   na_sequence_attribute_id NUMBER(10),
   na_sequence_id           NUMBER(10),
   volatility_score         DECIMAL(*,4),
@@ -90,13 +90,13 @@ CREATE TABLE ApiDB.NaSequenceAttribute (
 );
 
 CREATE INDEX ApiDB.NaSeqAttr_revix
-ON ApiDB.NaSequenceAttribute (na_sequence_id, na_sequence_attribute_id);
+ON ApidbTuning.NaSequenceAttribute (na_sequence_id, na_sequence_attribute_id);
 
-CREATE SEQUENCE ApiDB.NaSequenceAttribute_sq;
+CREATE SEQUENCE ApidbTuning.NaSequenceAttribute_sq;
 
-GRANT insert, select, update, delete ON ApiDB.NaSequenceAttribute TO gus_w;
-GRANT select ON ApiDB.NaSequenceAttribute TO gus_r;
-GRANT select ON ApiDB.NaSequenceAttribute_sq TO gus_w;
+GRANT insert, select, update, delete ON ApidbTuning.NaSequenceAttribute TO gus_w;
+GRANT select ON ApidbTuning.NaSequenceAttribute TO gus_r;
+GRANT select ON ApidbTuning.NaSequenceAttribute_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,

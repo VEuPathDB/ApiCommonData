@@ -75,7 +75,7 @@ sub new {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 3.5,
+  $self->initialize({ requiredDbVersion => 3.6,
 		      cvsRevision       => '$Revision: 22515 $',
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
@@ -183,7 +183,7 @@ sub getActiveGeneId {
   my ($self, $gene_id) = @_;
   my $dbh = $self->getQueryHandle();
 
-  my $stmt = $dbh->prepare("SELECT distinct gene FROM apidb.GeneId WHERE lower(id) = lower(?) and unique_mapping = 1");
+  my $stmt = $dbh->prepare("SELECT distinct gene FROM ApidbTuning.GeneId WHERE lower(id) = lower(?) and unique_mapping = 1");
   $stmt->execute($gene_id);
   my ($id) = $stmt->fetchrow_array();
 

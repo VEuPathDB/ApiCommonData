@@ -198,7 +198,7 @@ SQL
 
 sub mailOutOfSpaceReport {
 
-  my ($instance, $dbaEmail) = @_;
+  my ($instance, $dbaEmail, $fromEmail) = @_;
 
   my $errstr = getOutOfSpaceMessage();
   $errstr =~ /ORA-01652: unable to extend temp segment by .* in tablespace (\S*) /
@@ -209,7 +209,7 @@ sub mailOutOfSpaceReport {
 
   ApiCommonData::Load::TuningConfig::Log::addLog("Sending out-of-space notification to \"$dbaEmail\" with subject \"$subject\"");
 
-  open(MAIL, "|mail -s '$subject' $dbaEmail");
+  open(MAIL, "|mail -s '$subject' $dbaEmail  -- -r $fromEmail");
 
   print MAIL <<EMAIL;
 Dear DBAs,

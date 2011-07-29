@@ -7,7 +7,6 @@ use DBI;
 use Data::Dumper;
 use XML::Simple;
 use Getopt::Long qw(GetOptions);
-use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::Utils;
 use ReFlow::DataSource::DataSourceInfo;
 use ReFlow::DataSource::DataSourceInfos;
@@ -28,11 +27,10 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $password, $logfile, $suffix, $project, $version, $subversionDir, $debug);
+my ($propfile, $instance, $password, $suffix, $project, $version, $subversionDir, $debug);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
            "password=s" => \$password,
-           "logfile=s" => \$logfile,
            "suffix=s" => \$suffix,
            "project=s" => \$project,
            "version=s" => \$version,
@@ -40,7 +38,6 @@ GetOptions("propfile=s" => \$propfile,
            "debug!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
 my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, $password);
 
 $|=1;
@@ -53,13 +50,13 @@ chdir "$workingDir";
 
 my $projectQuery = $dbh->prepare(<<SQL);
   select project_id, lower(project_id) as lower_project_id
-  from (select distinct project_id from apidb.SequenceAttributes)
+  from (select distinct project_id from ApidbTuning.SequenceAttributes)
 SQL
 
 $projectQuery->execute() or die "getting a list of project IDs";
 while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
 
-  loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix, $debug);
+  loadDataSources($dbh, "globalResourcesInfo.xml", $project, $version, $suffix, $debug);
 
   foreach my $file (`ls $lowerProject/*Info.xml`) {
     loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
@@ -77,18 +74,18 @@ sub loadDataSources {
 
     my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("loading $infile");
+    print STDERR "loading $infile";
 
     # my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
     # $props->addProperty("dataDir", "/tmp");
     my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile);
-    ApiCommonData::Load::TuningConfig::Log::addLog(Dumper("DataSourceInfos: " . $dataSourceInfos)) if $debug;
+    print STDERR Dumper("DataSourceInfos: " . $dataSourceInfos) if $debug;
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSourceInfo$suffix
                   (data_source_id, display_name, categories,
-                   description, contact, institution)
-                   values (?, ?, ?, ?, ?, ?)
+                   description, contact, institution, public_url)
+                   values (?, ?, ?, ?, ?, ?, ?)
 SQL
 
     my $insertDsp = $dbh->prepare(<<SQL);
@@ -109,20 +106,20 @@ SQL
     foreach my $dsName ($dataSourceInfos->getDataSourceInfoNames()) {
       chomp($dsName);
       my $ds = $dataSourceInfos->getDataSourceInfo($dsName);
-      ApiCommonData::Load::TuningConfig::Log::addLog("data source: \"$dsName\"") if $debug;
+      print STDERR "data source: \"$dsName\"" if $debug;
       my $dataSourceId = $loadedDatasets{$dsName};
       if (!$dataSourceId) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("   . . . skipping because $dsName does not exist in apidb.DataSource") if $debug;
+	print STDERR "   . . . skipping because $dsName does not exist in apidb.DataSource" if $debug;
 	next;
       }
       $insertDs->execute($dataSourceId, $ds->getDisplayName(),
                        $ds->getCategory(),
                        $ds->getDescription(), $ds->getContact(),
-                       $ds->getInstitution())
+                       $ds->getInstitution(), $ds->getPublicUrl())
 	or die "inserting a DataSourceInfo record";
 
       foreach my $publicationList ($ds->getPublications()) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping publication:\n" . Dumper($publicationList)) if $debug;
+	print STDERR "Dumping publication:\n" . Dumper($publicationList) if $debug;
 	foreach my $publication (@$publicationList) {
           $insertDsp->execute($dataSourceId, $publication->{pmid}, $publication->{doi}, $publication->{citation}, $publication->{abstract})
 	    or die "inserting a DataSetPublication record";
@@ -130,7 +127,7 @@ SQL
       }
 
       foreach my $referenceList ($ds->getWdkReferences()) {
-	ApiCommonData::Load::TuningConfig::Log::addLog("Dumping referenceList:\n" . Dumper($referenceList) ) if $debug;
+	print STDERR "Dumping referenceList:\n" . Dumper($referenceList) if $debug;
 	foreach my $reference (@$referenceList) {
 	    $insertDsr->execute($dataSourceId, $reference->{recordClass}, $reference->{type}, $reference->{name})
 	      or die "inserting a DataSetReference record";

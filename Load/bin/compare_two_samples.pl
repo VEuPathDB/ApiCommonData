@@ -184,14 +184,11 @@ foreach my $id (sort sortByFisherRatio keys %{$data1}) {
   if ($data1->{$id}->{'count'}>=$ARGV[4] || $data2->{$id}->{'count'}>=$ARGV[4]) {
 
     my @valueSplit = split(/e/,$p{$id});
-    my ($string);
 
     $valueSplit[1] = $valueSplit[1] ? $valueSplit[1]:0;
-    if ($valueSplit[0] =~ /\./) {
-       $string = "$id\t".sprintf("%.2f", $valueSplit[0])."\t$valueSplit[1]\n";
-    } else {
-       $string = "$id\t$valueSplit[0]\t$valueSplit[1]\n";
-    }
+
+    my $string = "$id\t$valueSplit[0]\t$valueSplit[1]\n";
+
     $wfh1->print($string);
   }
 }

@@ -156,7 +156,7 @@ sub new {
       my $documentation = &getDocumentation();
       my $args = &getArgsDeclaration();
 
-      $self->initialize({requiredDbVersion => 3.5,
+      $self->initialize({requiredDbVersion => 3.6,
                  cvsRevision => '$Revision$',
                  cvsTag => '$Name:  $',
                  name => ref($self),
@@ -401,7 +401,7 @@ NUCMER
   457976    58529    132     1      1
   458118    58387    215    10     10
   458334    58171     50     1      1
-  458385    58120     29     1      1
+  458335    58120     29     1      1
   458433    58072     44    19     19
   458478    58027     30     1      1
   458519    57986     34    11     11

@@ -29,6 +29,7 @@
     <manualGet fileOrDir="global/nrdb/%RESOURCE_VERSION%/nr"/>
     <unpack>shortenDefLine --inputFile @@dataDir@@/nr --outputFile @@dataDir@@/nrdb-short-defline.fsa --taxonIdMappingFile @@dataDir@@/../taxonomy_RSRC/gi_taxid_prot.dmp</unpack>
     <getAndUnpackOutput file="@@dataDir@@/nrdb-short-defline.fsa"/>
+    <getAndUnpackOutput file="@@dataDir@@/nr"/>
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <info
         displayName="GenBank NRDB"
@@ -45,6 +46,20 @@
         ]]>
       </description>
     </info>
+  </resource>
+
+  <resource resource="InterproscanData_RSRC" version="@@InterproscanData_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+     <manualGet fileOrDir="global/domain/iprscanData/%RESOURCE_VERSION%/iprscan"/>
+     <unpack>fixSuperfamily @@dataDir@@/iprscan/data/</unpack>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+
+  <resource resource="PDBProteinSequences_RSRC" version="@@PDBProteinSequences_VER@@"
+      plugin="ApiCommonData::Load::Plugin::LoadNothing">
+     <manualGet fileOrDir="global/pdb/%RESOURCE_VERSION%/pdb.fsa"/>
+   <getAndUnpackOutput file="@@dataDir@@/pdb.fsa"/>
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
 
 </resources>

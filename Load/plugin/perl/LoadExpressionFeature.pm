@@ -124,10 +124,10 @@ sub new {
   my $documentation = &getDocumentation();
   my $arguments     = &getArgumentsDeclaration();
 
-  my $configuration = {requiredDbVersion => 3.5,
+  my $configuration = {requiredDbVersion => 3.6,
 	               cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
-		       revisionNotes => 'make consistent with GUS 3.5',
+		       revisionNotes => 'make consistent with GUS 3.6',
 		       argsDeclaration   => $arguments,
 		       documentation     => $documentation
 		       };

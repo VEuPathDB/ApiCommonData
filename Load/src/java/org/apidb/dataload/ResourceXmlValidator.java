@@ -7,8 +7,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.digester.Digester;
 import org.apache.log4j.Logger;
 
-import org.gusdb.workflow.XmlParser;
-import org.gusdb.workflow.Utilities;
+
+
+import org.gusdb.fgputil.xml.XmlParser;
+import org.gusdb.fgputil.CliUtil;
 
 public class ResourceXmlValidator extends XmlParser {
 
@@ -35,7 +37,7 @@ public class ResourceXmlValidator extends XmlParser {
         String cmdlineSyntax = cmdName + " -f resources_xml_file";
         String cmdDescrip = "Validate a resources XML file against the RNG schema.";
         CommandLine cmdLine =
-            Utilities.parseOptions(cmdlineSyntax, cmdDescrip, "", options, args);
+            CliUtil.parseOptions(cmdlineSyntax, cmdDescrip, "", options, args);
         String xmlFileName = cmdLine.getOptionValue("f");
         
 	ResourceXmlValidator validator = new ResourceXmlValidator();
@@ -46,7 +48,7 @@ public class ResourceXmlValidator extends XmlParser {
     private static Options declareOptions() {
         Options options = new Options();
 
-        Utilities.addOption(options, "f", "", true);
+        CliUtil.addOption(options, "f", "", true);
 
         return options;
     }

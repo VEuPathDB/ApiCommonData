@@ -31,9 +31,11 @@ while(<IN>){
 
     my $cmd="cp $inputDir/$fileName $outputDir/$fileName";
 
-    my $lcFileName = lc $fileName;
+    system ($cmd); 
 
-    system ($cmd) unless ($lcFileName =~ /pct$/);
+    #my $lcFileName = lc $fileName;
+
+    #system ($cmd) unless ($lcFileName =~ /pct$/);
 
 }
 

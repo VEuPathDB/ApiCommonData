@@ -86,8 +86,9 @@ sub new {
     bless($self,$class);
 
 
-    $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 26934 $', # cvs fills this in!
+
+    $self->initialize({requiredDbVersion => 3.6,
+		       cvsRevision => '$Revision: 40647 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -119,7 +120,7 @@ sub createExtDbAndExtDbRls{
                     die "Can't open the file $mappingFile.  Reason: $!\n";
 
   my (%dbAbbrevList,%dbRlsList);
-  while (<XREFMAP>){ #first scan of mapping file to cread extDbAndextDbRls for each dbAbbrev
+  while (<XREFMAP>){ #first scan of mapping file to cread extDbAndextDbRls for each dbAbbreviation
 
     $self->undefPointerCache(); #if at bottom, not always hit
 

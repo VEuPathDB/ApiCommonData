@@ -1,6 +1,6 @@
 <unionization>
 
-  <union name="apidb.SequenceId">
+  <union name="ApidbTuning.SequenceId">
     <source dblink="CRYPTO"/>
     <source dblink="GIARDIA"/>
     <source dblink="PLASMO"/>  
@@ -11,7 +11,7 @@
       <query> 
         <![CDATA[ 
           select gi.id,gi.sequence  
-          from apidb.sequenceid@AMITO gi, apidb.sequenceattributes@AMITO ga 
+          from ApidbTuning.SequenceId@AMITO gi, ApidbTuning.SequenceAttributes@AMITO ga 
           where gi.sequence = ga.source_id 
           and ga.project_id = 'TrichDB'
         ]]> 

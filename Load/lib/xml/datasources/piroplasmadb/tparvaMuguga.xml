@@ -74,7 +74,7 @@
   <resource resource="TparvaMuguga_dbEST_RSRC" version="@@TparvaMuguga_dbEST_VER@@"
       plugin="GUS::Supported::Plugin::dbEST">
     <manualGet fileOrDir="global/empty"/>
-    <unpack>getSubTaxa --ncbiTaxId 353154 --outputFile @@dataDir@@/taxonIdFile</unpack>
+    <unpack>getSubTaxa --ncbiTaxId 5875 --outputFile @@dataDir@@/taxonIdFile</unpack>
     <unpack>createPropFile --file @@dataDir@@/dbest.prop --propList "dbestLogin:@@dbestLogin@@,dbestPswd:@@dbestPswd@@"</unpack>
     <pluginArgs>--span 500 --taxonFile @@dataDir@@/taxonIdFile --extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --soVer @@SO_VER@@ --dbestLoginFile @@dataDir@@/dbest.prop --dbestConnect @@dbestConnect@@ </pluginArgs>
   </resource>

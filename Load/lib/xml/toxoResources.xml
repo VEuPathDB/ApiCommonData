@@ -1344,10 +1344,28 @@ This data was graciously provided to ToxoDB pre-publication by Paul Davis and Da
         <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 383379 --sequenceFile @downloadDir@/TgCosmidEnds/Tg_sequences_trimmed.fsa --soTermName "clone_insert_end" --regexSourceId "^>(\\w+\\d+T\\w)" --tableName "DoTS::ExternalNASequence"</pluginArgs>
         <description>
             <![CDATA[
- <b>Sequence from cosmid ends mapped against <i>T. gondii</i> ME49, VEG and GT1 scaffolds.</b><br>  End-sequence data from cosmid clones were provided by Ian Paulsen at TIGR.  Sequencing was done using T3 and T7 primers represented as TH and TV, respectively, in the sequence IDs.<br>Cosmids with the TOX designation originated from Boris Striepen's laboratory, while those that start with PSB are from David Sibley's group. A detailed description of cosmid libararies from the Sibly lab is available <a href="http://toxomap.wustl.edu/cosmid.html"Target="_blank">here</a>.
+ <b>Sequence from cosmid ends mapped against <i>T. gondii</i> ME49, VEG and GT1 scaffolds.</b><br>  End-sequence data from cosmid clones were provided by Ian Paulsen at TIGR.  Sequencing was done using T3 and T7 primers represented as TH and TV, respectively, in the sequence IDs.<br>Cosmids with the TOX designation originated from Boris Striepen's laboratory, while those that start with PSB are from David Sibley's group. A detailed description of cosmid libararies from the Sibley lab is available <a href="http://toxomap.wustl.edu/cosmid.html"Target="_blank">here</a>.
           ]]>
         </description>
     </resource>
+
+
+  <resource resource="TgonME49_lorenzi_CosmidEnds_RSRC" version="2011-05-04"
+        displayName="TgonME49 Cosmid Ends from Hernan Lorenzi"
+        category="Genome"
+	organisms="Toxoplasma gondii ME49"
+	plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="ToxoDB/tgondiiME49/genome/cosmid_ends/%RESOURCE_VERSION%/final/jtc_fasta_TOXOPLASMA-F-01-40KB_1129290704345_1304110565918_1.WGS.fasta.seq"         
+	contact="Hernan Lorenzi"
+        email="hlorenzi@jcvi.org"
+        institution="jcvi"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --externalDatabaseVersion %RESOURCE_VERSION% --ncbiTaxId 508771 --sequenceFile @@dataDir@@/jtc_fasta_TOXOPLASMA-F-01-40KB_1129290704345_1304110565918_1.WGS.fasta.seq --soTermName "clone_insert_end"   --regexSourceId "^>(TOXOPLASMA-F-01-40KB_\\d+)\\|clear_start=\\d+\\|clear_end=\\d+\\|primer_id=\\d+\\|trace_id=\\d+\\|trace_file_id=\\d+\\|clone_insert_id=\\w+\\|"  --regexSecondaryId "^>TOXOPLASMA-F-01-40KB_\\d+\\|clear_start=\\d+\\|clear_end=\\d+\\|primer_id=\\d+\\|trace_id=\\d+\\|trace_file_id=\\d+\\|clone_insert_id=(\\w+)\\|" -tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <description>
+      <![CDATA[
+    <b>Sequence from cosmid ends mapped against <i>T. gondii</i> ME49, VEG and GT1 scaffolds.</b><br>T. gondii ME49 Cosmid Ends from Hernan Lorenzi
+      ]]>
+    </description>
+  </resource>
 
 
    <resource resource="IEDB_Epitopes" version="2009-06-09"
@@ -2322,12 +2340,13 @@ Using chromatin immunoprecipitation and microarray hybridization (Nimblegen arra
 <pluginArgs> --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/ToxoDB/toxoFeatures2gus.xml --inputFileOrDir @downloadDir@/Einstein_Centromeres/jb_called_centromeres.gff --fileFormat gff2 --gff2GroupTag ID --naSequenceSubclass VirtualSequence --seqIdColumn source_id  --seqExtDbName "Chromosome Map - David Sibley" --seqExtDbRlsVer "2008-08-28" --soCvsVersion @soVer@ --defaultOrganism "Toxoplasma gondii" --handlerExternalDbs "enzyme:enzymeDB:2008-07-01"  --bioperlTreeOutput @pipelineDir@/logs/toxoCentromeres.bioperl</pluginArgs>
         <description>
             <![CDATA[
-Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip using antibodies to Centromeric Histone 3 (CenH3-HA) colocalized with antibodies to H3K9me2.  (Mathieu Gissot, Carrie F. Brooks, Boris Striepen, Kami Kim. Manuscript in preparation).<br>
-Albert Einstein College of Medicine, Bronx, NY (MG, KK) and University of Georgia, Athens, GA (CFB, BS)<br>
+Identification <i>Toxoplasma gondii</i> centromeres was performed by ChIP-chip using antibodies to Centromeric Histone 3 (CenH3-HA) colocalized with antibodies to H3K9me2.<br>
 For further information please contacts Kami Kim (kkim@aecom.yu.edu) or Boris Striepen (striepen@cb.uga.edu).
           ]]>
         </description>
+	<publication pmid="21321216"/>
     </resource>
+
  <resource resource="Lindstrom454Snps" version="2009-11-06" 
             displayName="T. gondii TgCkUg2 SNPs"
             category="Polymorphisms"
@@ -2764,7 +2783,7 @@ Annotation provided by Toxoplasma Genome Sequencing Project.
   </resource>
 
 <resource resource="tgME49Boothroyd_RSRC" version="1.0"
-            displayName="T.gondii ME4 Boothroyd Array Profiles"
+            displayName="T. gondii M4 Fritz/Buchholz Array Profiles"
             category="Transcriptome"
             organisms="Toxoplasma gondii"
             plugin="ApiCommonData::Load::Plugin::LoadNothing"
@@ -2812,18 +2831,14 @@ More specifically, RNA samples were obtained from:
 <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;
 3. In vitro 4 and 8 dpi bradyzoite and 2 dpi tachyzoite samples are from separately infected cultures of human foreskin fibroblasts (HFF) (replicate flasks for each condition and time-point were infected on the same day). Samples were harvested independently and kept separate for all the subsequent processing and labeling steps. 
-
-<br/><br/>
-
-The authors found that the patterns of gene expression differ across the life stages, as expected, with expression of known stage-specific genes appropriately reflected in the data.  Additionally, we found that the <i>in vitro</i> bradyzoite transcriptome appears to be in strong agreement with the <i>in vivo</i> transcriptome (suggesting that, at the transcriptional level, the <i>in vitro</i> model is a good approximation for <i>in vivo</i> bradyzoites). Analysis to identify significantly different genes between <i>in vitro</i> and <i>in vivo</i> bradyzoites is underway.
-
+Bradyzoite differentiation was induced by growth under low serum (1%) high pH (8.0) conditions without supplemented CO2 as described (Fux, B. et. al. Infect Immun 75:2580-90, 2007).
 <br/><br/>
 Authors: Heather Fritz*, Kerry R. Buchholz*, Patricia Conrad, and John C. Boothoryd. (* these authors contributed equally.)
 
 
           ]]>
     </description>
-    <publication pmid=""/>
+    <!-- publication pmid=""/ -->
   </resource>
 
   <resource resource="TgVEG_RNASeq_Tachyzoite_Reid_RSRC" version="2011-01-30"
@@ -2833,7 +2848,7 @@ Authors: Heather Fritz*, Kerry R. Buchholz*, Patricia Conrad, and John C. Bootho
           plugin="ApiCommonData::Load::Plugin::LoadNothing"
           extDbName="TgVEG_RNASeq_Tachyzoite_Reid_RSRC"
           extDbRlsVer="2011-01-30"
-          extDbRlsDescrip="T.gondii VEG RNASeq from Adam Reid"
+          extDbRlsDescrip="T.gondii VEG and N.caninum RNASeq from Adam Reid"
           dbCommit="@dbcommit@">
      <manualGet fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/Microarray/Tgondii_cellCycle_MWhite/workspace/analysis" 
           contact="Adam Reid"
@@ -2848,6 +2863,373 @@ Authors: Heather Fritz*, Kerry R. Buchholz*, Patricia Conrad, and John C. Bootho
           </description>
   </resource>
 
+
+
+
+   <resource resource="TgondiiVAND_genome_RSRC" version="1"
+        displayName="Toxoplasma gondii VAND contigs and scaffolds"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiVAND_genome_RSRC"
+        extDbRlsVer="1"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> VAND strain genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Tgondiip89_genome_RSRC" version="1"
+        displayName="Toxoplasma gondii p89 contigs and scaffolds"
+        category="Genome"
+        plugin="N/A"
+        extDbName="Tgondiip89_genome_RSRC"
+        extDbRlsVer="1"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> p89 strain genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="TgondiiMAS_genome_RSRC" version="1"
+        displayName="Toxoplasma gondii MAS contigs and scaffolds"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiMAS_genome_RSRC"
+        extDbRlsVer="1"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> MAS strain genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="TgME49_ncRNA_Gregory_RSRC" version="8-apr-2011"
+        displayName="RNA-Seqs from Gregory Brian"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgME49_ncRNA_Gregory_RSRC"
+        extDbRlsVer="8-apr-2011"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="TgRH_ncRNA_Gregory_RSRC" version="8-apr-2011"
+        displayName="RNA-Seqs from Gregory Brian"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgRH_ncRNA_Gregory_RSRC"
+        extDbRlsVer="8-apr-2011"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="TgVEG_mRNA_Gregory_RSRC" version="8-apr-2011"
+        displayName="RNA-Seqs from Gregory Brian"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgVEG_mRNA_Gregory_RSRC"
+        extDbRlsVer="8-apr-2011"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="NC_ncRNA_Gregory_RSRC" version="8-apr-2011"
+        displayName="RNA-Seqs from Gregory Brian"
+        category="Genome"
+        plugin="N/A"
+        extDbName="NC_ncRNA_Gregory_RSRC"
+        extDbRlsVer="8-apr-2011"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="NC_mRNA_Gregory_RSRC" version="8-apr-2011"
+        displayName="RNA-Seqs from Gregory Brian"
+        category="Genome"
+        plugin="N/A"
+        extDbName="NC_mRNA_Gregory_RSRC"
+        extDbRlsVer="8-apr-2011"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+   <resource resource="EtenellaHoughton_genome_RSRC" version="2010-10-04"
+        displayName="Eimeria tenella genome from GeneDB"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_genome_RSRC"
+        extDbRlsVer="2010-10-04"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p>Adam James Reid, Damer Blake, Thomas Dan Otto, Alejandro Sanchez, Mandy Sanders, Yealing Tay, Paul Dear, Kiew-Lian Wan, Matthew Berriman, Arnab Pain, Fiona Tomley. <i>Sequencing and annotation of the Eimeria tenella genome</i>.</p><br>
+<p>Funding: BBSRC, Wellcome Trust Sanger Institute</p><br>
+<p>The data were produced by the Parasite Genomics group at the Wellcome Trust Sanger Institute to the standard of an Improved Draft.  The Parasite Genomics group and collaborators plan on publishing the completed and annotated draft sequence in a peer-reviewed journal as soon as possible. Permission of the Principal Investigator (Matthew Berriman,mb4@sanger.ac.uk) should be obtained before publishing chromosome- or genome- scale analyses of the sequences or annotations. </p>
+          ]]>
+        </description>
+    </resource>
+   <resource resource="EtenellaHoughton_ProductName_RSRC" version="2010-10-04"
+        displayName="Eimeria tenella product names from GeneDB"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_ProductName_RSRC"
+        extDbRlsVer="2010-10-04"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+   <resource resource="EtenellaHoughton_Comment_RSRC" version="2010-10-04"
+        displayName="Eimeria tenella comments from GeneDB"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_Comment_RSRC"
+        extDbRlsVer="2010-10-04"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="EtenellaHoughton_previds_dbxref_RSRC" version="2010-10-04"
+        displayName="Eimeria tenella previous ids from GeneDB"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_previds_dbxref_RSRC"
+        extDbRlsVer="2010-10-04"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="EtenellaHoughton_dbEST_RSRC" version="2011-05-05"
+        displayName="Eimeria tenella ESTs from dbEST"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_dbEST_RSRC"
+        extDbRlsVer="2011-05-05"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+
+   <resource resource="EtenellaHoughton_IEDB_Epitopes_RSRC" version="2011-05-05"
+        displayName="Eimeria tenella IEDB Epitopes"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_IEDB_Epitopes_RSRC"
+        extDbRlsVer="2011-05-05"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="EtenellaHoughton_IEDB_Epitopes_DBxRefs_RSRC" version="2011-05-05"
+        displayName="Eimeria tenella IEDB Epitopes DBxRefs"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EtenellaHoughton_IEDB_Epitopes_DBxRefs_RSRC"
+        extDbRlsVer="2011-05-05"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+
+<resource resource="TgondiiFOU_genome_RSRC" version="2011-02-01"
+        displayName="Toxoplasma gondii FOU genome from JCVI"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiFOU_genome_RSRC"
+        extDbRlsVer="2011-02-01"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> FOU strain genome sequence data were produced by JCVI as part of the <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="TgondiiRUB_genome_RSRC" version="2011-02-01"
+        displayName="Toxoplasma gondii RUB genome from JCVI"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiRUB_genome_RSRC"
+        extDbRlsVer="2011-02-01"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> RUB strain genome sequence data were produced by JCVI as part of the  <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
 
  <categoryOrder>
    <categoryRef name="Genome"/>

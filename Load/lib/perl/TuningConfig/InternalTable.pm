@@ -14,7 +14,7 @@ sub new {
     my ($class, $name, $internalDependencyNames, $externalDependencyNames,
         $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
         $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
-        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password, $subversionDir)
+        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $schema, $password, $subversionDir)
 	= @_;
 
     my $self = {};
@@ -22,6 +22,7 @@ sub new {
 
     bless($self, $class);
     $self->{name} = $name;
+    $self->{schema} = $schema;
     $self->{internalDependencyNames} = $internalDependencyNames;
     $self->{externalDependencyNames} = $externalDependencyNames;
     $self->{externalTuningTableDependencyNames} = $externalTuningTableDependencyNames;
@@ -43,11 +44,17 @@ sub new {
     $self->{password} = $password;
     $self->{subversionDir} = $subversionDir;
 
+    if ($name =~ /\./) {
+      $self->{qualifiedName} = $name;
+    } else {
+      $self->{qualifiedName} = $schema . "." . $name;
+    }
+
     # get timestamp and definition from database
     my $sql = <<SQL;
        select to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss') as timestamp, definition
        from apidb.TuningTable
-       where name = '$self->{name}'
+       where name = '$self->{qualifiedName}'
 SQL
 
     my $stmt = $dbh->prepare($sql);
@@ -142,7 +149,7 @@ sub getState {
     ApiCommonData::Load::TuningConfig::Log::addLog("    no TuningTable record exists in database for $self->{name} -- update needed.");
     $needUpdate = 1;
   } elsif ($self->{dbDef} ne $self->getDefString()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record differs from current definition for $self->{name} -- update needed.");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    stored TuningTable record (dated $self->{timestamp}) differs from current definition for $self->{name} -- update needed.");
     $needUpdate = 1;
     ApiCommonData::Load::TuningConfig::Log::addLog("stored:\n-------\n" . $self->{dbDef} . "\n-------")
 	if $self->{debug};
@@ -188,7 +195,7 @@ sub getState {
     }
   }
 
-  # try querying the table; if it can't be SELECTed from, it should be rebuild
+  # try querying the table; if it can't be SELECTed from, it should be rebuilt
   my $stmt = $dbh->prepare(<<SQL);
     select count(*) from $self->{name} where rownum=1
 SQL
@@ -360,7 +367,7 @@ sub storeDefinition {
 
   my $sql = <<SQL;
        delete from apidb.TuningTable
-       where name = '$self->{name}'
+       where name = '$self->{qualifiedName}'
 SQL
 
   my $stmt = $dbh->prepare($sql);
@@ -375,7 +382,7 @@ SQL
 
   my $stmt = $dbh->prepare($sql);
 
-  if (!$stmt->execute($self->{name}, $self->getDefString())) {
+  if (!$stmt->execute($self->{qualifiedName}, $self->getDefString())) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     return "fail";
   }
@@ -500,18 +507,24 @@ SQL
     $stmt->finish();
 
   # get name of old table (for subsequenct purging). . .
-  my $oldTable;
-  my ($schema, $table) = split(/\./, $tuningTableName);
+  my ($oldTable, $explicitSchema, $table);
+
+  if ($tuningTableName =~ /\./) {
+    ($explicitSchema, $table) = split(/\./, $tuningTableName);
+  } else {
+    $table = $tuningTableName;
+  }
+
   if ($purgeObsoletes) {
     my $sql = <<SQL;
       select table_owner || '.' || table_name
       from all_synonyms
-      where owner = upper(?)
-        and synonym_name = upper(?)
+      where owner = sys_context ('USERENV', 'CURRENT_SCHEMA')
+         and synonym_name = upper(?)
 SQL
 
     my $stmt = $dbh->prepare($sql);
-    $stmt->execute("$schema", "$table")
+    $stmt->execute("$table")
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     ($oldTable) = $stmt->fetchrow_array();
     $stmt->finish();
@@ -521,12 +534,12 @@ SQL
       insert into apidb.ObsoleteTuningTable (name, timestamp)
       select table_owner || '.' || table_name, sysdate
       from all_synonyms
-      where owner = upper(?)
+      where owner = sys_context ('USERENV', 'CURRENT_SCHEMA')
         and synonym_name = upper(?)
 SQL
 
     my $stmt = $dbh->prepare($sql);
-    $stmt->execute("$schema", "$table")
+    $stmt->execute("$table")
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
   }

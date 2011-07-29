@@ -1,49 +1,20 @@
 <resources>
-
-  <resource resource="lmFriedlin_RNA_Seq_RSRC" version="@@lmFriedlin_RNA_Seq_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="TriTrypDB/lmajor/rnaSeq/washu_lmajor_friedlin/%RESOURCE_VERSION%/final"/>
-    <getAndUnpackOutput dir="@@dataDir@@/final"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/lmajorConfig.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_ATCACGsequence.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_ATCACGsequence.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_CGATGTsequence.txt"/>
-    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_CGATGTsequence.txt"/>
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="lmFriedlin_RNA_Seq_RSRC"
+            version="@@lmFriedlin_RNA_Seq_VER@@">
+    <getAndUnpackOutput dir="@@dataDir@@/final" />
+    <getAndUnpackOutput file="@@dataDir@@/final/lmajorConfig.txt" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_ATCACGsequence.txt" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_ATCACGsequence.txt" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_CGATGTsequence.txt" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_CGATGTsequence.txt" />
+    <manualGet fileOrDir="TriTrypDB/lmajor/rnaSeq/washu_lmajor_friedlin/%RESOURCE_VERSION%/final" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName="L. major Friedlin RNA-Seqs from WashU"
-        project="TriTrypDB"
-        organisms="@@LmajorOrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact="Wes Warren"
-        email=""
-        institution="WashU">
-      <description>
-        <![CDATA[
-        ]]>
-      </description>
-    </info>
   </resource>
-
-<resource resource="DoNothing_RSRC" version="@@DoNothing_VER@@"
-      plugin="ApiCommonData::Load::Plugin::LoadNothing">
-    <manualGet fileOrDir="TriTrypDB/dummy"/>
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="DoNothing_RSRC"
+            version="@@DoNothing_VER@@">
+    <manualGet fileOrDir="TriTrypDB/dummy" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
-    <info
-        displayName=""
-        project="TriTrypDB"
-        organisms=""
-        category=""
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-        ]]>
-      </description>
-    </info>
   </resource>
-
 </resources>
