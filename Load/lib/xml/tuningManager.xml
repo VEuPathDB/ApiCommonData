@@ -6001,6 +6001,96 @@ tablespace indx
   </tuningTable>
 
 
+ <!-- Query to group projects by higher level taxonomy --> 
+  <tuningTable name="ProjectIdTaxonLevel">
+    <sql>
+      <![CDATA[
+       CREATE TABLE ProjectIdTaxonLevel&1 NOLOGGING AS
+	 SELECT * FROM( 
+		SELECT 'PlasmoDB' AS project_id,
+			   'Apicomplexan' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'CryptoDB' AS project_id,
+			   'Apicomplexan' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'ToxoDB' AS project_id,
+				'Apicomplexan' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'PiroplasmaDB' AS project_id,
+				'Apicomplexan' AS  taxon_node 
+		FROM dual
+		UNION
+		SELECT 'TriTrypDB' AS project_id,
+			   'Kinetoplastid' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'AmoebaDB' AS project_id,
+			   'Amoeba' AS  taxon_node 
+		FROM dual
+		UNION 
+		SELECT 'MicrosporidiaDB' AS project_id,
+		'Pathogenic Fungi'AS  taxon_node 
+		FROM dual
+		UNION
+		SELECT 'GiardiaDB' AS project_id, 
+		'Diplomonadida' AS taxon_node 
+		FROM dual
+		UNION
+		SELECT 'TrichDB' AS project_id,
+		'Trichomonadida' AS taxon_node
+		FROM dual)     
+	]]>
+    </sql>
+  </tuningTable>
+
+ <!-- Query to group species by higher level taxonomy --> 
+  <tuningTable name="SpeciesTaxonLevel">
+    <internalDependency name="ProjectIdTaxonLevel"/>
+    <internalDependency name="SequenceAttributes"/>
+    <internalDependency name="TaxonSpecies"/>
+    <externalDependency name="SRES.TaxonName"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE SpeciesTaxonLevel&1 NOLOGGING AS
+	  SELECT term, parentTerm, project_id
+	  FROM (
+		SELECT distinct t.name AS term,
+                    substr(sa.organism,0,(instr(sa.organism,' ')))  AS parentTerm,
+                    sa.project_id AS project_id,
+                    t.taxon_id AS internal
+		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
+                     TaxonSpecies ts, sres.TaxonName tn, sres.TaxonName t
+		WHERE sa.project_id = ptl.project_id 
+		  AND tn.name = sa.organism
+		  AND ts.taxon_id = tn.taxon_id
+		  AND t.taxon_id = ts.species_taxon_id
+		UNION 
+		SELECT distinct substr(sa.organism,0,(instr(sa.organism,' '))) AS term,
+                     ptl.taxon_node AS parentTerm,
+                     ptl.project_id AS project_id,
+                     -1 as internal
+		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
+	   	     TaxonSpecies ts, sres.TaxonName tn, sres.TaxonName t
+		WHERE sa.project_id = ptl.project_id 
+		  AND tn.name = sa.organism
+		  AND ts.taxon_id = tn.taxon_id
+		  AND t.taxon_id = ts.species_taxon_id
+		UNION 
+		SELECT distinct ptl.taxon_node AS term,
+                    '' AS parentTerm,
+                    ptl.project_id as project_id,
+                    -1 as internal
+		FROM  ProjectIdTaxonLevel ptl, SequenceAttributes sa
+		WHERE sa.project_id = ptl.project_id 
+		)
+	  GROUP BY term, parentTerm, project_id	 
+	]]>
+    </sql>
+  </tuningTable>
+
  <!-- Special BLAST  abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationBlast">
     <internalDependency name="OrganismAbbreviationWS"/>
