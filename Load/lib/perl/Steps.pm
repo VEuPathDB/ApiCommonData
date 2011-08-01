@@ -1113,7 +1113,7 @@ sub copy {
 
   $mgr->runCmd("cp -ar  $from $to");
   $mgr->runCmd("gzip $to") if $compress;
-  $mgr->endStep();
+  $mgr->endStep($signal);
 }
 
 sub copyProteomeFile {
@@ -5015,6 +5015,18 @@ sub extractKeywordSearchFiles {
 
   $mgr->endStep($signal);
 }
+
+sub orthomclGroupKeywords {
+  my ($mgr) = @_;
+
+  my $signal = "insertOrthomclGroupKeywords";
+
+  $mgr->runPlugin($signal,
+		  "OrthoMCLData::Load::Plugin::InsertGroupKeywords", ,
+		  "Inserting rows into apidb.orthomclgroupkeyword");
+
+}
+
 
 sub extractCommentsFiles {
   my ($mgr,$filePrefix,$commentSchema,$dbLink,$projectId,$gusConfigFile) = @_;
