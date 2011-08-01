@@ -10,6 +10,7 @@ my ($help, $stsFile, $genomeFasta, $mapFile);
             'stsFile=s' => \$stsFile,
             'mapFile=s' => \$mapFile,
             'genomeFasta=s' => \$genomeFasta,
+	    'outputGff=s' => \$outputGff,
             );
 
 unless(-e $stsFile && $mapFile && $genomeFasta) {
@@ -109,7 +110,7 @@ while (<revHits>) {
 }
 close (revHits);
 
-open (gffFile, ">Pf_ms.gff");
+open (gffFile, ">$outputGff");
 
 foreach my $chromosome (sort keys %fwdCood){
   foreach my $Id (sort {$fwdCood{$chromosome}{$a} <=> $fwdCood{$chromosome}{$b} } %{ $fwdCood{$chromosome} }) {
