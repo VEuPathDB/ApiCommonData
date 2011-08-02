@@ -3045,13 +3045,13 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="ExpressionGraphs">
+  <tuningTable name="ProfileGraphs">
     <internalDependency name="GeneAttributes"/>
     <externalDependency name="apidb.Profile"/>
     <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
-CREATE TABLE ExpressionGraphs&1 NOLOGGING AS
+CREATE TABLE ProfileGraphs&1 NOLOGGING AS
 select all_gg.source_id, 
        all_gg.main_profile_name as profile_name, 
        all_gg.project_id, 
@@ -3190,12 +3190,11 @@ from
     UNION
 
     --TriTrypDB --
---  -- commented out , as this graph has moved to 'Phenotype' section of gene page.--
---    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
---           '' as main_profile_name,
---           'TriTrypDB' as project_id
---    from dual
---    UNION
+    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
+    UNION
     select 'Linfantum promastigote time-course biorep01' as profile_name,
            '' as main_profile_name,
            'TriTrypDB' as project_id
@@ -3284,17 +3283,17 @@ group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id
     </sql>
     <sql>
       <![CDATA[
-create index ExpGraph_sourceId_idx&1 ON ExpressionGraphs&1 (source_id)
+create index ProfGraph_sourceId_idx&1 ON ProfileGraphs&1 (source_id)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
 
 
-  <tuningTable name="ExpressionGraphDescrip">
+  <tuningTable name="ProfileGraphDescrip">
     <sql>
       <![CDATA[
-CREATE TABLE ExpressionGraphDescrip&1 NOLOGGING AS
+CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
 select mainOpen, dataOpen, order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts,attribution
 from (
 -- ToxoDB
@@ -3309,6 +3308,7 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'Brady_Time_Series' as attribution
     from dual
 
@@ -3324,6 +3324,7 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'Matt_Tz-Bz_Time_Series' as attribution
     from dual
 
@@ -3339,6 +3340,7 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'Brady_Time_Series' as attribution
     from dual
 
@@ -3354,6 +3356,7 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'Compound1_pH_avg_pct' as attribution
     from dual
 
@@ -3370,6 +3373,7 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
     from dual
 
@@ -3386,6 +3390,7 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' 
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+      'expression' as type,
         'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3402,6 +3407,7 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as 
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+      'expression' as type,
         'TgVEG_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3418,6 +3424,7 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+      'expression' as type,
         'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
@@ -3433,6 +3440,7 @@ select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_na
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'tgME49Boothroyd_RSRC' as attribution
 from dual
 
@@ -3450,6 +3458,7 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'GL_Spycher_metaData' as attribution
     from dual
 
@@ -3466,6 +3475,7 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'GL_Spycher_metaData_2' as attribution
     from dual
 
@@ -3482,6 +3492,7 @@ select 'Hehl encystation expression profile' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'G.lamblia_Hehl_encystation_Array_Profiles' as attribution
     from dual
 
@@ -3498,6 +3509,7 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'G.intestinalis_Troell_Svard_Array_Profiles' as attribution
     from dual
 
@@ -3514,6 +3526,7 @@ select 'giar sage tag frequencies sense' as profile_name,
         'TRUE' as mainOpen,
         'TRUE' as dataOpen,
        'sage' as visible_parts,
+      'expression' as type,
         'GiardiaSageTagArrayDesign,GiardiaSageTagFreqs' as attribution
     from dual
 
@@ -3537,6 +3550,7 @@ select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
        'E-GEOD-10022_array' as attribution
 from dual
 
@@ -3553,6 +3567,7 @@ select 'Profiles of E-TABM-438 from Cowman' as profile_name,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
        'New_Cowman_Sir2_KO' as attribution
 from dual
 
@@ -3572,6 +3587,7 @@ select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+      'expression' as type,
         'Pfalciparum_RNA_Seq' as attribution
 from dual
 
@@ -3588,6 +3604,7 @@ select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+      'expression' as type,
         'RNASeqCoveragePlot_Stunnenberg' as attribution
 from dual
 
@@ -3604,6 +3621,7 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage' as visible_parts,
+      'expression' as type,
         'RNASeqCoveragePlot_Patrick_Duffy' as attribution
 from dual
 UNION
@@ -3620,6 +3638,7 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
        'half_life,expr_val' as visible_parts,
+      'expression' as type,
        'GSE8099_metaData' as attribution
 from dual
 UNION
@@ -3636,6 +3655,7 @@ select 'EhistolyticaAffyProfiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
@@ -3650,10 +3670,26 @@ select 'EhistolyticaNugenProfiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
 --TriTrypDB --
+select 'T.brucei Horn RNAi Sequence minProfiles'' as profile_name,
+       'Horn::TbRNAiRNASeq' as module,
+       'Trypanosoma brucei' as species,
+       'RNAi Target Sequencing - Induced vs Uninduced' as display_name,
+       'RNAi target sequencing coverage at different life cycle stages. <br><br>In this experiment RNAi plasmid library, containing randomly sheared genomic fragments was used to create an inducible library in bloodstream form T. brucei . After transfection, the library was grown under non-inducing and inducing conditions and genomic DNA was isolated from surviving populations.<br><br>Cells carrying RNAi target fragments that negatively impact fitness through dsRNA expression and RNAi-mediated ablation are relatively depleted as the population expands and these changes are reported by the depth of sequence coverage relative to the uninduced control (No Tet).' as description,
+       'Stage/Sample' as x_axis,
+       'Coverage - log 2 (RPKM)' as y_axis,
+        179 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'cds_rpkm,transcript_rpkm' as visible_parts,
+      'phenotype' as type,
+        'Tbrucei_RNAiSeq_Horn_RSRC' as attribution
+from dual
+UNION
 select 'Linfantum promastigote time-course biorep01' as profile_name,
        'MylerLinfantum::Ver1' as module,
        'Leishmania infantum' as species,
@@ -3665,6 +3701,7 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'Linfantum_promastigote_ExpressionData' as attribution
 from dual
 UNION
@@ -3679,6 +3716,7 @@ select 'Profiles of Linfantum axenic and intracellular amastigote array data' as
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis' as attribution
 from dual
 UNION
@@ -3696,6 +3734,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val' as visible_parts,
+      'expression' as type,
         'Tbrucei_Christine_Clayton_RSRC' as attribution
 from dual
 UNION
@@ -3714,6 +3753,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'Tbrucei_Matthews_differentiation_series_RSRC' as attribution
 from dual
 UNION
@@ -3732,6 +3772,7 @@ The data table above contains the actual expression values.  <b>For this experim
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+      'expression' as type,
         'Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC' as attribution
 from dual
 UNION
@@ -3749,6 +3790,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'Tcruzi_Tarleton_Rick_RSRC' as attribution
 from dual
 UNION
@@ -3763,6 +3805,7 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+      'expression' as type,
         'Lmajor_Beverley_Steve_LifeStages_RSRC' as attribution
 from dual
 UNION
@@ -3777,6 +3820,7 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val' as visible_parts,
+      'expression' as type,
         'Tbrucei_Estevez_Procyclic_TbDRBD3_Depletion_RSRC_Profiles' as attribution
 from dual
 UNION
@@ -3792,6 +3836,7 @@ select 'T.brucei Archer Stuart Cell Cycle RNA Sequence min-Profiles' as profile_
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+      'expression' as type,
         'Tbrucei_RNASeq_ArcherStuart_CellCycle_RSRC' as attribution
 from dual
 UNION
@@ -3807,6 +3852,7 @@ select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+      'expression' as type,
         'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
 from dual
 UNION
@@ -3821,6 +3867,7 @@ select 'T. brucei under heat shock array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val,pct' as visible_parts,
+      'expression' as type,
         'T.brucei_Carrington_HeatShock_Array_PaGE_Analysis' as attribution
 from dual
 UNION
@@ -3835,6 +3882,7 @@ select 'T. brucei DHH1 wild type array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val,pct' as visible_parts,
+      'expression' as type,
         'T.brucei_Carrington_DHH1_induction_wildType_Array_PaGE_Analysis,T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis' as attribution
 from dual
 --UNION
@@ -3850,6 +3898,7 @@ from dual
 --        'TRUE' as mainOpen,
 --        'FALSE' as dataOpen,
 --       'coverage,pct' as visible_parts,
+--      'expression' as type,
 --        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
 --from dual
 UNION
@@ -3865,6 +3914,7 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+      'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
 UNION
@@ -3880,6 +3930,7 @@ select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' 
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+      'expression' as type,
         'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
 )
