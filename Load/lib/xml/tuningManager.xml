@@ -6047,48 +6047,80 @@ tablespace indx
   </tuningTable>
 
  <!-- Query to group species by higher level taxonomy --> 
-  <tuningTable name="SpeciesTaxonLevel">
+  <tuningTable name="OrganismTree">
     <internalDependency name="ProjectIdTaxonLevel"/>
     <internalDependency name="SequenceAttributes"/>
     <internalDependency name="TaxonSpecies"/>
     <externalDependency name="SRES.TaxonName"/>
+    <externalDependency name="SRES.Taxon"/>
     <sql>
       <![CDATA[
-        CREATE TABLE SpeciesTaxonLevel&1 NOLOGGING AS
-	  SELECT term, parentTerm, project_id, internal
-	  FROM (
-		SELECT distinct t.name AS term,
-                                substr(sa.organism,0,(instr(sa.organism,' ')))  AS parentTerm,
-                                sa.project_id AS project_id,
-                                t.taxon_id AS internal
-		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
-                     TaxonSpecies ts, SRES.TaxonName tn, SRES.TaxonName t
-		WHERE sa.project_id = ptl.project_id 
-		  AND tn.name = sa.organism
-		  AND ts.taxon_id = tn.taxon_id
-		  AND t.taxon_id = ts.species_taxon_id
-                  AND t.name_class= 'scientific name'
-		UNION 
-		SELECT distinct substr(sa.organism,0,(instr(sa.organism,' '))) AS term,
-                                ptl.taxon_node AS parentTerm,
-                                ptl.project_id AS project_id,
-                                -1 as internal
-		FROM ProjectIdTaxonLevel ptl, SequenceAttributes sa,
-                     TaxonSpecies ts, SRES.TaxonName tn, SRES.TaxonName t
-		WHERE sa.project_id = ptl.project_id 
-		  AND tn.name = sa.organism
-		  AND ts.taxon_id = tn.taxon_id
-		  AND t.taxon_id = ts.species_taxon_id
-		UNION 
-		SELECT distinct ptl.taxon_node AS term,
-                                '' AS parentTerm,
-                                ptl.project_id as project_id,
-                                -1 as internal
-		FROM  ProjectIdTaxonLevel ptl, SequenceAttributes sa
-		WHERE sa.project_id = ptl.project_id 
-		)
-	  GROUP BY term, parentTerm, project_id, internal	 
-	]]>
+        CREATE TABLE OrganismTree&1 NOLOGGING AS
+         SELECT organism,term,parentTerm, internal,project_id
+         FROM (
+           -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
+           SELECT DISTINCT sa.organism AS organism,
+                           sa.organism AS term,
+                           sn.name AS parentTerm,
+                           t.taxon_id AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, Sres.TaxonName tn,
+                SRES.Taxon t, SRES.TaxonName sn, TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           UNION
+           -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
+           -- we are getting a row for species leve AND for children here
+           SELECT DISTINCT sa.organism AS organism,
+                          sn.name AS term,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          tn.taxon_id AS internal,
+                          sa.project_id AS project_id
+           FROM SequenceAttributes sa, SRES.Taxon t, 
+                SRES.TaxonName tn, SRES.TaxonName sn,
+                TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           UNION 
+           SELECT DISTINCT sa.organism AS organism,
+                          sn.name AS term,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          sn.taxon_id AS internal,
+                          sa.project_id AS project_id
+           FROM SequenceAttributes sa, SRES.Taxon t, 
+                SRES.TaxonName tn, SRES.TaxonName sn,
+                TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           UNION
+           -- all organisms from sequenceattributes as organism, genus as term, parentterm from taxonlevel
+           SELECT DISTINCT sa.organism AS organism,      
+                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
+                           ptl.taxon_node AS parentTerm,
+                           -1 AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
+           WHERE ptl.project_id = sa.project_id
+           UNION
+           -- all organisms from sequenceattributes as organism, taxon_node as term, parentterm is null
+           SELECT DISTINCT sa.organism AS organism,               
+                           ptl.taxon_node AS term,
+                           '' AS parentTerm,
+                           -1 AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
+           WHERE ptl.project_id = sa.project_id
+          )
+    	]]>
     </sql>
   </tuningTable>
 
