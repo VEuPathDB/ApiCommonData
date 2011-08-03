@@ -6091,9 +6091,10 @@ tablespace indx
            AND  sn.taxon_id = ts.species_taxon_id
            AND t.taxon_id = ts.taxon_id
            AND sn.name_class = 'scientific name'
+           AND t.rank != 'species'
            UNION
            -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
-           -- we are getting a row for species leve AND for children here
+           -- we are getting a row for species level AND for children here
            SELECT DISTINCT sa.organism AS organism,
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
