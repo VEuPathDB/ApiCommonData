@@ -8,6 +8,7 @@ my $out = "result";
 my $varscan = "/Users/brunkb/Software_Downloads/varscan/VarScan.v2.2.5.jar";
 my $percentCutoff = 80; ## use to generate consensus
 my $minPercentCutoff; ## use for snps and indels
+my $editDistance = 0.04;
 
 &GetOptions("fastaFile|f=s" => \$fastaFile, 
             "mateA|ma=s"=> \$mateA,
@@ -18,6 +19,7 @@ my $minPercentCutoff; ## use for snps and indels
             "strain|s=s" => \$strain,
             "percentCutoff|pc=s" => \$percentCutoff,
             "minPercentCutoff|mpc=s" => \$minPercentCutoff,
+            "editDistance|ed=s" => \$editDistance,
             );
 
 die "varscan jar file not found\n" unless -e "$varscan";
@@ -30,14 +32,14 @@ die "you must provide a strain\n" unless $strain;
 
 $minPercentCutoff = $percentCutoff unless $minPercentCutoff;
 
-print STDERR "runBWA_HTS.pl ... parameter values:\n\tfastaFile=$fastaFile\n\tbwa_index=$bwaIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tstrain=$strain\n\tpercentCutoff=$percentCutoff\n\tvarscan=$varscan\n\n";
+print STDERR "runBWA_HTS.pl ... parameter values:\n\tfastaFile=$fastaFile\n\tbwa_index=$bwaIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tstrain=$strain\n\tpercentCutoff=$percentCutoff\n\tminPercentCutoff=$minPercentCutoff\n\teditDistance=$editDistance\n\tvarscan=$varscan\n\n";
 
 ## indices ..  bwa index -p <prefix for indices> <fastafile>  ##optional -c flag if colorspace
 
-system("(bwa aln -t 4 $bwaIndex $mateA > $out.mate1.sai) >& $out.bwa_aln_mate1.log");
+system("(bwa aln -t 4 -n $editDistance $bwaIndex $mateA > $out.mate1.sai) >& $out.bwa_aln_mate1.log");
 
 if(-e "$mateB"){
-  system("(bwa aln -t 4 $bwaIndex $mateB > $out.mate2.sai) >& $out.bwa_aln_mate2.log");
+  system("(bwa aln -t 4 -n $editDistance $bwaIndex $mateB > $out.mate2.sai) >& $out.bwa_aln_mate2.log");
 
   system("(bwa sampe $bwaIndex $out.mate1.sai $out.mate2.sai $mateA $mateB > $out.sam) >& $out.bwa_sampe.log");
 }else{
