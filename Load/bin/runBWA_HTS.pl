@@ -3,7 +3,7 @@
 use strict;
 use Getopt::Long;
 
-my($fastaFile,$mateA,$mateB,$bwaIndex,$strain);
+my($fastaFile,$mateA,$mateB,$bwaIndex,$strain,$snpsOnly);
 my $out = "result";
 my $varscan = "/Users/brunkb/Software_Downloads/varscan/VarScan.v2.2.5.jar";
 my $percentCutoff = 80; ## use to generate consensus
@@ -20,6 +20,7 @@ my $editDistance = 0.04;
             "percentCutoff|pc=s" => \$percentCutoff,
             "minPercentCutoff|mpc=s" => \$minPercentCutoff,
             "editDistance|ed=s" => \$editDistance,
+            "snpsOnly!" => \$snpsOnly,
             );
 
 die "varscan jar file not found\n" unless -e "$varscan";
@@ -59,9 +60,12 @@ my $mpc = $minPercentCutoff / 100;
 
 system("(java -jar $varscan pileup2snp $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $out.varscan.snps ) >& $out.varscan_snps.log");
 
+system("parseVarscanToGFF.pl --f $out.varscan.snps --strain $strain --pc $minPercentCutoff --o $out.SNPs.gff >& $out.parseVarscan.err");
+
+exit(0) if $snpsOnly;
+
 system("(java -jar $varscan pileup2indel $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $out.varscan.indels ) >& $out.varscan_indels.log");
 
-system("parseVarscanToGFF.pl --f $out.varscan.snps --strain $strain --pc $minPercentCutoff --o $out.SNPs.gff >& $out.parseVarscan.err");
 
 system("(java -jar $varscan pileup2cns $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $pc > $out.varscan.cons ) >& $out.varscan_cons.log");
 
