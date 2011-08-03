@@ -3109,6 +3109,11 @@ from
            'ToxoDB' as project_id
     from dual
     UNION
+    select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
 
     -- AmoebaDB --
     select 'EhistolyticaAffyProfiles' as profile_name,
@@ -3303,7 +3308,26 @@ tablespace indx
 CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
 select mainOpen, dataOpen, order_num, profile_name, module, display_name, description, x_axis, y_axis, visible_parts,attribution, type, dataTable
 from (
+
 -- ToxoDB
+select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
+       'Roos::ToxoLineages::Ver1' as module,
+       'Tachyzoite differential expression profiling of three archetypal T. gondii lineages' as display_name,
+       'Determination of strain-specific differential expression by profiling wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of <i>T. gondii</i>' as description,
+       'Strain' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3)' as y_axis,
+        9 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rma' as visible_parts,
+        'ToxoStrainsMicroarrayPercentile' as dataTable,
+      'expression' as type,
+        'Tg_3_Archetypal_Lineages_ExpressionData' as attribution
+    from dual
+
+    UNION
+
+
 select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
        'Roos::TzBz' as module,
        'Bradyzoite Differentiation (Multiple 6-hr Time Points)' as display_name,
