@@ -1,6 +1,6 @@
 <tuningConfig>
 
-  <tuningTable name="apidb.AnnotationChange" alwaysUpdate="true">
+  <tuningTable name="AnnotationChange" alwaysUpdate="true">
     <perl>
       <![CDATA[ 
 use strict;
@@ -222,7 +222,7 @@ sub getInsertStatement {
     my ($dbh) = @_;
     if (!$insertStatement) {
     $insertStatement = $dbh->prepare(<<SQL);
-      insert into apidb.AnnotationChange&1 (gene, change_date, change, source)
+      insert into AnnotationChange&1 (gene, change_date, change, source)
       values (?, to_date(?, 'yyyy-mm-dd'), ?, ?)
 SQL
   }
@@ -234,7 +234,7 @@ sub createEmptyTable {
     my ($dbh) = @_;
 
     $dbh->do(<<SQL);
-create table apidb.AnnotationChange&1 (
+create table AnnotationChange&1 (
    gene          varchar2(50),
    change_date date,
    change      varchar2(2000),
@@ -249,10 +249,10 @@ sub renameOldChanges {
 
     my ($dbh) = @_;
     $dbh->do(<<SQL);
-update apidb.AnnotationChange&1 -- should use &1 macro
+update AnnotationChange&1 -- should use &1 macro
 set gene = 'old change: ' || gene
 where change_date < (select to_date(edr.version, 'yyyy-mm-dd')
-                       from ApidbTuning.GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
+                       from GeneAttributes ga, dots.NaFeature nf, sres.ExternalDatabaseRelease edr
                        where ga.source_id = AnnotationChange&1.gene
                          and nf.na_feature_id = ga.na_feature_id
                          and edr.external_database_release_id = nf.external_database_release_id
@@ -267,7 +267,7 @@ sub indexChanges {
     my ($dbh) = @_;
     $dbh->do(<<SQL);
       create index AnotCh_ix&1 -- should use &1 macro
-      on apidb.AnnotationChange&1 (gene, change_date) tablespace INDX
+      on AnnotationChange&1 (gene, change_date) tablespace INDX
 SQL
 
 }
@@ -275,8 +275,8 @@ SQL
     </perl>
   </tuningTable>
 
-  <tuningTable name="apidb.ChangedGeneProduct" alwaysUpdate="true">
-    <externalTuningTableDependency name="ApidbTuning.GeneAttributes"/>
+  <tuningTable name="ChangedGeneProduct" alwaysUpdate="true">
+    <externalTuningTableDependency name="GeneAttributes"/>
     <perl>
       <![CDATA[
 use strict;
@@ -329,7 +329,7 @@ sub storeProducts {
     # get list of genes with changes
     my $stmt = $dbh->prepare(<<SQL) or die "preparing to get changed-gene list from AnnotationChange";
       select distinct gene
-      from apidb.AnnotationChange
+      from AnnotationChange
       order by gene
 SQL
 
@@ -407,7 +407,7 @@ SQL
     }
 
   my $insertStatement = $dbh->prepare(<<SQL);
-      insert into apidb.ChangedGeneProduct&1 (gene, gene_name, polypeptide, product) values (?, ?, ?, ?)
+      insert into ChangedGeneProduct&1 (gene, gene_name, polypeptide, product) values (?, ?, ?, ?)
 SQL
 
   my $products = 0;
@@ -436,7 +436,7 @@ sub createEmptyTable {
     my ($dbh) = @_;
 
     $dbh->do(<<SQL) or die "creating ChangedGeneProductXXXX table";
-      create table apidb.ChangedGeneProduct&1 (
+      create table ChangedGeneProduct&1 (
          gene        varchar2(50),
          gene_name   varchar2(50),
          polypeptide varchar2(60),
@@ -455,10 +455,10 @@ sub changedGenesWithoutProduct {
     # so take sql error to mean that the changed-gene list was formerly empty.
     eval {
     $stmt = $dbh->prepare(<<SQL)
-      select cgp.gene from apidb.ChangedGeneProduct cgp, ApidbTuning.GeneAttributes ga
+      select cgp.gene from ChangedGeneProduct cgp, GeneAttributes ga
                   where cgp.gene = ga.source_id
     minus
-      select gene from apidb.ChangedGeneProduct&1
+      select gene from ChangedGeneProduct&1
     order by gene
 SQL
 
@@ -499,7 +499,7 @@ sub createIndex {
     my ($dbh) = @_;
     $dbh->do(<<SQL) or die "indexing ChangedGeneProductXXXX table";
       create index cgp_ix&1 -- should use &1 macro
-      on apidb.ChangedGeneProduct&1 (gene, polypeptide, product) tablespace INDX
+      on ChangedGeneProduct&1 (gene, polypeptide, product) tablespace INDX
 SQL
 
 }
