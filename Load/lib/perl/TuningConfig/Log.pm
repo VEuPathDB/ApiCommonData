@@ -1,6 +1,5 @@
 package ApiCommonData::Load::TuningConfig::Log;
 
-use ApiCommonData::Load::TuningConfig::TuningRegistry;
 use ApiCommonData::Load::TuningConfig::TableSuffix;
 
 BEGIN {
