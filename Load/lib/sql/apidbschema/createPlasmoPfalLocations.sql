@@ -1,6 +1,6 @@
 CREATE TABLE ApiDB.PlasmoPfalLocations (
  plasmoPfalLocations_id      NUMBER(10),
- seq_source_id  NUMBER(10) NOT NULL,
+ seq_source_id  VARCHAR2(20) NOT NULL,
  old_location          NUMBER(10)  NOT NULL,
  new_location        NUMBER(10) NOT NULL,
  MODIFICATION_DATE     DATE,

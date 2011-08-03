@@ -23,4 +23,8 @@ create index ExonOrder_ix
   on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id)
    tablespace INDX; 
 
+-- schema changes for GUS tables
+
+alter table dots.NaFeatureImp modify (source_id varchar2(80));
+
 exit

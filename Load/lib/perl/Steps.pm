@@ -557,15 +557,15 @@ sub createMuscleDir {
   my $muscleTaskSize = $propertySet->getProp('muscle.taskSize');
   my $muscleBinDir = $propertySet->getProp('muscleBinDir');
 
-  $mgr->runCmd("mkdir -p $dataDir/msa");
+  #$mgr->runCmd("mkdir -p $dataDir/msa");
 
   &makeMsaDir($dataDir, $clusterDataDir,
 		   $muscleTaskSize,$muscleBinDir,
-		   $nodeClass,$nodePath,
-		   );
+		   $nodeClass,$nodePath);
 
   $mgr->endStep($signal);
 }
+
 
 sub rnaScanToGff2 {
   my ($mgr,$dir) = @_;
@@ -7333,14 +7333,8 @@ sub loadOrthoMCLResultsForOrthomclDB {
 
    my $signal = "loadOrthoMCLResult";
    return if $mgr->startStep("Starting Data Load $signal", $signal);
-   
 
-   my $args = <<"EOF";
---orthoFile=$orthoFileFullPath \\
---extDbName='$extDbName' \\
---extDbVersion='$extDbRlsVer' \\
-$addedArgs \\
-EOF
+   my $args = " --orthoFile $orthoFileFullPath --extDbName '$extDbName' --extDbVersion '$extDbRlsVer' $addedArgs";
 
    $mgr->runPlugin($signal, 
          "OrthoMCLData::Load::Plugin::InsertOrthologousGroupsFromMcl", 

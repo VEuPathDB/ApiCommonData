@@ -1,39 +1,23 @@
 <resources>
-<!--ISFResource-->
-
-  <resource resource="Cfasci_contigs_RSRC" version="@@Cfasci_contigs_VER@@"
-      plugin="GUS::Supported::Plugin::LoadFastaSequences">
-    <manualGet fileOrDir="TriTrypDB/cfasci/genome/contig/%RESOURCE_VERSION%/final/test.scf.fasta"/>
-    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/test.scf.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
-    <info
-        displayName="C.fasciculata genome sequence"
-        project="TriTrypDB"
-        organisms="@@CfasciOrganismFullName@@"
-        category="Genome"
-        publicUrl=""
-        contact=""
-        email=""
-        institution="">
-      <description>
-        <![CDATA[
-                The <i>Crithidia fasciculata</i> (strain/isolate Cf-C1) was obtained from Dr. Larry Simpson, University of California, Los Angeles.   Genomic DNA was prepared by CsCl/Ethidium bromide density gradient centrifugation to rminimize the amount of kinetoplast (mitochondrial) DNA, and was provided by Drs. Natalia Akopyants, Lon-Fye Lye and Stephen Beverley, Washington University School of Medicine.    
-<br><br>
-  A combination of next-generation sequencing and Sanger reads were produced for a draft assembly. Total sequence coverage of 454 instrument reads was 26X (Fragments   10X, 3Kb PE 14X, 8Kb PE 2X) and Sanger reads was .75X using a genome size estimate of 40Mb. The combined sequence reads were assembled using the CABOG software (Bioinformatics 24:2818-2824 2008). This first draft assembly was referred to as Crithidia_9.0. This version has been cleaned of contaminants and had some remaining vector trimmed from contigs. The assembly is made up of a total of 1043 scaffolds with an N50 scaffold length of over 122kb (N50 contig length for the 2847 contigs was 28kb). The assembly spans 34.5Gb.  
-
-<br><br>This work was supported by NIH grant AI29646 to SMB and by NIH-NHGRI grant 5U54HG00307907 to RKW, Director of The Genome Center at Washington University.
-
-<br><br>For questions regarding this <i>Crithidia fasciculata</i> assembly please contact Dr. Wes Warren, Washington University School of Medicine (wwarren@watson.wustl.edu). Downloads of the sequence data are available via the TriTrypDB genome browser server. Funding for the sequence characterization of the <i>Crithidia fasciculata</i> genome was provided by the National Human Genome Research Institute (NHGRI), National Institutes of Health (NIH).
-
-<br><br> DNA source - Drs. Stephen Beverley, Natalia Akopyants, and Lon-Fye Lye, Department of Microbiology, Washington University School of Medicine, St Louis, MO. 
-
-<br><br>Sequencing - The Genome Center, Washington University School of Medicine, St Louis, MO.  
-
-<br><br>Sequence assembly - The Genome Center, Washington University School of Medicine, St Louis, MO.
- 
-<br><br>It is requested that users of this <i>Crithidia</i> sequence assembly acknowledge Stephen M. Beverley and The Genome Center, Washington University School of Medicine in any publications that result from use of this sequence assembly.  Any publications that propose to use whole genome or chromosome data should contact the Genome Center at Washington University (gweinsto@wustl.edu or wwarren@wustl.edu) for the use of pre-publication data.  Please refer to the <a href="http://genome.wustl.edu/data/data_use_policy">Genome Center Data Use Policy</a> for further information regarding proper use of data and proper citation. 
-        ]]>
-      </description>
-    </info>
+  <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            resource="Cfasci_contigs_RSRC"
+            version="@@Cfasci_contigs_VER@@">
+    <manualGet fileOrDir="TriTrypDB/cfasci/genome/contig/%RESOURCE_VERSION%/final/supercontigs.fasta" />
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5656 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/supercontigs.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
   </resource>
-
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Cfasci_RNASeq_Beverley_RSRC"
+            version="@@Cfasci_RNASeq_Beverley_VER@@">
+    <getAndUnpackOutput dir="@@dataDir@@/final" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_1_sequence.txt" />
+    <getAndUnpackOutput file="@@dataDir@@/final/s_8_2_sequence.txt" />
+    <manualGet fileOrDir="TriTrypDB/cfasci/rnaSeq/Beverley_Crithidia/%RESOURCE_VERSION%/final/" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+            resource="Cfasci_contigs_DBRefs_RSRC"
+            version="12.0">
+    <manualGet fileOrDir="TriTrypDB/cfasci/dbxref/dbRefNASequence/%RESOURCE_VERSION%/final/dbxref_contig_id.tab" />
+    <pluginArgs>-DbRefMappingFile @@dataDir@@/dbxref_contig_id.tab --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier" --tableName "DbRefNASequence" --geneExternalDatabaseSpec 'Cfasci_contigs_RSRC|@@Cfasci_contigs_VER@@'</pluginArgs>
+  </resource>
 </resources>

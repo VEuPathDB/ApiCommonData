@@ -105,11 +105,11 @@ sub new {
   
   ## Initialize the plugin
   
-  $M->initialize({requiredDbVersion => 3.5,
+  $M->initialize({requiredDbVersion => 3.6,
                   cvsRevision => ' $Revision$ ', # cvs fills this in
                   cvsTag => ' $Name$ ', # cvs fills this in!
                   name => ref($M),
-                  revisionNotes => 'GUS 3.5 compliant',
+                  revisionNotes => 'GUS 3.6 compliant',
                   easyCspOptions => $easycsp,
                   usage => 'Loads dbEST information into GUS',
                 });

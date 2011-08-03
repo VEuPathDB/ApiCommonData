@@ -37,10 +37,10 @@ BEGIN {
     $message = $indentString . $message;
 
     $| = 1;
-    print "$message\n";
+    print STDERR "$message\n";
 
     # if log file name is unset, set it to a default
-    $logFile = "tuningManager." . $$ . "." . time . ".log"
+    $logFile = "/tmp/tuningManager." . $$ . "." . time . ".log"
       if !$logFile;
 
     open(my $fh, '>>', $logFile) or die "opening logfile \"$logFile\"for appending";
@@ -55,7 +55,7 @@ BEGIN {
     $message = $indentString . $message;
 
     $| = 1;
-    print "$message\n";
+    print STDERR "$message\n";
     $logPreamble .= "$message\n";
   }
 
@@ -171,6 +171,8 @@ sub mailLog {
     print MAIL getLog();
     close(MAIL);
   }
+
+  unlink(getLogfile());
 }
 
 sub getProcessInfo {
@@ -196,7 +198,7 @@ SQL
 
 sub mailOutOfSpaceReport {
 
-  my ($instance, $dbaEmail) = @_;
+  my ($instance, $dbaEmail, $fromEmail) = @_;
 
   my $errstr = getOutOfSpaceMessage();
   $errstr =~ /ORA-01652: unable to extend temp segment by .* in tablespace (\S*) /
@@ -207,7 +209,7 @@ sub mailOutOfSpaceReport {
 
   ApiCommonData::Load::TuningConfig::Log::addLog("Sending out-of-space notification to \"$dbaEmail\" with subject \"$subject\"");
 
-  open(MAIL, "|mail -s '$subject' $dbaEmail");
+  open(MAIL, "|mail -s '$subject' $dbaEmail  -- -r $fromEmail");
 
   print MAIL <<EMAIL;
 Dear DBAs,
@@ -217,6 +219,8 @@ The tuning manager encountered the error "$errstr" in the instance $instance.
 Can that tablespace ($tablespace) be made bigger?
 
 Thanks!
+
+(Note: this email was generated automatically by the tuning manager.)
 EMAIL
 
   close(MAIL);

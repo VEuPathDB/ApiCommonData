@@ -1,0 +1,27 @@
+<resources>
+  <resource resource="Gniphandrodes_genome_RSRC" version="@@Gniphandrodes_genome_VER@@"
+      plugin="GUS::Supported::Plugin::LoadFastaSequences">
+    <manualGet fileOrDir="ToxoDB/gniphandrodes/genome/contigs/%RESOURCE_VERSION%/final/Gniphandrodes_asmblAndDegen.fsa"/>
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 110365 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Gniphandrodes_asmblAndDegen.fsa --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+    <info
+        displayName="Gregarina niphandrodes contigs"
+        project="ToxoDB"
+        organisms="@@GniphandrodesFullName@@"
+        category="Genome"
+        publicUrl=""
+        contact=""
+        email=""
+        institution="">
+      <description>
+        <![CDATA[
+         Contig sequences for <i>Gregarina niphandrodes</i> obtained from Washington University in St. Louis 
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+</resources>
+
+
+
+

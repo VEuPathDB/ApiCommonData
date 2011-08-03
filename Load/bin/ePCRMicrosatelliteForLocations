@@ -60,7 +60,7 @@ my $ePcrOut = $dir."/".$base."_epcr";
 
 
 
-system("$ePcrDir/e-PCR $stsFile $seqFile M=$margin N=$mismatch G=$gap T=3 W=$wordSize F=$discontiguous O=$ePcrOut");
+system("$ePcrDir/e-PCR $stsFile $seqFile M=$margin N=$mismatch G=$gap T=3 W=$wordSize F=$discontiguous > $ePcrOut");
 
 my $stsHashRef = &makeGFFFile($ePcrOut,$outFile,$msInfo);
 
@@ -91,21 +91,22 @@ sub makeGFFFile{
 
   foreach my $line (<IN>){
     chomp $line;
-    my @fields = split(/\t/,$line);
+    my @fields = split(/\s+/,$line);
     my $chr = shift(@fields);
-    my $accession = shift(@fields);
+    my $locations = shift(@fields);
+    my ($start,$end)  = split(/\.\./,$locations);
     my $strand = shift(@fields);
-    my $start = shift(@fields);
-    my $end  = shift(@fields);
-
+    my $accession = shift(@fields);
     $strand =~ tr/)(//d;
+
 
     if($stsHash{$accession}){
       print STDERR "Repeated accessions: $accession\n";
     }
     $stsHash{$accession} = $accession;
-    print OUT "$chr\t$msInfo\tmicrosatellite\t$start\t$end\t.\t$strand\t.\tID $accession\n";
-  }
+    my($id,$name) = split(/:/,$accession);
+    print OUT "$chr\t$msInfo\tmicrosatellite\t$start\t$end\t.\t$strand\t.\tID $id; Name $name\n";
+		}
 
   close(IN);
   close(OUT);

@@ -15,11 +15,12 @@ use ApiCommonData::Load::TuningConfig::Log;
 use ApiCommonData::Load::TuningConfig::TableSuffix;
 use ApiCommonData::Load::TuningConfig::Utils;
 
-my $configDir;
+my $subversionDir;
 my $props;
 my $startTime = time;
 my $maxRebuildMinutes = 0;
 my $dbaEmail;
+my $fromEmail;
 
 my ($sec,$min,$hour,$mday,$mon,$year) = localtime();
 my $timestamp = sprintf('%4d-%02d-%02d %02d:%02d:%02d', $year+1900, $mon+1, $mday, $hour, $min, $sec);
@@ -31,13 +32,12 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
-my ($configFile, $propFile, $instance, $instanceName, $password, $tables,
+my ($configFile, $propFile, $instance, $password, $tables,
     $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
            "instance=s" => \$instance,
-           "instanceName=s" => \$instanceName,
            "password=s" => \$password,
            "tables=s" => \$tables,
            "doUpdate!" => \$doUpdate,
@@ -74,12 +74,14 @@ $maxRebuildMinutes = $props->{maxRebuildMinutes};
 
 if ($props->{dbaEmail}) {
   $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+  $fromEmail = $props->{fromEmail} if $props->{fromEmail};
 } else {
   $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+  $fromEmail = 'tuningMgr@pcbi.upenn.edu';
 }
 
 
-my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount, $instance_name);
+my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
 
 eval {
   $SIG{INT} = \&catch_signal;
@@ -89,6 +91,10 @@ eval {
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
+
+  if ($instance ne $tuningRegistry->getInstanceName()) {
+    die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
+  }
 
   $configFile = getConfigFileName($configFile, $tuningRegistry);
   ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
@@ -107,7 +113,7 @@ eval {
             $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
             $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
             $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
-            $maxRebuildMinutes, $instance, $propFile, $password);
+            $maxRebuildMinutes, $instance, $propFile, $password, $subversionDir);
   }
 
   if ($doUpdate) {
@@ -325,16 +331,14 @@ eval {
     if ($neededUpdateCount && !$doUpdate) || $brokenCount;
 
   # if a temporary config-file dir was checked out from svn, delete it now
-  if ($configDir) {
-    my @cmdLine = ("rm", "-rf", $configDir);
+  if ($subversionDir) {
+    my @cmdLine = ("rm", "-rf", $subversionDir);
     system(@cmdLine) == 0
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
   }
 
-  # set instance_name and notifyEmail (for log email)
-  $instance_name = $instanceName || $instance;
+  # set notifyEmail (for log email)
   if ($tuningRegistry) {
-    $instance_name = $instanceName || $tuningRegistry->getInstanceName() || $instance;
     $notifyEmail = $tuningRegistry->getNotifyEmails() if !$notifyEmail;
   }
 
@@ -352,9 +356,9 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble(time - $startTime .
 
 $notifyEmail = "tuningMgr\@pcbi.upenn.edu" if !$notifyEmail;
 
-ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance_name);
+ApiCommonData::Load::TuningConfig::Log::mailLog($notifyEmail, $instance);
 
-ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance_name, $dbaEmail)
+ApiCommonData::Load::TuningConfig::Log::mailOutOfSpaceReport($instance, $dbaEmail, $fromEmail)
   if ApiCommonData::Load::TuningConfig::Log::getOutOfSpaceMessage();
 
 die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
@@ -375,7 +379,6 @@ options:
   configFile      an xml file describing the tables to be created
   propFile        pathname of a file containing database username and password
   instance        the database instance to login and craete objects in
-  instanceName    what the instance should be called in the log (useful if the Oracle name is unwieldy)
   password        database login password
   tables          check/update only listed tables (and their antecedants)
   doUpdate        update any tables found to be out of date
@@ -442,6 +445,7 @@ Sample prop file:
   <username>apidb</username>
   <maxRebuildMinutes>180</maxRebuildMinutes>
   <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
+  <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
 </tuningProps>
 });
 }
@@ -449,22 +453,25 @@ Sample prop file:
 sub getConfigFileName {
   my ($configFile, $tuningRegistry) = @_;
 
+  my $configPath;
+  $subversionDir = "/tmp/tMan." . $$ . "." . time . "/";
+  my $subversionUrl = $tuningRegistry->getSubversionUrl();
+  my @cmdLine = ("svn", "checkout", $subversionUrl, $subversionDir);
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
+  ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
+  system(@cmdLine) == 0
+    or die "system @cmdLine failed: $?";
 
-  # if no config file was supplied, get it from Subversion
+  # if no config file was supplied, use one from Subversion
   if (!$configFile) {
-    my $configPath;
-    $configDir = "/tmp/tMan." . $$ . "." . time . "/";
-    my $subversionUrl = $tuningRegistry->getSubversionUrl();
     $configFile = $tuningRegistry->getConfigFile();
-    my @cmdLine = ("svn", "checkout", $subversionUrl, $configDir);
-    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
-    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
-    system(@cmdLine) == 0
-      or die "system @cmdLine failed: $?";
 
     # default to component tuning manager
     $configFile = "tuningManager.xml" if !$configFile; 
-    $configPath = $configDir . '/' . $configFile;
+    $configPath = $subversionDir . '/' . $configFile;
+    return $configPath;
+  } elsif (substr($configFile, 0, 1) ne "/") {
+    $configPath = $subversionDir . '/' . $configFile;
     return $configPath;
   } else {
     return $configFile;
@@ -661,7 +668,7 @@ sub clearDeadLock {
     return;
   }
 
-  my $pid_test = ` ps -fp $pid|tail +2|wc -l`;
+  my $pid_test = ` ps -fp $pid|tail -n +2|wc -l`;
   chomp($pid_test);
   if (!$pid_test) {
     # named process no longer exists; null out CURRENT_UPDATER

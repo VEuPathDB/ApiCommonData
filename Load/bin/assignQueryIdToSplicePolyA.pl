@@ -58,11 +58,11 @@ order by na_sequence_id,strand,coding_start";
 
 my $geneStmt = $dbh->prepare($geneModelQuery);
 
-my $outsideQuery = $type eq 'splice' ? "select nextgenseq_align_id,na_sequence_id,query_id,strand,CASE WHEN strand = '+' THEN start_a ELSE end_a END as location,intron_size, genome_matches
+my $outsideQuery = $type eq 'splice' ? "select nextgenseq_align_id,na_sequence_id,query_id,strand,CASE WHEN strand = '+' THEN end_a ELSE start_a END as location,intron_size, genome_matches
   from apidb.nextgenseq_align 
   where external_database_release_id = ?
   and sample = ?" :
-"select nextgenseq_align_id,na_sequence_id,query_id,strand,CASE WHEN strand = '+' THEN end_a ELSE start_a END as location,intron_size,genome_matches
+"select nextgenseq_align_id,na_sequence_id,query_id,strand,CASE WHEN strand = '+' THEN start_a ELSE end_a END as location,intron_size,genome_matches
   from apidb.nextgenseq_align 
   where external_database_release_id = ?
   and sample = ?";
@@ -134,7 +134,7 @@ foreach my $site (@list){
   print STDERR "Processing $ct\n" if ($verbose && $ct % 100 == 0);
   my($gene_id,$utr_len,$newCds) = &getGeneAndDistance($site);
   ##sanity check ... is this different than what George called?
-  if($site->{query_id} =~ /-(\d+)\(/){
+  if($site->{query_id} =~ /-(\d+)\*?\(/){
     my $dist = $1;
     if($dist != $utr_len && $site->{genome_matches} == 1){
       print STDERR "NOTICE: utr length for $site->{query_id} determined different than from George Cross\n" if $verbose;
@@ -147,7 +147,13 @@ foreach my $site (@list){
     $delStmt->execute($site->{nextgenseq_align_id});
     next;
   }
-  $upStmt->execute("$gene_id-$utr_len$newCds($site->{intron_size})",$utr_len,$site->{nextgenseq_align_id});
+
+  my $queryId = "$gene_id-$utr_len$newCds($site->{intron_size})";
+  if($newCds eq '*') {
+    $queryId = $queryId . " - Alternate CDS Start";
+  }
+
+  $upStmt->execute($queryId, $utr_len,$site->{nextgenseq_align_id});
 }
 if($commit){
   $dbh->do("commit");

@@ -9,12 +9,13 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputFile,$taxonId);
+my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery);
 
 &GetOptions("verbose!" => \$verbose,
             "outputFile=s" => \$outputFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "taxonId=s" => \$taxonId,
+            "coordinates=s" => \$coordinates,
 	    );
 
 
@@ -48,16 +49,24 @@ open(OUTINDX,">$outputFile");
 
 print("Preparing to export genes model for Ssa...\n");
 
-my $GeneQuery = &GetGeneQuery;
+if(uc $coordinates eq "CDS"){
+    $GeneQuery = &GetGeneQueryOnCDS;
+}else{
+    $GeneQuery = &GetGeneQuery;
+}
 
 my $sth = $dbh->prepare($GeneQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
 $sth->execute($taxonId) ||  die "Couldn't execute statement: " . $sth->errstr;
-
-my $ExonQuery = &GetExonQuery;
+if(uc $coordinates eq "CDS"){
+    $ExonQuery = &GetExonQueryOnCDS;
+}else{
+    $ExonQuery = &GetExonQuery;
+}
 
 my $sth2 = $dbh->prepare($ExonQuery) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;  
 
 while (my ($source_id, $na_feature_id,$start_min,$end_max, $strand, $sequence_id, $na_sequence_id, $exon_count ) = $sth->fetchrow_array()) {
+  next unless ($exon_count);
 
   print OUTINDX $sequence_id."\t".$strand."\t".$start_min."\t".$end_max."\t".$exon_count."\t";
 
@@ -109,6 +118,35 @@ sub GetExonQuery {
             WHERE fl.feature_type = 'ExonFeature'
               AND fl.parent_id = ?
               AND fl.na_sequence_id = ?
+         ORDER BY start_min,end_max");
+}
+
+sub GetGeneQueryOnCDS {
+
+
+return ("SELECT ga.source_id, ga.na_feature_id,
+                  least(ga.coding_start,ga.coding_end)-1 as start_min ,
+                  greatest(ga.coding_start,ga.coding_end) as end_max,
+                  decode(ga.is_reversed, 1, '-', '+') as strand,
+                  ga.sequence_id AS sequence_id,ga.na_sequence_id,
+                  (select count(*) from dots.exonfeature ef where ef.coding_start is not null and ef.parent_id = ga.na_feature_id) as exon_count
+
+             FROM apidb.geneattributes ga
+            WHERE ga.source_id is not null
+              and ga.taxon_id = ?
+            ORDER BY sequence_id,start_min,end_max,source_id");
+}
+
+sub GetExonQueryOnCDS {
+
+
+  return ("SELECT least(fl.coding_start,fl.coding_end)-1 as start_min,
+                  greatest(fl.coding_start,fl.coding_end) as end_max
+             FROM apidb.featurelocation fl
+            WHERE fl.feature_type = 'ExonFeature'
+              AND fl.parent_id = ?
+              AND fl.na_sequence_id = ?
+              AND fl.coding_start is not NULL
          ORDER BY start_min,end_max");
 }
 

@@ -14,7 +14,7 @@ sub new {
     my ($class, $name, $internalDependencyNames, $externalDependencyNames,
         $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
         $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
-        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password)
+        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $password, $subversionDir)
 	= @_;
 
     my $self = {};
@@ -41,6 +41,7 @@ sub new {
     $self->{instance} = $instance;
     $self->{propfile} = $propfile;
     $self->{password} = $password;
+    $self->{subversionDir} = $subversionDir;
 
     # get timestamp and definition from database
     my $sql = <<SQL;
@@ -187,6 +188,15 @@ sub getState {
     }
   }
 
+  # try querying the table; if it can't be SELECTed from, it should be rebuild
+  my $stmt = $dbh->prepare(<<SQL);
+    select count(*) from $self->{name} where rownum=1
+SQL
+  if (!$stmt) {
+	ApiCommonData::Load::TuningConfig::Log::addLog("    query against $self->{name} failed -- update needed.");
+	$needUpdate = 1
+  }
+
 
   if ($self->{alwaysUpdate}) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    " . $self->{name} . " has alwaysUpdate attribute.");
@@ -298,7 +308,9 @@ sub update {
                       . " -project '" . $registry->getProjectId() . "'"
                       . " -version '" . $registry->getVersion() . "'"
                       . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
+                      . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'";
+
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
 

@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long qw(GetOptions);
+
+my ($login, $password, $svn, $script, $skipInstances);
+
+# parse command line
+GetOptions("login=s" => \$login,
+           "password=s" => \$password,
+           "svn=s" => \$svn,
+           "script=s" => \$script,
+           "skipInstances=s" => \$skipInstances,
+	  );
+
+if (!$password || !$svn || !$script) {
+  usage();
+  die;
+}
+
+# store blacklist, if supplied
+my %blacklist;
+foreach my $blacklistedInstance (split(/,/, $skipInstances)) {
+  $blacklist{$blacklistedInstance} = 1;
+}
+
+$login = "apidb" if !$login;
+
+my $instanceCount = 0;
+foreach my $reportLine (`tuningMgrMgr list -password $password|cut -c14-65`) {
+  if ($reportLine =~ /^(\S*)\s.*$svn/) {
+    my $instance = $1;
+    next if $blacklist{$instance};
+    print "\n\npatching instance $instance with SQL script ${script}.sql\n";
+    my $commandLine = "sqlplus $login/$password\@$instance \@$script";
+    my $returnCode = system($commandLine);
+
+    if ($returnCode) {
+      die "trying to run command line \"$commandLine\"\n";
+    }
+    $instanceCount++;
+  }
+}
+
+print "updated $instanceCount instances.\n";
+
+###############################################################################
+
+sub usage {
+  print
+q{
+Script to run an SQL script on each database instance with a given Subversion URL
+
+Usage:
+
+apiPatchInstances -svn <branch> [ -login <Oracle_login> ] -password <password> -script <scriptName> -skipInstances <blacklist>
+
+options:
+  svn            a string (such as "trunk" or "api-build-10") which occurs in
+                 the Subversion URL of database instances which should be included
+  login          Oracle username (or "schema" in Oracle teriminology) to log in as
+  password       database login password
+  script         SQL script to be run on each matching database instance. The
+                 script should end with an "exit" command. The script name should
+                 end in ".sql"; this suffix should be omitted on the command line
+  skipInstances  comma-separated list of instances to skip
+};
+}
+
+

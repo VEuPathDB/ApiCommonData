@@ -25,7 +25,7 @@ package ApiCommonData::Load::MakeTaskDirs;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeDirForGfClient makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir makeIprscanDir);
+@EXPORT = qw(makeRMDir makeGenomeDir makeGenomeDirForGfClient makeGenomeReleaseXml makeMatrixDir makeSimilarityDir makeControllerPropFile makePfamDir makePsipredDir makeTRNAscanDir makeIprscanDir makeMsaDir);
 
 use strict;
 use Carp;
@@ -56,11 +56,13 @@ sub makeRMDir {
 }
 
 sub makeMsaDir {
-  my ($localDataDir, $clusterDataDir, $taskSize, $musclePath, $nodeClass,$nodePath );
+  my ($localDataDir, $clusterDataDir, $taskSize, $musclePath, $nodeClass,$nodePath ) = @_;
   my $inputDir = "$localDataDir/msa/input";
   my $serverBase = "$clusterDataDir/msa";
   my $slotsPerNode = 1;
+
   &_createDir("$localDataDir/msa");
+  &runCmd("mkdir -p $inputDir");
 
   &makeControllerPropFile($inputDir, $serverBase, $slotsPerNode, $taskSize,
 			    $nodePath,

@@ -7,9 +7,9 @@ use GUS::Supported::GusConfig;
 
 my ($gusConfigFile, $drop, $create, $db);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	   "drop!" => \$drop,
-	   "create!" => \$create,
-	   "db=s" => \$db);
+           "drop!" => \$drop,
+           "create!" => \$create,
+           "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
   die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
@@ -25,6 +25,7 @@ my @create = qw( enterDbVersion.sql
                  removeNullConstraintsFromSimilarityTables.sql
                  createAnalysisMethodInvocation.sql
                  createChromosome6Orthology.sql
+                 createDataSource.sql
                  createDbLinks.sql
                  createDbUser.sql
                  createExpressionProfileTables.sql
@@ -47,23 +48,28 @@ my @create = qw( enterDbVersion.sql
                  createSyntenyTables.sql
                  createToxodbGenesView.sql
                  createTransmembraneTable.sql
+                 createSpliceSiteFeature.sql
                  createTuningManager.sql
                  createContinents.sql
-		 createWorkflow.sql
-		 createsiRNA.sql
-		 createNextGenSeqCoverage.sql
-		 createNextGenSeq_Align.sql
-		 createPlasmoPfalLocations.sql
-		 createPlasmoMapp.sql
-		 createGeneGenomicSequence_Split.sql
-		 createOrganismProject.sql
+                 createWorkflow.sql
+                 createsiRNA.sql
+                 createNextGenSeqCoverage.sql
+                 createNextGenSeq_Align.sql
+                 createPlasmoPfalLocations.sql
+                 createPlasmoMapp.sql
+                 createGeneGenomicSequence_Split.sql
+                 createOrganismProject.sql
                  createIsolateMapping.sql
-	       );
+                 createDifferentialExpression.sql
+                 createRUMIntronFeature.sql
+                 modifySeqVariation.sql
+               );
 
 my @delete = qw( dropTuningManager.sql
                  dropAnalysisMethodInvocation.sql
                  dropDbLinks.sql
                  dropDbUser.sql
+                 dropDataSource.sql
                  dropExpressionProfileTables.sql
                  dropGeneInteractionTables.sql
                  dropGeneMappingView.sql
@@ -76,15 +82,17 @@ my @delete = qw( dropTuningManager.sql
                  dropSequenceAttributeTables.sql
                  dropSyntenyTables.sql
                  dropToxodbGenesView.sql
+                 dropSpliceSiteFeature.sql
                  dropTransmembraneTable.sql
-		 dropWorkflow.sql
+                 dropWorkflow.sql
+                 dropRUMIntronFeature.sql
                  dropOrganismProject.sql
-		 dropGenegenomicsequence.sql
+                 dropGenegenomicsequence.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
                  dropStoredProcedures.sql
                  dropApidbSchema.sql
-	       );
+               );
 
 if ($create) {
 

@@ -44,7 +44,7 @@ Origin	Netherlands	Honduras	Indochina/Laos
 Source	MRA-151	MRA-155	MRA-156
 Barcode	CGCTCCGGACTGCACCCAAGATTG	TGCCCCAGATCACAACTAAGATTT	TATCCGAATTTATCAATACAACGT
 #SNPS			
-Pf_01_000130573	C 	T	T
+Pf_01_000139573	C 	T	T
 Pf_01_000539044	G	G	A
 Pf_02_000842803	C	C	T
 Pf_04_000282592	T	C	C
@@ -101,7 +101,7 @@ sub new {
   my $self = {};
   bless($self,$class); 
 
-  $self->initialize({requiredDbVersion => 3.5,
+  $self->initialize({requiredDbVersion => 3.6,
                      cvsRevision => '$Revision$', # cvs fills this in!
                      name => ref($self),
                      argsDeclaration => $argsDeclaration,

@@ -48,6 +48,7 @@ my ($species,$GFFFile,$GFFString);
 my $TaxonQuery = &GetTaxonQuery($organism);
 my %SpeciesHash = &GetTaxonID(\$dbh,$TaxonQuery);
 
+my $count;
 foreach my  $Taxon_ID (keys (%SpeciesHash)) {
 
   $species = $SpeciesHash{$Taxon_ID};
@@ -99,7 +100,7 @@ sub GetTaxonID {
    
   $sth->finish;
 
-  print ("0 rows were returned by the query:\n $query \n") unless $rowcount > 0;
+  print ("0 rows were returned by the query to find Taxon IDs:\n $query \n") unless $rowcount > 0;
 
   return %TaxonHash;
 }

@@ -143,7 +143,7 @@ sub new {
       
       my $args = &getArgsDeclaration();
       
-      my $configuration = {requiredDbVersion => 3.5,
+      my $configuration = {requiredDbVersion => 3.6,
                  cvsRevision => '$Revision$',
                  cvsTag => '$Name$',
                  name => ref($self),
@@ -745,8 +745,8 @@ sub buildTranslatedAASequence {
 #(NO time to debug now, will get back to in 
 #X
 #MSKINLLNLKLVKKFENEDKYYEKGIKISANAIRISMRILLLFLFALIFSISSINGSNLSESPVDTRAKYGIVSHPEERSCKEKLLKTFSCLKLHSLLVKVKYIYVKFKTLLTYLFTYFKESDIDLEGIRDIVLNEIAQLSLENQAIVSVYVRKSCEREFPGFSTPMLKDFDPNASRHHVAPLSESKFEKSYVTQTLEILFRKNSKIKKIIKRADQLTTLKLCLSRLTFNLYRLAVFCQTAIKSLIKAILKANPNCKQFLSYAKSRLPLSSGGYDTSSSSSDEERYDEYFEKMKTYLPGGSSGGASGGASGGASGGDSGGDSGGASGGASGGASGGDSGGDSGGDSGGPTATQSGYNQYQQLRGISKVFRTSDKKETTSSLVCTCTSDKFSSRTCVCRPCAMRDNRGSTDSSIQPSCEIELPKKQKKALPKINLPCGYIPNPGDLCPIPLKTNKDFVVRKQNLESILSLPLRVTLQELDIEDISTDEELFCTEDFIKRPQEKKKLCLADLKKIREEPVEQPCMKSPDKSEMSKTKKIQRPSSPESSKFPLAHQLGLMQLQNFKTKDVPSKRFPRTRNTAVSRSHSTKHPRPLQTGDTSDDTKPHVSIPHLCSEARQSIQKPVLYSPTVDGGESKRQLGPDPSVRPKTTRPQLKIEDHSSHSTHRPRRRVEVVCRDGDYESRKASNLEEQLASLKISLNDNRSSHFTGGHGGHGGHGGQSSHRERSKNRERSRNRERSRNRERSGNRESGAKMASKVTYDGSGSRCARGGSSKEPMLLNAPTSMGGSSSSGSAASLDKYDLNDILEQSDY
-#DBD::Oracle::db prepare failed: ORA-00932: inconsistent datatypes: expected - got CLOB (DBD ERROR: OCIStmtExecute/Describe) at /var/local/GUS/gus_home/lib/perl/GUS/ObjRelP/DbiRow.pm line 247, <GEN23> line 31571.
-#Can't call method "execute" on an undefined value at /var/local/GUS/gus_home/lib/perl/GUS/ObjRelP/DbiRow.pm line 251, <GEN23> line 31571.
+#DBD::Oracle::db prepare failed: ORA-00932: inconsistent datatypes: expected - got CLOB (DBD ERROR: OCIStmtExecute/Describe) at /var/local/GUS/gus_home/lib/perl/GUS/ObjRelP/DbiRow.pm line 247, <GEN23> line 3.571.
+#Can't call method "execute" on an undefined value at /var/local/GUS/gus_home/lib/perl/GUS/ObjRelP/DbiRow.pm line 251, <GEN23> line 3.571.
 
 #   unless ($aaSeq->retrieveFromDB()){  
       #$protein->setIsVerified(0);

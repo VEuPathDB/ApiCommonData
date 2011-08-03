@@ -127,7 +127,7 @@ sub new {
                                                                                                                              
       my $args = &getArgsDeclaration();
                                                                                                                              
-      $self->initialize({requiredDbVersion => 3.5,
+      $self->initialize({requiredDbVersion => 3.6,
                      cvsRevision => '$Revision$',
                      name => ref($self),
                      argsDeclaration   => $args,
@@ -183,7 +183,7 @@ $self->log("Processed $ecCount EC Numbers");
 sub parseRow {
    my ($self, $line) = @_;
 
-      #cho:Chro.10335  ec:4.1.2.13              Kegg data
+      #cho:Chro.103.5  ec:4.1.2.13              Kegg data
       #CGD1_1170       3.4.19.12                Cyc Data
       my ($gene,$ec) = split(/\t/,$line);
       $gene =~ s/\w+\://; 

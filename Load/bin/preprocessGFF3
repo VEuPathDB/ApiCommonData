@@ -226,6 +226,20 @@ close(OUT);
 
 
 sub usage{
+  my ($m) = @_;
 
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl preprocessGFF3 (script to convert gff3 file to custom gff file for ISF to parse) \\
+--input_gff <input gff3 file (required)> \\
+--output_gff <output custom gff file (required)> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+
+For GeneDB GFF, We need to compensate limitiations in Bioperl 1.4, and also do some regular unpacking.
+
+Replace '=' with space, add quotes around each attribute value; convert hex characters to ascii. separates dbrefs into separate qualifiers.
+";
+  print STDERR $usage;
+  exit(0);
 
 }

@@ -93,7 +93,7 @@ sub new {
   my $self = {};
   bless($self,$class);
 
-  $self->initialize({ requiredDbVersion => 3.5,
+  $self->initialize({ requiredDbVersion => 3.6,
                       cvsRevision       => '$Revision$',
                       name              => ref($self),
                       argsDeclaration   => $argsDeclaration,
@@ -228,7 +228,7 @@ sub parseSpeciesFile {
 
 	my $species = GUS::Model::ApiDB::OrthomclTaxon->new();
 
-	# pfa APIC 123345
+	# pfa APIC 1233.5
 	if (/([a-z]{4})\t([A-Z]{4})\t(\d+)/) {
 	  my $speciesAbbrev = $1;
 	  my $cladeAbbrev = $2;

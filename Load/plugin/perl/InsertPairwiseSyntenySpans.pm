@@ -22,14 +22,15 @@ my $argsDeclaration =
 	   }),
 
    enumArg({name => 'organism',
-              descr => 'Species to insert synteny data for',
+              descr => 'Species to insert synteny data for. This parameter is only needed if non-standard SQL is required to retrieve ortholog groups as is the case for CryptoDB',
               constraintFunc=> undef,
-              reqd  => 1,
+              reqd  => 0,
               isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia, Fungi",
+              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia,Piroplasma,Fungi",
              }),
 
   ];
+
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Create entries for genomic synteny spans.
@@ -70,8 +71,8 @@ sub new {
     my $self = {};
     bless($self,$class);
 
-    $self->initialize({requiredDbVersion => 3.5,
-		       cvsRevision => '$Revision: 36289 $', # cvs fills this in!
+    $self->initialize({requiredDbVersion => 3.6,
+		       cvsRevision => '$Revision: 39349 $', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -392,14 +393,7 @@ sub findOrthologGroups {
 
   my $sql;
 
-  if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'||$self->getArg('organism') eq 'Fungi'){
-
-    $sql = "
-    select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
-    from apidb.geneattributes ga, dots.genefeature gf
-    where ga.na_feature_id = gf.na_feature_id
-    ";
-  }elsif($self->getArg('organism') eq 'CryptoDB'){
+  if ($self->getArg('organism') eq 'CryptoDB'){
     $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
     from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
     where g.source_id = ssg.source_id
@@ -411,9 +405,11 @@ sub findOrthologGroups {
     and t.table_id = ssg.source_table_id
     ";
   }else{
-    $self->error("ERROR: unable to find orthologous groups for organism ".$self->getArg('organism')." ... make sure this organism is a valid one as per the enum param and check method findOrthologousGroups\n");
+    $sql = "select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
+    from apidb.geneattributes ga, dots.genefeature gf
+    where ga.na_feature_id = gf.na_feature_id
+    ";
   }
-
 
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 

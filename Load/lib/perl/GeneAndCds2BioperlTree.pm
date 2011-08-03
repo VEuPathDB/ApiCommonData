@@ -61,6 +61,8 @@ sub preprocess {
 	    if ($type eq 'gene') {
 
 		$geneFeature = $bioperlFeatureTree; 
+
+		print STDERR Dumper $geneFeature;
 		if(!($geneFeature->has_tag("locus_tag"))){
 		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}      
@@ -138,6 +140,8 @@ sub preprocess {
 	}
 
     }
+
+	if($source){
 	if($source->has_tag('primer_bind')){
 	    $source->remove_tag('primer_bind');
 	}else{
@@ -159,6 +163,7 @@ sub preprocess {
   
 	$bioperlSeq->add_SeqFeature($source);
 	undef $source;
+    }
 	undef $primerPair;
     }
 }
