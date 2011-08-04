@@ -273,7 +273,7 @@ sub preprocess {
       }
 
 
-      $bioperlSeq->addSeqFeature($bioperlFeatureTree);
+      $bioperlSeq->add_SeqFeature($gene);
   }else{
 
       $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
