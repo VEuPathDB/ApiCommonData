@@ -3055,8 +3055,6 @@ CREATE TABLE ProfileGraphs&1 NOLOGGING AS
 select all_gg.source_id, 
        all_gg.main_profile_name as profile_name, 
        all_gg.project_id, 
-       psorg.organism,
-       psorg.species,
        max(case when pr.name is null then 0 ELSE 1 END) as has_profile
 from 
   (
@@ -3282,15 +3280,10 @@ from
   (select p.source_id, ps.name
    from apidb.profile p, apidb.profileset ps
    where p.profile_set_id = ps.profile_set_id
-   ) pr,
-   (select distinct ps.name, ga.organism, ga.species
-    from apidb.profile p, apidb.profileset ps, geneattributes ga
-    where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
-    ) psorg
+   ) pr
   where  all_gg.source_id = pr.source_id (+)
   and all_gg.profile_name = pr.name (+)
-  and all_gg.profile_name = psorg.name
-group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id, psorg.organism, psorg.species
+group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id
       ]]>
     </sql>
     <sql>
@@ -3303,10 +3296,13 @@ tablespace indx
 
 
   <tuningTable name="ProfileGraphDescrip">
+    <internalDependency name="GeneAttributes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
 CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
-select mainOpen, dataOpen, order_num, profile_name, module, display_name, description, x_axis, y_axis, visible_parts,attribution, type, dataTable
+select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, psorg.species, psorg.organism
 from (
 
 -- ToxoDB
@@ -3964,7 +3960,11 @@ select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' 
       'expression' as type,
         'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
-)
+) d,   (select distinct ps.name, ga.organism, ga.species
+    from apidb.profile p, apidb.profileset ps, geneattributes ga
+    where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
+    ) psorg
+where d.profile_name = psorg.name
       ]]>
     </sql>
   </tuningTable>
