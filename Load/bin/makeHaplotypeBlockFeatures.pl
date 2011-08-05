@@ -4,16 +4,17 @@ use strict;
 use IO::File;
 use Getopt::Long;
 
-my ($help, $mapFile, $microstatGff, $outputGff);
+my ($help, $mapFile, $microstatGff, $outputGff,$seqLengthFile);
 
 &GetOptions('help|h' => \$help,
             'mapFile=s' => \$mapFile,
             'microstatGff=s' => \$microstatGff,
+            'seqLengthFile=s' => \$seqLengthFile,
             'outputGff=s' => \$outputGff,
            );
  
 unless(-e $microstatGff && $mapFile && $outputGff) {
-  print STDERR "usage:  perl makeHaplotypeBlockFeatures.pl  --mapFile  <Microsatellites-Centimorgan mapping file> --microstatGff  <a GFF file containing the microsatellite features used for constructing the physical map>    --outputGff  <Output file to print the GFF features to>\n";
+  print STDERR "usage:  perl makeHaplotypeBlockFeatures.pl  --mapFile  <Microsatellites-Centimorgan mapping file> --microstatGff  <a GFF file containing the microsatellite features used for constructing the physical map>   --seqLengthFile  <A file listing the chromosomes and their length>   --outputGff  <Output file to print the GFF features to>\n";
   exit;
 }
 
@@ -41,21 +42,20 @@ while (<mapFile>) {
 close(mapFile);
 
 
-my %chrLength = ('psu|Pf3D7_14' => 3291871,
-                 'psu|Pf3D7_13' => 2895605,
-                 'psu|Pf3D7_12' => 2271478,
-                 'psu|Pf3D7_11' => 2038337,
-                 'psu|Pf3D7_10' => 1687655,
-                 'psu|Pf3D7_09' => 1541723,
-                 'psu|Pf3D7_07' => 1501717,
-                 'psu|Pf3D7_08' => 1419563,
-                 'psu|Pf3D7_06' => 1418244,
-                 'psu|Pf3D7_05' => 1343552,
-                 'psu|Pf3D7_04' => 1204112,
-                 'psu|Pf3D7_03' => 1060087,
-                 'psu|Pf3D7_02' => 947102,
-                 'psu|Pf3D7_01' => 643292);
 
+
+my (%chrLength);
+
+open(lengthFile,$seqLengthFile);
+while (<lengthFile>) {
+
+  my @list = split(/\t/,$_);
+  chomp(@list);
+  $list[1] =~ s/,//g;
+
+  $chrLength{$list[0]} = $list[1];
+}
+close(lengthFile);
 
 
 my (%fwdCood,%revCood,%strand);
@@ -115,8 +115,11 @@ foreach my $chromosome (sort keys %fwdCood){
 
 
 open (outGff, ">$outputGff");
+
 foreach my $chromosome (sort keys %conservativeStart){
   foreach my $centiMorgan (sort {$conservativeStart{$chromosome}{$a} <=> $conservativeStart{$chromosome}{$b} } (keys %{ $conservativeStart{$chromosome} })) {
-print (outGff "$chromosome\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max \t$liberalEnd{$chromosome}{$centiMorgan}; CentiMorgan $haplotypeCMorgan{$chromosome}{$centiMorgan}\n");
+    my $chr = $chromosome;
+    $chr =~ s/psu\|//g;
+    print (outGff "$chromosome\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max $liberalEnd{$chromosome}{$centiMorgan}; CentiMorgan $haplotypeCMorgan{$chromosome}{$centiMorgan}; Name HpB_".$chr."_".($centiMorgan+1)."\n");
   }
 }
