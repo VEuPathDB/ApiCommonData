@@ -879,6 +879,7 @@ sub mapToNASequence {
   my ($self, $naFeatureId, $pepStart, $pepEnd) = @_;
   my $naLocations = [];
 
+  # This should really be getExonsWithCodingSequence
   my $exons = $self->getExons($naFeatureId) or $self->error("no exons for na_feature_id '$naFeatureId'\n");
 
   # CDS in chromosome coordinates
@@ -989,6 +990,8 @@ EOF
   }
 
   for my $exon (@exons) {
+    next unless($exon->getCodingStart() && $exon->getCodingEnd());
+
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
 
     my $codingStart = ($exon->isValidAttribute('coding_start')) ?
