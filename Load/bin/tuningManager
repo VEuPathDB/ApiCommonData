@@ -92,7 +92,8 @@ eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $schema, $password);
+  ($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});

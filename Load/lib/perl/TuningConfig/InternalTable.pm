@@ -312,6 +312,7 @@ sub update {
                       . " -instance '" . $self->{instance} . "'"
                       . " -propfile '" . $self->{propfile} . "'"
                       . " -password '" . $self->{password} . "'"
+                      . " -schema '" . $self->{schema} . "'"
                       . " -project '" . $registry->getProjectId() . "'"
                       . " -version '" . $registry->getVersion() . "'"
                       . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"

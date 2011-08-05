@@ -28,9 +28,10 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $password, $logfile, $suffix, $project, $version, $debug);
+my ($propfile, $instance, $schema, $password, $logfile, $suffix, $project, $version, $debug);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
+           "schema=s" => \$schema,
            "password=s" => \$password,
            "logfile=s" => \$logfile,
            "suffix=s" => \$suffix,
@@ -39,8 +40,8 @@ GetOptions("propfile=s" => \$propfile,
            "debug!" => \$debug,
 	  );
 
-ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
-my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, 'apidb', $password);
+($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
 
 createTables($dbh, $suffix);
