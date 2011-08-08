@@ -27,4 +27,6 @@ create index ExonOrder_ix
 
 alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
+ALTER TABLE dots.sequencePiece ADD ( start_position number(12), end_position number(12) );
+
 exit
