@@ -411,7 +411,7 @@ sub makeVirWithSpacer {
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'},$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -428,7 +428,7 @@ sub makeVirWithSpacer {
 
     $length = length($sequence);
 
-    $seqPieceObj = $self->makeSequencePiece('',$orderNum,$length,$gapObj);
+    $seqPieceObj = $self->makeSequencePiece('',$orderNum,1,$spacer,$length,$gapObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -463,7 +463,7 @@ sub makeVir {
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'},$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -506,12 +506,14 @@ sub getGapObj {
 }
 
 sub  makeSequencePiece {
-  my ($self, $orientation,$pieceNumber,$offset,$pieceObj) = @_;
+  my ($self, $orientation,$pieceNumber,$start,$end,$offset,$pieceObj) = @_;
 
   my $pieceId = $pieceObj->getId();
 
   my $seqPiece = GUS::Model::DoTS::SequencePiece->new({sequence_order => $pieceNumber,
 						       strand_orientation => $orientation,
+						       start_position => $start,
+						       end_position => $end,
 						       distance_from_left => $offset,
 						       piece_na_sequence_id => $pieceId});
 
