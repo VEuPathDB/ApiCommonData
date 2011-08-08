@@ -607,7 +607,7 @@ sub createSnpFeature {
     ## deal with atts for NGS SNPs .. 
     $seqVar->setCoverage($coverage) if $coverage;
     $seqVar->setAllelePercent($percent) if $percent;
-    $seqVar->setPvalue($pvalue) if defined $pvalue;
+    $seqVar->setPvalue($pvalue) if ($pvalue || $pvalue == 0);
     $seqVar->setQuality($quality) if $quality;
 
     $seqVar->setParent($snpFeature);
