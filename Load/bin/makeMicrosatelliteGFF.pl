@@ -121,7 +121,9 @@ foreach my $chromosome (sort keys %fwdCood){
   foreach my $Id (sort {$fwdCood{$chromosome}{$a} <=> $fwdCood{$chromosome}{$b} } %{ $fwdCood{$chromosome} }) {
     next unless (exists $revCood{$chromosome}{$Id});
     next unless (abs($fwdCood{$chromosome}{$Id} - $revCood{$chromosome}{$Id}) < 1000);
-    print  gffFile "$chromosome\tSu\tmicrosatellite\t$fwdCood{$chromosome}{$Id}\t$revCood{$chromosome}{$Id}\t.\t$strand{$chromosome}{$Id}\t.\tID $Id\; Name\t$stsName{$Id}\n";
+    my $chr = $chromosome;
+    $chr =~ s/psu\|//g;
+    print  gffFile "$chr\tSu\tmicrosatellite\t$fwdCood{$chromosome}{$Id}\t$revCood{$chromosome}{$Id}\t.\t$strand{$chromosome}{$Id}\t.\tID $Id\; Name\t$stsName{$Id}\n";
   }
 }
 close(gffFile);
