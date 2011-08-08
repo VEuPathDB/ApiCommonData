@@ -120,6 +120,6 @@ foreach my $chromosome (sort keys %conservativeStart){
   foreach my $centiMorgan (sort {$conservativeStart{$chromosome}{$a} <=> $conservativeStart{$chromosome}{$b} } (keys %{ $conservativeStart{$chromosome} })) {
     my $chr = $chromosome;
     $chr =~ s/psu\|//g;
-    print (outGff "$chromosome\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max $liberalEnd{$chromosome}{$centiMorgan}; CentiMorgan $haplotypeCMorgan{$chromosome}{$centiMorgan}; Name HpB_".$chr."_".($centiMorgan+1)."\n");
+    print (outGff "$chr\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max $liberalEnd{$chromosome}{$centiMorgan}; CentiMorgan $haplotypeCMorgan{$chromosome}{$centiMorgan}; Name HpB_".$chr."_".($centiMorgan+1)."\n");
   }
 }
