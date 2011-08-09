@@ -123,7 +123,7 @@ foreach my $chromosome (sort keys %fwdCood){
     next unless (abs($fwdCood{$chromosome}{$Id} - $revCood{$chromosome}{$Id}) < 1000);
     my $chr = $chromosome;
     $chr =~ s/psu\|//g;
-    print  gffFile "$chr\tSu\tmicrosatellite\t$fwdCood{$chromosome}{$Id}\t$revCood{$chromosome}{$Id}\t.\t$strand{$chromosome}{$Id}\t.\tID $Id\; Name\t$stsName{$Id}\n";
+    print  gffFile "$chr\tSu\tmicrosatellite\t$fwdCood{$chromosome}{$Id}\t$revCood{$chromosome}{$Id}\t.\t$strand{$chromosome}{$Id}\t.\tID $Id\; Name $stsName{$Id}\n";
   }
 }
 close(gffFile);
