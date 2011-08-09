@@ -39,7 +39,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 41684 $',
+                     cvsRevision       => '$Revision: 41860 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -990,7 +990,9 @@ EOF
   }
 
   for my $exon (@exons) {
-    next unless($exon->getCodingStart() && $exon->getCodingEnd());
+    if ($exon->isValidAttribute('coding_start') && $exon->isValidAttribute('coding_end')){
+      next unless($exon->getCodingStart() && $exon->getCodingEnd());
+    }
 
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
 
