@@ -3062,6 +3062,16 @@ from
     from
     (
     -- ToxoDB --
+    select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+          '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION 
+    select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
+          '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION  
     select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
           '' as main_profile_name,
            'ToxoDB' as project_id
@@ -3472,7 +3482,37 @@ select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_na
 from dual
 
     UNION
+select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
+       'Sullivan::GCN5A' as module,
+       'Differential experssion of TgGCN5-A null mutant under alkaline growth conditions compared to wild type' as display_name,
+       'Disruption of the gene encoding for TgGCN5-A in type I RH strain did not produce a severe phenotype under normal culture conditions, but here we show that the TgGCN5-A null mutant is deficient in responding to alkaline pH,a common stress used to induce bradyzoite differentiation in vitro. We performed a genome- wide analysis of the Toxoplasma transcriptional response to alkaline pH stress, finding that parasites deleted for TgGCN5-A fail to up-regulate 74% of the stress response genes that are induced 2-fold or more in wild-type. Using chromatin immunoprecipitation, we verify an enrichment of TgGCN5-A at the upstream regions of genes activated by alkaline pH exposure. The TgGCN5-A knockout is also incapable of up-regulating key marker genes expressed during development of the latent cyst form, and is impaired in its ability to recover from alkaline stress. Complementation of the TgGCN5-A knockout restores the expression of these stress-induced genes and reverses the stress recovery defect.' as description,
+       'Growth Conditions' as x_axis,
+       'The RMA values in log2 scale.' as y_axis,
+        250 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        'Tg_Sullivan_GSE22100_GCN5-A_RSRC' as attribution
+from dual
 
+select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+       'Carruthers::IntraExtraDiff' as module,
+       'T.G. Intracelluar v. Extrcelluar Expression' as display_name,
+	   'Three sample types were harvested: extracellular, intracellular 0hr, intracellular 2hr. 2 replicates each. Expression for >80% of the regulated genes exhibits a steady downregulation during invasion.' as description,
+       'Enviroment' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Carruthers_GSE20480_RSRC' as attribution
+    from dual
+
+    UNION
 -- GiardiaDB --
 select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
        'Hehl::Stress1' as module,
