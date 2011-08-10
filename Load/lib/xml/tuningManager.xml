@@ -1708,6 +1708,16 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
 create unique index pk_SeqAttr_&1 ON SequenceAttributes&1 (lower(source_id), project_id)
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create unique index SeqAttr_source_id&1 ON SequenceAttributes&1 (source_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create unique index SeqAttr_naseqid&1 ON SequenceAttributes&1 (na_sequence_id)
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="SnpAttributes">
