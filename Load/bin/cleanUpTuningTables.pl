@@ -37,14 +37,14 @@ while(my ($syn) = $sh->fetchrow_array()) {
 $sh->finish();
 
 
-my $xml = XMLin($xml, ForceArray => 1);
+
 
 my %legitTables;
 
 
-
-
 unless($cleanAll) {
+  my $xml = XMLin($xml, ForceArray => 1);
+
   foreach(map {uc} keys %{$xml->{tuningTable}}) {
     $legitTables{$_} = 1;
   }
