@@ -71,9 +71,14 @@ while(my ($table, $synonym) = $d_sh->fetchrow_array()) {
 }
 
 foreach(@extra) {
-  print "drop synonym $schema.$_;\n";
-  print "delete apidb.tuningtable where upper(name) = '$schema.$_';\n";
 
+  if($all4D{$_}) {
+    print "drop synonym $schema.$_;\n";
+    print "delete apidb.tuningtable where upper(name) = '$schema.$_';\n";
+  }
+  else {
+    print STDERR "-- WARNING There is a synonym for $schema.$_ but no table with 4 digits... skipping\n";
+  }
 
   foreach(@{$all4D{$_}}) {
     print "dropt table $schema.$_;\n";
