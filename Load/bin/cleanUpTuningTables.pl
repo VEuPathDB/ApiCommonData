@@ -10,12 +10,13 @@ use Getopt::Long;
 
 use Data::Dumper;
 
-my ($help, $instance, $schema, $xml);
+my ($help, $instance, $schema, $xml, $cleanAll);
 
 &GetOptions('help|h' => \$help,
             'instance=s' => \$instance,
             'schema=s' => \$schema,
             'xml=s' => \$xml,
+            'clean_all' => \$cleanAll,
             );
 
 my $dsn = "dbi:Oracle:$instance";
@@ -39,8 +40,14 @@ $sh->finish();
 my $xml = XMLin($xml, ForceArray => 1);
 
 my %legitTables;
-foreach(map {uc} keys %{$xml->{tuningTable}}) {
-  $legitTables{$_} = 1;
+
+
+
+
+unless($cleanAll) {
+  foreach(map {uc} keys %{$xml->{tuningTable}}) {
+    $legitTables{$_} = 1;
+  }
 }
 
 my @extra;
@@ -64,12 +71,12 @@ while(my ($table, $synonym) = $d_sh->fetchrow_array()) {
 }
 
 foreach(@extra) {
-  print "dropt synonym $_;\n";
+  print "drop synonym $schema.$_;\n";
   print "delete apidb.tuningtable where upper(name) = '$schema.$_';\n";
 
 
   foreach(@{$all4D{$_}}) {
-    print "dropt table $_;\n";
+    print "dropt table $schema.$_;\n";
   }
 
 print "\n\n";
