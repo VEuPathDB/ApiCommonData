@@ -44,7 +44,7 @@ EOL
 
 while(<DATA>) {
   chomp;
-  my ($col, $col_title, $col_name) = split /,/, $_;
+  my ($col, $col_head, $col_title, $col_name) = split /,/, $_;
   $cn{$col_name} = $col;
 }
 
@@ -108,6 +108,7 @@ while(my ($k, $v) = each %hash) {
   my $seq1_rev_primer_name = $hash{$k}{$cn{seq1_rev_primer_name}};
   my $seq1_rev_primer_seq  = $hash{$k}{$cn{seq1_rev_primer_seq}};
   my $seq1_product         = $hash{$k}{$cn{seq1_product}};
+  my $seq1_desc            = $hash{$k}{$cn{seq1_desc}};
 
   my $seq2                 = $hash{$k}{$cn{seq2}};
   my $seq2_fwd_primer_name = $hash{$k}{$cn{seq2_fwd_primer_name}};
@@ -115,6 +116,7 @@ while(my ($k, $v) = each %hash) {
   my $seq2_rev_primer_name = $hash{$k}{$cn{seq2_rev_primer_name}};
   my $seq2_rev_primer_seq  = $hash{$k}{$cn{seq2_rev_primer_seq}};
   my $seq2_product         = $hash{$k}{$cn{seq2_product}};
+  my $seq2_desc            = $hash{$k}{$cn{seq2_desc}};
 
   my $seq3                 = $hash{$k}{$cn{seq3}};
   my $seq3_fwd_primer_name = $hash{$k}{$cn{seq3_fwd_primer_name}};
@@ -122,6 +124,7 @@ while(my ($k, $v) = each %hash) {
   my $seq3_rev_primer_name = $hash{$k}{$cn{seq3_rev_primer_name}};
   my $seq3_rev_primer_seq  = $hash{$k}{$cn{seq3_rev_primer_seq}};
   my $seq3_product         = $hash{$k}{$cn{seq3_product}};
+  my $seq3_desc            = $hash{$k}{$cn{seq3_desc}};
 
   my $seq4                 = $hash{$k}{$cn{seq4}};
   my $seq4_fwd_primer_name = $hash{$k}{$cn{seq4_fwd_primer_name}};
@@ -129,6 +132,7 @@ while(my ($k, $v) = each %hash) {
   my $seq4_rev_primer_name = $hash{$k}{$cn{seq4_rev_primer_name}};
   my $seq4_rev_primer_seq  = $hash{$k}{$cn{seq4_rev_primer_seq}};
   my $seq4_product         = $hash{$k}{$cn{seq4_product}};
+  my $seq4_desc            = $hash{$k}{$cn{seq4_desc}};
 
   $country    .= ", $city" if $city;
   $country    .= ", $state" if $state;
@@ -159,10 +163,10 @@ while(my ($k, $v) = each %hash) {
   $study =~ s/(\r|\n)/ /g; 
 
   my @seqs = (
-         [$seq1, $seq1_fwd_primer_name, $seq1_fwd_primer_seq, $seq1_rev_primer_name, $seq1_rev_primer_seq, $seq1_product],
-         [$seq2, $seq2_fwd_primer_name, $seq2_fwd_primer_seq, $seq2_rev_primer_name, $seq2_rev_primer_seq, $seq2_product],
-         [$seq3, $seq3_fwd_primer_name, $seq3_fwd_primer_seq, $seq3_rev_primer_name, $seq3_rev_primer_seq, $seq3_product],
-         [$seq4, $seq4_fwd_primer_name, $seq4_fwd_primer_seq, $seq4_rev_primer_name, $seq4_rev_primer_seq, $seq4_product]
+         [$seq1, $seq1_fwd_primer_name, $seq1_fwd_primer_seq, $seq1_rev_primer_name, $seq1_rev_primer_seq, $seq1_product, $seq1_desc],
+         [$seq2, $seq2_fwd_primer_name, $seq2_fwd_primer_seq, $seq2_rev_primer_name, $seq2_rev_primer_seq, $seq2_product, $seq2_desc],
+         [$seq3, $seq3_fwd_primer_name, $seq3_fwd_primer_seq, $seq3_rev_primer_name, $seq3_rev_primer_seq, $seq3_product, $seq3_desc],
+         [$seq4, $seq4_fwd_primer_name, $seq4_fwd_primer_seq, $seq4_rev_primer_name, $seq4_rev_primer_seq, $seq4_product, $seq4_desc]
              );
 
   my $count = 0;
@@ -174,9 +178,10 @@ while(my ($k, $v) = each %hash) {
     my $rev_primer_name = $s->[3];
     my $rev_primer_seq  = $s->[4];
     my $product         = $s->[5];
+    my $seq_description = $s->[6];
     my $file_name       = $isolate_id;            
 
-    next unless $sequence;
+    next unless $sequence; 
 
     $sequence =~ s/\W+//g;  
     my $length   = length($sequence);
@@ -222,7 +227,8 @@ while(my ($k, $v) = each %hash) {
     my $cds_feat =  Bio::SeqFeature::Generic->new( -primary_tag  => 'CDS',
                                                    -location     => $location,
                                                    -tag          => { codon_start => 1,
-                                                                      product => $product 
+                                                                      product     => $product,
+                                                                      note        => $seq_description 
                                                                     }
                                                  );
 
@@ -274,54 +280,54 @@ while(my ($k, $v) = each %hash) {
 } 
 
 __DATA__
-0,Isolate ID,isolate_id
-1,Day,day
-2,Month,month
-3,Year,year
-4,Isolate Species,species
-5,Genotype,genotype
-6,Subtype,subtype
-7,Other Organism,organism
-8,Country,country
-9,Region - State or Province,state
-10,County,county
-11,City/Village/Locality,city
-12,Latitude/Longitude Coordinates,gps
-13,Environment Source,isolation_source
-14,Host Species,host
-15,blank/hidden column P,hidden
-16,Race/Breed,breed
-17,Age,age
-18,Sex,sex
-19,Host Material,material
-20,Symptoms,symptoms
-21,Non-human Habitat,habitat
-22,Additional Notes,note
-23,Sequence 1 Product or Locus Name,seq1_product
-24,Sequence 1 Forward Primer Name,seq1_fwd_primer_name
-25,Sequence 1 Forward Primer Seq,seq1_fwd_primer_seq
-26,Sequence 1 Reverse Primer Name,seq1_rev_primer_name
-27,Sequence 1 Reverse Primer Seq,seq1_rev_primer_seq
-28,Sequence 1 Description,seq1_desc
-29,Sequence 1,seq1
-30,Sequence 2 Product or Locus Name,seq2_product
-31,Sequence 2 Forward Primer Name,seq2_fwd_primer_name
-32,Sequence 2 Forward Primer Seq,seq2_fwd_primer_seq
-33,Sequence 2 Reverse Primer Name,seq2_rev_primer_name
-34,Sequence 2 Reverse Primer Seq,seq2_rev_primer_seq
-35,Sequence 2 Description,seq2_desc
-36,Sequence 2,seq2
-37,Sequence 3 Product or Locus Name,seq3_product
-38,Sequence 3 Forward Primer Name,seq3_fwd_primer_name
-39,Sequence 3 Forward Primer Seq,seq3_fwd_primer_seq
-40,Sequence 3 Reverse Primer Name,seq3_rev_primer_name
-41,Sequence 3 Reverse Primer Seq,seq3_rev_primer_seq
-42,Sequence 3 Description,seq3_desc
-43,Sequence 3,seq3
-44,Sequence 4 Product or Locus Name,seq4_product
-45,Sequence 4 Forward Primer Name,seq4_fwd_primer_name
-46,Sequence 4 Forward Primer Seq,seq4_fwd_primer_seq
-47,Sequence 4 Reverse Primer Name,seq4_rev_primer_name
-48,Sequence 4 Reverse Primer Seq,seq4_rev_primer_seq
-49,Sequence 4 Description,seq4_desc
-50,Sequence 4,seq4 
+0,A,Isolate ID,isolate_id
+1,B,Day,day
+2,C,Month,month
+3,D,Year,year
+4,E,Isolate Species,species
+5,F,Genotype,genotype
+6,G,Subtype,subtype
+7,H,Other Organism,organism
+8,I,Country,country
+9,J,Region - State or Province,state
+10,K,County,county
+11,L,City/Village/Locality,city
+12,M,Latitude/Longitude Coordinates,gps
+13,N,Environment Source,isolation_source
+14,O,Host Species,host
+15,P,blank/hidden column P,hidden
+16,Q,Race/Breed,breed
+17,R,Age,age
+18,S,Sex,sex
+19,T,Host Material,material
+20,U,Symptoms,symptoms
+21,V,Non-human Habitat,habitat
+22,W,Additional Notes,note
+23,X,Sequence 1 Product or Locus Name,seq1_product
+24,Y,Sequence 1 Forward Primer Name,seq1_fwd_primer_name
+25,Z,Sequence 1 Forward Primer Seq,seq1_fwd_primer_seq
+26,AA,Sequence 1 Reverse Primer Name,seq1_rev_primer_name
+27,AB,Sequence 1 Reverse Primer Seq,seq1_rev_primer_seq
+28,AC,Sequence 1 Description,seq1_desc
+29,AD,Sequence 1,seq1
+30,AE,Sequence 2 Product or Locus Name,seq2_product
+31,AF,Sequence 2 Forward Primer Name,seq2_fwd_primer_name
+32,AG,Sequence 2 Forward Primer Seq,seq2_fwd_primer_seq
+33,AH,Sequence 2 Reverse Primer Name,seq2_rev_primer_name
+34,AI,Sequence 2 Reverse Primer Seq,seq2_rev_primer_seq
+35,AJ,Sequence 2 Description,seq2_desc
+36,AK,Sequence 2,seq2
+37,AL,Sequence 3 Product or Locus Name,seq3_product
+38,AM,Sequence 3 Forward Primer Name,seq3_fwd_primer_name
+39,AN,Sequence 3 Forward Primer Seq,seq3_fwd_primer_seq
+40,AO,Sequence 3 Reverse Primer Name,seq3_rev_primer_name
+41,AP,Sequence 3 Reverse Primer Seq,seq3_rev_primer_seq
+42,AQ,Sequence 3 Description,seq3_desc
+43,AR,Sequence 3,seq3
+44,AS,Sequence 4 Product or Locus Name,seq4_product
+45,AT,Sequence 4 Forward Primer Name,seq4_fwd_primer_name
+46,AU,Sequence 4 Forward Primer Seq,seq4_fwd_primer_seq
+47,AV,Sequence 4 Reverse Primer Name,seq4_rev_primer_name
+48,AW,Sequence 4 Reverse Primer Seq,seq4_rev_primer_seq
+49,AX,Sequence 4 Description,seq4_desc
+50,AY,Sequence 4,seq4
