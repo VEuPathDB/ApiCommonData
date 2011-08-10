@@ -47,21 +47,25 @@ close(mapFile);
 my (%chrLength);
 
 open(lengthFile,$seqLengthFile);
+
 while (<lengthFile>) {
 
   my @list = split(/\t/,$_);
   chomp(@list);
-  $list[1] =~ s/,//g;
 
+  $list[1] =~ s/,//g;
   $chrLength{$list[0]} = $list[1];
 }
+
 close(lengthFile);
 
 
 my (%fwdCood,%revCood,%strand);
 
 open (gffFile, $microstatGff);
+
 while (<gffFile>){
+
   chomp;
   my $gffLine = $_;
   my @elements = split(/\t/,$gffLine);
@@ -75,8 +79,10 @@ while (<gffFile>){
   $fwdCood{$chromID}{$geoID[1]} = $elements[3];
   $revCood{$chromID}{$geoID[1]} = $elements[4];
   $strand{$chromID}{$geoID[1]} = $elements[6];
+
 }
 close(gffFile);
+
 
 
 
@@ -119,6 +125,6 @@ open (outGff, ">$outputGff");
 foreach my $chromosome (sort keys %conservativeStart){
   foreach my $centiMorgan (sort {$conservativeStart{$chromosome}{$a} <=> $conservativeStart{$chromosome}{$b} } (keys %{ $conservativeStart{$chromosome} })) {
     
-     print (outGff "$chromosome\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max $liberalEnd{$chromosome}{$centiMorgan}; CentiMorgan $haplotypeCMorgan{$chromosome}{$centiMorgan}; Name HpB_".$chromosome."_".($centiMorgan+1)."\n");
+     print (outGff "$chromosome\tFerdigLab\thaplotype_block\t$conservativeStart{$chromosome}{$centiMorgan}\t$conservativeEnd{$chromosome}{$centiMorgan}\t.\t.\t.\tStart_Min $liberalStart{$chromosome}{$centiMorgan}; End_Max $liberalEnd{$chromosome}{$centiMorgan}; Name $chromosome"."_"."$haplotypeCMorgan{$chromosome}{$centiMorgan}; Source_Id HpB_".$chromosome."_".($centiMorgan+1)."\n");
   }
 }
