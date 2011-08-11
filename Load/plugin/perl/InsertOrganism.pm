@@ -72,7 +72,13 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     booleanArg({ name => 'isReferenceGenome',
+     stringArg({ name => 'abbrevRefStrain',
+		 descr => 'the reference strains abbrev eg tgonME49',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     booleanArg({ name => 'isReferenceStrain',
 		 descr => '',
 		 reqd  => 1,
 		 isList => 0,
@@ -163,6 +169,7 @@ sub run {
   my $abbrevForFilenames = $self->getArg('abbrevForFilenames');
   my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
   my $abbrevStrain = $self->getArg('abbrevStrain');
+  my $abbrevRefStrain = $self->getArg('abbrevRefStrain');
   my $isReferenceGenome = $self->getArg('isReferenceGenome');
   my $isDraftGenome = $self->getArg('isDraftGenome');
   my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
@@ -207,6 +214,7 @@ sub run {
 						    'abbrev_for_filenames' => $abbrevForFilenames,
 						    'abbrev_orthomcl' => $abbrevOrthomcl,
 						    'abbrev_strain' => $abbrevStrain,
+						    'abbrev_ref_strain' => $abbrevRefStrain,
 						    'is_reference_genome' => $isReferenceGenome,
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'is_draft_genome' => $isDraftGenome,
