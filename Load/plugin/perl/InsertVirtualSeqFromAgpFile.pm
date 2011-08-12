@@ -449,21 +449,26 @@ sub makeVir {
 
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
     my $pieceObj;
+    my ($start,$end);
 
     if ($virtual->{$pieceNumber}->{'pieceType'} =~ /[NU]/){
       my $gapLength = $virtual->{$pieceNumber}->{'gaplength'};
       $pieceObj = $self->getGapObj($virtual->{$pieceNumber}->{'gaplength'},$gapSOId);
       $pieceSeq = $pieceObj->getSequence();
+      $start = 1;
+      $end = $gapLength;
     }
     else {
       $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
       $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
       $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
+      $start = $virtual->{$pieceNumber}->{'pieceBeg'};
+      $end = $virtual->{$pieceNumber}->{'pieceEnd'};
     }
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'},$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$start,$end,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
