@@ -345,6 +345,13 @@
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/HaplotypeGff2gus.xml --inputFileOrDir @@dataDir@@/HaplotypeBlocks.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
     <unpack> makeHaplotypeBlockFeatures.pl  --mapFile  @@dataDir@@/final/Centimorgan_microSat_map.txt --microstatGff @@dataDir@@/final/Pf_ms.gff   --seqLengthFile  @@dataDir@@/final/PfSequenceLenghts  --outputGff  @@dataDir@@/HaplotypeBlocks.gff</unpack>
   </resource>
+  <resource parentResource="Su_Pfalciparum_Genetic_Map_RSRC"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            resource="Su_Pfalciparum_Progeny_Haplotype_Profiles_RSRC"
+            version="1.0">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/eQTL/Llinas_Ferdig_HB3_Dd2_eQTL/%RESOURCE_VERSION%/workspace/ProgenyHaplotype/" />
+    <pluginArgs>--inputDir @@dataDir@@/ProgenyHaplotype/ --configFile @@dataDir@@/ProgenyHaplotype/expression_profile_config.txt --tolerateMissingIds --externalDatabase %PARENT_RESOURCE_NAME% --externalDatabaseRls %PARENT_RESOURCE_VERSION%</pluginArgs>
+  </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
             resource="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC"
             version="2011-06-20">
