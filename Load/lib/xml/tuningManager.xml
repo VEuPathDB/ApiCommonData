@@ -2344,6 +2344,28 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="SnpStrains">
+    <internalDependency name="SequenceAttributes"/>
+    <externalDependency name="dots.SnpFeature"/>
+    <externalDependency name="dots.SeqVariation"/>
+    <sql>
+      <![CDATA[
+       CREATE TABLE SnpStrains&1 NOLOGGING AS
+         select distinct sf.external_database_release_id,sv.strain,sa.organism
+         from dots.snpfeature sf, dots.seqvariation sv, APIDBTUNING.sequenceattributes sa
+         where sa.na_sequence_id = sf.na_sequence_id
+         and sf.na_feature_id = sv.parent_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX SnpStrains_ix&1 ON SnpStrains&1(external_database_release_id,strain,organism)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+CREATE TABLE Polymorphism&1 NOLOGGING AS
   <tuningTable name="Polymorphism">
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.SnpFeature"/>
