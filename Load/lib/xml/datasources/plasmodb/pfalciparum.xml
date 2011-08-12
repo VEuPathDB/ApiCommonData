@@ -721,6 +721,14 @@
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Pf_GSE12515_HB3XDD2_RSRC"
+            version="@@Pf_GSE12515_HB3XDD2_RSRC@@">
+    <getAndUnpackOutput dir="@@dataDir@@/final" />
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt" />
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/GSE12515_HB3XDD2/%RESOURCE_VERSION%/final" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
             resource="Pf_Winzeler_WBCGametocyte_RSRC"
             version="@@Pf_Winzeler_WBCGametocyte_VER@@">
     <getAndUnpackOutput dir="@@dataDir@@/final" />
