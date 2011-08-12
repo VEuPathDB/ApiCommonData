@@ -39,7 +39,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 41860 $',
+                     cvsRevision       => '$Revision: 41991 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -1113,10 +1113,10 @@ sub undoTables {
   qw(
     ApiDB.MassSpecSummary
     DoTS.AALocation
+    DoTS.PostTranslationalModFeature
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    DoTS.PostTranslationalModFeature
     );
 }
 
