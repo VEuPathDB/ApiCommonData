@@ -406,16 +406,20 @@ sub makeVirWithSpacer {
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
 
     my $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
+    my $start = $virtual->{$pieceNumber}->{'pieceBeg'};
+    my $end = $virtual->{$pieceNumber}->{'pieceEnd'};
 
     my $orderNum = $pieceNumber == 1 ? $pieceNumber : $pieceNumber + 2;
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'},$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$start,$end,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
-    my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
+    my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$start,($end - $start + 1));
+
+
     $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
 
     $sequence .= $pieceSeq;
@@ -444,7 +448,6 @@ sub makeVir {
   my ($self,$virtualSeq,$virtual,$pieceDbRlsId,$gapSOId) = @_;
 
   my $sequence = "";
-
   my $pieceSeq;
 
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
@@ -460,11 +463,10 @@ sub makeVir {
     }
     else {
       $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
-      $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
       $start = $virtual->{$pieceNumber}->{'pieceBeg'};
       $end = $virtual->{$pieceNumber}->{'pieceEnd'};
-    }
+      $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$start,($end - $start + 1));
+      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';    }
 
     my $length = length($sequence);
 
