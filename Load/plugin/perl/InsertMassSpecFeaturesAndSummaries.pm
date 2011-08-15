@@ -880,11 +880,11 @@ sub mapToNASequence {
   my $naLocations = [];
 
   # This should really be getExonsWithCodingSequence
-  my $exons = $self->getExons($naFeatureId) or $self->error("no exons for na_feature_id '$naFeatureId'\n");
+  my @exons = @{$self->getExons($naFeatureId)} or $self->error("no exons for na_feature_id '$naFeatureId'\n");
 
   # CDS in chromosome coordinates
   my $cds = new Bio::Location::Split;
-  foreach (@{$exons}) {
+  foreach (@exons) {
     $cds->add_sub_Location(new Bio::Location::Simple(
                                                      -start  =>  @$_[0],
                                                      -end    =>  @$_[1],
