@@ -4803,7 +4803,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE SnpSummary&1 NOLOGGING AS
-SELECT cds_length, na_feature_id, source_id,
+SELECT type,cds_length, na_feature_id, source_id,
        strain_a, strain_b,
        sum(synonymous) as synonymous,
        sum(non_synonymous) as non_synonymous,
@@ -4819,26 +4819,25 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
               CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
-              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop
+              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
+              decode(ed.name,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type
        FROM dots.SeqVariation sva, dots.SeqVariation svb, dots.SnpFeature sf,
-            dots.SplicedNaSequence cds, dots.Transcript, dots.GeneFeature gf,
+            dots.Transcript, dots.GeneFeature gf,
             dots.TranslatedAaFeature taf, sres.ExternalDatabase ed,
             sres.ExternalDatabaseRelease edr
-       WHERE ed.name NOT IN ('Pf_Broad_SNPs_RSRC','Broad SNPs', 'Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
-                             'X.Su SNPs','Pf_XSuSnps_RSRC')
+       WHERE ed.name IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
+         AND edr.external_database_id = ed.external_database_id
+         AND sf.external_database_release_id = edr.external_database_release_id
+         AND sva.parent_id = sf.na_feature_id
+         AND sva.parent_id = svb.parent_id
          AND sva.strain  < svb.strain
          AND sva.allele != svb.allele
-         AND sva.parent_id = svb.parent_id
-         AND sva.parent_id = sf.na_feature_id
          AND sf.parent_id = gf.na_feature_id
-         AND sf.external_database_release_id = edr.external_database_release_id
-         AND edr.external_database_id = ed.external_database_id
          AND gf.na_feature_id = transcript.parent_id
-         AND transcript.na_sequence_id = cds.na_sequence_id
          AND transcript.na_feature_id = taf.na_feature_id
 )
 GROUP BY cds_length, na_feature_id, source_id,
-         strain_a, strain_b
+         strain_a, strain_b,type
       ]]>
     </sql>
     <sql>
