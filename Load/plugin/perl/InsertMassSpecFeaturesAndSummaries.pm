@@ -880,7 +880,7 @@ sub mapToNASequence {
   my $naLocations = [];
 
   # This should really be getExonsWithCodingSequence
-  my @exons = @{$self->getExons($naFeatureId)} or $self->error("no exons for na_feature_id '$naFeatureId'\n");
+  my @exons = @{$self->getExons($naFeatureId)} or return;
 
   # CDS in chromosome coordinates
   my $cds = new Bio::Location::Split;
