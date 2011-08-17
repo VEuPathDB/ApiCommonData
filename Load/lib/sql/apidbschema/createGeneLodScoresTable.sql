@@ -1,4 +1,4 @@
-GRANT references ON DoTS.NaFeature TO ApiDB;
+GRANT references ON DoTS.NaFeatureImp TO ApiDB;
 GRANT references ON SRes.ExternalDatabaseRelease TO ApiDB;
 GRANT references ON DoTS.ChromosomeElementFeature TO ApiDB;
 ------------------------------------------------------------------------------
@@ -10,8 +10,7 @@ CREATE TABLE ApiDB.GeneFeatureLodScore (
  LOD_SCORE_MANT                       FLOAT(126),
  LOD_SCORE_EXP                        NUMBER(8),
  EXTERNAL_DATABASE_RELEASE_ID         NUMBER(10),
- FOREIGN KEY (NA_FEATURE_ID) REFERENCES DoTS.NaFeature (NA_FEATURE_ID),
- FOREIGN KEY (HAPLOTYPE_BLOCK_NAME) REFERENCES DoTS.ChromosomeElementFeature (NAME),
+ FOREIGN KEY (NA_FEATURE_ID) REFERENCES DoTS.NaFeatureImp (NA_FEATURE_ID),
  FOREIGN KEY (EXTERNAL_DATABASE_RELEASE_ID) REFERENCES SRes.ExternalDatabaseRelease (EXTERNAL_DATABASE_RELEASE_ID),
  PRIMARY KEY (GENE_HAPBLOCK_SCORE_ID)
  );
