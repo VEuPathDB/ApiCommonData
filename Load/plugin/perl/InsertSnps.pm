@@ -569,9 +569,12 @@ sub createSnpFeature {
   $fromDB = $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
   $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
 
+  my $naLoc;
   if(! $fromDB){
-    my $naLoc = $self->getNaLoc($start, $end);
+    $naLoc = $self->getNaLoc($start, $end);
     $snpFeature->addChild($naLoc);
+  }else{
+    $naLoc = $snpFeature->getChild("GUS::Model::DoTS::NALocation",1);
   }
 
   foreach ($feature->get_tag_values('Allele')) {
