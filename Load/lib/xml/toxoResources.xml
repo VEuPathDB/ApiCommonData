@@ -2133,6 +2133,74 @@ This data was graciously provided to ToxoDB pre-publication by Silvia Moreno (sm
          </description>		
      </resource> 
 
+  <resource resource="TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC" version="2011_06_22"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="ToxoDB/tgonME49/massSpec/Boothroyd_Bowyer_oocyst_sporozoite/%RESOURCE_VERSION%/final/Sporocyst_membrane.tab"/>
+    <getAndUnpackOutput file="@@dataDir@@/Sporocyst_membrane.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Sporocyst_membrane.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'T.gondii ME49 contigs from Genbank|@@Tgondii_ME49_contigs_from_Genbank_VER@@'</pluginArgs>
+    <info
+        displayName="Boothroyd_Bowyer_Oocyst_Proteome"
+        project="ToxoDB"
+        organisms=""
+        category="Proteome"
+        publicUrl=""
+        contact="Paul Bowyer"
+        email="Paul Bowyer"
+        institution="">
+      <description>
+        <![CDATA[
+Fritz HM, Bowyer PW, Bogyo MS, Conrad PA, Boothroyd JC. Proteomic characterization of mature Toxoplasma gondii oocysts: identification of candidate wall and sporozoite components
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
+  <resource resource="TgonME49_BoothroydBowyerOocystCytosol_Proteome_RSRC" version="2011_06_22"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="ToxoDB/tgonME49/massSpec/Boothroyd_Bowyer_oocyst_sporozoite/%RESOURCE_VERSION%/final/Sporocyst_cytosol.tab"/>
+    <getAndUnpackOutput file="@@dataDir@@/Sporocyst_cytosol.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Sporocyst_cytosol.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'T.gondii ME49 contigs from Genbank|@@Tgondii_ME49_contigs_from_Genbank_VER@@'</pluginArgs>
+    <info
+        displayName="Boothroyd_Bowyer_Oocyst_Proteome"
+        project="ToxoDB"
+        organisms=""
+        category="Proteome"
+        publicUrl=""
+        contact="Paul Bowyer"
+        email="Paul Bowyer"
+        institution="">
+      <description>
+        <![CDATA[
+Fritz HM, *Bowyer PW, Bogyo MS, Conrad PA, Boothroyd JC. Proteomic characterization of mature Toxoplasma gondii oocysts: identification of candidate wall and sporozoite components
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+  <resource resource="TgonME49_BoothroydBowyerOocystWalls_Proteome_RSRC" version="2011_06_22"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="ToxoDB/tgonME49/massSpec/Boothroyd_Bowyer_oocyst_sporozoite/%RESOURCE_VERSION%/final/Walls.tab"/>
+    <getAndUnpackOutput file="@@dataDir@@/Walls.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Walls.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'T.gondii ME49 contigs from Genbank|@@Tgondii_ME49_contigs_from_Genbank_VER@@'</pluginArgs>
+    <info
+        displayName="Boothroyd_Bowyer_Oocyst_Proteome"
+        project="ToxoDB"
+        organisms=""
+        category="Proteome"
+        publicUrl=""
+        contact="Paul Bowyer"
+        email="Paul Bowyer"
+        institution="">
+      <description>
+        <![CDATA[
+Fritz HM, *Bowyer PW, Bogyo MS, Conrad PA, Boothroyd JC. Proteomic characterization of mature Toxoplasma gondii oocysts: identification of candidate wall and sporozoite components
+        ]]>
+      </description>
+    </info>
+  </resource>
+
+
 
 <resource resource="Antibody" version="1"
         displayName="Links to Antibodies from Albert Einstein College of Medicine"
@@ -3230,6 +3298,90 @@ Authors: Heather Fritz*, Kerry R. Buchholz*, Patricia Conrad, and John C. Bootho
           ]]>
         </description>
     </resource>
+
+
+<resource resource="TgondiiTgCATBr9_genome_RSRC" version="2011-06-23"
+        displayName="Toxoplasma gondii TgCATBr9 genome"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiTgCATBr9_genome_RSRC"
+        extDbRlsVer="2011-06-23"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> TgCATBr9 strain genome sequence data were produced by JCVI as part of the  <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+
+
+
+<resource resource="TgondiiTgCATBr9_apicoplast_RSRC" version="2011-06-23"
+        displayName="Toxoplasma gondii TgCATBr9 apicoplast"
+        category="Genome"
+        plugin="N/A"
+        extDbName="TgondiiTgCATBr9_genome_RSRC"
+        extDbRlsVer="2011-06-23"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Toxoplasma gondii</i> TgCATBr9 strain apicoplast sequence data were produced by JCVI as part of the  <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+
+
+<resource resource="Gniphandrodes_genome_RSRC" version="2011-06-27"
+        displayName="Gregarina niphandrodes genome"
+        category="Genome"
+        plugin="N/A"
+        extDbName="Gniphandrodes_genome_RSRC"
+        extDbRlsVer="2011-06-27"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+<p><i>Gregarina niphandrodes</i> genome sequence data were produced by JCVI as part of the  <a href="https://sites.google.com/site/toxoplasmagondiigscidproject/home">Toxoplasma white paper</a>.</p><br>
+<p>Data Usage Policy</p>
+<p>NIAID is committed to rapid, pre-publication release of genomic data and recognizes that clinical data and other metadata associated with the genomic data are valuable research resources.  For these reasons, NIAID endorses rapid release of all genome data sets.  To comply with this policy, the whole genome sequences of T. gondii strains are being submitted to NCBI and included here in ToxoDB prior to complete annotation.  Once annotation is complete and submitted to GenBank, the entries for these new genomes will be updated in ToxoDB.  The users of any released data are expected to act responsibly to recognize the scientific contribution of the data producers by following normal standards of scientific etiquette and fair use of unpublished data.  In particular, we ask that users not perform genome wide comparisons/analyses of the sequence/open reading frames/genes of the data sets deposited here without first contacting the organizing committee.  We welcome your input in this process, but would also like to coordinate community efforts to with the goal of producing a collective report for publication.  If you have an idea for analyses that would be useful, please contact one of us to coordinate your contribution to the community effort.</p><br>
+<p>Brian Brunk, Hernan Lorenzi, David Roos & David Sibley, on behalf of the Toxoplasma genome consortium, representing the white paper committee, the JCVI genome sequencing center, and the ToxoDB team.</p>
+          ]]>
+        </description>
+    </resource>
+
+
+
+
+
+
 
 <resource resource="Tg_Sullivan_GSE22100_GCN5-A_RSRC" version="2011-07-13"
         displayName="Toxoplasma gondii GCN5-A Array from Sullivan."
