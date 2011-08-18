@@ -103,7 +103,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 39370 $',
+                        cvsRevision => '$Revision: 39371 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -121,7 +121,7 @@ sub run {
              $self->getArg('extDbVer')) || $self->error("Can't find external_database_release_id for this data");
 
   my $processed = 1;
-  my $header = 0; 
+  my $header = 1; 
   my @genes;
 
   open(inputFile,$self->getArg('file'));
@@ -149,7 +149,6 @@ sub run {
 
     foreach my $gene (@genes) {
       if ($geneFeature{$gene}) {
-
         my @score = split(/E/i,$elements[$iter]);
         my $geneFeatLodScore = GUS::Model::ApiDB::GeneFeatureLodScore->new({ 
                                 'NA_FEATURE_ID' => $geneFeature{$gene},
