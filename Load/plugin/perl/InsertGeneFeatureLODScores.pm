@@ -9,7 +9,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::GeneFeature;
-use GUS::Model::ApiDB::GeneFeatureLodScore
+use GUS::Model::ApiDB::GeneFeatureLodScore;
 use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
@@ -60,7 +60,7 @@ Plugin to load LOD scores for genes and Haplotype Blocks (Haplotype Blocks are r
 PURPOSE
 
   my $purposeBrief = <<PURPOSEBRIEF;
-Plugin to load LOD scores for genes and Haplotype Blocks (Haplotype Blocks are regions on a chromosome that are at the same centimorgan distance in the genetic map). This plugin will read a matrix of association LOD scores between genes (as columns) and Hap Blocks (as rows). The Hap Block name is usually the 'Name' field in DoTS.ChromosomeElementFeature table, but this is not enforced.
+Plugin to load LOD scores for genes and Haplotype Blocks.
 PURPOSEBRIEF
 
   my $notes = <<NOTES;
@@ -120,6 +120,7 @@ sub run {
   my $extDbReleaseId = $self->getExtDbRlsId($self->getArg('extDbName'),
              $self->getArg('extDbVer')) || $self->error("Can't find external_database_release_id for this data");
 
+  my $processed = 1;
   my $header = 0; 
   my @genes;
 
@@ -133,7 +134,7 @@ sub run {
     if ($header) {
       @genes = @elements[2..(@elements-1)];
       
-      foreach $gene (@genes) {
+      foreach my $gene (@genes) {
         my $geneFeat = GUS::Model::DoTS::GeneFeature->new({source_id => $gene});
           if ($geneFeat->retrieveFromDB) {
             $geneFeature{$gene} = $geneFeat->getNaFeatureId();
@@ -146,7 +147,7 @@ sub run {
     $cMorgan = $elements[0]."_".$elements[1];
     my $iter = 2;
 
-    foreach $genes (@genes) {
+    foreach my $gene (@genes) {
       if ($geneFeature{$gene}) {
 
         my @score = split(/E/i,$elements[$iter]);
