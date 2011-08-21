@@ -317,7 +317,8 @@ sub update {
                       . " -version '" . $registry->getVersion() . "'"
                       . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
-                      . " -suffix '" . $suffix . "'";
+                      . " -suffix '" . $suffix . "'"
+                      . " 2>&1 ";
 
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
