@@ -40,7 +40,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'PolyAGenes',
-       'Standard', '',
+       'Standard', 'splice_site_feature_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
