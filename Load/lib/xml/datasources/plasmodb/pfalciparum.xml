@@ -735,6 +735,14 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/GSE12515_HB3XDD2/%RESOURCE_VERSION%/final/" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%"</pluginArgs>
   </resource>
+  <resource parentResource="Ferdig_Pfalciparum_eQTL_RSRC"
+            plugin="ApiCommonData::Load::Plugin::InsertGeneFeatureLODScores"
+            resource="Ferdig_Pfalciparum_LOD_Scores_RSRC"
+            version="@@Ferdig_Pfalciparum_eQTL_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/All_LODscores.txt" />
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/eQTL/Llinas_Ferdig_HB3_Dd2_eQTL/%RESOURCE_VERSION%/final/All_LODscores.txt" />
+    <pluginArgs>--file @@dataDir@@/All_LODscores.txt --extDbName %PARENT_RESOURCE_NAME% --extDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
+  </resource>
   <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
             resource="Pf_Winzeler_WBCGametocyte_RSRC"
             version="@@Pf_Winzeler_WBCGametocyte_VER@@">
