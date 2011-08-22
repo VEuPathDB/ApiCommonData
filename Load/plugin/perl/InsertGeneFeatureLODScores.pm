@@ -147,7 +147,7 @@ sub run {
     $cMorgan = $elements[0]."_".$elements[1];
     my $iter = 2;
 
-   print ("Preparing and loading association LOD scores for Hap Block $cMorgan ...\n");
+   print ("Preparing and loading gene association LOD scores for Hap Block $cMorgan ...\n");
 
     foreach my $gene (@genes) {
       if ($geneFeature{$gene}) {
@@ -159,11 +159,11 @@ sub run {
                                 'LOD_SCORE_EXP' => $score[1],
                                 'EXTERNAL_DATABASE_RELEASE_ID' => $extDbReleaseId
                                  });
-        $iter++;
         $processed++;
         $geneFeatLodScore->submit();
         $self->undefPointerCache(); 
       }
+      $iter++;
     }
     print ("Association LOD scores for Hap Block $cMorgan  parsed and loaded...\n");   
   }
