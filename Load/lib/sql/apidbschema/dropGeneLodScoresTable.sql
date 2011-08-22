@@ -1,4 +1,5 @@
 drop table ApiDB.GeneFeatureLodScore;
+drop sequence apidb.GeneFeatureLodScore_sq;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) = lower('GeneFeatureLodScore')

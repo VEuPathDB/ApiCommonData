@@ -35,6 +35,13 @@ ON ApiDB.GeneFeatureLodScore (GENE_HAPBLOCK_SCORE_ID);
 CREATE INDEX apidb.geneHapBlock_idx
 ON ApiDB.GeneFeatureLodScore (NA_FEATURE_ID,HAPLOTYPE_BLOCK_NAME);
 
+
+CREATE SEQUENCE apidb.GeneFeatureLodScore_sq;
+
+GRANT SELECT ON apidb.GeneFeatureLodScore_sq TO gus_r;
+GRANT SELECT ON apidb.GeneFeatureLodScore_sq TO gus_w;
+
+
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable,

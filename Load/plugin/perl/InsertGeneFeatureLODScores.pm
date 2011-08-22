@@ -103,7 +103,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 39371 $',
+                        cvsRevision => '$Revision: 39375 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -122,14 +122,14 @@ sub run {
 
   my $processed = 1;
   my $header = 1; 
-  my @genes;
+  my (@genes, %geneFeature);
 
   open(inputFile,$self->getArg('file'));
 
   while(<inputFile>){
     chomp;
     my @elements = split(/\t/,$_);
-    my ($cMorgan, %geneFeature);
+    my ($cMorgan);
 
     if ($header) {
       @genes = @elements[2..(@elements-1)];
@@ -163,8 +163,11 @@ sub run {
         $self->undefPointerCache(); 
       }
     }
+    if ($processed % 1000 == 0) {
+       print ("$processed lines parsed and loaded...\n");
+    }
   }
-  return "$processed lines parsed and loaded";
+  return "\n$processed lines parsed loaded\n"
 }
 
 
