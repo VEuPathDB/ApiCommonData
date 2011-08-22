@@ -103,7 +103,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 39376 $',
+                        cvsRevision => '$Revision: 39377 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -147,7 +147,7 @@ sub run {
     $cMorgan = $elements[0]."_".$elements[1];
     my $iter = 2;
 
-   print ("Preparing and loading association LOD scores for Hap Blocks on Sequence $elements[0] ...\n");
+   print ("Preparing and loading association LOD scores for Hap Block $cMorgan ...\n");
 
     foreach my $gene (@genes) {
       if ($geneFeature{$gene}) {
@@ -165,7 +165,7 @@ sub run {
         $self->undefPointerCache(); 
       }
     }
-    print ("Association LOD scores for Hap Blocks on $elements[0]  parsed and loaded...\n");   
+    print ("Association LOD scores for Hap Block $cMorgan  parsed and loaded...\n");   
   }
   return "\n$processed lines parsed loaded\n"
 }
