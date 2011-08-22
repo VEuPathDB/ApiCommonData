@@ -483,7 +483,7 @@ begin
          when 'octosporea'
            then return 'MicrosporidiaDB';
          when 'gregarina'
-           then return 'OrphanDB';
+           then return 'ToxoDB';
          when 'sarcocystis'
            then return 'OrphanDB';
          when 'eimeria'
