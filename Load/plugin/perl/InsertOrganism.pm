@@ -54,7 +54,7 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'abbrevForFilenames',
+     stringArg({ name => 'nameForFilenames',
 		 descr => 'eg TgondiiME49',
 		 constraintFunc=> undef,
 		 reqd  => 1,
@@ -166,7 +166,7 @@ sub run {
   my $speciesNcbiTaxonId = $self->getArg('speciesNcbiTaxonId');
   my $abbrev = $self->getArg('abbrev');
   my $abbrevPublic = $self->getArg('abbrevPublic');
-  my $abbrevForFilenames = $self->getArg('abbrevForFilenames');
+  my $nameForFilenames = $self->getArg('nameForFilenames');
   my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
   my $abbrevStrain = $self->getArg('abbrevStrain');
   my $abbrevRefStrain = $self->getArg('abbrevRefStrain');
@@ -211,7 +211,7 @@ sub run {
 						    'project_name' => $projectName,
 						    'abbrev' => $abbrev,
 						    'abbrev_public' => $abbrevPublic,
-						    'abbrev_for_filenames' => $abbrevForFilenames,
+						    'name_for_filenames' => $nameForFilenames,
 						    'abbrev_orthomcl' => $abbrevOrthomcl,
 						    'abbrev_strain' => $abbrevStrain,
 						    'abbrev_ref_strain' => $abbrevRefStrain,
