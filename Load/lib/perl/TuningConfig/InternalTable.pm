@@ -54,7 +54,7 @@ sub new {
     my $sql = <<SQL;
        select to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss') as timestamp, definition
        from apidb.TuningTable
-       where name = '$self->{qualifiedName}'
+       where lower(name) = lower('$self->{qualifiedName}')
 SQL
 
     my $stmt = $dbh->prepare($sql);
@@ -315,7 +315,6 @@ sub update {
                       . " -schema '" . $self->{schema} . "'"
                       . " -project '" . $registry->getProjectId() . "'"
                       . " -version '" . $registry->getVersion() . "'"
-                      . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
                       . " 2>&1 ";
@@ -369,7 +368,7 @@ sub storeDefinition {
 
   my $sql = <<SQL;
        delete from apidb.TuningTable
-       where name = '$self->{qualifiedName}'
+       where lower(name) = lower('$self->{qualifiedName}')
 SQL
 
   my $stmt = $dbh->prepare($sql);
