@@ -67,8 +67,7 @@ sub preprocess {
     
 }
 
-  my ($sharedGene,$prevSharedId);
-  $prevSharedId = '';
+
 
   foreach my $bioperlFeatureTree (@seqFeatures) {
     my $type = $bioperlFeatureTree->primary_tag();
@@ -201,49 +200,8 @@ sub preprocess {
 	  }
       }
 
-     if($sharedId && ($sharedId eq $prevSharedId)){
-	 
-	 my @sharedGeneLocs = $sharedGene->location->each_Location();
-	 
-	   my @sharedGeneLocsSorted = map { $_->[0] }
-  sort {($a->[1] <=> $b->[1] || $a->[2] <=> $b->[2])}
-  map { [ $_, $_->start(),$_->end() ]}
-  @sharedGeneLocs;
 
-	 my($start,$end,$strand);
-	 if($sharedGeneLocsSorted[0]->start() > $geneLoc->start()){
-	     $start = $geneLoc->start();
-	 }else{
-	     $start = $sharedGeneLocsSorted[0]->start();
-	 }
 
-	 if($sharedGeneLocsSorted[$#sharedGeneLocsSorted]->end() < $geneLoc->end()){
-	     $end = $geneLoc->end();
-	 }else{
-	     $end = $sharedGeneLocsSorted[$#sharedGeneLocsSorted]->end();
-	 }
-	     
-	 
-	 $strand = $sharedGeneLocsSorted[0]->strand();
-	 my $sharedGeneLoc = Bio::Location::Simple->new(-start => $start, -end => $end, -strand => $strand);
-
-	 $sharedGene->location($sharedGeneLoc);
-	 
-	 $gene = $sharedGene;
-     }else{
-	 my($start,$end,$strand);
-	 
-	 $start = $geneLoc->start();
-	 $end = $geneLoc->end();
-	 $strand = $geneLoc->strand();
-	 
-	 $gene->location(Bio::Location::Simple->new(-start => $start, -end => $end, -strand => $strand));
-     }
-
-#      print STDERR "$systematicId\n";
-#      print STDERR Dumper $geneLoc;
-
-#      print STDERR Dumper $transcriptLoc;
 
       $gene->add_SeqFeature($transcript);
       my @exonLocations = $transcriptLoc->each_Location();
@@ -293,7 +251,7 @@ sub preprocess {
 
 	  if($gene->location->strand() == -1){
 	      $gene->location->start($UTR3PExon->start());
-#	      print Dumper $gene->location();
+
 	  }else{
 	      $gene->location->end($UTR3PExon->end());
 	  }
@@ -315,31 +273,16 @@ sub preprocess {
       }
 
 
-      if($sharedId){
-
-	  $gene->remove_tag('systematic_id');
-	  $gene->add_tag_value('systematic_id',$sharedId);
-
-	  $prevSharedId = $sharedId;
-	  $sharedGene = $gene;
-	  undef $gene;
-	  
-      }else{
-	  if($sharedGene){
-	      $bioperlSeq->add_SeqFeature($sharedGene);
-	  }
-	  $bioperlSeq->add_SeqFeature($gene);
-	  $prevSharedId = '';
-	  undef $sharedGene;
-
-      }
+      $bioperlSeq->add_SeqFeature($gene);
   }else{
 
       $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-  }
+  
 
+  }
 }
 }
+
 
 
 1;

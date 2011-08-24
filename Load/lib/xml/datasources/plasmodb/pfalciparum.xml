@@ -332,12 +332,18 @@
   </resource>
   <resource plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
             resource="Su_Pfalciparum_Microsatellite_Markers_RSRC"
-            version="2008-05-29">
-    <manualGet fileOrDir="PlasmoDB/pfalciparum/genomeFeature/Su_P.falciparum_Microsatellite_Markers/%RESOURCE_VERSION%/sequences.gb.fixed" />
+            version="1.0">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/eQTL/Llinas_Ferdig_HB3_Dd2_eQTL/%RESOURCE_VERSION%/final/" />
     <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/MicrosatelliteGff2gus.xml --inputFileOrDir @@dataDir@@/Pf_ms.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
     <unpack>dumpSequencesFromTable.pl --outputFile @@dataDir@@/PfalciparumChroms.fasta --idSQL "SELECT source_id,sequence FROM DoTS.ExternalNASequence ns, SRes.ExternalDatabase ed, SRes.ExternalDatabaseRelease edr WHERE ed.name = 'Pfalciparum_chromosomes_RSRC' AND ed.external_database_id = edr.external_database_id AND edr.version = '@@Pfalciparum_chromosomes_VER@@' and ns.external_database_release_id = edr.external_database_release_id"</unpack>
-    <unpack>createSTSFileFromGB --genbank_file_or_dir @@dataDir@@/sequences.gb.fixed --output_file @@dataDir@@/sequences.sts </unpack>
-    <unpack> ePCRMicrosatelliteForLocations --sts_file @@dataDir@@/sequences.sts --output_file @@dataDir@@/Pf_ms.gff --seq_file @@dataDir@@/PfalciparumChroms.fasta --log_file ePcr.log --microsatellite_info "Su"  --epcr_dir /files/cbil/software/e-PCR/current/bin --margin 200 --gap 1 --mismatch 1 --wordsize 12 --discontiguous_words 3</unpack>
+    <unpack>makeMicrosatelliteGFF.pl --stsFile @@dataDir@@/final/microSatellite.sts --genomeFasta @@dataDir@@/PfalciparumChroms.fasta --mapFile @@dataDir@@/final/Centimorgan_microSat_map.txt --outputGff @@dataDir@@/Pf_ms.gff</unpack>
+  </resource>
+  <resource plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+            resource="Su_Pfalciparum_Genetic_Map_RSRC"
+            version="1.0">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/eQTL/Llinas_Ferdig_HB3_Dd2_eQTL/%RESOURCE_VERSION%/final/" />
+    <pluginArgs>--extDbName %RESOURCE_NAME% --extDbRlsVer %RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/HaplotypeGff2gus.xml --inputFileOrDir @@dataDir@@/HaplotypeBlocks.gff --fileFormat gff2 --gff2GroupTag "ID" --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7" --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput bioperlTree.out  --seqExtDbName "Pfalciparum_chromosomes_RSRC"   --seqExtDbRlsVer @@Pfalciparum_chromosomes_VER@@</pluginArgs>
+    <unpack> makeHaplotypeBlockFeatures.pl  --mapFile  @@dataDir@@/final/Centimorgan_microSat_map.txt --microstatGff @@dataDir@@/final/Pf_ms.gff   --seqLengthFile  @@dataDir@@/final/PfSequenceLenghts  --outputGff  @@dataDir@@/HaplotypeBlocks.gff</unpack>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
             resource="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC"
@@ -536,7 +542,7 @@
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertPhenotypeFeatures"
             resource="Pf_Rod_Mal_Phenotype_RSRC"
-            version="2011-03-17">
+            version="2011-08-22">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/phenotype/Rod_Mal_Phenotype/%RESOURCE_VERSION%/final/rmgm_phenotype_list_pfalciparum.xml" />
     <pluginArgs>--inputFile @@dataDir@@/rmgm_phenotype_list_pfalciparum.xml --extDbName %RESOURCE_NAME% --extDbVer %RESOURCE_VERSION% </pluginArgs>
   </resource>
@@ -722,6 +728,22 @@
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Ferdig_Pfalciparum_eQTL_RSRC"
+            version="@@Ferdig_Pfalciparum_eQTL_VER@@">
+    <getAndUnpackOutput dir="@@dataDir@@/final" />
+    <getAndUnpackOutput file="@@dataDir@@/final/expression_profile_config.txt" />
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/GSE12515_HB3XDD2/%RESOURCE_VERSION%/final/" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%PARENT_RESOURCE_NAME%|%PARENT_RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+  <resource parentResource="Ferdig_Pfalciparum_eQTL_RSRC"
+            plugin="ApiCommonData::Load::Plugin::InsertGeneFeatureLODScores"
+            resource="Ferdig_Pfalciparum_LOD_Scores_RSRC"
+            version="@@Ferdig_Pfalciparum_eQTL_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/All_LODscores.txt" />
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/eQTL/Llinas_Ferdig_HB3_Dd2_eQTL/%RESOURCE_VERSION%/final/All_LODscores.txt" />
+    <pluginArgs>--file @@dataDir@@/All_LODscores.txt --extDbName %PARENT_RESOURCE_NAME% --extDbVer %PARENT_RESOURCE_VERSION%</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
             resource="Pf_Winzeler_WBCGametocyte_RSRC"
             version="@@Pf_Winzeler_WBCGametocyte_VER@@">
     <getAndUnpackOutput dir="@@dataDir@@/final" />
@@ -761,6 +783,15 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/derisi/%RESOURCE_VERSION%/final" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Pf_array_GPL7189_eQTL_RSRC"
+            version="@@Pf_array_GPL7189_eQTL_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/geneProbeMapping.txt" />
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayPlatform/GPL7189_eQTL/%RESOURCE_VERSION%/final/geneProbeMapping.txt" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+
   <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
             resource="Pf_Derisi_Dd2_TimeSeries_RSRC"
             version="@@Pf_Derisi_Dd2_TimeSeries_VER@@">

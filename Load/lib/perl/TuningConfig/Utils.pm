@@ -1,6 +1,7 @@
 package ApiCommonData::Load::TuningConfig::Utils;
 
 use ApiCommonData::Load::TuningConfig::Log;
+use XML::Simple;
 
 sub sqlBugWorkaroundDo {
 
@@ -92,7 +93,7 @@ sub sqlBugWorkaroundExecute {
   return $sqlReturn;
 }
 
-sub getDbHandle {
+sub getDbLoginInfo {
   my ($instance, $propFile, $username, $password) = @_;
   my $props;
 
@@ -105,8 +106,15 @@ if ($propFile) {
   $username = $props->{username} if !$username;
   $username = 'ApidbTuning' if !$username;
 
-  my $dsn = "dbi:Oracle:" . $instance;
+  return ($instance, $username, $password);
+}
 
+sub getDbHandle {
+  my ($instance, $username, $password) = @_;
+  my $props;
+
+
+  my $dsn = "dbi:Oracle:" . $instance;
   my $dbh = DBI->connect(
                 $dsn,
                 $username,

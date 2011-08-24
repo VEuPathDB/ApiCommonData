@@ -27,9 +27,10 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $password, $suffix, $project, $version, $subversionDir, $debug);
+my ($propfile, $instance, $schema, $password, $suffix, $project, $version, $subversionDir, $debug);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
+           "schema=s" => \$schema,
            "password=s" => \$password,
            "suffix=s" => \$suffix,
            "project=s" => \$project,
@@ -38,7 +39,8 @@ GetOptions("propfile=s" => \$propfile,
            "debug!" => \$debug,
 	  );
 
-my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propfile, $password);
+($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propfile, $schema, $password);
+my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
 $|=1;
 
@@ -50,7 +52,7 @@ chdir "$workingDir";
 
 my $projectQuery = $dbh->prepare(<<SQL);
   select project_id, lower(project_id) as lower_project_id
-  from (select distinct project_id from ApidbTuning.SequenceAttributes)
+  from (select distinct project_id from SequenceAttributes)
 SQL
 
 $projectQuery->execute() or die "getting a list of project IDs";

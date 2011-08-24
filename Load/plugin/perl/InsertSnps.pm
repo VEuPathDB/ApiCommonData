@@ -565,11 +565,17 @@ sub createSnpFeature {
 
   ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
   ## so can generate complete picture of snp.
-  $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
+  my $fromDB = 0;
+  $fromDB = $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
   $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
 
-  my $naLoc = $self->getNaLoc($start, $end);
-  $snpFeature->addChild($naLoc);
+  my $naLoc;
+  if(! $fromDB){
+    $naLoc = $self->getNaLoc($start, $end);
+    $snpFeature->addChild($naLoc);
+  }else{
+    $naLoc = $snpFeature->getChild("GUS::Model::DoTS::NALocation",1);
+  }
 
   foreach ($feature->get_tag_values('Allele')) {
     my ($strain, $base, $coverage, $percent, $quality, $pvalue) = split(':', $_);
@@ -607,7 +613,7 @@ sub createSnpFeature {
     ## deal with atts for NGS SNPs .. 
     $seqVar->setCoverage($coverage) if $coverage;
     $seqVar->setAllelePercent($percent) if $percent;
-    $seqVar->setPvalue($pvalue) if defined $pvalue;
+    $seqVar->setPvalue($pvalue) if ($pvalue || $pvalue == 0);
     $seqVar->setQuality($quality) if $quality;
 
     $seqVar->setParent($snpFeature);
@@ -618,26 +624,25 @@ sub createSnpFeature {
 #    $seqVar->addChild($svLoc);
 
     ## need to add a seqvar for the reference genome if that hasn't been added already.
-  my $haveRef = 0;
-  foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
-    $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $base);
-  }
-  if(!$haveRef){  ##create a reference seqvar here ...
+    my $haveRef = 0;
     my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
-    my $seqVar =  GUS::Model::DoTS::SeqVariation->
-      new({'source_id' => $sourceId,
-           'external_database_release_id' => $extDbRlsId,
-           'name' => $name,
-           'sequence_ontology_id' => $soId,
-           'strain' => $ref,
-           'allele' => $referenceBase,
-           'organism' => $organism
-          });
-    $seqVar->setParent($snpFeature);
-    $seqVar->setParent($naSeq);
-    $snpFeature->setReferenceNa($referenceBase);
-
-  }
+    foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
+      $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
+    }
+    if(!$haveRef){  ##create a reference seqvar here ...
+      my $seqVar =  GUS::Model::DoTS::SeqVariation->
+        new({'source_id' => $sourceId,
+             'external_database_release_id' => $extDbRlsId,
+             'name' => $name,
+             'sequence_ontology_id' => $soId,
+             'strain' => $ref,
+             'allele' => $referenceBase,
+             'organism' => $organism
+            });
+      $seqVar->setParent($snpFeature);
+      $seqVar->setParent($naSeq);
+      $snpFeature->setReferenceNa($referenceBase);
+    }
 
   }
   return $snpFeature;

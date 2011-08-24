@@ -406,16 +406,20 @@ sub makeVirWithSpacer {
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
 
     my $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
+    my $start = $virtual->{$pieceNumber}->{'pieceBeg'};
+    my $end = $virtual->{$pieceNumber}->{'pieceEnd'};
 
     my $orderNum = $pieceNumber == 1 ? $pieceNumber : $pieceNumber + 2;
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$orderNum,$start,$end,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
-    my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
+    my $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$start,($end - $start + 1));
+
+
     $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
 
     $sequence .= $pieceSeq;
@@ -428,7 +432,7 @@ sub makeVirWithSpacer {
 
     $length = length($sequence);
 
-    $seqPieceObj = $self->makeSequencePiece('',$orderNum,$length,$gapObj);
+    $seqPieceObj = $self->makeSequencePiece('',$orderNum,1,$spacer,$length,$gapObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -444,26 +448,29 @@ sub makeVir {
   my ($self,$virtualSeq,$virtual,$pieceDbRlsId,$gapSOId) = @_;
 
   my $sequence = "";
-
   my $pieceSeq;
 
   foreach my $pieceNumber (sort {$a<=>$b} keys %$virtual) {
     my $pieceObj;
+    my ($start,$end);
 
     if ($virtual->{$pieceNumber}->{'pieceType'} =~ /[NU]/){
       my $gapLength = $virtual->{$pieceNumber}->{'gaplength'};
       $pieceObj = $self->getGapObj($virtual->{$pieceNumber}->{'gaplength'},$gapSOId);
       $pieceSeq = $pieceObj->getSequence();
+      $start = 1;
+      $end = $gapLength;
     }
     else {
       $pieceObj = $self->getPieceObj($virtual,$pieceNumber,$pieceDbRlsId);
-      $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$virtual->{$pieceNumber}->{'pieceBeg'},$virtual->{$pieceNumber}->{'pieceEnd'});
-      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';
-    }
+      $start = $virtual->{$pieceNumber}->{'pieceBeg'};
+      $end = $virtual->{$pieceNumber}->{'pieceEnd'};
+      $pieceSeq = $pieceObj->getSubstrFromClob('sequence',$start,($end - $start + 1));
+      $pieceSeq = Bio::PrimarySeq->new(-seq => $pieceSeq)->revcom->seq() if $virtual->{$pieceNumber}->{'strand'} eq '-';    }
 
     my $length = length($sequence);
 
-    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$length,$pieceObj);
+    my $seqPieceObj = $self->makeSequencePiece($virtual->{$pieceNumber}->{'strand'},$pieceNumber,$start,$end,$length,$pieceObj);
 
     $virtualSeq->addChild($seqPieceObj);
 
@@ -506,12 +513,14 @@ sub getGapObj {
 }
 
 sub  makeSequencePiece {
-  my ($self, $orientation,$pieceNumber,$offset,$pieceObj) = @_;
+  my ($self, $orientation,$pieceNumber,$start,$end,$offset,$pieceObj) = @_;
 
   my $pieceId = $pieceObj->getId();
 
   my $seqPiece = GUS::Model::DoTS::SequencePiece->new({sequence_order => $pieceNumber,
 						       strand_orientation => $orientation,
+						       start_position => $start,
+						       end_position => $end,
 						       distance_from_left => $offset,
 						       piece_na_sequence_id => $pieceId});
 

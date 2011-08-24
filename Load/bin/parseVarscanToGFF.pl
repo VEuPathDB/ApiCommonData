@@ -15,7 +15,7 @@ my $minDepth = 3;
 
 &GetOptions("file|f=s" => \$file, 
             "percentCutoff|pc=i"=> \$percentCutoff,
-            "pvalueCutoff|pvc=i"=> \$pvalueCutoff,
+            "pvalueCutoff|pvc=s"=> \$pvalueCutoff,
             "depthCutoff|dc=i"=> \$depthCutoffMult,
             "minDepth|md=i"=> \$minDepth,
             "output|o=s"=> \$output,
@@ -131,10 +131,10 @@ sub getAlleles {
   my @alleles;
   ##make a reference entry if > $depthCutoff ... how can we determine p value .. don't really have one!
   ## could use the minimum pvalue ...
-  push(@alleles,"$strain:$f->[2]:$cov:".(int($f->[4] / $cov * 1000) / 10).":$f->[9]:$minPvalue") if $f->[4] / $cov * 100 >= $percentCutoff;
-  push(@alleles,"$strain:".&getAllele($f).":$cov:".(int($f->[5] / $cov * 1000) / 10).":$f->[10]:$f->[11]") if $f->[5] / $cov * 100 >= $percentCutoff;
+  push(@alleles,"$strain:$f->[2]:$cov:".(int($f->[4] / $cov * 1000) / 10).":$f->[9]:$minPvalue") if $f->[4] / $cov * 100 >= $percentCutoff && $f->[11] <= $pvalueCutoff;
+  push(@alleles,"$strain:".&getAllele($f).":$cov:".(int($f->[5] / $cov * 1000) / 10).":$f->[10]:$f->[11]") if $f->[5] / $cov * 100 >= $percentCutoff && $f->[11] <= $pvalueCutoff;
   foreach my $l (@{$lines}){
-    push(@alleles,"$strain:".&getAllele($l).":$cov:".(int($l->[5] / $cov * 1000) / 10).":$l->[10]:$l->[11]") if $l->[5] / $cov * 100 >= $percentCutoff;
+    push(@alleles,"$strain:".&getAllele($l).":$cov:".(int($l->[5] / $cov * 1000) / 10).":$l->[10]:$l->[11]") if $l->[5] / $cov * 100 >= $percentCutoff && $l->[11] <= $pvalueCutoff;
   }
   return @alleles;
 }

@@ -39,7 +39,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 41684 $',
+                     cvsRevision       => '$Revision: 42027 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -879,11 +879,12 @@ sub mapToNASequence {
   my ($self, $naFeatureId, $pepStart, $pepEnd) = @_;
   my $naLocations = [];
 
-  my $exons = $self->getExons($naFeatureId) or $self->error("no exons for na_feature_id '$naFeatureId'\n");
+  # This should really be getExonsWithCodingSequence
+  my @exons = @{$self->getExons($naFeatureId)} or return;
 
   # CDS in chromosome coordinates
   my $cds = new Bio::Location::Split;
-  foreach (@{$exons}) {
+  foreach (@exons) {
     $cds->add_sub_Location(new Bio::Location::Simple(
                                                      -start  =>  @$_[0],
                                                      -end    =>  @$_[1],
@@ -989,6 +990,10 @@ EOF
   }
 
   for my $exon (@exons) {
+    if ($exon->isValidAttribute('coding_start') && $exon->isValidAttribute('coding_end')){
+      next unless($exon->getCodingStart() && $exon->getCodingEnd());
+    }
+
     my ($exonStart, $exonEnd, $exonIsReversed) = $exon->getFeatureLocation();
 
     my $codingStart = ($exon->isValidAttribute('coding_start')) ?
@@ -1108,10 +1113,10 @@ sub undoTables {
   qw(
     ApiDB.MassSpecSummary
     DoTS.AALocation
+    DoTS.PostTranslationalModFeature
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    DoTS.PostTranslationalModFeature
     );
 }
 

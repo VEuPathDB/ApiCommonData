@@ -1691,7 +1691,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
              edr.version AS database_version, ed.name AS database_name
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE edr.external_database_id = ed.external_database_id) db,
-     (SELECT piece_na_sequence_id, 0 as is_top_level
+     (SELECT distinct piece_na_sequence_id, 0 as is_top_level
       FROM dots.SequencePiece) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
@@ -1706,6 +1706,16 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
     <sql>
       <![CDATA[
 create unique index pk_SeqAttr_&1 ON SequenceAttributes&1 (lower(source_id), project_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create unique index SeqAttr_source_id&1 ON SequenceAttributes&1 (source_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create unique index SeqAttr_naseqid&1 ON SequenceAttributes&1 (na_sequence_id)
       ]]>
     </sql>
   </tuningTable>
@@ -1835,6 +1845,12 @@ tablespace indx
       <![CDATA[
 create index Snp_Freq_ix&1
        ON SnpAttributes&1 (dataset,strain_count,major_allele_frequency,minor_allele_frequency)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index SnpAttr_ds_org_ix&1 on snpattributes&1 (dataset,organism,na_feature_id)
 tablespace indx
       ]]>
     </sql>
@@ -2329,6 +2345,30 @@ UNION
     <sql>
       <![CDATA[
 CREATE INDEX featso_id_ix&1 ON FeatureSo&1(na_feature_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+  <tuningTable name="SnpStrains">
+    <internalDependency name="SequenceAttributes"/>
+    <externalDependency name="dots.SnpFeature"/>
+    <externalDependency name="dots.SeqVariation"/>
+    <sql>
+      <![CDATA[
+       CREATE TABLE SnpStrains&1 NOLOGGING AS
+         select distinct sv.strain,sa.organism,sf.external_database_release_id,d.name as extdb_name
+         from dots.snpfeature sf, dots.seqvariation sv, APIDBTUNING.sequenceattributes sa,
+         SRES.externaldatabase d, SRES.externaldatabaserelease rel
+         where sa.na_sequence_id = sf.na_sequence_id
+         and sf.na_feature_id = sv.parent_id
+         and sf.external_database_release_id = rel.external_database_release_id
+         and rel.external_database_id = d.external_database_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE INDEX SnpStrains_ix&1 ON SnpStrains&1(extdb_name,external_database_release_id,strain,organism)
 tablespace indx
       ]]>
     </sql>
@@ -3045,13 +3085,13 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="ExpressionGraphs">
+  <tuningTable name="ProfileGraphs">
     <internalDependency name="GeneAttributes"/>
     <externalDependency name="apidb.Profile"/>
     <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
-CREATE TABLE ExpressionGraphs&1 NOLOGGING AS
+CREATE TABLE ProfileGraphs&1 NOLOGGING AS
 select all_gg.source_id, 
        all_gg.main_profile_name as profile_name, 
        all_gg.project_id, 
@@ -3062,6 +3102,16 @@ from
     from
     (
     -- ToxoDB --
+    select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    Union
+    select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
+          '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION 
     select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
           '' as main_profile_name,
            'ToxoDB' as project_id
@@ -3103,6 +3153,11 @@ from
     from dual
     UNION
     select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    UNION
+    select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
@@ -3190,12 +3245,11 @@ from
     UNION
 
     --TriTrypDB --
---  -- commented out , as this graph has moved to 'Phenotype' section of gene page.--
---    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
---           '' as main_profile_name,
---           'TriTrypDB' as project_id
---    from dual
---    UNION
+    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
+    UNION
     select 'Linfantum promastigote time-course biorep01' as profile_name,
            '' as main_profile_name,
            'TriTrypDB' as project_id
@@ -3284,23 +3338,44 @@ group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id
     </sql>
     <sql>
       <![CDATA[
-create index ExpGraph_sourceId_idx&1 ON ExpressionGraphs&1 (source_id)
+create index ProfGraph_sourceId_idx&1 ON ProfileGraphs&1 (source_id)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
 
 
-  <tuningTable name="ExpressionGraphDescrip">
+  <tuningTable name="ProfileGraphDescrip">
+    <internalDependency name="GeneAttributes"/>
+    <externalDependency name="apidb.Profile"/>
+    <externalDependency name="apidb.ProfileSet"/>
     <sql>
       <![CDATA[
-CREATE TABLE ExpressionGraphDescrip&1 NOLOGGING AS
-select mainOpen, dataOpen, order_num, profile_name, module, species, display_name, description, x_axis, y_axis, visible_parts,attribution
+CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
+select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, psorg.species, psorg.organism
 from (
+
 -- ToxoDB
+select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
+       'Roos::ToxoLineages::Ver1' as module,
+       'Tachyzoite differential expression profiling of three archetypal T. gondii lineages' as display_name,
+       'Determination of strain-specific differential expression by profiling wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of <i>T. gondii</i>' as description,
+       'Strain' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3)' as y_axis,
+        9 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rma' as visible_parts,
+        'ToxoStrainsMicroarrayPercentile' as dataTable,
+      'expression' as type,
+        'Tg_3_Archetypal_Lineages_ExpressionData' as attribution
+    from dual
+
+    UNION
+
+
 select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
        'Roos::TzBz' as module,
-       'Toxoplasma gondii ME49' as species,
        'Bradyzoite Differentiation (Multiple 6-hr Time Points)' as display_name,
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type I RH lacking HXGPRT and UPRT. A total of three experimental conditions were used to promote in vitro bradyzoite differentiation: Alkaline conditions (D10 media adjusted to pH 8.2), CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2), and sodium nitroprusside (SNP) exposure (D10 with 100uM SNP). All conditions were applied 6hr post-inoculation and each media was exchanged every twelve hours post-inoculation.' as description,
        'Time in hours' as x_axis,
@@ -3309,13 +3384,14 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Brady_Time_Series' as attribution
     from dual
 
     UNION
 select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
        'Boothroyd::TzBz' as module,
-       'Toxoplasma gondii ME49' as species,
        'Bradyzoite Differentiation (3-day time series)' as display_name,
        'T. gondii Type II Prugniaud parasites lacking HXGPRT were inoculated at and MOI of 2 and differentiated in RPMI 1640 lacking sodium bicarbonate, low FCS, and high pH (8.1). RNA was collected from either tachyzoite (2 days post inoculation before monolayer lysis) or bradyzoite cultures (2-days, 3-days and 4-days of induction). ' as description,
        'Time in days' as x_axis,
@@ -3324,13 +3400,14 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Matt_Tz-Bz_Time_Series' as attribution
     from dual
 
     UNION
 select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
        'Dzierszinski::TzBz' as module,
-       'Toxoplasma gondii ME49' as species,
        'Bradyzoite Differentiation (Extended time series)' as display_name,
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type III VEG. CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2) was used to induce in vitro bradyzoite differentiation. ' as description,
        'Time in days' as x_axis,
@@ -3339,13 +3416,14 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Brady_Time_Series' as attribution
     from dual
 
     UNION
 select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
        'White::TzBz' as module,
-       'Toxoplasma gondii ME49' as species,
        'Bradyzoite Differentiation (Single Time-Point)' as display_name,
        'Bradyzoite genes were induced following a 48 hour treatment with compound 1 or alkaline condition. Strains used in this study: Type I-GT1, Type II-Me49B7 and Type III-CTG.' as description,
        'Treatment/Condition' as x_axis,
@@ -3354,6 +3432,8 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Compound1_pH_avg_pct' as attribution
     from dual
 
@@ -3361,7 +3441,6 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
 
    select 'M.White Cell Cycle Microarray profiles' as profile_name,
        'White::CellCycle' as module,
-       'Toxoplasma gondii ME49' as species,
        'Cell Cycle' as display_name,
        'The RH<sup>TK+</sup> strain used in this analysis expresses a fusion protein of herpes simplex thymidine kinase and chloramphenicol acetyltransferase (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  Synchronization of RH<sup>TK+</sup> parasites with thymidine followed published protocols (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  <b>In this synchrony model parasites released from thymidine immediately progress through S, mitosis and then cytokinesis</b>.  The first G1 phase is the start of the next cycle.  All time points represent microarray hybridization results from duplicate, independent biological replicates.  <br><br><b>The R0-12 time course represents ~1-2/3 divisions</b> with tachyzoite cell cycle phase repeats R1,R2=R8,R9, R3=R10, R4=R11, and R5=R12 (<a href="http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0012354">Behnke et al., 2010</a>)' as description,
        'Time point in hours' as x_axis,
@@ -3370,13 +3449,14 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
     from dual
 
 UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
        'Reid::TgME49RnaSeq' as module,
-       'Toxoplasma gondii ME49' as species,
        '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
@@ -3386,13 +3466,14 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' 
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
 UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
        'Reid::TgVEGRnaSeq' as module,
-       'Toxoplasma gondii VEG' as species,
        '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
@@ -3402,13 +3483,14 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as 
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'TgVEG_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
 UNION
 select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
        'Reid::NcRnaSeq' as module,
-       'Neospora caninum' as species,
        '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
@@ -3418,13 +3500,14 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
 from dual
 
 UNION
 select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
        'Boothroyd::TgME49M4' as module,
-       'Toxoplasma gondii ME49' as species,
        'Transcriptome analsysis of oocyst, tachyzoite, and bradyzoite development in the type II strain M4' as display_name,
        'There were three primary objectives to the overall experiment. <br/> I. Describe the transcriptome of the oocyst through its development beginning with the freshly excreted, unsporulated oocyst at "Day 0" to a fully sporulated and mature oocyst at "Day 10" and including a mid-sporulation timepoint at "Day 4".  <br/>II. Compare the transcriptomes of <i>in vitro</i> vs. <i>in vivo</i> derived bradyzoites.<br/> III. Compare expression data from three life stages (oocyst, bradyzoite and tachyzoite) from the same parasite isolate, M4, which has been been characterized as a Type II strain.' as description,
        '1. Time post infection or sporulation (i.e. 4d vs 8d Bradyzoites and 4d vs 10d sporulated oocyst). <br/>2. Developmental form (Oocyst, Tachyzoite, Bradyzoite). <br/> 3. Bradyzoite samples - obtained <i>in vitro</i> vs. <i>in vivo</i>' as x_axis,
@@ -3433,15 +3516,58 @@ select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_na
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'tgME49Boothroyd_RSRC' as attribution
 from dual
+
+    UNION
+select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
+       'Sullivan::GCN5A' as module,
+       'Differential experssion of TgGCN5-A null mutant under alkaline growth conditions compared to wild type' as display_name,
+       'Disruption of the gene encoding for TgGCN5-A in type I RH strain did not produce a severe phenotype under normal culture conditions, but here we show that the TgGCN5-A null mutant is deficient in responding to alkaline pH,a common stress used to induce bradyzoite differentiation in vitro. We performed a genome- wide analysis of the Toxoplasma transcriptional response to alkaline pH stress, finding that parasites deleted for TgGCN5-A fail to up-regulate 74% of the stress response genes that are induced 2-fold or more in wild-type. Using chromatin immunoprecipitation, we verify an enrichment of TgGCN5-A at the upstream regions of genes activated by alkaline pH exposure. The TgGCN5-A knockout is also incapable of up-regulating key marker genes expressed during development of the latent cyst form, and is impaired in its ability to recover from alkaline stress. Complementation of the TgGCN5-A knockout restores the expression of these stress-induced genes and reverses the stress recovery defect.' as description,
+        'There are 4 samples divided based on two criteria
+           1. Strain Type 
+              a. Wild Type: unmodified ME49 strain
+              b. GCN5-A Knockout: ME49 with GCN5-A gene deletion
+           2. Growth Conditions 
+              a. unstressed: samples were grown in standard culture medium
+              b. stressed: samples were grown in alkaline culture medium' as x_axis,
+        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.The RMA values in log2 scale.' as y_axis,
+        254 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Sullivan_GSE22100_GCN5-A_RSRC' as attribution
+from dual
+   
+   UNION
+
+select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+       'Carruthers::IntraExtraDiff' as module,
+       'T.G. Intracelluar v. Extrcelluar Expression' as display_name,
+	   'Three sample types were harvested: extracellular, intracellular 0hr, intracellular 2hr. 2 replicates each. Expression for >80% of the regulated genes exhibits a steady downregulation during invasion.' as description,
+       'Sample Type
+            1. Extracellular: Harvested from outside the cell, pre-invasion
+            2. Intracellular_0hr: Harvested from inside the cell, shortly after invasion
+            3. Intracellular_2hr: Harvested from inside the cell, 2 hours after invasion' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Carruthers_GSE20480_RSRC' as attribution
+    from dual
 
     UNION
 
 -- GiardiaDB --
 select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
        'Hehl::Stress1' as module,
-       'Giardia Assemblage A isolate WB' as species,
        'Stress response in Trophozoites - Varying DTT Concentrations and Temperature' as display_name,
        '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated for 30min with varying concentrations of DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
        'Incubation Condition' as x_axis,
@@ -3450,6 +3576,8 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'GL_Spycher_metaData' as attribution
     from dual
 
@@ -3457,7 +3585,6 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
 
 select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
        'Hehl::Stress2' as module,
-       'Giardia Assemblage A isolate WB' as species,
        'Stress response in Trophozoites - Varying Incubation Time' as display_name,
        '<b>Stress Response in Giardia lamblia Trophozoites</b>: Samples were incubated 30min, 60min, 120min at 14.2mM DTT. Each bar represents the average of three 2-channel hybridizations which were performed versus a control sample (ie. Control=Control/Control,...). Cases where the Control/Control is NOT close to 0 is an indication of experimental variation in the spots mapping to this gene.' as description,
        'Incubation Time' as x_axis,
@@ -3466,6 +3593,8 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'GL_Spycher_metaData_2' as attribution
     from dual
 
@@ -3473,7 +3602,6 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
 
 select 'Hehl encystation expression profile' as profile_name,
        'Hehl::Encystation' as module,
-       'Giardia Assemblage A isolate WB' as species,
        'Encystation in Trophozoites' as display_name,
        'Two protocols were used to encyst parasites <i>in vitro</i>: the standard 2-step, and a lipid (cholesterol) starvation protocol. Encystation-specific changes of gene expression were analyzed at 45 minutes, 3 and 7 hours post induction.' as description,
        'Encystation Time' as x_axis,
@@ -3482,6 +3610,8 @@ select 'Hehl encystation expression profile' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'G.lamblia_Hehl_encystation_Array_Profiles' as attribution
     from dual
 
@@ -3489,7 +3619,6 @@ select 'Hehl encystation expression profile' as profile_name,
 
 select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
        'Ringqvist::WbClone' as module,
-       'Giardia Assemblage A isolate WB' as species,
        'Transcriptional changes in <i>G. intestinalis</i> during host-parasite interactions ' as display_name,
        'Interaction experiments were performed between G. intestinalis GL50803 and 21-day differentiated Caco-2 cells. Trophozoites were separated and collected from the interaction cultures at 1.5 h, 6 h and 18 h time points.  In addition, trophozoites of the same time points were harvested from standard TYI-S-33 cultures and from cultures in only interaction medium (DMEM).  Microarrays of all samples and time points were performed with a common reference, a pool of trophozoites from the 0 hr  time point of three replicate experiments. At least two 2-channel arrays were performed for each time point.' as description,
        'Time point in hours' as x_axis,
@@ -3498,6 +3627,8 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'G.intestinalis_Troell_Svard_Array_Profiles' as attribution
     from dual
 
@@ -3505,7 +3636,6 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
 
 select 'giar sage tag frequencies sense' as profile_name,
        'Sage::McArthur' as module,
-       'Giardia Assemblage A isolate WB' as species,
        'Curated SAGE Data (Sense and Antisense Tags)' as display_name,
        'Serial Analysis of Gene Expression (SAGE) was used to monitor gene expression throughout the Giardia life cycle in vitro.  This data is based on the original raw SAGE tag data and was extensively manually curated.' as description,
        'Time points post excystation or encystation are indicated in hours.<br />S1 (stage 1) = acidic condition to mimic the stomach.<br />S2 (Stage 2) = trypsin and slight alkaline conditions to mimic the small intestine.' as x_axis,
@@ -3514,6 +3644,8 @@ select 'giar sage tag frequencies sense' as profile_name,
         'TRUE' as mainOpen,
         'TRUE' as dataOpen,
        'sage' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'GiardiaSageTagArrayDesign,GiardiaSageTagFreqs' as attribution
     from dual
 
@@ -3528,7 +3660,6 @@ select 'giar sage tag frequencies sense' as profile_name,
 
 select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
        'Su::CQTreatment' as module,
-       'Plasmodium falciparum' as species,
        'Expression and genomic changes after exposing drug-selected mutants to short term CQ treatment in <i>P. falciparum</i>' as display_name,
        'Mutations in PfCRT confer chloroquine (CQ) resistance in P. falciparum. Point mutations in the homolog of the mammalian multidrug resistance gene (pfmdr1) can also modulate the levels of CQ response. However, parasites with the same pfcrt and pfmdr1 alleles exhibit a wide range of drug sensitivity, suggesting that additional genes contribute to levels of CQ resistance (CQR).<br>3 isogenic lines which have different drug resistance profiles corresponding to unique mutations in the pfcrt gene (106/1K76, 106/176I, and 106/76I-352K) were used to study changes in gene expression with and without chloroquine  and genomic variations, i.e. copy number (CN) changes.' as description,
        'isogenic line' as x_axis,
@@ -3537,6 +3668,8 @@ select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
        'E-GEOD-10022_array' as attribution
 from dual
 
@@ -3544,7 +3677,6 @@ UNION
 
 select 'Profiles of E-TABM-438 from Cowman' as profile_name,
        'Cowman::Sir2KO' as module,
-       'Plasmodium falciparum' as species,
        'Transcription profiling of wild type, Pfsir2A knock-out and Pfsir2B knock-out <i>P. falciparum</i> intra-erythrocytic stages' as display_name,
        'Pfsir2A and Pfsir2B KOs expression profiling in intra-erythrocytic stages' as description,
        'intra-erythrocytic stage' as x_axis,
@@ -3553,6 +3685,8 @@ select 'Profiles of E-TABM-438 from Cowman' as profile_name,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
        'New_Cowman_Sir2_KO' as attribution
 from dual
 
@@ -3563,7 +3697,6 @@ UNION
 
 select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
        'PfRNASeq::Ver1' as module,
-       'Plasmodium falciparum' as species,
        '<i>P.falciparum</i> RNA Sequence Profiles - Intraerythrocytic Cycle' as display_name,
        'Illumina-based massively parallel sequencing was used to gain new insight into the transcriptome (RNA-Seq) of the human malaria parasite, <i>P. falciparum</i>. Using data collected at seven time points during the intraerythrocytic developmental cycle, we (i) detect novel gene transcripts; (ii) correct hundreds of gene models; (iii) propose alternative splicing events; and (iv) predict 5 prime and 3 prime untranslated regions.' as description,
        'Hours in the intraerythrocytic developmental cycle' as x_axis,
@@ -3572,6 +3705,8 @@ select 'Profiles of P.falciparum Newbold mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Pfalciparum_RNA_Seq' as attribution
 from dual
 
@@ -3579,7 +3714,6 @@ from dual
 UNION
 select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
        'Stunnenberg::PfRBCRnaSeq' as module,
-       'Plasmodium falciparum' as species,
        '<i>P. falciparum</i> post infection (RBC) RNA Seq (time series)' as display_name,
        'Total RNA was collected from one synchronous 3D7 parasite population at 5, 10, 15, 20, 25, 30, 35 and 40 hours post-invasion of intraerythrocytic development. mRNAs were enriched using polyA-selection (Oligotex dT, Qiagen), fragmented and converted to double-stranded cDNA. All samples were prepared for Illumina sequencing using a customized bias-free sample preparation protocol and sequenced for 76bp from one side of each fragment on an Illumina GAII machine. The scaled graph represents the expression level scaled to the amount of RNA isolated / nucleus to normalize for difference in total RNA produced at different stages of the iRBC cycle. More detail about the scaling can be found on the <a href="showQuestion.do?questionFullName=InternalQuestions.GenesByRNASeqEvidence">P.f. post infection (RBC) RNA-seq time series (fold change)</a> query page.' as description,
        'Time Point post infection' as x_axis,
@@ -3588,6 +3722,8 @@ select 'Profiles of P.falciparum Stunnenberg mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'RNASeqCoveragePlot_Stunnenberg' as attribution
 from dual
 
@@ -3595,7 +3731,6 @@ UNION
 
 select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
        'Duffy::PfRnaSeq' as module,
-       'Plasmodium falciparum' as species,
        '<i>P. falciparum</i> NSR Sequence Coverage' as display_name,
        'NSR-seq was used to analyze the transcriptome of an unsynchronized in vitro culture of human malaria parasite P. falciparum reference strain 3D7, and two pools of field isolates from malaria-infected pregnant women and children adapted to short-term in vitro culture and matched by the percentage of rings, trophozoites and schizonts.' as description,
        'Parasites from pregnant women, Parasites from children, 3D7' as x_axis,
@@ -3604,6 +3739,8 @@ select 'Profiles of P.falciparum duffy mRNA Seq data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'RNASeqCoveragePlot_Patrick_Duffy' as attribution
 from dual
 UNION
@@ -3611,7 +3748,6 @@ UNION
 
 select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'DeRisiHalfLife::Combined' as module,
-       'Plasmodium falciparum' as species,
        'mRNA half-lives during intraerythrocytic development - 3D7 post treatment with actD' as display_name,
        'Intraerythrocytic development of Plasmodium 3d7 with the addition of actinomycin D (actD), to achieve transcription inhibition. The mRNA half-life data was obtained from the supplementary material provided with the publication.  Normalized expression levels were calculated for each probe and then averaged for every gene.' as description,
        'Erythrocytic lifecycle stages for barplot or time in minutes' as x_axis,
@@ -3620,6 +3756,8 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
        'half_life,expr_val' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
        'GSE8099_metaData' as attribution
 from dual
 UNION
@@ -3627,7 +3765,6 @@ UNION
 -- AmoebaDB --
 select 'EhistolyticaAffyProfiles' as profile_name,
        'Singh::SinghEhTimeSeries' as module,
-       'Entamoeba histolytica' as species,
        '<i>E. histolytica</i> Microarray Profiles (Gene expression in <i>E. histolytica</i> cysts and trophozoites)' as display_name,
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Gene expression in Entamoeba histolytica cysts and trophozoites:</b><br>RNA was isolated from <i>E. histolytica</i> parasites recently derived from human patients and grown in xenic culture (Robinson''s media) for 1-8 weeks. These cultures contained a mixture of trophozoites and cysts (as assayed by staining with calcofluor). Two different strains, isolated from different patients, were used. Gene expression in these strains was compared to gene expression in multiple <i>E. histolytica</i> strains (HMI:IMSS, Rahman and 200:NIH)  of pure trophozoites, which had been grown in axenic culture (TYI-S-33)for > 10 years, using a full genome Affymetrix-platform microarray. Multiple lines of evidence suggest that many genes differentially expressed between these two conditions (recent isolates vs. long term lab growth) are developmentally regulated.<br><br>All samples were isolated using Trizol and all except the clinical/cyst samples were cleaned up with the Qiagen RNAeasy kit (those samples had very low RNA levels). Samples GSM154008 (HM1-rep 3) and GSM154011 (Rahman Rep 3) were amplified using the SPIA protocol (these were also hybed and scanned at VBI- other samples were processed entirely by Stanford PAN facility). Samples GSM154022, GSM154023, and GSM154024 (the clinical/cyst samples) were amplified 2 rounds using the standard affy T7 procedure. All others had sufficient RNA and only underwent the standard affy in vitro transcription labeling protocol.' as description,
        'Strain and lifecycle stage' as x_axis,
@@ -3636,12 +3773,13 @@ select 'EhistolyticaAffyProfiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
 select 'EhistolyticaNugenProfiles' as profile_name,
        'Gilchrist::GilchristEhTimeSeries' as module,
-       'Entamoeba histolytica' as species,
        '<i>E. histolytica</i> Microarray Profiles (Impact of intestinal colonization and invasion on the <i>E. histolytica</i>  transcriptome)' as display_name, 
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Impact of intestinal colonization and invasion on the Entamoeba histolytica  transcriptome:</b><br>An Affymetrix platform gene expression array was designed for this analysis that included probe sets for 9435 open reading frames (ORFs) and 9066 5'' and 3'' flanking regions. Transcripts were detected for > 80% of all ORFs. A total of 523 transcripts (5.2% of all <i>E. histolytica</i> genes) were significantly changed in amebae isolated from the intestine on Days 1 and 29 after infection: 326 and 109 solely on Days 1 and 29, and 88 on both days. Quantitative real-time reverse transcriptase PCR confirmed these changes in 11/12 genes tested using mRNA isolated from an additional six mice.<br><br>HM-1:IMSS and Rahman were not part of this study but have been inlcuded here for comparison' as description,
        'Strain and lifecycle stage' as x_axis,
@@ -3650,13 +3788,29 @@ select 'EhistolyticaNugenProfiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
 --TriTrypDB --
+select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
+       'Horn::TbRNAiRNASeq' as module,
+       'RNAi Target Sequencing - Induced vs Uninduced' as display_name,
+       'RNAi target sequencing coverage at different life cycle stages. <br><br>In this experiment RNAi plasmid library, containing randomly sheared genomic fragments was used to create an inducible library in bloodstream form T. brucei . After transfection, the library was grown under non-inducing and inducing conditions and genomic DNA was isolated from surviving populations.<br><br>Cells carrying RNAi target fragments that negatively impact fitness through dsRNA expression and RNAi-mediated ablation are relatively depleted as the population expands and these changes are reported by the depth of sequence coverage relative to the uninduced control (No Tet).' as description,
+       'Stage/Sample' as x_axis,
+       'Coverage - log 2 (RPKM)' as y_axis,
+        179 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'cds_rpkm,transcript_rpkm' as visible_parts,
+        'RNAiPhenotypingCoverage' as dataTable,
+      'phenotype' as type,
+        'Tbrucei_RNAiSeq_Horn_RSRC' as attribution
+from dual
+UNION
 select 'Linfantum promastigote time-course biorep01' as profile_name,
        'MylerLinfantum::Ver1' as module,
-       'Leishmania infantum' as species,
        'Differentiation Time Series: Promastigote to Amastigote' as display_name,
        'Time series data are shown as Fold Induction compared to the 0 hr.  Positive values are upregulated relative to the 0 hour and negative values are downregulated relative to the 0 hour.  The Percentile graph (below) shows the level of expression relative to other genes for the same experiment.  Values in the data table are log2(R/G)' as description,
        'Time point in hours' as x_axis,
@@ -3665,12 +3819,13 @@ select 'Linfantum promastigote time-course biorep01' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Linfantum_promastigote_ExpressionData' as attribution
 from dual
 UNION
 select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
        'Papadopoulou::LiAxenicVsIntracellular' as module,
-       'Leishmania infantum' as species,
        'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as display_name,
        'Comparison of Axenic and Intracellular Amastigotes (with Promastigotes) using transcription profiling' as description,
        'The bars represent a direct comparison of <i>Intercellular Amastigotes vs. Promastigotes (IC.A vs P)</i> <b>AND</b> <i>Axenic Amastigotes vs. Promastigotes (Ax.A vs P)</i>' as x_axis,
@@ -3679,12 +3834,13 @@ select 'Profiles of Linfantum axenic and intracellular amastigote array data' as
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'L.infantum_Papadoupou_Amastigote_Array_PaGE_Analysis' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
        'Clayton::TbTimeSeries' as module,
-       'Trypanosoma brucei' as species,
        'Transcriptome of in vitro cultured <i>T. brucei</i> during bloodstream form to procyclic differentiation' as display_name,
        'Gene Expression during in vitro differentiation from slender bloodstream forms to stumpy and procyclic forms (click on data sources for additional information about this study).  <br>
 				Time series data are shown as <u>Fold Induction</u> compared to established procyclic parasites as the common reference (upper graph).  Positive values are upregulated relative to the reference and negative values are downregulated relative to the reference.  <br>
@@ -3696,12 +3852,13 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_Christine_Clayton_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
        'Matthews::TbDifferentiationSeries' as module,
-       'Trypanosoma brucei' as species,
        'Dynamic mRNA Expression analysis of cells undergoing synchronous life-cycle differentiation in <i>T. brucei</i>' as display_name,
        'mRNA expression profiles of <i>T. brucei</i> slender and stumpy bloodstream stages, as well as during the transition of the stumpy population to the procyclic life-cycle stage. Data
 				represents values derived from 5 parallel biological replicates. (click on data sources for additional information about this study).<br>
@@ -3714,12 +3871,13 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_Matthews_differentiation_series_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
        'Parsons::TbDevelopmentalStages' as module,
-       'Trypanosoma brucei' as species,
        'Widespread variation in transcript abundance within and across developmental stages of <i>T. brucei</i>' as display_name,
        'Whole genome comparison of RNA levels for both protein coding genes and structural RNAs in five different life-cycle stages: cultured bloodstream form (bf), in vivo slender bloodstream form (sl), in vivo stumpy bloodstream form (st), log-phase procyclic culture form (pf_log) and stationary-phase procyclic culture form (pf_stat).  Data is averaged from three biological replicas (click on data sources for additional information about this study).<br>
 <u>RMA normalized</u> (log base 2) values are plotted for each stage in the top graph.<br>
@@ -3732,12 +3890,13 @@ The data table above contains the actual expression values.  <b>For this experim
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
        'Tarleton::TcTranscriptome' as module,
-       'Trypanosoma cruzi' as species,
        'Transcriptome analysis of the <i>T. cruzi</i> life-cycle' as display_name,
        'RNA from 3 biological replicates from a single time point in each stage were subjected to DNA microarrays containing probes for the complete, annotated <i>T. cruzi</i> genome (click on data sources for additional information about this study). <br>
 				Data is plotted as <u>Fold Induction</u> as compared to a control sample consisting of an equal mixture of all four life-cycle stages (Upper graph). <br>
@@ -3749,12 +3908,13 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tcruzi_Tarleton_Rick_RSRC' as attribution
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'Beverley::LmThreeDevStages' as module,
-       'Leishmania major' as species,
        'Transcription profiling of three developmental stages of Leishmania major - earlylLog, PNA- metacyclics and mouse lesion derived amastigotes' as display_name,
        'Comparison of three developmental stages (Early Log, PNA- metacyclics and Mouse lesion Derived Amastigotes) of L.major FV1.' as description,
        'The bars represent a direct comparison of <i>Mouse Lesion Derived Amastigotes vs. Early Log Procyclic Promastigotes (A v P)</i> <b>OR</b> <i>PNA - Metacyclic Promastigotes vs. Early Log Procyclic Promastigotes (M v P)</i>.  Data for each biologial replicate (3) for each comparison are shown.  The expression values provided in the data table are log2(A/P) and log2(M/P) for each of the replicates.' as x_axis,
@@ -3763,12 +3923,13 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Lmajor_Beverley_Steve_LifeStages_RSRC' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
        'Estevez::Drbd3Depletion' as module,
-       'Trypanosoma brucei' as species,
        'Effect of TbDRBD3 depletion on procyclic <i>T. brucei</i> transcriptome' as display_name,
        'In order to analyze whether TbDRBD3 has a role in the regulation of mRNA turnover, the transcriptome of procyclic trypanosomes depleted of TbDRBD3 was compared to that of uninduced cells using hybridizations of genomic microarrays. RNA samples were isolated from cells harvested after 48 hours of induction with tetracycline. At this point, cell growth was barely affected and trypanosomes remained highly motile. 15 microg of RNA were reverse-transcribed in the presence of 100 ng of oligo(dT)12-18, 0.25 mM dATP, 0.25 mM dTTP, 0.25 mM dGTP, 0.05 mM dCTP, 0.05 mM Cy3- or Cy5-dCTP, 50 mM Tris-HCl, pH 8.3, 75 mM KCl, 3 mM MgCl2, 5 mM DTT, 40 U of RNaseOUT (Invitrogen) and 400 U of Superscript III reverse transcriptase (Invitrogen). Reactions were incubated for 3 hours at 50 degrees C, stopped by heating at 70 degrees C for 15 min and treated with 5 U of RNase H for 20 min at 37 degrees C. cDNA was purified using the MinElute kit (Qiagen), ethanol precipitated and resuspended in hybridization buffer. Genomic T. brucei microarray glass slides containing ca. 24,000 independent random genomic clones (Brems et al., 2005) were pre-hybridized and hybridized as described (Diehl et al., 2002). Four hybridizations (two biological replicates with a dye swap each) were analyzed.' as description,
        'Direct comparison; 2 biological replicates' as x_axis,
@@ -3777,12 +3938,13 @@ select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_Estevez_Procyclic_TbDRBD3_Depletion_RSRC_Profiles' as attribution
 from dual
 UNION
 select 'T.brucei Archer Stuart Cell Cycle RNA Sequence min-Profiles' as profile_name,
        'Archer::TbRnaCellCyc' as module,
-       'Trypanosoma brucei' as species,
        '<i>T. brucei</i> Cell Cycle Stages RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale' as description,
        'Cell Cycle Stages: Early G1 (0.5 hrs), Late G1 (3 hrs), S (5.5 hrs) and G2 (7.25 hrs)' as x_axis,
@@ -3792,12 +3954,13 @@ select 'T.brucei Archer Stuart Cell Cycle RNA Sequence min-Profiles' as profile_
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_RNASeq_ArcherStuart_CellCycle_RSRC' as attribution
 from dual
 UNION
 select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
        'Cross::TbRnaSeqBfPf' as module,
-       'Trypanosoma brucei' as species,
        '<i>T. brucei</i> blood and procyclic forms RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale' as description,
        'Cultured Procyclic T. brucei Lister 427 and Cultured Bloodstream T. brucei Lister 427' as x_axis,
@@ -3807,12 +3970,13 @@ select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
 from dual
 UNION
 select 'T. brucei under heat shock array data' as profile_name,
        'Carrington::TbHeatShock' as module,
-       'Trypanosoma brucei' as species,
        '<i>T. brucei</i> heat shock array data' as display_name,
        'Procyclic trypanosomes (strain 427 lister) were grown in culture under standard conditions at 27&deg;C in SDM79 medium with 10% foetal bovine serume (Brun and Schnenberger, 1979), in a gazed incubator (5% CO2). Logarithmically growing procyclic cells (at about 5*10^6 cells/ml, at 27&deg;C) were added to one volume medium that had been heated to 53&deg;C and incubated at 41&deg;C for 60 minutes in a waterbath in a closed tube (41&deg;C sample). The control cells were added to one volume medium at 27&deg;C and also incubated for 60 minutes in a closed tube at 27&deg;C. Cells were harvested and washed once in PBS. The harvesting was done within 8 minutes.' as description,
        'The bar represent the heat shock data versus the control' as x_axis,
@@ -3821,12 +3985,13 @@ select 'T. brucei under heat shock array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'T.brucei_Carrington_HeatShock_Array_PaGE_Analysis' as attribution
 from dual
 UNION
 select 'T. brucei DHH1 wild type array data' as profile_name,
        'Carrington::TbCombined' as module,
-       'Trypanosoma brucei' as species,
        '<i>T. brucei</i> DHH1 wild type and DHH1 DEAD-DQAD mutant array data' as display_name,
        'Induction of the expression of the DHH1 wild type and the DHH1 DEAD:DQAD mutant from pLEW100 for 24 hours (thus, &plusmn; 24 hours Tetracycline). Non-induced cells were used as control.' as description,
        'The bars represent the DHH1 wild type and DHH1 DEAD-DQAD mutant data versus the control' as x_axis,
@@ -3835,12 +4000,13 @@ select 'T. brucei DHH1 wild type array data' as profile_name,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'T.brucei_Carrington_DHH1_induction_wildType_Array_PaGE_Analysis,T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis' as attribution
 from dual
 --UNION
 --select 'Lmajor RNASeq Spliced Leader And Poly A Sites from Myler uniqProfile' as profile_name,
 --       'Myler::LmSpliceSites' as module,
---       'Leishmania major' as species,
 --       'Splice Leader mapping of <i>L. major</i> Friedlin promastigotes by RNASeq' as display_name,
 --       'The coverage values in the graph are displayed in log2 scale' as description,
 --       '<i>L. major</i> Random and Not so random (NSR)' as x_axis,
@@ -3850,12 +4016,13 @@ from dual
 --        'TRUE' as mainOpen,
 --        'FALSE' as dataOpen,
 --       'coverage,pct' as visible_parts,
+--        '' as dataTable,
+--      'expression' as type,
 --        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
 --from dual
 UNION
 select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
        'Nilsson::TbSpliceSites' as module,
-       'Trypanosoma brucei' as species,
        'Splice Leader mapping of <i>T. brucei</i>' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
        '<i>T.brucei</i> bloodstream long slender (Antat1.1), bloodstream short stumpy (Antat1.1), bloodstream (Lister 427), bloodstream procyclic (Antat1.1), and in procyclic forms: Alba 1- (29-13, RNAi), Alba 1+ (29-13, RNAi), Alba 3_4- (29-13, RNAi), Alba 3_4+ (29-13, RNAi)' as x_axis,
@@ -3865,24 +4032,31 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
 UNION
 select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
        'Nilsson::TcSpliceSites' as module, 
-      'Trypanosoma cruzi' as species,
        'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
-       'FILL' as x_axis,
+       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
        'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         290 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
         'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
-)
+) d,   (select distinct ps.name, ga.organism, ga.species
+    from apidb.profile p, apidb.profileset ps, geneattributes ga
+    where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
+    ) psorg
+where d.profile_name = psorg.name
       ]]>
     </sql>
   </tuningTable>
@@ -4157,6 +4331,16 @@ select 'PlasmoDB' as project_id,
        'Pyoelii_LiverStage_LS50_RSRC' as extDB_name
 from dual
 UNION
+select 'PlasmoDB' as project_id,
+       'Pf Phosphoproteome' as display_term,
+       'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'PlasmoDB' as project_id,
+       'Pf Total Proteome' as display_term,
+       'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC' as extDB_name
+from dual 
+UNION
 select 'TrichDB' as project_id,
        'T. vaginalis subcellular fraction' as display_term,
        'Hayes-Johnson_Tvag_Proteomics' as extDB_name
@@ -4265,7 +4449,57 @@ UNION
 select 'ToxoDB' as project_id,
        'RH Mass Spec Data (sample G)' as display_term,
        'Moreno DTASelect filter sample G' as extDB_name
+from dual 
+UNION
+select 'ToxoDB' as project_id,
+       'Tg Intracellular Phosphoproteome' as display_term,
+       'Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' as extDB_name
 from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg Intracellular Total Proteome' as display_term,
+       'Tg_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg Purified Phosphoproteome' as display_term,
+       'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg Purified Total Proteome' as display_term,
+       'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg TiO2 Bound Mascot-based Phosphoproteome' as display_term,
+       'Tg_Tonkin_TiO2_Bound_Mascot-based_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg TiO2 Bound Sequest-based Phosphoproteome' as display_term,
+       'Tg_Tonkin_TiO2_Bound_Sequest-based_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Tg TiO2 Unbound Phosphoproteome' as display_term,
+       'Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC' as extDB_name
+from dual 
+UNION
+select 'ToxoDB' as project_id,
+       'TgME49 Oocyst Membrane Proteome' as display_term,
+       'TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'TgME49 Oocyst Cytosol Proteome' as display_term,
+       'TgonME49_BoothroydBowyerOocystCytosol_Proteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'TgME49 Oocyst Walls Proteome' as display_term,
+       'TgonME49_BoothroydBowyerOocystWalls_Proteome_RSRC' as extDB_name
+from dual 
 UNION
 select 'GiardiaDB' as project_id,
        'DTA-Select Filter ' as display_term,
@@ -4457,6 +4691,11 @@ select 'TriTrypDB' as project_id,
        '<i>L. major</i> Exosomes' as display_term,
        'Lmajor_Proteomics_Exosomes_RSRC' as extDB_name
 from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. brucei</i> Palmitoylated Proteome' as display_term,
+       'Tbrucei_Almeida_Palmitoylated_Proteome_RSRC' as extDB_name
+from dual
 )
       ]]>
     </sql>
@@ -4620,16 +4859,15 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="SnpSummary">
-    <externalDependency name="dots.AaFeatureImp"/>
-    <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="dots.NaSequenceImp"/>
-    <externalDependency name="sres.ExternalDatabase"/>
-    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <internalDependency name="SnpAttributes"/>
+    <externalDependency name="dots.TranslatedAAFeature"/>
+    <externalDependency name="dots.GeneFeature"/>
+    <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.SeqVariation"/>
     <sql>
       <![CDATA[
 CREATE TABLE SnpSummary&1 NOLOGGING AS
-SELECT cds_length, na_feature_id, source_id,
+SELECT type,cds_length, na_feature_id, source_id,
        strain_a, strain_b,
        sum(synonymous) as synonymous,
        sum(non_synonymous) as non_synonymous,
@@ -4639,32 +4877,33 @@ SELECT cds_length, na_feature_id, source_id,
 FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
               gf.na_feature_id, gf.source_id,
-              edr.external_database_release_id,
+           --   edr.external_database_release_id,
               SUBSTR(sva.strain, 1, 30) AS strain_a,
               SUBSTR(svb.strain, 1, 30) AS strain_b,
               CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
               CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
-              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop
-       FROM dots.SeqVariation sva, dots.SeqVariation svb, dots.SnpFeature sf,
-            dots.SplicedNaSequence cds, dots.Transcript, dots.GeneFeature gf,
-            dots.TranslatedAaFeature taf, sres.ExternalDatabase ed,
-            sres.ExternalDatabaseRelease edr
-       WHERE ed.name NOT IN ('Pf_Broad_SNPs_RSRC','Broad SNPs', 'Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
-                             'X.Su SNPs','Pf_XSuSnps_RSRC')
+              CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
+              decode(sa.dataset,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type
+       FROM dots.SeqVariation sva, dots.SeqVariation svb, apidbtuning.snpattributes sa,
+            dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
+       WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
+         AND sva.parent_id = sa.na_feature_id
+         AND sva.parent_id = svb.parent_id
          AND sva.strain  < svb.strain
          AND sva.allele != svb.allele
-         AND sva.parent_id = svb.parent_id
-         AND sva.parent_id = sf.na_feature_id
-         AND sf.parent_id = gf.na_feature_id
-         AND sf.external_database_release_id = edr.external_database_release_id
-         AND edr.external_database_id = ed.external_database_id
+         AND (sa.project_id in ('ToxoDB','PlasmoDB','CryptoDB')
+              OR (NVL(sva.allele_percent,100) >= 40
+                  AND NVL(svb.allele_percent,100) >= 40))
+         AND (sa.project_id in ('TriTrypDB','AmoebaDB')
+              OR (NVL(sva.allele_percent,100) >= 80
+                  AND NVL(svb.allele_percent,100) >= 80))
+         AND gf.source_id = sa.gene_source_id
          AND gf.na_feature_id = transcript.parent_id
-         AND transcript.na_sequence_id = cds.na_sequence_id
          AND transcript.na_feature_id = taf.na_feature_id
 )
 GROUP BY cds_length, na_feature_id, source_id,
-         strain_a, strain_b
+         strain_a, strain_b,type
       ]]>
     </sql>
     <sql>
@@ -5888,6 +6127,8 @@ tablespace indx
   select 'Toxoplasma gondii p89' as organism, 'Tgondiip89' as abbreviation from dual union  
   select 'Toxoplasma gondii FOU' as organism, 'TgondiiFOU' as abbreviation from dual union  
   select 'Toxoplasma gondii RUB' as organism, 'TgondiiRUB' as abbreviation from dual union  
+  select 'Gregarina niphandrodes' as organism, 'Gniphandrodes' as abbreviation from dual union  
+  select 'Toxoplasma gondii TgCATBr9' as organism, 'TgondiiTgCATBr9' as abbreviation from dual union 
   -- PiroplasmaDB Annotated Genomes
   select 'Babesia bovis T2Bo' as organism, 'BbovisT2Bo' as abbreviation from dual union  
   select 'Theileria annulata strain Ankara' as organism, 'TannulataAnkara' as abbreviation from dual union
@@ -6001,6 +6242,130 @@ tablespace indx
   </tuningTable>
 
 
+ <!-- Query to group projects by higher level taxonomy --> 
+  <tuningTable name="ProjectIdTaxonLevel">
+    <sql>
+      <![CDATA[
+       CREATE TABLE ProjectIdTaxonLevel&1 NOLOGGING AS
+	 SELECT * FROM( 
+		SELECT 'PlasmoDB' AS project_id,
+			   'Apicomplexa' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'CryptoDB' AS project_id,
+			   'Apicomplexa' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'ToxoDB' AS project_id,
+		           'Apicomplexa' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'PiroplasmaDB' AS project_id,
+		           'Apicomplexa' AS  taxon_node 
+		FROM dual
+		UNION
+		SELECT 'TriTrypDB' AS project_id,
+			   'Kinetoplastida' AS  taxon_node 
+		FROM dual 
+		UNION
+		SELECT 'AmoebaDB' AS project_id,
+			   'Amoebozoa' AS  taxon_node 
+		FROM dual
+		UNION 
+		SELECT 'MicrosporidiaDB' AS project_id,
+		           'Microsporidia' AS  taxon_node 
+		FROM dual
+		UNION
+		SELECT 'GiardiaDB' AS project_id, 
+		           'Diplomonadida' AS taxon_node 
+		FROM dual
+		UNION
+		SELECT 'TrichDB' AS project_id,
+		           'Trichomonadida' AS taxon_node
+		FROM dual)     
+	]]>
+    </sql>
+  </tuningTable>
+
+ <!-- Query to group species by higher level taxonomy --> 
+  <tuningTable name="OrganismTree">
+    <internalDependency name="ProjectIdTaxonLevel"/>
+    <internalDependency name="SequenceAttributes"/>
+    <internalDependency name="TaxonSpecies"/>
+    <externalDependency name="SRES.TaxonName"/>
+    <externalDependency name="SRES.Taxon"/>
+    <sql>
+      <![CDATA[
+        CREATE TABLE OrganismTree&1 NOLOGGING AS
+         SELECT organism,term,parentTerm, internal,project_id
+         FROM (
+           -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
+           SELECT DISTINCT sa.organism AS organism,
+                           sa.organism AS term,
+                           sn.name AS parentTerm,
+                           t.taxon_id AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, Sres.TaxonName tn,
+                SRES.Taxon t, SRES.TaxonName sn, TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           AND t.rank != 'species'
+           UNION
+           -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
+           -- we are getting a row for species level AND for children here
+           SELECT DISTINCT sa.organism AS organism,
+                          sn.name AS term,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          tn.taxon_id AS internal,
+                          sa.project_id AS project_id
+           FROM SequenceAttributes sa, SRES.Taxon t, 
+                SRES.TaxonName tn, SRES.TaxonName sn,
+                TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           UNION 
+           SELECT DISTINCT sa.organism AS organism,
+                          sn.name AS term,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          sn.taxon_id AS internal,
+                          sa.project_id AS project_id
+           FROM SequenceAttributes sa, SRES.Taxon t, 
+                SRES.TaxonName tn, SRES.TaxonName sn,
+                TaxonSpecies ts
+           WHERE tn.name = sa.organism
+           AND  ts.taxon_id = tn.taxon_id
+           AND  sn.taxon_id = ts.species_taxon_id
+           AND t.taxon_id = ts.taxon_id
+           AND sn.name_class = 'scientific name'
+           UNION
+           -- all organisms from sequenceattributes as organism, genus as term, parentterm from taxonlevel
+           SELECT DISTINCT sa.organism AS organism,      
+                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
+                           ptl.taxon_node AS parentTerm,
+                           -1 AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
+           WHERE ptl.project_id = sa.project_id
+           UNION
+           -- all organisms from sequenceattributes as organism, taxon_node as term, parentterm is null
+           SELECT DISTINCT sa.organism AS organism,               
+                           ptl.taxon_node AS term,
+                           '' AS parentTerm,
+                           -1 AS internal,
+                           sa.project_id AS project_id
+           FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
+           WHERE ptl.project_id = sa.project_id
+          )
+    	]]>
+    </sql>
+  </tuningTable>
+
  <!-- Special BLAST  abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationBlast">
     <internalDependency name="OrganismAbbreviationWS"/>
@@ -6048,5 +6413,8 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="Ssgcid" alwaysUpdate="true">
+    <program commandLine="buildSsgcidTT"/>
+  </tuningTable>
 
 </tuningConfig>

@@ -92,7 +92,8 @@ eval {
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
-  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $propFile, $schema, $password);
+  ($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+  $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
@@ -452,6 +453,7 @@ Sample prop file:
   <maxRebuildMinutes>180</maxRebuildMinutes>
   <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
   <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
+  <dblink>alt.login_comment</dblink>
 </tuningProps>
 });
 }

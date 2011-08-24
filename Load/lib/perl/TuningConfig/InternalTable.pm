@@ -54,7 +54,7 @@ sub new {
     my $sql = <<SQL;
        select to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss') as timestamp, definition
        from apidb.TuningTable
-       where name = '$self->{qualifiedName}'
+       where lower(name) = lower('$self->{qualifiedName}')
 SQL
 
     my $stmt = $dbh->prepare($sql);
@@ -312,11 +312,12 @@ sub update {
                       . " -instance '" . $self->{instance} . "'"
                       . " -propfile '" . $self->{propfile} . "'"
                       . " -password '" . $self->{password} . "'"
+                      . " -schema '" . $self->{schema} . "'"
                       . " -project '" . $registry->getProjectId() . "'"
                       . " -version '" . $registry->getVersion() . "'"
-                      . " -logfile '" . ApiCommonData::Load::TuningConfig::Log::getLogfile() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
-                      . " -suffix '" . $suffix . "'";
+                      . " -suffix '" . $suffix . "'"
+                      . " 2>&1 ";
 
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
@@ -367,7 +368,7 @@ sub storeDefinition {
 
   my $sql = <<SQL;
        delete from apidb.TuningTable
-       where name = '$self->{qualifiedName}'
+       where lower(name) = lower('$self->{qualifiedName}')
 SQL
 
   my $stmt = $dbh->prepare($sql);
