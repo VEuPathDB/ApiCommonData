@@ -196,9 +196,11 @@ sub getState {
   }
 
   # try querying the table; if it can't be SELECTed from, it should be rebuilt
+  $dbh->{PrintError} = 0;
   my $stmt = $dbh->prepare(<<SQL);
     select count(*) from $self->{name} where rownum=1
 SQL
+  $dbh->{PrintError} = 1;
   if (!$stmt) {
 	ApiCommonData::Load::TuningConfig::Log::addLog("    query against $self->{name} failed -- update needed.");
 	$needUpdate = 1
