@@ -641,7 +641,7 @@ sub getColumnInfo {
 
       if ($source->{query}) {
 	my $queryString = $source->{query}[0];
-	$tempTable = 'apidb.UnionizerTemp';
+	$tempTable = 'UnionizerTemp';
 	$table = $tempTable;
 	# do dblink-suffix transformation on $queryString
 	$queryString =~ s/@(\w*)\b/\@$1$dblinkSuffix/g;
