@@ -54,7 +54,7 @@ ON apidb.AaSequenceAttribute (max_molecular_weight, aa_sequence_attribute_id);
 
 ------------------------------------------------------------------------------
 
-CREATE TABLE ApidbTuning.NaSequenceAttribute (
+CREATE TABLE Apidb.NaSequenceAttribute (
   na_sequence_attribute_id NUMERIC(10),
   na_sequence_id           NUMERIC(10),
   volatility_score         DECIMAL(100,4),
@@ -83,9 +83,9 @@ CREATE TABLE ApidbTuning.NaSequenceAttribute (
 );
 
 CREATE INDEX NaSeqAttr_revix
-ON ApidbTuning.NaSequenceAttribute (na_sequence_id, na_sequence_attribute_id);
+ON Apidb.NaSequenceAttribute (na_sequence_id, na_sequence_attribute_id);
 
-CREATE SEQUENCE ApidbTuning.NaSequenceAttribute_sq;
+CREATE SEQUENCE Apidb.NaSequenceAttribute_sq;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
