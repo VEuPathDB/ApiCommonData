@@ -8,8 +8,8 @@ AND database_id =
      FROM core.DatabaseInfo
      WHERE name = 'ApiDB');
 
-DROP TABLE ApidbTuning.NaSequenceAttribute;
-DROP SEQUENCE ApidbTuning.NaSequenceAttribute_sq;
+DROP TABLE Apidb.NaSequenceAttribute;
+DROP SEQUENCE Apidb.NaSequenceAttribute_sq;
 
 DELETE FROM core.TableInfo
 WHERE name = 'NaSequenceAttribute'
