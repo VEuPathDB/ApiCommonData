@@ -12,9 +12,9 @@ CREATE TABLE apidb.OrthologGroup (
  NUMERIC_of_match_pairs        NUMERIC,
  aa_seq_group_experiment_id   NUMERIC(12),
  external_database_release_id NUMERIC(10) NOT NULL,
- multiple_sequence_alignment  CLOB,
- biolayout_image              BLOB,
- svg_content                  CLOB,
+ multiple_sequence_alignment  TEXT,
+ biolayout_image              BYTEA,
+ svg_content                  TEXT,
  modification_date            timestamp NOT NULL,
  user_read                    NUMERIC(1) NOT NULL,
  user_write                   NUMERIC(1) NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE apidb.OrthomclTaxon (
 );
 
 ALTER TABLE apidb.OrthomclTaxon
-ADD CONSTRAINT ot_pk PRIMARY KEY (orthomcl_taxon_id);
+ADD CONSTRAINT ot_pk UNIQUE (orthomcl_taxon_id);
 
 ALTER TABLE apidb.OrthomclTaxon
 ADD CONSTRAINT ot_fk1 FOREIGN KEY (parent_id)
@@ -649,7 +649,7 @@ CREATE TABLE apidb.GroupTaxonMatrix (
 );
 
 ALTER TABLE apidb.GroupTaxonMatrix
-ADD CONSTRAINT gtm_pk PRIMARY KEY (group_taxon_matrix_id);
+ADD CONSTRAINT gtm_pk UNIQUE (group_taxon_matrix_id);
 
 ALTER TABLE apidb.GroupTaxonMatrix
 ADD CONSTRAINT gtm_fk1 FOREIGN KEY (ortholog_group_id)
@@ -701,7 +701,7 @@ CREATE TABLE apidb.OrthologGroupAaSequence (
 );
 
 ALTER TABLE apidb.OrthologGroupAaSequence
-ADD CONSTRAINT ogas_pk PRIMARY KEY (ortholog_group_aa_sequence_id);
+ADD CONSTRAINT ogas_pk UNIQUE (ortholog_group_aa_sequence_id);
 
 ALTER TABLE apidb.OrthologGroupAaSequence
 ADD CONSTRAINT ogas_fk1 FOREIGN KEY (ortholog_group_id)
