@@ -70,7 +70,7 @@ sub getArgsDeclaration {
 		 reqd => 0,
 		 isList => 0,
 		 enum => "DoTS::ExternalNASequence, DoTS::VirtualSequence",
-		 default => "DoTS::ExternalNASequence",
+		 default => "DoTS::NASequence",
 	       })
     ];
 
