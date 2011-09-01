@@ -3,7 +3,7 @@ CREATE TABLE ApiDB.PlasmoMapp (
  na_sequence_id  NUMERIC(10) NOT NULL,
  strand          NUMERIC(3)  NOT NULL,
  location        NUMERIC(10) NOT NULL,
- value	         FLOAT(10) NOT NULL,
+ value	         FLOAT NOT NULL,
  MODIFICATION_DATE     TIMESTAMP,
  USER_READ             NUMERIC(1),
  USER_WRITE            NUMERIC(1),
