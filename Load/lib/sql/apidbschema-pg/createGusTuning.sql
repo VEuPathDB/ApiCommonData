@@ -1,31 +1,25 @@
 -- indexes on GUS tables
 
 create index AaSeq_source_ix
-  on dots.AaSequenceImp (lower(source_id)) tablespace INDX;
+  on dots.AaSequenceImp (lower(source_id));
 
 create index NaFeat_alleles_ix
-  on dots.NaFeatureImp (subclass_view, NUMERIC4, NUMERIC5, na_sequence_id, na_feature_id)
-  tablespace INDX;
+  on dots.NaFeatureImp (subclass_view, number4, number5, na_sequence_id, na_feature_id);
 
 create index AaSequenceImp_string2_ix
-  on dots.AaSequenceImp (string2, aa_sequence_id)
-  tablespace INDX;
-
+  on dots.AaSequenceImp (string2, aa_sequence_id);
+  
 create index nasequenceimp_string1_seq_ix
-  on dots.NaSequenceImp (string1, external_database_release_id, na_sequence_id)
-  tablespace INDX;
+  on dots.NaSequenceImp (string1, external_database_release_id, na_sequence_id);
 
 create index nasequenceimp_string1_ix
-  on dots.NaSequenceImp (string1, na_sequence_id)
-  tablespace INDX;
+  on dots.NaSequenceImp (string1, na_sequence_id);
 
 create index ExonOrder_ix
-  on dots.NaFeatureImp (subclass_view, parent_id, NUMERIC3, na_feature_id)
-  tablespace INDX; 
+  on dots.NaFeatureImp (subclass_view, parent_id, number3, na_feature_id); 
 
 create index SeqvarStrain_ix
-  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
-  tablespace INDX; 
+  on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id); 
 
 -- schema changes for GUS tables
 
