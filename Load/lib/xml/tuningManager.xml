@@ -132,12 +132,23 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="SequencePieceClosure">
     <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
         create table SequencePieceClosure&1 nologging as
-        select sp.*, 1 as edge_level from dots.SequencePiece sp
+        select sp.sequence_piece_id,
+               sp.virtual_na_sequence_id,
+               sp.piece_na_sequence_id, 
+               sp.sequence_order, 
+               sp.distance_from_left,
+               sp.uncertainty,
+               sp.strand_orientation,
+               sp.start_position,
+               sp.end_position, 
+               sp.modification_date,
+               1 as edge_level from dots.SequencePiece sp
       ]]>
     </sql>
     <sql>
@@ -147,28 +158,24 @@ tablespace indx
            SequencePieces aren't nested even once. */
         insert into SequencePieceClosure&1
                     (edge_level, virtual_na_sequence_id, piece_na_sequence_id,
-                     distance_from_left, strand_orientation, modification_date)
+                     distance_from_left, strand_orientation, modification_date, 
+                     start_position, end_position, sequence_order, sequence_piece_id)
         select 2, higher.virtual_na_sequence_id, lower.piece_na_sequence_id,
-               higher.distance_from_left
-               + case
-                   when nvl(higher.strand_orientation, '+') = '+'
-                   then lower.distance_from_left
-                   else higher_piece.length - lower_piece.length - lower.distance_from_left
-                 end as distance_from_left,
+               higher.distance_from_left,
                case
                  when nvl(higher.strand_orientation, '+') = nvl(lower.strand_orientation, '+')
                  then '+'
                  else '-'
                end as strand_orientation,
-               sysdate
-        from SequencePieceClosure&1 higher, SequencePieceClosure&1 lower,
-             dots.NaSequence higher_piece, dots.NaSequence lower_piece
+               sysdate,
+               higher.start_position - lower.distance_from_left, 
+               higher.end_position - lower.distance_from_left, 
+               higher.sequence_order,
+               dots.sequencepiece_sq.nextval
+        from SequencePieceClosure&1 higher, SequencePieceClosure&1 lower
         where higher.piece_na_sequence_id = lower.virtual_na_sequence_id
-          and higher.piece_na_sequence_id = higher_piece.na_sequence_id
-          and lower.piece_na_sequence_id = lower_piece.na_sequence_id
-          and (higher.virtual_na_sequence_id, lower.piece_na_sequence_id)
-              not in (select virtual_na_sequence_id, piece_na_sequence_id
-                      from SequencePieceClosure&1)
+         and higher.start_position >= lower.start_position + lower.distance_from_left
+         and higher.end_position <= lower.end_position + lower.distance_from_left
       ]]>
     </sql>
   </tuningTable>
