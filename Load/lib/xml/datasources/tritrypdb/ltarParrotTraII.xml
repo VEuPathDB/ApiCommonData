@@ -1,0 +1,42 @@
+<resources>
+
+  <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            resource="ltarParrotTraII_primary_genome_RSRC"
+            version="@@ltarParrotTraII_genome_VER@@">
+    <manualGet fileOrDir="TriTrypDB/ltarParrotTarII/genome/supercontig/2011-06-22/final/genome.fasta" />
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 56890001 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '.+(\d+)'</pluginArgs>
+  </resource>
+
+  <resource parentResource="ltarParrotTraII_primary_genome_RSRC"
+	    plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+            resource="ltarParrotTraII_annotation_RSRC"
+            version="@@ltarParrotTraII_genome_VER@@">
+    <manualGet fileOrDir="TriTrypDB/ltarParrotTarII/genome/supercontig/2011-06-22/final/genome.gff" />
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/EuTestDB/ltarParrotTraIIGFF2Gus.xml --inputFileOrDir @@dataDir@@/genome.gff --inputFileExtension "gff" --fileFormat gff3 --soCvsVersion @@SO_VER@@  --organism "Leishmania tarentolae Parrot-TarII" --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+  </resource>
+
+  <resource parentResource="ltarParrotTraII_primary_genome_RSRC"
+	    plugin="GUS::Supported::Plugin::LoadFastaSequences"
+            resource="ltarParrotTraII_notMapping_RSRC"
+            version="@@ltarParrotTraII_genome_VER@@">
+    <manualGet fileOrDir="TriTrypDB/ltarParrotTarII/genome/supercontig/2011-06-22/final/notMapped.fasta" />
+    <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 56890001 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/notMapped.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+  </resource>
+
+
+  <resource parentResource="ltarParrotTraII_primary_genome_RSRC"
+            plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+            resource="ltarParrotTraII_notMapping_annotation_RSRC"
+            version="@@ltarParrotTraII_genome_VER@@">
+    <manualGet fileOrDir="TriTrypDB/ltarParrotTarII/genome/supercontig/2011-06-22/final/notMapped.gff" />
+    <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/EuTestDB/ltarParrotTraIIGFF2Gus.xml --inputFileOrDir @@dataDir@@/notMapped.gff --inputFileExtension "gff" --fileFormat gff3 --soCvsVersion @@SO_VER@@  --organism "Leishmania tarentolae Parrot-TarII" --seqSoTerm "contig" --validationLog @@dataDir@@/validation_notMapping.log --bioperlTreeOutput @@dataDir@@/bioperlTree_notMapping.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
+  </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertGeneFeatProductFromTabFile"
+            resource="ltarParrotTraII_ProductName_RSRC"
+            version="@@ltarParrotTraII_genome_VER@@">
+    <manualGet fileOrDir="TriTrypDB/ltarParrotTarII/genome/supercontig/2011-06-22/final/product.txt" />
+    <pluginArgs>--file @@dataDir@@/products.txt --productDbName %PARENT_RESOURCE_NAME% --productDbVer %PARENT_RESOURCE_VERSION%  </pluginArgs>
+  </resource>
+
+</resources>
