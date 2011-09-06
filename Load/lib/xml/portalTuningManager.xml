@@ -55,8 +55,18 @@
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
+
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.EstAttributes@orphan.tuning
+            where organism not in ('Babesia bovis','Theileria annulata','Theileria parva')
+          ]]>
+        </query>
+      </source>
 
       <source>
         <query>
@@ -369,7 +379,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -378,7 +387,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -428,7 +436,6 @@ create unique index pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (source_id
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="trich.tuning"/> 
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="piro.tuning"/>
     <internalDependency name="ApidbTuning.SequenceAttributes"/>
 
@@ -438,7 +445,6 @@ create unique index pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (source_id
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
