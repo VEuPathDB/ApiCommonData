@@ -2087,12 +2087,14 @@ tablespace indx
                number_of_spans, query_start, query_end, target_start, target_end,
                is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
                is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
-               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
+               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left, sp.start_position, sp.end_position,
                sp.strand_orientation, piece.length, vti.table_id as virtual_target_table_id
         from dots.BlatAlignment ba, SequencePieceClosure sp, dots.NaSequence piece,
              dots.NaSequence virtualseq, core.TableInfo vti
         where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
-          and sp.piece_na_sequence_id = piece.na_sequence_id
+          and sp.start_position <= target_start
+          and sp.end_position >= target_end
+          and ba.target_na_sequence_id = piece.na_sequence_id
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
           and virtualseq.subclass_view = vti.name
 SQL
@@ -2128,20 +2130,20 @@ SQL
                $number_of_spans, $query_start, $query_end, $target_start, $target_end,
                $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
                $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
-               $tstarts, $virtual_na_sequence_id, $distance_from_left,
+               $tstarts, $virtual_na_sequence_id, $distance_from_left, $start_position, $end_position,
                $strand_orientation, $length, $virtual_target_table_id)
              = $queryHandle->fetchrow_array()) {
 
         if ($virtual_na_sequence_id) {
           if ($strand_orientation eq '-') {
-            $virtual_target_start = $distance_from_left + $length - $target_end + 1;
-            $virtual_target_end = $distance_from_left + $length - $target_start + 1;
-            $virtual_tstarts = &getReversedTstarts($distance_from_left,$length,$tstarts,$blocksizes);
+            $virtual_target_start = $distance_from_left + $end_position - $target_end + 1;
+            $virtual_target_end = $distance_from_left + $end_position - $target_start + 1;
+            $virtual_tstarts = &getReversedTstarts($distance_from_left,$end_position,$tstarts,$blocksizes);
             $blocksizes = join(',', reverse split(',', $blocksizes));
           } else {
-            $virtual_target_start = $target_start + $distance_from_left;
-            $virtual_target_end = $target_end + $distance_from_left;
-            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left } split( /,/, $tstarts));
+            $virtual_target_start = $target_start + $distance_from_left - $start_position + 1;
+            $virtual_target_end = $target_end + $distance_from_left - $start_position + 1;
+            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left - $start_position + 1 } split( /,/, $tstarts));
           }
 
           # insert virtual locations
@@ -5027,15 +5029,13 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        sim.subject_table_id, sim.score as similarity_score,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - greatest(sim.min_query_start, sim.max_query_end) + 1
-           else least(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - greatest(sim.min_query_start, sim.max_query_end) + 1
+           else sp.distance_from_left + least(sim.min_query_start, sim.max_query_end) - sp.start_position + 1
        end as min_query_start,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - least(sim.min_query_start, sim.max_query_end) + 1
-           else greatest(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - least(sim.min_query_start, sim.max_query_end) + 1
+           else sp.distance_from_left + greatest(sim.min_query_start, sim.max_query_end) - sp.start_position + 1
        end as max_query_end,
        sim.is_reversed, sim.pvalue_mant, sim.pvalue_exp,
        round(100 * sim.number_identical / sim.total_match_length,1) as percent_identical,
@@ -5044,15 +5044,13 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        simp.similarity_span_id, simp.score as span_score,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - greatest(simp.query_start, simp.query_end) + 1
-           else least(simp.query_start, simp.query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - greatest(simp.query_start, simp.query_end) + 1
+           else sp.distance_from_left + least(simp.query_start, simp.query_end) - sp.start_position + 1
        end as query_start,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - least(simp.query_start, simp.query_end) + 1
-           else greatest(simp.query_start, simp.query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - least(simp.query_start, simp.query_end) + 1
+           else sp.distance_from_left + greatest(simp.query_start, simp.query_end) - sp.start_position + 1
        end as query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
@@ -5063,7 +5061,9 @@ where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
   and ti.name = 'ExternalNASequence'
   and sim.query_id = sp.piece_na_sequence_id
-  and sp.piece_na_sequence_id = contig.na_sequence_id
+  and sp.start_position <= sim.min_query_start
+  and sp.end_position >= sim.max_query_end
+  and sim.query_id = contig.na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
       ]]>
     </sql>
