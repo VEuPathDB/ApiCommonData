@@ -1697,7 +1697,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE edr.external_database_id = ed.external_database_id) db,
      (SELECT distinct piece_na_sequence_id, 0 as is_top_level
-      FROM dots.SequencePieceClosure) virtualization
+      FROM SequencePieceClosure) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
