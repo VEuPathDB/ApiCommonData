@@ -98,7 +98,7 @@ eval {
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
 
-  if ($instance ne $tuningRegistry->getInstanceName()) {
+  if (lc($instance) ne lc($tuningRegistry->getInstanceName())) {
     die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
   }
 
