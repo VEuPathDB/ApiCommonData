@@ -26,7 +26,7 @@ sub getInfoFromRegistry {
              tf.notify_emails, tf.is_live, tf.config_file, imi.project_id, imi.version
       from apidb_r.TuningInstance\@$dblink ti, apidb_r.TuningFamily\@$dblink tf,
            apidb.InstanceMetaInfo imi
-      where ti.instance_nickname(+) =  imi.instance_nickname
+      where lower(ti.instance_nickname(+)) =  lower(imi.instance_nickname)
         and ti.family_name = tf.family_name(+)
 SQL
 
