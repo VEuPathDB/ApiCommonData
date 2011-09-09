@@ -6278,7 +6278,7 @@ tablespace indx
     <sql>
       <![CDATA[
         CREATE TABLE OrganismTree&1 NOLOGGING AS
-         SELECT organism,term,parentTerm, internal,internalName,project_id
+         SELECT organism,term,parentTerm, internal,internal_name,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
            SELECT DISTINCT sa.organism AS organism,
