@@ -52,7 +52,8 @@ foreach my $line (<IN>){
 	    
 	    $cols[19] =~ s/^\s+//;
 	    $cols[19] =~ s/\s+$//;
-	    $cols[19] =~ s/\(.*\)//g;
+	    #$cols[19] =~ s/\(.*\)//g;
+	    $cols[19] =~ s/\(.*?\)//g;
 	    $cols[19] =~ s/\s+,/,/g;
 	    $cols[19] =~ s/,\s+/,/g;
 	    $cols[19] =~ s/,$//;
