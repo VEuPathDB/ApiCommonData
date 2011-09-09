@@ -6278,13 +6278,14 @@ tablespace indx
     <sql>
       <![CDATA[
         CREATE TABLE OrganismTree&1 NOLOGGING AS
-         SELECT organism,term,parentTerm, internal,project_id
+         SELECT organism,term,parentTerm, internal,internalName,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
            SELECT DISTINCT sa.organism AS organism,
                            sa.organism AS term,
                            sn.name AS parentTerm,
                            t.taxon_id AS internal,
+                           sa.organism AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, Sres.TaxonName tn,
                 SRES.Taxon t, SRES.TaxonName sn, TaxonSpecies ts
@@ -6301,6 +6302,7 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           tn.taxon_id AS internal,
+                          tn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6315,6 +6317,7 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           sn.taxon_id AS internal,
+                          sn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6330,6 +6333,7 @@ tablespace indx
                            SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
+                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
@@ -6339,6 +6343,7 @@ tablespace indx
                            ptl.taxon_node AS term,
                            '' AS parentTerm,
                            -1 AS internal,
+                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
