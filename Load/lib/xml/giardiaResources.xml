@@ -322,6 +322,24 @@ inFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs
         </description>
     </resource>
 
+     <resource resource="GintAssemA_chromosome_virtual_genome_RSRC" version="2011-08-22"
+         plugin="ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile"
+         displayName="Giardia lamblia scaffold to chromosome map"
+         category="Genome"
+         publicUrl=""
+         extDbName="GintAssemA_chromosome_virtual_genome_RSRC"
+         extDbRlsVer="2011-08-22"
+         dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/eupath/data/EuPathDB/manualDelivery/GiardiaDB/giardiaAssemblageA/genome/chromosome_assembly_agp/2011-08-22/final/assembly.agp"
+         />
+         <pluginArgs>--agpFile @downloadDir@/assembly.agp --seqPieceExtDbName "Giardia scaffolds" --seqPieceExtDbRlsVer @@GintAssemA_supercontig_VER@@ --virSeqExtDbName %EXT_DB__NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "184922" --soVer @@SO_VER@@ --chromosomesInOrder</pluginArgs>
+         <description>
+            <![CDATA[
+        Scaffold to chromosome map for Giardia lamblia.
+         ]]>
+        </description>
+    </resource>
+
 <resource resource="ScaffoldAliases" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia scaffold aliases"
