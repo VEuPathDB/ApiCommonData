@@ -55,8 +55,18 @@
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
+
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from apidb.EstAttributes@orphan.tuning
+            where organism not in ('Babesia bovis','Theileria annulata','Theileria parva')
+          ]]>
+        </query>
+      </source>
 
       <source>
         <query>
@@ -378,7 +388,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
