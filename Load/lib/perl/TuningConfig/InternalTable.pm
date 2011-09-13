@@ -263,6 +263,10 @@ sub update {
 
   foreach my $sql (@{$self->{sqls}}) {
 
+    if ($sql =~ /]]>/) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("SQL contains embedded CDATA close -- possible XML parse error. SQL -->>" . $sql . "<<--");
+    }
+
     last if $updateError;
 
     my $sqlCopy = $sql;
