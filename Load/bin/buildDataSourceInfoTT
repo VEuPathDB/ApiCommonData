@@ -52,7 +52,7 @@ chdir "$workingDir";
 
 my $projectQuery = $dbh->prepare(<<SQL);
   select project_id, lower(project_id) as lower_project_id
-  from (select distinct project_id from SequenceAttributes)
+  from (select distinct project_id from ApidbTuning.SequenceAttributes)
 SQL
 
 $projectQuery->execute() or die "getting a list of project IDs";
