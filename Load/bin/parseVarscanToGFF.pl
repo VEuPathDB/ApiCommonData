@@ -97,6 +97,7 @@ while(<F>){
     push(@tmpLines,$line);
   }
 }
+&process(\@tmpLines) if scalar(@tmpLines) > 0;
 
 close F;
 close O;
@@ -127,14 +128,19 @@ sub process {
 sub getAlleles {
   my($lines,$cov) = @_;
   my $minPvalue = &getMinPvalue($lines);
-  my $f = shift(@{$lines});
   my @alleles;
   ##make a reference entry if > $depthCutoff ... how can we determine p value .. don't really have one!
   ## could use the minimum pvalue ...
-  push(@alleles,"$strain:$f->[2]:$cov:".(int($f->[4] / $cov * 1000) / 10).":$f->[9]:$minPvalue") if $f->[4] / $cov * 100 >= $percentCutoff && $f->[11] <= $pvalueCutoff;
-  push(@alleles,"$strain:".&getAllele($f).":$cov:".(int($f->[5] / $cov * 1000) / 10).":$f->[10]:$f->[11]") if $f->[5] / $cov * 100 >= $percentCutoff && $f->[11] <= $pvalueCutoff;
+  ## NOTE:  only want to include a reference allele if there is another SNP at this location and the reference percentCoverage is > cutoff
+  my $needRef = 1;
   foreach my $l (@{$lines}){
-    push(@alleles,"$strain:".&getAllele($l).":$cov:".(int($l->[5] / $cov * 1000) / 10).":$l->[10]:$l->[11]") if $l->[5] / $cov * 100 >= $percentCutoff && $l->[11] <= $pvalueCutoff;
+    if($l->[5] / $cov * 100 >= $percentCutoff && $l->[11] <= $pvalueCutoff){
+      push(@alleles,"$strain:".&getAllele($l).":$cov:".(int($l->[5] / $cov * 1000) / 10).":$l->[10]:$l->[11]");
+      if($needRef && $l->[4] / $cov * 100 >= $percentCutoff && $l->[11] <= $pvalueCutoff){
+        push(@alleles,"$strain:$l->[2]:$cov:".(int($l->[4] / $cov * 1000) / 10).":$l->[9]:$minPvalue");
+        $needRef = 0;
+      }
+    }
   }
   return @alleles;
 }
