@@ -121,4 +121,25 @@
     </info>
   </resource>
 
+<resource resource="Ehistolytica_Markiewicz_Proteomics_RSRC" version="2011-04"
+      plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
+    <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Markiewicz_Proteomics/%RESOURCE_VERSION%/final/Markiewicz_Proteomics.tab"/>
+    <pluginArgs>--inputFile @@dataDir@@/Markiewicz_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|@@Ehistolytica_genome_VER@@' --developmentalStage 'early phagocytosis'</pluginArgs>
+    <info
+        displayName="E. histolytica proteomics (Markiewicz et. al.)"
+        project="TriTrypDB"
+        organisms="@@EhistolyticaOrganismFullName@@"
+        category="Proteome"
+        publicUrl=""
+        contact = "Nancy Guillen"
+        email = "nancy.guillen@pasteur.fr"
+        institution = "">
+      <description>
+        <![CDATA[
+        ]]>
+      </description>
+    <publication pmid="21483708"/>
+    </info>
+  </resource>
+
 </resources>
