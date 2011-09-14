@@ -3216,6 +3216,11 @@ from
 
     -- PlasmoDB --
 
+    select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
 
     select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
            '' as main_profile_name,
@@ -3662,7 +3667,22 @@ select 'giar sage tag frequencies sense' as profile_name,
 -- PlasmoDB --
 
 
+select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
+       'Ferdig::Combined' as module,
+       'Expression Data for HB3 x DD2 Progeny' as display_name,
+       '' as description,
+       'Progeny' as x_axis,
+       'Loess Normalized Values (log2(R/G)) or expression percentile value.' as y_axis,
+        160 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'expr,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+       '' as attribution
+from dual
 
+UNION
 
 
 select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
