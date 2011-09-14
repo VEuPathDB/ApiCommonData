@@ -1,12 +1,18 @@
 #!/usr/bin/perl
 
-# This plugin takes a file in the format
+# Reformat a .align file produced by mercator:
+# 1) re-order the columns
+# 2) use start/length instead of start/stop
+# 3) make strand relative
+# 4) if input B is a draft genome, then expect its .agp file on input, and transform its alignments into its lower level sequences, instead of onto the assemblies that mercator produced for it.  (this may end up producing more lines on output then there was on input)
+
+# Input columns:
 #
-# Pxchr  Pxstart Pxstop Pxstrand Pfchr Pfstart Pfstop Pf strand
+# Achr Astart Astop Astrand Bchr Bstart Bstop Bstrand
 #
-# and reformats it as
+# Output colums:
 #
-# Pfchr Pxchr Pfstart Pflength Pxstart Pxlength Pfstrand
+# Bchr Achr Bstart Blength Astart Alength Bstrand
 
 use strict;
 use warnings;
@@ -33,7 +39,7 @@ GetOptions("verbose!"        => \$verbose,
          );
 
 unless ($inputFile){ 
-  print STDERR "Please provide input file\n\nUSAGE: formatPxSyntenyFile --inputFile <FILEPATH> --outputFile <FILEPATH> --agpFile <AGPFILE> [--verbose]\n";
+  print STDERR "Please provide input file\n\nUSAGE: reformatMercatorAlignFile --inputFile <FILEPATH> --outputFile <FILEPATH> --agpFile <AGPFILE> [--verbose]\n";
   exit;
 }
 
