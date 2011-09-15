@@ -1,3 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE tuningConfig [
+<!ELEMENT tuningConfig (tuningTable+)>
+<!ELEMENT tuningTable (externalTuningTableDependency*,internalDependency*,intermediateTable*,unionization+,sql*,perl*)>
+<!ELEMENT externalTuningTableDependency EMPTY>
+<!ELEMENT internalDependency EMPTY>
+<!ELEMENT intermediateTable EMPTY>
+<!ELEMENT unionization (source+)>
+<!ELEMENT source (query*)>
+<!ELEMENT query (#PCDATA)>
+<!ELEMENT sql (#PCDATA)>
+<!ELEMENT perl (#PCDATA)>
+
+<!ATTLIST tuningTable name CDATA #REQUIRED>
+
+<!ATTLIST externalTuningTableDependency 
+  name CDATA #REQUIRED
+  dblink CDATA #IMPLIED
+>
+
+<!ATTLIST internalDependency name CDATA #REQUIRED>
+<!ATTLIST source dblink CDATA #IMPLIED>
+]>
 <tuningConfig>
 
   <tuningTable name="ApidbTuning.OrganismAbbreviationWS">
@@ -116,7 +139,6 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="ApidbTuning.GeneAttributes">
-    <unionization>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="crypto.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="giardia.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="plasmo.tuning"/>
@@ -128,6 +150,7 @@ tablespace indx
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="orphan.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="piro.tuning"/>
 
+    <unionization>
       <source dblink="crypto.tuning"/>
       <source dblink="giardia.tuning"/>
       <source dblink="plasmo.tuning"/>
@@ -178,7 +201,7 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="ApidbTuning.GeneId">
-    <unionization>
+
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="crypto.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="giardia.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="plasmo.tuning"/>
@@ -192,6 +215,7 @@ tablespace indx
 
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes"/>
 
+    <unionization>
       <source dblink="crypto.tuning"/>
       <source dblink="giardia.tuning"/>
       <source dblink="plasmo.tuning"/>
