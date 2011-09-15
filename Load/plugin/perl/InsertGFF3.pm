@@ -173,6 +173,16 @@ sub getSOfromSoTerm {
    $self->{soids}->{$soterm} = $SOTerm;
    return $SOTerm;
 }
+sub getGFF3AttributeKeys{
+ my ($self, $key) = @_;
+   if(my $found = $self->{attr_keys}->{$key}) {
+     return $found;
+   }
+   
+   my $attrKey = GUS::Model::ApiDB::GFF3AttributeKeys->new({'name' => $key });
+   unless($attrKey->retrieveFromDB){
+     print 'key $key added to GFF3AttributeKeys'; 
+     $attrKey->submit();
 
 sub getGFF3AttributeKey{
  my ($self, $key) = @_;
@@ -273,6 +283,7 @@ sub insertGFF3{
 
   $gff3->submit();
 }
+
 
 sub undoTables {
   qw(
