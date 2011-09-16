@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+         datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="tuningConfig">
+    <oneOrMore>
+    <element name="tuningTable">
+      <attribute name="name" />
+      <optional>
+      <attribute name="alwaysUpdate" />
+      </optional>
+      <zeroOrMore>
+          <choice>
+          <element name="internalDependency">
+            <attribute name="name" />
+          </element>
+          <element name="externalDependency">
+            <attribute name="name" />
+            <optional>
+            <attribute name="dblink" />
+            </optional>
+          </element>
+          <element name="externalTuningTableDependency">
+            <attribute name="name" />
+            <optional>
+            <attribute name="dblink" />
+            </optional>
+          </element>
+          </choice>
+      </zeroOrMore>
+      <zeroOrMore>
+          <element name="intermediateTable">
+            <attribute name="name" />
+          </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="unionization">
+           <oneOrMore>
+              <element name="source">
+                 <optional>
+                    <attribute name="dblink"/>
+                 </optional>
+                 <optional>
+                    <element name="query">
+                      <text/>
+                    </element>
+                 </optional>
+              </element>
+           </oneOrMore>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <choice>
+        <element name="perl">
+          <text/>
+        </element>
+        <element name="sql">
+          <text/>
+        </element>
+        </choice>
+      </zeroOrMore>    
+      <zeroOrMore>
+        <element name="program">
+            <attribute name="commandLine" />
+        </element>
+      </zeroOrMore>    
+    </element>
+    </oneOrMore>
+
+    </element>
+  </start>
+</grammar>
