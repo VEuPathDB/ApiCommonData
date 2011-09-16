@@ -37,28 +37,26 @@
             <element name="unionization">
               <oneOrMore>
 		<element name="source">
-                  <optional>
+                  <choice>
                     <attribute name="dblink"/>
-                  </optional>
-                  <optional>
                     <element name="query">
                       <text/>
                     </element>
-                  </optional>
+                  </choice>
 		</element>
               </oneOrMore>
             </element>
 	  </zeroOrMore>
 	  <zeroOrMore>
-            <choice>
-              <element name="perl">
-		<text/>
-              </element>
-              <element name="sql">
-		<text/>
-              </element>
-            </choice>
+            <element name="sql">
+              <text/>
+            </element>
 	  </zeroOrMore>    
+	  <zeroOrMore>
+            <element name="perl">
+              <text/>
+            </element>
+	  </zeroOrMore>
 	  <zeroOrMore>
             <element name="program">
               <attribute name="commandLine" />
