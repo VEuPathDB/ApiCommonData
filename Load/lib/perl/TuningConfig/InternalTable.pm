@@ -593,6 +593,7 @@ sub unionize {
   my @unionMembers; # array of query statements to be UNIONed
   $sourceNumber = 0;
 
+
   foreach my $source (@{$union->{source}}) {
 
     $sourceNumber++;
@@ -611,6 +612,11 @@ sub unionize {
     }
     push(@unionMembers, 'select ' . join(', ', @selectees) . "\nfrom ". $froms[$sourceNumber])
       if $notAllNulls;
+  }
+
+  unless(scalar @{$union->{source}} == scalar @unionMembers) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("The number of <source> does not equal the number of sql statments to be unioned for " . $self->{name});
+    die;
   }
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
@@ -645,11 +651,11 @@ sub getColumnInfo {
 
       if ($source->{query}) {
 	my $queryString = $source->{query}[0];
-	$tempTable = 'UnionizerTemp';
+	$tempTable = $self->{schema} . "." . 'UnionizerTemp';
 	$table = $tempTable;
 	# do dblink-suffix transformation on $queryString
 	$queryString =~ s/@(\w*)\b/\@$1$dblinkSuffix/g;
-	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString);
+	runSql($dbh, 'create table ' . $tempTable . ' as ' . $queryString, 1);
 	$froms[$sourceNumber] = '(' . $queryString . ')';
       } else {
 	$table = $union->{name} if !$table;
@@ -657,7 +663,6 @@ sub getColumnInfo {
       }
 
       my ($owner, $simpleTable) = split(/\./, $table);
-
 
       my $sql = <<SQL;
          select column_name, data_type, char_col_decl_length, column_id
@@ -705,7 +710,9 @@ SQL
 
 sub runSql {
 
-  my ($dbh, $sql) = @_;
+  my ($dbh, $sql, $debug) = @_;
+
+  print "$sql\n\n" if $debug;
 
   my $stmt = $dbh->prepare($sql);
   $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
