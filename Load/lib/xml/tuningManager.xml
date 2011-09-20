@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <tuningConfig>
 
   <tuningTable name="SequenceAlias">
@@ -132,12 +133,23 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="SequencePieceClosure">
     <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
         create table SequencePieceClosure&1 nologging as
-        select sp.*, 1 as edge_level from dots.SequencePiece sp
+        select sp.sequence_piece_id,
+               sp.virtual_na_sequence_id,
+               sp.piece_na_sequence_id, 
+               sp.sequence_order, 
+               sp.distance_from_left,
+               sp.uncertainty,
+               sp.strand_orientation,
+               sp.start_position,
+               sp.end_position, 
+               sp.modification_date,
+               1 as edge_level from dots.SequencePiece sp
       ]]>
     </sql>
     <sql>
@@ -147,28 +159,24 @@ tablespace indx
            SequencePieces aren't nested even once. */
         insert into SequencePieceClosure&1
                     (edge_level, virtual_na_sequence_id, piece_na_sequence_id,
-                     distance_from_left, strand_orientation, modification_date)
+                     distance_from_left, strand_orientation, modification_date, 
+                     start_position, end_position, sequence_order, sequence_piece_id)
         select 2, higher.virtual_na_sequence_id, lower.piece_na_sequence_id,
-               higher.distance_from_left
-               + case
-                   when nvl(higher.strand_orientation, '+') = '+'
-                   then lower.distance_from_left
-                   else higher_piece.length - lower_piece.length - lower.distance_from_left
-                 end as distance_from_left,
+               higher.distance_from_left,
                case
                  when nvl(higher.strand_orientation, '+') = nvl(lower.strand_orientation, '+')
                  then '+'
                  else '-'
                end as strand_orientation,
-               sysdate
-        from SequencePieceClosure&1 higher, SequencePieceClosure&1 lower,
-             dots.NaSequence higher_piece, dots.NaSequence lower_piece
+               sysdate,
+               higher.start_position - lower.distance_from_left, 
+               higher.end_position - lower.distance_from_left, 
+               higher.sequence_order,
+               dots.sequencepiece_sq.nextval
+        from SequencePieceClosure&1 higher, SequencePieceClosure&1 lower
         where higher.piece_na_sequence_id = lower.virtual_na_sequence_id
-          and higher.piece_na_sequence_id = higher_piece.na_sequence_id
-          and lower.piece_na_sequence_id = lower_piece.na_sequence_id
-          and (higher.virtual_na_sequence_id, lower.piece_na_sequence_id)
-              not in (select virtual_na_sequence_id, piece_na_sequence_id
-                      from SequencePieceClosure&1)
+         and higher.start_position >= lower.start_position + lower.distance_from_left
+         and higher.end_position <= lower.end_position + lower.distance_from_left
       ]]>
     </sql>
   </tuningTable>
@@ -233,15 +241,13 @@ select -- virtual feature locations mapped through SequencePiece
        sp.virtual_na_sequence_id, nf.na_feature_id,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)+ 1
-           else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+           then sp.distance_from_left + sp.end_position - greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)  + 1
+           else sp.distance_from_left + least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position  + 1
        end as start_min,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
-         else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max)
+           then sp.distance_from_left + sp.end_position - least(nl.start_min, nl.start_max, nl.end_min, nl.end_max) + 1
+         else sp.distance_from_left + greatest(nl.start_min, nl.start_max, nl.end_min, nl.end_max) - sp.start_position + 1
        end as end_max,
        case
          when sp.strand_orientation in ('-', '-1')
@@ -253,15 +259,13 @@ select -- virtual feature locations mapped through SequencePiece
        cast (null as number) as is_top_level,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - coding_start + 1
-           else sp.distance_from_left + ef.coding_start
+           then sp.distance_from_left + sp.end_position - coding_start + 1
+           else sp.distance_from_left + ef.coding_start - sp.start_position + 1
        end as coding_start,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - coding_end + 1
-         else sp.distance_from_left + coding_end
+           then sp.distance_from_left + sp.end_position - coding_end + 1
+         else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
@@ -274,6 +278,8 @@ where nf.na_feature_id = nl.na_feature_id
   and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = contig.na_sequence_id
   and nf.na_sequence_id = sp.piece_na_sequence_id
+  and sp.start_position <= nl.start_min
+  and sp.end_position >= nl.end_max
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and contig.taxon_id = tn.taxon_id
@@ -290,7 +296,7 @@ set is_top_level = 1
       <![CDATA[
 update FeatureLocation&1
 set is_top_level = 0
-where na_sequence_id in (select piece_na_sequence_id from dots.SequencePiece)
+where na_sequence_id in (select piece_na_sequence_id from SequencePieceClosure)
       ]]>
     </sql>
     <sql>
@@ -1647,8 +1653,8 @@ tablespace indx
 
   <tuningTable name="SequenceAttributes">
     <internalDependency name="GenomicSequence"/>
+    <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="dots.DbRefNaSequence"/>
-    <externalDependency name="dots.SequencePiece"/>
     <externalDependency name="sres.DbRef"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
@@ -1692,7 +1698,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE edr.external_database_id = ed.external_database_id) db,
      (SELECT distinct piece_na_sequence_id, 0 as is_top_level
-      FROM dots.SequencePiece) virtualization
+      FROM SequencePieceClosure) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
@@ -2082,12 +2088,14 @@ tablespace indx
                number_of_spans, query_start, query_end, target_start, target_end,
                is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
                is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
-               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left,
+               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left, sp.start_position, sp.end_position,
                sp.strand_orientation, piece.length, vti.table_id as virtual_target_table_id
         from dots.BlatAlignment ba, SequencePieceClosure sp, dots.NaSequence piece,
              dots.NaSequence virtualseq, core.TableInfo vti
         where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
-          and sp.piece_na_sequence_id = piece.na_sequence_id
+          and sp.start_position <= target_start
+          and sp.end_position >= target_end
+          and ba.target_na_sequence_id = piece.na_sequence_id
           and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
           and virtualseq.subclass_view = vti.name
 SQL
@@ -2123,20 +2131,20 @@ SQL
                $number_of_spans, $query_start, $query_end, $target_start, $target_end,
                $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
                $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
-               $tstarts, $virtual_na_sequence_id, $distance_from_left,
+               $tstarts, $virtual_na_sequence_id, $distance_from_left, $start_position, $end_position,
                $strand_orientation, $length, $virtual_target_table_id)
              = $queryHandle->fetchrow_array()) {
 
         if ($virtual_na_sequence_id) {
           if ($strand_orientation eq '-') {
-            $virtual_target_start = $distance_from_left + $length - $target_end + 1;
-            $virtual_target_end = $distance_from_left + $length - $target_start + 1;
-            $virtual_tstarts = &getReversedTstarts($distance_from_left,$length,$tstarts,$blocksizes);
+            $virtual_target_start = $distance_from_left + $end_position - $target_end + 1;
+            $virtual_target_end = $distance_from_left + $end_position - $target_start + 1;
+            $virtual_tstarts = &getReversedTstarts($distance_from_left,$end_position,$tstarts,$blocksizes);
             $blocksizes = join(',', reverse split(',', $blocksizes));
           } else {
-            $virtual_target_start = $target_start + $distance_from_left;
-            $virtual_target_end = $target_end + $distance_from_left;
-            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left } split( /,/, $tstarts));
+            $virtual_target_start = $target_start + $distance_from_left - $start_position + 1;
+            $virtual_target_end = $target_end + $distance_from_left - $start_position + 1;
+            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left - $start_position + 1 } split( /,/, $tstarts));
           }
 
           # insert virtual locations
@@ -3209,6 +3217,11 @@ from
 
     -- PlasmoDB --
 
+    select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
 
     select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
            '' as main_profile_name,
@@ -3319,11 +3332,11 @@ from
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
-    UNION
-    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
+--    UNION
+--    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+--           '' as main_profile_name,
+--           'TriTrypDB' as project_id
+--    from dual
     ) pm, GeneAttributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -3655,7 +3668,22 @@ select 'giar sage tag frequencies sense' as profile_name,
 -- PlasmoDB --
 
 
+select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
+       'Ferdig::Combined' as module,
+       'Expression Data for HB3 x DD2 Progeny' as display_name,
+       'In this study, genome-wide expression level polymorphisms (ELPs) were examined in a genetic cross between phenotypically distinct parasite clones of <i>P. falciparum</i> (HB3 and Dd2). Using cDNA microarray hybridizations from the progeny of a genetic cross, gene expression quantitative trait loci (eQTLs) were mapped in an experimental population of malaria parasites. Each gene''s transcript level was used as a segregating phenotype to identify regions of the Plasmodium genome dictating transcriptional variation.' as description,
+       'Progeny' as x_axis,
+       'Loess Normalized Values (log2(R/G)) or expression percentile value.' as y_axis,
+        160 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'expr,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+       'Ferdig_Pfalciparum_eQTL_RSRC' as attribution
+from dual
 
+UNION
 
 
 select 'Profiles of E-GEOD-10022 array from Su' as profile_name,
@@ -3854,7 +3882,7 @@ select 'Expression profiling of T. brucei microarray data from Christine Clayton
        'expr_val' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Tbrucei_Christine_Clayton_RSRC' as attribution
+        'Tbrucei_Expression_Profiles_From_Christine_Clayton' as attribution
 from dual
 UNION
 select 'Expression profiling of T. brucei differentiation series' as profile_name,
@@ -3873,7 +3901,7 @@ select 'Expression profiling of T. brucei differentiation series' as profile_nam
        'expr_val,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Tbrucei_Matthews_differentiation_series_RSRC' as attribution
+        'Tbrucei_Matthews_differentiation_series' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
@@ -3892,7 +3920,7 @@ The data table above contains the actual expression values.  <b>For this experim
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Tbrucei_Parsons_Five_Life_Cycle_Stages_RSRC' as attribution
+        'Tbrucei_Parsons_Five_Life_Cycle_Stages_Expression_Profiles' as attribution
 from dual
 UNION
 select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
@@ -3910,7 +3938,7 @@ select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
        'expr_val,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Tcruzi_Tarleton_Rick_RSRC' as attribution
+        'Tcruzi_Tarleton_Rick_Array_Profiles' as attribution
 from dual
 UNION
 select 'Profiles of L.major Beverly Steve array data' as profile_name,
@@ -3925,22 +3953,22 @@ select 'Profiles of L.major Beverly Steve array data' as profile_name,
        'expr_val,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Lmajor_Beverley_Steve_LifeStages_RSRC' as attribution
+        'L.major_Beverley_Steve_Array_Profiles' as attribution
 from dual
 UNION
 select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
        'Estevez::Drbd3Depletion' as module,
        'Effect of TbDRBD3 depletion on procyclic <i>T. brucei</i> transcriptome' as display_name,
        'In order to analyze whether TbDRBD3 has a role in the regulation of mRNA turnover, the transcriptome of procyclic trypanosomes depleted of TbDRBD3 was compared to that of uninduced cells using hybridizations of genomic microarrays. RNA samples were isolated from cells harvested after 48 hours of induction with tetracycline. At this point, cell growth was barely affected and trypanosomes remained highly motile. 15 microg of RNA were reverse-transcribed in the presence of 100 ng of oligo(dT)12-18, 0.25 mM dATP, 0.25 mM dTTP, 0.25 mM dGTP, 0.05 mM dCTP, 0.05 mM Cy3- or Cy5-dCTP, 50 mM Tris-HCl, pH 8.3, 75 mM KCl, 3 mM MgCl2, 5 mM DTT, 40 U of RNaseOUT (Invitrogen) and 400 U of Superscript III reverse transcriptase (Invitrogen). Reactions were incubated for 3 hours at 50 degrees C, stopped by heating at 70 degrees C for 15 min and treated with 5 U of RNase H for 20 min at 37 degrees C. cDNA was purified using the MinElute kit (Qiagen), ethanol precipitated and resuspended in hybridization buffer. Genomic T. brucei microarray glass slides containing ca. 24,000 independent random genomic clones (Brems et al., 2005) were pre-hybridized and hybridized as described (Diehl et al., 2002). Four hybridizations (two biological replicates with a dye swap each) were analyzed.' as description,
-       'Direct comparison; 2 biological replicates' as x_axis,
-       'Fold Induction or percentile.' as y_axis,
+        'Direct comparison; 2 biological replicates' as x_axis,
+        'Fold Induction or percentile.' as y_axis,
         240 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
         'expr_val' as visible_parts,
         '' as dataTable,
-      'expression' as type,
-        'Tbrucei_Estevez_Procyclic_TbDRBD3_Depletion_RSRC_Profiles' as attribution
+        'expression' as type,
+        'Tbrucei_Procyclic_TbDRBD3_Depletion_Profiles' as attribution
 from dual
 UNION
 select 'T.brucei Archer Stuart Cell Cycle RNA Sequence min-Profiles' as profile_name,
@@ -3969,10 +3997,10 @@ select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rpkm,pct' as visible_parts,
+        'rpkm,pct' as visible_parts,
         '' as dataTable,
-      'expression' as type,
-        'Tbrucei_RNASeq_George_Cross_RSRC' as attribution
+        'expression' as type,
+        'George_Cross_RNA_Seq_Profiles' as attribution
 from dual
 UNION
 select 'T. brucei under heat shock array data' as profile_name,
@@ -4036,22 +4064,22 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
       'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
-UNION
-select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
-       'Nilsson::TcSpliceSites' as module, 
-       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
-       'The coverage values in the graph are displayed in log2 scale' as description,
-       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
-       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
-        290 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
-from dual
+--UNION
+--select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+--       'Nilsson::TcSpliceSites' as module, 
+--       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
+--       'The coverage values in the graph are displayed in log2 scale' as description,
+--       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
+--       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+--' as y_axis,
+--        290 as order_num,
+--        'TRUE' as mainOpen,
+--        'FALSE' as dataOpen,
+--       'coverage,pct' as visible_parts,
+--        '' as dataTable,
+--      'expression' as type,
+--        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
+--from dual
 ) d,   (select distinct ps.name, ga.organism, ga.species
     from apidb.profile p, apidb.profileset ps, geneattributes ga
     where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
@@ -4332,12 +4360,12 @@ select 'PlasmoDB' as project_id,
 from dual
 UNION
 select 'PlasmoDB' as project_id,
-       'Pf Phosphoproteome' as display_term,
+       '<i>P. falciparum</i> 3D7 blood stage (Phospho) peptides (40hours post infection +/-8h, Treeck & Sanders et al)' as display_term,
        'Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'PlasmoDB' as project_id,
-       'Pf Total Proteome' as display_term,
+       '<i>P. falciparum</i> 3D7 blood stage peptides (40hours post infection +/-8h, Treeck & Sanders et al)' as display_term,
        'Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC' as extDB_name
 from dual 
 UNION
@@ -4452,23 +4480,43 @@ select 'ToxoDB' as project_id,
 from dual 
 UNION
 select 'ToxoDB' as project_id,
-       'Tg Intracellular Phosphoproteome' as display_term,
+       'Phosphoproteome of intracellular RH tachys' as display_term,
        'Tg_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
-       'Tg Intracellular Total Proteome' as display_term,
+       'Phosphoproteome of intracellular RH tachys' as display_term,
+       'TgGT1_Boothroyd_Elias_Moritz_Intracellular_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Proteome of intracellular RH tachys' as display_term,
        'Tg_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
-       'Tg Purified Phosphoproteome' as display_term,
+       'Proteome of intracellular RH tachys' as display_term,
+       'TgGT1_Boothroyd_Elias_Moritz_Intracellular_Totalproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Phosphoproteome of purified RH tachys' as display_term,
        'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
-       'Tg Purified Total Proteome' as display_term,
+       'Phosphoproteome of purified RH tachys' as display_term,
+       'TgGT1_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Proteome of purified RH tachys' as display_term,
        'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC' as extDB_name
+from dual
+UNION
+select 'ToxoDB' as project_id,
+       'Proteome of purified RH tachys' as display_term,
+       'TgGT1_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
@@ -4487,17 +4535,17 @@ select 'ToxoDB' as project_id,
 from dual 
 UNION
 select 'ToxoDB' as project_id,
-       'TgME49 Oocyst Membrane Proteome' as display_term,
+       'M4 Oocyst Walls, bleach-treated' as display_term,
        'TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
-       'TgME49 Oocyst Cytosol Proteome' as display_term,
+       'M4 Oocyst Walls, not-treated' as display_term,
        'TgonME49_BoothroydBowyerOocystCytosol_Proteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
-       'TgME49 Oocyst Walls Proteome' as display_term,
+       'M4 sporocysts/sporozoites' as display_term,
        'TgonME49_BoothroydBowyerOocystWalls_Proteome_RSRC' as extDB_name
 from dual 
 UNION
@@ -4695,6 +4743,11 @@ UNION
 select 'TriTrypDB' as project_id,
        '<i>T. brucei</i> Palmitoylated Proteome' as display_term,
        'Tbrucei_Almeida_Palmitoylated_Proteome_RSRC' as extDB_name
+from dual
+UNION
+select 'TriTrypDB' as project_id,
+       '<i>T. brucei</i> Proteomics Bloodstream Form Cytosolic Phosphoproteome' as display_term,
+       'Tbrucei_Ferguson_Phospho_Proteome_RSRC' as extDB_name
 from dual
 )
       ]]>
@@ -4936,55 +4989,6 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="Scaffold_Map">
-    <externalDependency name="dots.NaSequenceImp"/>
-    <externalDependency name="dots.SequencePiece"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE Scaffold_Map&1 NOLOGGING AS
-     SELECT
-      na_sequence_id as virtual_na_sequence_id,
-      parent_id as virtual_source_id,
-      piece_na_sequence_id,
-      source_id as piece_source_id,
-      (offset + 1) as startm,
-      (offset + length) as end,
-      strand_orientation,
-      length,
-      sequence_order
-FROM (
-(SELECT vs.na_sequence_id, vs.source_id as parent_id, ens.source_id,
-       sp.piece_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length as chr_length, sp.strand_orientation,
-       0 as offset
- FROM dots.VirtualSequence vs, SequencePieceClosure sp,
-     dots.ExternalNaSequence ens
- WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
-  and ens.na_sequence_id = sp.piece_na_sequence_id
-  and sp.sequence_order = 1
-GROUP by vs.na_sequence_id, vs.source_id, ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length, sp.strand_orientation)
-UNION
-(SELECT vs.na_sequence_id, vs.source_id as parent_id, ens.source_id,
-       sp.piece_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length as chr_length, sp.strand_orientation,
-       sum(predecessors.length) as offset
- FROM dots.VirtualSequence vs, SequencePieceClosure sp,
-     dots.ExternalNaSequence ens,
-     (select sp2.virtual_na_sequence_id, sp2.sequence_order, ens2.length
-      from SequencePieceClosure sp2,
-           dots.ExternalNaSequence ens2
-      where sp2.piece_na_sequence_id = ens2.na_sequence_id) predecessors
- WHERE vs.na_sequence_id = sp.virtual_na_sequence_id
-  and ens.na_sequence_id = sp.piece_na_sequence_id
-  and vs.na_sequence_id = predecessors.virtual_na_sequence_id(+)
-  and sp.sequence_order > predecessors.sequence_order
-GROUP by vs.source_id, vs.na_sequence_id, ens.source_id, sp.piece_na_sequence_id, sp.sequence_order,
-       ens.length, vs.length, sp.strand_orientation )
-ORDER by na_sequence_id, offset, sequence_order)
-      ]]>
-    </sql>
-  </tuningTable>
 
   <tuningTable name="DistinctLowerProduct">
     <internalDependency name="GeneAttributes"/>
@@ -5021,7 +5025,7 @@ tablespace indx
     <externalDependency name="dots.SimilaritySpan"/>
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.NaSequence"/>
-    <externalDependency name="dots.SequencePiece"/>
+    <internalDependency name="SequencePieceClosure"/>
     <sql>
       <![CDATA[
 create table SimilaritySpanLocation&1 NOLOGGING as
@@ -5046,15 +5050,13 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        sim.subject_table_id, sim.score as similarity_score,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - greatest(sim.min_query_start, sim.max_query_end) + 1
-           else least(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - greatest(sim.min_query_start, sim.max_query_end) + 1
+           else sp.distance_from_left + least(sim.min_query_start, sim.max_query_end) - sp.start_position + 1
        end as min_query_start,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - least(sim.min_query_start, sim.max_query_end) + 1
-           else greatest(sim.min_query_start, sim.max_query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - least(sim.min_query_start, sim.max_query_end) + 1
+           else sp.distance_from_left + greatest(sim.min_query_start, sim.max_query_end) - sp.start_position + 1
        end as max_query_end,
        sim.is_reversed, sim.pvalue_mant, sim.pvalue_exp,
        round(100 * sim.number_identical / sim.total_match_length,1) as percent_identical,
@@ -5063,26 +5065,26 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        simp.similarity_span_id, simp.score as span_score,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - greatest(simp.query_start, simp.query_end) + 1
-           else least(simp.query_start, simp.query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - greatest(simp.query_start, simp.query_end) + 1
+           else sp.distance_from_left + least(simp.query_start, simp.query_end) - sp.start_position + 1
        end as query_start,
        case
          when sp.strand_orientation in ('-', '-1')
-           then sp.distance_from_left + contig.length
-                - least(simp.query_start, simp.query_end) + 1
-           else greatest(simp.query_start, simp.query_end) + sp.distance_from_left
+           then sp.distance_from_left + sp.end_position - least(simp.query_start, simp.query_end) + 1
+           else sp.distance_from_left + greatest(simp.query_start, simp.query_end) - sp.start_position + 1
        end as query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
        'virtual' as location_mapping, 1 as is_top_level
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
-     dots.NaSequence contig, dots.SequencePiece sp, dots.NaSequence scaffold
+     dots.NaSequence contig, SequencePieceClosure sp, dots.NaSequence scaffold
 where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
   and ti.name = 'ExternalNASequence'
   and sim.query_id = sp.piece_na_sequence_id
-  and sp.piece_na_sequence_id = contig.na_sequence_id
+  and sp.start_position <= sim.min_query_start
+  and sp.end_position >= sim.max_query_end
+  and sim.query_id = contig.na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
       ]]>
     </sql>
@@ -5090,7 +5092,7 @@ where sim.similarity_id = simp.similarity_id
       <![CDATA[
 update SimilaritySpanLocation&1
 set is_top_level = 0
-where subject_id in (select piece_na_sequence_id from dots.SequencePiece)
+where subject_id in (select piece_na_sequence_id from SequencePieceClosure)
       ]]>
     </sql>
     <sql>
@@ -5236,7 +5238,8 @@ select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
-     dots.NaSequence ns, TaxonSpecies st, sres.TaxonName tn, GeneAttributes ga
+     dots.NaSequence ns, -- TaxonSpecies st,
+     sres.TaxonName tn, GeneAttributes ga
 where qti.table_id = sim.query_table_id
   and qti.name = 'TranslatedAASequence'
   and sti.table_id = sim.subject_table_id
@@ -5249,8 +5252,9 @@ where qti.table_id = sim.query_table_id
   and subject.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
   and gf.na_sequence_id = ns.na_sequence_id
-  and ns.taxon_id = st.taxon_id
-  and st.species_taxon_id = tn.taxon_id
+  and ns.taxon_id =
+--    st.taxon_id and st.species_taxon_id =
+                     tn.taxon_id
   and tn.name_class = 'scientific name'
       ]]>
     </sql>
@@ -5730,7 +5734,7 @@ WHERE syn.a_na_sequence_id = context_gene_attrs.na_sequence_id
         -- test that the divisor used in synteny scaling is nonzero. It's odd
         -- that this varies with is_reversed. But any changes must happen both
         -- here and in the PL/SQL
-        AND abs(anch_left.syntenic_loc - anch_right.syntenic_loc - 1) > 0
+        AND abs(anch_right.syntenic_loc - anch_left.syntenic_loc - 1) > 0
         AND apidb.compute_startm(syn.is_reversed, syn_fl.start_min, syn_fl.end_max,
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
                                  anch_right.syntenic_loc, syn.b_start, syn.b_end)
@@ -5847,7 +5851,6 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
                                  anch_right.syntenic_loc, syn.b_start, syn.b_end)
             <= context_gene_attrs.context_end 
-
         AND apidb.compute_end(syn.is_reversed, exfloc.start_min, exfloc.end_max,
                               anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
                               anch_right.syntenic_loc, syn.b_start, syn.b_end)
@@ -5863,7 +5866,6 @@ WHERE syntenic_gene_attrs.na_feature_id = exfloc.parent_id
                                  anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
                                  anch_right.syntenic_loc, syn.b_start, syn.b_end)
             <= context_gene_attrs.context_end 
-
         AND apidb.compute_end(syn.is_reversed, exfloc.start_min, exfloc.end_max,
                               anch_left.ref_loc, anch_right.ref_loc, anch_left.syntenic_loc,
                               anch_right.syntenic_loc, syn.b_start, syn.b_end)
@@ -6297,13 +6299,14 @@ tablespace indx
     <sql>
       <![CDATA[
         CREATE TABLE OrganismTree&1 NOLOGGING AS
-         SELECT organism,term,parentTerm, internal,project_id
+         SELECT organism,term,parentTerm, internal,internal_name,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
            SELECT DISTINCT sa.organism AS organism,
                            sa.organism AS term,
                            sn.name AS parentTerm,
                            t.taxon_id AS internal,
+                           sn.name AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, Sres.TaxonName tn,
                 SRES.Taxon t, SRES.TaxonName sn, TaxonSpecies ts
@@ -6320,6 +6323,7 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           tn.taxon_id AS internal,
+                          sn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6334,6 +6338,7 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           sn.taxon_id AS internal,
+                          sn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6349,6 +6354,7 @@ tablespace indx
                            SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
+                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
@@ -6358,6 +6364,7 @@ tablespace indx
                            ptl.taxon_node AS term,
                            '' AS parentTerm,
                            -1 AS internal,
+                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
@@ -6407,6 +6414,10 @@ tablespace indx
   select 'Trypanosoma cruzi' as organism, 'Tcruzi' as abbreviation from dual union
   select 'Leishmania major' as organism, 'LmajorFriedlin' as abbreviation from dual union
   select 'Leishmania mexicana mexicana' as organism, 'Lmexicana' as abbreviation from dual union
+  -- PiroplasmaDB ESTs
+  select 'Theileria annulata' as organism, 'TannulataAnkara' as abbreviation from dual union
+  select 'Theileria parva' as organism, 'TparvaMuguga' as abbreviation from dual union
+  select 'Babesia bovis' as organism, 'BbovisT2Bo' as abbreviation from dual union
   -- EuPathDB Other ESTs
   select 'Other Apicomplexan ESTs' as organism, 'Other' as abbreviation from dual
       ]]>

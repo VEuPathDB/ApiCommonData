@@ -22,7 +22,7 @@ ADD CONSTRAINT data_source_pk PRIMARY KEY (data_source_id);
 
 ALTER TABLE apidb.DataSource
 ADD CONSTRAINT data_source_uniq
-UNIQUE (name, project);
+UNIQUE (name, project_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.DataSource TO gus_w;
 GRANT SELECT ON apidb.DataSource TO gus_r;

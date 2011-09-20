@@ -51,7 +51,7 @@ sub run {
   my ($self) = @_;
   $self->{featuresAdded} = $self->{summariesAdded} = $self->{summariesSkipped} = 0;
     
-  my $inputFile = $self->getArg('inputFile');    
+  my $inputFileDirectory = $self->getArg('inputFileDirectory');    
   my $record = {};
   my $recordSet = [];
   my $mss;
@@ -1042,14 +1042,12 @@ sub nextRecord {
 sub declareArgs {
   [
 
-   fileArg({
-            name            =>  'inputFile',
-            descr           =>  'Name of file containing the mass spec features',
+   stringArg({
+            name            =>  'inputFileDirectory',
+            descr           =>  'Directory of files containing the mass spec features',
             constraintFunc  =>  undef,
             reqd            =>  1,
             isList          =>  0,
-            mustExist       =>  1,
-            format          =>  'Text'
            }),
 
    stringArg({

@@ -1,3 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<?xml version="1.0"?>
+<!DOCTYPE tuningConfig [
+<!ELEMENT tuningConfig (tuningTable+)>
+<!ELEMENT tuningTable (externalTuningTableDependency*,internalDependency*,intermediateTable*,unionization+,sql*,perl*)>
+<!ELEMENT externalTuningTableDependency EMPTY>
+<!ELEMENT internalDependency EMPTY>
+<!ELEMENT intermediateTable EMPTY>
+<!ELEMENT unionization (source+)>
+<!ELEMENT source (query*)>
+<!ELEMENT query (#PCDATA)>
+<!ELEMENT sql (#PCDATA)>
+<!ELEMENT perl (#PCDATA)>
+
+<!ATTLIST tuningTable name CDATA #REQUIRED>
+
+<!ATTLIST externalTuningTableDependency 
+  name CDATA #REQUIRED
+  dblink CDATA #IMPLIED
+>
+
+<!ATTLIST internalDependency name CDATA #REQUIRED>
+<!ATTLIST source dblink CDATA #IMPLIED>
+]>
+-->
 <tuningConfig>
 
   <tuningTable name="ApidbTuning.OrganismAbbreviationWS">
@@ -55,8 +81,18 @@
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
+
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.EstAttributes@orphan.tuning
+            where organism not in ('Babesia bovis','Theileria annulata','Theileria parva')
+          ]]>
+        </query>
+      </source>
 
       <source>
         <query>
@@ -92,13 +128,13 @@
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.EstAttr_source_id&1 ON ApidbTuning.EstAttributes&1 (source_id, project_id)
+create unique index EstAttr_source_id&1 ON ApidbTuning.EstAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.EstAttr_seqsrc_id&1 ON ApidbTuning.EstAttributes&1 (assembly_source_id, source_id)
+create index EstAttr_seqsrc_id&1 ON ApidbTuning.EstAttributes&1 (assembly_source_id, source_id)
 tablespace indx
       ]]>
     </sql>
@@ -106,7 +142,6 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="ApidbTuning.GeneAttributes">
-    <unionization>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="crypto.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="giardia.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="plasmo.tuning"/>
@@ -118,6 +153,7 @@ tablespace indx
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="orphan.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="piro.tuning"/>
 
+    <unionization>
       <source dblink="crypto.tuning"/>
       <source dblink="giardia.tuning"/>
       <source dblink="plasmo.tuning"/>
@@ -159,7 +195,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.GeneAttr_srcPrj&1
+create unique index GeneAttr_srcPrj&1
        ON ApidbTuning.GeneAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
@@ -168,7 +204,7 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="ApidbTuning.GeneId">
-    <unionization>
+
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="crypto.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="giardia.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="plasmo.tuning"/>
@@ -180,8 +216,9 @@ tablespace indx
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="orphan.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="piro.tuning"/>
 
-      <externalTuningTableDependency name="ApidbTuning.GeneAttributes"/>
+      <internalDependency name="ApidbTuning.GeneAttributes"/>
 
+    <unionization>
       <source dblink="crypto.tuning"/>
       <source dblink="giardia.tuning"/>
       <source dblink="plasmo.tuning"/>
@@ -257,7 +294,7 @@ tablespace indx
     </unionization>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.IsolateAttr_sourceId_idx&1 ON ApidbTuning.IsolateAttributes&1 (source_id, project_id)
+create unique index IsolateAttr_sourceId_idx&1 ON ApidbTuning.IsolateAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -316,13 +353,13 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.OrfAttr_source_id&1 ON ApidbTuning.OrfAttributes&1 (source_id, project_id)
+create unique index OrfAttr_source_id&1 ON ApidbTuning.OrfAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.OrfAttr_location_idx&1 ON ApidbTuning.OrfAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+create index OrfAttr_location_idx&1 ON ApidbTuning.OrfAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
 tablespace indx
       ]]>
     </sql>
@@ -346,14 +383,14 @@ tablespace indx
     </unionization>
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.SageTagAttr_sourceId_idx&1 ON ApidbTuning.SageTagAttributes&1
+create unique index SageTagAttr_sourceId_idx&1 ON ApidbTuning.SageTagAttributes&1
              (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX apidb.SageTagAttr_loc_idx&1 ON ApidbTuning.SageTagAttributes&1
+create index SageTagAttr_loc_idx&1 ON ApidbTuning.SageTagAttributes&1
              (na_sequence_id, start_min, end_max, is_reversed, source_id)
 tablespace indx
       ]]>
@@ -369,7 +406,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -378,7 +414,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -412,7 +447,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (source_id, project_id)
+create unique index pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (source_id, project_id)
       ]]>
     </sql>
 
@@ -428,7 +463,6 @@ CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (sou
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="trich.tuning"/> 
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SequenceId" dblink="piro.tuning"/>
     <internalDependency name="ApidbTuning.SequenceAttributes"/>
 
@@ -438,7 +472,6 @@ CREATE UNIQUE INDEX apidb.pk_SeqAttr_&1 ON ApidbTuning.SequenceAttributes&1 (sou
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -544,14 +577,14 @@ tablespace indx
 
     <sql>
       <![CDATA[
-CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_id, project_id)
+create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_id, project_id)
       ]]>
     </sql>
 
   </tuningTable>
 
  
-  <tuningTable name="apidb.GeneGFF">
+  <tuningTable name="GeneGFF">
     <externalDependency name="apidb.GeneGFF" dblink="giardia.tuning"/>
     <externalDependency name="apidb.GeneGFF" dblink="plasmo.tuning"/>
     <externalDependency name="apidb.GeneGFF" dblink="toxo.tuning"/>
@@ -573,7 +606,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFGiardia nologging as
+        create table GeneGFFGiardia nologging as
         select SOURCE_ID,PROJECT_ID as PROJECT_ID,TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@giardia.tuning
       ]]>
@@ -581,7 +614,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFPlasmo nologging as
+        create table GeneGFFPlasmo nologging as
         select SOURCE_ID,PROJECT_id, TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@plasmo.tuning
        ]]>
@@ -589,7 +622,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFToxo nologging as
+        create table GeneGFFToxo nologging as
         select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
         CONTENT, MODIFICATION_DATE from apidb.GeneGFF@toxo.tuning
        ]]>
@@ -597,7 +630,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
       <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFTriTryp nologging as
+        create table GeneGFFTriTryp nologging as
         select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@tritryp.tuning
       ]]>
@@ -605,7 +638,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
       <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFCrypto nologging as
+        create table GeneGFFCrypto nologging as
         select SOURCE_ID, PROJECT_ID, TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@crypto.tuning
       ]]>
@@ -613,7 +646,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
      <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFTrich nologging as
+        create table GeneGFFTrich nologging as
         select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@trich.tuning where project_id = 'TrichDB'
       ]]>
@@ -621,7 +654,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 <!--
       <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFAmoeba nologging as
+        create table GeneGFFAmoeba nologging as
         select SOURCE_ID,'EuPathDB' as PROJECT_ID,
                TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
@@ -629,7 +662,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
       <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFMicro nologging as
+        create table GeneGFFMicro nologging as
         select SOURCE_ID,'EuPathDB' as PROJECT_ID,
                TABLE_NAME, ROW_COUNT,CONTENT, MODIFICATION_DATE from apidb.GeneGFF@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
@@ -638,7 +671,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
      <sql>
       <![CDATA[
-        create table ApidbTuning.GeneGFFPiro nologging as
+        create table GeneGFFPiro nologging as
         select SOURCE_ID,PROJECT_ID, TABLE_NAME, ROW_COUNT,
                CONTENT, MODIFICATION_DATE from apidb.GeneGFF@piro.tuning where project_id = 'PiroDB'
       ]]>
@@ -646,7 +679,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
       <sql>
       <![CDATA[
-        create table apidb.GeneGFF&1 nologging as
+        create table GeneGFF&1 nologging as
         (
         select * from ApidbTuning.GeneGFFGiardia
         union all
@@ -671,7 +704,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
   </tuningTable>
 
  
-  <tuningTable name="apidb.GeneDetail">
+  <tuningTable name="GeneDetail">
     <internalDependency name="ApidbTuning.ProteinSequence"/>
     <externalDependency name="apidb.GeneDetail" dblink="crypto.tuning"/>
     <externalDependency name="apidb.GeneDetail" dblink="giardia.tuning"/>
@@ -696,77 +729,77 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailCrypto nologging as
+        create table GeneDetailCrypto nologging as
         select * from apidb.GeneDetail@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailGiardia nologging as
+        create table GeneDetailGiardia nologging as
         select * from apidb.GeneDetail@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailPlasmo nologging as
+        create table GeneDetailPlasmo nologging as
         select * from apidb.GeneDetail@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailToxo nologging as
+        create table GeneDetailToxo nologging as
         select * from apidb.GeneDetail@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailTrich nologging as
+        create table GeneDetailTrich nologging as
         select * from apidb.GeneDetail@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
     
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailAmoeba nologging as
+        create table GeneDetailAmoeba nologging as
         select * from apidb.GeneDetail@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailMicro nologging as
+        create table GeneDetailMicro nologging as
         select * from apidb.GeneDetail@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailTriTryp nologging as
+        create table GeneDetailTriTryp nologging as
         select * from apidb.GeneDetail@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailOrphan nologging as
+        create table GeneDetailOrphan nologging as
         select * from apidb.GeneDetail@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.GeneDetailPiro nologging as
+        create table GeneDetailPiro nologging as
         select * from apidb.GeneDetail@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table apidb.GeneDetail&1 nologging as
+        create table GeneDetail&1 nologging as
         (
         select * from ApidbTuning.GeneDetailCrypto
         union all
@@ -816,77 +849,77 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceToxo nologging as
+        create table TranscriptSequenceToxo nologging as
         select * from ApidbTuning.TranscriptSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceCrypto nologging as
+        create table TranscriptSequenceCrypto nologging as
         select * from ApidbTuning.TranscriptSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceGiardia nologging as
+        create table TranscriptSequenceGiardia nologging as
         select * from ApidbTuning.TranscriptSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequencePlasmo nologging as
+        create table TranscriptSequencePlasmo nologging as
         select * from ApidbTuning.TranscriptSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceTrich nologging as
+        create table TranscriptSequenceTrich nologging as
         select * from ApidbTuning.TranscriptSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceTriTryp nologging as
+        create table TranscriptSequenceTriTryp nologging as
         select * from ApidbTuning.TranscriptSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceAmoeba nologging as
+        create table TranscriptSequenceAmoeba nologging as
         select * from ApidbTuning.TranscriptSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceMicro nologging as
+        create table TranscriptSequenceMicro nologging as
         select * from ApidbTuning.TranscriptSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequenceOrphan nologging as
+        create table TranscriptSequenceOrphan nologging as
         select * from ApidbTuning.TranscriptSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequencePiro nologging as
+        create table TranscriptSequencePiro nologging as
         select * from ApidbTuning.TranscriptSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.TranscriptSequence&1 nologging as
+        create table TranscriptSequence&1 nologging as
         (
         select * from ApidbTuning.TranscriptSequenceCrypto
         union all
@@ -913,7 +946,7 @@ CREATE UNIQUE INDEX apidb.SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (so
 
     <sql>
       <![CDATA[
-create index apidb.XScriptSeq_ix&1 on ApidbTuning.TranscriptSequence&1 (source_id, project_id)
+create index XScriptSeq_ix&1 on ApidbTuning.TranscriptSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -944,77 +977,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceCrypto nologging as
+        create table CodingSequenceCrypto nologging as
         select * from ApidbTuning.CodingSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceGiardia nologging as
+        create table CodingSequenceGiardia nologging as
         select * from ApidbTuning.CodingSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequencePlasmo nologging as
+        create table CodingSequencePlasmo nologging as
         select * from ApidbTuning.CodingSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceToxo nologging as
+        create table CodingSequenceToxo nologging as
         select * from ApidbTuning.CodingSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceTrich nologging as
+        create table CodingSequenceTrich nologging as
         select * from ApidbTuning.CodingSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceTriTryp nologging as
+        create table CodingSequenceTriTryp nologging as
         select * from ApidbTuning.CodingSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceAmoeba nologging as
+        create table CodingSequenceAmoeba nologging as
         select * from ApidbTuning.CodingSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceMicro nologging as
+        create table CodingSequenceMicro nologging as
         select * from ApidbTuning.CodingSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequenceOrphan nologging as
+        create table CodingSequenceOrphan nologging as
         select * from ApidbTuning.CodingSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequencePiro nologging as
+        create table CodingSequencePiro nologging as
         select * from ApidbTuning.CodingSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.CodingSequence&1 nologging as
+        create table CodingSequence&1 nologging as
         (
         select * from ApidbTuning.CodingSequenceCrypto
         union all
@@ -1041,7 +1074,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.cds_ix&1 on ApidbTuning.CodingSequence&1 (source_id, project_id)
+create index cds_ix&1 on ApidbTuning.CodingSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1072,77 +1105,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceCrypto nologging as
+        create table ProteinSequenceCrypto nologging as
         select * from ApidbTuning.ProteinSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceGiardia nologging as
+        create table ProteinSequenceGiardia nologging as
         select * from ApidbTuning.ProteinSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequencePlasmo nologging as
+        create table ProteinSequencePlasmo nologging as
         select * from ApidbTuning.ProteinSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceToxo nologging as
+        create table ProteinSequenceToxo nologging as
         select * from ApidbTuning.ProteinSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceTrich nologging as
+        create table ProteinSequenceTrich nologging as
         select * from ApidbTuning.ProteinSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceTriTryp nologging as
+        create table ProteinSequenceTriTryp nologging as
         select * from ApidbTuning.ProteinSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceAmoeba nologging as
+        create table ProteinSequenceAmoeba nologging as
         select * from ApidbTuning.ProteinSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceMicro nologging as
+        create table ProteinSequenceMicro nologging as
         select * from ApidbTuning.ProteinSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequenceOrphan nologging as
+        create table ProteinSequenceOrphan nologging as
         select * from ApidbTuning.ProteinSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequencePiro nologging as
+        create table ProteinSequencePiro nologging as
         select * from ApidbTuning.ProteinSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.ProteinSequence&1 nologging as
+        create table ProteinSequence&1 nologging as
         (
         select * from ApidbTuning.ProteinSequenceCrypto
         union all
@@ -1169,7 +1202,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.ProtSeq_ix&1 on ApidbTuning.ProteinSequence&1 (source_id, project_id)
+create index ProtSeq_ix&1 on ApidbTuning.ProteinSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1200,42 +1233,42 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceCrypto nologging as
+        create table NaSequenceCrypto nologging as
         select * from ApidbTuning.NaSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceGiardia nologging as
+        create table NaSequenceGiardia nologging as
         select * from ApidbTuning.NaSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequencePlasmo nologging as
+        create table NaSequencePlasmo nologging as
         select * from ApidbTuning.NaSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceToxo nologging as
+        create table NaSequenceToxo nologging as
         select * from ApidbTuning.NaSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceTrich nologging as
+        create table NaSequenceTrich nologging as
         select * from ApidbTuning.NaSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceTriTryp nologging as
+        create table NaSequenceTriTryp nologging as
         select * from ApidbTuning.NaSequence@tritryp.tuning
       ]]>
     </sql>
@@ -1243,35 +1276,35 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceAmoeba nologging as
+        create table NaSequenceAmoeba nologging as
         select * from ApidbTuning.NaSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceMicro nologging as
+        create table NaSequenceMicro nologging as
         select * from ApidbTuning.NaSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequenceOrphan nologging as
+        create table NaSequenceOrphan nologging as
         select * from ApidbTuning.NaSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequencePiro nologging as
+        create table NaSequencePiro nologging as
         select * from ApidbTuning.NaSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.NaSequence&1 nologging as
+        create table NaSequence&1 nologging as
         (
         select * from ApidbTuning.NaSequenceCrypto
         union all
@@ -1298,7 +1331,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.NaSeq_ix&1 on ApidbTuning.NaSequence&1 (source_id, project_id)
+create index NaSeq_ix&1 on ApidbTuning.NaSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1329,77 +1362,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceCrypto nologging as
+        create table OrfSequenceCrypto nologging as
         select * from ApidbTuning.OrfSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceGiardia nologging as
+        create table OrfSequenceGiardia nologging as
         select * from ApidbTuning.OrfSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequencePlasmo nologging as
+        create table OrfSequencePlasmo nologging as
         select * from ApidbTuning.OrfSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceToxo nologging as
+        create table OrfSequenceToxo nologging as
         select * from ApidbTuning.OrfSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceTrich nologging as
+        create table OrfSequenceTrich nologging as
         select * from ApidbTuning.OrfSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceTriTryp nologging as
+        create table OrfSequenceTriTryp nologging as
         select * from ApidbTuning.OrfSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceAmoeba nologging as
+        create table OrfSequenceAmoeba nologging as
         select * from ApidbTuning.OrfSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceMicro nologging as
+        create table OrfSequenceMicro nologging as
         select * from ApidbTuning.OrfSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequenceOrphan nologging as
+        create table OrfSequenceOrphan nologging as
         select * from ApidbTuning.OrfSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequencePiro nologging as
+        create table OrfSequencePiro nologging as
         select * from ApidbTuning.OrfSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.OrfSequence&1 nologging as
+        create table OrfSequence&1 nologging as
         (
         select * from ApidbTuning.OrfSequenceCrypto
         union all
@@ -1426,7 +1459,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.OrfSeq_ix&1 on ApidbTuning.OrfSequence&1 (source_id, project_id)
+create index OrfSeq_ix&1 on ApidbTuning.OrfSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1457,77 +1490,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceCrypto nologging as
+        create table EstSequenceCrypto nologging as
         select * from ApidbTuning.EstSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceGiardia nologging as
+        create table EstSequenceGiardia nologging as
         select * from ApidbTuning.EstSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequencePlasmo nologging as
+        create table EstSequencePlasmo nologging as
         select * from ApidbTuning.EstSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceToxo nologging as
+        create table EstSequenceToxo nologging as
         select * from ApidbTuning.EstSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceTrich nologging as
+        create table EstSequenceTrich nologging as
         select * from ApidbTuning.EstSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceTriTryp nologging as
+        create table EstSequenceTriTryp nologging as
         select * from ApidbTuning.EstSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceAmoeba nologging as
+        create table EstSequenceAmoeba nologging as
         select * from ApidbTuning.EstSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceMicro nologging as
+        create table EstSequenceMicro nologging as
         select * from ApidbTuning.EstSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequenceOrphan nologging as
+        create table EstSequenceOrphan nologging as
         select * from ApidbTuning.EstSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequencePiro nologging as
+        create table EstSequencePiro nologging as
         select * from ApidbTuning.EstSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.EstSequence&1 nologging as
+        create table EstSequence&1 nologging as
         (
         select * from ApidbTuning.EstSequenceCrypto
         union all
@@ -1554,7 +1587,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.EstSeq_ix&1 on ApidbTuning.EstSequence&1 (source_id, project_id)
+create index EstSeq_ix&1 on ApidbTuning.EstSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1585,77 +1618,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceCrypto nologging as
+        create table AssemblySequenceCrypto nologging as
         select * from ApidbTuning.AssemblySequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceGiardia nologging as
+        create table AssemblySequenceGiardia nologging as
         select * from ApidbTuning.AssemblySequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequencePlasmo nologging as
+        create table AssemblySequencePlasmo nologging as
         select * from ApidbTuning.AssemblySequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceToxo nologging as
+        create table AssemblySequenceToxo nologging as
         select * from ApidbTuning.AssemblySequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceTrich nologging as
+        create table AssemblySequenceTrich nologging as
         select * from ApidbTuning.AssemblySequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceTriTryp nologging as
+        create table AssemblySequenceTriTryp nologging as
         select * from ApidbTuning.AssemblySequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceAmoeba nologging as
+        create table AssemblySequenceAmoeba nologging as
         select * from ApidbTuning.AssemblySequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceMicro nologging as
+        create table AssemblySequenceMicro nologging as
         select * from ApidbTuning.AssemblySequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequenceOrphan nologging as
+        create table AssemblySequenceOrphan nologging as
         select * from ApidbTuning.AssemblySequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequencePiro nologging as
+        create table AssemblySequencePiro nologging as
         select * from ApidbTuning.AssemblySequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.AssemblySequence&1 nologging as
+        create table AssemblySequence&1 nologging as
         (
         select * from ApidbTuning.AssemblySequenceCrypto
         union all
@@ -1682,7 +1715,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.AssemblySeq_ix&1 on ApidbTuning.AssemblySequence&1 (source_id, project_id)
+create index AssemblySeq_ix&1 on ApidbTuning.AssemblySequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1713,77 +1746,77 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceCrypto nologging as
+        create table IsolateSequenceCrypto nologging as
         select * from ApidbTuning.IsolateSequence@crypto.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceGiardia nologging as
+        create table IsolateSequenceGiardia nologging as
         select * from ApidbTuning.IsolateSequence@giardia.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequencePlasmo nologging as
+        create table IsolateSequencePlasmo nologging as
         select * from ApidbTuning.IsolateSequence@plasmo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceToxo nologging as
+        create table IsolateSequenceToxo nologging as
         select * from ApidbTuning.IsolateSequence@toxo.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceTrich nologging as
+        create table IsolateSequenceTrich nologging as
         select * from ApidbTuning.IsolateSequence@trich.tuning where project_id = 'TrichDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceTriTryp nologging as
+        create table IsolateSequenceTriTryp nologging as
         select * from ApidbTuning.IsolateSequence@tritryp.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceAmoeba nologging as
+        create table IsolateSequenceAmoeba nologging as
         select * from ApidbTuning.IsolateSequence@amoeba.tuning where project_id = 'AmoebaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceMicro nologging as
+        create table IsolateSequenceMicro nologging as
         select * from ApidbTuning.IsolateSequence@micro.tuning where project_id = 'MicrosporidiaDB'
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequenceOrphan nologging as
+        create table IsolateSequenceOrphan nologging as
         select * from ApidbTuning.IsolateSequence@orphan.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequencePiro nologging as
+        create table IsolateSequencePiro nologging as
         select * from ApidbTuning.IsolateSequence@piro.tuning
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create table ApidbTuning.IsolateSequence&1 nologging as
+        create table IsolateSequence&1 nologging as
         (
         select * from ApidbTuning.IsolateSequenceCrypto
         union all
@@ -1810,7 +1843,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create index apidb.IsolateSeq_ix&1 on ApidbTuning.IsolateSequence&1 (source_id, project_id)
+create index IsolateSeq_ix&1 on ApidbTuning.IsolateSequence&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
@@ -1832,7 +1865,7 @@ tablespace indx
 
     <sql>
       <![CDATA[
-create table ApidbTuning.Statistics&1 nologging as
+create table Statistics&1 nologging as
 select taxa.project_id, taxa.organism, genes.gene_count,
        transcripts.transcript_count, cdss.cds_count, proteins.protein_count,
        sequences.sequence_count, sequences.total_sequence_length,
@@ -1911,7 +1944,7 @@ order by taxa.project_id, taxa.organism
 
     <sql>
       <![CDATA[
-create table ApidbTuning.IsolateStatistics&1 nologging as
+create table IsolateStatistics&1 nologging as
 select project_id, genus, count(*) isolate_count
 from (select ia.project_id, substr(ia.organism, 1, instr(ia.organism||' ', ' ') - 1) genus
       from ApidbTuning.IsolateAttributes ia, ApidbTuning.IsolateSequence iseq
@@ -1979,42 +2012,42 @@ order by project_id, genus
 
     <sql>
       <![CDATA[
-create index apidb.featloc_ix&1 on ApidbTuning.FeatureLocation&1
+create index featloc_ix&1 on ApidbTuning.FeatureLocation&1
              (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index apidb.featloc2_ix&1 on ApidbTuning.FeatureLocation&1
+create index featloc2_ix&1 on ApidbTuning.FeatureLocation&1
              (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index apidb.fl_seq_st_end_feat_idx&1
+create index fl_seq_st_end_feat_idx&1
       on ApidbTuning.FeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index apidb.featloc3_ix&1 on ApidbTuning.FeatureLocation&1
+create index featloc3_ix&1 on ApidbTuning.FeatureLocation&1
              (na_feature_id, na_sequence_id, is_top_level)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index apidb.featloc4_ix&1 on ApidbTuning.FeatureLocation&1
+create index featloc4_ix&1 on ApidbTuning.FeatureLocation&1
              (feature_type, is_top_level, na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index apidb.featloc5_ix&1
+create index featloc5_ix&1
 on ApidbTuning.FeatureLocation&1 
 (na_sequence_id, feature_type, start_min, end_max, parent_id, na_feature_id)
 tablespace indx
@@ -2022,7 +2055,7 @@ tablespace indx
     </sql>
     <sql>
       <![CDATA[
-create index apidb.featloc6_ix&1 on ApidbTuning.FeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
+create index featloc6_ix&1 on ApidbTuning.FeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
 tablespace indx
       ]]>
     </sql>
@@ -2031,7 +2064,7 @@ tablespace indx
 
 
 
-<tuningTable name="apidb.OrthomclTaxon">
+<tuningTable name="OrthomclTaxon">
     <externalDependency name="apidb.orthomcltaxon" dblink="crypto.tuning"/>
     <externalDependency name="apidb.orthomcltaxon" dblink="giardia.tuning"/>
     <externalDependency name="apidb.orthomcltaxon" dblink="plasmo.tuning"/>
@@ -2085,7 +2118,7 @@ while ( $hash_ref = $queryHandle->fetchrow_hashref ) {
 # (we'll assume that's the most populous one, since orthoMCL tends to grow monotonically)
 
 $dbh->do(<<EOSQL) or die $dbh->errstr;
-    CREATE TABLE apidb.OrthomclTaxon&1 AS SELECT * FROM apidb.orthomcltaxon\@$maxDbLink
+    create table OrthomclTaxon&1 AS SELECT * FROM apidb.orthomcltaxon\@$maxDbLink
 EOSQL
 
       ]]> 

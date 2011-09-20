@@ -21,9 +21,9 @@ my ($help, $instance, $schema, $xml, $cleanAll);
 
 my $dsn = "dbi:Oracle:$instance";
 
-my $dbh = DBI->connect($dsn) or die DBI->errstr;
+my $dbh = DBI->connect($dsn, $schema) or die DBI->errstr;
 $dbh->{RaiseError} = 1;
-$dbh->{AutoCommit} = 0;
+$dbh->{AutoCommit} = 1;
 
 $schema = uc $schema;
 
@@ -60,7 +60,7 @@ my $d_sh = $dbh->prepare("   select table_name, regexp_replace(table_name, '[0-9
 from all_tables
 where regexp_replace(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
       like '\%fournumbers'
-  AND owner != 'SYS'
+  AND owner = '$schema'
   AND table_name not like 'QUERY_RESULT_%'");
 $d_sh->execute();
 
@@ -73,18 +73,16 @@ while(my ($table, $synonym) = $d_sh->fetchrow_array()) {
 foreach(@extra) {
 
   if($all4D{$_}) {
-    print "drop synonym $schema.$_;\n";
-    print "delete apidb.tuningtable where upper(name) = '$schema.$_';\n";
+    $dbh->do("drop synonym $schema.$_");
+    $dbh->do("delete apidb.tuningtable where upper(name) = '$schema.$_'");
   }
   else {
     print STDERR "-- WARNING There is a synonym for $schema.$_ but no table with 4 digits... skipping\n";
   }
 
   foreach(@{$all4D{$_}}) {
-    print "dropt table $schema.$_;\n";
+    $dbh->do("drop table $schema.$_");
   }
-
-print "\n\n";
 }
 
 

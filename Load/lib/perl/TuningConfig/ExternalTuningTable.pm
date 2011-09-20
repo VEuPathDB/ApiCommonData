@@ -29,7 +29,7 @@ sub new {
     my $sql = <<SQL;
        select to_char(timestamp, 'yyyy-mm-dd hh24:mi:ss')
        from apidb.TuningTable$dblink
-       where name = '$self->{name}'
+       where lower(name) = lower('$self->{name}')
 SQL
     my $stmt = $dbh->prepare($sql);
     $stmt->execute()

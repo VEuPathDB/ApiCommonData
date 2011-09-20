@@ -98,7 +98,7 @@ eval {
   $tuningRegistry =
     ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
 
-  if ($instance ne $tuningRegistry->getInstanceName()) {
+  if (lc($instance) ne lc($tuningRegistry->getInstanceName())) {
     die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
   }
 
@@ -496,7 +496,13 @@ sub parseConfigFile {
   # use forcearray so elements with one child are still arrays
   # and use keyattr so that unions are given as an ordered list
   # rather than a hash
-  my $config = $simple->XMLin($configFile,
+
+  # reading the XML into a string instead of just giving the file name to XML::Simple because we
+  # were getting inexplicable errors, such as CDATA chunks that didn't end at the "]]>"
+  open (F, $configFile);
+  my @lines = <F>;
+  my $xmlString = join("", @lines);
+  my $config = $simple->XMLin($xmlString,
 			    forcearray => 1,
 			    KeyAttr => {sqlValue=>'+name'});
   if ($debug) {

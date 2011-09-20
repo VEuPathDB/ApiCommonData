@@ -152,4 +152,12 @@
     <pluginArgs>--DbRefMappingFile @@dataDir@@/dbRefs.txt --extDbName %RESOURCE_NAME% --extDbReleaseNumber %RESOURCE_VERSION% --columnSpec "primary_identifier, remark" --tableName "AASequenceDbRef"</pluginArgs>
     <unpack>createEpitopeDbRefFile --inputDir @@dataDir@@/../Lbraziliensis_IEDB_Epitopes_RSRC/IEDB_Epitopes_fixed --outputFile @@dataDir@@/dbRefs.txt</unpack>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Lbraziliensis_Cuervo_Promastigotes_RSRC"
+            version="2007-03-30">
+    <manualGet fileOrDir="TriTrypDB/lbraziliensis/massSpec/Promastigote/%RESOURCE_VERSION%/final/Table1_formatted.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/Table1_formatted.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' --developmentalStage 'promastigotes'</pluginArgs>
+  </resource>
+
 </resources>

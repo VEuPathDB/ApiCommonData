@@ -12,6 +12,8 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GFF3;
+use GUS::Model::ApiDB::GFF3AttributeKey;
+use GUS::Model::ApiDB::GFF3Attributes;
 use ApiCommonData::Load::Util;
 
 # ----------------------------------------------------------
@@ -76,7 +78,7 @@ PURPOSEBRIEF
 NOTES
 
   my $tablesAffected = <<AFFECT;
-ApiDB.GFF3
+ApiDB.GFF3, ApiDB.GFF3AttributeKey, ApiDB.Attributes
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -158,7 +160,7 @@ sub getNaSequencefromSourceId {
    return $naSeq;
 }
 
-sub getSoIdfromSoTerm {
+sub getSOfromSoTerm {
    my ($self, $soterm) = @_;
    if(my $found = $self->{soids}->{$soterm}) {
      return $found;
@@ -171,15 +173,49 @@ sub getSoIdfromSoTerm {
    $self->{soids}->{$soterm} = $SOTerm;
    return $SOTerm;
 }
+sub getGFF3AttributeKeys{
+ my ($self, $key) = @_;
+   if(my $found = $self->{attr_keys}->{$key}) {
+     return $found;
+   }
+   
+   my $attrKey = GUS::Model::ApiDB::GFF3AttributeKeys->new({'name' => $key });
+   unless($attrKey->retrieveFromDB){
+     print 'key $key added to GFF3AttributeKeys'; 
+     $attrKey->submit();
 
-sub insertGFF3 {
+sub getGFF3AttributeKey{
+ my ($self, $key) = @_;
+ if(my $found = $self->{attr_keys}->{$key}) {
+     return $found;
+   }
+   
+   my $attrKey = GUS::Model::ApiDB::GFF3AttributeKey->new({'name' => $key });
+   unless($attrKey->retrieveFromDB){
+     print "key $key added to GFF3AttributeKey"; 
+     $attrKey->submit();
+
+   }
+   $self->{attr_keys}->{$key} = $attrKey;
+   return $attrKey;
+}
+
+sub createGff3AttrObj{
+  my ($self,$key,$value) = @_;
+  my $attrKey = $self->getGFF3AttributeKey($key);
+  my $attr = GUS::Model::ApiDB::GFF3Attributes->new({'value' => $value });
+  $attr->setParent($attrKey);
+  return $attr
+}
+
+sub insertGFF3{
   my ($self,$feature, $gff3ExtDbReleaseId) = @_;
 
   my $seqid = $feature->seq_id;
   my $naSeq = $self->getNaSequencefromSourceId($seqid);
 
   my $soterm = $feature->primary_tag;
-  my $sotermObj = $self->getSoIdfromSoTerm($soterm);
+  my $sotermObj = $self->getSOfromSoTerm($soterm);
 
   my $snpStart = $feature->location()->start();
   my $snpEnd = $feature->location()->end();
@@ -190,10 +226,37 @@ sub insertGFF3 {
   my $frame = $feature->frame;
 
   my $attr = '';
+  my $parent = '';
+  my $id = '';
   my @tags = $feature->get_all_tags();
+  my @attr;
   foreach my $tag(@tags) {
-     my @values = $feature->get_tag_values($tag);
-     $attr .= $tag. '='. join(',', @values) . ';';
+    # change to uc string eq
+    if (uc($tag) eq "PARENT"){
+      my @parents = $feature->get_tag_values($tag);
+      unless (scalar(@parents) == 1){
+        $self->userError("Only one parent allowed");
+      }
+      $parent = $parents[0];
+      print $parent
+    }
+    elsif (uc($tag) eq "ID"){
+      my @ids = $feature->get_tag_values($tag);
+      unless (scalar(@ids) == 1){
+        $self->userError("Only one id allowed")
+      }
+      $id = $ids[0];
+    }
+    else {
+      my @values = $feature->get_tag_values($tag);
+      my $value = $values[0];
+      print "SeqID = $seqid : $tag : $value";
+      $attr .= $tag. '='. join(',', @values) . ';';
+      foreach my $value(@values){
+        my $gff3Attr = $self->createGff3AttrObj($tag,$value);
+        push(@attr,$gff3Attr);
+      }
+    }
   }
   $attr =~ s/;$//;
 
@@ -205,16 +268,27 @@ sub insertGFF3 {
                                 'score' => $score,
                                 'is_reversed' => $strand,
                                 'phase' => $frame,
-                                'external_database_release_id' => $gff3ExtDbReleaseId
+                                'external_database_release_id' => $gff3ExtDbReleaseId,
+                                'parent_attr' => $parent,
+                                'id_attr' => $id
                                  });
 
   $gff3->setParent($naSeq);
   $gff3->setParent($sotermObj);
   $gff3->setAttr($attr);
 
+  foreach my $attribute(@attr) {
+    $attribute->setParent($gff3);
+    }
+
   $gff3->submit();
 }
 
+
 sub undoTables {
-  return ('ApiDB.GFF3');
+  qw(
+    ApiDB.GFF3
+    ApiDB.GFF3Attributes
+    ApiDB.GFF3AttributeKey
+    );
 }

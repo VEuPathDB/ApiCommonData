@@ -248,4 +248,13 @@
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
     <publication pmid="19393160" />
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Linfantum_RNASeq_Mottram_RSRC"
+            version="@@Linfantum_RNASeq_Mottram_VER@@">
+    <getAndUnpackOutput dir="@@dataDir@@/final" />
+    <getAndUnpackOutput file="@@dataDir@@/final/Mottram_LinfJPCM5_rna-seq.fastq" />
+    <manualGet fileOrDir="TriTrypDB/linfantum/rnaSeq/Mottram_Jeremy/%RESOURCE_VERSION%/final/" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
 </resources>
