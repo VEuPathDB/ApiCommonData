@@ -5039,7 +5039,7 @@ select sim.similarity_id, sim.query_id, sim.subject_id, sim.query_table_id,
        simp.similarity_span_id, simp.score as span_score, simp.query_start, simp.query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'direct' as location_mapping, 1 as is_top_level
+       'direct' as location_mapping
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti
 where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
@@ -5075,7 +5075,7 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        end as query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'virtual' as location_mapping, 1 as is_top_level
+       'virtual' as location_mapping
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
      dots.NaSequence contig, SequencePieceClosure sp, dots.NaSequence scaffold
 where sim.similarity_id = simp.similarity_id
@@ -5086,13 +5086,6 @@ where sim.similarity_id = simp.similarity_id
   and sp.end_position >= sim.max_query_end
   and sim.query_id = contig.na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-update SimilaritySpanLocation&1
-set is_top_level = 0
-where subject_id in (select piece_na_sequence_id from SequencePieceClosure)
       ]]>
     </sql>
     <sql>
