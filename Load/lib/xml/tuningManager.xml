@@ -6302,7 +6302,10 @@ tablespace indx
                                 THEN 'Cryptosporidium parvum Chr. 6'
                                 ELSE sa.organism
                            END AS organism,
-                           sa.organism AS term,
+                           CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS term,
                            CASE WHEN sa.organism = 'Cryptosporidium parvum'
                                 THEN sa.organism
                                 ELSE sn.name 
