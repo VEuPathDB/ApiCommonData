@@ -6298,7 +6298,10 @@ tablespace indx
          SELECT organism,term,parentTerm, internal,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
-           SELECT DISTINCT sa.organism AS organism,
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,
                            sa.organism AS term,
                            sn.name AS parentTerm,
                            t.taxon_id AS internal,
@@ -6314,7 +6317,10 @@ tablespace indx
            UNION
            -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
            -- we are getting a row for species level AND for children here
-           SELECT DISTINCT sa.organism AS organism,
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           tn.taxon_id AS internal,
@@ -6328,7 +6334,10 @@ tablespace indx
            AND t.taxon_id = ts.taxon_id
            AND sn.name_class = 'scientific name'
            UNION 
-           SELECT DISTINCT sa.organism AS organism,
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           sn.taxon_id AS internal,
@@ -6343,7 +6352,10 @@ tablespace indx
            AND sn.name_class = 'scientific name'
            UNION
            -- all organisms from sequenceattributes as organism, genus as term, parentterm from taxonlevel
-           SELECT DISTINCT sa.organism AS organism,      
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,      
                            SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
@@ -6352,7 +6364,10 @@ tablespace indx
            WHERE ptl.project_id = sa.project_id
            UNION
            -- all organisms from sequenceattributes as organism, taxon_node as term, parentterm is null
-           SELECT DISTINCT sa.organism AS organism,               
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,               
                            ptl.taxon_node AS term,
                            '' AS parentTerm,
                            -1 AS internal,
