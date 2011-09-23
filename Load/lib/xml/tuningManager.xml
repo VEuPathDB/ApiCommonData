@@ -6323,6 +6323,7 @@ tablespace indx
              AND tn.name = sa.organism              
            -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
            -- we are getting a row for species level AND for children here
+           UNION
            SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
                                 THEN 'Cryptosporidium parvum Chr. 6'
                                 ELSE sa.organism
