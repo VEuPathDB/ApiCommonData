@@ -6298,18 +6298,9 @@ tablespace indx
          SELECT organism,term,parentTerm, internal,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
-           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
-                                THEN 'Cryptosporidium parvum Chr. 6'
-                                ELSE sa.organism
-                           END AS organism,
-                           CASE WHEN sa.organism = 'Cryptosporidium parvum'
-                                THEN 'Cryptosporidium parvum Chr. 6'
-                                ELSE sa.organism
-                           END AS term,
-                           CASE WHEN sa.organism = 'Cryptosporidium parvum'
-                                THEN sa.organism
-                                ELSE sn.name 
-                           END AS parentTerm,
+           SELECT DISTINCT sa.organism AS organism,
+                           sa.organism AS term,
+                           sn.name AS parentTerm,
                            t.taxon_id AS internal,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, Sres.TaxonName tn,
@@ -6321,6 +6312,15 @@ tablespace indx
            AND sn.name_class = 'scientific name'
            AND t.rank != 'species'
            UNION
+            -- Special handling for Crytosporidium parvum Chr. 6 Reannotation
+           SELECT DISTINCT 'Cryptosporidium parvum Chr. 6' AS organism,
+                           'Cryptosporidium parvum Chr. 6' AS term,
+                           sa.organism as parentTerm,
+                           tn.taxon_id AS internal,
+                           sa.project_id as project_id
+           FROM SequenceAttributes sa, Sres.TaxonName tn
+           WHERE sa.organism = 'Cryptosporidium parvum'
+             AND tn.name = sa.organism              
            -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
            -- we are getting a row for species level AND for children here
            SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
