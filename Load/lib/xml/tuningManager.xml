@@ -6303,7 +6303,10 @@ tablespace indx
                                 ELSE sa.organism
                            END AS organism,
                            sa.organism AS term,
-                           sn.name AS parentTerm,
+                           CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN sa.organism
+                                ELSE sn.name 
+                           END AS parentTerm,
                            t.taxon_id AS internal,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, Sres.TaxonName tn,
