@@ -294,9 +294,12 @@ set is_top_level = 1
     </sql>
     <sql>
       <![CDATA[
-update FeatureLocation&1
-set is_top_level = 0
-where na_sequence_id in (select piece_na_sequence_id from SequencePieceClosure)
+update FeatureLocation&1 fl
+set is_top_level = 0 
+where na_sequence_id in (select distinct piece_na_sequence_id 
+                         from apidbtuning.sequencepiececlosure spc
+                         where fl.start_min >= spc.start_position
+                         and fl.end_max <= spc.end_position)
       ]]>
     </sql>
     <sql>
@@ -5039,7 +5042,7 @@ select sim.similarity_id, sim.query_id, sim.subject_id, sim.query_table_id,
        simp.similarity_span_id, simp.score as span_score, simp.query_start, simp.query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'direct' as location_mapping, 1 as is_top_level
+       'direct' as location_mapping
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti
 where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
@@ -5075,7 +5078,7 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        end as query_end,
        simp.subject_start, simp.subject_end,
        simp.is_reversed as span_is_reversed,
-       'virtual' as location_mapping, 1 as is_top_level
+       'virtual' as location_mapping
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
      dots.NaSequence contig, SequencePieceClosure sp, dots.NaSequence scaffold
 where sim.similarity_id = simp.similarity_id
@@ -5086,13 +5089,6 @@ where sim.similarity_id = simp.similarity_id
   and sp.end_position >= sim.max_query_end
   and sim.query_id = contig.na_sequence_id
   and sp.virtual_na_sequence_id = scaffold.na_sequence_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-update SimilaritySpanLocation&1
-set is_top_level = 0
-where subject_id in (select piece_na_sequence_id from SequencePieceClosure)
       ]]>
     </sql>
     <sql>
@@ -6299,14 +6295,13 @@ tablespace indx
     <sql>
       <![CDATA[
         CREATE TABLE OrganismTree&1 NOLOGGING AS
-         SELECT organism,term,parentTerm, internal,internal_name,project_id
+         SELECT organism,term,parentTerm, internal,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
            SELECT DISTINCT sa.organism AS organism,
                            sa.organism AS term,
                            sn.name AS parentTerm,
                            t.taxon_id AS internal,
-                           sn.name AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, Sres.TaxonName tn,
                 SRES.Taxon t, SRES.TaxonName sn, TaxonSpecies ts
@@ -6323,7 +6318,6 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           tn.taxon_id AS internal,
-                          sn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6338,7 +6332,6 @@ tablespace indx
                           sn.name AS term,
                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
                           sn.taxon_id AS internal,
-                          sn.name AS internal_name,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
                 SRES.TaxonName tn, SRES.TaxonName sn,
@@ -6354,7 +6347,6 @@ tablespace indx
                            SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
-                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
@@ -6364,7 +6356,6 @@ tablespace indx
                            ptl.taxon_node AS term,
                            '' AS parentTerm,
                            -1 AS internal,
-                           '' AS internal_name,
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id

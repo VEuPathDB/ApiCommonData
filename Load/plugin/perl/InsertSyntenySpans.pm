@@ -55,13 +55,7 @@ my $argsDeclaration =
 	      reqd => 1,
 	      isList => 0
 	     }),
-   enumArg({name => 'organism',
-              descr => 'Species to insert synteny data for',
-              constraintFunc=> undef,
-              reqd  => 1,
-              isList => 0,
-              enum => "Plasmodium, Toxoplasma, Cryptosporidium, TriTryp, Giardia, Entamoeba, Microsporidia",
-             }),
+
 
   ];
 
@@ -417,13 +411,7 @@ my $sql;
 
 
 
-if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'TriTryp' || $self->getArg('organism') eq 'Toxoplasma'|| $self->getArg('organism') eq 'Giardia' ||$self->getArg('organism') eq 'Entamoeba'||$self->getArg('organism') eq 'Microsporidia'){
-    $sql = "
-    select ga.na_feature_id as sequence_id, ga.orthomcl_name as sequence_group_id, gf.external_database_release_id
-    from ApidbTuning.GeneAttributes ga, dots.genefeature gf
-    where ga.na_feature_id = gf.na_feature_id
-    ";
-  }elsif($self->getArg('organism') eq 'Cryptosporidium'){
+
     $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
     from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
     where g.source_id = ssg.source_id
@@ -434,7 +422,7 @@ if($self->getArg('organism') eq 'Plasmodium' || $self->getArg('organism') eq 'Tr
     and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
     ";
-  }
+
 
 
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);

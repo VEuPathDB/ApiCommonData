@@ -4567,7 +4567,7 @@ Rich&aacute;rd B&aacute;rtfai, Wieteke A.M. Hoeijmakers, Adriana M. Salcedo-Amay
     </resource>
 
   <resource resource="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC" version="1.0"
-        displayName="Late blood stage P. falciparum Phosphoproteome provided by M. Treeck and J. Boothroyd"
+        displayName="Late blood stage P. falciparum total proteome and phosphoproteome provided by Treeck, Sanders, et. al."
         category="Genome"
         plugin="N/A"
         extDbName="Pf_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC"
@@ -4581,13 +4581,17 @@ Rich&aacute;rd B&aacute;rtfai, Wieteke A.M. Hoeijmakers, Adriana M. Salcedo-Amay
         />
         <pluginArgs></pluginArgs>
         <description>
-            <![CDATA[
+            <![CDATA[Sample collection and mass-spectrometry were performed by Moritz Treeck and John L. Sanders of the Boothroyd and Elias labs at Stanford University, respectively. See further explanation in Treeck <i>et. al.</i>.,  2011 Cell Host & Microbe, in press. <br><br>
+Synchronized <i>P. falciparum</i> 3D7 schizont cultures (40h +/- 8h post-infection) containing <1% gametocytes purified on a Variomacs were used for phosphopeptide enrichment and mass-spectrometry. All parasite samples were lysed in 8m urea lysis buffer, followed by trypsin digestion, strong-cation-exchange (SCX) chromatography and IMAC phosphopeptide enrichment (Villen and Gygi, 2008). Samples enriched for phosphopeptides and the flow through (containing predominantly non-phosphorylated peptides) were analyzed in duplicate via LC-MS/MS and the resulting spectra were searched against appropriate parasite protein sequence databases concatenated with reversed decoy versions of these sequences using the SEQUEST algorithm (Eng et al., 1994). Phosphorylation sites were localized using the AScore algorithm (Beausoleil et al., 2006) and the dataset was filtered using the target-decoy strategy (Elias and Gygi 2007, 2010) for peptide and phosphorylation site-FDRs <1% and a protein FDR <3%.<br><br>
+This bulk FDR prediction estimates that fewer than 1% of the identifications are incorrect. Given that a phosphopeptide was correctly identified, its phosphorylation sites are necessarily present, but the site’s localization to a specific amino acid can be ambiguous.  As a result, the Ascore algorithm was used to help localize phosphorylation sites to a specific residue. This algorithm calculates the relative likelihood that the indicated amino acid is phosphorylated versus the next-most likely residue on the peptide. An Ascore >19 indicates a >99% likelihood that the indicated phosphorylation site is correctly assigned; an Ascore >13-represents a 95% likelihood; and an Ascore >10 corresponds with a >90% likelihood. As a rule of thumb, a phosphorylation site with many spectral counts, indicating many observations, tend to be more abundant than those with fewer spectral counts.  While it is true that most incorrect identifications have few spectral counts, it is not necessarily the case that phosphorylation sites with few spectral counts are incorrect.   <br><br>
+Further scores to evaluate each individual site and peptide can be found in the supplementary data Table S1 and S2 in Treeck <i>et. al.</i>.,  2011 Cell Host & Microbe, in press.
+
           ]]>
         </description>
     </resource>
   <resource resource="Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC" version="1.0"
         displayName="Late blood stage P. falciparum Total proteome provided by M. Treeck and J. Boothroyd"
-        category="Genome"
+        category="ignore"
         plugin="N/A"
         extDbName="Pf_Boothroyd_Elias_Moritz_Totalproteome_RSRC"
         extDbRlsVer="1.0"
