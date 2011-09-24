@@ -1199,7 +1199,7 @@ MOS11 (HB3 study) and MOS14 (Dd2/3D7 studies)."
 
     <resource resource="Waters_female_gametes" version="2007-09-25" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-        displayName="Mass Spec of Female Gametocytes from Leiden Malaria Group"
+        displayName="Mass Spec of Female, Male and Mixed Gametocytes from the Leiden Malaria Group"
         category="Proteome"
         publicUrl=""
         extDbName="Waters Female Gametes"
@@ -1215,7 +1215,7 @@ MOS11 (HB3 study) and MOS14 (Dd2/3D7 studies)."
         <pluginArgs>--inputFile @downloadDir@/Waters_female_gametes/Female_peptide_list_PlasmoDB_load.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'P. berghei genome|2006-02-27'</pluginArgs>
         <description>
             <![CDATA[
-              Female gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
+              Gametocyte proteomics data from <i>P. berghei</i> provided by the Leiden Malaria Group.
           ]]>
 				<publication pmid="15935755"/>
         </description>		
@@ -1224,7 +1224,7 @@ MOS11 (HB3 study) and MOS14 (Dd2/3D7 studies)."
     <resource resource="Waters_male_gametes" version="2007-09-25"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Male Gametocytes from Leiden Malaria Group"
-        category="Proteome"
+        category="ignore"
         publicUrl=""
         extDbName="Waters Male Gametes"
         extDbRlsVer="2007-09-25"
@@ -1248,7 +1248,7 @@ MOS11 (HB3 study) and MOS14 (Dd2/3D7 studies)."
     <resource resource="Waters_mixed_gametes" version="2007-09-25"
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of Mixed Gametocytes from Leiden Malaria Group"
-        category="Proteome"
+        category="ignore"
         publicUrl=""
         extDbName="Waters Mixed Gametes"
         extDbRlsVer="2007-09-25"
@@ -2195,7 +2195,7 @@ IsolatesByCountry
 
 <resource resource="Pyoelii_LiverStage_LS40" version="2008-07-18" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 hrs post-infection (LS40)"
+        displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 40 (LS40) and 50 (LS50) hrs post-infection"
         category="Proteome"
         publicUrl=""
         extDbName="Pyoelii LiverStage LS40"
@@ -2210,7 +2210,7 @@ IsolatesByCountry
         <pluginArgs>--inputFile @downloadDir@/Pyoelii_LiverStage_LS40/Py40h.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'Jane Carlton P. yoelii chromosomes|2002-09-10'</pluginArgs>
         <description>
             <![CDATA[
-             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 hrs post-infection (LS40).
+             Mass Spec of <i>P. yoelii</i> proteins identified in liver stage-infected hepatocytes isolated 40 (LS40) and 50 (LS50) hrs post-infection.
           ]]>
         </description>	
 	<publication pmid="18172196"/>	
@@ -2219,7 +2219,7 @@ IsolatesByCountry
 <resource resource="Pyoelii_LiverStage_LS50" version="2008-07-18" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="Mass Spec of parasite proteins identified in LS-infected hepatocytes isolated 50 hrs post-infection (LS50)"
-        category="Proteome"
+        category="ignore"
         publicUrl=""
         extDbName="Pyoelii LiverStage LS50"
         extDbRlsVer="2008-07-18"
@@ -4231,7 +4231,9 @@ NSR-seq was used to analyze the transcriptome of an unsynchronized in vitro cult
     </info>
       <description>
         <![CDATA[
-Early developing gametocytes (<b>Early stage I-II gametocytes</b>) were obtained using a three-step purification process of transgenic 3D7A parasites expressing a Pfg27-GFP fusion protein (expressed early in sexual differentiation).<br>
+<u>Early developing gametocytes</u> (<b>Early stage I-II gametocytes</b>) were obtained using a three-step purification process of transgenic 3D7A parasites expressing a Pfg27-GFP fusion protein (expressed early in sexual differentiation).<br>
+<u>Mature gametocytes</u> (<b>Late stage V gametocytes</b>) were obtained by Percoll purification of mature gametocyte cultures previously treated with N-acetylglucosamine to clear residual asexual parasites.<br>
+<u>Gametocyte-free trophozoites</u> of <i>P. falciparum</i> (<b>Trophozoites</b>) were obtained from clone F12, a 3D7A derivative which fails to produce the early gametocyte stages. <br>
 Protein samples were analyzed by high mass accuracy nano-LC-MS/MS. <br>
         ]]>
       </description>
@@ -4240,7 +4242,7 @@ Protein samples were analyzed by high mass accuracy nano-LC-MS/MS. <br>
 
   <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_late_gametocytes_RSRC" version="2009-07-01"
       displayName="Mass Spec Analysis of P.falciparum Early Gametocytes (ISS (Silvestrini &amp; Alano) &amp; RUNMC (Lasonder))"
-      category="Proteome"
+      category="ignore"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_late_gametocytes_V.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/lasonder_late_gametocytes_V.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'late gametocytes'</pluginArgs>
@@ -4263,7 +4265,7 @@ Protein samples were analyzed by high mass accuracy nano-LC-MS/MS. <br>
 
   <resource resource="Pf_Lasonder_Proteomics_Blood_Stages_trophozoites_RSRC" version="2009-07-01"
       displayName="Mass Spec Analysis of P.falciparum Early Gametocytes (ISS (Silvestrini &amp; Alano) &amp; RUNMC (Lasonder))"
-      category="Proteome"
+      category="ignore"
       plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/LasonderBloodStages/%RESOURCE_VERSION%/final/lasonder_trophozoites.tab"/>
     <pluginArgs>--inputFile @@dataDir@@/lasonder_trophozoites.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophozoites'</pluginArgs>
@@ -4287,7 +4289,7 @@ Protein samples were analyzed by high mass accuracy nano-LC-MS/MS. <br>
 
 <resource resource="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection" version="2010-02-08" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
-        displayName="P.falciparum proteomics data from Bowyer - 42hrs post infection"
+        displayName="P.falciparum proteomics data from Bowyer - 42 and 48 hrs post infection"
         category="Proteome"
         publicUrl=""
         extDbName="Pfalciparum_Bowyer_Proteomics_42hrs_Post_Infection"
@@ -4304,13 +4306,14 @@ Protein samples were analyzed by high mass accuracy nano-LC-MS/MS. <br>
 						P. falciparum mass spec peptides from at 42 and 48 hrs post infection, provided by the Bogyo Lab, Departments of Pathology and Microbiology and Immunology, Stanford University School of Medicine, 300 Pasteur Dr. Stanford, CA 94305 USA.  Further analysis of this data can be performed using the <a href="http://www.scripps.edu/chemphys/cravatt/Bowyer2010/">PROTOMAP data base</a>.
           ]]>
         </description>	
+<publication pmid="20943600"/>
     </resource> 
 
  
 <resource resource="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection" version="2010-02-08" 
         plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
         displayName="P.falciparum proteomics data from Bowyer - 48hrs post infection"
-        category="Proteome"
+        category="ignore"
         publicUrl=""
         extDbName="Pfalciparum_Bowyer_Proteomics_48hrs_Post_Infection"
         extDbRlsVer="2010-02-08"
