@@ -46,7 +46,7 @@ INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
      is_view, view_on_table_id, superclass_table_id, is_updatable, 
      modification_date, user_read, user_write, group_read, group_write, 
-     other_read, other_write, row_user_id, row_group_id, row_id, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'Organism',
        'Standard', 'organism_id',
