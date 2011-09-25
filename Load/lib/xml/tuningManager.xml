@@ -89,7 +89,8 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE PdbSimilarity&1 NOLOGGING AS
-SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
+SELECT gf.source_id, eas.source_id AS pdb_chain,
+       substr(eas.description, 1, 100) AS pdb_title,
        substr(eas.source_id, 1,
               instr(eas.source_id, '_', -1) - 1)
          AS pdb_id,
