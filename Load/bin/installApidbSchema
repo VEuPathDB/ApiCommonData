@@ -119,9 +119,21 @@ sub runSql {
 
   -e $fullFile || die "File '$fullFile' does not exist";
 
-  my $cmd = "sqlplus $login\@$db/$password \@$fullFile";
-print STDERR "$cmd\n";
-  system($cmd);
-  my $status = $? >> 8;
-  die "Failed with status '$status running cmd: $cmd'" if $status;
+  my $tmpFile = "/tmp/$file.$PID";
+  unlink($tmpFile);  # in case of a old one
+  my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpfile";
+  runCmd($cmd);
+  $cmd = "cat $fullFile >> $tmpfile";
+  runCmd($cmd);
+  $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
+  runCmd($cmd);
+  unlink($tmpFile);
+}
+
+sub runCmd {
+    my ($cmd) = @_;
+    print STDERR "running command: $cmd\n";
+    system($cmd);
+    my $status = $? >> 8;
+    die "Failed with status '$status running cmd: $cmd'" if $status;
 }
