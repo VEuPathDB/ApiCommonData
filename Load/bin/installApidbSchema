@@ -99,7 +99,6 @@ my @delete = qw( dropTuningManager.sql
                );
 
 if ($create) {
-
   for my $sql (@create) {
     &runSql($login, $password, $db, $sql);
   }
@@ -119,11 +118,11 @@ sub runSql {
 
   -e $fullFile || die "File '$fullFile' does not exist";
 
-  my $tmpFile = "/tmp/$file.$PID";
+  my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
-  my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpfile";
+  my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
   runCmd($cmd);
-  $cmd = "cat $fullFile >> $tmpfile";
+  $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd);
   $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
   runCmd($cmd);
