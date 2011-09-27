@@ -345,7 +345,6 @@ sub loadInterproFormat {
        $name = $2
      } elsif (/\<name\>(.*)\</) {
        $desc = $1;
-       print STDERR "$id\t$name\t$desc\n";
        $self->submitDbRef($dbName, $id, $name, undef, $logFreq, ++$eCount);
        last if ($testNum && $eCount >= $testNum)
      }
@@ -399,7 +398,7 @@ sub submitDbRef{
    my $gusObj= GUS::Model::SRes::DbRef->new( $gusHash );
    $gusObj->submit();
    $self->undefPointerCache() if $eCount % 1000 == 0;
-   $self->log("   $eCount") if $eCount % $logFreq == 0;
+   $self->log("   $eCount") if ($logFreq >0 && $eCount % $logFreq == 0);
 }
 
 
