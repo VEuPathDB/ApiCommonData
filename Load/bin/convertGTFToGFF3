@@ -107,9 +107,10 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			  $genes{$a}->{min} <=> $genes{$b}->{min}
 		  } keys %genes ) {
     my $gene = $genes{$gid};
-    my $gene_id = sprintf("%sgene%06d",$prefix,$counts{'gene'}++);
+#    my $gene_id = sprintf("%sgene%06d",$prefix,$counts{'gene'}++);
     my $aliases = $genes2alias{$gid};
     my $gname   = $gene2name{$gid};
+    my $gene_id = $gname;
     if( $gname ) {
 	if( $aliases) {
 	    $aliases = join(",",$gid,$aliases);	
@@ -120,9 +121,9 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	$gname = $gid;
     }
     $gname = sprintf('"%s"',$gname) if $gname =~ /[;\s,]/;
-    my $ninth  = sprintf("ID=%s;Name=%s",$gene_id, $gname);
+    my $ninth  = sprintf("ID=%s",$gname);
     if( $aliases ) {
-	$ninth .= sprintf(";Alias=%s",$aliases);
+#	$ninth .= sprintf(";Alias=%s",$aliases);
     }
     print join("\t", ( $gene->{chrom}, 
 		       $gene->{src},
@@ -171,10 +172,11 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	    $transname = $transcript2name{$transcript};
 	    $transname = sprintf('"%s"',$transname) if $transname =~ /[;\s,]/;
 	}
-	my $mrna_ninth = sprintf("ID=%s;Parent=%s;Name=%s",
-				 $mrna_id,$gene_id,$transname);
+	my $mrna_ninth = sprintf("ID=%s;Parent=%s;",
+				 $transname,$gname);
+	
 	if( $transaliases && $transaliases ne $transname ) {
-	    $mrna_ninth .= sprintf(";Alias=%s",$transaliases);
+	  #  $mrna_ninth .= sprintf(";Alias=%s",$transaliases);
 	}
 	print join("\t",($chrom,
 			 $src,
@@ -424,7 +426,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 		   join("\t", @$exon, sprintf("ID=%sexon%06d;Parent=%s",
 					      $prefix,
 					      $counts{'exon'}++,
-					      $mrna_id))];
+					      $transname))];
 	}
 	if( $strand_val > 0 ) {
 	    if( exists $utrs{'5utr'} ) {
