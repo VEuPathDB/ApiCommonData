@@ -27,7 +27,7 @@ use Data::Dumper;
 # (7) add to transcript
 
 #Need to check if codon_start qualifier (reading frame) in Genbank files for CDS is relative to the CDS positions. This code assumes 
-that it is
+
 
 sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
