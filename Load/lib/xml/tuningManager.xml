@@ -5231,7 +5231,7 @@ select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
        sim.number_identical, sim.total_match_length,
        substr(replace(subject.description, chr(1), ''), 1, 300) as description,
        sim.number_positive, ed.name as external_database_name,
-       SUBSTR(tn.name, 1, 50) AS query_organism
+       substr(tn.name, 1, 50) AS query_organism, ns.taxon_id as query_taxon_id
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
@@ -5250,7 +5250,7 @@ where qti.table_id = sim.query_table_id
   and edr.external_database_id = ed.external_database_id
   and gf.na_sequence_id = ns.na_sequence_id
   and ns.taxon_id =
---    st.taxon_id and st.species_taxon_id =
+--    st.taxon_id and st.species_taxon_id = # TaxonSpecies mapping commented out
                      tn.taxon_id
   and tn.name_class = 'scientific name'
       ]]>
