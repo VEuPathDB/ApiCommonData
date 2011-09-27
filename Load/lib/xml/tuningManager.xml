@@ -1317,10 +1317,12 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
       FROM dots.NaFeatureComment nfc
       GROUP BY nfc.na_feature_id) cmnt,
      (select distinct gf.source_id, 1 as is_deprecated
-      from dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-      where gf.external_database_release_id = edr.external_database_release_id
+      from dots.GeneFeature gf, dots.DbRefNaFeature drnf, sres.DbRef dr, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+      where gf.na_feature_id = drnf.na_feature_id
+        and drnf.db_ref_id = dr.db_ref_id
+        and dr.external_database_release_id = edr.external_database_release_id
         and edr.external_database_id = ed.external_database_id
-        and ed.name = 'orfs to deprecated genes') deprecated,
+        and ed.name = 'deprecated genes') deprecated,
      (select sf.parent_id,count(*) as total_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
       where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
