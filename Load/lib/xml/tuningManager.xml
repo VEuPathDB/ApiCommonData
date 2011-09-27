@@ -1679,6 +1679,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
          AS at_percent,
        SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
+       taxon.taxon_id,                 
        SUBSTR(sequence.description, 1, 400) AS sequence_description,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
@@ -5357,16 +5358,14 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="TaxonSpecies">
+    <internalDependency name="SequenceAttributes"/>
     <externalDependency name="sres.Taxon"/>
-    <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="dots.NaSequenceImp"/>
     <sql>
       <![CDATA[
 create table TaxonSpecies&1 as    
 select t.taxon_id, species.taxon_id as species_taxon_id
-from sres.Taxon species, (select distinct ns.taxon_id
-      from dots.NaSequence ns, dots.NaFeature nf
-      where ns.na_sequence_id = nf.na_sequence_id) t
+from sres.Taxon species, (select distinct sa.taxon_id
+      from SequenceAttributes sa) t
 where species.taxon_id in (select taxon_id from sres.taxon
                            connect by taxon_id = prior parent_id and prior rank != 'species'
                            start with taxon_id = t.taxon_id)
