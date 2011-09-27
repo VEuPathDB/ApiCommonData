@@ -242,7 +242,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	  my $exon_ninth = sprintf("ID=%scds%06d;Parent=%s",
 				   $prefix,
 				   $counts{'CDS'}++,
-				   $mrna_id);
+				   $transname);
 	  if ( $proteinid ) {
 	    $proteinid = sprintf('"%s"',$proteinid) if $proteinid =~ /[;\s,]/;
 	    $exon_ninth .= sprintf(";Name=%s",$proteinid);
@@ -282,7 +282,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     sprintf("ID=%sutr5%06d;Parent=%s",
 				     $prefix,
 				     $counts{'5utr'}++,
-				     $mrna_id)))];
+				     $transname)))];
 		} else {
 		  # push the partial exon up to the start codon
 		  push @{$utrs{'5utr'}}, 
@@ -299,7 +299,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
-				   $mrna_id)
+				   $transname)
 			  )];
 		}
 	      }
@@ -323,7 +323,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
-				     $mrna_id)))];
+				     $transname)))];
 		} else { 
 		    warn("making a partial 3' UTR from $translation_stop -> ",$exon->[4],"\n") if $debug;
 		  # make UTR from partial exon
@@ -341,7 +341,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
-				     $mrna_id)))];
+				     $transname)))];
 		}
 	      } 
 	    } else {
@@ -363,7 +363,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
-				   $mrna_id)) ];
+				   $transname)) ];
 		} else {
 		  # push on part of exon up to the start codon 
 		  push @{$utrs{'5utr'}}, 
@@ -379,7 +379,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
-				   $mrna_id))];
+				   $transname))];
 		}
 	      }		
 	      #3' UTR on -1 strand
@@ -400,7 +400,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
-				     $mrna_id)))];
+				     $transname)))];
 		} else { 
 		  # make UTR from partial exon
 		  push @{$utrs{'3utr'}},
@@ -417,7 +417,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
-				     $mrna_id)))];
+				     $transname)))];
 		}
 	      }
 	    }
