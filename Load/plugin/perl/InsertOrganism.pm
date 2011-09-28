@@ -192,7 +192,7 @@ sub run {
              from 
               (select ncbi_tax_id, rank from sres.taxon
                connect by taxon_id = prior parent_id 
-               start with taxon_id = $ncbiTaxonId) t
+               start with ncbi_tax_id = $ncbiTaxonId) t
              where t.rank = 'species'";
   $sth = $self->prepareAndExecute($sql);
   my ($species_ncbi_tax_id) = $sth->fetchrow_array();
