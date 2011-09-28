@@ -98,6 +98,16 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 0,
 		 isList => 0,
 	       }),
+     booleanArg({ name => 'hasPlastidGenomeSeq',
+		 descr => '',
+		 reqd  => 0,
+		 isList => 0,
+	       }),
+     booleanArg({ name => 'hasMitoGenomeSeq',
+		 descr => '',
+		 reqd  => 0,
+		 isList => 0,
+	       }),
     ];
 
 
