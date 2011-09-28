@@ -20,82 +20,79 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 
-my @create = qw( enterDbVersion.sql
-                 createApidbSchema.sql
-                 createApidbTuningSchema.sql
-                 removeNullConstraintsFromSimilarityTables.sql
-                 createAnalysisMethodInvocation.sql
-                 createChromosome6Orthology.sql
-                 createDataSource.sql
-                 createDbLinks.sql
-                 createDbUser.sql
-                 createExpressionProfileTables.sql
-                 createGeneInteractionTables.sql
-                 createGeneMappingView.sql
-                 createGeneFeatureProduct.sql
-                 createGeneFeatureName.sql
-                 createIsolateVocabulary.sql
-                 createMassSpecSummary.sql
-                 createGusTuning.sql
-                 createOrthologGroup.sql
-                 createOrthomclEngine.sql
-                 createPhylogeneticProfile.sql
-                 createPhylogeneticTree.sql
-                 createRelatedNaFeature.sql
-                 createReportCache.sql
-                 createRodentChrColors.sql
-                 createSequenceAttributeTables.sql
-                 createStoredProcedures.sql
-                 createSyntenyTables.sql
-                 createToxodbGenesView.sql
-                 createTransmembraneTable.sql
-                 createSpliceSiteFeature.sql
-                 createTuningManager.sql
-                 createContinents.sql
-                 createWorkflow.sql
-                 createsiRNA.sql
-                 createNextGenSeqCoverage.sql
-                 createNextGenSeq_Align.sql
-                 createPlasmoPfalLocations.sql
-                 createPlasmoMapp.sql
-                 createGeneGenomicSequence_Split.sql
-                 createOrganismProject.sql
-                 createIsolateMapping.sql
-                 createDifferentialExpression.sql
-                 createRUMIntronFeature.sql
-                 createGeneLodScoresTable.sql
-                 modifySeqVariation.sql
-               );
 
-my @delete = qw( dropTuningManager.sql
-                 dropAnalysisMethodInvocation.sql
-                 dropDbLinks.sql
-                 dropDbUser.sql
-                 dropDataSource.sql
-                 dropExpressionProfileTables.sql
-                 dropGeneInteractionTables.sql
-                 dropGeneMappingView.sql
-                 dropGeneFeatureProduct.sql
-                 dropGeneFeatureName.sql
-                 dropMassSpecSummary.sql
-                 dropOrthologGroup.sql
-                 dropOrthomclEngine.sql
-                 dropPhylogeneticProfile.sql
-                 dropSequenceAttributeTables.sql
-                 dropSyntenyTables.sql
-                 dropToxodbGenesView.sql
-                 dropSpliceSiteFeature.sql
-                 dropTransmembraneTable.sql
-                 dropWorkflow.sql
-                 dropRUMIntronFeature.sql
-                 dropOrganismProject.sql
-                 dropGenegenomicsequence.sql
-                 dropGeneLodScoresTable.sql
-                 restoreNullConstraintsFromSimilarityTables.sql
-                 dropGusTuning.sql
-                 dropStoredProcedures.sql
-                 dropApidbSchema.sql
+# PLEASE READ BEFORE ADDING TO @create
+#
+# The list is ordered according to these rules:
+# first:  changes to GUS
+# second: create ApidbTuning schema
+# third:  create Apidb schema
+# fourth: create tables within Apidb, in dependency order as needed
+#
+# This ordering helps ensure that when/if we drop, the dropping proceeds
+# in the correct order, avoiding bogus failures from dropping what was
+# not yet created.
+#
+# ALSO: if you are adding a create script for the Apidb schema
+#       it is good practice to write a parallel drop script
+#       so that if needed, the create can be manually reversed
+
+my @create = qw(
+               enterDbVersion.sql
+               removeNullConstraintsFromSimilarityTables.sql
+               createGusTuning.sql
+               modifySeqVariation.sql
+
+               createApidbTuningSchema.sql
+
+               createApidbSchema.sql
+	       createAnalysisMethodInvocation.sql
+	       createChromosome6Orthology.sql
+	       createDataSource.sql
+	       createDbLinks.sql
+	       createDbUser.sql
+	       createExpressionProfileTables.sql
+	       createGeneInteractionTables.sql
+	       createGeneMappingView.sql
+	       createGeneFeatureProduct.sql
+	       createGeneFeatureName.sql
+	       createIsolateVocabulary.sql
+	       createMassSpecSummary.sql
+	       createOrthologGroup.sql
+	       createOrthomclEngine.sql
+	       createPhylogeneticProfile.sql
+	       createPhylogeneticTree.sql
+	       createRelatedNaFeature.sql
+	       createReportCache.sql
+	       createRodentChrColors.sql
+	       createSequenceAttributeTables.sql
+	       createStoredProcedures.sql
+	       createSyntenyTables.sql
+	       createToxodbGenesView.sql
+	       createTransmembraneTable.sql
+	       createSpliceSiteFeature.sql
+	       createTuningManager.sql
+	       createContinents.sql
+	       createWorkflow.sql
+	       createsiRNA.sql
+	       createNextGenSeqCoverage.sql
+	       createNextGenSeq_Align.sql
+	       createPlasmoPfalLocations.sql
+	       createPlasmoMapp.sql
+	       createGeneGenomicSequence_Split.sql
+	       createOrganismProject.sql
+	       createIsolateMapping.sql
+	       createDifferentialExpression.sql
+	       createRUMIntronFeature.sql
+	       createGeneLodScoresTable.sql
+	     );
+
+# drop GUS first, then ApidbTuning, then Apidb (same order as we created).
+# for GUS, we only drop the tuning indexes, as the other GUS changes don't
+# need to be reversed.  WHAT ABOUT enterDbVersion.sql?
+my @delete = qw( dropGusTuning.sql
                  dropApidbTuningSchema.sql
+                 dropApidbSchema.sql
                );
 
 if ($create) {
