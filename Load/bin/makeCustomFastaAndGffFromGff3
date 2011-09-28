@@ -16,8 +16,8 @@ my ($verbose, $help, $inputFileOrDir, $outputFasta,$outputGff,$inputFileExt);
 	    'output_fasta=s' => \$outputFasta,
 	    'output_gff=s' => \$outputGff,
 	    'inputFileExt=s' => \$inputFileExt,
- 
-           );
+	    
+    );
 
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $inputFileOrDir && $outputFasta && $outputGff);
@@ -25,76 +25,69 @@ my ($verbose, $help, $inputFileOrDir, $outputFasta,$outputGff,$inputFileExt);
 
 
 if(!($inputFileExt)){
-	$inputFileExt = "gff";
+    $inputFileExt = "gff";
 }
 
 
 open(OUT,">$outputFasta");
 
-	
-if(-d $inputFileOrDir){
-  opendir(DIR, $inputFileOrDir) || die "can't opendir $inputFileOrDir: $!";
+
+if(-d $inputFileOrDir) {
+    opendir(DIR, $inputFileOrDir) || die "can't opendir $inputFileOrDir: $!";
 }else{
-  open(IN,$inputFileOrDir);
+    open(IN,$inputFileOrDir) || die "can't open file $inputFileOrDir: $!";
 }
 
 
 open(OUTGFF,">$outputGff");
+my $linesRead = 0;
 if(-d $inputFileOrDir){
+    
+    foreach my $file (readdir(DIR)){
+	if($file =~ /\.$inputFileExt$/){
+	    open(FILE,"$inputFileOrDir/$file");
 
-
-
-  foreach my $file (readdir(DIR)){
-    if($file =~ /\.$inputFileExt$/){
-      open(FILE,"$inputFileOrDir/$file");
-
-      my $flag = 0;
-
-
-
-
-      foreach my $line (<FILE>){
-      chomp $line;
-      
-
-      if($line =~ /##FASTA/){
-	$flag = 1;
-      }elsif($flag == 1){
-	if($line=~/0*(\d+)$/){
-	    $line = $line."|".$1;
-	}elsif($line=~/bin$/){
-	    	    $line = $line."|un";
-	}  
-	print OUT "$line\n";
-      }else{
-	print OUTGFF "$line\n";
-      }
+	    my $flag = 0;
+	    foreach my $line (<FILE>){
+		chomp $line;
+		$linesRead++;
+		if($line =~ /##FASTA/){
+		    $flag = 1;
+		}elsif($flag == 1){
+		    if($line=~/0*(\d+)$/){
+			$line = $line."|".$1;
+		    }elsif($line=~/bin$/){
+			$line = $line."|un";
+		    }  
+		    print OUT "$line\n";
+		}else{
+		    print OUTGFF "$line\n";
+		}
+	    }
+	    close(FILE);
+	    
+	}
     }
-      close(FILE);
-  
-    }
-  }
-  closedir(DIR);
+    closedir(DIR);
 }else{
-      my $flag = 0;
-
-
-      foreach my $line (<IN>){
-      chomp $line;
-      
-      if($line =~ /##FASTA/){
-	$flag = 1;
-      }elsif($flag == 1){
-	print OUT "$line\n";
-      }else{
-	print OUTGFF "$line\n";
-      }
+    my $flag = 0;
+    foreach my $line (<IN>){
+	chomp $line;
+	$linesRead++;
+	if($line =~ /##FASTA/){
+	    $flag = 1;
+	}elsif($flag == 1){
+	    print OUT "$line\n";
+	}else{
+	    print OUTGFF "$line\n";
+	}
     }
 
-      close(IN);
+    close(IN);
 
 }
 
+die "Did not read any input lines.  Is input empty?\n" unless $linesRead;
 
 close(OUTFILE);
 close(OUT);
@@ -102,10 +95,10 @@ close(OUTGFF);
 
 
 sub usage{
-  my ($m) = @_;
+    my ($m) = @_;
 
-  print STDERR "$m\n" if($m);
-  my $usage = "usage:  perl makeCustomFastaAndGffFromGff3 \\
+    print STDERR "$m\n" if($m);
+    my $usage = "usage:  perl makeCustomFastaAndGffFromGff3 \\
 --input_file_or_dir <input file or dir containing gff3 files (required)> \\
 --inputFileExt <input file extension: default gff> \\
 --output_fasta <output fasta file (required)> \\
@@ -113,8 +106,8 @@ sub usage{
 --verbose <boolean-a little extra STDERR out> \\
 --help|h
 ";
-  print STDERR $usage;
-  exit(0);
+    print STDERR $usage;
+    exit(0);
 }
 
 
