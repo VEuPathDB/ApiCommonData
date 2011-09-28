@@ -219,6 +219,8 @@ sub run {
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'is_draft_genome' => $isDraftGenome,
 						    'has_temporary_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
+						    'has_plastid_genome_seq' => $hasPlastidGenomeSeq,
+						    'has_mito_genome_seq' => $hasMitoGenomeSeq,
 						   });
 
   $organism->submit() unless $organism->retrieveFromDB();
