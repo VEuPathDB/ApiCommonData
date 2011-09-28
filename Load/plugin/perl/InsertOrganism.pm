@@ -218,7 +218,7 @@ sub run {
 						    'is_reference_strain' => $isReferenceStrain,
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'is_draft_genome' => $isDraftGenome,
-						    'has_temp_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
+						    'has_temporary_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
 						   });
 
   $organism->submit() unless $organism->retrieveFromDB();
