@@ -170,7 +170,7 @@ sub run {
   my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
   my $abbrevStrain = $self->getArg('abbrevStrain');
   my $abbrevRefStrain = $self->getArg('abbrevRefStrain');
-  my $isReferenceGenome = $self->getArg('isReferenceGenome');
+  my $isReferenceStrain = $self->getArg('isReferenceStrain');
   my $isDraftGenome = $self->getArg('isDraftGenome');
   my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
   my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
@@ -215,7 +215,7 @@ sub run {
 						    'abbrev_orthomcl' => $abbrevOrthomcl,
 						    'abbrev_strain' => $abbrevStrain,
 						    'abbrev_ref_strain' => $abbrevRefStrain,
-						    'is_reference_genome' => $isReferenceGenome,
+						    'is_reference_strain' => $isReferenceStrain,
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'is_draft_genome' => $isDraftGenome,
 						    'has_temp_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
