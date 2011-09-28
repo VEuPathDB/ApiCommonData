@@ -15,6 +15,7 @@ CREATE TABLE apidb.Organism (
  has_plastid_genome_seq       NUMBER(1) NOT NULL,
  has_mito_genome_seq          NUMBER(1) NOT NULL,
  modification_date            DATE NOT NULL,
+ user_read                   NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
  group_read                   NUMBER(1) NOT NULL,
  group_write                  NUMBER(1) NOT NULL,
