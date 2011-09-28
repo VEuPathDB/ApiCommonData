@@ -188,13 +188,13 @@ sub run {
   $self->error("fullName '$fullName' and ncbiTaxonId '$ncbiTaxonId' do not match, according to SRes.TaxonName") unless $ncbi_tax_id eq $ncbiTaxonId;
   
   # validate species ncbi taxon id against ncbi taxon id
-  my $sql = "select ncbi_tax_id 
+  $sql = "select ncbi_tax_id 
              from 
               (select ncbi_tax_id, rank from sres.taxon
                connect by taxon_id = prior parent_id 
                start with taxon_id = $ncbiTaxonId) t
              where t.rank = 'species'";
-  my $sth = $self->prepareAndExecute($sql);
+  $sth = $self->prepareAndExecute($sql);
   my ($species_ncbi_tax_id) = $sth->fetchrow_array();
   
   $self->error("speciesNcbiTaxonId '$speciesNcbiTaxonId' is not the species ncbi taxon id for ncbi taxon id '$ncbiTaxonId'.  (The species in the taxonomy table is '$species_ncbi_tax_id')") unless $species_ncbi_tax_id eq $speciesNcbiTaxonId;
@@ -221,7 +221,7 @@ sub run {
 						    'has_temp_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
 						   });
 
-  $organismProject->submit() unless $organismProject->retrieveFromDB();
+  $organism->submit() unless $organism->retrieveFromDB();
 
   my $msg = "$fullName added to apidb.Organism.";
 
