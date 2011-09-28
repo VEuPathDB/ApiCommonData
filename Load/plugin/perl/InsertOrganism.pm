@@ -184,6 +184,8 @@ sub run {
   my $isDraftGenome = $self->getArg('isDraftGenome');
   my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
   my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
+  my $hasPlastidGenomeSeq = $self->getArg('hasPlastidGenomeSeq');
+  my $hasMitoGenomeSeq = $self->getArg('hasMitoGenomeSeq');
   my $projectName = $self->getArg('projectName');
 
   # validate full name against ncbi taxon id
