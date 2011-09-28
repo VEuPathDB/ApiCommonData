@@ -6330,7 +6330,7 @@ tablespace indx
                                 ELSE sa.organism
                            END AS organism,
                           sn.name AS term,
-                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS parentTerm,
                           tn.taxon_id AS internal,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
@@ -6347,7 +6347,7 @@ tablespace indx
                                 ELSE sa.organism
                           END AS organism,
                           sn.name AS term,
-                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS parentTerm,
                           sn.taxon_id AS internal,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
