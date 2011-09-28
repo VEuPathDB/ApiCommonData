@@ -6364,7 +6364,7 @@ tablespace indx
                                 THEN 'Cryptosporidium parvum Chr. 6'
                                 ELSE sa.organism
                            END AS organism,      
-                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
+                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
                            sa.project_id AS project_id
