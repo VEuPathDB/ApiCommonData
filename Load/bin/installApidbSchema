@@ -122,8 +122,9 @@ sub runSql {
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
+  my $cmd;
   if (!$allowFailures) {
-      my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
+      $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
       runCmd($cmd);
   }
   $cmd = "cat $fullFile >> $tmpFile";
