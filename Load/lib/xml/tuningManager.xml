@@ -3120,6 +3120,11 @@ from
            'FungiDB' as project_id
     from dual
     Union
+    select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence diff Profiles' as profile_name,
+           '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    Union
 
     -- ToxoDB --
     select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
@@ -3397,7 +3402,23 @@ select 'Expression profiling of saccharomyces cerevisiae s288c Cln/Clb experimen
     from dual
 
     UNION
+    
+select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence diff Profiles' as profile_name,
+       'RhizopusOryzae::RnaSeqHyphalTip' as module,
+       'Placeholder TODO' as display_name,
+       'Placeholder TODO' as description,
+       'Placeholder TODO' as x_axis,
+       'Placeholder TODO' as y_axis,
+        1 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
 
+    UNION
 
 
 -- ToxoDB
