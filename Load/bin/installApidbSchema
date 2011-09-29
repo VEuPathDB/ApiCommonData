@@ -95,6 +95,7 @@ my @create = qw(
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
 # need to be reversed.  The trick here is to order these to avoid failures
 my @delete = qw( deleteGusVersion.sql
+                 restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
                  dropApidbTuningSchema.sql
                  dropApidbSchema.sql
