@@ -5,9 +5,10 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 
-my ($gusConfigFile, $drop, $create, $db);
+my ($gusConfigFile, $drop, $create, $db, $allowFailures);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "drop!" => \$drop,
+           "allowFailures!" => \$allowFailures,
            "create!" => \$create,
            "db=s" => \$db);
 
@@ -38,7 +39,7 @@ my $password = $gusconfig->getDatabasePassword();
 #       so that if needed, the create can be manually reversed
 
 my @create = qw(
-               enterDbVersion.sql
+               insertGusVersion.sql
                removeNullConstraintsFromSimilarityTables.sql
                createGusTuning.sql
                modifySeqVariation.sql
@@ -89,8 +90,9 @@ my @create = qw(
 
 # drop GUS first, then ApidbTuning, then Apidb (same order as we created).
 # for GUS, we only drop the tuning indexes, as the other GUS changes don't
-# need to be reversed.  WHAT ABOUT enterDbVersion.sql?
-my @delete = qw( dropGusTuning.sql
+# need to be reversed.  The trick here is to order these to avoid failures
+my @delete = qw( deleteGusVersion.sql
+                 dropGusTuning.sql
                  dropApidbTuningSchema.sql
                  dropApidbSchema.sql
                );
@@ -117,8 +119,10 @@ sub runSql {
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
-  my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
-  runCmd($cmd);
+  if (!$allowFailures) {
+      my $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
+      runCmd($cmd);
+  }
   $cmd = "cat $fullFile >> $tmpFile";
   runCmd($cmd);
   $cmd = "sqlplus $login\@$db/$password \@$tmpFile";

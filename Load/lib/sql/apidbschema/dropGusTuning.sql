@@ -6,4 +6,6 @@ drop index dots.nasequenceimp_string1_ix
 drop index ExonOrder_ix
 drop index SeqvarStrain_ix
 
+alter table dots.sequencePiece DROP ( start_position, end_position );
+
 exit
