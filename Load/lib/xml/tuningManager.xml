@@ -3114,6 +3114,13 @@ from
     select ga.source_id, pm.profile_name, nvl(pm.main_profile_name, pm.profile_name) as main_profile_name, pm.project_id
     from
     (
+    -- FungiDB --
+    select 'Expression profiling of saccharomyces cerevisiae s288c Cln/Clb experiments' as profile_name,
+           '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    Union
+
     -- ToxoDB --
     select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
            '' as main_profile_name,
@@ -3372,6 +3379,26 @@ tablespace indx
 CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
 select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, psorg.species, psorg.organism
 from (
+
+-- FungiDB
+select 'Expression profiling of saccharomyces cerevisiae s288c Cln/Clb experiments' as profile_name,
+       'SaccharomycesCerevisiae::CombinedTS' as module,
+       'Placeholder TODO' as display_name,
+       'Placeholder TODO' as description,
+       'Placeholder TODO' as x_axis,
+       'Placeholder TODO' as y_axis,
+        1 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'pheromone,elutriation' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+
+
 
 -- ToxoDB
 select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
