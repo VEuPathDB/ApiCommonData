@@ -13,7 +13,10 @@ my ($gusConfigFile, $drop, $create, $db, $allowFailures);
            "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
-  die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+  die "
+usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures]
+
+Caution: only use --allowFailures if you know what you are doing";
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
