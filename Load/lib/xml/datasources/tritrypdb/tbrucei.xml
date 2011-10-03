@@ -613,4 +613,29 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/DGETag/%RESOURCE_VERSION%/final/freq/freqs.tsv" />
     <pluginArgs>--contact @@TriTrypSageTags.Contact@@ --arrayDesignName 'SageTagArrayDesign_RSRC' --arrayDesignVersion '2' --studyName 'Transcriptome analysis of two life stages of Trypanosoma brucei gambiense' --studyDescription '' --freqFile @@dataDir@@/freqs.tsv </pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei927_Proteomics_Urbaniak_BsfEnriched_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfEnriched_peptides_927.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfEnriched_peptides_927.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei427_Proteomics_Urbaniak_BsfEnriched_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfEnriched_peptides_427.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfEnriched_peptides_427.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei927_Proteomics_Urbaniak_BsfProteome_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfProteome_peptides_927.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfProteome_peptides_927.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei427_Proteomics_Urbaniak_BsfProteome_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfProteome_peptides_427.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfProteome_peptides_427.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
 </resources>
