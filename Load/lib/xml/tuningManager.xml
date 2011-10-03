@@ -298,7 +298,7 @@ set is_top_level = 1
 update FeatureLocation&1 fl
 set is_top_level = 0 
 where na_sequence_id in (select distinct piece_na_sequence_id 
-                         from apidbtuning.sequencepiececlosure spc
+                         from SequencePieceClosure spc
                          where fl.start_min >= spc.start_position
                          and fl.end_max <= spc.end_position)
       ]]>
@@ -2371,7 +2371,7 @@ tablespace indx
       <![CDATA[
        CREATE TABLE SnpStrains&1 NOLOGGING AS
          select distinct sv.strain,sa.organism,sf.external_database_release_id,d.name as extdb_name
-         from dots.snpfeature sf, dots.seqvariation sv, APIDBTUNING.sequenceattributes sa,
+         from dots.snpfeature sf, dots.seqvariation sv, SequenceAttributes sa,
          SRES.externaldatabase d, SRES.externaldatabaserelease rel
          where sa.na_sequence_id = sf.na_sequence_id
          and sf.na_feature_id = sv.parent_id
@@ -4997,7 +4997,7 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
               CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
               decode(sa.dataset,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type
-       FROM dots.SeqVariation sva, dots.SeqVariation svb, apidbtuning.snpattributes sa,
+       FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
             dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
        WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
          AND sva.parent_id = sa.na_feature_id
