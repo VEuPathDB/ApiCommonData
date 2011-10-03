@@ -40,7 +40,7 @@ GetOptions("propfile=s" => \$propfile,
            "debug!" => \$debug,
 	  );
 
-($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propfile, $schema, $password);
 my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
 
