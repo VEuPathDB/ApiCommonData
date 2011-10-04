@@ -1048,6 +1048,8 @@ sub declareArgs {
             constraintFunc  =>  undef,
             reqd            =>  1,
             isList          =>  0,
+            mustExist       =>  1,
+            format          =>  'Text'
            }),
 
    stringArg({
