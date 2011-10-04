@@ -1042,9 +1042,9 @@ sub nextRecord {
 sub declareArgs {
   [
 
-   stringArg({
-            name            =>  'inputFileDirectory',
-            descr           =>  'Directory of files containing the mass spec features',
+   fileArg({
+            name            =>  'inputFile',
+            descr           =>  'Name of file containing the mass spec features',
             constraintFunc  =>  undef,
             reqd            =>  1,
             isList          =>  0,
