@@ -51,7 +51,7 @@ sub run {
   my ($self) = @_;
   $self->{featuresAdded} = $self->{summariesAdded} = $self->{summariesSkipped} = 0;
     
-  my $inputFileDirectory = $self->getArg('inputFileDirectory');    
+  my $inputFile = $self->getArg('inputFile');    
   my $record = {};
   my $recordSet = [];
   my $mss;
