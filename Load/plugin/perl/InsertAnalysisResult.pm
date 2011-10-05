@@ -69,13 +69,6 @@ sub getArgumentsDeclaration{
                enum           => "ArrayElementFeature,GeneFeature,BindingSiteFeature", 
              }),
 
-     stringArg({name => 'profileSetName',
-                descr => 'Name of an associated Apidb.profileset',
-                constraintFunc=> undef,
-                reqd  => 0,
-                isList => 0
-               }),
-
     ];
   return $argsDeclaration;
 }
@@ -155,7 +148,8 @@ sub run {
     my $analysisName = $configRow->[1];
     my $protocolName = $configRow->[2];
     my $protocolType = $configRow->[3];
-    my $profileElements = $configRow->[4];
+    my $profileSetName = $configRow->[4]
+    my $profileElements = $configRow->[5];
 
     my $logicalGroup = $self->makeLogicalGroup($profileElements, $analysisName);
 
@@ -180,7 +174,7 @@ sub run {
 sub validateHeader {
   my ($self, $header) = @_;
 
-  my @expected = ('datafile', 'analysisname', 'protocolname', 'protocoltype', 'profileelementname');
+  my @expected = ('datafile', 'analysisname', 'protocolname', 'protocoltype','profilesetname','profileelementnames');
 
   for(my $i = 0; $i < scalar @expected; $i++) {
     my $value = $header->[$i];
