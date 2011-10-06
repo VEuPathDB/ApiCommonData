@@ -5,7 +5,7 @@
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5823 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\w+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/P.berghei.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
   </resource>
   <resource parentResource="Pberghei_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -14,7 +14,7 @@
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium berghei strain ANKA"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/P.berghei.chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.fasta --output_gff  @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff3 --output_gff @@dataDir@@/P.berghei.chromosomes_fixed/Pberghei.gff</unpack>
   </resource>
   <resource plugin="GUS::Community::Plugin::InsertECMapping"
@@ -22,7 +22,7 @@
             version="@@Pberghei_chromosomes_VER@@">
     <manualGet fileOrDir="PlasmoDB/pberghei/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--ECMappingFile @@dataDir@@/Pberghei.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/Pberghei.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pberghei.fasta --output_gff @@dataDir@@/Pberghei.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pberghei.gff3 --output_gff @@dataDir@@/Pberghei.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pberghei.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pberghei.ec </unpack>
   </resource>

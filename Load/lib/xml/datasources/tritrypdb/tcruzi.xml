@@ -12,7 +12,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome 'TcChr(\d+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/TcNonEsm_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff3</unpack>
   </resource>
   <resource parentResource="TcruziNonEsmeraldoLike_genome_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -21,7 +21,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi CL Brener Non-Esmeraldo-like"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/TcNonEsm_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff3 --output_gff @@dataDir@@/TcNonEsm_chromosomes_fixed/TcNonEsm.gff</unpack>
   </resource>
   <resource parentResource="TcruziNonEsmeraldoLike_genome_RSRC"
@@ -31,7 +31,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/contig/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 36658100 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --SOTermName 'contig'  --regexSourceId  '>([^\|]+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
     <unpack>mkdir @@dataDir@@/TcNonEsm_contigs_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
   </resource>
   <resource parentResource="TcruziNonEsmeraldoLike_genome_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -40,7 +40,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziNonEsmeraldoLike/contig/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi CL Brener Non-Esmeraldo-like"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/TcNonEsm_contigs_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.fasta --output_gff  @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff3 --output_gff @@dataDir@@/TcNonEsm_contigs_fixed/TcNonEsm.gff</unpack>
   </resource>
   <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
@@ -49,7 +49,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziEsmeraldoLike/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 3665810 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome 'TcChr(\d+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/TcEsm_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.fasta --output_gff  @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.fasta --output_gff  @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff3</unpack>
   </resource>
   <resource parentResource="TcruziEsmeraldoLike_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -58,7 +58,7 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/genome/tcruziEsmeraldoLike/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma cruzi CL Brener Esmeraldo-like"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/TcEsm_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.fasta --output_gff  @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.fasta --output_gff  @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff3 --output_gff @@dataDir@@/TcEsm_chromosomes_fixed/TcEsm.gff</unpack>
   </resource>
   <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"

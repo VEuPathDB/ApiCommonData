@@ -5,7 +5,7 @@
     <manualGet fileOrDir="TriTrypDB/lmajor/genome/lmajorFriedlin/chromosome/%RESOURCE_VERSION%/Lmaj.gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 347515 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/LmajorFriedlin_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --output_gff  @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --output_gff  @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3</unpack>
   </resource>
   <resource parentResource="LmajorFriedlin_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -15,7 +15,7 @@
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@//LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania major strain Friedlin"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <publication pmid="16020728" />
     <unpack>mkdir @@dataDir@@/LmajorFriedlin_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --output_gff  @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.fasta --output_gff  @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff3 --output_gff @@dataDir@@/LmajorFriedlin_chromosomes_fixed/LmajorFriedlin.gff</unpack>
   </resource>
   <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"

@@ -18,7 +18,7 @@
 
     <manualGet fileOrDir="$$project$$/$$orgAbbrev$$/genome/GeneDB_GFF/%RESOURCE_VERSION%/final"/>
 
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/%RESOURCE_VERSION%/final --output_fasta @@dataDir@@/genome.fasta --output_gff @@dataDir@@/genome.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/%RESOURCE_VERSION%/final --output_fasta @@dataDir@@/genome.fasta --output_gff @@dataDir@@/genome.gff3</unpack>
 
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/genome.gff3 --output_gff @@dataDir@@/genome.gff</unpack>
 
