@@ -34,7 +34,7 @@ fileArg({name => 'agpFile',
         }),
 
 fileArg({name => 'chromosomeOrderMappingFile',
-         descr => 'file of correct chromosome order if chromosomes in agp file are randomly ordered',
+         descr => 'Tab-delimited file containing source_id,chromosome,chromosome_order_number mapping if chromosomes are not numerical and randomly ordered in file',
          constraintFunc=> undef,
          reqd  => 0,
          isList => 0,
@@ -119,6 +119,11 @@ integerArg({name => 'ncbiTaxId',
                reqd            =>  0,
                isList          =>  0
               }),
+ stringArg({   name           => 'regexChromosome',
+	       descr          => 'The regular expression to pick the chromosome from the source id',
+	       reqd           => 0,
+	       constraintFunc => undef,
+	       isList         => 0 }),
 
 ];
 
@@ -214,7 +219,7 @@ sub run {
 
   my $file = $self->getArg('agpFile');
 
-  die "Do not use 'chromosomeOrderMappingFile' and 'chromosomesInOrder' and 'notChromosomes', use only one of them\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder') && $self->getArg('notChromosomes'));
+  die "Do not use 'chromosomeOrderMappingFile' and 'chromosomesInOrder' and 'notChromosomes' and 'regexChromosomes', use only one of them. Use regexChromosomes only if the chromosome is a numerical value. Else use chromosomeOrderMappingFile.\n" if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('chromosomesInOrder') && $self->getArg('notChromosomes')) && $self->getArg('regexChromosomes');
 
  $self->validateFileFormat($file);
 
@@ -243,7 +248,7 @@ sub processFile {
 
   my $numVirInserted=0;
 
-  my (%virtual,$refChromosomeOrderMapping,$chromosomeOrder);
+  my (%virtual,$refChromosomeOrderMapping,$chromosomeOrder,$chromosome);
 
   if ($self->getArg('chromosomeOrderMappingFile')){
 
@@ -268,11 +273,25 @@ sub processFile {
     if ($arr[0] ne $virAcc) {
       $numVirInserted++;
 
-      $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc};
+      if ($self->getArg('regexChromosome')){
+	  my $regexChromosome = $self->getArg('regexChromosome');
+	  if ($regexChromosome && $virAcc =~ /$regexChromosome/) {
+	      $chromosome = $1;
+	  }
+      
+  
+	  if($chromosome =~ /^\d+$/){
+	      $chromosomeOrder = $chromosome;
+	  }
+      }else{
 
-      die "No chromosome order information provided for virtual sequence\n" if (!($chromosomeOrder || $self->getArg('notChromosomes')));
+	  $chromosome= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc}->{chromosome};
+	  $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc}->{chrom_order_num};
+      }
 
-      $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder);
+      die "No chromosome or chromosome order information provided for virtual sequence\n" if (!($chromosomeOrder || $self->getArg('notChromosomes')) || !($chromosome || $self->getArg('notChromosomes')));
+
+      $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder, $chromosome);
 
       $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -318,7 +337,8 @@ sub getChromOrderMapping{
 
     my @arr = split(/\t/, $_);
 
-    $chromosomeOrderMapping{$arr[0]} = $arr[1]; 
+    $chromosomeOrderMapping{$arr[0]}->{chrom} = $arr[1]; 
+    $chromosomeOrderMapping{$arr[0]}->{chrom_order_num} = $arr[2];
   }
 
   return \%chromosomeOrderMapping;
@@ -326,7 +346,7 @@ sub getChromOrderMapping{
 }
 
 sub makeVirtualSequence {
-  my ($self, $virtual, $virAcc, $chromosomeOrderNum) = @_;
+  my ($self, $virtual, $virAcc, $chromosomeOrderNum, $chromosome) = @_;
 
   my $sourceIdPrefix = $self->getArg('sourceIdPrefix');
   my $sourceId = $sourceIdPrefix ? $sourceIdPrefix . $virAcc : $virAcc;
@@ -337,7 +357,7 @@ sub makeVirtualSequence {
   my $virDbRlsId = $self->getVirDbRlsId($self->getArg('virSeqExtDbName'),$self->getArg('virSeqExtDbRlsVer'));
   my $SOTermId = $self->getSOTermId($self->getArg("virtualSeqSOTerm"));
   my $taxonId = $self->getTaxonId($self->getArg('ncbiTaxId'));
-  my $chromosome="$chromosomeOrderNum" if $chromosomeOrderNum;
+
 
   my $virtualSeq;
 
