@@ -175,4 +175,11 @@
     <manualGet fileOrDir="PlasmoDB/pvivax/microarrayExpression/Westenberger_patients/%RESOURCE_VERSION%/final" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pvivax_Cui_Schizont_Proteomics_RSRC"
+            version="2011-04-28">
+    <manualGet fileOrDir="PlasmoDB/pvivax/massSpec/Cui_schizont/%RESOURCE_VERSION%/final/Pvivax_Proteomics.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/Pvivax_Proteomics.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pvivax_contigsGB_RSRC|@@Pvivax_contigsGB_VER@@' --developmentalStage 'erythrocytic stages'</pluginArgs>
+  </resource>
 </resources>
