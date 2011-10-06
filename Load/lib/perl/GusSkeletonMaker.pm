@@ -35,9 +35,9 @@ my $soTerms = { 'coding_gene'=>'protein_coding',
 #--------------------------------------------------------------------------------
 
 sub makeGeneSkeleton{
-  my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $taxonId) = @_;
+  my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $taxonId,$isPredicted) = @_;
 
-  my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId);
+  my $gusGene = &makeGusGene($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $isPredicted);
 
   $bioperlGene->{gusFeature} = $gusGene;
 
@@ -98,9 +98,9 @@ sub makeGeneSkeleton{
 }
 
 sub makeOrfSkeleton{
-  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId, $taxonId) = @_;
+  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId, $taxonId, $isPredicted) = @_;
 
-  my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId);
+  my $gusMiscFeature = &makeGusOrf($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted);
   $bioperlOrf->{gusFeature} = $gusMiscFeature;
 
   my $translatedAAFeat = &makeTranslatedAAFeat($dbRlsId);
@@ -118,7 +118,7 @@ sub makeOrfSkeleton{
 #--------------------------------------------------------------------------------
 
 sub makeGusGene {
-  my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId) = @_;
+  my ($plugin, $bioperlGene, $genomicSeqId, $dbRlsId, $isPredicted) = @_;
 
   my $type = $bioperlGene->primary_tag();
 
@@ -128,12 +128,12 @@ sub makeGusGene {
   my $gusGene = $plugin->makeSkeletalGusFeature($bioperlGene, $genomicSeqId,
 						$dbRlsId, 
 						'GUS::Model::DoTS::GeneFeature',
-						$soTerms->{$type});
+						$soTerms->{$type},$isPredicted);
   return $gusGene;
 }
 
 sub makeGusOrf {
-  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId) = @_;
+  my ($plugin, $bioperlOrf, $genomicSeqId, $dbRlsId,$isPredicted) = @_;
 
   my $type = $bioperlOrf->primary_tag();
 
@@ -142,7 +142,7 @@ sub makeGusOrf {
   my $gusOrf = $plugin->makeSkeletalGusFeature($bioperlOrf, $genomicSeqId,
 					       $dbRlsId,
 					       'GUS::Model::DoTS::Miscellaneous',
-					       $soTerms->{$type});
+					       $soTerms->{$type},$isPredicted);
   return $gusOrf;
 }
 
