@@ -160,4 +160,12 @@
     <pluginArgs>--inputFile @@dataDir@@/Table1_formatted.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' --developmentalStage 'promastigotes'</pluginArgs>
   </resource>
 
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Lbraziliensis_SNPs_WashU_RSRC"
+            version="@@Lbraziliensis_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/LbraziliensisM2903_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/LbraziliensisM2903_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/LbraziliensisM2903_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
 </resources>

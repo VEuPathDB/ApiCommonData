@@ -245,4 +245,23 @@
     <manualGet fileOrDir="TriTrypDB/lmajor/microarrayExpression/E-MEXP-1864_Beverley_Steve_LifeStages/%RESOURCE_VERSION%/final" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Lmajor_LV39_cl5_SNPs_WashU_RSRC"
+            version="@@Lmajor_LV39_cl5_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/LmajorLV39cl5_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/LmajorLV39cl5_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/LmajorLV39cl5_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Lmajor_Seidman_751_SNPs_WashU_RSRC"
+            version="@@Lmajor_Seidman_751_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/LmajorSeidman751_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/LmajorSeidman751_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/LmajorSeidman751_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+
 </resources>

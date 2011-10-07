@@ -458,4 +458,21 @@
     <manualGet fileOrDir="TriTrypDB/tcruzi/rnaSeq/Nilsson_Spliced_Leader/%RESOURCE_VERSION%/final/" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Tcruzi_Esmeraldo_cl3_SNPs_WashU_RSRC"
+            version="@@Tcruzi_Esmeraldo_cl3_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/TcruziEsmeraldoCl3_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/TcruziEsmeraldoCl3_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/TcruziEsmeraldoCl3_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Tcruzi_JR_cl4_SNPs_WashU_RSRC"
+            version="@@Tcruzi_JR_cl4_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/TcruziJRcl4_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/TcruziJRcl4_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/TcruziJRcl4_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
 </resources>
