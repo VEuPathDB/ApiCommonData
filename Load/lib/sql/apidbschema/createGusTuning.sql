@@ -31,6 +31,8 @@ create index SeqvarStrain_ix
 
 alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
-ALTER TABLE dots.sequencePiece ADD ( start_position number(12), end_position number(12) );
+alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
+
+alter table dots.NaFeatureImp modify (name varchar(80));
 
 exit
