@@ -1,0 +1,83 @@
+<!--
+
+Genome
+  Annotated Genome
+  Unanotated Genome
+  Chromatin Immunoprecipitation
+  Genetic Map
+Polymorphism
+  SNPs 
+  Isolates
+Proteome
+  Mass Spec
+-->
+
+
+
+<wdkReferenceCategories>
+
+  <wdkReferenceCategory category="Proteome:OrthoMCL-DB">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByOrthologPattern"/>
+  </wdkReferenceCategory>
+
+  <wdkReferenceCategory category="Proteome:OrthoMCL Groups">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="Orthologs"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByOrthologPattern"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByOrthologs"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesOrthologousToAGivenGene"/>
+
+  </wdkReferenceCategory>
+
+
+  <wdkReferenceCategory category="Proteome:EC Associations">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByEcNumber"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="ec_numbers_string"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="EcNumber"/>
+  </wdkReferenceCategory>
+
+  <wdkReferenceCategory category="Proteome:GO Associations">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGoTerm"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="ann_go_function"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="ann_go_process"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="ann_go_component"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_function"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_process"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="pred_go_component"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="GoTerms"/>
+  </wdkReferenceCategory>
+
+
+
+
+  <wdkReferenceCategory category="Transcriptome:ESTs">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByESTOverlap"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="attribute" name="overview"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="question" name="EstQuestions.EstBySourceId"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="question" name="EstQuestions.EstsWithGeneOverlap"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="question" name="EstQuestions.EstsByLibrary"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="question" name="EstQuestions.ESTsByGeneIDs"/>
+    <wdkReference recordClass="EstRecordClasses.EstRecordClass" type="question" name="EstQuestions.EstsByLocation"/>
+  </wdkReferenceCategory>
+
+  <wdkReferenceCategory category="Genome:Annotated Genome">
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="attribute" name="overview"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="Notes"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="table" name="Alias"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByLocation"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GeneByLocusTag"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByTaxon"/>
+    <wdkReference recordClass="GeneRecordClasses.GeneRecordClass" type="question" name="GeneQuestions.GenesByGeneType"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="attribute" name="overview"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequenceBySourceId"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequencesByTaxon"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequencesBySimilarity"/>
+  </wdkReferenceCategory>
+
+  <wdkReferenceCategory category="Genome:Genome Sequence">
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="attribute" name="overview"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequenceBySourceId"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequencesByTaxon"/>
+    <wdkReference recordClass="SequenceRecordClasses.SequenceRecordClass" type="question" name="GenomicSequenceQuestions.SequencesBySimilarity"/>
+  </wdkReferenceCategory>
+
+</wdkReferenceCategories>
