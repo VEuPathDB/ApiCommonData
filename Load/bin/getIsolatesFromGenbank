@@ -6,16 +6,45 @@
 
 use LWP::Simple;
 use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
 
 $| = 1;
 
-my ($ncbiTaxIdList, $outputFile) = @ARGV;
+my ($speciesNcbiTaxonId, $outputFile) = @ARGV;
 
-&usage unless $ncbiTaxIdList && $outputFile;
-
-my @ncbiTaxIds = split(/,/, $ncbiTaxIdList);   # sample : 5810
+&usage unless $speciesNcbiTaxonId && $outputFile;
 
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
+
+
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+my $u = $gusconfig->{props}->{databaseLogin};
+my $pw = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+$dbh->{RaiseError} = 1;
+
+my $sql = <<SQL;
+  select ncbi_tax_id
+  from SRes.Taxon
+  start with ncbi_tax_id in ($speciesNcbiTaxonId)
+  connect by prior taxon_id = parent_id
+SQL
+
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+my @ncbiTaxIds;
+while(my($currentTaxon) = $stmt->fetchrow_array()){
+  push(@ncbiTaxIds, $currentTaxon);
+  print STDERR "including NCBI taxon id $currentTaxon\n";
+}
 
 my $db      = "PopSet";
 my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
@@ -76,14 +105,12 @@ sub usage {
   print STDERR "
 
 Use NCBI's eutils to fetch isolate sequences from genbank.  All sequences
-are concatenated into a single genbank file.
+are concatenated into a single genbank file.  Gets isolates for all NCBI
+taxon IDs that are children of the provided speciesNcbiTaxonId
 
-usage: getIsolatesFromGenbank taxon_list output_file
+usage: getIsolatesFromGenbank speciesNcbiTaxonId outputFile
 
-where:
-  taxon_list:  comma delimited list of ncbi taxon ids
-
-(Prints a . to STDERR for each sequence it gets.
+(Prints a . to STDERR for each sequence it gets.)
 
 ";
 
