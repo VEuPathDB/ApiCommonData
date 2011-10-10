@@ -10,6 +10,7 @@ use Getopt::Long qw(GetOptions);
 use ApiCommonData::Load::TuningConfig::Utils;
 use ReFlow::DataSource::DataSourceInfo;
 use ReFlow::DataSource::DataSourceInfos;
+use ReFlow::DataSource::WdkReferenceCategories;
 use CBIL::Util::PropertySet;
 
 BEGIN {
@@ -27,14 +28,12 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $schema, $password, $suffix, $project, $version, $subversionDir, $debug);
+my ($propfile, $instance, $schema, $password, $suffix, $project, $subversionDir, $debug);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
            "schema=s" => \$schema,
            "password=s" => \$password,
            "suffix=s" => \$suffix,
-           "project=s" => \$project,
-           "version=s" => \$version,
            "subversionDir=s" => \$subversionDir,
            "debug!" => \$debug,
 	  );
@@ -52,16 +51,19 @@ chdir "$workingDir";
 
 my $projectQuery = $dbh->prepare(<<SQL);
   select project_id, lower(project_id) as lower_project_id
-  from (select distinct project_id from ApidbTuning.SequenceAttributes)
+  from (select distinct project_id from $schema.SequenceAttributes)
 SQL
+
+my $wdkReferenceCategoriesXmlFile = "wdkReferenceCategories.xml";
+my $wdkReferenceCategories = ReFlow::DataSource::WdkReferenceCategories->new($wdkReferenceCategoriesXmlFile);
 
 $projectQuery->execute() or die "getting a list of project IDs";
 while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
 
-  loadDataSources($dbh, "globalResourcesInfo.xml", $project, $version, $suffix, $debug);
+  loadDataSources($dbh, "globalResourcesInfo.xml", $suffix, $wdkReferenceCategories, $debug);
 
   foreach my $file (`ls $lowerProject/*Info.xml`) {
-    loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
+    loadDataSources($dbh, $file, $suffix, $wdkReferenceCategories, $debug);
   }
 }
 
@@ -73,15 +75,17 @@ die if getErrorFlag();
 ################################################################################
 
 sub loadDataSources {
-
-    my ($dbh, $infile, $project, $version, $suffix, $debug) = @_;
+    my ($dbh, $infile, $suffix, $wdkReferenceCategories, $debug) = @_;
 
     print STDERR "loading $infile";
 
-    # my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
-    # $props->addProperty("dataDir", "/tmp");
-    my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile);
-    print STDERR Dumper("DataSourceInfos: " . $dataSourceInfos) if $debug;
+    my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile, $wdkReferenceCategories);
+
+    if($debug){
+	print STDERR "DATA SOURCE INFO:  ";
+	print STDERR Dumper $dataSourceInfos;
+    }
+
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSourceInfo$suffix
@@ -111,7 +115,7 @@ SQL
       print STDERR "data source: \"$dsName\"" if $debug;
       my $dataSourceId = $loadedDatasets{$dsName};
       if (!$dataSourceId) {
-	print STDERR "   . . . skipping because $dsName does not exist in apidb.DataSource" if $debug;
+	print STDERR "skipping [$dsName] because $dsName does not exist in apidb.DataSource\n" if $debug;
 	next;
       }
       $insertDs->execute($dataSourceId, $ds->getDisplayName(),
@@ -164,7 +168,7 @@ sub createTables {
       create table apidb.DataSourceInfo$suffix (
         data_source_id               number(12),
         display_name                 varchar2(200),
-        public_url                   varchar2(80),
+        public_url                   varchar2(200),
         categories                   varchar2(80),
         description                  varchar2(4000),
         contact                      varchar2(80),
