@@ -148,7 +148,7 @@ sub run {
     my $analysisName = $configRow->[1];
     my $protocolName = $configRow->[2];
     my $protocolType = $configRow->[3];
-    my $profileSetName = $configRow->[4]
+    my $profileSetName = $configRow->[4];
     my $profileElements = $configRow->[5];
 
     my $logicalGroup = $self->makeLogicalGroup($profileElements, $analysisName);
