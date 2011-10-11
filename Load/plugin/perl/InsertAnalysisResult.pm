@@ -151,7 +151,7 @@ sub run {
     my $profileSetName = $configRow->[4];
     my $profileElements = $configRow->[5];
 
-    my $logicalGroup = $self->makeLogicalGroup($profileElements, $analysisName);
+    my $logicalGroup = $self->makeLogicalGroup($profileElements, $analysisName, $profileSetName);
 
     my $protocol = $self->getProtocol($protocolName, $protocolType, $configHeader);
 
@@ -193,7 +193,7 @@ sub validateHeader {
 #--------------------------------------------------------------------------------
 
 sub makeLogicalGroup {
-  my ($self, $profileElements, $analysisName) = @_;
+  my ($self, $profileElements, $analysisName, $profileSetName) = @_;
 
   return unless($profileElements);
 
@@ -202,7 +202,6 @@ sub makeLogicalGroup {
   my $logicalGroupName = "$analysisName INPUTS";
   my $logicalGroup = GUS::Model::RAD::LogicalGroup->new({name => $logicalGroupName});
 
-  my $profileSetName = $self->getArg('profileSetName');
   my ($profileSetId) = $self->sqlAsArray( Sql => "select profile_set_id from apidb.profileset where name = '$profileSetName'" );
 
   my @profileElements = split(';', $profileElements);
