@@ -127,6 +127,8 @@ sub run {
   my $taxaToLoad = $self->getArg('taxaToLoad');
   my $projectName = $self->getArg('projectName');
 
+  $self->error("Provide only one or the other of these two arguments: --taxaToLoad and --projectName") if ($taxaToLoad && $projectName);
+
   if ($projectName) {
       my $sql = "select abbrev_orthomcl from ApiDB.Organism
                  where project_name = '$projectName'";
@@ -135,8 +137,6 @@ sub run {
 	  push(@$taxaToLoad, $orthomclAbbrev);
       }
   }
-
-  $self->error("Provide only one or the other of these two arguments: --taxaToLoad and --projectName") if ($taxaToLoad && $projectName);
 
   open(FILE, $self->getArg('OrthologFile')) || die "Could Not open Ortholog File for reading: $!\n";
 
