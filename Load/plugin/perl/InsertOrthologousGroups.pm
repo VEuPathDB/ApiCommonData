@@ -129,7 +129,7 @@ sub run {
 
   if ($projectName) {
       my $sql = "select abbrev_orthomcl from ApiDB.Organism
-                 where project_name = $projectName";
+                 where project_name = '$projectName'";
       my $sth = $self->prepareAndExecute($sql);
       while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
 	  push(@$taxaToLoad, $orthomclAbbrev);
