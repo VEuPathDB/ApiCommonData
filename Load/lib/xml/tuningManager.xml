@@ -379,7 +379,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE GeneId&1 NOLOGGING AS
-SELECT id, gene, unique_mapping,
+SELECT mapping.id, mapping.gene, mapping.unique_mapping,
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
@@ -494,8 +494,21 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       and gf.external_database_release_id =r.external_database_release_id
       and r.external_database_id = d.external_database_id
       and n.is_preferred = 1
-)
-GROUP BY id, gene, unique_mapping
+) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+where mapping.gene = gf.source_id
+  and gf.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions',
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
+                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
+                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
+                      'Pfalciparum workshop annotations reviewed and changed',
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Tbrucei427_AutoMAGI_Annotations_RSRC')
+GROUP BY mapping.id, mapping.gene, mapping.unique_mapping
       ]]>
     </sql>
     <sql>
@@ -1302,6 +1315,7 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
      DerisiExpn DerisiExpn, WinzelerExpn WinzelerExpn,
      ToxoExpn ToxoExpn, GenomicSequence sequence,
      dots.geneinstance gi, TaxonSpecies ts, sres.TaxonName species_name,
+     (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
@@ -1399,7 +1413,7 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
       from apidb.GeneFeatureName
       group by na_feature_id
      ) any_name
-WHERE gf.source_id is not null
+WHERE gf.source_id = gene.source_id
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
@@ -1431,19 +1445,6 @@ WHERE gf.source_id is not null
   AND sequence.taxon_id = ts.taxon_id(+)
   AND ts.species_taxon_id = species_name.taxon_id
   AND species_name.name_class = 'scientific name'
-  -- skip toxo predictions (except tRNAs)
-  -- skip new plasmo annotation
-  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', 'TwinScan predictions',
-                      'TwinScanEt predictions',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
-                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
-                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                      'Pfalciparum workshop annotations reviewed and changed',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Tbrucei427_AutoMAGI_Annotations_RSRC'
-)
   AND gf.na_feature_id = preferred_product.na_feature_id(+)
   AND gf.na_feature_id = preferred_name.na_feature_id(+)
   AND gf.na_feature_id = any_product.na_feature_id(+)
@@ -2406,6 +2407,9 @@ CREATE TABLE Polymorphism&1 NOLOGGING AS
          substr(sb.allele, 1, 1) AS allele_b,
          substr(sa.product, 1, 1) AS product_a,
          substr(sb.product, 1, 1) AS product_b,
+         sa.coverage as coverage_a, sb.coverage as coverage_b,
+         sa.allele_percent as allele_percent_a, sb.allele_percent as allele_percent_b,
+         sa.pvalue as pvalue_a, sb.pvalue as pvalue_b,
          snp.external_database_release_id,
          snp.parent_id as gene_na_feature_id,
          nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id
