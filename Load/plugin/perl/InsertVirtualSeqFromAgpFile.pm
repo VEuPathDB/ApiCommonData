@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile;
+Hpackage ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -34,7 +34,7 @@ fileArg({name => 'agpFile',
         }),
 
 fileArg({name => 'chromosomeOrderMappingFile',
-         descr => 'Tab-delimited file containing source_id,chromosome,chromosome_order_number mapping if chromosomes are not numerical and randomly ordered in file',
+         descr => 'Tab-delimited file containing source_id,chromosome_order_number,chromosome_order mapping if chromosomes are not numerical and randomly ordered in file',
          constraintFunc=> undef,
          reqd  => 0,
          isList => 0,
@@ -285,8 +285,18 @@ sub processFile {
 	  }
       }else{
 
-	  $chromosome= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc}->{chromosome};
-	  $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc}->{chrom_order_num};
+	  my $chromOrderNumFromFile = $refChromosomeOrderMapping->{$virAcc}->{chrom_order_num} if $refChromosomeOrderMapping->{$virAcc}->{chrom_order_num};
+
+	  my $chromFromFile;
+	  if($refChromosomeOrderMapping->{$virAcc}->{chromosome}){
+	      $chromFromFile = $refChromosomeOrderMapping->{$virAcc}->{chromosome};
+	  }elsif($chromOrderNumFromFile){
+	      $chromFromFile = $chromOrderNumFromFile;
+	  }
+	  $chromosomeOrder= $self->getArg('chromosomesInOrder') ? $numVirInserted : $chromOrderNumFromFile;
+	  
+	  $chromosome= $self->getArg('chromosomesInOrder') ? $numVirInserted : $chromFromFile;
+
       }
 
       die "No chromosome or chromosome order information provided for virtual sequence\n" if (!($chromosomeOrder || $self->getArg('notChromosomes')) || !($chromosome || $self->getArg('notChromosomes')));
@@ -337,8 +347,8 @@ sub getChromOrderMapping{
 
     my @arr = split(/\t/, $_);
 
-    $chromosomeOrderMapping{$arr[0]}->{chrom} = $arr[1]; 
-    $chromosomeOrderMapping{$arr[0]}->{chrom_order_num} = $arr[2];
+    $chromosomeOrderMapping{$arr[0]}->{chrom_order_num} = $arr[1]; 
+    $chromosomeOrderMapping{$arr[0]}->{chromosome} = $arr[2] if $arr[2];
   }
 
   return \%chromosomeOrderMapping;
