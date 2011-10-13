@@ -1,4 +1,4 @@
-Hpackage ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile;
+package ApiCommonData::Load::Plugin::InsertVirtualSeqFromAgpFile;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
