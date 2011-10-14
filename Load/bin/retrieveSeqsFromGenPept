@@ -2,6 +2,9 @@
 
 ## script that uses Bio::Perl to retrieve sequences (accessions or GI numbers passed in a file on stdin) from genpept
 
+# input file is expected to have some header lines, each of which must include the word "Accession."  these are removed.
+# then each remaining line is expected to be tab delimited, with the first column holding the accession to submit to genpept
+
 use strict;
 use Bio::Perl;
 use Getopt::Long;
