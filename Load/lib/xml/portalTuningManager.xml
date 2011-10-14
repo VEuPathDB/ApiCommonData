@@ -72,7 +72,6 @@
     <externalTuningTableDependency name="ApidbTuning.EstAttributes" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstAttributes" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.EstAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -84,15 +83,6 @@
       <source dblink="piro.tuning"/>
 
 
-      <source>
-        <query>
-          <![CDATA[
-            select *
-            from ApidbTuning.EstAttributes@orphan.tuning
-            where organism not in ('Babesia bovis','Theileria annulata','Theileria parva')
-          ]]>
-        </query>
-      </source>
 
       <source>
         <query>
@@ -150,7 +140,6 @@ tablespace indx
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="trich.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="amoeba.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="micro.tuning"/>
-      <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="orphan.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -159,7 +148,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -213,7 +201,6 @@ tablespace indx
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="trich.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="amoeba.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="micro.tuning"/>
-      <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="orphan.tuning"/>
       <externalTuningTableDependency name="ApidbTuning.GeneId" dblink="piro.tuning"/>
 
       <internalDependency name="ApidbTuning.GeneAttributes"/>
@@ -224,7 +211,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -281,7 +267,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="giardia.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="plasmo.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="toxo.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -289,7 +274,6 @@ tablespace indx
       <source dblink="giardia.tuning"/>
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
     </unionization>
     <sql>
@@ -309,7 +293,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.OrfAttributes" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfAttributes" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.OrfAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -318,7 +301,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -371,7 +353,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.SageTagAttributes" dblink="giardia.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SageTagAttributes" dblink="plasmo.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SageTagAttributes" dblink="toxo.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SageTagAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SageTagAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -533,7 +514,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.SnpAttributes" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SnpAttributes" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SnpAttributes" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.SnpAttributes" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.SnpAttributes" dblink="piro.tuning"/>
 
     <unionization>
@@ -542,7 +522,6 @@ tablespace indx
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
@@ -714,7 +693,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
     <externalDependency name="apidb.GeneDetail" dblink="trich.tuning"/>
     <externalDependency name="apidb.GeneDetail" dblink="amoeba.tuning"/>
     <externalDependency name="apidb.GeneDetail" dblink="micro.tuning"/>
-    <externalDependency name="apidb.GeneDetail" dblink="orphan.tuning"/>
     <externalDependency name="apidb.GeneDetail" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.GeneDetailCrypto"/>
     <intermediateTable name="ApidbTuning.GeneDetailGiardia"/>
@@ -724,7 +702,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
     <intermediateTable name="ApidbTuning.GeneDetailTriTryp"/>
     <intermediateTable name="ApidbTuning.GeneDetailAmoeba"/>
     <intermediateTable name="ApidbTuning.GeneDetailMicro"/>
-    <intermediateTable name="ApidbTuning.GeneDetailOrphan"/>
     <intermediateTable name="ApidbTuning.GeneDetailPiro"/>
 
     <sql>
@@ -783,12 +760,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table GeneDetailOrphan nologging as
-        select * from apidb.GeneDetail@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -817,8 +788,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
         union all
         select * from ApidbTuning.GeneDetailMicro
         union all
-        select * from ApidbTuning.GeneDetailOrphan
-        union all
         select * from ApidbTuning.GeneDetailPiro
         )
       ]]>
@@ -834,7 +803,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
     <externalTuningTableDependency name="ApidbTuning.TranscriptSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.TranscriptSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.TranscriptSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.TranscriptSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.TranscriptSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.TranscriptSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.TranscriptSequenceGiardia"/>
@@ -844,7 +812,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
     <intermediateTable name="ApidbTuning.TranscriptSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.TranscriptSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.TranscriptSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.TranscriptSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.TranscriptSequencePiro"/>
 
     <sql>
@@ -903,12 +870,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table TranscriptSequenceOrphan nologging as
-        select * from ApidbTuning.TranscriptSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -937,8 +898,6 @@ create unique index SnpAttr_source_id&1 ON ApidbTuning.SnpAttributes&1 (source_i
         union all
         select * from ApidbTuning.TranscriptSequenceMicro
         union all
-        select * from ApidbTuning.TranscriptSequenceOrphan
-        union all
         select * from ApidbTuning.TranscriptSequencePiro
         )
       ]]>
@@ -962,7 +921,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.CodingSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.CodingSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.CodingSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.CodingSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.CodingSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.CodingSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.CodingSequenceGiardia"/>
@@ -972,7 +930,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.CodingSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.CodingSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.CodingSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.CodingSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.CodingSequencePiro"/>
 
     <sql>
@@ -1031,12 +988,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table CodingSequenceOrphan nologging as
-        select * from ApidbTuning.CodingSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1065,8 +1016,6 @@ tablespace indx
         union all
         select * from ApidbTuning.CodingSequenceMicro
         union all
-        select * from ApidbTuning.CodingSequenceOrphan
-        union all
         select * from ApidbTuning.CodingSequencePiro
         )
       ]]>
@@ -1090,7 +1039,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.ProteinSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.ProteinSequence" dblink="micro.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.ProteinSequence" dblink="amoeba.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.ProteinSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.ProteinSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.ProteinSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.ProteinSequenceGiardia"/>
@@ -1100,7 +1048,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.ProteinSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.ProteinSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.ProteinSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.ProteinSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.ProteinSequencePiro"/>
 
     <sql>
@@ -1159,12 +1106,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table ProteinSequenceOrphan nologging as
-        select * from ApidbTuning.ProteinSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1193,8 +1134,6 @@ tablespace indx
         union all
         select * from ApidbTuning.ProteinSequenceMicro
         union all
-        select * from ApidbTuning.ProteinSequenceOrphan
-        union all
         select * from ApidbTuning.ProteinSequencePiro
         )
       ]]>
@@ -1218,7 +1157,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.NaSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.NaSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.NaSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.NaSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.NaSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.NaSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.NaSequenceGiardia"/>
@@ -1228,7 +1166,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.NaSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.NaSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.NaSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.NaSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.NaSequencePiro"/>
 
     <sql>
@@ -1288,12 +1225,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table NaSequenceOrphan nologging as
-        select * from ApidbTuning.NaSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1322,8 +1253,6 @@ tablespace indx
         union all
         select * from ApidbTuning.NaSequenceMicro
         union all
-        select * from ApidbTuning.NaSequenceOrphan
-        union all
         select * from ApidbTuning.NaSequencePiro
         )
       ]]>
@@ -1347,7 +1276,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.OrfSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.OrfSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrfSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.OrfSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.OrfSequenceGiardia"/>
@@ -1357,7 +1285,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.OrfSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.OrfSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.OrfSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.OrfSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.OrfSequencePiro"/>
 
     <sql>
@@ -1416,12 +1343,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table OrfSequenceOrphan nologging as
-        select * from ApidbTuning.OrfSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1450,8 +1371,6 @@ tablespace indx
         union all
         select * from ApidbTuning.OrfSequenceMicro
         union all
-        select * from ApidbTuning.OrfSequenceOrphan
-        union all
         select * from ApidbTuning.OrfSequencePiro
         )
       ]]>
@@ -1475,7 +1394,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.EstSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.EstSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.EstSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.EstSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.EstSequenceGiardia"/>
@@ -1485,7 +1403,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.EstSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.EstSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.EstSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.EstSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.EstSequencePiro"/>
 
     <sql>
@@ -1546,13 +1463,6 @@ tablespace indx
 
     <sql>
       <![CDATA[
-        create table EstSequenceOrphan nologging as
-        select * from ApidbTuning.EstSequence@orphan.tuning
-      ]]>
-    </sql>
-
-    <sql>
-      <![CDATA[
         create table EstSequencePiro nologging as
         select * from ApidbTuning.EstSequence@piro.tuning
       ]]>
@@ -1578,8 +1488,6 @@ tablespace indx
         union all
         select * from ApidbTuning.EstSequenceMicro
         union all
-        select * from ApidbTuning.EstSequenceOrphan
-        union all
         select * from ApidbTuning.EstSequencePiro
         )
       ]]>
@@ -1603,7 +1511,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.AssemblySequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.AssemblySequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.AssemblySequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.AssemblySequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.AssemblySequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.AssemblySequenceCrypto"/>
     <intermediateTable name="ApidbTuning.AssemblySequenceGiardia"/>
@@ -1613,7 +1520,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.AssemblySequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.AssemblySequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.AssemblySequenceMicro"/>
-    <intermediateTable name="ApidbTuning.AssemblySequenceOrphan"/>
     <intermediateTable name="ApidbTuning.AssemblySequencePiro"/>
 
     <sql>
@@ -1672,12 +1578,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table AssemblySequenceOrphan nologging as
-        select * from ApidbTuning.AssemblySequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1706,8 +1606,6 @@ tablespace indx
         union all
         select * from ApidbTuning.AssemblySequenceMicro
         union all
-        select * from ApidbTuning.AssemblySequenceOrphan
-        union all
         select * from ApidbTuning.AssemblySequencePiro
         )
       ]]>
@@ -1731,7 +1629,6 @@ tablespace indx
     <externalTuningTableDependency name="ApidbTuning.IsolateSequence" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateSequence" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateSequence" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.IsolateSequence" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateSequence" dblink="piro.tuning"/>
     <intermediateTable name="ApidbTuning.IsolateSequenceCrypto"/>
     <intermediateTable name="ApidbTuning.IsolateSequenceGiardia"/>
@@ -1741,7 +1638,6 @@ tablespace indx
     <intermediateTable name="ApidbTuning.IsolateSequenceTriTryp"/>
     <intermediateTable name="ApidbTuning.IsolateSequenceAmoeba"/>
     <intermediateTable name="ApidbTuning.IsolateSequenceMicro"/>
-    <intermediateTable name="ApidbTuning.IsolateSequenceOrphan"/>
     <intermediateTable name="ApidbTuning.IsolateSequencePiro"/>
 
     <sql>
@@ -1800,12 +1696,6 @@ tablespace indx
       ]]>
     </sql>
 
-    <sql>
-      <![CDATA[
-        create table IsolateSequenceOrphan nologging as
-        select * from ApidbTuning.IsolateSequence@orphan.tuning
-      ]]>
-    </sql>
 
     <sql>
       <![CDATA[
@@ -1827,8 +1717,6 @@ tablespace indx
         select * from ApidbTuning.IsolateSequenceToxo
         union all
         select * from ApidbTuning.IsolateSequenceTrich
-        union all
-        select * from ApidbTuning.IsolateSequenceOrphan
         union all
         select * from ApidbTuning.IsolateSequenceAmoeba
         union all
@@ -1966,7 +1854,6 @@ order by project_id, genus
     <externalTuningTableDependency name="ApidbTuning.FeatureLocation" dblink="trich.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.FeatureLocation" dblink="amoeba.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.FeatureLocation" dblink="micro.tuning"/>
-    <externalTuningTableDependency name="ApidbTuning.FeatureLocation" dblink="orphan.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.FeatureLocation" dblink="piro.tuning"/>
 
     <unionization>
@@ -1975,7 +1862,6 @@ order by project_id, genus
       <source dblink="plasmo.tuning"/>
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
-      <source dblink="orphan.tuning"/>
       <source dblink="piro.tuning"/>
 
       <source>
