@@ -5,12 +5,16 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($inputDir, $queryDir, $outputDir, $blastDatabase, 
+my ($inputFile, $queryDir, $outputDir, $blastDatabase, 
     $subjectFile, $idRegex, $verbose, $speciesKey, $ncbiBlastPath);
 
 my $speciesRegex = 'IEDBExport([a-zA-Z][a-zA-Z])\w*';
 
-&GetOptions("inputDir=s" => \$inputDir,
+# input file is expected to have some header lines, each of which must include the word "Accession."  these are removed.
+# then each remaining line is expected to be tab delimited, with the first column holding the accession to submit to genpept
+
+
+&GetOptions("inputFile=s" => \$inputFile,
 	    "queryDir=s"=> \$queryDir,
 	    "outputDir=s" => \$outputDir,
         "ncbiBlastPath=s" => \$ncbiBlastPath,
@@ -33,35 +37,18 @@ if (!$inputDir || !$queryDir || !$outputDir || !$blastDatabase) {
 print STDERR "Mapping Complete\n";
 
 sub getGenPetSeqs{
-  my ($inputDir, $queryDir) = @_;
+  my ($inputFile, $queryDir) = @_;
 
-  unless (-d $queryDir){
-    my $cmd = "mkdir -p $queryDir";
+  die "Query dir '$queryDir' does not exist\n" unless (-d $queryDir){
 
-    &exeCmd($cmd);
+  die "Input file '$inputFile' does not exist\n" unless (-e $inputFile);
 
-  }
+  my $outFile = $inputFile;
+  $outFile =~ s/\.txt/\.fsa/;
 
-  die "Cannot locate the directory '$inputDir':$!\n" unless (-d $inputDir);
+  my $cmd = "retrieveSeqsFromGenPept --inFile $inFile --outFile $queryDir/$outFile";
 
-  opendir(DIR, $inputDir) or die "can't opendir '$inputDir': $!";
-
-  my $file;
-  while (defined($file = readdir(DIR))) {
-    my $inFile = "$inputDir/$file";
-
-    next unless -f "$inFile";
-
-    my $outFile = $file;
-    $outFile =~ s/(\w+).\w+/$1/;
-    $outFile = "$queryDir/$outFile.fsa";
-
-    my $cmd = "retrieveSeqsFromGenPept --inFile $inFile --outFile $outFile";
-
-    &exeCmd($cmd);
-
-  }
-  closedir(DIR);
+  &exeCmd($cmd);
 }
 
 sub runBlast{
