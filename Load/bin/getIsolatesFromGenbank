@@ -14,6 +14,8 @@ use CBIL::Util::PropertySet;
 
 $| = 1;
 
+my $PRINT_URLS = 0;
+
 my ($speciesNcbiTaxonId, $outputFile) = @ARGV;
 
 &usage unless $speciesNcbiTaxonId && $outputFile;
@@ -40,9 +42,9 @@ SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 
-my @ncbiTaxIds;
+my %ncbiTaxIds;
 while(my($currentTaxon) = $stmt->fetchrow_array()){
-  push(@ncbiTaxIds, $currentTaxon);
+  $ncbiTaxIds{$currentTaxon} = 1;
   print STDERR "including NCBI taxon id $currentTaxon\n";
 }
 
@@ -50,14 +52,19 @@ my $db      = "PopSet";
 my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
 my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 
-my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} @ncbiTaxIds;
+my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} keys(%ncbiTaxIds);
 my $query = join("OR", @queries);
 
+# find all studies that match our query
 my $esearch_result = get("$esearch$query");
+print STDERR "$esearch$query\n\n" if $PRINT_URLS;
+
 die "Failed running esearch query" unless defined $esearch_result;
 
 $esearch_result =~ m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s || die "Can't parse results from esearch\n";
 
+# We matched $Count studies.  We can get them using $QueryKey and $WebEnv
+# as IDs for our query result
 my $Count    = $1;
 my $QueryKey = $2;
 my $WebEnv   = $3;
@@ -67,21 +74,18 @@ my $retmax=3;
 
 my $seqCount = 0;
 
+# iterate through the studies
+# we are given all studies that have any isolates matching our taxa
+# but not all isolates in the study do.  filter them by db_xref=taxon
 for ($retstart = 0; $retstart < $Count; $retstart += $retmax) {
   my $efetch = "$utils/efetch.fcgi?" .
     "rettype=Summary&retmode=text&retstart=$retstart&retmax=$retmax&" .
       "db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
 
-  # H.W.
-  #print "\nEF_QUERY=$efetch\n";
-
   my $efetch_result = get($efetch);
-  die "Failed getting efetch result\n" unless $efetch_result;
+  print STDERR "$efetch\n\n" if $PRINT_URLS;
 
-  # H.W.
-  #  print "---------\nEFETCH RESULT(".
-  #         ($retstart + 1) . ".." . ($retstart + $retmax) . "): ".
-  #        "[$efetch_result]\n-----PRESS ENTER!!!-------\n";
+  die "Failed getting efetch result\n" unless $efetch_result;
 
   my $summary = $efetch_result;
 
@@ -91,7 +95,10 @@ for ($retstart = 0; $retstart < $Count; $retstart += $retmax) {
     $seqCount++;
     $_ =~ s/(\[|\])//g;
     my $gb_result = get("$utils/efetch.fcgi?db=$db&id=$_&rettype=gb");
+    $gb_result =~ /db_xref="taxon:(\d+)"/;
+    next unless $ncbiTaxIds{$1};
     die "Failed getting gb result\n" unless $gb_result;
+
     open(FILE, ">>$outputFile") || die "Could not open output file '$outputFile'\n";
     print FILE "$gb_result";
     close(FILE);
