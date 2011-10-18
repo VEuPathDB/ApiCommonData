@@ -3131,7 +3131,17 @@ from
     UNION
 
     -- ToxoDB --
-    select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    Union
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_TimeSeries' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    Union
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
@@ -3639,6 +3649,83 @@ select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_n
         '' as dataTable,
         'expression' as type,
         'Tg_Carruthers_GSE20480_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
+       'Matrajt::BzMutant' as module,
+       'T.g. Differentiation Mutant Transcript Expression' as display_name,
+       'Expression profiles of seven mutant strains (B7,P11,7K,11K,12K,13P, and 11P) at both the Extracellular tachyzoite and bradyzoite stages were examined, using the T. gondii RH strain as a control. In addition, the expression profile of the intracellular tachyzoite for the T. gondii RH control strain was also provided for comparison. 17 sample types are provided in total' as description,
+       'Sample Type
+            1. Control: Tachyzoite
+            2. Intracellular Tachyzoite
+            3. Control: Bradyzoite
+            4. 12K Mutant: Tachyzoite
+            5. 12K Mutant: Bradyzoite
+            6. 13P Mutant: Tachyzoite
+            7. 13P Mutant: Bradyzoite
+            8. B7 Mutant: Tachyzoite
+            9. B7 Mutant: Bradyzoite
+            10. 11P Mutant: Tachyzoite
+            11. 11P Mutant: Bradyzoite
+            12. 11K Mutant: Tachyzoite
+            13. 11K Mutant: Bradyzoite
+            14. 7K Mutant: Tachyzoite
+            15. 7K Mutant: Bradyzoite
+            16. P11 Mutant: Tachyzoite
+            17. P11 Mutant: Bradyzoite' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
+       'Matrajt::BzTimeSeries' as module,
+       'T.g. Differentiation Time Series' as display_name,
+       'Expression profiles of the T. gondii RH extracelluar tachyzoite stage are compared to its bradyzoite stage at 4 time points (24, 36, 48, and 72 hours post invasion)' as description,
+       'Sample Type
+            1. Extracellular Tachyzoite
+            2. Bradyzoite (24 hrs) 
+            3. Bradyzoite (36 hrs) 
+            4. Bradyzoite (48 hrs) 
+            5. Bradyzoite (72 hrs)' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
+       'Matrajt::BzEgress' as module,
+       'T.g. Differentiation Mutant Expression, 11 Hours Post-Egress' as display_name,
+       'The expression profile of T. gondii RH 11 hours post egress was compared to that of the same strain in the extracellular tachyzoite stage, as well as 2 mutant strains (13P and B7) which were also collected 11 hours post egress' as description,
+       'Sample Type
+            1. Extracellular Tachyzoite 
+            2. Wild Type: Post-Egress 
+            3. 13P Mutant: Post-Egress 
+            4. B7 Mutant: Post-Egress' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
     from dual
 
     UNION
