@@ -10,16 +10,17 @@ use Data::Dumper;
 
 # this file was copied from manual delivery.  its history is unknown.
 
-my ($fn, $dir, $help,$taxId);
+my ($fn, $dir, $help,$taxId,$organismListFile);
 
 &GetOptions('help|h' => \$help,
             'outputfile=s' => \$fn,
             'input_dir=s' => \$dir,
 	    'NCBITaxId=s' => \$taxId,
+            'organismListFile=s' => \$organismListFile
            );
 
 &usage() if($help);
-&usage("input dir is required") unless(-e $dir);
+&usage("input dir and organismListFile is required") unless(-e $dir && -e $organismListFile);
 my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
 print STDERR "$subNCBITaxaList\n";
 
@@ -28,8 +29,54 @@ my @taxaLists = split(/\,/,$subNCBITaxaList);
 my %taxaListHash;
     
 foreach (@taxaLists){
-    $taxaListHash{$_}=1;
+  $taxaListHash{$_}=1;
 }
+
+my %orgListHash;
+
+open(ORG,$organismListFile);
+
+my $flag = 0;
+my $taxId = 0;
+my $orgId;
+
+while(<ORG>){
+  if($_ =~ /<Organism>/){
+    $flag=1;
+  }
+  if($flag && $_ =~ /<TaxId>(\d+)<\/TaxId>/ && $taxaListHash{$1}==1){
+    $taxId=$1;
+  }
+  if(/<OrganismId>(\d+)<\/OrganismId>/){
+    $orgId=$1;
+  }
+  if($taxId && $orgId){
+    $orgListHash{$orgId}=1;
+  }
+  if($_ =~ /<\/Organism>/){
+    $flag=0;
+    $taxId=0;
+  }
+}
+# my $parser = XML::LibXML->new();
+
+# my $doc = $parser->parse_file($organismListFile);
+
+# my $top = $doc->getDocumentElement;
+
+# my @organisms = $top->findnodes('/OrganismList/Organism');
+
+# foreach my $organism (@organisms) {
+#   my $taxId = $organism->findvalue('TaxId');
+
+#   print STDERR "$taxId\n";
+#    if ($taxaListHash{$taxId}==1){
+#      my $orgId = $organism->findvalue('OrganismId');
+#      $orgListHash{$orgId}= 1;
+#    }
+# }
+
+
 
 my $f = `ls $dir | sort`;
 
@@ -71,6 +118,7 @@ foreach my $epitope (@epitopes) {
   my $EpitopeName = $epitope->findvalue('EpitopeName');
   my $EpitopeId = $epitope->findvalue('EpitopeId');
   my @EpitopeStructures = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule') ;
+
   foreach my $EpitopeStructure (@EpitopeStructures) {
 
     $ChemicalType = $EpitopeStructure->findvalue('ChemicalType');
@@ -99,7 +147,7 @@ foreach my $epitope (@epitopes) {
                   GenBankId => $GenBankId,
                   SourcePDBID => '',
                  };
-    push(@results, $result) if $LinearSequence && $taxaListHash{$SourceOrganismId};
+    push(@results, $result) if $LinearSequence && $orgListHash{$SourceOrganismId};
   }
 print STDERR "Finished Reading $singleFile file\n";
 writeTabFile(\@results);
@@ -143,7 +191,7 @@ sub usage {
 Make a tab file for a specified organism, from a set of IEDB xml files
 (that have been fixed with iedbFixXml).
 
-usage: iedbMakeTabFileFromXml --input_dir INPUT_DIR --outputfile OUTPUT_FILE --NCBITaxId tax_id
+usage: iedbMakeTabFileFromXml --input_dir INPUT_DIR --outputfile OUTPUT_FILE --NCBITaxId tax_id --organismListFile
 ";
   print STDERR "ERROR:  $m\n" if($m);
   exit(1);
