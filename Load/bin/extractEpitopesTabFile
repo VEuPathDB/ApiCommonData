@@ -3,18 +3,15 @@
 use strict;
 use DBI;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use Bio::SeqFeature::Gene::Exon;
 use CBIL::Util::PropertySet;
-use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$outputFile);
+my ($outputFile) = @ARGV;
 
-&GetOptions("verbose!" => \$verbose,
-            "outputFile=s" => \$outputFile,
-	    );
+usage() unless $outputFile;
 
+open(OUT, ">$outputFile") || die "Can't open output file '$outputFile'\n";
 
 my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
 
@@ -33,16 +30,31 @@ my $sql = "
 select s.sequence, s.description
 from dots.aasequence s, sres.sequenceontology o
 where o.term_name = 'epitope'
-and s.sequence_ontology_id = o.sequence_ontology_id;
+and s.sequence_ontology_id = o.sequence_ontology_id
 ";
 
 my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
 $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
-open(OUT, ">$outputFile") || die "Can't open output file '$outputFile'\n";
-
 # this is the same format as printed in iedbSimplifyTabFile
 while (my ($seq, $description ) = $sth->fetchrow_array()) {
   my ($iedbId, $epiName, $strain, $accession) = split(/|/,$description);
   print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
+}
+
+sub usage {
+
+print STDERR "
+
+Extract a tab file that has the same columns as was used to load epitopes.
+The loaded fasta file preserves the info on its defline, and we use that
+to recreate the tab file.  
+
+(In a workflow context it is much easier to extract the tab file then pass
+it to all stains that need it.)
+
+ usage:  extractEpitopesTabFile output_file
+
+";
+exit(1);
 }
