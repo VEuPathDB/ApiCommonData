@@ -2,39 +2,16 @@
 use strict;
 
 # read isolate submission Excel file - 2000-2007 version?
-# suggests using BioPerl version 1.60 or above
 
 use Spreadsheet::ParseExcel;
 
 use lib "$ENV{GUS_HOME}/lib/perl/ApiCommonWebsite/Model";
 
-# enforce to use bioperl version 1.60
-use lib "$ENV{BASE_GUS}/cgi-lib/";
-
 use Bio::SeqIO;
 use Bio::Seq::RichSeq;
-use Bio::SeqFeature::Generic;
-use Bio::Species;
-use Bio::DB::Taxonomy;
-use Getopt::Long qw(GetOptions);
 
 my (%hash, %cn);  # column name
-my ($file, $taxon);
-
-GetOptions( "inputfile=s" => \$file,
-            "genus=s"     => \$taxon );
-
-unless($file && $taxon) {
-  die
-print <<EOL;
-Usage: extractIsolateFromExcel.pl --inputfile isolateSubmissimnExcelFile --genus genusName
-
-Where:
-  inputfile - Isolate Submission Excel File (in Excel 2000-2004 format .xls)
-  genus     - valid NCBI taxomomy name, e.g Cryptosporidium, Toxoplasma, Plasmodium
-
-EOL
-}
+my $file = shift or die "cannot open the Isolate Submission Excel form\n";
 
 while(<DATA>) {
   chomp;
@@ -47,56 +24,65 @@ my $parser = Spreadsheet::ParseExcel->new( CellHandler => \&cell_handler,
 
 my $workbook = $parser->Parse($file);
 
-sub cell_handler { 
+sub cell_handler {
   my $workbook    = $_[0];
   my $sheet_index = $_[1];
   my $row         = $_[2];
   my $col         = $_[3];
-  my $cell        = $_[4]; 
-  
+  my $cell        = $_[4];
+
   # Skip some worksheets and rows (inefficiently).
   return if $sheet_index >= 1;
 
-  my $value = $cell->Value(); 
+  my $value = $cell->Value();
   $hash{$row}{$col} = $value;
-} 
+}
 
-my $submitter    = $hash{1}{1};
-my $email        = $hash{2}{1};
-my $address      = $hash{3}{1};
-my $authors      = $hash{4}{1};
-my $study        = $hash{5}{1};
-my $pmid         = $hash{6}{1};
-my $other_ref    = $hash{7}{1};
-my $purpose      = $hash{8}{1};
-my $release_date = $hash{9}{1};
+my $first_name   = $hash{2}{1};
+my $last_name    = $hash{3}{1};
+my $department   = $hash{4}{1};
+my $institution  = $hash{5}{1};
+my $street       = $hash{6}{1};
+my $city         = $hash{7}{1};
+my $state        = $hash{8}{1};
+my $zip          = $hash{9}{1};
+my $country      = $hash{10}{1};
+my $phone        = $hash{11}{1};
+my $email        = $hash{12}{1};
 
-&create_template($email, $study, $address,$pmid);
 
-sub create_template {
-  my($email, $study, $address) = @_;
-  my $cmd =<<EOL;
-curl -F 'first_name=John'
-     -F 'last_name=Test'
-     -F 'department=Department'
-     -F 'institution=$address'
-     -F 'street=Test street'
-     -F 'city=Athens'
-     -F 'state=GA'
-     -F 'zip=30602'
-     -F 'country=USA'
-     -F 'phone=706-542-1447'
+
+my $authors      = $hash{13}{1};
+my $study        = $hash{14}{1};
+my $pmid         = $hash{15}{1};
+my $other_ref    = $hash{16}{1};
+my $purpose      = $hash{17}{1};
+my $release_date = $hash{18}{1};
+
+my $publish_status = $pmid ? "published" : "unpublished";
+
+my $cmd =<<EOL;
+curl -F 'first_name=$first_name'
+     -F 'last_name=$last_name'
+     -F 'department=$department'
+     -F 'institution=$institution'
+     -F 'street=$street'
+     -F 'city=$city'
+     -F 'state=$state'
+     -F 'zip=$zip'
+     -F 'country=$country'
+     -F 'phone=$phone'
      -F 'fax=none'
      -F 'email=$email'
-     -F 'author_first_1=John'
+     -F 'author_first_1=$first_name'
      -F 'author_mi_1='
-     -F 'author_last_1=Test'
+     -F 'author_last_1=$last_name'
      -F 'author_suffix_1='
      -F 'author_first_='
      -F 'author_mi_='
      -F 'author_last_='
      -F 'author_suffix_='
-     -F 'cit_status_radio=unpublished'
+     -F 'cit_status_radio=$publish_status'
      -F 'citation_title=$study'
      -F 'jrnl_title='
      -F 'jrnl_yr='
@@ -119,16 +105,16 @@ curl -F 'first_name=John'
      > template.sbt
 EOL
 
-  $cmd =~ s/\r|\n//igc;
-  system($cmd);
+$cmd =~ s/\r|\n//igc;
+print $cmd;
+system($cmd);
 
-}
 
 while(my ($k, $v) = each %hash) {
-  next if $k < 13;   # isolate data starts from row 15, k is the row num
-  next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ; 
+  next if $k < 23;   # isolate data starts from row 15, k is the row num
+  next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
-  my $isolate_id   = $hash{$k}{$cn{isolate_id}}; 
+  my $isolate_id   = $hash{$k}{$cn{isolate_id}};
   my $species      = $hash{$k}{$cn{species}};
   my $country      = $hash{$k}{$cn{country}};
   my $state        = $hash{$k}{$cn{state}};
@@ -191,23 +177,12 @@ while(my ($k, $v) = each %hash) {
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
-  $note .= "; purpose of sample collection: $purpose" if $purpose; 
+  $note .= "; purpose of sample collection: $purpose" if $purpose;
   $note =~ s/^; //;
-  # NCBI format /note="subtype: IIaA22G1R1; PCR_primers=fwd_name: AL3532"
 
   die "Cannot find isolate species. Please check column E\n" unless $species;
 
-  my @class = ();
-  my $db = Bio::DB::Taxonomy->new(-source => 'entrez');
-  foreach my $node ($db->get_tree(($taxon))->get_nodes()) {
-    push @class, $node->node_name();
-  }
-
-  shift @class;
-  push  @class, $species;
-  my $taxon = Bio::Species->new(-classification => [reverse @class]); 
-
-  $study =~ s/(\r|\n)/ /g; 
+  $study =~ s/(\r|\n)/ /g;
 
   my @seqs = (
          [$seq1, $seq1_fwd_primer_name, $seq1_fwd_primer_seq, $seq1_rev_primer_name, $seq1_rev_primer_seq, $seq1_product, $seq1_desc],
@@ -218,19 +193,19 @@ while(my ($k, $v) = each %hash) {
 
   my $count = 1;
   foreach my $s (@seqs) {
-   
-    my $sequence        = $s->[0]; 
+
+    my $sequence        = $s->[0];
     my $fwd_primer_name = $s->[1];
     my $fwd_primer_seq  = $s->[2];
     my $rev_primer_name = $s->[3];
     my $rev_primer_seq  = $s->[4];
     my $product         = $s->[5];
     my $seq_description = $s->[6];
-    my $file_name       = "$isolate_id.$count";            
+    my $file_name       = "$isolate_id.$count";
 
-    next unless $sequence; 
+    next unless $sequence;
 
-    $sequence =~ s/\W+//g;  
+    $sequence =~ s/\W+//g;
     my $length   = length($sequence);
 
     my $modifier = "";
@@ -251,31 +226,25 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[rev-PCR-primer-seq=$rev_primer_seq]" if $rev_primer_seq;
 
     my $seq = Bio::Seq::RichSeq->new( -seq  => $sequence,
-                                      -desc => $modifier,        
+                                      -desc => "$study $modifier",
                                       -id   => $file_name );
 
-    #$seq->species($taxon);
-
     my $out = Bio::SeqIO->new(-file => ">$file_name.fsa", -format => 'Fasta' );
-    $out->write_seq($seq); 
+    $out->write_seq($seq);
 
     open  (F, ">$file_name.tbl");
-    print F ">Feature\t$file_name\n"; 
-    #print F "<1\t>$length\tgene\n";
+    print F ">Feature\t$file_name\n";
+    print F "<1\t>$length\tgene\n";
     #print F "\t\t\tgene\tgene_name\n"; ?
     print F "<1\t>$length\tCDS\n";
-    print F "\t\t\tproduct\t$product\n";
+    print F "\t\t\tproduct\t$product\n" if $product;
     print F "\t\t\tnote\t$seq_description\n";
 
     close F;
 
     $count++;
   }
-} 
-
-
-
-
+}
 
 __DATA__
 0,A,Isolate ID,isolate_id
