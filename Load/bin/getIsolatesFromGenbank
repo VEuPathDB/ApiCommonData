@@ -1,9 +1,5 @@
 #!/usr/bin/perl -w
 #
-# Based on sample code from NCBI, author:  Oleg Khovayko
-# Adapted for EupathDB by Haiming Wang and Steve Fischer
-#
-
 use LWP::Simple;
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -26,7 +22,7 @@ my $db      = "nuccore";
 my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
 
 
-# use eutils to run query at ncbi.  returns a handle on a set of files
+# use eutils to run query at ncbi.  returns a handle on a set of records
 my $query = buildQueryString($speciesNcbiTaxonId);
 my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 my $esearch_result = get("$esearch$query");
@@ -35,8 +31,8 @@ die "Failed running esearch query" unless defined $esearch_result;
 
 $esearch_result =~ m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s || die "Can't parse results from esearch\n";
 
-# We matched $Count genbank files.  We can get them using $QueryKey and $WebEnv
-# as IDs for our query result
+# We matched $Count genbank records.  We can get them using $QueryKey and
+# $WebEnv as IDs for our query result
 my $Count    = $1;
 my $QueryKey = $2;
 my $WebEnv   = $3;
@@ -44,32 +40,26 @@ my $WebEnv   = $3;
 print STDERR "Query found $Count genbank files\n";
 
 # assume we can fit all these results easily in memory
-# this returns an asn.1 file. maybe there is a more compact way to 
-# get just a list of accessions.
-# QUESTION 1:  is there a way i can get just accessions in a compact form?
-my $efetch = "$utils/efetch.fcgi?rettype=Summary&retmode=text&retstart=0&retmax=$Count&db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
+my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
+
 print STDERR "$efetch\n\n" if $PRINT_URLS;
 my $efetch_result = get($efetch);
+open(FF,">/home/sfischer/junk/gbyuck");
+print FF $efetch_result;
+close(FF);
 
 die "Failed getting efetch result\n" unless $efetch_result;
 
 my $batchSize = 100;
 
-# find the unique accessions in the result
-# QUESTION 2: why do we get redundant accessions
-# (don't understand why we get redundant accessions, but we do)
-my @accessions = $efetch_result =~ /accession "(\w+)"/g;
-my %accHash;
-foreach my $accession (@accessions) { $accHash{$accession} = 1; }
+my @uniqueAccs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
 
-
-my @uniqueAccs = keys(%accHash);
 my $uniqueAccCount = scalar(@uniqueAccs);
 
-print STDERR "found $uniqueAccCount unique accessions\n";
+print STDERR "found $uniqueAccCount unique genbank Ids\n";
 my $batchCount = int($uniqueAccCount / $batchSize + 1);
 
-# group the accessions into batches, to reduce internet accesses.
+# group the GIs into batches, to reduce internet accesses.
 my @batches;
 my $totcount;
 for (my $i=0; $i<$batchCount; $i++) {
@@ -105,7 +95,7 @@ taxon IDs that are children of the provided speciesNcbiTaxonId
 
 usage: getIsolatesFromGenbank speciesNcbiTaxonId outputFile
 
-(Prints a . to STDERR for each sequence it gets.)
+(Prints a . to STDERR for each batch of sequences it gets.)
 
 ";
 
@@ -141,7 +131,6 @@ SQL
     print STDERR "including NCBI taxon id $currentTaxon\n";
   }
 
-  # QUESTION 3: is this the best query?
   my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} keys(%ncbiTaxIds);
   my $query = join("OR", @queries);
   return $query;
