@@ -37,7 +37,9 @@ my $Count    = $1;
 my $QueryKey = $2;
 my $WebEnv   = $3;
 
-print STDERR "Query found $Count genbank files\n";
+print STDERR "Query found $Count genbank records\n";
+
+exit(0) unless $Count;
 
 # assume we can fit all these results easily in memory
 my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
