@@ -243,7 +243,7 @@ while(my ($k, $v) = each %hash) {
 
     open  (F, ">$file_name.tbl");
     print F ">Feature\t$file_name\n";
-    print F "<1\t>$length\tgene\n";
+    #print F "<1\t>$length\tgene\n";
     #print F "\t\t\tgene\tgene_name\n"; ?
     print F "<1\t>$length\tCDS\n";
     print F "\t\t\tproduct\t$product\n" if $product;
