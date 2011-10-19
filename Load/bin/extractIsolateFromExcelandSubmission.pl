@@ -256,7 +256,7 @@ while(my ($k, $v) = each %hash) {
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-my $cmd = "linux.tbl2asn -t template.sbt -p .";
+my $cmd = "linux.tbl2asn -t template.sbt -p . -k m -V b";
 system($cmd);
 
 __DATA__
