@@ -50,14 +50,27 @@ my $country      = $hash{10}{1};
 my $phone        = $hash{11}{1};
 my $email        = $hash{12}{1};
 
-
-
 my $authors      = $hash{13}{1};
 my $study        = $hash{14}{1};
 my $pmid         = $hash{15}{1};
 my $other_ref    = $hash{16}{1};
 my $purpose      = $hash{17}{1};
 my $release_date = $hash{18}{1};
+
+
+my @author_list  = split /,/, $authors;
+my $count = @author_list;
+
+my $author_form = "";
+
+for(my $i=1; $i<=$count; $i++) {
+  my $name = $author_list[$i-1];
+  $name =~ s/\s+$//g;
+  $name =~ s/^\s+//g;
+  my ($f, $l) = split /\s/, $name;
+
+  $author_form .= " -F 'author_first_$i=$f' -F 'author_mi_$i=' -F 'author_last_$i=$l' -F 'author_suffix_$i='";
+}
 
 my $publish_status = $pmid ? "published" : "unpublished";
 
@@ -74,10 +87,7 @@ curl -F 'first_name=$first_name'
      -F 'phone=$phone'
      -F 'fax=none'
      -F 'email=$email'
-     -F 'author_first_1=$first_name'
-     -F 'author_mi_1='
-     -F 'author_last_1=$last_name'
-     -F 'author_suffix_1='
+     $author_form
      -F 'author_first_='
      -F 'author_mi_='
      -F 'author_last_='
@@ -106,7 +116,6 @@ curl -F 'first_name=$first_name'
 EOL
 
 $cmd =~ s/\r|\n//igc;
-print $cmd;
 system($cmd);
 
 
@@ -245,6 +254,10 @@ while(my ($k, $v) = each %hash) {
     $count++;
   }
 }
+
+# under current directory run tbl2asn to generate asn files for genbank submission
+my $cmd = "linux.tbl2asn -t template.sbt -p .";
+system($cmd);
 
 __DATA__
 0,A,Isolate ID,isolate_id
