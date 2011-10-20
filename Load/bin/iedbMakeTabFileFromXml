@@ -21,14 +21,15 @@ my ($fn, $dir, $help,$taxId,$organismListFile);
 
 &usage() if($help);
 &usage("input dir and organismListFile is required") unless(-e $dir && -e $organismListFile);
-my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
-print STDERR "$subNCBITaxaList\n";
+#my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+my $subNCBITaxaList = "29176,572307";
+print STDERR "Finding epitopes for this set of taxa: $subNCBITaxaList\n";
 
 my @taxaLists = split(/\,/,$subNCBITaxaList);
 
 my %taxaListHash;
-    
-foreach (@taxaLists){
+
+foreach (@taxaLists) {
   $taxaListHash{$_}=1;
 }
 
@@ -36,129 +37,102 @@ my %orgListHash;
 
 open(ORG,$organismListFile);
 
-my $flag = 0;
-my $taxId = 0;
-my $orgId;
-
-while(<ORG>){
-  if($_ =~ /<Organism>/){
-    $flag=1;
-  }
-  if($flag && $_ =~ /<TaxId>(\d+)<\/TaxId>/ && $taxaListHash{$1}==1){
-    $taxId=$1;
-  }
-  if(/<OrganismId>(\d+)<\/OrganismId>/){
-    $orgId=$1;
-  }
-  if($taxId && $orgId){
-    $orgListHash{$orgId}=1;
-  }
-  if($_ =~ /<\/Organism>/){
-    $flag=0;
-    $taxId=0;
-  }
+print STDERR "Scanning organism file to find IEDB Organism IDs for those taxa\n";
+my $parser = XML::LibXML->new();
+my $doc = $parser->parse_file($organismListFile);
+my $top = $doc->getDocumentElement;
+my @organisms = $top->findnodes('/OrganismList/Organism');
+foreach my $organism (@organisms) {
+  my %h = (TaxId=>0, OrganismId=>0);
+  findXmlValues($organism, \%h);
+  $orgListHash{$h{OrganismId}}= 1 if ($h{TaxId} && $taxaListHash{$h{TaxId}} && $h{OrganismId});
 }
 
-foreach my $org (keys %orgListHash){
-  print STDERR "OrganismId: $org\n";
-}
-  
-# my $parser = XML::LibXML->new();
+print STDERR "Found: " . join(", ", keys(%orgListHash)) . "\n";
 
-# my $doc = $parser->parse_file($organismListFile);
-
-# my $top = $doc->getDocumentElement;
-
-# my @organisms = $top->findnodes('/OrganismList/Organism');
-
-# foreach my $organism (@organisms) {
-#   my $taxId = $organism->findvalue('TaxId');
-
-#   print STDERR "$taxId\n";
-#    if ($taxaListHash{$taxId}==1){
-#      my $orgId = $organism->findvalue('OrganismId');
-#      $orgListHash{$orgId}= 1;
-#    }
-# }
-
-
-
-my $f = `ls $dir | sort`;
-
-my @files = split(/\n/,$f);
+my @files = findRelevantFiles($dir, keys(%orgListHash));
 
 my $n=@files;
 
 open (TABF, ">> $fn") or die "could not APPEND to $fn\n";;
 TABF->autoflush(1);
-   print TABF 
-      'Reference',      "\t",
-        'IEDB ID',      "\t",
-          'Epitope Name',         "\t",
-            'Epitope Structure Chemical Type',            "\t",
-              'Epitope Linear Sequence',            "\t",
-                'Epitope Conformational Sequence',  "\t",
-                  'Epitope SMILES Structure',    "\t",
-                    'Epitope Source Species',    "\t",
-	              'Epitope Source Species Strain',    "\t",
-                        'Epitope Source Name',    "\t",
-                          'Epitope Source Accession Number',    "\t",
-                            'Epitope Source PDB ID',       "\n",
-                             ;
+print TABF 
+  'Reference',      "\t",
+  'IEDB ID',      "\t",
+  'Epitope Name',         "\t",
+  'Epitope Structure Chemical Type',            "\t",
+  'Epitope Linear Sequence',            "\t",
+  'Epitope Conformational Sequence',  "\t",
+  'Epitope SMILES Structure',    "\t",
+  'Epitope Source Species',    "\t",
+  'Epitope Source Species Strain',    "\t",
+  'Epitope Source Name',    "\t",
+  'Epitope Source Accession Number',    "\t",
+  'Epitope Source PDB ID',       "\n",
+  ;
 #--------------------------------------------------------------------------------
 
-for(my $i=0; $i<$n; $i++){
-my @results;
 my $parser = XML::LibXML->new();
-my $singleFile = "$dir/$files[$i]";
-print STDERR "checking file $singleFile\n";
-my $tree = $parser->parse_file($singleFile);
-my $root = $tree->getDocumentElement;
+my $epitopeCount;
+for (my $i=0; $i<$n; $i++) {
+  my @results;
+  my $singleFile = $files[$i];
+  print STDERR "Parsing $singleFile\n";
+  my $tree = $parser->parse_file($singleFile);
+  my $root = $tree->getDocumentElement;
 
-my ($result,$GenBankId,$ChemicalType,$LinearSequence,$SourceOrganismId);
-my @epitopes = $root->findnodes('/References/Reference/Epitopes/Epitope') ;
+  my ($result,$GenBankId,$ChemicalType,$LinearSequence,$SourceOrganismId);
+  my @epitopes = $root->findnodes('/References/Reference/Epitopes/Epitope') ;
 
-foreach my $epitope (@epitopes) {
-  my $find;
-  my $EpitopeName = $epitope->findvalue('EpitopeName');
-  my $EpitopeId = $epitope->findvalue('EpitopeId');
-  my @EpitopeStructures = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule') ;
+  foreach my $epitope (@epitopes) {
+    $epitopeCount++;
+    my %h = (EpitopeName=>0, EpitopeId=>0);
+    findXmlValues($epitope, \%h);
+    my ($EpitopeName, $EpitopeId) = ($h{EpitopeName}, $h{EpitopeId});
 
-  foreach my $EpitopeStructure (@EpitopeStructures) {
+    my @EpitopeStructures = $epitope->findnodes('EpitopeStructure/FragmentOfANaturalSequenceMolecule') ;
 
-    $ChemicalType = $EpitopeStructure->findvalue('ChemicalType');
-    $LinearSequence = $EpitopeStructure->findvalue('LinearSequence');
-    my @SourceMolecules = $EpitopeStructure->findnodes('SourceMolecule');
+    # presumably there is only one structure?  ask the original author of
+    # this script.
+    foreach my $EpitopeStructure (@EpitopeStructures) {
+      my %h = (ChemicalType=>0, LinearSequence=>0, SourceOrganismId=>0);
+      findXmlValues($EpitopeStructure, \%h);
 
-    foreach my $SourceMolecule (@SourceMolecules) {
-      $GenBankId = $SourceMolecule->findvalue('GenBankId');
-      $GenBankId = $SourceMolecule->findvalue('IedbAccession') unless $GenBankId;
+      ($ChemicalType, $LinearSequence, $SourceOrganismId) =
+	($h{ChemicalType}, $h{LinearSequence}, $h{SourceOrganismId});
+
+      my @SourceMolecules = $EpitopeStructure->findnodes('SourceMolecule');
+
+      foreach my $SourceMolecule (@SourceMolecules) {
+	my %h = (GenBankId=>0, IedbAccession=>0);
+	findXmlValues($SourceMolecule, \%h);
+	$GenBankId = $h{GenBankId};
+	$GenBankId = $h{IedbAccession} unless $GenBankId;
+      }
     }
 
-    $SourceOrganismId = $EpitopeStructure->findvalue('SourceOrganismId');
-
-  }
-
     $result = {reference => '' ,
-                  EpitopeId => $EpitopeId,
-                  EpitopeName => $EpitopeName,
-                  ChemicalType => $ChemicalType,
-                  LinearSequence => $LinearSequence,
-                  ConformationalSequence => '',
-                  SMILESStructure => '',
-                  SourceOrganismId => $SourceOrganismId ,
-                  SourceSpeciesStrain => '',
-                  SourceName => '',
-                  GenBankId => $GenBankId,
-                  SourcePDBID => '',
-                 };
+	       EpitopeId => $EpitopeId,
+	       EpitopeName => $EpitopeName,
+	       ChemicalType => $ChemicalType,
+	       LinearSequence => $LinearSequence,
+	       ConformationalSequence => '',
+	       SMILESStructure => '',
+	       SourceOrganismId => $SourceOrganismId ,
+	       SourceSpeciesStrain => '',
+	       SourceName => '',
+	       GenBankId => $GenBankId,
+	       SourcePDBID => '',
+	      };
     push(@results, $result) if $LinearSequence && $orgListHash{$SourceOrganismId}==1;
+    print STDERR "Epitopes examined: $epitopeCount \n" if $epitopeCount % 100 == 0;
   }
-print STDERR "Finished Reading $singleFile file\n";
-writeTabFile(\@results);
-undef @results;
+#  print STDERR "Finished Reading $singleFile file\n";
+  writeTabFile(\@results);
+  undef @results;
 }
 close TABF;
+print STDERR "Found $epitopeCount epitopes\n";
 #print Dumper (\@results);
 
 #--------------------------------------------------------------------------------
@@ -170,22 +144,30 @@ sub writeTabFile {
 
     print TABF
       $h->{reference},       "\t",
-        $h->{EpitopeId},     "\t",
-          $h->{EpitopeName},        "\t",
-            $h->{ChemicalType},           "\t",
-              $h->{LinearSequence},           "\t",
-                $h->{ConformationalSequence}, "\t",
-                  $h->{SMILESStructure},   "\t",
-                    $h->{SourceOrganismId},   "\t",
-                      $h->{SourceSpeciesStrain},   "\t",
-                        $h->{SourceName},   "\t",
-                          $h->{GenBankId},   "\t",
-                            $h->{SourcePDBID},   "\n",
-                            ;
-   }
-
+	$h->{EpitopeId},     "\t",
+	  $h->{EpitopeName},        "\t",
+	    $h->{ChemicalType},           "\t",
+	      $h->{LinearSequence},           "\t",
+		$h->{ConformationalSequence}, "\t",
+		  $h->{SMILESStructure},   "\t",
+		    $h->{SourceOrganismId},   "\t",
+		      $h->{SourceSpeciesStrain},   "\t",
+			$h->{SourceName},   "\t",
+			  $h->{GenBankId},   "\t",
+			    $h->{SourcePDBID},   "\n",
+			      ;
   }
 
+}
+
+sub findXmlValues {
+  my ($node, $fieldsHash) =  @_;
+  for my $child ($node->childNodes()) {
+    my $childName = $child->nodeName();
+    $fieldsHash->{$childName} = $child->textContent()
+      if defined($fieldsHash->{$childName});
+  }
+}
 
 #--------------------------------------------------------------------------------
 
@@ -204,6 +186,18 @@ usage: iedbMakeTabFileFromXml --input_dir INPUT_DIR --outputfile OUTPUT_FILE --N
 
 #--------------------------------------------------------------------------------
 
+sub findRelevantFiles {
+  my $dir = shift @_;
+  my @organismIds = @_;
+  print STDERR "Finding files that contain our organisms\n";
+  my @a = map {"<SourceOrganismId>$_</SourceOrganismId>"} @organismIds;
+  my $expr = join("|", @a);
+
+  my $f = `grep -lE "$expr" $dir/*.xml`;
+  my @files =  split(/\n/,$f);
+  print STDERR "Found " . scalar(@files) . " files\n";
+  return @files;
+}
 
 1;
 
