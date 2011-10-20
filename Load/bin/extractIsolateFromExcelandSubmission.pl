@@ -228,11 +228,12 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[sex=$sex]" if $sex;
     $modifier .= "[breed=$breed]" if $breed;
     $modifier .= "[lat-lon=$gps]" if $gps;
-    $modifier .= "[note=$note]" if $note;
+    $modifier .= "[note=$note; $seq_description]" if $note;
     $modifier .= "[fwd-PCR-primer-name=$fwd_primer_name]" if $fwd_primer_name;
     $modifier .= "[fwd-PCR-primer-seq=$fwd_primer_seq]" if $fwd_primer_seq;
     $modifier .= "[rev-PCR-primer-name=$rev_primer_name]" if $rev_primer_name;
     $modifier .= "[rev-PCR-primer-seq=$rev_primer_seq]" if $rev_primer_seq;
+    $modifier .= "[protein=$product]" if $product;
 
     my $seq = Bio::Seq::RichSeq->new( -seq  => $sequence,
                                       -desc => "$study $modifier",
@@ -241,22 +242,21 @@ while(my ($k, $v) = each %hash) {
     my $out = Bio::SeqIO->new(-file => ">$file_name.fsa", -format => 'Fasta' );
     $out->write_seq($seq);
 
-    open  (F, ">$file_name.tbl");
-    print F ">Feature\t$file_name\n";
+    #open  (F, ">$file_name.tbl");
+    #print F ">Feature\t$file_name\n";
     #print F "<1\t>$length\tgene\n";
     #print F "\t\t\tgene\tgene_name\n"; ?
-    print F "<1\t>$length\tCDS\n";
-    print F "\t\t\tproduct\t$product\n" if $product;
-    print F "\t\t\tnote\t$seq_description\n";
-
-    close F;
+    #print F "<1\t>$length\tCDS\n";
+    #print F "\t\t\tproduct\t$product\n" if $product;
+    #print F "\t\t\tnote\t$seq_description\n";
+    #close F;
 
     $count++;
   }
 }
 
 # under current directory run tbl2asn to generate asn files for genbank submission
-my $cmd = "linux.tbl2asn -t template.sbt -p . -k m -V vb";
+my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
 system($cmd);
 
 __DATA__
