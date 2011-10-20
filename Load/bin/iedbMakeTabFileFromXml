@@ -58,6 +58,11 @@ while(<ORG>){
     $taxId=0;
   }
 }
+
+foreach my $org (keys %orgListHash){
+  print STDERR "OrganismId: $org\n";
+}
+  
 # my $parser = XML::LibXML->new();
 
 # my $doc = $parser->parse_file($organismListFile);
@@ -147,7 +152,7 @@ foreach my $epitope (@epitopes) {
                   GenBankId => $GenBankId,
                   SourcePDBID => '',
                  };
-    push(@results, $result) if $LinearSequence && $orgListHash{$SourceOrganismId};
+    push(@results, $result) if $LinearSequence && $orgListHash{$SourceOrganismId}==1;
   }
 print STDERR "Finished Reading $singleFile file\n";
 writeTabFile(\@results);
