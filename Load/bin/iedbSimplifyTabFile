@@ -26,7 +26,7 @@ Rearrange the columns in an IEDB tab file produced by iedbMakeTabFileFromXml
 \n";
 }
 
-open(OUT, ">> $outputFile");
+open(OUT, "> $outputFile");
 
 print OUT "Accession\tIEDB ID\tStrain\tSequence\tEpitope Name\n";
 
@@ -36,6 +36,7 @@ while(<TAB>){
 
     chomp;
     next if (/^\n/);
+    next if /Accession/;
 
     my @data=split(/\t/, $_);
 
