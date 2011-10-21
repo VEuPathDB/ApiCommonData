@@ -7,9 +7,9 @@ use CBIL::Util::PropertySet;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($outputFile, $speciesTaxonId) = @ARGV;
+my ($outputFile, $taxonIdList) = @ARGV;
 
-usage() unless $outputFile && $speciesTaxonId;
+usage() unless $outputFile && $taxonIdList;
 
 open(OUT, ">$outputFile") || die "Can't open output file '$outputFile'\n";
 
@@ -31,7 +31,7 @@ select s.sequence, s.description
 from dots.aasequence s, sres.sequenceontology o
 where o.term_name = 'epitope'
 and s.sequence_ontology_id = o.sequence_ontology_id
-and s.taxon_id = $speciesTaxonId
+and s.taxon_id in ($taxonIdList)
 ";
 
 my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
