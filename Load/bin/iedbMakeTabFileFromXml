@@ -154,6 +154,8 @@ sub writeTabFile {
 
 }
 
+# we use this crazy approach instead of calling node->findvalue to workaround
+# a serious performance problem findvalue seems to have
 sub findXmlValues {
   my ($node, $fieldsHash) =  @_;
   for my $child ($node->childNodes()) {
