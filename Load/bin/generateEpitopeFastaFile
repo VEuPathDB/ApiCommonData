@@ -27,7 +27,7 @@ next if /Accession/;
 my @values = split("\t",$_);
 
 # the order of the fields in the defline is expected by extractEpitopeTabFile
-# IEDB ID|epitope name|species|accession
+# IEDB ID|epitope name|strainTaxId|accession
 print OUT ">$values[1]|$values[4]|$values[2]|$values[0]
 $values[3]\n";
 
