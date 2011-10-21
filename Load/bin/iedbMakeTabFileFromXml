@@ -30,11 +30,12 @@ my ($outputFile, $dir, $help,$taxId,$organismListFile);
 # expand species tax id to all organisms for that species
 my $cmd = "getSubNCBITaxaList --NCBITaxId $taxId";
 my $subNCBITaxaList = `$cmd`;
+chomp($subNCBITaxaList);
 die "\nFailed running '$cmd'" if $? >> 8;
 #my $subNCBITaxaList = "29176,572307";
 print STDERR "Finding epitopes for this set of taxa: '$subNCBITaxaList'\n";
 my @taxaLists = split(/\,/,$subNCBITaxaList);
-print Dumper @taxaLists;
+#print Dumper @taxaLists;
 my %taxaListHash;
 foreach (@taxaLists) { $taxaListHash{$_}=1; }
 
