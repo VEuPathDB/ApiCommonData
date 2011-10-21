@@ -1,42 +1,42 @@
 #!/usr/bin/perl
-
 use strict;
-
 use XML::LibXML;
-
 use Getopt::Long;
-
 use Data::Dumper;
 
 # this file was copied from manual delivery.  its history is unknown.
 
-my ($fn, $dir, $help,$taxId,$organismListFile);
+# here are the steps:
+# 1) use the provided species tax id to get a list of tax ids for that
+#    species and its children.  (query the taxon table)
+# 2) parse the very large IEDB organisms list file to get a mapping of those
+#    tax ids to IEDB organism IDs
+# 3) grep the 10s of thousands of .xml files we downloaded from IEDB
+#    to find the small number of files that contain those organism IDs
+# 4) parse those files to find the epitopes from our taxa, and reformat from
+#    xml to tab
 
+my ($outputFile, $dir, $help,$taxId,$organismListFile);
 &GetOptions('help|h' => \$help,
-            'outputfile=s' => \$fn,
+            'outputfile=s' => \$outputFile,
             'input_dir=s' => \$dir,
 	    'NCBITaxId=s' => \$taxId,
             'organismListFile=s' => \$organismListFile
            );
 
 &usage() if($help);
-&usage("input dir and organismListFile is required") unless(-e $dir && -e $organismListFile);
-#my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
-my $subNCBITaxaList = "29176,572307";
+&usage("input dir and organismListFile are required") unless(-e $dir && -e $organismListFile);
+
+# expand species tax id to all organisms for that species
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
 print STDERR "Finding epitopes for this set of taxa: $subNCBITaxaList\n";
-
 my @taxaLists = split(/\,/,$subNCBITaxaList);
-
 my %taxaListHash;
+foreach (@taxaLists) { $taxaListHash{$_}=1; }
 
-foreach (@taxaLists) {
-  $taxaListHash{$_}=1;
-}
 
 my %orgListHash;
-
 open(ORG,$organismListFile);
-
 print STDERR "Scanning organism file to find IEDB Organism IDs for those taxa\n";
 my $parser = XML::LibXML->new();
 my $doc = $parser->parse_file($organismListFile);
@@ -47,14 +47,12 @@ foreach my $organism (@organisms) {
   findXmlValues($organism, \%h);
   $orgListHash{$h{OrganismId}}= 1 if ($h{TaxId} && $taxaListHash{$h{TaxId}} && $h{OrganismId});
 }
-
 print STDERR "Found: " . join(", ", keys(%orgListHash)) . "\n";
 
+# find files that contain our taxa
 my @files = findRelevantFiles($dir, keys(%orgListHash));
 
-my $n=@files;
-
-open (TABF, ">> $fn") or die "could not APPEND to $fn\n";;
+open (TABF, ">$outputFile") or die "could not open '$outputFile' for writing\n";
 TABF->autoflush(1);
 print TABF 
   'Reference',      "\t",
@@ -70,22 +68,20 @@ print TABF
   'Epitope Source Accession Number',    "\t",
   'Epitope Source PDB ID',       "\n",
   ;
-#--------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 my $parser = XML::LibXML->new();
 my $epitopeCount;
-for (my $i=0; $i<$n; $i++) {
+foreach my $file (@files) {
   my @results;
-  my $singleFile = $files[$i];
-  print STDERR "Parsing $singleFile\n";
-  my $tree = $parser->parse_file($singleFile);
+  print STDERR "Parsing $file\n";
+  my $tree = $parser->parse_file($file);
   my $root = $tree->getDocumentElement;
 
-  my ($result,$GenBankId,$ChemicalType,$LinearSequence,$SourceOrganismId);
   my @epitopes = $root->findnodes('/References/Reference/Epitopes/Epitope') ;
 
   foreach my $epitope (@epitopes) {
-    $epitopeCount++;
+    my ($result,$GenBankId,$ChemicalType,$LinearSequence,$SourceOrganismId);
     my %h = (EpitopeName=>0, EpitopeId=>0);
     findXmlValues($epitope, \%h);
     my ($EpitopeName, $EpitopeId) = ($h{EpitopeName}, $h{EpitopeId});
@@ -97,6 +93,7 @@ for (my $i=0; $i<$n; $i++) {
     foreach my $EpitopeStructure (@EpitopeStructures) {
       my %h = (ChemicalType=>0, LinearSequence=>0, SourceOrganismId=>0);
       findXmlValues($EpitopeStructure, \%h);
+      last unless $orgListHash{$SourceOrganismId};
 
       ($ChemicalType, $LinearSequence, $SourceOrganismId) =
 	($h{ChemicalType}, $h{LinearSequence}, $h{SourceOrganismId});
@@ -111,6 +108,8 @@ for (my $i=0; $i<$n; $i++) {
       }
     }
 
+    next unless $orgListHash{$SourceOrganismId};
+    $epitopeCount++;
     $result = {reference => '' ,
 	       EpitopeId => $EpitopeId,
 	       EpitopeName => $EpitopeName,
@@ -124,10 +123,9 @@ for (my $i=0; $i<$n; $i++) {
 	       GenBankId => $GenBankId,
 	       SourcePDBID => '',
 	      };
-    push(@results, $result) if $LinearSequence && $orgListHash{$SourceOrganismId}==1;
+    push(@results, $result) if $LinearSequence;
     print STDERR "Epitopes examined: $epitopeCount \n" if $epitopeCount % 100 == 0;
   }
-#  print STDERR "Finished Reading $singleFile file\n";
   writeTabFile(\@results);
   undef @results;
 }
