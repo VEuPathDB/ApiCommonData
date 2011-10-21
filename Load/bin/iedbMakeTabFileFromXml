@@ -29,6 +29,7 @@ my ($outputFile, $dir, $help,$taxId,$organismListFile);
 
 # expand species tax id to all organisms for that species
 my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+#my $subNCBITaxaList = "29176,572307";
 print STDERR "Finding epitopes for this set of taxa: $subNCBITaxaList\n";
 my @taxaLists = split(/\,/,$subNCBITaxaList);
 my %taxaListHash;
@@ -71,7 +72,7 @@ print TABF
 #------------------------------------------------------------------------------
 
 my $parser = XML::LibXML->new();
-my $epitopeCount;
+my $epitopeCount = 0;
 foreach my $file (@files) {
   my @results;
   print STDERR "Parsing $file\n";
@@ -93,10 +94,11 @@ foreach my $file (@files) {
     foreach my $EpitopeStructure (@EpitopeStructures) {
       my %h = (ChemicalType=>0, LinearSequence=>0, SourceOrganismId=>0);
       findXmlValues($EpitopeStructure, \%h);
-      last unless $orgListHash{$SourceOrganismId};
 
       ($ChemicalType, $LinearSequence, $SourceOrganismId) =
 	($h{ChemicalType}, $h{LinearSequence}, $h{SourceOrganismId});
+
+      last unless $orgListHash{$SourceOrganismId};
 
       my @SourceMolecules = $EpitopeStructure->findnodes('SourceMolecule');
 
