@@ -89,7 +89,8 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE PdbSimilarity&1 NOLOGGING AS
-SELECT gf.source_id, eas.source_id AS pdb_chain, eas.description AS pdb_title,
+SELECT gf.source_id, eas.source_id AS pdb_chain,
+       substr(eas.description, 1, 100) AS pdb_title,
        substr(eas.source_id, 1,
               instr(eas.source_id, '_', -1) - 1)
          AS pdb_id,
@@ -297,7 +298,7 @@ set is_top_level = 1
 update FeatureLocation&1 fl
 set is_top_level = 0 
 where na_sequence_id in (select distinct piece_na_sequence_id 
-                         from apidbtuning.sequencepiececlosure spc
+                         from SequencePieceClosure spc
                          where fl.start_min >= spc.start_position
                          and fl.end_max <= spc.end_position)
       ]]>
@@ -378,7 +379,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE GeneId&1 NOLOGGING AS
-SELECT id, gene, unique_mapping,
+SELECT mapping.id, mapping.gene, mapping.unique_mapping,
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
@@ -493,8 +494,21 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       and gf.external_database_release_id =r.external_database_release_id
       and r.external_database_id = d.external_database_id
       and n.is_preferred = 1
-)
-GROUP BY id, gene, unique_mapping
+) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+where mapping.gene = gf.source_id
+  and gf.external_database_release_id = edr.external_database_release_id
+  and edr.external_database_id = ed.external_database_id
+  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+                      'TigrScan', 'TwinScan predictions',
+                      'TwinScanEt predictions',
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
+                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
+                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
+                      'Pfalciparum workshop annotations reviewed and changed',
+                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
+                      'Tbrucei427_AutoMAGI_Annotations_RSRC')
+GROUP BY mapping.id, mapping.gene, mapping.unique_mapping
       ]]>
     </sql>
     <sql>
@@ -1301,6 +1315,7 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
      DerisiExpn DerisiExpn, WinzelerExpn WinzelerExpn,
      ToxoExpn ToxoExpn, GenomicSequence sequence,
      dots.geneinstance gi, TaxonSpecies ts, sres.TaxonName species_name,
+     (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
@@ -1398,7 +1413,7 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
       from apidb.GeneFeatureName
       group by na_feature_id
      ) any_name
-WHERE gf.source_id is not null
+WHERE gf.source_id = gene.source_id
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
@@ -1430,19 +1445,6 @@ WHERE gf.source_id is not null
   AND sequence.taxon_id = ts.taxon_id(+)
   AND ts.species_taxon_id = species_name.taxon_id
   AND species_name.name_class = 'scientific name'
-  -- skip toxo predictions (except tRNAs)
-  -- skip new plasmo annotation
-  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', 'TwinScan predictions',
-                      'TwinScanEt predictions',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
-                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
-                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                      'Pfalciparum workshop annotations reviewed and changed',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Tbrucei427_AutoMAGI_Annotations_RSRC'
-)
   AND gf.na_feature_id = preferred_product.na_feature_id(+)
   AND gf.na_feature_id = preferred_name.na_feature_id(+)
   AND gf.na_feature_id = any_product.na_feature_id(+)
@@ -1678,6 +1680,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
          AS at_percent,
        SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
+       taxon.taxon_id,                 
        SUBSTR(sequence.description, 1, 400) AS sequence_description,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
@@ -2369,7 +2372,7 @@ tablespace indx
       <![CDATA[
        CREATE TABLE SnpStrains&1 NOLOGGING AS
          select distinct sv.strain,sa.organism,sf.external_database_release_id,d.name as extdb_name
-         from dots.snpfeature sf, dots.seqvariation sv, APIDBTUNING.sequenceattributes sa,
+         from dots.snpfeature sf, dots.seqvariation sv, SequenceAttributes sa,
          SRES.externaldatabase d, SRES.externaldatabaserelease rel
          where sa.na_sequence_id = sf.na_sequence_id
          and sf.na_feature_id = sv.parent_id
@@ -2404,6 +2407,9 @@ CREATE TABLE Polymorphism&1 NOLOGGING AS
          substr(sb.allele, 1, 1) AS allele_b,
          substr(sa.product, 1, 1) AS product_a,
          substr(sb.product, 1, 1) AS product_b,
+         sa.coverage as coverage_a, sb.coverage as coverage_b,
+         sa.allele_percent as allele_percent_a, sb.allele_percent as allele_percent_b,
+         sa.pvalue as pvalue_a, sb.pvalue as pvalue_b,
          snp.external_database_release_id,
          snp.parent_id as gene_na_feature_id,
          nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id
@@ -2428,7 +2434,7 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE INDEX polymorphism_loc_ix&1
-ON Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, strain_b, start_min)
+ON Polymorphism&1(external_database_release_id, na_sequence_id, strain_a, strain_b, start_min, pvalue_a, allele_percent_a, coverage_a, pvalue_b, allele_percent_b, coverage_b)
 tablespace indx
       ]]>
     </sql>
@@ -3112,8 +3118,30 @@ from
     select ga.source_id, pm.profile_name, nvl(pm.main_profile_name, pm.profile_name) as main_profile_name, pm.project_id
     from
     (
+    -- FungiDB --
+    select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+    select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+
     -- ToxoDB --
-    select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    Union
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
+           '' as main_profile_name,
+           'ToxoDB' as project_id
+    from dual
+    Union
+    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
            '' as main_profile_name,
            'ToxoDB' as project_id
     from dual
@@ -3335,11 +3363,11 @@ from
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
---    UNION
---    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
---           '' as main_profile_name,
---           'TriTrypDB' as project_id
---    from dual
+    UNION
+    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+           '' as main_profile_name,
+           'TriTrypDB' as project_id
+    from dual
     ) pm, GeneAttributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -3370,6 +3398,50 @@ tablespace indx
 CREATE TABLE ProfileGraphDescrip&1 NOLOGGING AS
 select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, psorg.species, psorg.organism
 from (
+
+-- FungiDB
+select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
+       'RhizopusOryzae::RnaSeqHyphalTip' as module,
+       'RNA Seq' as display_name,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>.' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments' as profile_name,
+       'SaccharomycesCerevisiae::CombinedTS' as module,
+       'Microarray Cell cycle Time Series - Single' as display_name,
+       'Microarray data for <i>S. cerevisiae</i> is from the cell cycle regulation microarray from <a href="http://www.ncbi.nlm.nih.gov/pubmed/9843569">Spellman et al</a>.
+<br /><br />
+Pheromone timecourse experiments were performed by synchronizing cells with alpha-factor to arrest them, then removing the alpha factor releasing the cells, and sampling every 7 minutes for the next 140 minutes.
+<br /><br />
+Cdc15 synchronization was performed by arresting cdc15 cells at 37C then releasing by moving to the 20C permissive temperature and sampling every 10 minutes for the next 300 minutes.
+<br /><br />
+Cln3 and Clb2 experiment compared wild-type and cln- or clb- strains. For Cln3 experiment, cln3 cell were arrested in late G1 due by temperature-shift inactivating Cdc43p. Clb2 experiment was performed by growing clb2 cells and arresting at M with nocodazole. These RNA were compared to the control wild-type cells arrested at G1 and M using the same approaches. Values represent the relative expression of the mutant to wild-type. cln3-1 is the 40 minute and cln3-2 is the 30 minute experiment. The clb2-1 and clb2-2 represent replicate experiments of the 40min timepoint.
+<br /><br />
+Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/rawdata/">here</a>.' as description,
+       'Time point (minutes) or Sample Name' as x_axis,
+       'The expression value is log2(sample/common reference)' as y_axis,
+        12 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'Cln_Clb,pheromone,elutriation,cdc15,Cho' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+    UNION
+
+
 
 -- ToxoDB
 select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
@@ -3577,6 +3649,83 @@ select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_n
         '' as dataTable,
         'expression' as type,
         'Tg_Carruthers_GSE20480_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
+       'Matrajt::BzMutant' as module,
+       'T.g. Differentiation Mutant Transcript Expression' as display_name,
+       'Expression profiles of seven mutant strains (B7,P11,7K,11K,12K,13P, and 11P) at both the Extracellular tachyzoite and bradyzoite stages were examined, using the T. gondii RH strain as a control. In addition, the expression profile of the intracellular tachyzoite for the T. gondii RH control strain was also provided for comparison. 17 sample types are provided in total' as description,
+       'Sample Type
+            1. Control: Tachyzoite
+            2. Intracellular Tachyzoite
+            3. Control: Bradyzoite
+            4. 12K Mutant: Tachyzoite
+            5. 12K Mutant: Bradyzoite
+            6. 13P Mutant: Tachyzoite
+            7. 13P Mutant: Bradyzoite
+            8. B7 Mutant: Tachyzoite
+            9. B7 Mutant: Bradyzoite
+            10. 11P Mutant: Tachyzoite
+            11. 11P Mutant: Bradyzoite
+            12. 11K Mutant: Tachyzoite
+            13. 11K Mutant: Bradyzoite
+            14. 7K Mutant: Tachyzoite
+            15. 7K Mutant: Bradyzoite
+            16. P11 Mutant: Tachyzoite
+            17. P11 Mutant: Bradyzoite' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
+       'Matrajt::BzTimeSeries' as module,
+       'T.g. Differentiation Time Series' as display_name,
+       'Expression profiles of the T. gondii RH extracelluar tachyzoite stage are compared to its bradyzoite stage at 4 time points (24, 36, 48, and 72 hours post invasion)' as description,
+       'Sample Type
+            1. Extracellular Tachyzoite
+            2. Bradyzoite (24 hrs) 
+            3. Bradyzoite (36 hrs) 
+            4. Bradyzoite (48 hrs) 
+            5. Bradyzoite (72 hrs)' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+    from dual
+
+    UNION
+
+select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
+       'Matrajt::BzEgress' as module,
+       'T.g. Differentiation Mutant Expression, 11 Hours Post-Egress' as display_name,
+       'The expression profile of T. gondii RH 11 hours post egress was compared to that of the same strain in the extracellular tachyzoite stage, as well as 2 mutant strains (13P and B7) which were also collected 11 hours post egress' as description,
+       'Sample Type
+            1. Extracellular Tachyzoite 
+            2. Wild Type: Post-Egress 
+            3. 13P Mutant: Post-Egress 
+            4. B7 Mutant: Post-Egress' as x_axis,
+       'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
+        255 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rma,pct' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
     from dual
 
     UNION
@@ -4067,22 +4216,22 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
       'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
---UNION
---select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
---       'Nilsson::TcSpliceSites' as module, 
---       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
---       'The coverage values in the graph are displayed in log2 scale' as description,
---       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
---       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
---' as y_axis,
---        290 as order_num,
---        'TRUE' as mainOpen,
---        'FALSE' as dataOpen,
---       'coverage,pct' as visible_parts,
---        '' as dataTable,
---      'expression' as type,
---        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
---from dual
+UNION
+select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+       'Nilsson::TcSpliceSites' as module, 
+       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
+       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        290 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
+from dual
 ) d,   (select distinct ps.name, ga.organism, ga.species
     from apidb.profile p, apidb.profileset ps, geneattributes ga
     where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
@@ -4941,7 +5090,7 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
               CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
               decode(sa.dataset,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type
-       FROM dots.SeqVariation sva, dots.SeqVariation svb, apidbtuning.snpattributes sa,
+       FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
             dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
        WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
          AND sva.parent_id = sa.na_feature_id
@@ -5230,7 +5379,7 @@ select rownum as blastp_id, gf.source_id, ga.project_id, sim.similarity_id,
        sim.number_identical, sim.total_match_length,
        substr(replace(subject.description, chr(1), ''), 1, 300) as description,
        sim.number_positive, ed.name as external_database_name,
-       SUBSTR(tn.name, 1, 50) AS query_organism
+       substr(tn.name, 1, 50) AS query_organism, ns.taxon_id as query_taxon_id
 from dots.Similarity sim, core.TableInfo qti, core.TableInfo sti, dots.ExternalAaSequence subject,
      dots.GeneFeature gf, dots.Transcript t, dots.TranslatedAaFeature taf,
      sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
@@ -5249,7 +5398,7 @@ where qti.table_id = sim.query_table_id
   and edr.external_database_id = ed.external_database_id
   and gf.na_sequence_id = ns.na_sequence_id
   and ns.taxon_id =
---    st.taxon_id and st.species_taxon_id =
+--    st.taxon_id and st.species_taxon_id = # TaxonSpecies mapping commented out
                      tn.taxon_id
   and tn.name_class = 'scientific name'
       ]]>
@@ -5356,16 +5505,14 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="TaxonSpecies">
+    <internalDependency name="SequenceAttributes"/>
     <externalDependency name="sres.Taxon"/>
-    <externalDependency name="dots.NaFeatureImp"/>
-    <externalDependency name="dots.NaSequenceImp"/>
     <sql>
       <![CDATA[
-create table TaxonSpecies&1 as
+create table TaxonSpecies&1 as    
 select t.taxon_id, species.taxon_id as species_taxon_id
-from sres.Taxon species, (select distinct ns.taxon_id
-      from dots.NaSequence ns, dots.NaFeature nf
-      where ns.na_sequence_id = nf.na_sequence_id) t
+from sres.Taxon species, (select distinct sa.taxon_id
+      from SequenceAttributes sa) t
 where species.taxon_id in (select taxon_id from sres.taxon
                            connect by taxon_id = prior parent_id and prior rank != 'species'
                            start with taxon_id = t.taxon_id)
@@ -6137,7 +6284,7 @@ tablespace indx
   select 'Cryptosporidium hominis' as organism, 'Chominis' as abbreviation from dual union  
   select 'Cryptosporidium muris' as organism, 'Cmuris' as abbreviation from dual union  
   -- GiardiaDB Annotated Genomes
-  select 'Giardia Assemblage A isolate WB' as organism, 'Glamblia' as abbreviation from dual union  
+  select 'Giardia Assemblage A isolate WB' as organism, 'GintestinalisAssemblageA' as abbreviation from dual union  
   select 'Giardia Assemblage B isolate GS' as organism, 'GintestinalisAssemblageB' as abbreviation from dual union  
   select 'Giardia Assemblage E isolate P15' as organism, 'GintestinalisAssemblageE' as abbreviation from dual union  
   -- TrichDB Annotated Genomes
@@ -6201,7 +6348,26 @@ tablespace indx
   select 'Trypanosoma cruzi CL Brener Esmeraldo-like' as organism, 'TcruziEsmeraldo-Like' as abbreviation from dual union
   select 'Trypanosoma cruzi CL Brener Non-Esmeraldo-like' as organism, 'TcruziNonEsmeraldo-Like' as abbreviation from dual union
   select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
-  select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual
+  select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual union
+   -- FungiDB Annotated Genomes
+  select 'Gibberella moniliformis' as organism, 'Fusarium_verticillioides_7600' as abbreviation from dual union
+  select 'Aspergillus niger' as organism, 'Aspergillus_niger_ATCC_105' as abbreviation from dual union
+  select 'Fusarium graminearum species complex' as organism, 'Fusarium_graminearum_PH-1' as abbreviation from dual union
+  select 'Puccinia graminis f. sp. tritici CRL 75-36-700-3' as organism, 'Puccini_graminist_tritici_CRL75-36-700-3' as abbreviation from dual union
+  select 'Saccharomyces cerevisiae S288c' as organism, 'Saccharomyces_cerevisiae_S288c' as abbreviation from dual union
+  select 'Aspergillus clavatus NRRL 1' as organism, 'Aspergillus_clavatus_NRRL_1' as abbreviation from dual union
+--  select 'Fusarium oxysporum' as organism, '' as abbreviation from dual union
+  select 'Cryptococcus neoformans var. grubii H99' as organism, 'Cryptococcus_neoformans_grubii_H99' as abbreviation from dual union
+  select 'Coccidioides immitis H538.4' as organism, 'Coccidioides_immitis_H538.4' as abbreviation from dual union
+--  select 'Aspergillus nidulans FGSC A4' as organism, '' as abbreviation from dual union
+  select 'Rhizopus oryzae RA 99-880' as organism, 'Rhizopus_oryzae_RA99-8800' as abbreviation from dual union
+  select 'Neurospora crassa OR74A' as organism, 'Neurospora_crassa_OR74A' as abbreviation from dual union
+  select 'Aspergillus fumigatus Af293' as organism, 'Aspergillus_fumigatus_Af293' as abbreviation from dual union
+  select 'Aspergillus terreus' as organism, 'Aspergillus_terreus_NIH_2624' as abbreviation from dual union
+  select 'Candida albicans SC5314' as organism, 'Candida_albicans_SC5314' as abbreviation from dual union
+  select 'Coccidioides immitis RS' as organism, 'Coccidioides_immitis_RS' as abbreviation from dual union
+  select 'Magnaporthe oryzae 70-15' as organism, 'Magnaporthe_oryzae_70-15' as abbreviation from dual union
+  select 'Aspergillus flavus' as organism, 'Aspergillus_flavus_NRRL_3357' as abbreviation from dual 
        )
       ]]>
     </sql>
@@ -6228,7 +6394,8 @@ tablespace indx
   select 'Cryptosporidium parvum EST' as organism, 'CparvumEST' as abbreviation from dual union  
   select 'Cryptosporidium muris EST' as organism, 'CmurisEST' as abbreviation from dual union  
   -- Giardia Deprecated
-  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GlambliaDeprecated' as abbreviation from dual union
+  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
+  select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GintestinalisAssemblageAScaffoldGenomic' as abbreviation from dual union
   -- TrichDB Repeat Genes
   select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'TvaginalisRG' as abbreviation from dual union  
   -- PlasmoDB Plasmid And Mitochondrial
@@ -6280,7 +6447,12 @@ tablespace indx
 		UNION
 		SELECT 'TrichDB' AS project_id,
 		           'Trichomonadida' AS taxon_node
-		FROM dual)     
+		FROM dual
+		UNION
+		SELECT 'FungiDB' AS project_id,
+		           'Fungi' AS taxon_node
+		FROM dual
+        )     
 	]]>
     </sql>
   </tuningTable>
@@ -6312,11 +6484,24 @@ tablespace indx
            AND sn.name_class = 'scientific name'
            AND t.rank != 'species'
            UNION
+            -- Special handling for Crytosporidium parvum Chr. 6 Reannotation
+           SELECT DISTINCT 'Cryptosporidium parvum Chr. 6' AS organism,
+                           'Cryptosporidium parvum Chr. 6' AS term,
+                           sa.organism as parentTerm,
+                           tn.taxon_id AS internal,
+                           sa.project_id as project_id
+           FROM SequenceAttributes sa, Sres.TaxonName tn
+           WHERE sa.organism = 'Cryptosporidium parvum'
+             AND tn.name = sa.organism              
            -- all organisms from sequenceattributes as organism, species as term, parentterm is genus  
            -- we are getting a row for species level AND for children here
-           SELECT DISTINCT sa.organism AS organism,
+           UNION
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,
                           sn.name AS term,
-                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS parentTerm,
                           tn.taxon_id AS internal,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
@@ -6328,9 +6513,12 @@ tablespace indx
            AND t.taxon_id = ts.taxon_id
            AND sn.name_class = 'scientific name'
            UNION 
-           SELECT DISTINCT sa.organism AS organism,
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                          END AS organism,
                           sn.name AS term,
-                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS parentTerm,
+                          SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS parentTerm,
                           sn.taxon_id AS internal,
                           sa.project_id AS project_id
            FROM SequenceAttributes sa, SRES.Taxon t, 
@@ -6343,8 +6531,11 @@ tablespace indx
            AND sn.name_class = 'scientific name'
            UNION
            -- all organisms from sequenceattributes as organism, genus as term, parentterm from taxonlevel
-           SELECT DISTINCT sa.organism AS organism,      
-                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' '))) AS term,
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,      
+                           SUBSTR(sa.organism,0,(INSTR(sa.organism,' ') - 1)) AS term,
                            ptl.taxon_node AS parentTerm,
                            -1 AS internal,
                            sa.project_id AS project_id
@@ -6352,7 +6543,10 @@ tablespace indx
            WHERE ptl.project_id = sa.project_id
            UNION
            -- all organisms from sequenceattributes as organism, taxon_node as term, parentterm is null
-           SELECT DISTINCT sa.organism AS organism,               
+           SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
+                                THEN 'Cryptosporidium parvum Chr. 6'
+                                ELSE sa.organism
+                           END AS organism,               
                            ptl.taxon_node AS term,
                            '' AS parentTerm,
                            -1 AS internal,

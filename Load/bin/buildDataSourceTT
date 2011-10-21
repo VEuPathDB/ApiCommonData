@@ -28,37 +28,46 @@ BEGIN {
   }
 }
 
-my ($propfile, $instance, $schema, $password, $logfile, $suffix, $project, $version, $debug);
+my ($propfile, $instance, $schema, $password, $logfile, $suffix, $version, $debug, $subversionDir);
 GetOptions("propfile=s" => \$propfile,
            "instance=s" => \$instance,
            "schema=s" => \$schema,
            "password=s" => \$password,
            "logfile=s" => \$logfile,
            "suffix=s" => \$suffix,
-           "project=s" => \$project,
            "version=s" => \$version,
+	   "subversionDir=s" => \$subversionDir,
            "debug!" => \$debug,
 	  );
 
-($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propfile, $schema, $password);
 my $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
 
 createTables($dbh, $suffix);
 
-chdir "$ENV{GUS_HOME}/lib/xml/datasources";
+my $workingDir = $subversionDir . "datasources";
+
+print "WORKING DIR: $workingDir\n" if $debug;
+
+chdir "$workingDir";
 
 my $projectQuery = $dbh->prepare(<<SQL);
   select project_id, lower(project_id) as lower_project_id
-  from (select distinct project_id from ApidbTuning.SequenceAttributes)
+  from (select distinct project_id from $schema.SequenceAttributes)
 SQL
 
 $projectQuery->execute() or die "getting a list of project IDs";
 while (my ($project, $lowerProject) = $projectQuery->fetchrow_array()) {
 
+    print STDERR "working on project $project\n" if $debug;
+
   loadDataSources($dbh, "globalResources.xml", $project, $version, $suffix, $debug);
 
   foreach my $file (`ls $lowerProject/*.xml`) {
+      chomp $file;
+
+      next if($file =~ /Info\.xml$/);
     loadDataSources($dbh, $file, $project, $version, $suffix, $debug);
   }
 }
@@ -80,14 +89,16 @@ sub loadDataSources {
 
     my $props = CBIL::Util::PropertySet->new("$ENV{PROJECT_HOME}/workflows/$project/$version/config/stepsShared.prop",[], 1);
     $props->addProperty("dataDir", "/tmp");
+
+    my $props;
     my $dataSources = ReFlow::DataSource::DataSources->new($infile, $props, getLoadedDatasets($dbh));
   ApiCommonData::Load::TuningConfig::Log::addLog(Dumper($dataSources)) if $debug;
 
     my $insertDs = $dbh->prepare(<<SQL);
       insert into apidb.DataSource$suffix
-                  (data_source_id, name, display_name, version, categories,
-                   project_id, description, contact, institution, external_database_release_id)
-                  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  (data_source_id, name,version, 
+                   project_id,external_database_release_id)
+                  values (?, ?, ?, ?, ? )
 SQL
 
     my %loadedDatasets = getLoadedDatasets($dbh);
@@ -101,11 +112,10 @@ SQL
       }
       print "data source \"$dsName\" has external database release ID $rlsId\n";
       my $dataSourceId = getNextDataSourceId($dbh, $suffix);
-      $insertDs->execute($dataSourceId, $dsName, $ds->getDisplayName(),
-                       $ds->getVersion(), $ds->getCategory(),
+      $insertDs->execute($dataSourceId, $dsName, 
+                       $ds->getVersion(),
                        $project, # not $ds->getProject()
-                       $ds->getDescription(), $ds->getContact(),
-                       $ds->getInstitution(), $rlsId)
+                       $rlsId)
 	or die "inserting a DataSource record";
     }
 }

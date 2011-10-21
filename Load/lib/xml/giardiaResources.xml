@@ -243,10 +243,12 @@ Draft Genome Sequencing of Giardia intestinalis Assemblage B Isolate GS: Is Huma
 Sequence and annotation of Giardia Assemblage E isolate P15 was provided by J. Jerlstrom-Hultqvist. O. Franzen, E. Castro, J. Ankarklev, D. Palm, J. O. Andersson, S.G. Svard and B. Andersson (Karolinska Institutet, Stockholm, Sweden and Uppsala University, Uppsala, Sweden). The genome sequence and annotation was provided to GiardiaDB prepublication and is expected to be published in a peer-reviewed journal as soon as possible. Permission should be obtained from the authors before publishing analyses of the sequence/open reading frames/genes on a chromosome or genome scale.
 		]]>
         </description>
+<publication pmid="20929575"/>
        </resource>
 
     <resource resource="PDBProteinSequences" version="2009-08-20"
         url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+	   publicUrl="http://www.rcsb.org/pdb/"
         displayName="Protein Sequences from PDB"
         organisms="Diverse"
         category="Proteome"
@@ -336,19 +338,16 @@ inFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs
          <pluginArgs>--agpFile @downloadDir@/assembly.agp --seqPieceExtDbName "Giardia scaffolds" --seqPieceExtDbRlsVer @@GintAssemA_supercontig_VER@@ --virSeqExtDbName %EXT_DB__NAME% --virSeqExtDbRlsVer %EXT_DB_RLS_VER% --virtualSeqSOTerm "chromosome" --ncbiTaxId "184922" --soVer @@SO_VER@@ --chromosomesInOrder</pluginArgs>
          <description>
             <![CDATA[
-            "Optical map of the Genotype A1 WB C6 Giardia lamblia genome isolate" Alexander D Perry, BS; Hilary G Morrison, Ph.D.; Rodney D Adam, MD
-            (Submitted to Molecular and Biochemical Parasitology)
-            Abstract: The Giardia lamblia genome consists of 12 Mb divided among 5 chromosomes ranging in size from approximately 1 to 4 Mb. The assembled contigs of the 
-genotype A1 isolate, WB, were previously mapped along the 5 chromosomes on the basis of hybridization of plasmid clones representing the contigs to chromosomes separated 
-by PFGE. In the current report, we have generated an MluI optical map of the WB genome to improve the accuracy of the physical map. This has allowed us to correct several 
-assembly errors and to better define the extent of the subtelomeric regions that are not included in the genome assembly.
+An MluI optical map of the WB genome was generated.  Scaffolds and contigs were mapped to the optical map and assembled into chromsomes.  <br><br>
+Optical map of the Genotype A1 WB C6 Giardia lamblia genome isolate. Alexander D Perry, Hilary G Morrison, Rodney D Adam.
          ]]>
         </description>
+<publication pmid="21835210"/>
     </resource>
 
 <resource resource="ScaffoldAliases" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
-         displayName="Giardia lamblia scaffold aliases"
+         displayName="Giardia lamblia genes, scaffold and contig aliases"
          category="Genome"
          extDbName="Giardia scaffold aliases"
          extDbRlsVer="2008-02-14"
@@ -358,7 +357,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
          <pluginArgs>--pattern1 "^(SC_\d+)" --pattern2 "(CH\d+)" --table "VirtualSequence" --mappingFile @downloadDir@/ScaffoldAliases/scaffoldAccessions --seqExtDbName "Giardia scaffolds" --seqExtDbRlsVer "2008-02-14" --dbRefExtDbName %EXT_DB_NAME% --dbRefExtDbRlsVer %EXT_DB_RLS_VER% --seqAttribute "source_id"</pluginArgs> 
          <description>
             <![CDATA[
-         Alternative identifiers for G. lamblia scaffolds
+         Alternative identifiers for G. lamblia genes, scaffolds and contigs.
          ]]>
         </description>
     </resource>
@@ -366,7 +365,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="ContigAliases" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia contig aliases"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia contig aliases"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -383,7 +382,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases2" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 2"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 2"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -401,7 +400,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases2GeneId" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 2 for GeneId"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 2"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -436,7 +435,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases2RefSeqXP" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 2 for RefSeq predicted mRNA"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 2"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -453,7 +452,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases1RefSeqXM" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 1 for RefSeq predicted mRNA"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 1"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -470,7 +469,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases1RefSeqXP" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 1 for RefSeq predicted protein"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 1"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -487,7 +486,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
  <resource resource="GeneAliases1GeneId" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 1 for GeneId"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 1"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -573,7 +572,7 @@ assembly errors and to better define the extent of the subtelomeric regions that
 <resource resource="GeneAliases1" version="2008-02-14"
          plugin="ApiCommonData::Load::Plugin::LoadDbRefDbRefNASequence"
          displayName="Giardia lamblia gene aliases 1"
-         category="Genome"
+         category="ignore"
          extDbName="Giardia gene aliases 1"
          extDbRlsVer="2008-02-14"
          dbCommit="@dbcommit@">
@@ -1002,7 +1001,7 @@ G. intestinalis mitosome enriched fraction -- nanoLC/MALDI TOF/TOF
               version="1.3"
               plugin="GUS::Supported::Plugin::InsertOntologyTermType"
 	      displayName="MGED Ontology Term Types"
-              category="Ontology"
+              category="ignore"
 	      dbCommit="@dbcommit@"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyTermTypes.tab" 
@@ -1017,7 +1016,7 @@ G. intestinalis mitosome enriched fraction -- nanoLC/MALDI TOF/TOF
               version="1.3"
               plugin="GUS::Supported::Plugin::InsertOntologyRelationshipType"
 	      displayName="MGED Ontology Relationship Types"
-              category="Ontology"
+              category="ignore"
 	      dbCommit="@dbcommit@"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/MGED_Ontology/MgedOntologyRelationshipTypes.tab" 
@@ -1050,7 +1049,7 @@ G. intestinalis mitosome enriched fraction -- nanoLC/MALDI TOF/TOF
               version="1.3"
               plugin="GUS::Community::Plugin::LoadOntologyEntryFromMO"
 	      displayName="MGED Ontology Entry"
-              category="Ontology"
+              category="ignore"
 	      dbCommit="@dbcommit@"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/empty" 
@@ -1064,7 +1063,7 @@ G. intestinalis mitosome enriched fraction -- nanoLC/MALDI TOF/TOF
               version="1"
               plugin="GUS::Supported::Plugin::LoadArrayDesign"
 	      displayName="Giardia lamblia Oligo Array"
-              category="Transcriptome"
+              category="ignore"
 	      dbCommit="@dbcommit@"
             >
         <manualGet fileOrDir="/files/cbil/data/cbil/giardiaDB/manualDelivery/ExpressionArrays/Giardia_lamblia_1" 
@@ -1360,6 +1359,7 @@ _VER% </pluginArgs>
 	 Transcriptional changes in Giardia during host-parasite interactions.  This data was provided prepublication by Emma Ringqvist and Staffan G. Svard.
           ]]>
     </description>
+<publication pmid="21074536"/> 
   </resource>
  <resource resource="G.intestinalis_Troell_Svard_Array_Profiles" version="2010-03-12"
             displayName="G. intestinalis host-parasite interaction Array Profile"

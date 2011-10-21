@@ -36,5 +36,6 @@ select sys_context ('USERENV', 'SERVICE_NAME') as instance_nickname,
 from dual;
 
 grant select on apidb.InstanceMetaInfo to gus_r;
+grant insert, update, delete on apidb.InstanceMetaInfo to gus_w;
 
 exit

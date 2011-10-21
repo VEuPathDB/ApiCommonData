@@ -11,7 +11,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbrucei927_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3</unpack>
   </resource>
   <resource parentResource="Tbrucei927_genome_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -20,7 +20,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU927"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbrucei927_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff3 --output_gff @@dataDir@@/Tbrucei927_chromosomes_fixed/Tbrucei927.gff</unpack>
   </resource>
   <resource parentResource="Tbrucei927_genome_RSRC"
@@ -30,7 +30,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/contig/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %PARENT_RESOURCE_NAME% --ncbiTaxId 185431 --externalDatabaseVersion %PARENT_RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.fasta  --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" </pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbrucei927_contigs_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff3</unpack>
   </resource>
   <resource parentResource="Tbrucei927_genome_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -39,7 +39,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceibrucei927/contig/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei TREU927"  --seqSoTerm "contig" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbrucei927_contigs_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.fasta --output_gff  @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff3 --output_gff @@dataDir@@/Tbrucei927_contigs_fixed/Tbrucei927.gff</unpack>
   </resource>
   <resource plugin="GUS::Supported::Plugin::LoadFastaSequences"
@@ -48,7 +48,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 31285 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)'</pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbruceigambiense_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff  @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff  @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3</unpack>
   </resource>
   <resource parentResource="Tbruceigambiense_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -57,7 +57,7 @@
     <manualGet fileOrDir="TriTrypDB/tbrucei/genome/tbruceigambiense/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Trypanosoma brucei gambiense"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/Tbruceigambiense_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff  @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.fasta --output_gff  @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff3 --output_gff @@dataDir@@/Tbruceigambiense_chromosomes_fixed/Tbruceigambiense.gff</unpack>
   </resource>
   <resource plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -612,5 +612,30 @@
             version="@@SageTagArrayDesign_VER@@">
     <manualGet fileOrDir="TriTrypDB/tbrucei/sageTag/DGETag/%RESOURCE_VERSION%/final/freq/freqs.tsv" />
     <pluginArgs>--contact @@TriTrypSageTags.Contact@@ --arrayDesignName 'SageTagArrayDesign_RSRC' --arrayDesignVersion '2' --studyName 'Transcriptome analysis of two life stages of Trypanosoma brucei gambiense' --studyDescription '' --freqFile @@dataDir@@/freqs.tsv </pluginArgs>
+  </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei927_Proteomics_Urbaniak_BsfEnriched_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfEnriched_peptides_927.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfEnriched_peptides_927.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei427_Proteomics_Urbaniak_BsfEnriched_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfEnriched_peptides_427.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfEnriched_peptides_427.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei927_Proteomics_Urbaniak_BsfProteome_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfProteome_peptides_927.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfProteome_peptides_927.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei927_genome_RSRC|@@Tbrucei927_genome_VER@@' --developmentalStage ''</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Tbrucei427_Proteomics_Urbaniak_BsfProteome_RSRC"
+            version="2011-05-23">
+    <manualGet fileOrDir="TriTrypDB/tbrucei/massSpec/Urbaniak_Proteomics/%RESOURCE_VERSION%/final/TbruceiBsfProteome_peptides_427.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/TbruceiBsfProteome_peptides_427.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Tbrucei427_chromosomes_RSRC|@@Tbrucei427_chromosomes_VER@@' --developmentalStage ''</pluginArgs>
   </resource>
 </resources>

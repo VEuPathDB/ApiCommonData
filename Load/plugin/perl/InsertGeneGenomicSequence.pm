@@ -24,10 +24,17 @@ my $argsDeclaration =
 ];
 
 my $purpose = <<PURPOSE;
+The plugin populates a new table called ApiDB.GeneGenomicSequence_Split to speed up live site performance.It pre-computes values made now by the slow GeneModel wdk table query, which is slowing down the gene pages. 
+
+The new table includes:
+- source_id
+- gene_genomic_sequence, which is the full length of the genomic sequence for the gene (reversed as needed), possibly including some flanking sequence. flanking sequence and introns would be lower-cased, exons would be upper-cased.
+- start_min
+
 PURPOSE
 
 my $purposeBrief = <<PURPOSE_BRIEF;
-
+The plugin populates a new table called ApiDB.GeneGenomicSequence_Split to speed up live site performance.It pre-computes values made now by the slow GeneModel wdk table query, which is slowing down the gene pages.
 PURPOSE_BRIEF
 
 my $notes = <<NOTES;

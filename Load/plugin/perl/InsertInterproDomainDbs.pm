@@ -345,7 +345,6 @@ sub loadInterproFormat {
        $name = $2
      } elsif (/\<name\>(.*)\</) {
        $desc = $1;
-       print STDERR "$id\t$name\t$desc\n";
        $self->submitDbRef($dbName, $id, $name, undef, $logFreq, ++$eCount);
        last if ($testNum && $eCount >= $testNum)
      }

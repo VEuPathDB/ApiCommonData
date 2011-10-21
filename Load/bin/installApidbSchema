@@ -5,14 +5,18 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 
-my ($gusConfigFile, $drop, $create, $db);
+my ($gusConfigFile, $drop, $create, $db, $allowFailures);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "drop!" => \$drop,
+           "allowFailures!" => \$allowFailures,
            "create!" => \$create,
            "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
-  die "usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file]\n";
+  die "
+usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures]
+
+Caution: only use --allowFailures if you know what you are doing";
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -20,88 +24,84 @@ my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my $login = $gusconfig->getDatabaseLogin();
 my $password = $gusconfig->getDatabasePassword();
 
-my @create = qw( enterDbVersion.sql
-                 createApidbSchema.sql
-                 createApidbTuningSchema.sql
-                 removeNullConstraintsFromSimilarityTables.sql
-                 createAnalysisMethodInvocation.sql
-                 createChromosome6Orthology.sql
-                 createDataSource.sql
-                 createDbLinks.sql
-                 createDbUser.sql
-                 createExpressionProfileTables.sql
-                 createGeneInteractionTables.sql
-                 createGeneMappingView.sql
-                 createGeneFeatureProduct.sql
-                 createGeneFeatureName.sql
-                 createIsolateVocabulary.sql
-                 createMassSpecSummary.sql
-                 createGusTuning.sql
-                 createOrganism.sql
-                 createOrganismProject.sql
-                 createOrthologGroup.sql
-                 createOrthomclEngine.sql
-                 createPhylogeneticProfile.sql
-                 createPhylogeneticTree.sql
-                 createRelatedNaFeature.sql
-                 createReportCache.sql
-                 createRodentChrColors.sql
-                 createSequenceAttributeTables.sql
-                 createStoredProcedures.sql
-                 createSyntenyTables.sql
-                 createToxodbGenesView.sql
-                 createTransmembraneTable.sql
-                 createSpliceSiteFeature.sql
-                 createTuningManager.sql
-                 createContinents.sql
-                 createWorkflow.sql
-                 createsiRNA.sql
-                 createNextGenSeqCoverage.sql
-                 createNextGenSeq_Align.sql
-                 createPlasmoPfalLocations.sql
-                 createPlasmoMapp.sql
-                 createGeneGenomicSequence_Split.sql
-                 createIsolateMapping.sql
-                 createDifferentialExpression.sql
-                 createRUMIntronFeature.sql
-                 createGeneLodScoresTable.sql
-                 modifySeqVariation.sql
-               );
 
-my @delete = qw( dropTuningManager.sql
-                 dropAnalysisMethodInvocation.sql
-                 dropDbLinks.sql
-                 dropDbUser.sql
-                 dropDataSource.sql
-                 dropExpressionProfileTables.sql
-                 dropGeneInteractionTables.sql
-                 dropGeneMappingView.sql
-                 dropGeneFeatureProduct.sql
-                 dropGeneFeatureName.sql
-                 dropMassSpecSummary.sql
-                 dropOrganism.sql
-                 dropOrganismProject.sql
-                 dropOrthologGroup.sql
-                 dropOrthomclEngine.sql
-                 dropPhylogeneticProfile.sql
-                 dropSequenceAttributeTables.sql
-                 dropSyntenyTables.sql
-                 dropToxodbGenesView.sql
-                 dropSpliceSiteFeature.sql
-                 dropTransmembraneTable.sql
-                 dropWorkflow.sql
-                 dropRUMIntronFeature.sql
-                 dropGenegenomicsequence.sql
-                 dropGeneLodScoresTable.sql
+# PLEASE READ BEFORE ADDING TO @create
+#
+# The list is ordered according to these rules:
+# first:  changes to GUS
+# second: create ApidbTuning schema
+# third:  create Apidb schema
+# fourth: create tables within Apidb, in dependency order as needed
+#
+# This ordering helps ensure that when/if we drop, the dropping proceeds
+# in the correct order, avoiding bogus failures from dropping what was
+# not yet created.
+#
+# ALSO: if you are adding a create script for the Apidb schema
+#       it is good practice to write a parallel drop script
+#       so that if needed, the create can be manually reversed
+
+my @create = qw(
+               insertGusVersion.sql
+               removeNullConstraintsFromSimilarityTables.sql
+               createGusTuning.sql
+               modifySeqVariation.sql
+
+               createApidbTuningSchema.sql
+
+               createApidbSchema.sql
+	       createAnalysisMethodInvocation.sql
+	       createChromosome6Orthology.sql
+	       createDataSource.sql
+	       createDbLinks.sql
+	       createDbUser.sql
+	       createExpressionProfileTables.sql
+	       createGeneInteractionTables.sql
+	       createGeneMappingView.sql
+	       createGeneFeatureProduct.sql
+	       createGeneFeatureName.sql
+	       createIsolateVocabulary.sql
+	       createMassSpecSummary.sql
+	       createOrthologGroup.sql
+	       createOrthomclEngine.sql
+	       createPhylogeneticProfile.sql
+	       createPhylogeneticTree.sql
+	       createRelatedNaFeature.sql
+	       createReportCache.sql
+	       createRodentChrColors.sql
+	       createSequenceAttributeTables.sql
+	       createStoredProcedures.sql
+	       createSyntenyTables.sql
+	       createToxodbGenesView.sql
+	       createTransmembraneTable.sql
+	       createSpliceSiteFeature.sql
+	       createTuningManager.sql
+	       createContinents.sql
+	       createWorkflow.sql
+	       createsiRNA.sql
+	       createNextGenSeqCoverage.sql
+	       createNextGenSeq_Align.sql
+	       createPlasmoPfalLocations.sql
+	       createPlasmoMapp.sql
+	       createGeneGenomicSequence_Split.sql
+	       createOrganism.sql
+	       createIsolateMapping.sql
+	       createDifferentialExpression.sql
+	       createRUMIntronFeature.sql
+	       createGeneLodScoresTable.sql
+	     );
+
+# drop GUS first, then ApidbTuning, then Apidb (same order as we created).
+# for GUS, we only drop the tuning indexes, as the other GUS changes don't
+# need to be reversed.  The trick here is to order these to avoid failures
+my @delete = qw( deleteGusVersion.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
-                 dropStoredProcedures.sql
-                 dropApidbSchema.sql
                  dropApidbTuningSchema.sql
+                 dropApidbSchema.sql
                );
 
 if ($create) {
-
   for my $sql (@create) {
     &runSql($login, $password, $db, $sql);
   }
@@ -121,9 +121,24 @@ sub runSql {
 
   -e $fullFile || die "File '$fullFile' does not exist";
 
-  my $cmd = "sqlplus $login\@$db/$password \@$fullFile";
-print STDERR "$cmd\n";
-  system($cmd);
-  my $status = $? >> 8;
-  die "Failed with status '$status running cmd: $cmd'" if $status;
+  my $tmpFile = "/tmp/$file.$$";  # append the process id
+  unlink($tmpFile);  # in case of a old one
+  my $cmd;
+  if (!$allowFailures) {
+      $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
+      runCmd($cmd);
+  }
+  $cmd = "cat $fullFile >> $tmpFile";
+  runCmd($cmd);
+  $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
+  runCmd($cmd);
+  unlink($tmpFile);
+}
+
+sub runCmd {
+    my ($cmd) = @_;
+    print STDERR "running command: $cmd\n";
+    system($cmd);
+    my $status = $? >> 8;
+    die "Failed with status '$status running cmd: $cmd'" if $status;
 }

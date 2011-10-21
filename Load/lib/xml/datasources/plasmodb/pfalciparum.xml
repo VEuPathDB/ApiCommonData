@@ -5,7 +5,7 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 36329 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <unpack>mkdir @@dataDir@@/Pfalciparum_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
   </resource>
   <resource parentResource="Pfalciparum_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -14,7 +14,7 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/sangerGFF2Gus.xml --inputFileOrDir @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Plasmodium falciparum 3D7"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/Pfalciparum_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.fasta --output_gff  @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff3 --output_gff @@dataDir@@/Pfalciparum_chromosomes_fixed/Pfalciparum.gff</unpack>
   </resource>
   <resource parentResource="Pfalciparum_chromosomes_RSRC"
@@ -36,7 +36,7 @@
             version="@@Pfalciparum_chromosomes_VER@@">
     <manualGet fileOrDir="PlasmoDB/pfalciparum/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--ECMappingFile @@dataDir@@/Pfalciparum.ec --evidenceCode "GeneDB" --aaSeqLocusTagMappingSql "SELECT aa_sequence_id FROM dots.GeneFeature g, dots.Transcript t, dots.TranslatedAAFeature taf WHERE g.source_id = ? AND g.na_feature_id = t.parent_id AND t.na_feature_id = taf.na_feature_id"</pluginArgs>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pfalciparum.fasta --output_gff @@dataDir@@/Pfalciparum.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --output_fasta @@dataDir@@/Pfalciparum.fasta --output_gff @@dataDir@@/Pfalciparum.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Pfalciparum.gff3 --output_gff @@dataDir@@/Pfalciparum.gff</unpack>
     <unpack>makeECFile --format gff3 --fileOrDir @@dataDir@@/Pfalciparum.gff --id_qualifier ID --ec_qualifier eC_number --output_file @@dataDir@@/Pfalciparum.ec </unpack>
   </resource>
@@ -887,4 +887,98 @@
     <manualGet fileOrDir="PlasmoDB/pfalciparum/microarrayExpression/Derisi_HalfLife/%RESOURCE_VERSION%/final" />
     <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
   </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_ring_stages_F1_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/ring_stages_F1.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/ring_stages_F1.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'ring'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_ring_stages_F2_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/ring_stages_F2.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/ring_stages_F2.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'ring'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_ring_stages_F3_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/ring_stages_F3.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/ring_stages_F3.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'ring'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_ring_stages_F4_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/ring_stages_F4.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/ring_stages_F4.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'ring'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_ring_stages_F5_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/ring_stages_F5.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/ring_stages_F5.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'ring'</pluginArgs>
+  </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_schizonts_stages_F1_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/schizonts_stages_F1.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/schizonts_stages_F1.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'schizonts'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_schizonts_stages_F2_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/schizonts_stages_F2.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/schizonts_stages_F2.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'schizonts'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_schizonts_stages_F3_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/schizonts_stages_F3.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/schizonts_stages_F3.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'schizonts'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_schizonts_stages_F4_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/schizonts_stages_F4.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/schizonts_stages_F4.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'schizonts'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_schizonts_stages_F5_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/schizonts_stages_F5.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/schizonts_stages_F5.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'schizonts'</pluginArgs>
+  </resource>
+
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_trophs_stages_F1_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/trophs_stages_F1.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/trophs_stages_F1.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophs'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_trophs_stages_F2_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/trophs_stages_F2.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/trophs_stages_F2.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophs'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_trophs_stages_F3_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/trophs_stages_F3.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/trophs_stages_F3.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophs'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_trophs_stages_F4_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/trophs_stages_F4.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/trophs_stages_F4.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophs'</pluginArgs>
+  </resource>
+  <resource plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+            resource="Pf_Voss_trophs_stages_F5_RSRC"
+            version="2011-09-11">
+    <manualGet fileOrDir="PlasmoDB/pfalciparum/massSpec/Voss_fraction_proteomics/%RESOURCE_VERSION%/final/trophs_stages_F5.tab" />
+    <pluginArgs>--inputFile @@dataDir@@/trophs_stages_F5.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Pfalciparum_chromosomes_RSRC|@@Pfalciparum_chromosomes_VER@@' --developmentalStage 'trophs'</pluginArgs>
+  </resource>
+
 </resources>

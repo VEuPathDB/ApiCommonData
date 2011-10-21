@@ -62,7 +62,7 @@ WHERE 'gff3' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 CREATE TABLE ApiDB.GFF3AttributeKey (
- gff3_attribute_key_id NUMBER(38),
+ gff3_attribute_key_id NUMBER(38) not null,
  name	               VARCHAR2(64) not null,
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
@@ -103,7 +103,7 @@ WHERE 'gff3attributekey' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 CREATE TABLE ApiDB.GFF3Attributes (
- gff3_attribute_id     NUMBER(38),
+ gff3_attribute_id     NUMBER(38) not null,
  gff3_attribute_key_id NUMBER(38),
  gff3_feature_id       NUMBER(10),
  value	               VARCHAR2(64) not null,

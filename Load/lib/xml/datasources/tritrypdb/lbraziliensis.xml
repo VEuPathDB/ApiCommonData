@@ -5,7 +5,7 @@
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 5660 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --SOTermName 'chromosome'  --regexSourceId  '>(\S+)\|' --tableName "DoTS::ExternalNASequence" --regexChromosome '\|(\d+)' </pluginArgs>
     <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
   </resource>
   <resource parentResource="Lbraziliensis_chromosomes_RSRC"
             plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
@@ -14,7 +14,7 @@
     <manualGet fileOrDir="TriTrypDB/lbraziliensis/genome/chromosome/%RESOURCE_VERSION%/gff" />
     <pluginArgs>--extDbName %PARENT_RESOURCE_NAME% --extDbRlsVer %PARENT_RESOURCE_VERSION% --mapFile @@gusHome@@/lib/xml/isf/geneDBGFF2Gus.xml --inputFileOrDir @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff --inputFileExtension "gff"  --fileFormat gff3 --soCvsVersion @@SO_VER@@ --defaultOrganism "Leishmania braziliensis"  --seqSoTerm "chromosome" --validationLog @@dataDir@@/validation.log --bioperlTreeOutput @@dataDir@@/bioperlTree.out --seqIdColumn source_id --naSequenceSubclass ExternalNASequence</pluginArgs>
     <unpack>mkdir @@dataDir@@/Lbraziliensis_chromosomes_fixed</unpack>
-    <unpack>makeCustomFastaAndGffFromGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
+    <unpack>splitGff3FilesIntoFastaAndCustomGff3 --input_dir @@dataDir@@/gff --inputFileExt gff --output_fasta @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.fasta --output_gff  @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3</unpack>
     <unpack>preprocessGFF3 --input_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff3 --output_gff @@dataDir@@/Lbraziliensis_chromosomes_fixed/Lbraziliensis.gff</unpack>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertGOAssociationsSimple"
@@ -160,4 +160,12 @@
     <pluginArgs>--inputFile @@dataDir@@/Table1_formatted.tab --externalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%" --geneExternalDatabaseSpec 'Lbraziliensis_chromosomes_RSRC|@@Lbraziliensis_chromosomes_VER@@' --developmentalStage 'promastigotes'</pluginArgs>
   </resource>
 
+  <resource plugin="ApiCommonData::Load::Plugin::LoadNothing"
+            resource="Lbraziliensis_SNPs_WashU_RSRC"
+            version="@@Lbraziliensis_SNPs_WashU_VER@@">
+    <getAndUnpackOutput file="@@dataDir@@/LbraziliensisM2903_1.fq" />
+    <getAndUnpackOutput file="@@dataDir@@/LbraziliensisM2903_2.fq" />
+    <manualGet fileOrDir="TriTrypDB/common/genome/WhitePaperNGS/%RESOURCE_VERSION%/final/LbraziliensisM2903_*.fq" />
+    <pluginArgs>--dbRefExternalDatabaseSpec "%RESOURCE_NAME%|%RESOURCE_VERSION%"</pluginArgs>
+  </resource>
 </resources>
