@@ -1,3 +1,4 @@
+drop user APIDBTUNING cascade;
 drop user APIDB cascade;
 drop user CORE cascade;
 drop user COREVER cascade;
