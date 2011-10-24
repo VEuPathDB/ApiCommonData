@@ -15,7 +15,7 @@ my ($gusConfigFile, $drop, $create, $db, $allowFailures, $verbose);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
   die "
-usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+usage: installApidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
 
 Caution: only use --allowFailures if you know what you are doing
 
@@ -93,7 +93,6 @@ my @create = qw(
 	       createGeneGenomicSequence_Split.sql
 	       createOrganism.sql
 	       createIsolateMapping.sql
-	       createDifferentialExpression.sql
 	       createRUMIntronFeature.sql
 	       createGeneLodScoresTable.sql
 	     );
@@ -104,6 +103,8 @@ my @create = qw(
 my @delete = qw( deleteGusVersion.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
+      	         dropDbLinks.sql
+	         dropDbUser.sql
                  dropApidbTuningSchema.sql
                  dropApidbSchema.sql
                );
@@ -126,7 +127,7 @@ sub runSql {
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
-  -e $fullFile || die "File '$fullFile' does not exist";
+  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
@@ -156,6 +157,6 @@ sub runCmd {
     my $status = $? >> 8;
     if ($status) {
       unlink($tmpFile);
-      die "Failed with status '$status running cmd: $cmd'";
+      die "Failed with status '$status running cmd: \n$cmd'\n";
     }
 }
