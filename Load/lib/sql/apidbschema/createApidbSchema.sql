@@ -67,9 +67,4 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
 --END grant CTXSYS to GUS/APIDB schema owners
 
--- tuningManager needs there to be a index named "apidb.Blastp_text_ix"
---  (because OracleText needs it)
-CREATE INDEX apidb.Blastp_text_ix
-ON core.tableinfo(superclass_table_id, table_id, database_id);
-
 exit
