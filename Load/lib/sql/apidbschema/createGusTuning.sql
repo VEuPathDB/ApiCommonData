@@ -27,6 +27,18 @@ create index dots.SeqvarStrain_ix
   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
   tablespace INDX; 
 
+
+-- indexes for orthomcl keyword and pfam searches
+CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
+    indextype IS ctxsys.ctxcat;
+    
+CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
+    indextype IS ctxsys.ctxcat;
+
+CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
+    indextype IS ctxsys.ctxcat;
+
+
 -- schema changes for GUS tables
 
 alter table dots.NaFeatureImp modify (source_id varchar2(80));
@@ -34,5 +46,39 @@ alter table dots.NaFeatureImp modify (source_id varchar2(80));
 alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
 
 alter table dots.NaFeatureImp modify (name varchar(80));
+
+-- add columns to a GUS view
+-- drop first, because this view already exists from GUS install
+-- (and don't drop in dropGusTuning.sql)
+DROP VIEW rad.DifferentialExpression;
+CREATE VIEW rad.DifferentialExpression AS
+SELECT
+   analysis_result_id,
+   subclass_view,
+   analysis_id,
+   table_id,
+   row_id,
+   float1 as fold_change,
+   float2 as confidence,
+   float3 as pvalue_mant,
+   number1 as pvalue_exp,
+   modification_date,
+   user_read,
+   user_write,
+   group_read,
+   group_write,
+   other_read,
+   other_write,
+   row_user_id,
+   row_group_id,
+   row_project_id,
+   row_alg_invocation_id
+FROM RAD.AnalysisResultImp
+WHERE subclass_view = 'DifferentialExpression'
+WITH CHECK OPTION;
+
+GRANT SELECT ON rad.DifferentialExpression TO gus_r;
+GRANT INSERT, UPDATE, DELETE ON rad.DifferentialExpression TO gus_w;
+
 
 exit
