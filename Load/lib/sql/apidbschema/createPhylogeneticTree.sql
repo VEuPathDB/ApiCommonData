@@ -1,5 +1,3 @@
-DROP TABLE apidb.PhylogeneticTree;
-
 CREATE TABLE apidb.PhylogeneticTree (
    source_id varchar2(50),
    atv clob,
