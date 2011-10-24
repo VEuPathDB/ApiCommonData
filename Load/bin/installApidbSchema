@@ -5,18 +5,25 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 
-my ($gusConfigFile, $drop, $create, $db, $allowFailures);
+my ($gusConfigFile, $drop, $create, $db, $allowFailures, $verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "drop!" => \$drop,
            "allowFailures!" => \$allowFailures,
            "create!" => \$create,
+           "verbose!" => \$verbose,
            "db=s" => \$db);
 
 if (!$db || !($drop || $create) || ($drop && $create)) {
   die "
-usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures]
+usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
 
-Caution: only use --allowFailures if you know what you are doing";
+Caution: only use --allowFailures if you know what you are doing
+
+Log is printed to STDOUT
+
+Verbose prints commands run to STDERR
+
+";
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -125,20 +132,30 @@ sub runSql {
   unlink($tmpFile);  # in case of a old one
   my $cmd;
   if (!$allowFailures) {
-      $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
-      runCmd($cmd);
+      $cmd = "echo 'whenever sqlerror exit sql.sqlcode;' > $tmpFile";
+      runCmd($cmd, $tmpFile);
   }
+  $cmd = "echo 'set echo on;' >> $tmpFile";
+  runCmd($cmd, $tmpFile);
+
   $cmd = "cat $fullFile >> $tmpFile";
-  runCmd($cmd);
+  runCmd($cmd, $tmpFile);
   $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
-  runCmd($cmd);
+  print STDOUT "\n==============================================================\n";
+  print STDOUT "Running $tmpFile\n";
+  print STDOUT "==============================================================\n";
+
+  runCmd($cmd, $tmpFile);
   unlink($tmpFile);
 }
 
 sub runCmd {
-    my ($cmd) = @_;
-    print STDERR "running command: $cmd\n";
+    my ($cmd, $tmpFile) = @_;
+    print STDERR "\nrunning command: $cmd\n" if $verbose;
     system($cmd);
     my $status = $? >> 8;
-    die "Failed with status '$status running cmd: $cmd'" if $status;
+    if ($status) {
+      unlink($tmpFile);
+      die "Failed with status '$status running cmd: $cmd'";
+    }
 }
