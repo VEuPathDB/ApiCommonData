@@ -1,6 +1,4 @@
 /* table for alignments ...  */
-drop table Apidb.NextGenSeq_Align;
-
 create table Apidb.NextGenSeq_Align (
   nextgenseq_align_id number(10) not null,
   external_database_release_id number(10) not null,
@@ -30,10 +28,6 @@ create table Apidb.NextGenSeq_Align (
 
 grant select on Apidb.NextGenSeq_Align to gus_r;
 grant insert, select, update, delete on Apidb.NextGenSeq_Align to gus_w;
-
-create unique index apidb.nextgenseq_align_pk_ids 
-on Apidb.NextGenSeq_Align (nextgenseq_align_id)
-tablespace indx;
 
 create index apidb.nextgenseq_align_data_idx
 on Apidb.NextGenSeq_Align (sample,na_sequence_id,start_a,end_b,intron_size,genome_matches)
