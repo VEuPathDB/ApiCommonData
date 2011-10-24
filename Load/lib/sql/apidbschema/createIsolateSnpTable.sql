@@ -1,5 +1,3 @@
-drop table Apidb.IsolateSNPs;
-
 create table Apidb.IsolateSNPs as
 select s.na_sequence_id as is_na_sequence_id,atr.source_id as is_source_id, s.name,s.isolate, 
 f.allele,snpf.source_id as snp_source_id,d.name as snp_db_name,snpf.na_sequence_id as snp_na_sequence_id,snpl.start_min as snp_start_min
