@@ -95,11 +95,6 @@ WHERE lower(name) =  'ortholomcltaxon'
 --------------------------------------------------------------------------------
 
 
-DROP INDEX dots.aasequenceimp_ind_desc;
-
-DROP INDEX sres.dbref_ind_id2;
-
-DROP INDEX sres.dbref_ind_rmk;
 
 --------------------------------------------------------------------------------
 exit;
