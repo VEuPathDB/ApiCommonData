@@ -40,31 +40,20 @@ if ($restart){
     &runSql($login, $password, $db, 'dropMultiDbUsers.sql');
 }
 
-    my $gusInstall='build GUS install  -append -installDBSchema';
-
-    system($gusInstall);
-
-    my $status = $? >>8;
-
-    die "Failed with status '$status running cmd: $gusInstall'" if $status;
-
-    my $apidbInstall="installApidbSchema --db $db --create";
-
-    system($apidbInstall);
-
-    my $status = $? >>8;
-
-    die "Failed with status '$status running cmd: $apidbInstall'" if $status;
-
-    my $gusBld='build GUS install -append';
-
-    system($gusBld);
-
-    my $status = $? >>8;
-
-    die "Failed with status '$status running cmd: $gusBld'" if $status;
+runCmd('build GUS install  -append -installDBSchemaSkipRoles');
+runCmd("installApidbSchema --db $db --create");
+runCmd("rm $ENV{PROJECT_HOME}/GUS/Model/lib/perl/generated");
+runCmd('build GUS install -append');
 
 #############################################################################
+sub runCmd {
+    my ($cmd) = @_;
+    system($cmd);
+
+    my $status = $? >>8;
+
+    die "Failed with status '$status running cmd: \n$cmd'\n" if $status;
+}
 
 sub runSql {
 
