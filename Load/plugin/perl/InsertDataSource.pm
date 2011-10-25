@@ -59,15 +59,15 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'organismAbbrev',
-	      descr => 'the organismAbbrev of the data source.  Omit if global scope',
+   stringArg({name => 'taxonId',
+	      descr => 'the taxonId for the organism (not the species) of the data source.  Omit if global scope',
 	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
 
    booleanArg({name => 'isSpeciesScope',
-	      descr => 'true if the dataset applies to the species.',
+	      descr => 'true if the dataset applies to the species.  (In which case the taxonId is for the reference strain)',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -95,13 +95,17 @@ sub new {
 sub run {
     my ($self) = @_; 
 
-    
+    my $dataSourceName = $self->getArg('dataSourceName');
+    my $version = $self->getArg('version');
+    my $taxonId = $self->getArg('taxonId');
+    my $isSpeciesScope = $self->getArg('isSpeciesScope');
+
     my $objArgs = {
 	name   => $dataSourceName,
 	version  => $version,
-        organismAbbrev => $organismAbbrev
+        taxonId => $taxonId
     };
-    $objArgs->{isSpeciesScope} = $isSpeciesScope if $organismAbbrev;
+    $objArgs->{isSpeciesScope} = $isSpeciesScope if $taxonId;
 
     my $datasource = use GUS::Model::ApiDB::DataSource->new($objArgs);
     $datasource->submit();
