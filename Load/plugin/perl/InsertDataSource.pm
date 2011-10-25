@@ -5,7 +5,7 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use ApiCommonData::Load::DataSource;
+use use GUS::Model::ApiDB::DataSource;
 use Data::Dumper;
 
 
@@ -59,14 +59,15 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'internalDescrip',
-	      descr => 'the internal description of the data source.',
-	      reqd => 1,
+   stringArg({name => 'organismAbbrev',
+	      descr => 'the organismAbbrev of the data source.  Omit if global scope',
+	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'organism',
-	      descr => 'the organism of the data source.',
+
+   booleanArg({name => 'isSpeciesScope',
+	      descr => 'true if the dataset applies to the species.',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -92,21 +93,19 @@ sub new {
 }
 
 sub run {
-  my ($self) = @_; 
+    my ($self) = @_; 
 
- 
+    
     my $objArgs = {
-		 name   => $dataSourceName,
-		 version  => $version,
-		 internal_descrip   => $internalDescrip,
-		 organism   => $organism,
-		  };
-    my $datasource = ApiCommonData::Load::Plugin::InsertDataSource->new($objArgs);
-    $datasource->submit();
-    $self->log("processed $count") if ($count % 1000) == 0;
-  }
+	name   => $dataSourceName,
+	version  => $version,
+        organismAbbrev => $organismAbbrev
+    };
+    $objArgs->{isSpeciesScope} = $isSpeciesScope if $organismAbbrev;
 
-  return "Inserted data source $dataSourceName";
+    my $datasource = use GUS::Model::ApiDB::DataSource->new($objArgs);
+    $datasource->submit();
+    return "Inserted data source $dataSourceName";
 }
 
 sub undoTables {
