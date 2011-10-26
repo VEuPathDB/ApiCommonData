@@ -22,7 +22,7 @@ ADD CONSTRAINT data_source_pk PRIMARY KEY (data_source_id);
 
 ALTER TABLE apidb.DataSource
 ADD CONSTRAINT data_source_uniq
-UNIQUE (name, project_id);
+UNIQUE (name, row_project_id);
 
 ALTER TABLE apidb.DataSource
 ADD CONSTRAINT data_source_fk1 FOREIGN KEY (taxon_id)
