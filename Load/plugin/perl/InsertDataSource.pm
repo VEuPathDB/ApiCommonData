@@ -107,7 +107,7 @@ sub run {
     };
     $objArgs->{isSpeciesScope} = $isSpeciesScope if $taxonId;
 
-    my $datasource = use GUS::Model::ApiDB::DataSource->new($objArgs);
+    my $datasource = GUS::Model::ApiDB::DataSource->new($objArgs);
     $datasource->submit();
     return "Inserted data source $dataSourceName";
 }
