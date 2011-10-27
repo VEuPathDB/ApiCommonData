@@ -61,7 +61,7 @@ my $argsDeclaration =
 	     }),
    stringArg({name => 'taxonId',
 	      descr => 'the taxonId for the organism (not the species) of the data source.  Omit if global scope',
- 	      reqd => 0,
+	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
@@ -83,7 +83,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision => '$Revision: 21749 $', # cvs fills this in!
+		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
