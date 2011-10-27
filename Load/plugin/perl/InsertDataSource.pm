@@ -103,7 +103,7 @@ sub run {
     my $objArgs = {
 	name   => $dataSourceName,
 	version  => $version,
-        taxonId => $taxonId
+        taxon_id => $taxonId
     };
     $objArgs->{isSpeciesScope} = $isSpeciesScope if $taxonId;
 
