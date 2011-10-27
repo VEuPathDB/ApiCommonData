@@ -2661,7 +2661,6 @@ tablespace indx
         create table TFBSGene&1 NOLOGGING AS
 select distinct
       ga.source_id as gene_source_id,
-      ga.taxon_id as taxon_id,
       ga.organism as organism,
       ga.species as species,
       aef.source_id as probe_id,
@@ -3982,7 +3981,7 @@ from dual
 UNION
 select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
        'Gilchrist::EhG3Hm1Imss' as module,
-       '<i>E. histolytica</i> G3  versus  HM1:IMSS Transcript Expression as display_name, 
+       '<i>E. histolytica</i> G3  versus  HM1:IMSS Transcript Expression' as display_name, 
        'Comparison of the transcriptomes of the amoebapore (Ehap-a) gene silenced G3 trophozoites with those of the parent HM-1:IMSS strain' as description,
        'Sample Type
             1. G3 (Ehap-a silenced strain) 
