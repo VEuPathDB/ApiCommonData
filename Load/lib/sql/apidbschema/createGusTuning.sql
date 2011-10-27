@@ -43,6 +43,10 @@ CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
 
 alter table dots.NaFeatureImp modify (source_id varchar2(80));
 
+alter table sres.EnzymeClass modify (description varchar2(200));
+
+alter table sres.GoEvidenceCode modify (name varchar2(20));
+
 alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
 
 alter table dots.NaFeatureImp modify (name varchar(80));
