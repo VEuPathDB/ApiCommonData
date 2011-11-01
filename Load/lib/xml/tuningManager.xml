@@ -6230,34 +6230,21 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="NextGenSeqSamples">
-    <externalDependency name="apidb.NextGenSeqCoverage"/>
-    <sql>
-      <![CDATA[
-      create table NextGenSeqSamples&1 nologging as
-      select distinct d.name as ext_db_name, ngsc.sample
-      from APIDB.nextgenseqcoverage ngsc, sres.externaldatabaserelease r, sres.externaldatabase d
-      where ngsc.external_database_release_id = r.external_database_release_id
-      and d.external_database_id = r.external_database_id
-      ]]>
-    </sql>
-  </tuningTable>
-
-
-
 
   <tuningTable name="NextGenSeqStats">
     <externalDependency name="apidb.NextGenSeqCoverage"/>
     <sql>
       <![CDATA[
       create table NextGenSeqStats&1 nologging as
-      select sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length,sum_span_length 
-      from (select sample,count(*) as num_spans,
-                   sum(coverage * (mapping_end - mapping_start)) as sum_coverage,
-                   sum(mapping_end - mapping_start) as sum_span_length
-            from apidb.NextGenSeqCoverage
-            where multiple = 0
-            group by sample)
+      select name as ext_db_name, sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length, sum_span_length
+      from (select d.name, c.sample, count(*) as num_spans,
+                   sum(c.coverage * (c.mapping_end - c.mapping_start)) as sum_coverage,
+                   sum(c.mapping_end - c.mapping_start) as sum_span_length
+            from apidb.NextGenSeqCoverage c,sres.externaldatabaserelease r, sres.externaldatabase d
+            where c.multiple = 0
+             and c.external_database_release_id = r.external_database_release_id
+             and d.external_database_id = r.external_database_id
+            group by d.name, c.sample)
       ]]>
     </sql>
     <sql>
