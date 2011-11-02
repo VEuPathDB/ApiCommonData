@@ -132,12 +132,12 @@ print "more than one hit\n";
   die "Failed with status '$status running cmd: $cmd'" if $status;
 }
 
-#----------------validation for Blast Hits------------
+# #----------------validation for Blast Hits------------
 
-die "No blast hits returned for all $seqCount sequences, check the source_id regex $regex and query file $queryFile\n" unless ($seqCountWithNoBlastHits < $seqCount);
+# die "No blast hits returned for all $seqCount sequences, check the source_id regex $regex and query file $queryFile\n" unless ($seqCountWithNoBlastHits < $seqCount);
 
 
-#----------------Subroutines----------------------
+# #----------------Subroutines----------------------
 
 sub createSeqFile{
   my ($tempFile, $seq) = @_;
