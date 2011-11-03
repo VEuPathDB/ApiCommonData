@@ -47,6 +47,13 @@ alter table dots.SequencePiece add ( start_position number(12), end_position num
 
 alter table dots.NaFeatureImp modify (name varchar(80));
 
+-- add this to prevent race condition in which we write duplicate rows
+-- when plugins first run in a workflow on a brand new instance
+ALTER TABLE core.algorithmimplementation
+ADD CONSTRAINT alg_imp_uniq
+UNIQUE (executable, cvs_revision);
+
+
 -- add columns to a GUS view
 -- drop first, because this view already exists from GUS install
 -- (and don't drop in dropGusTuning.sql)
