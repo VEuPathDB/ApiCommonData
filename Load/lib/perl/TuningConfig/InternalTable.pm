@@ -311,6 +311,9 @@ sub update {
     }
   }
 
+  my $debug;
+  $debug = " -debug " if $self->{debug};
+
   foreach my $program (@{$self->{programs}}) {
     last if $updateError;
 
@@ -320,19 +323,24 @@ sub update {
                       . " -password '" . $self->{password} . "'"
                       . " -schema '" . $self->{schema} . "'"
                       . " -project '" . $registry->getProjectId() . "'"
-                      . " -version '" . $registry->getVersion() . "'"
+#                     . " -version '" . $registry->getVersion() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
+                      . $debug
                       . " 2>&1 ";
-
 
     ApiCommonData::Load::TuningConfig::Log::addLog("running program with command line \"" . $commandLine . "\" to build $self->{name}");
 
-    my $returnCode = system("$commandLine");
+    open(PROGRAM, $commandLine . "|");
+    while (<PROGRAM>) {
+      my $line = $_;
+      chomp($line);
+      ApiCommonData::Load::TuningConfig::Log::addLog($line);
+    }
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $returnCode");
+    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $?");
 
-    if ($returnCode) {
+    if ($?) {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to run standalone program:\n$commandLine");
       $updateError = 1;
     }

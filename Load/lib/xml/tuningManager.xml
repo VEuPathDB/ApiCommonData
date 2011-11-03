@@ -2661,6 +2661,7 @@ tablespace indx
         create table TFBSGene&1 NOLOGGING AS
 select distinct
       ga.source_id as gene_source_id,
+      ga.organism as organism,
       ga.species as species,
       aef.source_id as probe_id,
       aef.na_feature_id as tfbs_na_feature_id,
@@ -3209,6 +3210,11 @@ from
     from dual
     UNION
     select 'EhistolyticaNugenProfiles' as profile_name,
+           '' as main_profile_name,
+           'AmoebaDB' as project_id
+    from dual
+    UNION
+    select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
            '' as main_profile_name,
            'AmoebaDB' as project_id
     from dual
@@ -3973,6 +3979,24 @@ select 'EhistolyticaNugenProfiles' as profile_name,
         'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
 from dual
 UNION
+select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
+       'Gilchrist::EhG3Hm1Imss' as module,
+       '<i>E. histolytica</i> G3  versus  HM1:IMSS Transcript Expression' as display_name, 
+       'Comparison of the transcriptomes of the amoebapore (Ehap-a) gene silenced G3 trophozoites with those of the parent HM-1:IMSS strain' as description,
+       'Sample Type
+            1. G3 (Ehap-a silenced strain) 
+            2. HM1:IMSS (Parent strain)' as x_axis,
+       'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
+       180 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,pct' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       'Ehistolytica_Gilchrist_GSE28883_RSRC' as attribution
+from dual
+UNION
+
 --TriTrypDB --
 select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
        'Horn::TbRNAiRNASeq' as module,
@@ -6206,18 +6230,21 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
   <tuningTable name="NextGenSeqStats">
     <externalDependency name="apidb.NextGenSeqCoverage"/>
     <sql>
       <![CDATA[
       create table NextGenSeqStats&1 nologging as
-      select sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length,sum_span_length 
-      from (select sample,count(*) as num_spans,
-                   sum(coverage * (mapping_end - mapping_start)) as sum_coverage,
-                   sum(mapping_end - mapping_start) as sum_span_length
-            from apidb.NextGenSeqCoverage
-            where multiple = 0
-            group by sample)
+      select name as ext_db_name, sample, sum_coverage / sum_span_length as average_coverage, sum_coverage, sum_span_length / num_spans as average_span_length, sum_span_length
+      from (select d.name, c.sample, count(*) as num_spans,
+                   sum(c.coverage * (c.mapping_end - c.mapping_start)) as sum_coverage,
+                   sum(c.mapping_end - c.mapping_start) as sum_span_length
+            from apidb.NextGenSeqCoverage c,sres.externaldatabaserelease r, sres.externaldatabase d
+            where c.multiple = 0
+             and c.external_database_release_id = r.external_database_release_id
+             and d.external_database_id = r.external_database_id
+            group by d.name, c.sample)
       ]]>
     </sql>
     <sql>
