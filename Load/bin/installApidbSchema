@@ -27,7 +27,7 @@ Verbose prints commands run to STDERR
 }
 
 if ($drop) {
-    print "You are about to UNINSTALL the schema on:\n\n  $db\n\n Type the name of the instance to confirm:";
+    print "You are about to UNINSTALL the ApiDB and ApiDBTuning schemas on:\n\n  $db\n\n This will BLOW AWAY data on $db.\n\n Type the name of the instance to confirm:";
     $confirm = <STDIN>;
     die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
 }
