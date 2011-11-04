@@ -5,6 +5,8 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 
+$| = 1;
+
 my ($gusConfigFile, $drop, $create, $db, $allowFailures, $verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
            "drop!" => \$drop,
