@@ -93,6 +93,7 @@ eval {
   $SIG{TERM} = \&catch_signal;
 
   ($instance, $schema, $password) = ApiCommonData::Load::TuningConfig::Utils::getDbLoginInfo($instance, $propFile, $schema, $password);
+  ApiCommonData::Load::TuningConfig::Log::addLog("Logging in to the database as (and creating tuning tables in) the schema \"$schema\".");
   $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
   $tuningRegistry =

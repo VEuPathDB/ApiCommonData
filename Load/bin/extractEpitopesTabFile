@@ -39,7 +39,7 @@ $sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
 
 # this is the same format as printed in iedbSimplifyTabFile
 while (my ($seq, $description ) = $sth->fetchrow_array()) {
-  my ($iedbId, $epiName, $strain, $accession) = split(/|/,$description);
+  my ($iedbId, $epiName, $strain, $accession) = split(/\|/,$description);
   print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
 }
 

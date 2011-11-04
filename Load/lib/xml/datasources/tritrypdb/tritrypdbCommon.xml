@@ -3,13 +3,13 @@
             resource="OrthoMCL_Phyletic_RSRC"
             version="5">
     <manualGet fileOrDir="TriTrypDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt" />
-    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv"</pluginArgs>
+    <pluginArgs>--groupsFile @@dataDir@@/orthomclGroups.txt --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv,ltar"</pluginArgs>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
             resource="OrthoMCL_RSRC"
             version="5">
     <manualGet fileOrDir="TriTrypDB/common/orthology/orthoMCL/%RESOURCE_VERSION%/orthomclGroups.txt" />
-    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+    <pluginArgs>--OrthologFile @@dataDir@@/orthomclGroups.txt --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "lmaj,linf,lmex,lbra,tbru,tcru,tbrg,tcon,tviv,ltar" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
   </resource>
   <resource plugin="ApiCommonData::Load::Plugin::InsertOrthomclTaxon"
             resource="OrthoMCLTree_RSRC"

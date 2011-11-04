@@ -450,6 +450,8 @@ begin
            then return 'ToxoDB';
          when 'neospora'
            then return 'ToxoDB';
+	 when 'endotrypanum'
+	   then return 'TriTrypDB';
          when 'leishmania'
            then return 'TriTrypDB';
          when 'trypanosoma'

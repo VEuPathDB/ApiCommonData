@@ -1,3 +1,5 @@
+whenever sqlerror exit sql.sqlcode;
+set echo on;
 drop user APIDBTUNING cascade;
 drop user APIDB cascade;
 drop user CORE cascade;
@@ -14,7 +16,5 @@ drop user STUDY cascade;
 drop user STUDYVER cascade;
 drop user TESS cascade;
 drop user TESSVER cascade;
-DROP ROLE GUS_W;
-DROP ROLE GUS_R;
 
 exit
