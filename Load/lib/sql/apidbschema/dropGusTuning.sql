@@ -9,6 +9,9 @@ DROP INDEX dots.aasequenceimp_ind_desc;
 DROP INDEX sres.dbref_ind_id2;
 DROP INDEX sres.dbref_ind_rmk;
 
+ALTER TABLE core.algorithmimplementation
+DROP CONSTRAINT alg_imp_uniq;
+
 alter table dots.sequencePiece DROP ( start_position, end_position );
 
 exit
