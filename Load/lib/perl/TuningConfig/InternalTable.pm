@@ -516,10 +516,13 @@ sub publish {
       grant select on $tuningTableName$suffix to gus_r
 SQL
 
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-    $stmt->finish();
+  my $stmt = $dbh->prepare($sql);
+  my $grantRtn = $stmt->execute();
+  if (!$grantRtn) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    return 0;
+  }
+  $stmt->finish();
 
   # get name of old table (for subsequenct purging). . .
   my ($oldTable, $explicitSchema, $table);
