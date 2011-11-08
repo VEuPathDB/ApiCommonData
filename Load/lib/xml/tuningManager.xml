@@ -3119,6 +3119,12 @@ from
     select ga.source_id, pm.profile_name, nvl(pm.main_profile_name, pm.profile_name) as main_profile_name, pm.project_id
     from
     (
+    -- CryptoDB --
+    select 'Cparvum_RT_PCR_Kissinger' as profile_name,
+          '' as main_profile_name,
+           'CryptoDB' as project_id
+    from dual
+    UNION
     -- FungiDB --
     select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
           '' as main_profile_name,
@@ -3441,6 +3447,25 @@ Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/raw
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'Cln_Clb,pheromone,elutriation,cdc15,Cho' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+    UNION
+
+
+
+-- CryptoDB 
+select 'Cparvum_RT_PCR_Kissinger' as profile_name,
+       'Kissinger::KissingerRtPcrProfiles' as module,
+       'Expression profile based on RT PCR experiments' as display_name,
+       'Expression profile based on RT PCR experiments' as description,
+       'Time point' as x_axis,
+       'Median Expression (standardized)' as y_axis,
+        9 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rma' as visible_parts,
         '' as dataTable,
       'expression' as type,
         '' as attribution
