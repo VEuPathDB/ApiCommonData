@@ -6434,7 +6434,8 @@ tablespace indx
       <![CDATA[
        create table OrganismAbbreviationWS&1 nologging as
        select oa.organism, ot.parentTerm as parent, oa.abbreviation
-       from OrganismAbbreviation oa, OrganismTree ot       
+       from OrganismAbbreviation oa, OrganismTree ot
+       where ot.term = oa.organism
        union
   -- ToxoDB Apicoplast
   select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union  
