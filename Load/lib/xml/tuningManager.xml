@@ -6429,31 +6429,33 @@ tablespace indx
  <!-- Special webservice abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationWS">
     <internalDependency name="OrganismAbbreviation"/>
+    <internalDependency name="OrganismTree"/>
     <sql>
       <![CDATA[
        create table OrganismAbbreviationWS&1 nologging as
-       select organism, abbreviation from OrganismAbbreviation
+       select oa.organism, ot.parentTerm as parent, oa.abbreviation
+       from OrganismAbbreviation, OrganismTree       
        union
   -- ToxoDB Apicoplast
-  select 'Toxoplasma gondii apicoplast' as organism, 'TgondiiApicoplast' as abbreviation from dual union  
+  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union  
   -- PiroplasmaDB Plastid and Mitochondrial
-  select 'Babesia bovis T2Bo mitochondrial' as organism, 'BbovisT2BoMito' as abbreviation from dual union
-  select 'Babesia bovis T2Bo plastid' as organism, 'BbovisT2BoPlastid' as abbreviation from dual union
-  select 'Theileria annulata strain Ankara mitochondrial' as organism, 'TannulataAnkaraMito' as abbreviation from dual union
-  select 'Theileria parva strain Muguga mitochondrial' as organism, 'TparvaMugugaMito' as abbreviation from dual union
-  select 'Theileria parva strain Muguga plastid' as organism, 'TparvaMugugaPlastid' as abbreviation from dual union
+  select 'Babesia bovis T2Bo mitochondrial' as organism,'Babesia bovis' as parent, 'BbovisT2BoMito' as abbreviation from dual union
+  select 'Babesia bovis T2Bo plastid' as organism, 'Babesia bovis' as parent, 'BbovisT2BoPlastid' as abbreviation from dual union
+  select 'Theileria annulata strain Ankara mitochondrial' as organism, 'Theileria annulata' as parent, 'TannulataAnkaraMito' as abbreviation from dual union
+  select 'Theileria parva strain Muguga mitochondrial' as organism, 'Theileria parva' as parent, 'TparvaMugugaMito' as abbreviation from dual union
+  select 'Theileria parva strain Muguga plastid' as organism, 'Theileria parva' as parent, 'TparvaMugugaPlastid' as abbreviation from dual union
   -- CryptoDB ESTORFs
-  select 'Cryptosporidium parvum EST' as organism, 'CparvumEST' as abbreviation from dual union  
-  select 'Cryptosporidium muris EST' as organism, 'CmurisEST' as abbreviation from dual union  
+  select 'Cryptosporidium parvum EST' as organism, 'Cryptosporidium parvum' as parent, 'CparvumEST' as abbreviation from dual union  
+  select 'Cryptosporidium muris EST' as organism, 'Cryptosporidium muris' as parent, 'CmurisEST' as abbreviation from dual union  
   -- Giardia Deprecated
-  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
-  select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GintestinalisAssemblageAScaffoldGenomic' as abbreviation from dual union
+  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
+  select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffoldGenomic' as abbreviation from dual union
   -- TrichDB Repeat Genes
-  select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'TvaginalisRG' as abbreviation from dual union  
+  select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'Trichomonas vaginalis' as parent, 'TvaginalisRG' as abbreviation from dual union  
   -- PlasmoDB Plasmid And Mitochondrial
-  select 'Plasmodium falciparum 3D7 mitochondrial' as organism, 'PfalciparumMito' as abbreviation from dual union
-  select 'Plasmodium falciparum 3D7 plastid' as organism, 'PfalciparumPlastid' as abbreviation from dual union
-  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'PvivaxMito' as abbreviation from dual       
+  select 'Plasmodium falciparum 3D7 mitochondrial' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumMito' as abbreviation from dual union
+  select 'Plasmodium falciparum 3D7 plastid' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumPlastid' as abbreviation from dual union
+  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'Plasmodium vivax' as parent, 'PvivaxMito' as abbreviation from dual       
       ]]>
     </sql>
   </tuningTable>
@@ -6616,47 +6618,47 @@ tablespace indx
     <sql>
       <![CDATA[
        create table OrganismAbbreviationBlast&1 nologging as
-       select organism, abbreviation from OrganismAbbreviationWS
+       select organism, parent, abbreviation from OrganismAbbreviationWS
        union
   -- ToxoDB ESTs
-  select 'Toxoplasma gondii' as organism, 'Tgondii' as abbreviation from dual union  
+  select 'Toxoplasma gondii' as organism, 'Toxoplasma' as parent, 'Tgondii' as abbreviation from dual union  
   -- ToxoDB Isolates TODO !!
-  select 'All Toxoplasma Isolates' as organism, 'ToxoDB' as abbreviation from dual union  
+  select 'All Toxoplasma Isolates' as organism, 'Toxoplasma' as parent, 'ToxoDB' as abbreviation from dual union  
   -- CryptoDB ESTs
-  select 'Cryptosporidium muris RN66' as organism, 'Cmuris' as abbreviation from dual union  
+  select 'Cryptosporidium muris RN66' as organism, 'Cryptosporidium muris' as parent, 'Cmuris' as abbreviation from dual union  
   -- CryptoDB Isolates
-  select 'Cryptosporidium Reference Isolates' as organism, 'CryptoReference' as abbreviation from dual union  
-  select 'Cryptosporidium Isolates minus Reference' as organism, 'Crypto' as abbreviation from dual union  
+  select 'Cryptosporidium Reference Isolates' as organism, 'Cryptosporidium' as parent, 'CryptoReference' as abbreviation from dual union  
+  select 'Cryptosporidium Isolates minus Reference' as organism, 'Cryptosporidium' as parent, 'Crypto' as abbreviation from dual union  
   -- GiardiaDB Isolates
-  select 'All Giardia Isolates' as organism, 'GiardiaGenbank' as abbreviation from dual union  
+  select 'All Giardia Isolates' as organism, 'Giardia' as parent, 'GiardiaGenbank' as abbreviation from dual union  
   -- TrichDB EST
-  select 'Trichomonas vaginalis' as organism, 'Tvaginalis' as abbreviation from dual union  
+  select 'Trichomonas vaginalis' as organism, 'Trichomonas' as parent, 'Tvaginalis' as abbreviation from dual union  
   -- MicrosporidiaDB EST  
-  select 'Encephalitozoon cuniculi' as organism, 'Ecuniculi' as abbreviation from dual union  
+  select 'Encephalitozoon cuniculi' as organism, 'Encephalitozoon' as parent, 'Ecuniculi' as abbreviation from dual union  
   -- MicrosporidiaDB Genome Survey Sequences
-  select 'Genome Survey Sequences' as organism, 'Microsporidia' as abbreviation from dual union
+  select 'Genome Survey Sequences' as organism, 'Microsporidia' as parent, 'Microsporidia' as abbreviation from dual union
   -- AmoebaDB EST
-  select 'Entamoeba dispar' as organism, 'Edispar' as abbreviation from dual union  
-  select 'Entamoeba histolytica' as organism, 'Ehistolytica' as abbreviation from dual union  
+  select 'Entamoeba dispar' as organism, 'Entamoeba' as parent, 'Edispar' as abbreviation from dual union  
+  select 'Entamoeba histolytica' as organism, 'Entamoeba' as parent, 'Ehistolytica' as abbreviation from dual union  
   -- PlasmoDB ESTs where the name differs from above
-  select 'Plasmodium berghei' as organism, 'Pberghei' as abbreviation from dual union
-  select 'Plasmodium falciparum' as organism, 'Pfalciparum' as abbreviation from dual union
-  select 'Plasmodium vivax' as organism, 'Pvivax' as abbreviation from dual union
-  select 'Plasmodium yoelii' as organism, 'Pyoelii' as abbreviation from dual union
+  select 'Plasmodium berghei' as organism, 'Plasmodium' as parent, 'Pberghei' as abbreviation from dual union
+  select 'Plasmodium falciparum' as organism, 'Plasmodium' as parent, 'Pfalciparum' as abbreviation from dual union
+  select 'Plasmodium vivax' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
+  select 'Plasmodium yoelii' as organism, 'Plasmodium', 'Pyoelii' as abbreviation from dual union
   -- PlasmoDB Isolates
-  select 'Plasmodium Barcode Isolates' as organism, 'PlasmodiumBarcode' as abbreviation from dual union
-  select 'Plasmodium Popset/Genbank Isolates' as organism, 'Plasmodium' as abbreviation from dual union
+  select 'Plasmodium Barcode Isolates' as organism, 'Plasmodium' as parent, 'PlasmodiumBarcode' as abbreviation from dual union
+  select 'Plasmodium Popset/Genbank Isolates' as organism, 'Plasmodium' as parent 'Plasmodium' as abbreviation from dual union
    -- TriTrypDD ESTs which are different than above
-  select 'Trypanosoma brucei' as organism, 'Tbrucei' as abbreviation from dual union
-  select 'Trypanosoma cruzi' as organism, 'Tcruzi' as abbreviation from dual union
-  select 'Leishmania major' as organism, 'LmajorFriedlin' as abbreviation from dual union
-  select 'Leishmania mexicana mexicana' as organism, 'Lmexicana' as abbreviation from dual union
+  select 'Trypanosoma brucei' as organism, 'Trypanosoma' as parent, 'Tbrucei' as abbreviation from dual union
+  select 'Trypanosoma cruzi' as organism, 'Trypanosoma' as parent, 'Tcruzi' as abbreviation from dual union
+  select 'Leishmania major' as organism, 'Leishmania' as parent, 'LmajorFriedlin' as abbreviation from dual union
+  select 'Leishmania mexicana mexicana' as organism, 'Leishmania mexicana' as parent, 'Lmexicana' as abbreviation from dual union
   -- PiroplasmaDB ESTs
-  select 'Theileria annulata' as organism, 'TannulataAnkara' as abbreviation from dual union
-  select 'Theileria parva' as organism, 'TparvaMuguga' as abbreviation from dual union
-  select 'Babesia bovis' as organism, 'BbovisT2Bo' as abbreviation from dual union
+  select 'Theileria annulata' as organism, 'Theileria' as parent, 'TannulataAnkara' as abbreviation from dual union
+  select 'Theileria parva' as organism, 'Theileria' as parent, 'TparvaMuguga' as abbreviation from dual union
+  select 'Babesia bovis' as organism, 'Babesia' as parent, 'BbovisT2Bo' as abbreviation from dual union
   -- EuPathDB Other ESTs
-  select 'Other Apicomplexan ESTs' as organism, 'Other' as abbreviation from dual
+  select 'Other Apicomplexan ESTs' as organism, 'Apicomplexa' as parent, 'Other' as abbreviation from dual
       ]]>
     </sql>
   </tuningTable>
