@@ -66,29 +66,36 @@ $cleanupAge = 0 if !defined $cleanupAge;
 
 $doUpdate = 1 if $forceUpdate;
 
-if ($propFile) {
-  my $simple = XML::Simple->new();
-  $props = $simple->XMLin($propFile);
-}
-
-# prefer schema from command line, then prop file, then hardwired default
-$schema = $props->{schema} if !$schema;
-$schema = 'ApidbTuning' if !$schema;
-
-$maxRebuildMinutes = $props->{maxRebuildMinutes};
-
-if ($props->{dbaEmail}) {
-  $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
-  $fromEmail = $props->{fromEmail} if $props->{fromEmail};
-} else {
-  $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
-  $fromEmail = 'tuningMgr@pcbi.upenn.edu';
-}
-
-
 my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
-
 eval {
+  if ($propFile) {
+    my $simple = XML::Simple->new();
+    $props = $simple->XMLin($propFile);
+    my %permittedProperties = (password => 1, maxRebuildMinutes => 1, dbaEmail => 1, dblink => 1, schema => 1);
+    my $badProp;
+    foreach my $foundProp (keys(%{$props})) {
+      if (!$permittedProperties{$foundProp}) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid property \"$foundProp\"");
+	$badProp = 1;
+      }
+    }
+    die if $badProp;
+  }
+
+  # prefer schema from command line, then prop file, then hardwired default
+  $schema = $props->{schema} if !$schema;
+  $schema = 'ApidbTuning' if !$schema;
+
+  $maxRebuildMinutes = $props->{maxRebuildMinutes};
+
+  if ($props->{dbaEmail}) {
+    $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+    $fromEmail = $props->{fromEmail} if $props->{fromEmail};
+  } else {
+    $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+    $fromEmail = 'tuningMgr@pcbi.upenn.edu';
+  }
+
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
@@ -582,9 +589,17 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . dropping");
-    $dbh->do("drop table $table")
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("Obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . consider dropping it");
+# We used to drop these tables (i.e. ones with names ending in [at least] four
+# digits but with no synonym pointing to them). But it sometimes happened that
+# the long-running Sanger web-service client was still making its table (and
+#  therefore didn't have a synonym pointed at it) when a faster-running tuning
+#  manager process completed and, in its cleanup, DROPPED THE
+#  STILL-UNDER-CONSTRUCTION TABLE. So now, we'll just log an error that this
+# table (apparently) needs to be cleaned up.
+#
+#    $dbh->do("drop table $table")
+#       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
   $stmt->finish();
