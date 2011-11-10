@@ -4290,6 +4290,7 @@ where d.profile_name = psorg.name
     </sql>
   </tuningTable>
 
+<!--
   <tuningTable name="MassSpecTerms">
     <sql>
       <![CDATA[
@@ -4954,7 +4955,7 @@ from dual
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <tuningTable name="NaSynteny">
     <externalDependency name="core.TableInfo"/>
@@ -6666,6 +6667,10 @@ tablespace indx
 
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
+  </tuningTable>
+
+  <tuningTable name="MassSpecTerms">
+    <program commandLine="buildMassSpecTermsTT"/>
   </tuningTable>
 
 </tuningConfig>
