@@ -519,7 +519,7 @@ SQL
   my $stmt = $dbh->prepare($sql);
   my $grantRtn = $stmt->execute();
   if (!$grantRtn) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("Failure on GRANT for new table:" . $dbh->errstr . "\n");
     return 0;
   }
   $stmt->finish();
