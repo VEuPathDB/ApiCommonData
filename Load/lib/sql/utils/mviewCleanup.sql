@@ -11,7 +11,7 @@ prompt Run these statements to test synonyms
 select 'select count(*) as ' || synonym_name || ' from ' || owner || '.' || synonym_name || ';'
        as "synonym tests"
 from all_synonyms
-where owner='APIDB'
+where owner='APIDBTUNING'
 order by synonym_name;
 
 prompt These mviews appear superfluous (their names end in four digits but no synonym points at them).
