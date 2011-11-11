@@ -71,7 +71,7 @@ eval {
   if ($propFile) {
     my $simple = XML::Simple->new();
     $props = $simple->XMLin($propFile);
-    my %permittedProperties = (password => 1, maxRebuildMinutes => 1, dbaEmail => 1, dblink => 1, schema => 1);
+    my %permittedProperties = (password => 1, maxRebuildMinutes => 1, dbaEmail => 1, dblink => 1, schema => 1, fromEmail => 1);
     my $badProp;
     foreach my $foundProp (keys(%{$props})) {
       if (!$permittedProperties{$foundProp}) {
