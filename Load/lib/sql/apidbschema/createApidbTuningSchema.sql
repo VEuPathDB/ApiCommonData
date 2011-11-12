@@ -23,7 +23,7 @@ GRANT REFERENCES ON dots.AaSequenceImp TO ApidbTuning;
 GRANT REFERENCES ON sres.Taxon TO ApidbTuning;
 
 -- GRANTs required for CTXSYS
-GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to apidb;
+GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to ApiDBTuning;
 
 -- tuningManager needs there to be a index named "ApidbTuning.blastp_text_ix"
 --  (because OracleText needs it)
