@@ -337,8 +337,10 @@ sub update {
       chomp($line);
       ApiCommonData::Load::TuningConfig::Log::addLog($line);
     }
+    close(PROGRAM);
+    my $exitCode = $? >> 8;
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $?");
+    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $exitCode");
 
     if ($?) {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to run standalone program:\n$commandLine");
