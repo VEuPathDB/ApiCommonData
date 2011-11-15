@@ -154,10 +154,10 @@ sub traverseSeqFeatures {
 #	    my $exon   = makeBioperlFeature('exon',$exon_location,$bp_seq_obj);
 #	    $transcript->add_SeqFeature($exon);
 #	}
-#	
+	
 #	# Add the transcript to the gene.
 #	$gene_feature->add_SeqFeature($transcript);
-#
+
 #	# And add the gene back to the seq_obj
 #	$bp_seq_obj->add_SeqFeature($gene_feature);
     
@@ -381,6 +381,7 @@ sub gene2centraldogma {
 	    # $gene = copy_attributes($subfeature,$gene);
 	    
 	    if ($subfeature->primary_tag eq 'noncoding_exon'
+                || $subfeature->primary_tag eq 'pseudo_gene'
 		||
 		$subfeature->primary_tag eq 'CDS'
 		) {
