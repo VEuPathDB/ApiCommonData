@@ -1106,10 +1106,23 @@ icum/">CHGC</a> (sequence and annotated features).<br>Sequencing of <i>S. japoni
     <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 6185 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/Shaematobium.contigs.fasta --SOTermName 'contig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
 	<description>
         <![CDATA[
-         <i>S. haematobium</i> contigs from UGA.
+         <i>S. haematobium</i> contigs from UGA (modified).
         ]]>
       </description>
+  </resource>
 
+
+<!-- Schistosoma haematobium Egypt -->
+<resource plugin="GUS::Supported::Plugin::LoadFastaSequences" resource="ShaeEgypt_supercontig_RSRC" version="2011-09-08"
+        displayName="S. haematobium Egypt"
+        category="Genome">
+    <manualGet fileOrDir="SchistoDB/ShaeEgypt/genome/supercontig_Unimelb_gff/%RESOURCE_VERSION%/final/genome.fasta" />
+    <pluginArgs>--externalDatabaseName %RESOURCE_NAME% --ncbiTaxId 1031716 --externalDatabaseVersion %RESOURCE_VERSION% --sequenceFile @@dataDir@@/genome.fasta --SOTermName 'supercontig'  --regexSourceId  '>(\S+)' --tableName "DoTS::ExternalNASequence</pluginArgs>
+        <description>
+        <![CDATA[
+        Sequence data for <i>Schistosoma haematobium</i> strain Egypt were provided by <a href="http://research.vet.unimelb.edu.au/gasserlab/index.html">Dr. Robin B. Gasser</a> (sequence and annotated features).<br>
+	]]>
+      </description>
   </resource>
 
  <categoryOrder>
