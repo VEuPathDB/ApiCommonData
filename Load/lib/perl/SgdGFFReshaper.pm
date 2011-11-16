@@ -332,25 +332,25 @@ sub gene2centraldogma {
     my $type;
     my $tag = $feature->primary_tag;
 
-     $type = $feather->primary_tag();
+#     $type = $feather->primary_tag();
 
-    if ($type eq 'pseudogene') {
-        $type = 'gene';
-        $feather->primary_tag('gene');
-        $feather->add_tag_value("pseudo","");
-     } 
+#    if ($type eq 'pseudogene') {
+#        $type = 'gene';
+#        $feather->primary_tag('gene');
+#        $feather->add_tag_value("pseudo","");
+#     } 
      
-     if ($type eq 'gene') {
-        my $gene = makeBioperlFeature("coding_gene", $feature->location, $bp_seq_obj);
-     }
+#     if ($type eq 'gene') {
+#        my $gene = makeBioperlFeature("coding_gene", $feature->location, $bp_seq_obj);
+#     }
 
-#    if ($tag eq 'gene') {
-#	$type = 'coding_gene';
-#    } elsif ($tag eq 'pseudogene') {
-#	$type = 'pseudo_gene';
-#   } else {
-#	$type = $feature->primary_tag . '_gene';
-#    }
+    if ($tag eq 'gene') {
+	$type = 'coding_gene';
+    } elsif ($tag eq 'pseudogene') {
+	$type = 'pseudo_gene';
+   } else {
+	$type = $feature->primary_tag . '_gene';
+    }
  
    print STDERR $feature->primary_tag . " $type\n";
 
@@ -375,20 +375,20 @@ sub gene2centraldogma {
     my $transcript = makeBioperlFeature("transcript", $feature->location, $bp_seq_obj);
    
 
-    foreach my $tag ($featre->get_all_tags){
-    if ($tag eq 'pseudo'){
-                $feature->primary_tag("coding_gene");
-                my $geneLoc = $feature->location();
-                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bp_seq_obj);
-                my @exonLocs = $geneLoc->each_Location();
-               foreach my $exonLoc (@exonLocs){
-                        my $exon = &makeBioperlFeature("exon",$exonLoc,$bp_seq_obj);
-                        $transcript->add_SeqFeature($exon);
-                }
-                $feature->add_SeqFeature($transcript);
-                $bp_seq_obj->add_SeqFeature($feature);
-           }
-    }
+#    foreach my $tag ($featre->get_all_tags){
+#    if ($tag eq 'pseudo'){
+#                $feature->primary_tag("coding_gene");
+#                my $geneLoc = $feature->location();
+#                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bp_seq_obj);
+#                my @exonLocs = $geneLoc->each_Location();
+#               foreach my $exonLoc (@exonLocs){
+#                        my $exon = &makeBioperlFeature("exon",$exonLoc,$bp_seq_obj);
+#                        $transcript->add_SeqFeature($exon);
+#                }
+#                $feature->add_SeqFeature($transcript);
+#                $bp_seq_obj->add_SeqFeature($feature);
+#           }
+#    }
  
     # Unnecessary.
 #    $transcript    = copy_attributes($feature,$transcript);
