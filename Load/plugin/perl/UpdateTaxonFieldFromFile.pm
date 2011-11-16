@@ -18,7 +18,7 @@ sub getArgumentsDeclaration{
   my $argsDeclaration =
     [
      fileArg({name => 'fileName',
-	      descr => 'input file containing the source_id and either the correspoding ncbi_tax_id or taxon_name',
+	      descr => 'input file containing the source_id and either the corresponding ncbi_tax_id or taxon_name',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0,
@@ -49,18 +49,18 @@ sub getArgumentsDeclaration{
 		reqd  => 1,
 		isList => 0
 	       }),
+     integerArg({name => 'sourceIdSubstringLength',
+		descr => 'Use to take substring from beginning of a source_id ... this is 4 for PDB updates',
+		constraintFunc=> undef,
+		reqd  => 0,
+		isList => 0
+	       }),
      stringArg({name => 'extDbRelSpec',
               descr => 'the database source for the rows being updated in database_name|db_rel_ver format',
               constraintFunc => undef,
               reqd => 1,
               isList => 0
-             }),
-     stringArg({name => 'idSql',
-		descr => 'sql used to get the PKs and lower case source_ids of the rows to be updated, external_database_release_id appended using info from extDbRelSpec',
-		constraintFunc=> undef,
-		reqd  => 1,
-		isList => 0
-	       })
+             })
     ];
   return $argsDeclaration;
 }
@@ -127,15 +127,30 @@ sub run {
 
   $self->userError("table must be in format TableSpace::Table") if ($table !~ /^\w+::\w+$/);
 
+  if ($self->getArg('taxonNameRegex')) {
+    $self->{taxidnameregex} = $self->getArg('taxonNameRegex');
+  }
+  elsif ($self->getArg('ncbiTaxIdRegex')) {
+    $self->{taxidnameregex} = $self->getArg('ncbiTaxIdRegex');
+  }
+  else {
+    $self->userError("must supply either ncbiTaxIdRegex or taxonNameRegex");
+  }
+
   eval ("require GUS::Model::$table");
 
   my $tableId = $self->className2TableId($table);
+
+  ##first cache some things
+  $self->cacheTaxonIdMapping();
+  my $dbh = $self->getQueryHandle();
+  $self->{taxonNameStmt} = $dbh->prepare("select taxon_id from sres.taxonname where lower(name) = ?");
 
   my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
 
   my $sourceIds  = $self->processFile();
 
-  my $updatedRows = $self->getUpdateIds($sourceIds,$table,$pkName);
+  my $updatedRows = $self->getUpdateIds($sourceIds);
 
   my $resultDescrip = "Taxon_id field updated in $updatedRows rows of $table";
 
@@ -147,19 +162,22 @@ sub run {
 sub processFile {
   my ($self) = @_;
 
-  my $file = $self->getArg('fileName');
+  $self->log("Processing taxon file\n");
 
-  my %taxonIds;
+  my $file = $self->getArg('fileName');
 
   my %sourceIds;
 
-  my $unknownTaxonId = $self->getTaxonId(\%taxonIds);
+  my $unknownTaxonId = $self->getTaxonId('unknown');
 
   my $sourceRegex = $self->getArg('sourceIdRegex');
 
   open(FILE,$file) || $self->userError ("can't open $file for reading");
 
+  my $count = 0;
+
   while(<FILE>){
+    $count++;
     chomp;
 
     my $line = $_;
@@ -174,47 +192,29 @@ sub processFile {
       $self->userError("Unable to parse source_id from $line using regex '$sourceRegex' $forgotParens");
     }
 
-    my $taxon_id = $self->getTaxonId(\%taxonIds,$line);
+    my $taxon_id = $self->getTaxonId($line);
 
     $sourceIds{$source_id} = $taxon_id if (! exists $sourceIds{$source_id} || $sourceIds{$source_id} == $unknownTaxonId);
-  }
 
-  %taxonIds = ();
+    $self->log("Processed $count rows") if $count %100000 == 0;
+  }
 
   return \%sourceIds;
 }
 
 sub getTaxonId {
-  my ($self,$taxonIds,$line) = @_;
+  my ($self,$line) = @_;
 
-  my ($regex,$id);
+  my ($val,$id);
 
-  if ($self->getArg('taxonNameRegex')) {
-    $regex = $self->getArg('taxonNameRegex');
-  }
-  elsif ($self->getArg('ncbiTaxIdRegex')) {
-    $regex = $self->getArg('ncbiTaxIdRegex');
-  }
-  else {
-    $self->userError("must supply either ncbiTaxIdRegex or taxonNameRegex");
-  }
-
-  my $val;
-
-  if ($line =~ /$regex/ ) {
+  if ($line =~ /$self->{taxidnameregex}/ ) {
     $val = lc($1);
   }
   else {
     $val = $self->getArg('taxonNameRegex') ? 'unknown' : 32644;
   }
 
-  if (defined $taxonIds->{$val}) {
-    $id = $taxonIds->{$val};
-  }
-  else {
-    $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdfromTaxon($val) ;
-    $taxonIds->{$val} = $id;
-  }
+  $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdfromTaxon($val) ;
 
   return $id;
 }
@@ -222,84 +222,77 @@ sub getTaxonId {
 sub getIdFromTaxonName {
   my ($self,$name) = @_;
 
-  my $dbh = $self->getQueryHandle();
+  $self->{taxonNameStmt}->execute($name);
 
-  my $stmt = $dbh->prepare("select taxon_id from sres.taxonname where lower(name) = ?");
-
-  $stmt->execute($name);
-
-  my ($id) = $stmt->fetchrow_array();
+  my ($id) = $self->{taxonNameStmt}->fetchrow_array();
 
   $id = $self->getIdFromTaxonName('unknown') if (! $id);
 
-  $self->undefPointerCache();
-
   return $id;
+}
+
+sub cacheTaxonIdMapping {
+  my $self = shift;
+  $self->log("Caching ncbi_tax_id -> taxon_id mapping\n");
+  my $st = $self->prepareAndExecute("select taxon_id, ncbi_tax_id from sres.taxon");
+  while(my($taxon_id,$n_tax_id) = $st->fetchrow_array()){
+    $self->{taxonIdMapping}->{$n_tax_id} = $taxon_id;
+  }
 }
 
 sub getIdfromTaxon {
   my ($self,$ncbiTaxId) = @_;
 
-  my $taxon = GUS::Model::SRes::Taxon->new({'ncbi_tax_id' => $ncbiTaxId});
-
-  $taxon->retrieveFromDB();
-
-  my $id = $taxon->getId();
+  my $id = $self->{taxonIdMapping}->{$ncbiTaxId};
 
   $id = $self->getIdFromTaxonName('unknown') if (! $id);
-
-  $self->undefPointerCache();
 
   return $id;
 }
 
 sub updateRows {
-  my ($self,$sourceIds,$table,$source,$pk,$table,$pkName) = @_;
+  my ($self,$hashref, $sourceIds) = @_;
 
-  my $submitted;
+  my $tableName = "GUS::Model::".$self->getArg('tableName');
 
-  my $tableName = "GUS::Model::$table";
+  my $row = $tableName->new($hashref);
 
-  my $row = $tableName->new({"$pkName" => $pk});
+  my $subLength = $self->getArg('sourceIdSubstringLength');
+  my $sid = $subLength ? substr($row->getSourceId(),0,$subLength) : $row->getSourceId();
 
-  $row->retrieveFromDB();
+  $row->setTaxonId($sourceIds->{$sid}) unless ($sourceIds->{$sid} == $row->getTaxonId());
 
-  $row->setTaxonId($sourceIds->{$source}) unless ($sourceIds->{$source} == $row->getTaxonId());
-
-  $submitted += $row->submit();
-
-  $self->undefPointerCache();
-
-  $self->log("Updated $submitted rows.") if $submitted % 1000 == 0;
-
-
-  return $submitted;
+  return $row->submit(0,1);
 }
 
 sub getUpdateIds {
-  my ($self,$sourceIds,$table,$pkName) = @_;
-  my $updatedRows;
+  my ($self,$sourceIds) = @_;
+  my $updatedRows = 0;
 
   my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
 
-  my $idSql = $self->getArg('idSql');
+  my $tableName = $self->getArg('tableName');
+  $tableName =~ s/::/./;
 
-  if ($idSql =~ /where/) {
-    $idSql = $idSql . " and external_database_release_id = $extDbRlsId";
-  }
-  else {
-    $idSql = $idSql . " where external_database_release_id = $extDbRlsId";
-  }
+  my $sql = "select * from $tableName where external_database_release_id = $extDbRlsId and taxon_id is null";
+  $self->log("Query for rows to update:\n$sql\n");
 
   my $dbh = $self->getQueryHandle();
 
-  my $stmt = $dbh->prepareAndExecute($idSql);
+  my $stmt = $dbh->prepareAndExecute($sql);
 
-  while (my ($source_id, $pk) = $stmt->fetchrow_array) {
-    $updatedRows = $self->updateRows($sourceIds,$table,$source_id,$pk,$table,$pkName);
+  while (my $hashref = $stmt->fetchrow_hashref('NAME_lc')) {
+    $self->getDb()->manageTransaction(0,'begin') if $updatedRows % 100 == 0;
+    $updatedRows += $self->updateRows($hashref,$sourceIds);
+    if ($updatedRows % 100 == 0){
+      $self->getDb()->manageTransaction(0,'commit');
+      $self->log("Updated $updatedRows rows.") if $updatedRows % 1000 == 0;
+      $self->undefPointerCache();
+    }
   }
-
+  $self->getDb()->manageTransaction(0,'commit'); 
   $self->undefPointerCache();
+
 
   return $updatedRows;
 }
