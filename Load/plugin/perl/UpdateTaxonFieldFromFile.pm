@@ -122,7 +122,7 @@ sub run {
   $self->logAlgInvocationId();
   $self->logCommit();
   $self->logArgs();
-  $self->getDb()->setGlobalNoVersion(0);  ##don't want to version as not informative
+  $self->getDb()->setGlobalNoVersion(1);  ##don't want to version as not informative
 
   my $table = $self->getArg('tableName');
 
