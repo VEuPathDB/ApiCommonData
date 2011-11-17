@@ -111,7 +111,7 @@ tab_count   SMALLINT;
 ind_count   SMALLINT;
 
 begin
-    for s in (select distinct(owner) schema from all_tables where owner in ('APIDB') )
+    for s in (select distinct(owner) schema from all_tables where owner in ('APIDB', 'APIDBTUNING') )
 	loop
 		dbms_output.put_line('Checking stats for the '||s.schema||' schema');
 		for t in (select distinct(table_name) from
