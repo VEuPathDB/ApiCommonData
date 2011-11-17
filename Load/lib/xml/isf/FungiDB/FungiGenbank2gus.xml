@@ -35,6 +35,8 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/> 
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="ribosomal_slippage" ignore="true"/>
     <!-- from mRNA records -->
     <qualifier name="gene" ignore="true"/>
     <qualifier name="function" ignore="true"/>
@@ -137,8 +139,49 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="unsure" ignore="true">
   </feature>
 
+  <feature name="other_gene" ignore="true">
+  </feature>
+
+  <feature name="telomerase_RNA_gene" ignore="true">
+  </feature>
+
+  <feature name="RNase_P_RNA_gene" ignore="true">
+  </feature>
+
+  <feature name="SRP_RNA_gene" ignore="true">
+  </feature>
+
+  <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="curation"             handler="api" method="note"/>
+    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="blastn_file"          ignore="true"/>
+    <qualifier name="domain"               ignore="true"/>
+    <qualifier name="ncRNA_class"          ignore="true"/>
+
+  </feature>
+
   <feature name="mRNA" ignore="true">
     <!-- mRNA qualifiers are also in CDS -->
+    <qualifier name="allele" ignore="true"/>
+    <qualifier name="citation"/>
+    <qualifier name="evidence"/>
+    <qualifier name="function"/>
+    <qualifier name="gene" handler="standard" method="gene"/>
+    <qualifier name="label"/>
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="map"/>
+    <qualifier name="note" handler="standard" method="note"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
+    <qualifier name="operon" ignore="true"/>
+    <qualifier name="product"/>
+    <qualifier name="pseudo" column="is_pseudo"/>
+    <qualifier name="standard_name"/>
+    <qualifier name="usedin"/>
+    <qualifier name="db_xref" handler="standard" method="dbXRef"/>
   </feature>
 
   <feature name="variation" table="DoTS::Miscellaneous" so="">
@@ -160,6 +203,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <qualifier name="gene" ignore="true"/>
   <qualifier name="artificial_location" ignore="true"/>
   <qualifier name="old_locus_tag" ignore="true"/>
+  <qualifier name="gene_synonym" ignore="true"/>
   </feature>
 
 
