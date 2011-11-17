@@ -129,9 +129,11 @@ sub run {
 
   if ($self->getArg('taxonNameRegex')) {
     $self->{taxidnameregex} = $self->getArg('taxonNameRegex');
+    $self->cacheTaxonNameMapping();
   }
   elsif ($self->getArg('ncbiTaxIdRegex')) {
     $self->{taxidnameregex} = $self->getArg('ncbiTaxIdRegex');
+    $self->cacheTaxonIdMapping();
   }
   else {
     $self->userError("must supply either ncbiTaxIdRegex or taxonNameRegex");
@@ -140,11 +142,6 @@ sub run {
   eval ("require GUS::Model::$table");
 
   my $tableId = $self->className2TableId($table);
-
-  ##first cache some things
-  $self->cacheTaxonIdMapping();
-  my $dbh = $self->getQueryHandle();
-  $self->{taxonNameStmt} = $dbh->prepare("select taxon_id from sres.taxonname where lower(name) = ?");
 
   my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
 
@@ -168,7 +165,7 @@ sub processFile {
 
   my %sourceIds;
 
-  my $unknownTaxonId = $self->getTaxonId('unknown');
+  my $unknownTaxonId = $self->getIdFromTaxonOrName('unknown');
 
   my $sourceRegex = $self->getArg('sourceIdRegex');
 
@@ -196,7 +193,7 @@ sub processFile {
 
     $sourceIds{$source_id} = $taxon_id if (! exists $sourceIds{$source_id} || $sourceIds{$source_id} == $unknownTaxonId);
 
-    $self->log("Processed $count rows") if $count %100000 == 0;
+    $self->log("  Processed $count rows") if $count %10000 == 0;
   }
 
   return \%sourceIds;
@@ -211,22 +208,20 @@ sub getTaxonId {
     $val = lc($1);
   }
   else {
-    $val = $self->getArg('taxonNameRegex') ? 'unknown' : 32644;
+    $val = 'unknown';
   }
 
-  $id = $self->getArg('taxonNameRegex') ? $self->getIdFromTaxonName($val) : $self->getIdfromTaxon($val) ;
+  $id = $self->getIdFromTaxonOrName($val) ;
 
   return $id;
 }
 
-sub getIdFromTaxonName {
-  my ($self,$name) = @_;
+sub getIdFromTaxonOrName {
+  my ($self,$val) = @_;
 
-  $self->{taxonNameStmt}->execute($name);
+  my $id = $self->{taxonIdMapping}->{$val};
 
-  my ($id) = $self->{taxonNameStmt}->fetchrow_array();
-
-  $id = $self->getIdFromTaxonName('unknown') if (! $id);
+  $id = $self->getIdFromTaxonOrName('unknown') if (! $id);
 
   return $id;
 }
@@ -238,17 +233,24 @@ sub cacheTaxonIdMapping {
   while(my($taxon_id,$n_tax_id) = $st->fetchrow_array()){
     $self->{taxonIdMapping}->{$n_tax_id} = $taxon_id;
   }
+  ##need to cache for unknown one ...
+  my $ust = $self->prepareAndExecute("select taxon_id from sres.taxonname where lower(name) = 'unknown'");
+  my ($uid) = $ust->fetchrow_array();
+  $self->{taxonIdMapping}->{'unknown'} = $uid;
+  $self->log("Cached ".scalar(keys%{$self->{taxonIdMapping}}). " ncbi_tax_id -> taxon_id mappings\n");
 }
 
-sub getIdfromTaxon {
-  my ($self,$ncbiTaxId) = @_;
-
-  my $id = $self->{taxonIdMapping}->{$ncbiTaxId};
-
-  $id = $self->getIdFromTaxonName('unknown') if (! $id);
-
-  return $id;
+sub cacheTaxonNameMapping {
+  my $self = shift;
+  $self->log("Caching taxonName -> taxon_id mapping\n");
+  my $st = $self->prepareAndExecute("select taxon_id,lower(name) from sres.taxonname");
+  while(my($taxon_id,$taxName) = $st->fetchrow_array()){
+    $self->{taxonIdMapping}->{$taxName} = $taxon_id;
+  }
+  $self->log("Cached ".scalar(keys%{$self->{taxonIdMapping}}). " names -> taxon_id mappings\n");
 }
+
+
 
 sub updateRows {
   my ($self,$hashref, $sourceIds) = @_;
@@ -286,7 +288,7 @@ sub getUpdateIds {
     $updatedRows += $self->updateRows($hashref,$sourceIds);
     if ($updatedRows % 100 == 0){
       $self->getDb()->manageTransaction(0,'commit');
-      $self->log("Updated $updatedRows rows.") if $updatedRows % 1000 == 0;
+      $self->log("Updated $updatedRows rows.") if $updatedRows % 10000 == 0;
       $self->undefPointerCache();
     }
   }
