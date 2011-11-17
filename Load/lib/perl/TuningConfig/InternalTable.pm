@@ -14,7 +14,7 @@ sub new {
     my ($class, $name, $internalDependencyNames, $externalDependencyNames,
         $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
         $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
-        $alwaysUpdate, $maxRebuildMinutesParam, $instance, $propfile, $schema, $password, $subversionDir)
+        $alwaysUpdate, $prefixEnabled, $maxRebuildMinutesParam, $instance, $propfile, $schema, $password, $subversionDir)
 	= @_;
 
     my $self = {};
@@ -39,6 +39,7 @@ sub new {
     $self->{externalTuningTableDependencies} = [];
     $self->{debug} = $debug;
     $self->{alwaysUpdate} = $alwaysUpdate;
+    $self->{prefixEnabled} = $prefixEnabled;
     $self->{instance} = $instance;
     $self->{propfile} = $propfile;
     $self->{password} = $password;
@@ -135,7 +136,7 @@ sub getTimestamp {
 }
 
 sub getState {
-  my ($self, $doUpdate, $dbh, $purgeObsoletes, $registry) = @_;
+  my ($self, $doUpdate, $dbh, $purgeObsoletes, $registry, $prefix, $filterValue) = @_;
 
   return $self->{state} if defined $self->{state};
 
@@ -163,7 +164,7 @@ sub getState {
 
     # increase log-file indentation for recursive call
     ApiCommonData::Load::TuningConfig::Log::increaseIndent();
-    my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes, $registry);
+    my $childState = $dependency->getState($doUpdate, $dbh, $purgeObsoletes, $registry, $prefix, $filterValue);
     ApiCommonData::Load::TuningConfig::Log::decreaseIndent();
 
     if ($childState eq "neededUpdate" || $dependency->getTimestamp() gt $self->getTimestamp()) {
@@ -206,23 +207,27 @@ SQL
 	$needUpdate = 1
   }
 
-
   if ($self->{alwaysUpdate}) {
     ApiCommonData::Load::TuningConfig::Log::addLog("    " . $self->{name} . " has alwaysUpdate attribute.");
   }
 
-  if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate}) {
-    my $updateResult = $self->update($dbh, $purgeObsoletes, $registry);
-    $broken = 1 if $updateResult eq "broken";
+  if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate} or ($doUpdate and $prefix)) {
+    if ($prefix && !$self->{prefixEnabled}) {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("attempt to update tuning table " . $self->{name} . ", which does not have the prefixEnabled attribute");
+      $broken = 1;
+    } else {
+      my $updateResult = $self->update($dbh, $purgeObsoletes, $registry, $prefix, $filterValue);
+      $broken = 1 if $updateResult eq "broken";
+    }
   }
 
   ApiCommonData::Load::TuningConfig::Log::setUpdateNeededFlag()
-      if $needUpdate and !$self->{alwaysUpdate};  # don't set the update flag for alwaysUpdate tables
+      if ($needUpdate or $prefix) and !$self->{alwaysUpdate};  # don't set the update flag for alwaysUpdate tables
 
   if ($broken) {
     $self->{state} = "broken";
     ApiCommonData::Load::TuningConfig::Log::setErrorsEncounteredFlag();
-  } elsif ($needUpdate) {
+  } elsif ($needUpdate or $prefix) {
     $self->{state} = "neededUpdate";
   } else {
     $self->{state} = "up-to-date";
@@ -234,7 +239,7 @@ SQL
 }
 
 sub update {
-  my ($self, $dbh, $purgeObsoletes, $registry) = @_;
+  my ($self, $dbh, $purgeObsoletes, $registry, $prefix, $filterValue) = @_;
 
   my $startTime = time;
 
@@ -277,6 +282,12 @@ sub update {
 
     # use numeric suffix to make db object names unique
     $sqlCopy =~ s/&1/$suffix/g;
+
+    # substitute prefix macro
+    $sqlCopy =~ s/&prefix/$prefix/g;
+
+    # substitute filterValue macro
+    $sqlCopy =~ s/&filterValue/$filterValue/g;
 
     ApiCommonData::Load::TuningConfig::Log::addLog("vvvvvv sql string changed: vvvvvv\nbefore: \"$sql\"\nafter: \"$sqlCopy\"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 	if $self->{debug} && $sqlCopy ne $sql;
@@ -322,7 +333,7 @@ sub update {
                       . " -propfile '" . $self->{propfile} . "'"
                       . " -password '" . $self->{password} . "'"
                       . " -schema '" . $self->{schema} . "'"
-                      . " -project '" . $registry->getProjectId() . "'"
+#                     . " -project '" . $registry->getProjectId() . "'"
 #                     . " -version '" . $registry->getVersion() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
@@ -337,8 +348,10 @@ sub update {
       chomp($line);
       ApiCommonData::Load::TuningConfig::Log::addLog($line);
     }
+    close(PROGRAM);
+    my $exitCode = $? >> 8;
 
-    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $?");
+    ApiCommonData::Load::TuningConfig::Log::addLog("finished running program, with exit code $exitCode");
 
     if ($?) {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to run standalone program:\n$commandLine");
@@ -351,12 +364,12 @@ sub update {
   $self->dropIntermediateTables($dbh, 'warn on nonexistence');
 
   # publish main table
-  $self->publish($self->{name}, $suffix, $dbh, $purgeObsoletes) or return "broken";
+  $self->publish($self->{name}, $suffix, $dbh, $purgeObsoletes, $prefix) or return "broken";
 
   # publish ancillary tables
   foreach my $ancillary (@{$self->{ancillaryTables}}) {
       ApiCommonData::Load::TuningConfig::Log::addLog("publishing ancillary table " . $ancillary->{name});
-      $self->publish($ancillary->{name}, $suffix, $dbh, $purgeObsoletes) or return "broken";
+      $self->publish($ancillary->{name}, $suffix, $dbh, $purgeObsoletes, $prefix) or return "broken";
   }
 
   # store definition
@@ -372,7 +385,8 @@ sub update {
       if ($buildDuration > $maxRebuildMinutes * 60)
   }
 
-  ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink());
+  ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink())
+      if !$prefix;
 
   return "neededUpdate"
 }
@@ -509,17 +523,20 @@ SQL
 }
 
 sub publish {
-  my ($self, $tuningTableName, $suffix, $dbh, $purgeObsoletes) = @_;
+  my ($self, $tuningTableName, $suffix, $dbh, $purgeObsoletes, $prefix) = @_;
 
   # grant select privilege on new table
     my $sql = <<SQL;
-      grant select on $tuningTableName$suffix to gus_r
+      grant select on $prefix$tuningTableName$suffix to gus_r
 SQL
 
-    my $stmt = $dbh->prepare($sql);
-    $stmt->execute()
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
-    $stmt->finish();
+  my $stmt = $dbh->prepare($sql);
+  my $grantRtn = $stmt->execute();
+  if (!$grantRtn) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("Failure on GRANT for new table:" . $dbh->errstr . "\n");
+    return 0;
+  }
+  $stmt->finish();
 
   # get name of old table (for subsequenct purging). . .
   my ($oldTable, $explicitSchema, $table);
@@ -539,7 +556,7 @@ SQL
 SQL
 
     my $stmt = $dbh->prepare($sql);
-    $stmt->execute("$table")
+    $stmt->execute("$prefix$table")
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     ($oldTable) = $stmt->fetchrow_array();
     $stmt->finish();
@@ -554,14 +571,14 @@ SQL
 SQL
 
     my $stmt = $dbh->prepare($sql);
-    $stmt->execute("$table")
+    $stmt->execute("$prefix$table")
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     $stmt->finish();
   }
 
   # update synonym
   my $sql = <<SQL;
-    create or replace synonym $tuningTableName for $tuningTableName$suffix
+    create or replace synonym $prefix$tuningTableName for $prefix$tuningTableName$suffix
 SQL
   my $synonymRtn = $dbh->do($sql);
 

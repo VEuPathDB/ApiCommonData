@@ -33,7 +33,8 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . join(' ', @ARGV));
 
 my ($configFile, $propFile, $instance, $schema, $password, $tables,
-    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate, $maxWait, $logfile);
+    $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate,
+    $maxWait, $logfile, $prefix, $filterValue);
 
 GetOptions("configFile=s" => \$configFile,
            "propFile=s" => \$propFile,
@@ -49,6 +50,8 @@ GetOptions("configFile=s" => \$configFile,
            "cleanupWarnOnly!" => \$debug,
            "maxWait=s" => \$maxWait,
            "logfile=s" => \$logfile,
+           "prefix=s" => \$prefix,
+           "filterValue=s" => \$filterValue,
 	  );
 
 ApiCommonData::Load::TuningConfig::Log::setLogfile($logfile);
@@ -66,29 +69,39 @@ $cleanupAge = 0 if !defined $cleanupAge;
 
 $doUpdate = 1 if $forceUpdate;
 
-if ($propFile) {
-  my $simple = XML::Simple->new();
-  $props = $simple->XMLin($propFile);
-}
-
-# prefer schema from command line, then prop file, then hardwired default
-$schema = $props->{schema} if !$schema;
-$schema = 'ApidbTuning' if !$schema;
-
-$maxRebuildMinutes = $props->{maxRebuildMinutes};
-
-if ($props->{dbaEmail}) {
-  $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
-  $fromEmail = $props->{fromEmail} if $props->{fromEmail};
-} else {
-  $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
-  $fromEmail = 'tuningMgr@pcbi.upenn.edu';
-}
-
-
 my ($dbh, $tuningRegistry, $brokenCount, $neededUpdateCount);
-
 eval {
+  if ($propFile) {
+    my $simple = XML::Simple->new();
+    $props = $simple->XMLin($propFile);
+    my %permittedProperties = (password => 1, maxRebuildMinutes => 1, dbaEmail => 1, dblink => 1, schema => 1, fromEmail => 1);
+    my $badProp;
+    foreach my $foundProp (keys(%{$props})) {
+      if (!$permittedProperties{$foundProp}) {
+	ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid property \"$foundProp\"");
+	$badProp = 1;
+      }
+    }
+    die if $badProp;
+  }
+
+  # prefer schema from command line, then prop file, then hardwired default
+  $schema = $props->{schema} if !$schema;
+  $schema = 'ApidbTuning' if !$schema;
+
+  $maxRebuildMinutes = $props->{maxRebuildMinutes};
+
+  if ($props->{dbaEmail}) {
+    $dbaEmail = $props->{dbaEmail} if $props->{dbaEmail};
+    $fromEmail = $props->{fromEmail} if $props->{fromEmail};
+  } else {
+    $dbaEmail = 'tuningMgr@pcbi.upenn.edu';
+    $fromEmail = 'tuningMgr@pcbi.upenn.edu';
+  }
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("creating tuning tables with the prefix \"$prefix\"")
+      if $prefix;
+
   $SIG{INT} = \&catch_signal;
   $SIG{TERM} = \&catch_signal;
 
@@ -97,13 +110,14 @@ eval {
   $dbh = ApiCommonData::Load::TuningConfig::Utils::getDbHandle($instance, $schema, $password);
 
   $tuningRegistry =
-    ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink});
+    ApiCommonData::Load::TuningConfig::TuningRegistry->new($dbh, $props->{dblink})
+	if !$prefix;
 
-  if (lc($instance) ne lc($tuningRegistry->getInstanceName())) {
+  if (!$prefix && (lc($instance) ne lc($tuningRegistry->getInstanceName()))) {
     die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
   }
 
-  $configFile = getConfigFileName($configFile, $tuningRegistry);
+  $configFile = getConfigFileName($configFile, $tuningRegistry, $prefix);
   ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
   my ($config) = &parseConfigFile($configFile);
 
@@ -111,6 +125,9 @@ eval {
   my %tuningTables;
   my %externalTables;
   my %externalTuningTables;
+  my $dblinkSuffix = "";
+  $dblinkSuffix = $tuningRegistry->getDblinkSuffix() if !$prefix;
+
   foreach my $tuningTable (@{$config->{tuningTable}}) {
 
     $tuningTables{$tuningTable->{name}}
@@ -119,11 +136,11 @@ eval {
 	    $tuningTable->{externalTuningTableDependency}, $tuningTable->{intermediateTable},
             $tuningTable->{ancillaryTable}, $tuningTable->{sql}, $tuningTable->{perl},
             $tuningTable->{unionization}, $tuningTable->{program}, $dbh, $debug,
-            $tuningRegistry->getDblinkSuffix(), $tuningTable->{alwaysUpdate},
+            $dblinkSuffix, $tuningTable->{alwaysUpdate}, $tuningTable->{prefixEnabled},
             $maxRebuildMinutes, $instance, $propFile, $schema, $password, $subversionDir);
   }
 
-  if ($doUpdate) {
+  if ($doUpdate && !$prefix) {
     clearDeadLock();
     checkLockout($maxWait) if $maxWait;
     $doUpdate = 0 if lockForUpdate($forceUpdate) eq "fail";
@@ -159,7 +176,7 @@ eval {
 	$externalTables{$key}
 	  = ApiCommonData::Load::TuningConfig::ExternalTable->
 	    new($dependency->{name}, $dependency->{dblink}, $dbh, $doUpdate,
-		$tuningRegistry->getDblinkSuffix())
+		$dblinkSuffix)
 	      unless ($externalTables{$key});
 
 	# add external-table object to list of external dependencies
@@ -253,7 +270,7 @@ eval {
     }
 
     $tableCount++;
-    my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge, $tuningRegistry);
+    my $state = $tuningTables{$table}->getState($doUpdate, $dbh, !$cleanupAge, $tuningRegistry, $prefix, $filterValue);
 
     if ($state eq "broken") {
       $brokenCount++;
@@ -317,28 +334,28 @@ eval {
 						   . " indexes were found to exist.");
   }
 
-  releaseLockForUpdate();
+  releaseLockForUpdate() if !$prefix;
 
   # set last updater in registry if we did a successful full update (and made changes)
   $tuningRegistry->setLastUpdater()
-    if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount;
+    if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount && !$prefix;
 
   # set last checker
   $tuningRegistry->setLastChecker()
-    if !$tables && !$doUpdate;
+    if !$tables && !$doUpdate && !$prefix;
   $tuningRegistry->setLastUpdater()
-    if !$tables && !$doUpdate;
+    if !$tables && !$doUpdate && !$prefix;
 
   # set OK if: we looked at everything, nothing was broken, and if updates were needed, we did them.
   $tuningRegistry->setOk()
-    if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate);
+    if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate) && !$prefix;
 
   # set outdated if: something was broken, or needed an update but didn't get it
   $tuningRegistry->setOutdated()
-    if ($neededUpdateCount && !$doUpdate) || $brokenCount;
+    if ( ($neededUpdateCount && !$doUpdate) || $brokenCount) && !$prefix;
 
   # if a temporary config-file dir was checked out from svn, delete it now
-  if ($subversionDir) {
+  if ($subversionDir && !$prefix) {
     my @cmdLine = ("rm", "-rf", $subversionDir);
     system(@cmdLine) == 0
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to remove temporary config directory");
@@ -460,16 +477,18 @@ Sample prop file:
 }
 
 sub getConfigFileName {
-  my ($configFile, $tuningRegistry) = @_;
+  my ($configFile, $tuningRegistry, $suffix) = @_;
 
   my $configPath;
-  $subversionDir = "/tmp/tMan." . $$ . "." . time . "/";
-  my $subversionUrl = $tuningRegistry->getSubversionUrl();
-  my @cmdLine = ("svn", "checkout", $subversionUrl, $subversionDir);
-  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
-  ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
-  system(@cmdLine) == 0
-    or die "system @cmdLine failed: $?";
+  if (!$prefix) {
+    $subversionDir = "/tmp/tMan." . $$ . "." . time . "/";
+    my $subversionUrl = $tuningRegistry->getSubversionUrl();
+    my @cmdLine = ("svn", "checkout", $subversionUrl, $subversionDir);
+    ApiCommonData::Load::TuningConfig::Log::addLogBanner("Checking out configuration file from Subversion");
+    ApiCommonData::Load::TuningConfig::Log::addLog("Subversion URL: \"$subversionUrl\"");
+    system(@cmdLine) == 0
+      or die "system @cmdLine failed: $?";
+  }
 
   # if no config file was supplied, use one from Subversion
   if (!$configFile) {
@@ -582,9 +601,17 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . dropping");
-    $dbh->do("drop table $table")
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("Obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . consider dropping it");
+# We used to drop these tables (i.e. ones with names ending in [at least] four
+# digits but with no synonym pointing to them). But it sometimes happened that
+# the long-running Sanger web-service client was still making its table (and
+#  therefore didn't have a synonym pointed at it) when a faster-running tuning
+#  manager process completed and, in its cleanup, DROPPED THE
+#  STILL-UNDER-CONSTRUCTION TABLE. So now, we'll just log an error that this
+# table (apparently) needs to be cleaned up.
+#
+#    $dbh->do("drop table $table")
+#       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
   $stmt->finish();
