@@ -125,10 +125,11 @@ my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
 # confirm that we have all valid taxa, and convert names to NCBI taxon
 # identifiers
 # result: an array of NCBI TaxIds for the taxon names provided on command line
+my %hier;
 @taxa = map {
   my $taxon = $_;
-  my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
-  SELECT ncbi_tax_id
+  my ($ncbiTaxonId,$level) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
+  SELECT ncbi_tax_id,t.hierarchy
   FROM   SRes.Taxon t,
          SRes.TaxonName tn
   WHERE  t.taxon_id = tn.taxon_id
@@ -140,8 +141,13 @@ EOSQL
     die "Invalid taxon: $taxon\n";
   }
 
+  $hier{$ncbiTaxonId} = $level;
+
   $ncbiTaxonId;
 } @taxa;
+
+##sort by hierarchy with lowest first
+my @sortedTaxa = sort{$hier{$a} <=> $hier{$b}}keys%hier;
 
 # an sql run on each subject
 # input: subject's tax_id
@@ -157,7 +163,7 @@ SELECT e.ncbi_tax_id
                   CONNECT BY PRIOR e.taxon_id = e.parent_id
 EOSQL
 
-my $lookup = $dbh->prepare($sql_statement);
+my $lookup = $dbh->prepare($sql_taxon_hash);
 
 my %taxaIds;  ##cache the taxa query .. note that need to know which is at what level ... hmmm 
 foreach my $ntid (@taxa){
@@ -330,8 +336,6 @@ sub process {
   }
 }
 
-my %ncbiTaxonIdMap;
-
 sub truncateTables {
   for my $taxonId ("root", @taxa) {
     my $table = "hits$pid\_$taxonId";
@@ -340,21 +344,10 @@ sub truncateTables {
 }
 
 sub calcTaxonId {
-
   my ($ncbiTaxonId) = @_;
 
-  return $ncbiTaxonIdMap{$ncbiTaxonId} ||= do {
-    my $taxonId = "root";
-
-    if (@taxa) {
-      $lookup->execute($ncbiTaxonId);
-      if (my $row = $lookup->fetchrow_arrayref()) {
-	($taxonId) = @$row;
-      }
-      $lookup->finish();
-    }
-
-    $taxonId;
-  };
-
+  foreach my $t (@sortedTaxa){
+    return $t if $taxaIds{$t}->{$ncbiTaxonId};
+  }
+  return 'root';
 }
