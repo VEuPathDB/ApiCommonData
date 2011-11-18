@@ -142,10 +142,6 @@ sub run {
 
   eval ("require GUS::Model::$table");
 
-  my $tableId = $self->className2TableId($table);
-
-  my $pkName = $self->getAlgInvocation()->getTablePKFromTableId($tableId);
-
   my $sourceIds  = $self->processFile();
 
   my $updatedRows = $self->getUpdateIds($sourceIds);
@@ -160,7 +156,25 @@ sub run {
 sub processFile {
   my ($self) = @_;
 
-  $self->log("Processing taxon file\n");
+  $self->log("Processing taxon file");
+
+  ##NOTE: we can't afford the large memory footprint of the entire file so need to just pull in rows that we need.
+
+  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
+
+  my $tableName = $self->getArg('tableName');
+  $tableName =~ s/::/./;
+
+  my $sql = "select source_id from $tableName where external_database_release_id = $extDbRlsId and taxon_id is null";
+  my $dbh = $self->getQueryHandle();
+  my $stmt = $dbh->prepareAndExecute($sql);
+  my %idsNeeded;
+  my $subLength = $self->getArg('sourceIdSubstringLength');
+  while (my ($id) = $stmt->fetchrow_array()) {
+    my $sid = lc($subLength ? substr($id,0,$subLength) : $id);
+    $idsNeeded{$sid} = 1;
+  }
+  $self->log(" Pulling ",scalar(keys%idsNeeded)." ids from file");
 
   my $file = $self->getArg('fileName');
 
@@ -189,13 +203,15 @@ sub processFile {
       my $forgotParens = ($sourceRegex !~ /\(/)? "(Forgot parens?)" : "";
       $self->userError("Unable to parse source_id from $line using regex '$sourceRegex' $forgotParens");
     }
+    $self->log("  Processed $count rows") if $count % 100000 == 0;
+    next unless $idsNeeded{$source_id};
 
     my $taxon_id = $self->getTaxonId($line);
 
     $sourceIds{$source_id} = $taxon_id if (! exists $sourceIds{$source_id} || $sourceIds{$source_id} == $unknownTaxonId);
 
-    $self->log("  Processed $count rows") if $count %10000 == 0;
   }
+  $self->log("Have mapping for ",scalar(keys%sourceIds)," source_ids\n"); 
 
   return \%sourceIds;
 }
