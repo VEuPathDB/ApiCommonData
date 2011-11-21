@@ -5,18 +5,49 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use GUS::Supported::GusConfig;
 
-my ($gusConfigFile, $drop, $create, $db, $allowFailures);
+$| = 1;
+
+my ($gusConfigFile, $dropApiDB, $dropGUS, $create, $db, $allowFailures, $verbose);
+
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-           "drop!" => \$drop,
+           "dropApiDB!" => \$dropApiDB,
+           "dropGUS!" => \$dropGUS,
            "allowFailures!" => \$allowFailures,
            "create!" => \$create,
+           "verbose!" => \$verbose,
            "db=s" => \$db);
 
-if (!$db || !($drop || $create) || ($drop && $create)) {
+my $x = $dropApiDB + $dropGUS + $create;
+if (!$db || ($x != 1)) {
   die "
-usage: apidbSchema --db database [--drop | --create] [--gusConfigFile gus_config_file] [--allowFailures]
 
-Caution: only use --allowFailures if you know what you are doing";
+Install the ApiDB and ApiDBTuning schemas and the ApidDB patches to GUS.  Or, uinstall them (or uninstall the GUS schemas)
+
+usage: installApidbSchema --db database [--create | --dropApiDB | --dropGUS] [--gusConfigFile gus_config_file] [--allowFailures] [--verbose]
+
+Caution: only use --allowFailures if you know what you are doing
+
+create - creates the ApiDB and ApiDBTuning schemas and patches GUS.
+
+dropApiDB - drops the ApiDB and ApiDBTuning schemas, and ApiDB patches to GUS.
+
+dropGUS - drops the Core, DoTS, PROT, RAD, SRes, STUDY, TESS (and all VER) schemas
+
+Log is printed to STDOUT
+
+Verbose prints commands run to STDERR
+
+";
+}
+
+my $d = 'GUS schema';
+$d = 'ApiDB and ApiDBTuning schemas' if $dropApiDB;
+
+if ($dropApiDB || $dropGUS) {
+    print "\nYou are about to UNINSTALL the $d on:\n  $db\nType the name of the instance to confirm: ";
+    my $confirm = <STDIN>;
+    chomp $confirm;
+    die "You did not correctly confirm the db instance\n" unless $db eq $confirm;
 }
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -84,9 +115,8 @@ my @create = qw(
 	       createPlasmoPfalLocations.sql
 	       createPlasmoMapp.sql
 	       createGeneGenomicSequence_Split.sql
-	       createOrganismProject.sql
+	       createOrganism.sql
 	       createIsolateMapping.sql
-	       createDifferentialExpression.sql
 	       createRUMIntronFeature.sql
 	       createGeneLodScoresTable.sql
 	     );
@@ -97,6 +127,8 @@ my @create = qw(
 my @delete = qw( deleteGusVersion.sql
                  restoreNullConstraintsFromSimilarityTables.sql
                  dropGusTuning.sql
+      	         dropDbLinks.sql
+	         dropDbUser.sql
                  dropApidbTuningSchema.sql
                  dropApidbSchema.sql
                );
@@ -106,39 +138,54 @@ if ($create) {
     &runSql($login, $password, $db, $sql);
   }
 
-} else {
+} elsif ($dropApiDB) {
 
   for my $sql (@delete) {
     &runSql($login, $password, $db, $sql);
   }
 
+} elsif ($dropGUS) {
+    &runSql($login, $password, $db, 'dropEntireGusSchema.sql');
+
 }
+
+print STDERR "\nDone.\n";
 
 sub runSql {
   my ($login, $password, $db, $file) = @_;
 
   my $fullFile = "$ENV{GUS_HOME}/lib/sql/apidbschema/$file";
 
-  -e $fullFile || die "File '$fullFile' does not exist";
+  -e $fullFile || die "File .sql file '$fullFile' does not exist\n";
 
   my $tmpFile = "/tmp/$file.$$";  # append the process id
   unlink($tmpFile);  # in case of a old one
   my $cmd;
   if (!$allowFailures) {
-      $cmd = "echo 'whenever sqlerror exit sql.sqlcode' > $tmpFile";
-      runCmd($cmd);
+      $cmd = "echo 'whenever sqlerror exit sql.sqlcode;' > $tmpFile";
+      runCmd($cmd, $tmpFile);
   }
+  $cmd = "echo 'set echo on;' >> $tmpFile";
+  runCmd($cmd, $tmpFile);
+
   $cmd = "cat $fullFile >> $tmpFile";
-  runCmd($cmd);
+  runCmd($cmd, $tmpFile);
   $cmd = "sqlplus $login\@$db/$password \@$tmpFile";
-  runCmd($cmd);
+  print STDOUT "\n==============================================================\n";
+  print STDOUT "Running $tmpFile\n";
+  print STDOUT "==============================================================\n";
+
+  runCmd($cmd, $tmpFile);
   unlink($tmpFile);
 }
 
 sub runCmd {
-    my ($cmd) = @_;
-    print STDERR "running command: $cmd\n";
+    my ($cmd, $tmpFile) = @_;
+    print STDERR "\nrunning command: $cmd\n" if $verbose;
     system($cmd);
     my $status = $? >> 8;
-    die "Failed with status '$status running cmd: $cmd'" if $status;
+    if ($status) {
+      unlink($tmpFile);
+      die "Failed with status '$status running cmd: \n$cmd'\n";
+    }
 }

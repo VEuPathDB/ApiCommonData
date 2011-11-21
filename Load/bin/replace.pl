@@ -42,12 +42,8 @@ $fileNamePattern = "\S+" unless $fileNamePattern;
 foreach my $file (@inputFiles){
   my $new_file = "";
   my $replace = 0;
-  open (F, "$file");
-  my $len = length($file);
-  $len += 3;
+  open (F, "$file") || die "Can't open input file '$file'\n";;
   while (<F>) {
-    my $dnrp = 0;
-    my $rpc = 0;
     while (m/$old/g) {
         $replace++;
         $_ =~ s|$old|$new|;

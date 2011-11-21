@@ -109,9 +109,6 @@ ALTER TABLE apidb.OrthomclTaxon
 ADD CONSTRAINT ot_fk2 FOREIGN KEY (taxon_id)
 REFERENCES sres.Taxon (taxon_id);
 
-CREATE INDEX apidb.OrthomclTaxon_revix
-ON apidb.OrthomclTaxon (taxon_id, orthomcl_taxon_id);
-
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthomclTaxon TO gus_w;
 GRANT SELECT ON apidb.OrthomclTaxon TO gus_r;
 
@@ -920,31 +917,5 @@ FROM dual,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'OrthomclGroupDomain' NOT IN (SELECT name FROM core.TableInfo
                                  WHERE database_id = d.database_id);
-
---------------------------------------------------------------------------------
-
-
-CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
-    indextype IS ctxsys.ctxcat;
-    
-CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
-    indextype IS ctxsys.ctxcat;
-
-CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
-    indextype IS ctxsys.ctxcat;
-
---------------------------------------------------------------------------------
-
-
-EXEC CTX_DDL.SYNC_INDEX('dots.aasequenceimp_ind_desc');
-EXEC CTX_DDL.OPTIMIZE_INDEX('dots.aasequenceimp_ind_desc','FULL');
-
-EXEC CTX_DDL.SYNC_INDEX('sres.dbref_ind_id2');
-EXEC CTX_DDL.OPTIMIZE_INDEX('sres.dbref_ind_id2');
- 
-EXEC CTX_DDL.SYNC_INDEX('sres.dbref_ind_rmk');
-EXEC CTX_DDL.OPTIMIZE_INDEX('sres.dbref_ind_rmk');
-
---------------------------------------------------------------------------------
 
 exit;

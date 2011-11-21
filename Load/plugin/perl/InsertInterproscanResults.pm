@@ -173,9 +173,9 @@ sub run {
 
   $self->loadConfig(\@resultFiles, $resultDir);
 
-  my @goDbRlsIds = ($self->getArg('goVersion'));
+  my $goVersion = $self->getArg('goVersion');
   $self->{GOAnnotater} =
-    ApiCommonData::Load::Utility::GOAnnotater->new($self, \@goDbRlsIds);
+    ApiCommonData::Load::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"]);
 
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('extDbName'),
 					     $self->getArg('extDbRlsVer'));
@@ -411,10 +411,20 @@ sub loadConfig{
 sub parseSimple{
   my ($self,$file) = @_;
 
-  my $simple = XML::Simple->new();
-  my $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
 
+  # wrap in eval to dodge xml simple error handling issue
+  # can lose the eval when GusApplication retires use of Error.pm
+  # see redmine #5982
+  my $tree;
+  eval {
+    my $simple = XML::Simple->new();
+    $tree = $simple->XMLin($file, keyattr=>['name'], forcearray=>1);
+  };
+  if ( $@ ) {
+    die "$@";
+  }
   return $tree;
+
 }
 
 # return a hash of domain sourceId to DbRef ID

@@ -7,11 +7,13 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use Getopt::Long;
 use Data::Dumper;
 use List::Util qw(sum);
+use Digest::MD5 qw(md5_base64);
 
-my ($outputFile,$inputFile,$verbose, $sampleName);
+my ($outputFile,$inputFile,$verbose, $sampleName, $experimentName);
 &GetOptions("inputFile=s" => \$inputFile,
             "verbose!" => \$verbose,
             "sampleName=s" => \$sampleName,
+            "experimentName=s" => \$experimentName,
             "outputFile=s" => \$outputFile);
 
 my %featureHash;
@@ -30,7 +32,9 @@ close(TABFILE);
 open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
 foreach my $k (keys %featureHash){
     my @arr = split(/\t/, $k);
-    print OUT "$arr[0]\tChIP_PEAKS\tPEAKS\t$arr[1]\t$arr[2]\t.\t+\t.\tID \"$arr[0]_$arr[1]_$arr[2]-$sampleName\";IS_PREDICTED \"0\"\n";
+    # sequence source id, start, end
+    my $peakID = md5_base64("$arr[0]_$arr[1]_$arr[2]-$sampleName-$experimentName");
+    print OUT "$arr[0]\tChIP_PEAKS\tPEAKS\t$arr[1]\t$arr[2]\t.\t+\t.\tID \"$peakID\";IS_PREDICTED \"0\"\n";
 }
 
 close(OUT);

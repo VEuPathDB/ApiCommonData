@@ -16,7 +16,6 @@ use GUS::Model::Core::TableInfo;
 use ApiCommonData::Load::Util;
 
 
-
 my $argsDeclaration =
   [
 
@@ -51,10 +50,17 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	    }),
 
-  stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
+  stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi).  If you provide this list then do not provide a projectName argument.',
 	      name  => 'taxaToLoad',
 	      isList    => 1,
-	      reqd  => 1,
+	      reqd  => 0,
+	      constraintFunc => undef,
+	    }),
+
+  stringArg({ descr => 'Use projectName to discover the set of orthomclAbbrevs to load from the ApiDB.Organism table (ie, those that are in this project).  If you provide this value then do not provide the taxaToLoad argument.',
+	      name  => 'projectName',
+	      isList    => 0,
+	      reqd  => 0,
 	      constraintFunc => undef,
 	    }),
 
@@ -118,6 +124,20 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $taxaToLoad = $self->getArg('taxaToLoad');
+  my $projectName = $self->getArg('projectName');
+
+  $self->error("Provide only one or the other of these two arguments: --taxaToLoad and --projectName") if ($taxaToLoad && $projectName);
+
+  if ($projectName) {
+      my $sql = "select abbrev_orthomcl from ApiDB.Organism
+                 where project_name = '$projectName'";
+      my $sth = $self->prepareAndExecute($sql);
+      while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
+	  push(@$taxaToLoad, $orthomclAbbrev);
+      }
+  }
+
   open(FILE, $self->getArg('OrthologFile')) || die "Could Not open Ortholog File for reading: $!\n";
 
   my $orthologExperimentId = $self->_makeOrthologExperiment();
@@ -126,8 +146,6 @@ sub run {
   my ($expLoaded, $seqGroupLoaded, $seqSeqGroupLoaded, $skipped) = (1);
 
   my $counter = 0;
-
-  my $taxaToLoad = $self->getArg('taxaToLoad');
 
   while (my $line = <FILE>) {
     chomp($line);

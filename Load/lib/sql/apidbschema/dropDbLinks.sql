@@ -1,3 +1,3 @@
-DROP DATABASE LINK apidb.login_comment;
+DROP PUBLIC DATABASE LINK apidb.login_comment;
 
 exit;

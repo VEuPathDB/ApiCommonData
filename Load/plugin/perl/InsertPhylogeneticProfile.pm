@@ -23,12 +23,20 @@ my $argsDeclaration =
             constraintFunc => undef,
             isList         => 0, }),
 
-   stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi)',
-	       name  => 'taxaToLoad',
-	       isList    => 1,
-	       reqd  => 1,
-	       constraintFunc => undef,
-	     }),
+  stringArg({ descr => 'List of taxon abbrevs we want to load (eg: pfa, pvi).  If you provide this list then do not provide a projectName argument.',
+	      name  => 'taxaToLoad',
+	      isList    => 1,
+	      reqd  => 0,
+	      constraintFunc => undef,
+	    }),
+
+  stringArg({ descr => 'Use projectName to discover the set of orthomclAbbrevs to load from the ApiDB.Organism table (ie, those that are in this project).  If you provide this value then do not provide the taxaToLoad argument.',
+	      name  => 'projectName',
+	      isList    => 0,
+	      reqd  => 0,
+	      constraintFunc => undef,
+	    }),
+
   ];
 
 my $purpose = <<PURPOSE;
@@ -89,8 +97,20 @@ sub new {
 sub run {
   my ($self) = @_;
 
-  # put our taxa into a hash
   my $taxaToLoad = $self->getArg('taxaToLoad');
+  my $projectName = $self->getArg('projectName');
+  $self->error("Provide only one or the other of these two arguments: --taxaToLoad and --projectName") if ($taxaToLoad && $projectName);
+
+  if ($projectName) {
+      my $sql = "select abbrev_orthomcl from ApiDB.Organism
+                 where project_name = '$projectName'";
+      my $sth = $self->prepareAndExecute($sql);
+      while (my ($orthomclAbbrev) = $sth->fetchrow_array()) {
+	  push(@$taxaToLoad, $orthomclAbbrev);
+      }
+  }
+
+  # put our taxa into a hash
   my %ourTaxa = map {$_ => 1} @$taxaToLoad;
 
   # first pass: go through file, collecting:

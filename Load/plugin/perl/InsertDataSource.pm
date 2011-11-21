@@ -1,11 +1,11 @@
 package ApiCommonData::Load::Plugin::InsertDataSource;
-@ISA = qw( GUS::PluginMgr::Plugin);
+@ISA = qw( GUS::PluginMgr::Plugin); 
 
 use strict;
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use ApiCommonData::Load::DataSource;
+use GUS::Model::ApiDB::DataSource;
 use Data::Dumper;
 
 
@@ -59,14 +59,15 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'internalDescrip',
-	      descr => 'the internal description of the data source.',
-	      reqd => 1,
+   stringArg({name => 'taxonId',
+	      descr => 'the taxonId for the organism (not the species) of the data source.  Omit if global scope',
+	      reqd => 0,
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
-   stringArg({name => 'organism',
-	      descr => 'the organism of the data source.',
+
+   booleanArg({name => 'isSpeciesScope',
+	      descr => 'true if the dataset applies to the species.  (In which case the taxonId is for the reference strain)',
 	      reqd => 1,
 	      constraintFunc => undef,
 	      isList => 0,
@@ -82,7 +83,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision => '$Revision: 21749 $', # cvs fills this in!
+		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -92,21 +93,23 @@ sub new {
 }
 
 sub run {
-  my ($self) = @_; 
+    my ($self) = @_; 
 
- 
+    my $dataSourceName = $self->getArg('dataSourceName');
+    my $version = $self->getArg('version');
+    my $taxonId = $self->getArg('taxonId');
+    my $isSpeciesScope = $self->getArg('isSpeciesScope');
+
     my $objArgs = {
-		 name   => $dataSourceName,
-		 version  => $version,
-		 internal_descrip   => $internalDescrip,
-		 organism   => $organism,
-		  };
-    my $datasource = ApiCommonData::Load::Plugin::InsertDataSource->new($objArgs);
-    $datasource->submit();
-    $self->log("processed $count") if ($count % 1000) == 0;
-  }
+	name   => $dataSourceName,
+	version  => $version,
+        taxon_id => $taxonId
+    };
+    $objArgs->{isSpeciesScope} = $isSpeciesScope if $taxonId;
 
-  return "Inserted data source $dataSourceName";
+    my $datasource = GUS::Model::ApiDB::DataSource->new($objArgs);
+    $datasource->submit();
+    return "Inserted data source $dataSourceName";
 }
 
 sub undoTables {

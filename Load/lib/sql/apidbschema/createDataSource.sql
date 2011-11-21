@@ -1,9 +1,9 @@
 CREATE TABLE apidb.DataSource (
  data_source_id               NUMBER(12) NOT NULL,
- project_id                   VARCHAR2(20) NOT NULL,
  name                         VARCHAR2(60) NOT NULL,
  version                      VARCHAR2(20) NOT NULL,
- internal_descrip             VARCHAR2(200) NOT NULL,
+ isSpeciesScope               NUMBER(1),
+ taxon_id                     NUMBER(12),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
@@ -22,7 +22,11 @@ ADD CONSTRAINT data_source_pk PRIMARY KEY (data_source_id);
 
 ALTER TABLE apidb.DataSource
 ADD CONSTRAINT data_source_uniq
-UNIQUE (name, project_id);
+UNIQUE (name, row_project_id);
+
+ALTER TABLE apidb.DataSource
+ADD CONSTRAINT data_source_fk1 FOREIGN KEY (taxon_id)
+REFERENCES sres.taxon (taxon_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.DataSource TO gus_w;
 GRANT SELECT ON apidb.DataSource TO gus_r;

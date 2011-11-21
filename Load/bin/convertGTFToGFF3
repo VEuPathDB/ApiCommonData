@@ -1,8 +1,5 @@
 #!/usr/bin/perl -w
 use strict;
-# This script is used to convert GTF to GFF suitable for
-# taking Broad and JGI GTF data and turning it into GFF3
-
 my $fix = 0;
 my $debug = 0;
 use Getopt::Long;
@@ -123,8 +120,8 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
     } else {
 	$gname = $gid;
     }
-    $gname = sprintf('"%s"',$gname);# if $gname =~ /[;\s,]/;
-    my $ninth  = sprintf("ID %s;",$gname);
+    $gname = sprintf('"%s"',$gname) if $gname =~ /[;\s,]/;
+    my $ninth  = sprintf("ID=%s",$gname);
     if( $aliases ) {
 #	$ninth .= sprintf(";Alias=%s",$aliases);
     }
@@ -175,9 +172,9 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	    $transname = $transcript2name{$transcript};
 	    $transname = sprintf('"%s"',$transname) if $transname =~ /[;\s,]/;
 	}
-	my $mrna_ninth = sprintf('ID "%s";Parent %s;',
+	my $mrna_ninth = sprintf("ID=%s;Parent=%s;",
 				 $transname,$gname);
-
+	
 	if( $transaliases && $transaliases ne $transname ) {
 	  #  $mrna_ninth .= sprintf(";Alias=%s",$transaliases);
 	}
@@ -200,16 +197,15 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 		      $b->[3] * $strand_val } @cds;
 
 	if ( $debug) {
-	  warn("CDS order is ($gname) :\n");
+	  warn("CDS order is :\n");
 	  for my $c ( @cds ) {
 	    warn(join("\t", @$c), "\n");
 	  }
 	}
 
 	if( $stop_codon ) {
-	    if( $strand_val > 0 ) {
-		warn("stop codon is ", join("\t", @{$stop_codon}), 
-		     " cds was ",$cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
+	    if( $strand_val > 0 ) {		
+		warn("stop codon is ", join("\t", @{$stop_codon}), " cds was ",$cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
 		$cds[-1]->[4] = $stop_codon->[4];
 		warn("cds updated to ", $cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
 		$translation_stop = $stop_codon->[4];
@@ -223,7 +219,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	    $translation_stop = ($strand_val > 0) ? $cds[-1]->[4] : $cds[-1]->[3];
 	  }
 	if( $start_codon ) {
-	    if( $strand_val > 0 ) {
+	    if( $strand_val > 0 ) {		
 		warn("start codon is ", join("\t", @{$start_codon}), "\n") if $debug;
 		$cds[0]->[3] = $start_codon->[3];
 		$translation_start = $start_codon->[3];
@@ -236,25 +232,25 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	    $translation_start = ($strand_val > 0) ? $cds[0]->[3] : $cds[0]->[4];
 	  }
 	if ( $debug) {
-	  warn("CDS order is after ($gname):\n");
+	  warn("CDS order is after :\n");
 	  for my $c ( @cds ) {
 	    warn(join("\t", @$c), "\n");
 	  }
 	}
 
 	for my $cds_i ( @cds ) {
-	  my $exon_ninth = sprintf('ID "%scds%06d";Parent "%s"',
+	  my $exon_ninth = sprintf("ID=%scds%06d;Parent=%s",
 				   $prefix,
 				   $counts{'CDS'}++,
 				   $transname);
 	  if ( $proteinid ) {
 	    $proteinid = sprintf('"%s"',$proteinid) if $proteinid =~ /[;\s,]/;
-	    $exon_ninth .= sprintf(";Name %s",$proteinid);
+	    $exon_ninth .= sprintf(";Name=%s",$proteinid);
 	  }
 	  $cds_i = [$cds_i->[3], join("\t", @$cds_i, $exon_ninth)];
 	}
 	if ( $debug) {
-	  warn("CDS order after ninth column is($gname) :\n");
+	  warn("CDS order after ninth column is :\n");
 	  for my $c ( @cds ) {
 	    warn(join("\t", @$c), "\n");
 	  }
@@ -283,7 +279,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf('ID "%sutr5%06d";Parent "%s"',
+			     sprintf("ID=%sutr5%06d;Parent=%s",
 				     $prefix,
 				     $counts{'5utr'}++,
 				     $transname)))];
@@ -300,7 +296,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   '.',
 			   $strand,
 			   '.',
-			   sprintf('ID "%sutr5%06d";Parent "%s"',
+			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
 				   $transname)
@@ -324,7 +320,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf('ID "%sutr3%06d";Parent "%s"',
+			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
 				     $transname)))];
@@ -342,7 +338,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf('ID "%sutr3%06d";Parent "%s"',
+			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
 				     $transname)))];
@@ -364,7 +360,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   '.',
 			   $strand,
 			   '.',
-			   sprintf('ID "%sutr5%06d";Parent "%s"',
+			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
 				   $transname)) ];
@@ -380,7 +376,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   '.',
 			   $strand,
 			   '.',
-			   sprintf('ID "%sutr5%06d";Parent "%s"',
+			   sprintf("ID=%sutr5%06d;Parent=%s",
 				   $prefix,
 				   $counts{'5utr'}++,
 				   $transname))];
@@ -401,7 +397,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf('ID "%sutr3%06d";Parent "%s"',
+			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
 				     $transname)))];
@@ -418,7 +414,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf('ID "%sutr3%06d";Parent "%s"',
+			     sprintf("ID=%sutr3%06d;Parent=%s",
 				     $prefix,
 				     $counts{'3utr'}++,
 				     $transname)))];
@@ -427,7 +423,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	    }
 	  }
 	  $exon = [$exon->[3],
-		   join("\t", @$exon, sprintf('ID "%sexon%06d";Parent "%s"',
+		   join("\t", @$exon, sprintf("ID=%sexon%06d;Parent=%s",
 					      $prefix,
 					      $counts{'exon'}++,
 					      $transname))];
@@ -444,15 +440,9 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   @{$utrs{'3utr'}}), "\n";
 	    }
 	}
-		
-	if ( $debug) {
-	  warn("CDS before print is($gname) :\n");
-	  for my $c ( @cds ) {
-	    warn(join("\t", @$c), "\n");
-	  }
-	}
+
 	print join("\n", ( map { $_->[1] } sort { $a->[0] <=> $b->[0] }
-			   (@exons, @cds))), "\n";
+			   @exons, @cds)), "\n";
 	if( $strand_val > 0 ) {
 	  if( exists $utrs{'3utr'} ) {
 	    print join("\n", map { $_->[1] } sort { $a->[0] <=> $b->[0] }

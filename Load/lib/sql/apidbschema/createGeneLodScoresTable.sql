@@ -29,9 +29,6 @@ CREATE TABLE ApiDB.GeneFeatureLodScore (
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.GeneFeatureLodScore TO gus_w;
 GRANT SELECT ON ApiDB.GeneFeatureLodScore TO gus_r;
 
-CREATE INDEX apidb.lodScore_idx
-ON ApiDB.GeneFeatureLodScore (GENE_HAPBLOCK_SCORE_ID);
-
 CREATE INDEX apidb.geneHapBlock_idx
 ON ApiDB.GeneFeatureLodScore (NA_FEATURE_ID,HAPLOTYPE_BLOCK_NAME);
 

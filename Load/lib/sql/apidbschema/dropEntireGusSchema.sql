@@ -1,5 +1,3 @@
-drop user APIDBTUNING cascade;
-drop user APIDB cascade;
 drop user CORE cascade;
 drop user COREVER cascade;
 drop user DOTS cascade;
@@ -14,7 +12,5 @@ drop user STUDY cascade;
 drop user STUDYVER cascade;
 drop user TESS cascade;
 drop user TESSVER cascade;
-DROP ROLE GUS_W;
-DROP ROLE GUS_R;
 
 exit
