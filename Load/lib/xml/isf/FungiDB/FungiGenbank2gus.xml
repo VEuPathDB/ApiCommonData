@@ -69,6 +69,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="product"              ignore="true"/>
+    <qualifier name="gene"                 ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -84,15 +85,29 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="colour"                 ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
     <qualifier name="FEAT_NAME"              ignore="true"/>
+
+
   </feature>
 
-
+    <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="temporary_systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="db_xref"                handler="api" method="dbXRef"/>
+    <qualifier name="note"                   handler="api" method="note"/>
+    <qualifier name="curation"               handler="api" method="note"/>
+    <qualifier name="product"                handler="api" method="product"/>
+    <qualifier name="locus_tag"              column="source_id"/>
+    <qualifier name="blastn_file"            ignore="true"/>
+    <qualifier name="domain"                 ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+  </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="product"              ignore="true"/>
     <qualifier name="db_xref"              ignore="true"/>
+    <qualifier name="gene"                 ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="">
