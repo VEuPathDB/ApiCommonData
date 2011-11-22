@@ -25,6 +25,13 @@
     </ant>
   </target>  
 
+  <target name="FgpUtil-Installation">
+    <ant antfile="../FgpUtil/build.xml" target="FgpUtil-Installation">
+      <property name="project" value="FgpUtil"/>
+      <property name="version" value=""/>
+    </ant>
+  </target>  
+
   <target name="WDK-Installation">
     <ant antfile="../WDK/build.xml" target="WDK-Installation">
       <property name="project" value="WDK"/>
@@ -63,6 +70,14 @@
     </ant>
   </target>  
 
+  <target name="FgpUtil-Checkout" unless="FgpUtil.present"> 
+    <ant target="defaultProjectCheckout" inheritAll="false">
+      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/FgpUtil" />
+      <property name="project" value="FgpUtil"/>
+      <property name="version" value="trunk"/>
+    </ant>
+  </target>
+
   <target name="WDK-Checkout" unless="WDK.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false">
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
@@ -84,11 +99,13 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-ChildCheckout">
+    <available file="../FgpUtil" type="dir" property="FgpUtil.present" />
     <available file="../WDK" type="dir" property="WDK.present" />
     <available file="../GUS" type="dir" property="GUS.present" />
     <available file="../DJob" type="dir" property="DJob.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
     <available file="../ApiCommonShared" type="dir" property="ApiCommonShared.present" />
+    <antcall target="FgpUtil-Checkout" />
     <antcall target="WDK-Checkout" />
     <antcall target="GUS-Checkout" />
     <antcall target="DJob-Checkout" />
@@ -102,6 +119,9 @@
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-ChildUpdate" >
+    <ant target="defaultProjectUpdate">
+      <property name="project" value="FgpUtil"/>
+    </ant>
     <ant target="defaultProjectUpdate">
       <property name="project" value="WDK"/>
     </ant>
@@ -123,7 +143,8 @@
   <!-- oooooooooooooooooooooooooo  Installation  oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
-  <target name="ApiCommonData-Installation" depends="GUS-Installation,
+  <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
+                                            GUS-Installation,
                                             DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
