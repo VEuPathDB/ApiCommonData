@@ -1,0 +1,183 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+my ($gusConfigFile,$inFile,$outFile,$idMapFile,$verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "verbose!" => \$verbose,
+	    "gfffile=s" => \$outFile,
+	    "infile=s" => \$inFile,
+             "idmapfile=s" => \$idMapFile);
+
+
+open(FILE,$inFile) || die "$inFile can't be opened for reading\n";
+
+open(IDMAPPER,$idMapFile) || die "$idMapFile can't be opened for reading\n";
+
+open(OUT,">$outFile") || die "Can't open $outFile for writing\n";
+
+
+my (%geneHash,%exonHash, %idMapHash, %exonOrderHash);
+
+while (<IDMAPPER>){
+  chomp;
+  my($acc,$gi) = split(/\t/,$_);
+  $idMapHash{$gi} = $acc;
+}
+
+
+
+
+while (<FILE>){
+  chomp;
+  
+  if($_ =~ /^gene/){
+    next;
+  }else{
+      
+    my($geneId,$gi,$start,$end,$strand,$exonNum,$ortholog,$note) = split(/\t/,$_);
+
+    
+    if($geneId =~ /^PF/){
+      $geneId = "PY_".$geneId;
+    }
+
+
+    
+    $geneId .= ".prov";
+    my($codingStart,$codingEnd);
+
+
+    
+    if($idMapHash{$gi}){
+
+
+	$geneHash{$geneId}->{$idMapHash{$gi}}->{chr} = $idMapHash{$gi};	
+	$geneHash{$geneId}->{$idMapHash{$gi}}->{gene} = $geneId;
+	if($strand eq '-'){
+	    $codingStart = $end;
+	    $codingEnd = $start;
+	    $geneHash{$geneId}->{$idMapHash{$gi}}->{strand} = '-';
+	}else{
+	    $codingStart = $start;
+	    $codingEnd = $end;
+	    $geneHash{$geneId}->{$idMapHash{$gi}}->{strand} = '+';
+	}
+	$exonHash{$geneId}->{$idMapHash{$gi}}->{$exonNum} = "$idMapHash{$gi}\tPyoelii_Kappe_Annotation\tCDS\t$start\t$end\t.\t$strand\t0\tID=$geneId; CodingEnd $codingEnd ; CodingStart $codingStart ; OrderNum $exonNum";
+    
+    $exonOrderHash{$geneId}->{$exonNum} = $idMapHash{$gi};
+    if($geneHash{$geneId}->{$idMapHash{$gi}}->{start}){
+	if($geneHash{$geneId}->{$idMapHash{$gi}}->{start} > $start){
+	    $geneHash{$geneId}->{$idMapHash{$gi}}->{start}  = $start;
+	}
+    }else{
+      	$geneHash{$geneId}->{$idMapHash{$gi}}->{start}  = $start;
+    }
+
+    if($geneHash{$geneId}->{$idMapHash{$gi}}->{end}){
+	if($geneHash{$geneId}->{$idMapHash{$gi}}->{end} < $end){
+	    $geneHash{$geneId}->{$idMapHash{$gi}}->{end}  = $end;
+	}
+    }else{
+	$geneHash{$geneId}->{$idMapHash{$gi}}->{end}  = $end;
+    }
+
+    if($note){
+	$exonHash{$geneId}->{$exonNum}->{note} = $note;
+    }
+	
+}else{
+
+	print STDERR "$gi could not be mapped to a contig\n";
+	print STDERR "$gi\tPyoelii_Kappe_Annotation\texon\t$start\t$end\t.\t$strand\t0\tGenePrediction \"$geneId\" ; CodingEnd $codingEnd ; CodingStart $codingStart ; OrderNum $exonNum\n";
+	
+    }
+
+}
+}
+
+
+
+foreach my $id (keys %exonOrderHash){
+    my $prevContig = '';
+
+    my $part = 1;
+
+    my $flag = 0;
+
+
+    foreach my $orderNum (sort {$a <=> $b} keys %{$exonOrderHash{$id}}){
+	my $contig = $exonOrderHash{$id}->{$orderNum};
+	if(($contig ne $prevContig) && $prevContig ne ''){
+	    $part++;
+	}
+
+
+
+	if($part > 1){
+	    if($part == 2 && $flag == 0){
+		$geneHash{$id}->{$prevContig}->{gene} = "${id}-part".($part-1);
+		
+	 
+		$geneHash{$id}->{$prevContig}->{alias} = $id;
+		my $exonNum = 1;
+		while($exonNum < $orderNum){
+		    $exonHash{$id}->{$prevContig}->{$exonNum} =~ s/$id/$geneHash{$id}->{$prevContig}->{gene}/g;
+		    $exonNum++;
+		}
+		$flag = 1;
+		
+	    }
+		
+	    $geneHash{$id}->{$contig}->{gene} = "${id}-part$part";
+	    $geneHash{$id}->{$contig}->{alias} = $id;
+	    $exonHash{$id}->{$contig}->{$orderNum} =~ s/$id/$geneHash{$id}->{$contig}->{gene}/g;
+	    
+	    
+	}
+
+	$geneHash{$id}->{$contig}->{part} = $part;
+	$prevContig = $contig;
+	
+    
+    }
+
+}
+
+
+
+
+
+foreach my $id (keys %geneHash){
+  
+    
+    foreach my $contig (sort {$geneHash{$id}->{$a}->{part} <=> $geneHash{$id}->{$b}->{part}} keys %{$geneHash{$id}}){
+	print OUT "$contig\tPyoelii_Kappe_Annotation\ttranscript\t$geneHash{$id}->{$contig}->{start}\t$geneHash{$id}->{$contig}->{end}\t.\t$geneHash{$id}->{$contig}->{strand}\t.\tID=$geneHash{$id}->{$contig}->{gene}; GeneType coding_gene";
+
+	if($geneHash{$id}->{$contig}->{alias}){
+	    print OUT "; Aliases $geneHash{$id}->{$contig}->{alias}\n";
+	}else{
+	    print OUT "\n";
+	}
+         
+
+  
+	foreach my $orderNum (sort {$a <=> $b} keys %{$exonHash{$id}->{$contig}}){
+
+	    print OUT "$exonHash{$id}->{$contig}->{$orderNum}\n";
+=pod
+	    if($exonHash{$id}->{$orderNum}->{note}){
+		print OUT " ; Note \'$exonHash{$id}->{$orderNum}->{note}\'\n";
+	    }else{
+		print OUT "\n";
+	    }
+=cut
+
+	}
+    }
+}
+
+
+ 

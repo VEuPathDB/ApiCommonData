@@ -1,0 +1,76 @@
+#!/usr/bin/perl
+
+###################################################
+#            ConfigureIprscanJob
+#
+#  Script to dynamically set chunk size in
+#  iprscan.conf.  Place this script in the root
+#  iprscan directory.
+#
+#  This script will take, at minimum, two arguments
+#  The first is the number of 
+#  nodes you wish to leave FREE. After that, give
+#  the location and names of the files that will
+#  be analyzed.  It will calculate
+#  how big the chunk size should be to take up the
+#  number of nodes left on the cluster.
+#
+#  Note: this assumes you will be running only ONE
+#  application at a time on iprscan.  Each separate
+#  application will take up this many nodes and
+#  iprscan will submit all of the jobs at once to
+#  the cluster.
+#
+#  Ed Robinson, 12/16/2005
+###
+# mheiges, 12/23/2005
+# add die messages so users will get feedback if conf r/w fails.
+# chmod g+w on conf file so subsequent users can update it.
+# use FindBin to locate the conf directory as a child of
+#  this script's home so script can be run from any dir.
+# use strict.
+###################################################
+
+use strict;
+use FindBin qw($Bin);
+
+my $arraySize = 32;
+my @QSTATS = qx"qstat -an\;pbsnodes -l";
+
+foreach my $line (@QSTATS) {
+   if ($line =~ /              offline/ || $line =~ /\.headnode/) {
+       $arraySize--;
+   }
+}
+
+my $seqCount = qx"grep -c \'>\' $ARGV[0]";
+
+my $freeNodes;
+if ($ARGV[1]) {
+   $freeNodes=$ARGV[1];
+}
+else {
+   $freeNodes = 5;
+}
+
+my $chunkSize = int(($seqCount/($arraySize - $freeNodes)) + 1);
+
+open CONF1, "<$Bin/conf/iprscan.conf" or die "can not read $Bin/conf/iprscan.conf\n";
+open CONF2, ">$Bin/conf/iprscan.tmp" or die "can not write $Bin/conf/iprscan.tmp\n";
+
+while (<CONF1>) {
+    if (/^chunk\=/) {
+       print CONF2 "chunk\=$chunkSize\n";
+    }
+    else {
+       print CONF2;
+    }
+}
+
+close (CONF1);
+close (CONF2);
+
+rename ("$Bin/conf/iprscan.tmp", "$Bin/conf/iprscan.conf") or die "can not rename iprscan.tmp to iprscan.conf in $Bin/conf\n";
+
+chmod 0664, "$Bin/conf/iprscan.conf" or warn "can add group write permissions to iprscan.conf\n";
+

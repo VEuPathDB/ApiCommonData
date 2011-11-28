@@ -1,0 +1,135 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long qw(GetOptions);
+
+my ($inFile,$outFile,$verbose);
+GetOptions("verbose!"=> \$verbose,
+           "outfile=s" => \$outFile,
+	   "infile=s" => \$inFile,
+	);
+
+open(FILE, $inFile)     || die "$inFile can't be opened for reading\n";
+open(OUT,  ">$outFile") || die "Can't open $outFile for writing\n";
+
+my %usage;           # to count codons in CDS
+my %codonCount;      # to total codons for AA
+my $totalCount= 0;   # total number of codons
+my $nSeq = 0;        # number of input sequences
+my $nGapSeqs = -1;   # number of seqs with gaps (reg ex: /N+/)
+my $cds = "";        # cds sequence
+my $hasN = 0;        # boolean for presence of NNNs in CDS sequence
+
+my %code = ( 'TTT'=> 'F', 'TCT'=> 'S', 'TAT'=> 'Y', 'TGT'=> 'C',
+             'TTC'=> 'F', 'TCC'=> 'S', 'TAC'=> 'Y', 'TGC'=> 'C',
+             'TTA'=> 'L', 'TCA'=> 'S', 'TAA'=> '*', 'TGA'=> '*',
+             'TTG'=> 'L', 'TCG'=> 'S', 'TAG'=> '*', 'TGG'=> 'W',
+             'CTT'=> 'L', 'CCT'=> 'P', 'CAT'=> 'H', 'CGT'=> 'R',
+             'CTC'=> 'L', 'CCC'=> 'P', 'CAC'=> 'H', 'CGC'=> 'R',
+             'CTA'=> 'L', 'CCA'=> 'P', 'CAA'=> 'Q', 'CGA'=> 'R',
+             'CTG'=> 'L', 'CCG'=> 'P', 'CAG'=> 'Q', 'CGG'=> 'R',
+             'ATT'=> 'I', 'ACT'=> 'T', 'AAT'=> 'N', 'AGT'=> 'S',
+             'ATC'=> 'I', 'ACC'=> 'T', 'AAC'=> 'N', 'AGC'=> 'S',
+             'ATA'=> 'I', 'ACA'=> 'T', 'AAA'=> 'K', 'AGA'=> 'R',
+             'ATG'=> 'M', 'ACG'=> 'T', 'AAG'=> 'K', 'AGG'=> 'R',
+             'GTT'=> 'V', 'GCT'=> 'A', 'GAT'=> 'D', 'GGT'=> 'G',
+             'GTC'=> 'V', 'GCC'=> 'A', 'GAC'=> 'D', 'GGC'=> 'G',
+             'GTA'=> 'V', 'GCA'=> 'A', 'GAA'=> 'E', 'GGA'=> 'G',
+             'GTG'=> 'V', 'GCG'=> 'A', 'GAG'=> 'E', 'GGG'=> 'G'
+			);
+
+my %reverseCode = (
+	'*' => ['TAA','TGA','TAG'],
+	'A' => ['GCT','GCC','GCA','GCG'],
+	'C' => ['TGT','TGC'],
+	'D' => ['GAT','GAC'],
+	'E' => ['GAA','GAG'],
+	'F' => ['TTT','TTC'],
+	'G' => ['GGT','GGC','GGA','GGG'],
+	'H' => ['CAT','CAC'],
+	'I' => ['ATT','ATC','ATA'],
+	'K' => ['AAA','AAG'],
+	'L' => ['TTA','TTG','CTT','CTC','CTA','CTG'],
+	'M' => ['ATG'],
+	'N' => ['AAT','AAC'],
+	'P' => ['CCT','CCC','CCA','CCG'],
+	'Q' => ['CAA','CAG'],
+	'R' => ['CGT','CGC','CGA','CGG','AGA','AGG'],
+	'S' => ['TCT','TCC','TCA','TCG','AGT','AGC'],
+	'T' => ['ACT','ACC','ACA','ACG'],
+	'V' => ['GTT','GTC','GTA','GTG'],
+	'Y' => ['TAT','TAC'],
+	'W' => ['TGG'],
+	);
+
+
+while(<FILE>){
+  if (/^\>/){
+    count_codons($cds);
+    $nGapSeqs++ unless (length($cds));
+    $cds ="";
+    $hasN = 0;
+    $nSeq++;
+  } else {
+    chomp;
+    if ($_=~ m/^(.*)(N+)(.*)$/gi){
+      $hasN = 1;
+      $cds = "";
+    } else {
+      $cds .= $_ unless ($hasN);
+    }
+  }
+}
+close(FILE);
+count_codons($cds);   # for the last input sequence
+$nGapSeqs++ unless (length($cds));
+
+print STDERR "Total number of codons = $totalCount\n" if $verbose;
+print STDERR "Total number of sequences = $nSeq \n" if $verbose;
+print STDERR "Number of sequences with gaps = $nGapSeqs \n" if $verbose;
+
+total_codons(\%usage) if ($nSeq - $nGapSeqs);
+close(OUT);
+
+
+# method to count codons in CDS sequence
+sub count_codons { 
+  my $cds = shift; 
+  my $codon;
+  for (my $i=0; $i<length($cds);$i=$i+3){
+    $codon = substr($cds, $i, 3);
+    next if (length($codon) != 3);
+    $totalCount++;
+    if ($usage{$codon}){
+      $usage{$codon} += 1;
+    } else {
+      $usage{$codon} = 1;
+    }
+  }
+}
+
+# method to populate a new hash, where key is AA and val is sum of codons for it
+sub total_codons {
+  my $hashRef = shift;
+  my %h = %{$hashRef};
+  my @fields = keys(%h);
+  foreach my $try (sort @fields) {
+    $codonCount{$code{$try}} += $h{$try};
+  }
+  return display();
+}
+
+# method to display codon usage
+sub display {
+  my @fields = keys(%reverseCode);
+  print OUT "CODON\tAA\tFREQ\tABUNDANCE\n";
+  foreach my $aa (sort @fields) {
+    foreach my $codon (@{$reverseCode{$aa}}){
+      my $freq = $usage{$codon}*1000/$totalCount;
+      my $abundance =  ($usage{$codon})/($codonCount{$aa});
+      $codon =~ s/T/U/g; # change 'T' to 'U' in the codon, as in the RNA seq
+      print OUT "$codon\t$aa\t" . sprintf("%.2f", $freq) . " \t" . sprintf("%.2f",  $abundance) . "\n";
+    }
+  }
+}

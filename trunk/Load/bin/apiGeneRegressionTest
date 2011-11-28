@@ -1,0 +1,230 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use DBI;
+
+my $species = $ARGV[0];
+my $dblinkName = $ARGV[1];
+
+$| = 1;
+
+usage() unless $species && $dblinkName;
+
+my $gusconfig = GUS::Supported::GusConfig->new("$ENV{GUS_HOME}/config/gus.config");
+
+my $login = $gusconfig->getDatabaseLogin();
+my $password = $gusconfig->getDatabasePassword();
+my $dsn = $gusconfig->getDbiDsn();
+
+my $dbh = DBI->connect($dsn,
+		       $login,
+		       $password,
+		       { PrintError => 1, RaiseError => 0}
+		      )
+  or die "Can't connect to the tracking database: $DBI::errstr\n";
+
+print "Checking gene counts\n";
+my $oldGeneCount = getGeneCount();
+my $newGeneCount = getGeneCount($dblinkName);
+if ($oldGeneCount == $newGeneCount) {
+  print "Gene Counts OK ($oldGeneCount)\n\n";
+} else {
+  print "DIFFS: Gene counts old: $oldGeneCount new: $newGeneCount\n\n";
+}
+compareSourceIds($oldGeneCount, $newGeneCount);
+
+foreach my $column (getAttrCols()) {
+  my $sql = "
+select old.source_id, old.$column as old$column, new.$column as new$column
+from ApidbTuning.GeneAttributes old, ApidbTuning.GeneAttributes\@$dblinkName new
+where old.source_id = new.source_id
+and old.$column != new.$column
+and old.species = '$species'";
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  print "Checking $column\n";
+  my $diffCount = 0;
+  while (my @row = $stmt->fetchrow_array()) {
+    print "\t" . join("\t",@row) . "\n";
+    $diffCount++;
+  }
+  print "DIFFS: Column $column has $diffCount differences\n\n" if $diffCount;
+  print "Column $column OK\n\n" unless $diffCount;
+}
+
+
+sub getGeneCount {
+  my ($dblinkName) = @_;
+
+  my $dbl = $dblinkName? "\@$dblinkName" : "";
+  my $sql = "select count(*) from ApidbTuning.GeneAttributes$dbl where species = '$species'";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($geneCnt) = $stmt->fetchrow_array();
+
+  die "Invalid species name '$species' (no genes found in ApidbTuning.GeneAttributes$dbl)\n" unless $geneCnt;
+  return $geneCnt;
+}
+
+sub compareSourceIds {
+  my ($oldGeneCount, $newGeneCount) = @_;
+
+  print "Checking for identical source ids\n";
+
+  my $sql = 
+"select count(*)
+ from ApidbTuning.GeneAttributes old, ApidbTuning.GeneAttributes\@$dblinkName new
+ where old.species = '$species'
+ and new.source_id = old.source_id";
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($geneCnt) = $stmt->fetchrow_array();
+
+  my $minGenes = $oldGeneCount < $newGeneCount? $oldGeneCount : $newGeneCount;
+
+  if (!$geneCnt) {
+    print "DIFFS: No genes found with identical source_ids\n\n";
+    exit();
+  } elsif ($geneCnt == $minGenes) {
+    print "Source id identity ($geneCnt) OK\n\n";
+  } else {
+    print "DIFFS: non-identical source_ids: " . ($minGenes - $geneCnt) . "\n\n";
+  }
+
+}
+
+
+sub getAttrCols {
+  return (
+	  #'PROJECT_ID',
+	  #'SOURCE_ID',
+	  #'NA_FEATURE_ID',
+	  'GENE_TYPE',
+	  'PRODUCT',
+	  'IS_PSEUDO',
+	  'START_MIN',
+	  'END_MAX',
+	  'CODING_START',
+	  'CODING_END',
+	  'IS_REVERSED',
+	  'TRANSCRIPT_LENGTH',
+	  'CONTEXT_START',
+	  'CONTEXT_END',
+	  'STRAND',
+	  'SEQUENCE_ID',
+	  'ORGANISM',
+	  'SPECIES',
+	  'NCBI_TAX_ID',
+	  'SO_ID',
+	  'SO_TERM_NAME',
+	  'SO_TERM_DEFINITION',
+	  'ONTOLOGY_NAME',
+	  #'SO_VERSION',
+	  'ANTICODON',
+	  'TM_COUNT',
+	  'MOLECULAR_WEIGHT',
+	  'ISOELECTRIC_POINT',
+	  'MIN_MOLECULAR_WEIGHT',
+	  'MAX_MOLECULAR_WEIGHT',
+	  'HYDROPATHICITY_GRAVY_SCORE',
+	  'AROMATICITY_SCORE',
+	  'CDS_LENGTH',
+	  'PROTEIN_LENGTH',
+	  'EC_NUMBERS',
+	  #'EXTERNAL_DB_NAME',
+	  #'EXTERNAL_DB_VERSION',
+	  'EXON_COUNT',
+	  'COMMENT_STRING',
+	  'CHROMOSOME',
+	  'CHROMOSOME_ORDER_NUM',
+	  #'NA_SEQUENCE_ID',
+	  'ANNOTATED_GO_COMPONENT',
+	  'ANNOTATED_GO_FUNCTION',
+	  'ANNOTATED_GO_PROCESS',
+	  'PREDICTED_GO_COMPONENT',
+	  'PREDICTED_GO_FUNCTION',
+	  'PREDICTED_GO_PROCESS',
+	  'DERISI_MAX_LEVEL',
+	  'DERISI_MAX_PCT',
+	  'DERISI_MAX_TIMING',
+	  'DERISI_MIN_TIMING',
+	  'DERISI_MIN_LEVEL',
+	  'DERISI_MAX_FOLD_INDUCTION',
+	  'WINZELER_MAX_LEVEL',
+	  'WINZELER_MAX_PCT',
+	  'WINZELER_MAX_TIMING',
+	  'WINZELER_MIN_TIMING',
+	  'WINZELER_MIN_LEVEL',
+	  'TYPE3_TYPE1_FOLD_CHANGE',
+	  'TYPE3_TYPE2_FOLD_CHANGE',
+	  'TYPE2_TYPE1_FOLD_CHANGE',
+	  'IS_DEPRECATED',
+	  'GENE_ID',
+	  'ORTHOMCL_NAME',
+	  'TOTAL_SNPS',
+	  'NONSYNONYMOUS_SNPS',
+	  'SYNONYMOUS_SNPS',
+	  'NONSYN_SYN_RATIO',
+	  'SIGNALP_SCORES',
+	  'SIGNALP_PEPTIDE',
+	  #'TAXON_ID',
+	  'PARALOG_NUMBER',
+	  'ORTHOLOG_NUMBER',
+	 );
+}
+
+sub detailCols {
+  return (
+	  'ExpressionGraphsData',
+	  'GoTerms',
+	  'Y2hInteractions',
+	  'Product',
+	  'Alias',
+	  'Epitopes',
+	  'UserComments',
+	  'EcNumber',
+	  'ArrayElements',
+	  'PdbSimilarities',
+	  'ProteinDatabase',
+	  'GeneModelDump',
+	  'LowComplexity',
+	  'PlasmoVer5Genes',
+	  'BlastP',
+	  'GeneLinkouts',
+	  'InterPro',
+	  'SNPs',
+	  'SageTags',
+	  'TwoChannelDiffExpr',
+	  'MassSpecDownload',
+	  'SignalP',
+	  'Notes',
+	  'Aliases',
+	  'GeneId',
+	  'MassSpec',
+	  'TMHMM',
+	  'ProteinExpression'
+	 );
+
+}
+
+sub usage {
+
+  print STDERR "
+Usage:  apiGeneRegressionTest species dblinkName
+
+Example:  apiGeneRegressionTest 'Plasmodium vivax' plasrbld
+
+Compares the ApidbTuning.GeneAttributes table in an old and new database for the specified species.
+
+The 'old' database is specified by connect info in \$GUS_HOME/config/gus.config.
+
+The 'new' database is accessed from the old via the dblink whose name is provided in dblinkName.  This dblink must exist in the old database (ask a DBA).
+
+";
+
+  exit(1);
+}

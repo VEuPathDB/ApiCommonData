@@ -1,0 +1,1011 @@
+<resourcesPipeline repository="/files/efr"
+                   downloadDir="@downloadDir@">
+    <cleanups>
+    </cleanups>
+
+    <resource resource="taxonomy" version="2009-11-05" 
+        displayName="NCBI Taxonomy"
+        publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        category="Ontology"
+        url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+        plugin="GUS::Supported::Plugin::LoadTaxon"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+        <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+        <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+        <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+        <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
+          ]]>
+        </description>
+    </resource>
+
+    
+
+
+
+    <resource resource="SO" version="1.234"
+        displayName="Sequence Ontology"
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"
+        url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=1.234"
+        plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion 1.234 --soCvsVersion 1.234</pluginArgs>
+        <description>
+            <![CDATA[
+    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="enzymeDB" version="2009_11_03" 
+        displayName="Enzyme nomenclature database"
+        publicUrl="ftp://us.expasy.org/databases/enzyme/release_with_updates"
+        category="Ontology"
+        url="ftp://us.expasy.org/databases/enzyme/release_with_updates/"
+        plugin="GUS::Community::Plugin::LoadEnzymeDatabase"
+        extDbName="enzymeDB"
+        extDbRlsVer="2009-11-03"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=enzclass.txt,enzyme.dat</wgetArgs>
+        <pluginArgs>--InPath @downloadDir@/enzymeDB/ --enzymeDbName %EXT_DB_NAME% --enzymeDbRlsVer %EXT_DB_RLS_VER% @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+    ENZYME is a repository of information relative to the nomenclature of enzymes. It is primarily based on the recommendations of the Nomenclature Committee of the International Union of Biochemistry and Molecular Biology (IUBMB) and it describes each type of characterized enzyme for which an EC (Enzyme Commission) number has been provided
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="GO_evidence_codes" version="1.20"
+        displayName="Gene Ontology evidence codes"        
+        publicUrl="http://www.geneontology.org/GO.evidence.shtml"
+        category="Ontology"            
+        url="http://obo.cvs.sourceforge.net/*checkout*/obo/obo/ontology/evidence_code.obo"
+        plugin="ApiCommonData::Load::Plugin::InsertGOEvidenceCodesFromObo"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=evidence_code.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO_evidence_codes/evidence_code.obo</pluginArgs>
+        <description>
+            <![CDATA[
+   Gene Ontology annotation uses evidence codes to indicate the type of evidence that supports the annotation.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="GO" version="1.875"
+        displayName="Gene Ontology"
+        publicUrl="http://www.geneontology.org"
+        category="Ontology"
+        url="http://www.geneontology.org/ontology/gene_ontology.obo"
+        plugin="GUS::Supported::Plugin::InsertGeneOntology"
+        extDbName="Gene Ontology"
+        extDbRlsVer="1.875"
+        extDbRlsDescrip="The Gene Ontology from Nov. 3, 2009"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=gene_ontology.obo</wgetArgs>
+        <pluginArgs>--oboFile @downloadDir@/GO/gene_ontology.obo --extDbRlsName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER%</pluginArgs>
+        <description>
+            <![CDATA[
+   The Gene Ontology (GO) project provides a controlled vocabulary to describe gene and gene product attributes in any organism.
+          ]]>
+        </description>
+    </resource>
+    
+    <resource resource="NRDB" version="2009-11-03"
+        plugin="ApiCommonData::Load::Plugin::LoadNothing"
+        displayName="GenBank NRDB"
+        publicUrl="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        category="Proteome"
+        url="ftp://ftp.ncbi.nih.gov/blast/db/FASTA/"
+        extDbName="NRDB"
+        extDbRlsVer="2009-11-03"
+        extDbRlsDescrip="The nr file from 2009-11-03"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --accept=nr.gz </wgetArgs>
+        <pluginArgs>--dbRefExternalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%"</pluginArgs>
+        <description>
+            <![CDATA[
+   The Non-Redundant Database (NRDB) of protein sequences in FASTA format from GenBank.
+          ]]>
+        </description>
+    </resource>
+
+
+
+    <resource resource="InterproscanData" version="23.0"
+        plugin="ApiCommonData::Load::Plugin::InsertInterproDomainDbs"
+        displayName="InterPro Database"
+        category="Proteome"
+        publicUrl="http://www.ebi.ac.uk/interpro"
+        dbCommit="@dbcommit@">	
+        <manualGet 
+            email="interhelp@ebi.ac.uk"
+            fileOrDir="/files/cbil/data/cbil/toxoDb/manualDelivery/iprscan23.0"
+            contact="EBI"
+            institution="EBI"
+        />
+        <unpack>fixSuperfamily @downloadDir@/InterproscanData/iprscan23.0/iprscan/data</unpack>
+        <unpack>cp @downloadDir@/InterproscanData/iprscan23.0/insertInterpro-config.xml @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</unpack>
+        <pluginArgs>--inPath @downloadDir@/InterproscanData/iprscan23.0/iprscan/data/</pluginArgs>
+        <description>
+            <![CDATA[
+        InterPro is a database of protein families, domains and functional sites in which identifiable features found in known proteins can be applied to unknown protein sequences.
+		]]>
+        </description>
+        <publication pmid="15608177"/>
+    </resource>
+ 
+    <resource resource="dbEST" version="2009-12-06"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        extDbName="dbEST"
+        extDbRlsVer="2009-12-06"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/toxoDb/manualDelivery/dbEST/dummy"
+        />
+        <unpack>getSubTaxa --ncbiTaxId 5758 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect @dbestConnect@ </pluginArgs>
+        <description>
+            <![CDATA[
+                  ESTs from the mirrored <a href="http://www.ncbi.nlm.nih.gov/dbEST/"TARGET="_blank">dbEST</a> site.
+          ]]>
+        </description>
+    </resource>
+
+
+    <resource resource="E.histolytica_Genome" version="2009-11-27"
+        displayName="E. histolytica genome"
+        category="ignore"
+        organisms="Entamoeba histolytica"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. histolytica Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_histolytica/2009-11-27/E_histolytica_Assemblies.fsa"
+        />
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 294381 --sequenceFile @downloadDir@/E.histolytica_Genome/E_histolytica_Assemblies.fsa --soTermName "supercontig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+          ]]>
+        </description>
+    </resource>
+
+
+     <resource resource="E.histolytica_Annotations" version="2009-11-27"
+        displayName="E. histolytica HM-1:IMSS genome and annotation"
+        organisms="Entamoeba histolytica"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E. histolytica Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. histolytica Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_histolytica/2009-11-27/"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+      <unpack>mkdir @downloadDir@/E.histolytica_Annotations_fixed</unpack>
+      <unpack>preprocessGFF3 --input_gff @downloadDir@/E.histolytica_Annotations/2009-11-27/E_histolytica_Genes.gff3 --output_gff @downloadDir@/E.histolytica_Annotations_fixed/E_histolytica_Genes.gff</unpack>
+      <unpack>addProteinTranslations --input_dir  @downloadDir@/E.histolytica_Annotations_fixed/E_histolytica_Genes.gff  --protein_fasta  @downloadDir@/E.histolytica_Annotations/2009-11-27/E_histolytica_Protein_Sequences.fsa --output_gff  @downloadDir@/E.histolytica_Annotations_fixed/E_histolytica.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/AmoebaDB/jcviGFF32Gus.xml --inputFileOrDir @downloadDir@/E.histolytica_Annotations_fixed/E_histolytica.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Entamoeba histolytica HM-1:IMSS" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "supercontig"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput @pipelineDir@/logs/Ehistolytica.bioperl --validationLog @pipelineDir@/logs/Ehistolytica.validation.log</pluginArgs>
+        <description>
+            <![CDATA[
+ Whole genome shotgun sequence and annotations for <i>E. histolytica</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+          ]]>
+        </description>
+      </resource>
+
+    <resource resource="E.dispar_Genome" version="2009-11-27"
+        displayName="E. dispar genome"
+        category="ignore"
+        organisms="Entamoeba dispar"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. dispar Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. dispar Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_dispar/2009-11-27/E_dispar_Assemblies.fsa"
+        />
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 370354 --sequenceFile @downloadDir@/E.dispar_Genome/E_dispar_Assemblies.fsa --soTermName "supercontig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Whole genome shotgun sequence for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>)..
+          ]]>
+        </description>
+    </resource>
+
+     <resource resource="E.dispar_Annotations" version="2009-11-27"
+        displayName="E. dispar genome and annotation"
+        organisms="Entamoeba dispar"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E. dispar Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. dispar Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_dispar/2009-11-27/"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+      <unpack>mkdir @downloadDir@/E.dispar_Annotations_fixed</unpack>
+      <unpack>preprocessGFF3 --input_gff @downloadDir@/E.dispar_Annotations/2009-11-27/E_dispar_Genes.gff3 --output_gff @downloadDir@/E.dispar_Annotations_fixed/E_dispar_Genes.gff</unpack>
+      <unpack>addProteinTranslations --input_dir  @downloadDir@/E.dispar_Annotations_fixed/E_dispar_Genes.gff  --protein_fasta  @downloadDir@/E.dispar_Annotations/2009-11-27/E_dispar_Protein_Sequences.fsa --output_gff  @downloadDir@/E.dispar_Annotations_fixed/E_dispar.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/AmoebaDB/jcviGFF32Gus.xml --inputFileOrDir @downloadDir@/E.dispar_Annotations_fixed/E_dispar.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Entamoeba dispar SAW760" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "supercontig"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput @pipelineDir@/logs/Edispar.bioperl --validationLog @pipelineDir@/logs/Edispar.validation.log</pluginArgs>
+        <description>
+            <![CDATA[
+ Whole genome shotgun sequence and annotations for <i>E. dispar</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+          ]]>
+        </description>
+      </resource>
+
+    <resource resource="E.invadens_Genome" version="2009-11-27"
+        displayName="E. invadens genome"
+        category="ignore"
+        organisms="Entamoeba invadens"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. invadens Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. invadens Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_invadens/2009-11-27/E_invadens_Assemblies.fsa"
+        />
+
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxId 370355 --sequenceFile @downloadDir@/E.invadens_Genome/E_invadens_Assemblies.fsa --soTermName "supercontig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Whole genome shotgun sequence for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>)..
+          ]]>
+        </description>
+    </resource>
+
+     <resource resource="E.invadens_Annotations" version="2009-11-27"
+        displayName="E. invadens genome and annotation"
+        organisms="Entamoeba invadens"
+        category="Genome"
+        plugin="GUS::Supported::Plugin::InsertSequenceFeatures"
+        extDbName="E. invadens Genome and Annotations from jCVI"
+        extDbRlsVer="2009-11-27"
+        extDbRlsDescrip="E. invadens Genome and Annotations from jCVI|2009-11-27"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/Entamoeba_invadens/2009-11-27/"
+            contact = "Vishal Nayak"
+            email = "vishalkn@pcbi.upenn.edu"
+            institution = "PCBI"
+        />
+      <unpack>mkdir @downloadDir@/E.invadens_Annotations_fixed</unpack>
+      <unpack>preprocessGFF3 --input_gff @downloadDir@/E.invadens_Annotations/2009-11-27/E_invadens_Genes.gff3 --output_gff @downloadDir@/E.invadens_Annotations_fixed/E_invadens_Genes.gff</unpack>
+      <unpack>addProteinTranslations --input_dir  @downloadDir@/E.invadens_Annotations_fixed/E_invadens_Genes.gff  --protein_fasta  @downloadDir@/E.invadens_Annotations/2009-11-27/E_invadens_Protein_Sequences.fsa --output_gff  @downloadDir@/E.invadens_Annotations_fixed/E_invadens.gff</unpack>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/AmoebaDB/jcviGFF32Gus.xml --inputFileOrDir @downloadDir@/E.invadens_Annotations_fixed/E_invadens.gff --fileFormat gff3 --soCvsVersion @soVer@ --defaultOrganism "Entamoeba invadens IP1" --handlerExternalDbs "enzyme:enzymeDB:2009-11-03" --seqSoTerm "supercontig"  --naSequenceSubclass ExternalNASequence --seqIdColumn source_id --bioperlTreeOutput @pipelineDir@/logs/Einvadens.bioperl --validationLog @pipelineDir@/logs/Einvadens.validation.log</pluginArgs>
+        <description>
+            <![CDATA[
+ Whole genome shotgun sequence and annotations for <i>E. invadens</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+          ]]>
+        </description>
+      </resource>
+
+   <resource resource="E.histolyticaDS4_Genome" version="2010-08-04"
+        displayName="E. histolytica DS4 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica DS4"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica DS4 Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica DS4 Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/DS4_Reference_assembly.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHDS4_/g" @downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica DS4" --sequenceFile @downloadDir@/E.histolyticaDS4_Genome/DS4_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica DS4</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU50_Genome" version="2010-08-04"
+        displayName="E. histolytica KU50 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU50"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU50 Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica KU50 Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/KU50_Reference_assembly.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU50_/g" @downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU50" --sequenceFile @downloadDir@/E.histolyticaKU50_Genome/KU50_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU50</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaMS96_Genome" version="2010-08-24"
+        displayName="E. histolytica MS96 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica MS96"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica MS96 Genome from jCVI"
+        extDbRlsVer="2010-08-24"
+        extDbRlsDescrip="E. histolytica MS96 Genome from jCVI|2010-08-24"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-24-2010/MS96_Ref_1171_contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHMS96_/g" @downloadDir@/E.histolyticaMS96_Genome/MS96_Ref_1171_contigs.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaMS96_Genome/MS96_Reference_assembly_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica MS96" --sequenceFile @downloadDir@/E.histolyticaMS96_Genome/MS96_Reference_assembly_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica MS96</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaHM1_CA_Genome" version="2010-08-04"
+        displayName="E. histolytica HM1:CA genome"
+        category="Genome"
+        organisms="Entamoeba histolytica HM1_CA"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica HM1_CA Genome from jCVI"
+        extDbRlsVer="2010-08-04"
+        extDbRlsDescrip="E. histolytica HM1_CA Genome from jCVI|2010-08-04"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-04-2010/HM1_CA_Reference_contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHHM1_CA_/g" @downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs.fa | perl -pe "s/contig.*$//g" >@downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica HM-1:CA" --sequenceFile @downloadDir@/E.histolyticaHM1_CA_Genome/HM1_CA_Reference_contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica HM-1:CA</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU48_Genome" version="2010-08-17"
+        displayName="E. histolytica KU48 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU48"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU48 Genome from jCVI"
+        extDbRlsVer="2010-08-17"
+        extDbRlsDescrip="E. histolytica KU48 Genome from jCVI|2010-08-17"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-17-2010/ku48_consensus_1172contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU48_/g" @downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs.fa | perl -pe "s/mapping.*$//g" >@downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU48" --sequenceFile @downloadDir@/E.histolyticaKU48_Genome/ku48_consensus_1172contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU48</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="E.histolyticaKU27_Genome" version="2010-08-17"
+        displayName="E. histolytica KU27 genome"
+        category="Genome"
+        organisms="Entamoeba histolytica KU27"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="E. histolytica KU27 Genome from jCVI"
+        extDbRlsVer="2010-08-17"
+        extDbRlsDescrip="E. histolytica KU27 Genome from jCVI|2010-08-17"
+        dbCommit="@dbcommit@">
+       <manualGet fileOrDir = "/files/cbil/data/cbil/AmoebaDB/manualDelivery/Genomes/EHistolytica_isolates_JCVI/8-17-2010/ku27_consensus_1178contigs.fa"
+        />
+        <unpack>perl -pe "s/Consensusfrom/tmp.EHKU27_/g" @downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs.fa | perl -pe "s/mapping.*$//g" >@downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs_fixed.fa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --ncbiTaxonName "Entamoeba histolytica KU27" --sequenceFile @downloadDir@/E.histolyticaKU27_Genome/ku27_consensus_1178contigs_fixed.fa --soTermName "contig" --regexSourceId '>(\S+)' --tableName "DoTS::ExternalNASequence"</pluginArgs>
+        <description>
+            <![CDATA[
+   Reference assembly for <i>E. histolytica KU27</i> obtained from Lis Caler at the J. Craig Venter Institute (<a href="http://pathema.jcvi.org/cgi-bin/Entamoeba/PathemaHomePage.cgi"Target="_blank">JCVI</a>).
+<br>Users should acknowledge the J. Craig Venter Institute and the National Institute of Allergy and Infectious Diseases, National Institutes of Health, Department of Health and Human Services in any publications that result from use of this draft sequence assembly. Any investigaors who propose to publish analyses of the sequence/open reading frames/genes on a genome scale should contact the J. Craig Venter Institute for the use of pre-publication data. 
+<br><br>You can download a poster describing the sequencing of these clinical isolates <a href="communityDownload.do?fname=Hannick%20Eh%20MPM%20Poster%202010.pdf">here</a>.
+          ]]>
+        </description>
+    </resource>
+
+    <resource resource="PDBProteinSequences" version="2009-12-09"
+        url="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz"
+        displayName="Protein Sequences from PDB"
+        organisms="Diverse"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="PDB protein sequences" 
+        extDbRlsVer="2009-12-09"
+        extDbRlsDescrip="PDB protein sequences|2009-12-09"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=3 --output-document=pdb_seqres.txt.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/PDBProteinSequences/pdb_seqres.txt.gz</unpack>
+        <unpack>filterPdbFile --inputFile @downloadDir@/PDBProteinSequences/pdb_seqres.txt --outputFile  @downloadDir@/PDBProteinSequences/pdb.fsa</unpack>
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile  @downloadDir@/PDBProteinSequences/pdb.fsa --SOTermName 'polypeptide'  --noSequence --regexSourceId  '>(\w+)\s+mol:protein' --regexDesc 'length:\d+\s+(.+)$' --tableName "DoTS::ExternalAASequence"</pluginArgs>
+        <description>
+         <![CDATA[
+Protein sequences from PDB used for mapping protein sequences to crystal structures in PDB.        
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="IEDB_Epitopes" version="2009-12-09"
+        publicUrl="http://www.immuneepitope.org"
+        displayName="IEDB Epitopes"
+        organisms="E. histolytica"
+        category="Proteome"
+        plugin="GUS::Supported::Plugin::LoadFastaSequences"
+        extDbName="Links to IEDB epitopes"
+        extDbRlsVer="2009-12-09"
+        extDbRlsDescrip="Mappings from epitope ids to external websites provided by IEDB."
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/Common/IEDB/Amoeba" 
+            contact="IEDB"
+            email=""
+            institution="IEDB"
+        />
+        <unpack>mkdir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <unpack>createEpitopeFilesFromExcel --excelDir @downloadDir@/IEDB_Epitopes/Amoeba --outDir @downloadDir@/IEDB_Epitopes_fixed</unpack>
+        <pluginArgs>--seqFileDir @downloadDir@/IEDB_Epitopes_fixed/fasta --externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --soTermName "protein_binding_site" --regexSourceId ">(\d+)|" --tableName "DoTS::MotifAASequence" --logFrequency 100 --regexNcbiTaxId "\|.*\|(.*)" --regexName "\|(.*)\|.*"</pluginArgs>
+        <description>
+            <![CDATA[
+   Epitope data obtained from the Immune Epitope Database and Analysis Resource (IEDB).
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Entrez_Gene_dbxref" version="1-16-2010"
+        displayName="dbxref from entrez gene ids to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Entrez Genes"
+        extDbRlsVer="1-16-2010"
+        extDbRlsDescrip="dbxref from entrez gene ids to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Entrez_Gene/gene_info_amoeb"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Entrez_Gene_dbxref/gene_info_amoeb --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+
+   <resource resource="Uniprot_Gene_dbxref" version="1-16-2010"
+        displayName="dbxref from Uniprot gene ACs to eupathdb gene identifiers"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertDBxRefs"
+        extDbName="Links to Uniprot Genes"
+        extDbRlsVer="1-16-2010"
+        extDbRlsDescrip="dbxref from Uniprot gene ACs to eupathdb gene identifiers."
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "/files/cbil/data/cbil/Common/Uniprot/Uniprot_Gene_amoeb"
+            contact=""
+            email=""
+            institution=""
+        />
+
+        <pluginArgs>--DbRefMappingFile @downloadDir@/Uniprot_Gene_dbxref/Uniprot_Gene_amoeb --extDbName %EXT_DB_NAME% --extDbReleaseNumber %EXT_DB_RLS_VER% --columnSpec "primary_identifier,secondary_identifier,remark" --tableName "DbRefNAFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+          ]]>
+        </description>
+    </resource>
+    <resource resource="OrthoMCL_Phyletic" version="4.0"
+        displayName="OrthoMCL phyletic profiles"
+        organisms="E. histolytica, E.invadens,E.dispar"
+        category="Proteome"
+        plugin="ApiCommonData::Load::Plugin::InsertPhylogeneticProfile"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        dbCommit="@dbcommit@">
+           <manualGet fileOrDir="/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/orthoMCL/4/addEintToGroups.out"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--groupsFile @downloadDir@/OrthoMCL_Phyletic/addEintToGroups.out --taxaToLoad "einv,edis,ehis"</pluginArgs>
+        <description>
+            <![CDATA[
+OrthoMCL data in a phyletic profile format. Contact: Steve Fischer </tt>
+          ]]>
+        </description>
+        <publication pmid="16381887"/>
+    </resource>
+
+<resource resource="OrthoMCL" version="4.0"
+        displayName="Orthologous groups generated using OrthoMCL"
+        organisms="E. histolytica, E.invadens,E.dispar"
+        category="Proteome"
+        publicUrl="http://orthomcl.cbil.upenn.edu"
+        plugin="ApiCommonData::Load::Plugin::InsertOrthologousGroups"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/MicrosporidiaDB/manualDelivery/orthoMCL/4/addEintToGroups.out"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--OrthologFile @downloadDir@/OrthoMCL/addEintToGroups.out --AnalysisName 'OrthoMCL-based Orthology Predictions' --AnalysisDescription 'OrthoMCL-based Orthology Predictions'  --taxaToLoad "einv,edis,ehis" --ElementResultTable "DoTS::GeneFeature"</pluginArgs>
+        <description>
+            <![CDATA[
+   OrthoMCL-based orthologous predictions for proteins were generated by Steve Fischer and Deborah Pinney (EuPathDB team) as described in Chen et al. Nucleic Acids Research 2006.
+          ]]>
+        </description>
+        <publication pmid="12952885"/>
+</resource>
+
+
+<resource resource="Ehistolytica_oldIds" version="2010-04-27"
+        displayName="Old E. histolytica ids"
+        organisms="E. histolytica"
+        category="ignore"
+        plugin="ApiCommonData::Load::Plugin::InsertNaFeatureNaGene" 
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/Alias/E_histolytica/2010-04-27/remap_to_amoebadb_mod.tab"
+            email="pinney@pcbi.upenn.edu"
+            contact="Deborah Pinney"
+            institution="PCBI"
+        />
+        <pluginArgs>--MappingFile @downloadDir@/Ehistolytica_oldIds/remap_to_amoebadb_mod.tab</pluginArgs>
+        <description>
+            <![CDATA[
+   Retired E. histolytica ids provided by Hernan Lorenzi 
+          ]]>
+        </description>
+
+
+
+</resource>
+
+<resource resource="E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles" version="2007-05-31"
+            displayName="E. histolytica Intestinal Colonization/Invasion and Stage Conversion Array Profiles"
+            category="Microarray"
+            publicUrl=""
+            organisms="Entamoeba histolytica"
+            plugin="ApiCommonData::Load::Plugin::InsertExpressionProfiles"
+            extDbName="E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles"
+            extDbRlsVer="2007-05-31"
+            extDbRlsDescrip="E. histolytica Intestinal Colonization/Invasion and Stage Conversion Array Profiles"
+            dbCommit="@dbcommit@">
+     <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/Microarray/Gilchrist_Singh/workspace/analysis/" 
+            contact="John Brestelli"
+            email="jbrestel@pcbi.upenn.edu"
+            institution="EuPathDB"
+      />
+<pluginArgs>--inputDir @downloadDir@/E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles/analysis --configFile @downloadDir@/E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles/analysis/config_profile.txt --tolerateMissingIds --externalDatabase %EXT_DB_NAME% --externalDatabaseRls %EXT_DB_RLS_VER% </pluginArgs>
+   <description>
+         <![CDATA[
+
+           Gilchrist CA, Houpt E, Trapaidze N, Fei Z et al. 
+           Impact of intestinal colonization and invasion on the <i>Entamoeba histolytica</i> transcriptome. 
+           Mol Biochem Parasitol 2006 Jun;147(2):163-76. PMID: 16569449
+
+           <br>Ehrenkaufer GM, Haque R, Hackney JA, Eichinger DJ et al. 
+           Identification of developmentally regulated genes in <i>Entamoeba histolytica</i>: insights into mechanisms of stage conversion in a protozoan parasite. 
+           Cell Microbiol 2007 Jun;9(6):1426-44. PMID: 17250591
+           
+<br><br>Taken from GEO datasets: <a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE8484">GSE8484<a>,<a href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE6648">GSE6648</a>
+                 ]]>
+    </description>
+          <publication pmid="16569449"/>
+          <publication pmid="17250591"/>
+  </resource>
+
+
+<resource resource="Phagosome_Proteomics_Data_From_Huston_0min_vs_NR" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Phagosome Proteomics data from Boettner et. al"
+              category="Proteome"
+              extDbName="Phagosome Proteomics data from Huston - 0 mins"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Phagosome Proteomics data from Huston - 0 mins"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/proteomics/Phagosome/Huston_mass_spec_phagosome_data_0min_vs_NR.tab"
+                contact="Christopher Huston"
+               email="Christopher.Huston@uvm.edu"
+                institution="University of Vermont"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_0min_vs_NR/Huston_mass_spec_phagosome_data_0min_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[
+	Magnetic Bead-Purified Phagosomes from Trophozoite (Boettner et. al.)<br>
+	Ingested carboxylated magnetic beads within intact phagosomes from E. histolytica were separated from amebic lysate and subjected to delipidation and mass spectrometry sequencing. Phagosome preparations were performed at 0, 5, 10, and 60 minutes following centrifugation of the beads into contact with trophozoites. In addition lysed ameba were incubated with beads and subjected to the same steps to account for background binding to the carboxylated beads. This resultant proteome identified many proteins previously associated with phagocytosis in the literature, including: the galactose binding lectin, small GTPases, hydrolytic proteins, cytoskeleton proteins, and endoplasmic reticulum proteins.<br>
+For details refer to: <a href="http://www.ncbi.nlm.nih.gov/pubmed/18208324">http://www.ncbi.nlm.nih.gov/pubmed/18208324</a>
+          ]]>
+        </description>		
+    </resource>  
+
+<resource resource="Phagosome_Proteomics_Data_From_Huston_5mins_vs_NR" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Phagosome Proteomics data from Huston - 5 mins"
+              category="ignore"
+              extDbName="Phagosome Proteomics data from Huston - 5 mins"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Phagosome Proteomics data from Huston - 5 mins"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/proteomics/Phagosome/Huston_mass_spec_phagosome_data_5mins_vs_NR.tab"
+                contact="Christopher Huston"
+               email="Christopher.Huston@uvm.edu"
+                institution="University of Vermont"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_5mins_vs_NR/Huston_mass_spec_phagosome_data_5mins_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[
+	Magnetic Bead-Purified Phagosomes from Trophozoite (Boettner et. al.)<br>
+	Ingested carboxylated magnetic beads within intact phagosomes from E. histolytica were separated from amebic lysate and subjected to delipidation and mass spectrometry sequencing. Phagosome preparations were performed at 0, 5, 10, and 60 minutes following centrifugation of the beads into contact with trophozoites. In addition lysed ameba were incubated with beads and subjected to the same steps to account for background binding to the carboxylated beads. This resultant proteome identified many proteins previously associated with phagocytosis in the literature, including: the galactose binding lectin, small GTPases, hydrolytic proteins, cytoskeleton proteins, and endoplasmic reticulum proteins.<br>
+For details refer to: <a href="http://www.ncbi.nlm.nih.gov/pubmed/18208324">http://www.ncbi.nlm.nih.gov/pubmed/18208324</a>
+          ]]>
+        </description>		
+    </resource>  
+
+<resource resource="Phagosome_Proteomics_Data_From_Huston_10mins_vs_NR" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Phagosome Proteomics data from Huston - 10 mins"
+              category="ignore"
+              extDbName="Phagosome Proteomics data from Huston - 10 mins"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Phagosome Proteomics data from Huston - 10 mins"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/proteomics/Phagosome/Huston_mass_spec_phagosome_data_10mins_vs_NR.tab"
+                contact="Christopher Huston"
+               email="Christopher.Huston@uvm.edu"
+                institution="University of Vermont"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_10mins_vs_NR/Huston_mass_spec_phagosome_data_10mins_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[
+	Magnetic Bead-Purified Phagosomes from Trophozoite (Boettner et. al.)<br>
+	Ingested carboxylated magnetic beads within intact phagosomes from E. histolytica were separated from amebic lysate and subjected to delipidation and mass spectrometry sequencing. Phagosome preparations were performed at 0, 5, 10, and 60 minutes following centrifugation of the beads into contact with trophozoites. In addition lysed ameba were incubated with beads and subjected to the same steps to account for background binding to the carboxylated beads. This resultant proteome identified many proteins previously associated with phagocytosis in the literature, including: the galactose binding lectin, small GTPases, hydrolytic proteins, cytoskeleton proteins, and endoplasmic reticulum proteins.<br>
+For details refer to: <a href="http://www.ncbi.nlm.nih.gov/pubmed/18208324">http://www.ncbi.nlm.nih.gov/pubmed/18208324</a>
+          ]]>
+        </description>		
+    </resource>  
+
+<resource resource="Phagosome_Proteomics_Data_From_Huston_30mins_vs_NR" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Phagosome Proteomics data from Huston - 30 mins"
+              category="ignore"
+              extDbName="Phagosome Proteomics data from Huston - 30 mins"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Phagosome Proteomics data from Huston - 30 mins"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/proteomics/Phagosome/Huston_mass_spec_phagosome_data_30mins_vs_NR.tab"
+                contact="Christopher Huston"
+               email="Christopher.Huston@uvm.edu"
+                institution="University of Vermont"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_30mins_vs_NR/Huston_mass_spec_phagosome_data_30mins_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[
+	Magnetic Bead-Purified Phagosomes from Trophozoite (Boettner et. al.)<br>
+	Ingested carboxylated magnetic beads within intact phagosomes from E. histolytica were separated from amebic lysate and subjected to delipidation and mass spectrometry sequencing. Phagosome preparations were performed at 0, 5, 10, and 60 minutes following centrifugation of the beads into contact with trophozoites. In addition lysed ameba were incubated with beads and subjected to the same steps to account for background binding to the carboxylated beads. This resultant proteome identified many proteins previously associated with phagocytosis in the literature, including: the galactose binding lectin, small GTPases, hydrolytic proteins, cytoskeleton proteins, and endoplasmic reticulum proteins.<br>
+For details refer to: <a href="http://www.ncbi.nlm.nih.gov/pubmed/18208324">http://www.ncbi.nlm.nih.gov/pubmed/18208324</a>
+          ]]>
+        </description>		
+    </resource> 
+<resource resource="Phagosome_Proteomics_Data_From_Huston_60mins_vs_NR" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Phagosome Proteomics data from Huston - 60 mins"
+              category="Proteome"
+              extDbName="Phagosome Proteomics data from Huston - 60 mins"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Phagosome Proteomics data from Huston - 60 mins"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="/files/cbil/data/cbil/AmoebaDB/manualDelivery/proteomics/Phagosome/Huston_mass_spec_phagosome_data_60mins_vs_NR.tab"
+                contact="Christopher Huston"
+               email="Christopher.Huston@uvm.edu"
+                institution="University of Vermont"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_60mins_vs_NR/Huston_mass_spec_phagosome_data_60mins_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[
+	Magnetic Bead-Purified Phagosomes from Trophozoite (Boettner et. al.)<br>
+	Ingested carboxylated magnetic beads within intact phagosomes from E. histolytica were separated from amebic lysate and subjected to delipidation and mass spectrometry sequencing. Phagosome preparations were performed at 0, 5, 10, and 60 minutes following centrifugation of the beads into contact with trophozoites. In addition lysed ameba were incubated with beads and subjected to the same steps to account for background binding to the carboxylated beads. This resultant proteome identified many proteins previously associated with phagocytosis in the literature, including: the galactose binding lectin, small GTPases, hydrolytic proteins, cytoskeleton proteins, and endoplasmic reticulum proteins.<br>
+          ]]>
+        </description>		
+        <publication pmid=18208324/>  
+    </resource>   
+<resource resource="Ehistolytica_Glycosylation_RSRC" 
+              version="1"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Concanavalin A-enriched Glycoproteins from Trophozoite (Carpentieri et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Glycosylation_RSRC"
+              extDbRlsVer="1"
+              extDbRlsDescrip="Glycoprotein proteomics data (Carpentieri et. al.)"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Glycosylation/%RESOURCE_VERSION%/final/Ehmerged.tab"
+                contact="Andrea Carpentieri,C.E. Costello,John Samuelson"
+               email="acarpent76@gmail.com"
+                institution="Boston University Goldman School of Dental Medicine"
+         />
+         <pluginArgs> --inputFile @downloadDir@/Phagosome_Proteomics_Data_From_Huston_60mins_vs_NR/Huston_mass_spec_phagosome_data_60mins_vs_NR.tab --externalDatabaseSpec "%EXT_DB_NAME%|%EXT_DB_RLS_VER%" --geneExternalDatabaseSpec 'E. histolytica Genome and Annotations from jCVI|2009-11-27' </pluginArgs>
+        <description>
+          <![CDATA[ 
+	Concanavalin A-enriched Glycoproteins from Trophozoite (Carpentieri et. al.)
+<br>	
+	Total protein extract (soluble fraction) from <i>E. histolytica</i> trophozoites was purified over a Concanavalin A column followed by tryptic digestions and N-glycanase F hydrolysis (to release N-linked glycans and identify glycosylation sites).  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+          ]]>
+        </description>
+        <publication pmid=20852023/>		
+    </resource>  
+
+<resource resource="Ehistolytica_Markiewicz_Proteomics_RSRC" 
+              version="2011-04"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Purified Uropods from Trophozoite (Markiewicz et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Markiewicz_Proteomics_RSRC"
+              extDbRlsVer="2011-04"
+              extDbRlsDescrip="N/A"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Markiewicz_Proteomics/2011-04/final/Markiewicz_Proteomics.tab"
+                contact="N/A"
+                email="N/A"
+                institution="N/A"
+         />
+         <pluginArgs></pluginArgs>
+        <description>
+          <![CDATA[
+	Purified Uropods from Trophozoite (Markiewicz et. al.)
+	<br>
+	Uropod extruded fractions were purified following a Concanavalin A incubation of E. histolytica trophozoites.  Purification was performed by successive centrifugation and final pellet was processed for proteomics analysis.  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+	<br>
+          ]]>
+        </description>
+        <publication pmid=21483708/>
+    </resource>
+
+<resource resource="Ehistolytica_Marion_Proteomics_Wild_Type_RSRC" 
+              version="2005-07"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Marion_Proteomics_Wild_Type_RSRC"
+              extDbRlsVer="2005-07"
+              extDbRlsDescrip="N/A"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Marion_Proteomics/2005-07/final/CMI_573_sm_tableS1.tab"
+                contact="N/A"
+                email="N/A"
+                institution="N/A"
+         />
+         <pluginArgs></pluginArgs>
+        <description>
+          <![CDATA[
+	Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)
+<br>	
+	Phagosomes were purified from E. histolytica wild type and myosin IB over-expressing (MyoIB+) trophozoites using human serum-coated magnetic beads.  Phagosomes from wild type parasites were purified following a 3 minute incubation with beads, and  phagosomes from MyoIB+ parasites were purified following 5 or 15 minute incubations.  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+<br>	
+          ]]>
+        </description>
+        <publication pmid=16153248/>		
+    </resource>
+
+<resource resource="Ehistolytica_Marion_Proteomics_Wild_Type_RSRC" 
+              version="2005-07"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Marion_Proteomics_Wild_Type_RSRC"
+              extDbRlsVer="2005-07"
+              extDbRlsDescrip="N/A"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Marion_Proteomics/2005-07/final/CMI_573_sm_tableS1.tab"
+                contact="N/A"
+                email="N/A"
+                institution="N/A"
+         />
+         <pluginArgs></pluginArgs>
+        <description>
+          <![CDATA[
+	Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)
+<br>	
+	Phagosomes were purified from E. histolytica wild type and myosin IB over-expressing (MyoIB+) trophozoites using human serum-coated magnetic beads.  Phagosomes from wild type parasites were purified following a 3 minute incubation with beads, and  phagosomes from MyoIB+ parasites were purified following 5 or 15 minute incubations.  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+<br>	
+          ]]>
+        </description>	
+        <publication pmid=16153248/>	
+    </resource>
+
+<resource resource="Ehistolytica_Marion_Proteomics_MyoIB_5min_RSRC" 
+              version="2005-07"
+              plugin="ApiCommonData::Load::Plugin::InsertMassSpecFeaturesAndSummaries"
+	      displayName="Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Marion_Proteomics_MyoIB_5min_RSRC"
+              extDbRlsVer="2005-07"
+              extDbRlsDescrip="N/A"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Marion_Proteomics/2005-07/final/CMI_573_sm_tableS1.tab"
+                contact="N/A"
+                email="N/A"
+                institution="N/A"
+         />
+         <pluginArgs></pluginArgs>
+        <description>
+          <![CDATA[
+	Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)
+<br>	
+	Phagosomes were purified from E. histolytica wild type and myosin IB over-expressing (MyoIB+) trophozoites using human serum-coated magnetic beads.  Phagosomes from wild type parasites were purified following a 3 minute incubation with beads, and  phagosomes from MyoIB+ parasites were purified following 5 or 15 minute incubations.  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+<br>	
+          ]]>
+        </description>
+        <publication pmid=16153248/>
+    </resource>
+
+<resource resource="Ehistolytica_Marion_Proteomics_MyoIB_15min_RSRC" 
+              version="2005-07"
+              plugin="N/A"
+	      displayName="Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)"
+              category="Proteome"
+              extDbName="Ehistolytica_Marion_Proteomics_MyoIB_15min_RSRC"
+              extDbRlsVer="2005-07"
+              extDbRlsDescrip="N/A"
+	      dbCommit="@dbcommit@"
+            >	
+         <manualGet fileOrDir="AmoebaDB/ehistolytica/massSpec/Marion_Proteomics/2005-07/final/CMI_573_sm_tableS1.tab"
+                contact="N/A"
+                email="N/A"
+                institution="N/A"
+         />
+         <pluginArgs></pluginArgs>
+        <description>
+          <![CDATA[
+	Human Serum Coated Magnetic Bead-Purified Phagosomes from Trophozoite (Marion et. al.)
+<br>	
+	Phagosomes were purified from E. histolytica wild type and myosin IB over-expressing (MyoIB+) trophozoites using human serum-coated magnetic beads.  Phagosomes from wild type parasites were purified following a 3 minute incubation with beads, and  phagosomes from MyoIB+ parasites were purified following 5 or 15 minute incubations.  Proteins were analyzed by liquid chromatography and tandem mass spectrometry (LC-MS/MS).
+<br>	
+	For details refer to: <a href="http://www.ncbi.nlm.nih.gov/pubmed/16153248">http://www.ncbi.nlm.nih.gov/pubmed/16153248< /a>
+          ]]>
+        </description>		
+    </resource>
+
+<resource resource="Emoshkovskii_genome_RSRC" version="2011-02-02"
+        displayName="Entamoeba moshkovskii genome sequence from the University of Liverpool"
+        category="Genome"
+        plugin="N/A"
+        extDbName="Emoshkovskii_genome_RSRC"
+        extDbRlsVer="2011-02-02"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+Genome Assembly for <i>Entamoeba moshkovskii</i> was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK 
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="EmoshkovskiiScaffoldAGP_RSRC" version="2011-02-02"
+        displayName="Entamoeba moshkovskii contig to scaffold map"
+        category="Ignore"
+        plugin="N/A"
+        extDbName="EmoshkovskiiScaffoldAGP_RSRC"
+        extDbRlsVer="2011-02-02"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+Entamoeba moshkovskii contig to scaffold map from the Department Functional and Comparative Genomics, University of Liverpool.
+          ]]>
+        </description>
+    </resource>
+
+
+<resource resource="EhistolyticaRahman_genome_RSRC" version="2011-02-02"
+        displayName="Entamoeba histolytica Rahman genome sequence from the University of Liverpool"
+        category="Genome"
+        plugin="N/A"
+        extDbName="EhistolyticaRahman_genome_RSRC"
+        extDbRlsVer="2011-02-02"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+Genome Assembly for <i>Entamoeba histolytica</i> Rahman strain was provided by Gareth Weedall and Neil Hall. Institute of Integrative Biology, University of Liverpool, Crown Street, Liverpool L69 7ZB, UK  
+          ]]>
+        </description>
+    </resource>
+
+<resource resource="EhistolyticaRahmanScaffoldAGP_RSRC" version="2011-02-02"
+        displayName="Entamoeba histolytica Rahman contig to scaffold map"
+        category="Ignore"
+        plugin="N/A"
+        extDbName="EhistolyticaRahmanScaffoldAGP_RSRC"
+        extDbRlsVer="2011-02-02"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+Entamoeba histolytica Rahman contig to scaffold map from the Department Functional and Comparative Genomics, University of Liverpool.
+          ]]>
+        </description>
+    </resource>
+
+  <resource resource="Eh_Weedall_SOLID_RSRC" version="1.0"
+        displayName="Weedall E. Histolytica strain HTS sequence reads"
+        category="Genome"
+        plugin="N/A"
+        extDbName="Eh_Weedall_SOLID_RSRC"
+        extDbRlsVer="1.0"
+        extDbRlsDescrip="N/A"
+        dbCommit="@dbcommit@">
+         <manualGet fileOrDir = "N/A"
+            contact="N/A"
+            email="N/A"
+            institution="N/A"
+        />
+        <pluginArgs></pluginArgs>
+        <description>
+            <![CDATA[
+ABI SOLiD sequence reads of multiple <i>E. histolytica</i> strains were provided by Gareth Weedall and Neil Hall, of the Institute of Integrative Biology, Liverpool.  Reads were aligned to the <i>E. histolytica</i> HM-1:IMSS reference genome using Bowtie and SNPs called using VarScan.
+          ]]>
+        </description>
+    </resource>
+ 
+</resourcesPipeline>
+
+

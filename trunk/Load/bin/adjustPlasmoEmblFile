@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+
+my $previousLine = "";
+
+while (<STDIN>) {
+  if (/^ID/) {
+    if (/unknown id/) {
+      s/unknown id/$ARGV[0]/;
+    }
+    elsif (/XXX;/){
+      s/XXX;/XXX; CHR;/;
+    }
+    else {
+      s/;(\w{3});/; $1;/;
+    }
+  }
+  elsif (/^FT   exon/) {
+    s/   exon/   alternative_exon/;
+  }
+  elsif (/^AC/) {
+    next;
+  }
+  elsif (/\/note=""/) {
+    next;
+  }
+  elsif (/\/EC_number="4.2.70"/) {
+    next;
+  }
+  elsif (/\/EC_number="1.10.22"/) {
+    s/1\.10\.22/1.10.2.2/g;
+  }
+  elsif (/\/EC_number="2.1.1.173"/) {
+    s/2\.1\.1\.173/2.1.1.37/g; # the 173 is a typo for 73; and 73 has
+                               # been replaced by 37
+  }
+  elsif (/\/EC_number="2.7.1."/) {
+    next;
+  }
+  elsif (/\/EC_number="EC \d/) {
+    s/"EC /"/g; # the 'EC' should not be included with the EC number
+  }
+  elsif (/\/protein_id=*/) {
+    s/(CA[AB]\d+(?:\.\d+)?)/EMBL:$1/;
+  }
+  elsif (/\/systematic_id=/  && $previousLine =~ /\/systematic_id=/){
+    $previousLine = $_;
+    s/\/systematic_id/\/previous_systematic_id/;
+    print;
+    next;
+  }
+  elsif (/^SQ/) {
+    my @array = split("SQ ", $_);
+    $_ = "SQ $array[1]\n";
+  }
+  elsif (/^FT/) {
+    if ($_ eq $previousLine){
+      next;
+    }
+  }
+  $previousLine = $_;
+  print;
+}

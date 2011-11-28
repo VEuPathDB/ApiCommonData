@@ -1,0 +1,15 @@
+<mapping>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeOrfSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <feature name="ORF" so="ORF">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="translation" handler="api" method="setProvidedOrfTranslation"/>
+  </feature>
+
+</mapping>
+

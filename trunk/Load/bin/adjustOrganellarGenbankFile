@@ -1,0 +1,17 @@
+#!/usr/bin/perl
+
+my $nukeNextLine=0;
+
+while (<STDIN>) {
+
+  if(/^\s+gene/){
+    $nukeNextLine = 1;
+    next;
+  }
+  if($nukeNextLine){
+    $nukeNextLine=0;
+    next;
+  }
+
+  print;
+}

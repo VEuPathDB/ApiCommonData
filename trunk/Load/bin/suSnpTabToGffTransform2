@@ -1,0 +1,138 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+
+my ($fn, $verbose, $help, $out);
+
+&GetOptions('tab_file=s' => \$fn,
+            'verbose' => \$verbose,
+            'help|h' => \$help,
+            'out_file=s' => \$out,
+           );
+
+&_usage() if($help);
+&_usage("Incorrectly specified argument") unless(-e $fn && $out);
+
+=pod
+
+=head1 Purpose
+
+Simple script to create a gff file for the su snps from their tab file format:
+Chromosome    gene    #Snps   Snp-Position    3D7-allele      7G8-allele      DD2-allele      D10-allele      HB3-allele      External ID5' Flank sequence       Allele in slashed form or IUPAC Code    3' Flank sequence
+
+=cut
+
+open(FILE, $fn) || die "Cannot open file $fn for reading: $!";
+open(OUT, "> $out") || die "Cannot open file $out for writing: $!";
+
+
+my %rv;
+
+my %allele;
+
+my @strns =();
+
+while(<FILE>) {
+  chomp;
+
+  next if ($_ =~ /gene/ && @strns > 1);
+  if($_ =~ /gene/ && @strns==0){
+    my @arr = split(/\t/,$_);
+    foreach my $strn (@arr){
+      $strn =~ s/-allele//;
+      push(@strns,$strn);
+    }
+
+    my $col = scalar (@strns);
+
+  }
+  else{
+    %allele = ();
+
+    my @ar = split(/\t/, $_);
+
+    my $chromosome = $ar[0];
+    my $position = $ar[3];
+
+    my $col = scalar (@strns) - 5;
+
+    for (my $i=4;$i<=$col;$i++) {
+
+      $allele{$strns[$i]} = $ar[$i];
+    };
+
+
+    my $n = scalar (keys %allele);
+
+    my $name = $ar[$col+1];
+    my $five = $ar[$col+2];
+    my $three = $ar[$col+4];
+
+    my ($aThree, $aFive) = &_ensureEqualLength($three, $five);
+
+    my $strains;
+    foreach my $strain (keys %allele) {
+      next if ($allele{$strain} =~ /\_/);
+      $strains = $strains . "\"$strain:$allele{$strain}\" " if($allele{$strain});
+    }
+  
+    next if ($strains !~ /\w+/);
+
+    my $comment = "ID $name; Allele $strains; FivePrimeFlank $aFive ; ThreePrimeFlank $aThree";
+
+    print OUT "$chromosome\tSu\tSNP\t$position\t$position\t.\t.\t.\t$comment\n";
+  }
+}
+
+close(FILE);
+close(OUT);
+
+
+sub _ensureEqualLength {
+  my ($three, $five) = @_;
+
+  my ($newThree, $newFive);
+
+  my $lengthThree = length($three);
+  my $lengthFive = length($five);
+
+  if($lengthThree == $lengthFive) {
+    return($three, $five);
+  }
+  elsif($lengthFive < $lengthThree) {
+    $newThree = substr($three, 0, $lengthFive);
+    $newFive = $five;
+
+    print STDERR "ADJUST_THREE:  $three\t$newThree\n" if($verbose);
+    print STDERR "               $five\t$newFive\n" if($verbose);
+  }
+  elsif($lengthThree < $lengthFive) {
+    my $startingPos = $lengthFive - $lengthThree;
+    $newFive = substr($five, $startingPos);
+    $newThree = $three;
+
+    print STDERR "ADJUST_five:  $five\t$newFive\n" if($verbose);
+    print STDERR "              $three\t$newThree\n" if($verbose);
+  }
+  else {
+    die "Maybe undef sequence $three or $five";
+  }
+  return($newThree, $newFive);
+}
+
+sub _usage {
+  my $m = shift;
+
+  print STDERR "$m\n" if($m);
+  print STDERR "usage: perl suSnpTabToGffTransform --tab_file <s-FILE> --out_file --verbose\n";
+  exit();
+}
+
+1;
+
+
+
+

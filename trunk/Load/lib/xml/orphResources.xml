@@ -1,0 +1,101 @@
+<resourcesPipeline repository="login.pcbi.upenn.edu:/files/efr"
+                   downloadDir="@downloadDir@">
+
+    <resource resource="taxonomy" version="2009_09_03" 
+              displayName="NCBI Taxonomy"
+              publicUrl="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+              category="Ontology"
+              url="ftp://ftp.ncbi.nih.gov/pub/taxonomy/"
+              plugin="GUS::Supported::Plugin::LoadTaxon"
+              dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --mirror --no-parent --no-directories --no-host-directories --cut-dirs=2 --accept=gi_taxid_prot.dmp.gz,taxdump.tar.gz</wgetArgs>
+        <unpack>gunzip @downloadDir@/taxonomy/gi_taxid_prot.dmp.gz</unpack>
+        <unpack>gunzip @downloadDir@/taxonomy/taxdump.tar.gz</unpack>
+        <unpack>tar -xf @downloadDir@/taxonomy/taxdump.tar -C @downloadDir@/taxonomy/</unpack>
+        <unpack>rm -f @downloadDir@/taxonomy/taxdump.tar</unpack>
+        <pluginArgs>--names @downloadDir@/taxonomy/names.dmp --nodes @downloadDir@/taxonomy/nodes.dmp --gencode @downloadDir@/taxonomy/gencode.dmp --merged @downloadDir@/taxonomy/merged.dmp --restart @taxonomy.restart@ --verbose @commit@</pluginArgs>
+        <description>
+            <![CDATA[
+            The NCBI Taxonomy database contains the names of all organisms that are represented in the Entrez genetic databases.
+            ]]>
+        </description>
+    </resource>
+
+    <resource resource="SO" version="2.3"
+        displayName="Sequence Ontology"        
+        publicUrl="http://song.sourceforge.net"
+        category="Ontology"      
+	url="http://song.cvs.sourceforge.net/*checkout*/song/ontology/so.obo?revision=2.3"
+        plugin="GUS::Supported::Plugin::InsertSequenceOntologyOBO"
+        dbCommit="@dbcommit@">
+        <wgetArgs>--tries=5 --output-document=so.obo</wgetArgs>
+        <pluginArgs>--inputFile @downloadDir@/SO/so.obo --soVersion @soVer@ --soCvsVersion @soVer@</pluginArgs>
+            <description>
+         <![CDATA[
+    The Sequence Ontology Project (SO) is a joint effort by genome annotation centres, including: WormBase, the Berkeley Drosophila Genome Project, FlyBase, the Mouse Genome Informatics group, and the Sanger Institute. They are a part of the Gene Ontology Project  and their aim is to develop an ontology suitable for describing biological sequences.
+          ]]>
+     </description>
+    </resource>
+ 
+<resource resource="TparvaGenomics" version="2005"
+              displayName="T. parva genomics WGS"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TparvaGenome"
+              extDbRlsVer="2005"
+              extDbRlsDescrip="Tparva Genomics WGS obtained from NCBI/TIGR"
+              dbCommit="@dbcommit@">
+              <manualGet 
+                fileOrDir="@manualDeliveryDir@/genomes/TparvaGenome/TheileriaParvaGenomics.fasta"
+              />
+            <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TparvaGenomics/TheileriaParvaGenomics.fasta --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){6}(.*)' --SOTermName supercontig --ncbiTaxId 333668   --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Theileria parva strain Muguga Genomics WGS from NCBI/TIGR.
+            ]]>
+        </description>
+    </resource>
+
+
+<resource resource="TannulataGenomics" version="2005"
+              displayName="T. annulata genomics WGS"
+              category="Genome"
+              plugin="GUS::Supported::Plugin::LoadFastaSequences"
+              extDbName="TannulataGenome"
+              extDbRlsVer="2005"
+              extDbRlsDescrip="Tannulata Genomics WGS obtained from WTSI"
+              dbCommit="@dbcommit@">
+              <manualGet fileOrDir="@manualDeliveryDir@/genomes/TannulataGenome/TheileriaAnnulataGenomics.fasta"
+              />
+        <pluginArgs>--externalDatabaseName %EXT_DB_NAME% --externalDatabaseVersion %EXT_DB_RLS_VER% --sequenceFile @downloadDir@/TannulataGenomics/TheileriaAnnulataGenomics.fasta --SOTermName supercontig --ncbiTaxId 353154 --regexSourceId '>[^\|]+\|([^\|]+)\|' --regexDesc '>(?:[^\|]+\|){3}(.*)' --tableName 'DoTS::ExternalNASequence' --noCheck</pluginArgs>
+        <description>
+            <![CDATA[
+            Theileria annulata strain Ankara Genomics, WGS  from WTSI.
+            ]]>
+        </description>
+    </resource>
+
+    <resource resource="dbEST" version="2009-08-24"
+        plugin="GUS::Supported::Plugin::dbEST"
+        displayName="dbEST ESTs"
+        category="Transcriptome"
+        publicUrl="http://www.ncbi.nlm.nih.gov/dbEST/"
+        extDbName="dbEST"
+        extDbRlsVer="2009-08-24"
+        extDbRlsDescrip="ESTs from the mirrored dbEST"
+        dbCommit="@dbcommit@">
+        <manualGet fileOrDir = "/files/cbil/data/cbil/plasmoDB/manualDelivery/dbEST/dummy"
+        />
+        <unpack>mkdir @pipelineDir@/config/</unpack>
+        <unpack>getSubTaxa --ncbiTaxId 5820 --outputFile @downloadDir@/dbEST/taxonIdFile</unpack>
+        <unpack>createPropFile --file @pipelineDir@/config/dbestProp --propList "dbestLogin:@dbestLogin@,dbestPswd:@dbestPswd@"</unpack>
+        <pluginArgs>--span 500 --taxonFile @downloadDir@/dbEST/taxonIdFile --extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --soVer @soVer@ --dbestLoginFile @pipelineDir@/config/dbestProp --dbestConnect "dbi:Oracle:dbst100n" </pluginArgs>
+        <description>
+            <![CDATA[
+                  Plasmodium ESTs from dbEST.
+          ]]>
+        </description>
+    </resource>
+
+
+</resourcesPipeline>

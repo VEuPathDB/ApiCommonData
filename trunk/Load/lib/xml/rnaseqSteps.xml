@@ -1,0 +1,31 @@
+<xml>
+ <step class="CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles">
+    <property name="outputFile" value="profiles.min"/>
+    <property name="makePercentiles" value="1"/>
+    <property name="fileSuffix" value="int.min"/>
+    <property name="profileSetName" isReference="1" value="$globalReferencable->{profileSetName}" />
+    <property name="samples" isReference="1" value="$globalReferencable->{samples}" />
+  </step>
+
+ <step class="CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles">
+    <property name="outputFile" value="profiles.max"/>
+    <property name="fileSuffix" value="int.max"/>
+    <property name="makePercentiles" value="0"/>
+    <property name="doNotLoad" value="1" />
+    <property name="samples" isReference="1" value="$globalReferencable->{samples}" />
+  </step>
+
+
+ <step class="CBIL::TranscriptExpression::DataMunger::ProfileDifferences">
+    <property name="outputFile" value="profiles.diff"/>
+    <property name="minuendFile" value="profiles.max"/>
+    <property name="subtrahendFile" value="profiles.min"/>
+    <property name="profileSetName" isReference="1" value="$globalReferencable->{diffProfileSetName}" />
+  </step>
+
+ <step class="CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers">
+    <property name="profileSetName" isReference="1" value="$globalReferencable->{profileSetName}" />
+    <property name="conditions" isReference="1" value="$globalReferencable->{samples}" />
+    <property name="isPairedEnd" value="no"/>
+  </step>
+</xml>

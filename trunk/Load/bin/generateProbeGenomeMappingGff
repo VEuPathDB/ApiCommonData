@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use Data::Dumper;
+use List::Util qw(sum);
+
+my ($outputFile,$inputFile,$verbose, $allowedMismatches);
+&GetOptions("inputFile=s" => \$inputFile,
+	    "allowedMismatches=s" => \$allowedMismatches,
+            "verbose!" => \$verbose,
+            "outputFile=s" => \$outputFile);
+
+my (%featureHash,$feature);
+
+open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
+
+while (<TABFILE>){
+  chomp;
+
+  next if /^#/; 
+
+  my ($probeId, $genomeId, $locations,$strand, $probeSeq, $mismatches)= split(/\t/, $_);
+
+  $feature = {probeId => $probeId,
+	      genomeId => $genomeId,
+	      strand => $strand,
+	      mismatches => $mismatches,
+             };
+   my @exons = split (/,/,$locations);
+   map(s/\s//g,@exons) ;
+   my $exonOrder=0;
+   foreach(@exons){
+       	my ($start,$end) = split (/-/,$_);
+	$exonOrder++;
+	push(@{$feature->{exon}},{start=>$start,
+				   end=>$end,
+				   exonOrder=>$exonOrder,});
+  }
+  push(@{$featureHash{$probeId}}, $feature);
+}
+
+close(TABFILE);
+
+#print Dumper (\%featureHash);
+
+open(OUT, "> $outputFile") or die "Cannot open file for writing:  $!";
+
+foreach my $probeId (keys %featureHash){
+
+    my @features = @{$featureHash{$probeId}};
+
+    my $featureCount=0;
+ 
+    foreach my $probeFeature (@features){
+
+	$featureCount++;
+
+	my @exonFeatures = @{$probeFeature->{exon}};
+	
+	foreach my $exonfeature (@exonFeatures){
+	    
+             print OUT "$probeFeature->{genomeId}\tProbe_Mappings\tProbes\t$exonfeature->{start}\t$exonfeature->{end}\t.\t$probeFeature->{strand}\t.\tID \"$probeFeature->{probeId}"."-"."$featureCount\"; ExonOrder \"$exonfeature->{exonOrder}\"; Name \"$probeFeature->{probeId}\"\n" if ($probeFeature->{mismatches} <= $allowedMismatches);
+	    
+	}
+    }
+}
+
+close(OUT);
+
+
+

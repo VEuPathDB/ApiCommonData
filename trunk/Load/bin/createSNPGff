@@ -1,0 +1,137 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+use Data::Dumper;
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+use Bio::SeqIO;
+
+my ($verbose, $help, $inputDir, $outputFile,$inputFileExt,$extDbName,$extDbRls,$gusConfigFile, $seqFile);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'input_dir=s' => \$inputDir,
+	    'output_gff=s' => \$outputFile,
+	    'inputFileExt=s' => \$inputFileExt,
+	    'extDbName=s' => \$extDbName,
+	    'extDbRls=s' => \$extDbRls,
+	    'gusConfigFile=s' => \$gusConfigFile,
+	    'seq_file=s' => \$seqFile
+ 
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $inputDir && $outputFile);
+
+my($gusconfig,$db,$dbh,%seqs);
+if($seqFile){
+    my $stream = Bio::SeqIO->new(-file => $seqFile, -format => 'fasta');
+
+    while (my $bioperlSeq = $stream->next_seq()){
+	my ($source,$id,) = split(/\|/,$bioperlSeq->id());
+
+	$seqs{$id} = $bioperlSeq->seq();
+    }
+}else{
+    $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+    $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+    
+    $dbh = $db->getQueryHandle();
+}
+
+
+if(!($inputFileExt)){
+	$inputFileExt = "snps";
+}
+
+
+open(OUT,">$outputFile");
+
+opendir(DIR, $inputDir) || die "can't opendir $inputDir: $!";
+
+
+foreach my $subdir (readdir(DIR)){
+  if(!(-f "$inputDir/$subdir")){
+    opendir(SUBDIR,"$inputDir/$subdir");
+    foreach my $file (readdir(SUBDIR)){
+      if($file =~ /two_vs_454\.$inputFileExt$/){
+	open(FILE,"$inputDir/$subdir/$file");
+	
+	my $chr = "$subdir";
+	
+	foreach my $line (<FILE>){
+	  chomp($line);
+	  my (@cols) = split(/\t/,$line);
+	  
+	  my($fivePFlanking,$threePFlanking);
+	      
+	  if($seqFile){
+	      if($cols[0] < 100){
+		  $fivePFlanking = substr($seqs{$chr},0,$cols[0]-1);
+	      }else{
+		  $fivePFlanking = substr($seqs{$chr},$cols[0]-101,100);
+	      }
+
+	      $threePFlanking = substr($seqs{$chr},$cols[0],100);
+	  }else{
+	      ($fivePFlanking,$threePFlanking) = &getFlankingSeqs($chr,$cols[0]);
+	  }
+
+	  print OUT "$chr\tLindstrom\tSNP\t$cols[0]\t$cols[0]\t.\t.\t.\tID \"Tg_${subdir}_$cols[0]\" ; Allele \"ME49:$cols[4]\" \"TgCkUg2:$cols[5]\" ; FivePrimeFlank $fivePFlanking ; ThreePrimeFlank $threePFlanking\n";
+	}
+	close(FILE);
+      }
+    }
+    closedir(SUBDIR);
+  }
+}
+closedir(DIR);
+
+close(OUT);
+
+if(!($seqFile)){
+
+    $dbh->disconnect();
+    $db->logout();
+}
+
+
+sub getFlankingSeqs{
+  my($chr,$coord) =  @_;
+
+  my $sql = '';
+
+  
+  if ($coord <= 100){
+    $sql = "SELECT substr(ens.sequence,1,".($coord-1).") ";
+  }else{
+    $sql = "SELECT substr(ens.sequence,".($coord-100).",100) ";
+  }
+
+  $sql .= ", substr(ens.sequence,".($coord+1).",100) FROM dots.virtualsequence ens, sres.externaldatabase ed, sres.externaldatabaserelease edr WHERE edr.version = '$extDbRls' AND edr.external_database_id = ed.external_database_id AND ed.name = '$extDbName' AND edr.external_database_release_id = ens.external_database_release_id AND ens.source_id = '$chr'";
+
+  my $stmt = $dbh->prepare($sql);
+
+
+  print STDERR "Retrieving flanking regions from the database\n";
+
+  $stmt->execute();
+  while(my($fivePFlanking,$threePFlanking) = $stmt->fetchrow_array()){
+    return($fivePFlanking,$threePFlanking);
+  }
+
+}
+
+
+
+sub usage{
+}

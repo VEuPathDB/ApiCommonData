@@ -1,0 +1,126 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use strict;
+use Getopt::Long;
+use Bio::SeqIO;
+use File::Basename;
+
+
+my ($verbose, $help, $mercatorDir, $fastaDir, $gffDir, $mercatorDraftGenomes,$mercatorNonDraftGenomes, $mercatorReferenceGenome, $mercatorDraftExternalDatabases, $mercatorNonDraftExternalDatabases, $mercatorDraftSeqTables, $mercatorNonDraftSeqTables,$syntenyVersion);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+            'mercator_dir=s' => \$mercatorDir,
+            'fasta_dir=s'               =>  \$fastaDir,
+            'gff_dir=s'                 =>  \$gffDir,
+            'mercator_draft_genomes=s' => \$mercatorDraftGenomes,
+            'mercator_non_draft_genomes=s' => \$mercatorNonDraftGenomes,
+            'mercator_draft_extdb=s' => \$mercatorDraftExternalDatabases,
+            'mercator_non_draft_extdb=s' => \$mercatorNonDraftExternalDatabases,
+            'mercator_draft_seqtable=s' => \$mercatorDraftSeqTables,
+            'mercator_non_draft_seqtable=s' => \$mercatorNonDraftSeqTables,
+            'mercator_reference_genome=s' => \$mercatorReferenceGenome,
+	    'mercator_synteny_version=s' => \$syntenyVersion
+           );
+
+
+&usage() if($help);
+&usage("Missing Argument") unless(defined $mercatorDir && $fastaDir && $gffDir);
+
+  my ($seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile);
+
+  my @drafts = ();
+  my @nonDrafts = ();
+  my @draftExternalDbs = ();
+  my @nonDraftExternalDbs = ();
+  my @draftSeqTables = ();
+  my @nonDraftSeqTables = ();
+
+  my @allGenomes = ();
+  my @allExternalDbs = ();
+  my @allSeqTables = ();
+
+  my $draftIdx = -1;
+  my  $nonDraftIdx = -1;
+
+  if(uc($mercatorDraftGenomes) ne 'NONE'){
+      @drafts =  map { "$_" } split(',', $mercatorDraftGenomes);
+      @draftExternalDbs =  map { "$_" } split(',', $mercatorDraftExternalDatabases);
+      @draftSeqTables =  map { "$_" } split(',', $mercatorDraftSeqTables);
+
+      $draftIdx = $#drafts;
+  }
+  
+  if(uc($mercatorNonDraftGenomes) ne 'NONE'){
+      @nonDrafts = map { "$_" } split(',', $mercatorNonDraftGenomes);
+      @nonDraftExternalDbs =  map { "$_" } split(',', $mercatorNonDraftExternalDatabases);
+      @nonDraftSeqTables =  map { "$_" } split(',', $mercatorNonDraftSeqTables); 
+      $nonDraftIdx = $#nonDrafts;
+  }
+
+  push(@allGenomes,@drafts,@nonDrafts);
+  push(@allExternalDbs,@draftExternalDbs,@nonDraftExternalDbs);
+  push(@allSeqTables,@draftSeqTables,@nonDraftSeqTables); 
+
+
+  for(my $i =0; $i <= ($#allGenomes-1); $i++){
+      for(my $j =$i+1 ; $j <= $#allGenomes; $j++){
+	  $specA = $allExternalDbs[$j];
+	  $specB = $allExternalDbs[$i];
+	  $seqTableA = $allSeqTables[$j];
+	  $seqTableB = $allSeqTables[$i];
+	  $syntenySpec = "$allGenomes[$i]-$allGenomes[$j] synteny from Mercator|$syntenyVersion";
+	  if($j <= $draftIdx){
+	      $agpFile = "$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/mercator-output/$allGenomes[$j].agp";
+	  }else{
+	      $agpFile = "";
+	  }
+	      system("mkdir -p $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      system("mkdir -p $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	  &createConfigFile("$mercatorDir/$allGenomes[$i]-$allGenomes[$j]","$mercatorDir/$allGenomes[$i]-$allGenomes[$j]/$allGenomes[$i]-$allGenomes[$j]".".align",$seqTableA,$seqTableB,$specA,$specB,$syntenySpec,$agpFile);
+	      system("cp -R $fastaDir/$allGenomes[$i].fasta $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      system("cp -R $fastaDir/$allGenomes[$j].fasta $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/fasta");
+	      system("cp -R $gffDir/$allGenomes[$i].gff $mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      system("cp -R $gffDir/$allGenomes[$j].gff mercatorDir/$allGenomes[$i]-$allGenomes[$j]/gff");
+	      
+      }
+  }
+
+#-------------------------------------------------------------------------------
+
+sub usage {
+  my ($m) = @_;
+
+  print STDERR "$m\n" if($m);
+  my $usage = "usage:  perl createPairwiseMercatorDir \\
+--genbank_file_or_dir <s-directory of genbank files or genbank file> \\
+--output_file <sts file> \\
+--verbose <boolean-a little extra STDERR out> \\
+--help|h
+";
+  print STDERR $usage;
+  exit(0);
+}
+
+#-------------------------------------------------------------------------------
+
+
+sub createConfigFile {
+    my($inputDir,$inFile, $seqTableA, $seqTableB, $specA, $specB, $syntenySpec, $agpFile) = @_;
+
+    open(CONFIG_FILE,">$inputDir/config.txt");
+
+    print CONFIG_FILE "inputFile=$inFile\n";
+    print CONFIG_FILE "seqTableA=$seqTableA\n";
+    print CONFIG_FILE "seqTableB=$seqTableB\n";
+    print CONFIG_FILE "extDbSpecA=$specA\n";
+    print CONFIG_FILE "extDbSpecB=$specB\n";
+    print CONFIG_FILE "syntenySpec=$syntenySpec\n";
+    print CONFIG_FILE "agpFile=$agpFile\n";
+
+    close(IN);
+    return;
+
+}
+1;

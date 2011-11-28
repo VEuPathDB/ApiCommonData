@@ -1,0 +1,311 @@
+#!/usr/bin/perl
+
+# filter blastx results
+# separate hits into the taxonomic categories.  the categories are specified on the command line plus one called "root" for all remaining taxa.
+# (I believe the taxa provided on the command line must be in a parent-child
+# hierarchy??.  eg: root, eukaryota, apicomplexa, toxoplasma)
+# in areas of physical overlap, only keep maxOverlap number of hits from
+# each category (the best hits)
+
+
+use strict;
+use warnings;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long qw(GetOptions);
+
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+use File::Temp qw(tempfile);
+
+my $verbose = 0;
+my $gusConfigFile;
+my $taxa;
+my $maxOverlap = 25;
+my $gi2taxidFile = "gi_taxid_prot.dmp.gz";
+my $inputFile;
+my $outputFile;
+
+GetOptions("verbose!"        => \$verbose,
+           "gusConfigFile=s" => \$gusConfigFile,
+           "taxon=s"         => \$taxa,
+           "maxOverlap=i"    => \$maxOverlap,
+           "gi2taxidFile=s"  => \$gi2taxidFile,
+           "inputFile=s"     => \$inputFile,
+           "outputFile=s"    => \$outputFile,
+          );
+
+my @taxa = split(/,*\s+/,$taxa);
+
+#die "there are ".scalar(@taxa). " taxa = (".join(' | ',@taxa).")\n";
+
+unless (-e $gi2taxidFile) {
+  die "Must supply a valid gi2taxid mapping file!\n";
+}
+
+if ($gi2taxidFile =~ m/\.gz$/) {
+  open(GI2TAXID, "gunzip -c $gi2taxidFile |") or die $!;
+}
+else {
+  open(GI2TAXID, "<$gi2taxidFile") or die $!;
+}
+
+unless (-e $inputFile) {
+  die "The specified inputFile is not valid!\n";
+}
+
+if ($inputFile =~ m/\.gz$/) {
+  open(INPUT, "gunzip -c $inputFile |") or die $!;
+} 
+else {
+  open(INPUT, "<$inputFile") or die $!;
+}
+
+open(OUTPUT, ">$outputFile")
+  or die "Couldn't open outputFile for writing: $!\n";
+
+# first scan of the inputFile is just to collect GI #'s for which we
+# want to know NCBI taxon identifiers:
+my %gi2ncbiTaxonId;
+while (<INPUT>) {
+  if (m/Sum:\s+(\d+)/) {
+    $gi2ncbiTaxonId{$1} = 0;
+  }
+}
+close(INPUT);
+
+# now scan the NCBI taxon identifier mapping, saving only the GI #'s
+# we care about:
+while (<GI2TAXID>) {
+  chomp;
+  my ($gi, $ncbiTaxonId) = split(" ", $_, 2);
+  $gi2ncbiTaxonId{$gi} = $ncbiTaxonId
+    if exists $gi2ncbiTaxonId{$gi};
+}
+close(GI2TAXID);
+
+# reopen for actual parsing:
+if ($inputFile =~ m/\.gz$/) {
+  open(INPUT, "gunzip -c $inputFile |") or die $!;
+}
+else {
+  open(INPUT, "<$inputFile") or die $!;
+}
+
+my $gusConfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $dbh = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
+                                         $gusConfig->getDatabaseLogin(),
+                                         $gusConfig->getDatabasePassword(),
+                                         $verbose, 0, 1,
+                                         $gusConfig->getCoreSchemaName()
+                                        )->getQueryHandle();
+
+# confirm that we have all valid taxa, and convert names to NCBI taxon
+# identifiers
+# result: an array of NCBI TaxIds for the taxon names provided on command line
+@taxa = map {
+  my $taxon = $_;
+  my ($ncbiTaxonId) = $dbh->selectrow_array(<<EOSQL, undef, $taxon);
+  SELECT ncbi_tax_id
+  FROM   SRes.Taxon t,
+         SRes.TaxonName tn
+  WHERE  t.taxon_id = tn.taxon_id
+    AND  tn.name_class = 'scientific name'
+    AND  tn.name = ?
+EOSQL
+
+  unless ($ncbiTaxonId) {
+    die "Invalid taxon: $taxon\n";
+  }
+
+  $ncbiTaxonId;
+} @taxa;
+
+# an sql run on each subject
+# input: subject's tax_id
+# output: presence or absence in each of the command line taxa (or none)
+#         ordered by their hierarchy level(?)
+
+my $sql_statement = <<EOSQL;
+ SELECT t.ncbi_tax_id, f.hierarchy
+  FROM   sres.taxon t,
+         ( SELECT e.taxon_id, level AS hierarchy
+           FROM   sres.taxon e
+                  START WITH e.ncbi_tax_id = ?
+                  CONNECT BY PRIOR e.parent_id = e.taxon_id
+         ) f
+  WHERE  t.ncbi_tax_id IN ( @{[join(", ", grep { $_ ne "root"} @taxa)]} )
+    AND  t.taxon_id = f.taxon_id
+  ORDER BY f.hierarchy ASC
+EOSQL
+
+my $lookup = $dbh->prepare($sql_statement);
+
+# setup taxon-specific hit location storage tables
+# ie, make a table for each taxon provided on the command line
+# to hold the hits that belong to those taxa
+# note: because the input file has hits ordered by e-value within a subject
+# these tables are effectively ordered by (subject,e-value)
+
+my %insert;
+my %search;
+for my $taxonId ("root", @taxa) {
+
+  $dbh->do("DROP TABLE hits_${taxonId}");
+  $dbh->do(<<EOSQL);
+  CREATE TABLE hits_${taxonId}(
+    contig_id INTEGER NOT NULL,
+    hit_start INTEGER NOT NULL,
+    hit_stop INTEGER NOT NULL,
+    is_reversed INTEGER NOT NULL
+  ) NOLOGGING
+EOSQL
+
+  $dbh->do(<<EOSQL);
+  CREATE INDEX hits_${taxonId}_ix ON hits_${taxonId} (contig_id, is_reversed, hit_start, hit_stop)
+EOSQL
+
+  $insert{$taxonId} = $dbh->prepare(<<EOSQL);
+  INSERT INTO hits_${taxonId} (contig_id, is_reversed, hit_start, hit_stop)
+            VALUES (        ?,      ?,     ?,    ?)
+EOSQL
+
+  $search{$taxonId} = $dbh->prepare(<<EOSQL);
+  SELECT COUNT(*)
+  FROM   hits_${taxonId}
+  WHERE  contig_id = ?
+    AND  is_reversed = ?
+    AND  ? <= hit_stop
+    AND  ? >= hit_start
+EOSQL
+}
+
+my %contigs;
+my $i = 1;
+my $queryId;
+my $idLine;
+my $sum;
+my @hsps;
+my %seen;
+my $numProc;
+my %gis;
+
+while (<INPUT>) {
+  if (m/^\s*HSP\d+:\s*(\S+)/) {
+    push @hsps, $_;
+  }
+  else {
+    process() if @hsps;
+    undef @hsps;
+
+    if (m/^>(\S+)/) {
+      $queryId = $1;
+      $idLine = $_;
+      $numProc++;
+      print STDERR "Number of query similarities being processed : $numProc\n" if ($numProc % 100 == 0);
+      &truncateTables();
+    }
+    elsif (m/^\s*Sum:/) {
+      $sum = $_;
+    }
+  }
+}
+process() if @hsps;
+close(INPUT);
+close(OUTPUT);
+
+# rescan output file to replace counts:
+my ($fh, $filename) = tempfile();
+open(OLD, "<$outputFile") or die "Couldn't reopen outputFile: $!\n";
+while (<OLD>) {
+  if (m/^>(\S+)/) {
+    print $fh ">$1 (@{[$seen{$1} || 0]} subjects)\n";
+  }
+  else {
+    print $fh $_;
+  }
+}
+close(OLD);
+
+#rename($filename, $outputFile)
+#  or die "Couldn't replace outputFile with $filename: $!\n";
+
+system("mv $filename $outputFile");
+
+# clean up temporary tables:
+for my $taxonId ("root", @taxa) {
+  $dbh->do("DROP TABLE hits_${taxonId}");
+}
+
+exit();
+
+sub process {
+  my ($data) = $sum =~ m/Sum:\s+(\S+)/;
+
+  my ($gi,
+      $score, $pvalue,
+      $sstart, $sstop,
+      $qstart, $qstop,
+      $num, $length,
+      $ident, $posit,
+      $reversed, $frame,
+     ) = split(":", $data, 13);
+
+  $gis{$gi}=1;
+  my $n = scalar (keys %gis);
+  print STDERR "Number of gi numbers : $n\n" if ($n % 1000 == 0);
+
+  my $ncbiTaxonId = $gi2ncbiTaxonId{$gi};
+  #die "Couldn't find NCBI taxon identifier for: $gi\n" unless $ncbiTaxonId > 0;
+
+  if (! $ncbiTaxonId){
+    print STDERR ("Couldn't find NCBI taxon identifier for: $gi\n");
+    return;
+  }
+
+
+  my $taxonId = calcTaxonId($ncbiTaxonId);
+  $taxonId = "root" unless defined $taxonId;
+
+  # convert a DNA source_id to a surrogate primary key:
+  my $contig_id = $contigs{$queryId} ||= $i++;
+
+  $search{$taxonId}->execute($contig_id, $reversed, $qstart, $qstop);
+  my ($count) = $search{$taxonId}->fetchrow_array();
+  unless ($count >= $maxOverlap) {
+    $insert{$taxonId}->execute($contig_id, $reversed, $qstart, $qstop);
+    print OUTPUT $idLine unless $seen{$queryId}++;
+    print OUTPUT $sum, @hsps;
+  }
+}
+
+my %ncbiTaxonIdMap;
+
+sub truncateTables {
+  for my $taxonId ("root", @taxa) {
+    $dbh->do("TRUNCATE TABLE hits_${taxonId}");
+  }
+}
+
+sub calcTaxonId {
+
+  my ($ncbiTaxonId) = @_;
+
+  return $ncbiTaxonIdMap{$ncbiTaxonId} ||= do {
+    my $taxonId = "root";
+
+    if (@taxa) {
+      $lookup->execute($ncbiTaxonId);
+      if (my $row = $lookup->fetchrow_arrayref()) {
+	($taxonId) = @$row;
+      }
+      $lookup->finish();
+    }
+
+    $taxonId;
+  };
+
+}

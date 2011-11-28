@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+my ($gusConfigFile,$inFile,$outFile,$verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "verbose!" => \$verbose,
+	    "outfile=s" => \$outFile,
+	    "infile=s" => \$inFile);
+
+
+open(FILE,$inFile) || die "$inFile can't be opened for reading\n";
+
+open(OUT,">$outFile") || die "Can't open $outFile for writing\n";
+
+my %hsh;
+
+while(<FILE>){
+  chomp;
+
+  if ($_ =~ /^Sequence|^Name|^---|^\s+$/){next;}
+
+  my @arr=split(/\t/,$_);
+
+  $hsh{$arr[0]}{$arr[4]}++;
+
+  my $name = "${arr[0]}_tRNA_${arr[4]}$hsh{$arr[0]}{$arr[4]}";
+  $name=~ s/\s//g;
+
+  my $location;
+
+  my $tStart;
+  my $tEnd;
+  my $strand;
+
+  if ($arr[2] > $arr[3]) {
+    $tStart = $arr[3];
+    $tEnd = $arr[2];
+    $strand = "-";
+  }
+  else {
+    $tStart = $arr[2];
+    $tEnd = $arr[3];
+    $strand = "+";
+  }
+
+  print OUT "${arr[0]}\tannotation\ttranscript\t$tStart\t$tEnd\t${arr[8]}\t$strand\t.\ttRNAPrediction \"$name\" ; Note \"${arr[5]}\"
+; Product \"tRNA ${arr[4]}\"\n";
+
+
+  if ($arr[6] && $arr[7]){
+
+    if ($arr[2] > $arr[3]){
+
+      print OUT "${arr[0]}\tannotation\texon\t${arr[3]}\t${arr[7]}\t.\t$strand\t.\ttRNAPrediction \"$name\" ; OrderNumber 1\n";
+      print OUT "${arr[0]}\tannotation\texon\t${arr[6]}\t${arr[2]}\t.\t$strand\t.\ttRNAPrediction \"$name\" ; OrderNumber 2\n";
+    }
+    else{
+      print OUT "${arr[0]}\tannotation\texon\t${arr[2]}\t${arr[6]}\t.\t$strand\t.\ttRNAPrediction \"$name\" ; OrderNumber 1\n";
+      print OUT "${arr[0]}\tannotation\texon\t${arr[7]}\t${arr[3]}\t.\t$strand\t.\ttRNAPrediction \"$name\" ; OrderNumber 2\n";
+    }
+  }
+  else {
+    print OUT "${arr[0]}\tannotation\texon\t$tStart\t$tEnd\t.\t$strand\t.\ttRNAPrediction \"$name\" ; OrderNumber 1\n";
+  }
+
+}
+

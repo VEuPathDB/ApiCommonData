@@ -1,0 +1,22 @@
+#!/usr/bin/perl
+
+use strict;
+
+# compute score in a fashion similar to GUS::Community::Plugin::LoadBLATAlignments
+
+while (<STDIN>) {
+  chomp;
+  my @a = split(/\t/);
+  my $matches      = $a[0];
+  my $mismatches   = $a[1];
+  my $repmatches   = $a[2];
+  my $ncount       = $a[3];
+  my $qLength      = $a[10];
+  my $alignedBases = ($matches + $mismatches + $repmatches + $ncount);
+  my $alignedQueryBases = ($matches + $repmatches + $ncount);
+  my $alignPct     = ($alignedBases / $qLength) * 100.0;
+  my $pctId = ($alignedQueryBases / $alignedBases) * 100.0;
+
+  my $score = sprintf("%3.3f", sqrt($pctId * $alignPct));
+  print "$_\t$score\n";
+}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tuningConfig>
+
+
+  <tuningTable name="AnnotationChange" alwaysUpdate="true">
+    <program commandLine="buildAnnotationChangeTT"/>
+  </tuningTable>
+
+  <tuningTable name="ChangedGeneProduct" alwaysUpdate="true">
+    <internalDependency name="AnnotationChange"/>
+    <sql>
+      <![CDATA[
+        create table ChangedGeneProduct&1 nologging as
+        select gene,
+               max(product) keep (dense_rank last order by change_date) as product
+        from apidbTuning.AnnotationChange
+        where gene is not null
+        group by gene
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index cgp_ix&1 on ChangedGeneProduct&1 (gene)
+      ]]>
+    </sql>
+  </tuningTable>
+</tuningConfig>

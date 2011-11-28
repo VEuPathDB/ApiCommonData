@@ -1,0 +1,573 @@
+<methods>
+  <method method="BLASTX_genome_NRDB_MTHD" version="2.0 [06-Apr-2005]">
+    <displayName>Align NRDB proteins to genomic sequence</displayName>
+    <toolName>WU-BLASTX</toolName>
+    <input>Genomic sequence and NCBI non-redundant protein database</input>
+    <output>BLASTX alignments</output>
+    <description>WU-BLASTX is used to identify statistically significant DNA-protein sequence similarities found between DNA sequence queries and protein sequence libraries</description>
+    <pubmedId>2231712</pubmedId>
+    <url>http://blast.wustl.edu</url>
+    <credit>Warren R. Gish, Washington University, Saint Louis, Missouri</credit>
+  </method>
+
+  <method method="BLASTP_translated_proteins_NRDB_MTHD" version="2.0 [06-Apr-2005]">
+    <displayName>Align NRDB proteins to annotated proteins</displayName>
+    <toolName>WU-BLASTP</toolName>
+    <input>Protein sequences and NRDB</input>
+    <output>BLASTP alignments</output>
+    <pubmedId>2231712</pubmedId>
+    <description>BLASTP translations of annotated genes against NCBI non-redundant protein database.  WU-BLASTP is used to identify statistically significant protein-protein sequence similarities</description>
+    <url>http://blast.wustl.edu</url>
+    <credit>Warren R. Gish, Washington University, Saint Louis, Missouri</credit>
+  </method>
+
+  <method method="BLASTP_translated_proteins_PDB_MTHD" version="2.0 [06-Apr-2005]">
+    <displayName>Align PDB proteins to annotated proteins</displayName>
+    <toolName>WU-BLASTP</toolName>
+    <input>Protein sequences and PDB</input>
+    <output>BLASTP alignments</output>
+    <pubmedId>2231712</pubmedId>
+    <description>BLASTP translations of annotated genes against the Protein Data Bank.  WU-BLASTP is used to identify statistically significant protein-protein sequence similarities</description>
+    <url>http://blast.wustl.edu</url>
+    <credit>Warren R. Gish, Washington University, Saint Louis, Missouri</credit>
+  </method>
+
+  <method method="TMHMM_MTHD" version="2.0a">
+    <displayName>Predict transmembrane domains in proteins</displayName>
+    <toolName>TMHMM</toolName>
+    <input>Protein sequences</input>
+    <output>Predicted transmembrane domain topology</output>
+    <pubmedId>11152613</pubmedId>
+    <description>TMHMM is used to predict transmembrane domain presence and topology</description>
+    <url></url>
+    <credit>Anders Krogh, Bjorn Larsson, Gunnar von Heijne, and Erik L.L. Sonnhammer</credit>
+  </method>
+
+  <method method="SignalP_MTHD" version="3.0">
+    <displayName>Predict signal peptides</displayName>
+    <toolName>SignalP</toolName>
+    <input>Protein sequences</input>
+    <output>Signal peptide predictions</output>
+    <pubmedId>15223320</pubmedId>
+    <description>SignalP is used to identify signal peptides and their likely cleavage sites.</description>
+    <url>http://www.cbs.dtu.dk/services/SignalP/</url>
+    <credit>Bendtsen JD, Nielsen H, von Heijne G, Brunak S.</credit>
+  </method>
+
+  <method method="BLASTN_isolate_sequence_MTHD" version="2.0 [06-Apr-2005]">
+    <displayName>Align isolate sequences to genomic sequence</displayName>
+    <toolName>WU-BLASTN</toolName>
+    <input>Oligo sequences and Genomic or transcript sequences</input>
+    <output>BLASTN alignments</output>
+    <pubmedId></pubmedId>
+    <description>WU-BLASTN is used to identify statistically signficant DNA sequence similarities found between DNA sequence queries and DNA sequence libraries</description>
+    <url>http://blast.wustl.edu</url>
+    <credit>Warren R. Gish, Washington University, Saint Louis, Missouri</credit>
+  </method>
+
+  <method method="ExportPred_MTHD" version="1.0.1">
+    <displayName>Predict proteins exported to host</displayName>
+    <toolName>ExportPred</toolName>
+    <input>FASTA file of protein sequences</input>
+    <output>file containing export sequences and scores</output>
+    <pubmedId>16507167</pubmedId>
+    <description>Program that predicts the exported proteins of Plasmodium.</description>
+    <url>http://bioinf.wehi.edu.au/exportpred/</url>
+    <credit></credit>
+  </method>
+
+  <method method="TRF_MTHD" version="3.21">
+    <displayName>Find tandem repeats in genomic sequence</displayName>
+    <toolName>trf</toolName>
+    <input>fasta file of DNA sequences</input>
+    <output>a repeat table file and an alignment file</output>
+    <pubmedId>9862982</pubmedId>
+    <description>The Tandem Repeats Finder program locates and displays tandem repeats in DNA sequences</description>
+    <url>http://tandem.bu.edu/trf/trf.html</url>
+    <credit></credit>
+  </method>
+
+  <method method="seg_translated_proteins_MTHD" version="2.0">
+    <displayName>Mask low complexity protein sequence</displayName>
+    <toolName>seg</toolName>
+    <input>Protein sequences</input>
+    <output>Protein sequences containing regions of low complexity are masked with the character 'x'</output>
+    <pubmedId></pubmedId>
+    <description>seg was used to mask low complexity regions.</description>
+    <url></url>
+    <credit>Wootton and Federhen</credit>
+  </method>
+
+  <method method="dust_genome_MTHD" version="2.0">
+    <displayName>Mask low complexity genomic sequence</displayName>
+    <toolName>dust</toolName>
+    <input>Genomic sequences</input>
+    <output>Genomic sequences containing regions of low complexity are masked with the character 'N'</output>
+    <pubmedId></pubmedId>
+    <description>dust was used to mask low complexity regions.</description>
+    <url></url>
+    <credit>Tatusov and Lipman</credit>
+  </method>
+
+  <method method="psipred_MTHD" version="2.4">
+    <displayName>Predict protein secondary structure</displayName>
+    <toolName>psipred</toolName>
+    <input>Protein translations of annotated genes (filtered with seg)</input>
+    <output>Residue by residue prediction of helix, strand, and coil accompanied by confidence level</output>
+    <pubmedId>10493868</pubmedId>
+    <description>Psipred predicts secondary structure using a neural network analysis of PSI-BLAST output</description>
+    <url>http://bioinf.cs.ucl.ac.uk/psipred/</url>
+    <credit>Jones DT.(1999)Protein secondary structure prediction based on position-specific scoring matrices.J.Mol.Biol.292:195-202.</credit>
+  </method>
+
+  <method method="tRNAscan_MTHD" version="1.4">
+    <displayName>Predict tRNA genes in genomic sequence</displayName>
+    <toolName>tRNAScan-SE</toolName>
+    <input>Transcript or genomic sequence file in fasta format</input>
+    <output>tab delimited file with the type of tRNA, anticodon, score, and locations on the sequences analyzed</output>
+    <pubmedId>9023104</pubmedId>
+    <description>tRNAscan-SE identifies transfer RNA genes in genomic DNA or RNA sequences.</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="interProScan_MTHD" version="most recent">
+    <displayName>Find InterPro domains in protein sequence</displayName>
+    <toolName>InterProScan</toolName>
+    <input>Protein translations of annotated genes and the InterPro Domains Database</input>
+    <output>Domains matched, description of the interpro entry, GO description of the Interpro entry and E-value of the match</output>
+    <pubmedId>11590104</pubmedId>
+    <description>InterProScan scans protein sequences against the protein signatures of the InterPro member databases including PROSITE, PRINTS, xPfam, ProDom,SMART, TIGRFAMs, PIR, SUPERFAMILY</description>
+    <url>http://www.ebi.ac.uk/InterProScan/</url>
+    <credit></credit>
+  </method>
+
+  <method method="orfFinder_MTHD" version="unknown">
+    <displayName>Locate ORFs in genomic sequence</displayName>
+    <toolName>orfFinder</toolName>
+    <input>Genomic DNA or EST sequences</input>
+    <output>gff file containing the 6 reading frame, 50 or more amino acid translations of the input nucleic acid</output>
+    <pubmedId></pubmedId>
+    <description>The translations in all 6 reading frames do not necessarily begin with MET but always end at a stop codon. ORF names are in the form template-frame-start-end, e.g. AAEL01000396-5-5847-4366</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="CAP4_cluster_ESTs_MTHD" version="unknown">
+    <displayName>Cluster mRNA and EST sequences</displayName>
+    <toolName>CAP4</toolName>
+    <input>Clusters of EST sequences</input>
+    <output>assembled consensus sequence and quality values</output>
+    <pubmedId>10508846</pubmedId>
+    <description>CAP4 is used to generate the EST assemblies. CAP4 aligns and assembles clustered sequence reads and produces consensus sequences</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="BLAT_ESTs_genome_MTHD" version="31">
+    <displayName>BLAT</displayName>
+    <toolName>BLAT</toolName>
+    <input>Fasta file of EST sequences blocked using repeatMasker with RepBase and genome sequences in nib format</input>
+    <output>Text file of alignments in .psl format</output>
+    <pubmedId>11932250</pubmedId>
+    <description>ESTs are clustered based on BLAT alignmnets. BLAT is a tool to rapidly find mRNA/DNA alignments that can be run using the GfClient program to query an indexed DNA database on a GfServer</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="BLAT_genome_NRDB_MTHD" version="31">
+    <displayName>BLAT</displayName>
+    <toolName>BLAT</toolName>
+    <input>Fasta file of NRDB and genome sequences in nib format</input>
+    <output>Text file of alignments in .psl format</output>
+    <pubmedId>11932250</pubmedId>
+    <description>FIX THIS</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="mercator_MTHD" version="2006.09.19">
+    <displayName>Mercator and Mavid</displayName>
+    <toolName>Mercator and Mavid</toolName>
+    <input>genomes, exon coordinates, and a phylogentic newick tree</input>
+    <output>file of pairwise synteny alignments with defined spans</output>
+    <pubmedId>17993677</pubmedId>
+    <description>Mercator and Mavid are used for comparative genome analysis. Mercator uses genomes and exon coordinates to create exon translations for protein BLAT alignments and outputs orthology maps. The orthology maps are used as a guide for Mavid which also uses a phylogentic newick tree to generate gene alignments</description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>mavid_MTHD</seeAlso>
+  </method>
+
+  <method method="mavid_MTHD" version="2.0.4">
+    <displayName>Mercator and Mavid</displayName>
+    <toolName>Mercator and Mavid</toolName>
+    <input>genomes, exon coordinates, and a phylogentic newick tree</input>
+    <output>file of pairwise synteny alignments with defined spans</output>
+    <pubmedId>17993677</pubmedId>
+    <description>Mercator and Mavid are used for comparative genome analysis. Mercator uses genomes and exon coordinates to create exon translations for protein BLAT alignments and outputs orthology maps. The orthology maps are used as a guide for Mavid which also uses a phylogentic newick tree to generate gene alignments</description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>mercator_MTHD</seeAlso>
+  </method>
+
+  <method method="repeatMasker_genome_MTHD" version="1.214">
+    <displayName>RepeatMasker</displayName>
+    <toolName>RepeatMasker</toolName>
+    <input>Fasta file of nucleic acid sequences and RepBase</input>
+    <output>Fasta file of masked nucleic acid sequences</output>
+    <pubmedId></pubmedId>
+    <description>RepeatMasker uses cross-match and a RepBase repeat library to screen DNA sequences for interspersed repeats and low complexity DNA sequences and outputs a modified version of the query sequence in which all the repeats have been masked.</description>
+    <url>http://www.repeatmasker.org</url>
+    <credit></credit>
+  </method>
+
+  <method method="isoelectric_point_MTHD" version="1.4">
+    <displayName>Calculate protein pI (isoelectric point)</displayName>
+    <toolName>BioPerl Bio::Tools::pICalculator</toolName>
+    <input>Protein sequences</input>
+    <output>pI (isoelectric point) values</output>
+    <pubmedId></pubmedId>
+    <description>The pKa values used to calculate pI are those used in the EMBOSS package; the pI is calculated to only two decimal points.</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="molecular_weight_MTHD" version="1.4">
+    <displayName>Calculate protein molecular weight</displayName>
+    <toolName>BioPerl Bio::Tools::SeqStats</toolName>
+    <input>Protein sequences</input>
+    <output>Molecular weight values</output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="crossmatch_transcript_seqs_MTHD" version="0.990319">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="repeatMasker_transcript_seqs_MTHD" version="1.214">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="one_channel_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>two_channel_MTHD</seeAlso>
+    <seeAlso>PaGE_MTHD</seeAlso>
+  </method>
+
+  <method method="two_channel_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>one_channel_MTHD</seeAlso>
+    <seeAlso>PaGE_MTHD</seeAlso>
+  </method>
+
+  <method method="PaGE_MTHD" version="5.1.6.1">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>one_channel_MTHD</seeAlso>
+    <seeAlso>two_channel_MTHD</seeAlso>
+  </method>
+
+  <method method="transcript_assemblies_overview_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+    <seeAlso>crossmatch, mask,blat,cluster, assemble</seeAlso>
+  </method>
+
+  <method method="epitopes_mapping_MTHD" version="2.2.8">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Epitopes are mapped to genes using NCBI blast</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="snps_mummer_MTHD" version="3.20">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="map_sage_tags_MTHD" version="unknown">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>SAGE tags are mapped to genome sequences using string comparisons</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="sage_tags_norm_freqs_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blast_isolates_to_genome_MTHD" version="2.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Isolate sequences are mapped to the genome with WU-BLASTN</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blast_piggy_bacs_to_genome_MTHD" version="2.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Piggy-bac sequences are mapped to the genome with WU-BLASTN</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="crossmatch_MTHD" version="0.990319">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="repeatmask_assemblyseqs_MTHD" version="1.214">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="cluster_assembly_seqs_MTHD" version="unknown">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Transcript sequences are clusters based on alignment to genome and using a graph based algorithm</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="repeat_mask_assemblies_MTHD" version="1.214">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="Consensus_transcript_prediction_MTHD" version="4">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Consensus RNA predictions are made from transcript clusters using CAP4 sequence assembly program</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blat_assembly_seqs_MTHD" version="31">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Transcript sequences are aligned to the genome using BLAT, a rapid blast-like alignment tool</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="blat_assemblies_MTHD" version="31">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description>Transcript assembly sequences are aligned to the genome using BLAT, a rapid blast-like alignment tool</description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="rum_rna_or_chip_seq_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="exon_junction_rna_or_chip_seq_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="make_unique_norm_cov_file_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="make_non_unique_norm_cov_file_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="make_rna_or_chip_seq_intensity_file_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="chip_chip_peak_finder_MTHD" version="1.0">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+  <method method="_MTHD" version="">
+    <displayName></displayName>
+    <toolName></toolName>
+    <input></input>
+    <output></output>
+    <pubmedId></pubmedId>
+    <description></description>
+    <url></url>
+    <credit></credit>
+  </method>
+
+
+</methods>

@@ -1,0 +1,145 @@
+<!--
+The feature and qualifier names to use here follow those set by BioPerl's
+tree structure and any reshaping/renaming done by bioperlSeqPreprocessor, not
+necessarily by what's defined in the input (eg. Genbank) file
+-->
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::GeneAndCds2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <specialCaseQualifierHandler name="crypto" 
+           class="CryptoDBData::Load::SpecialCaseQualifierHandlers"/>
+
+  <!-- genbank feature CDS reshaped to coding_gene -->
+  <feature name="coding_gene" so="protein_coding">
+    <qualifier name="locus_tag"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="codon_start"         ignore="true"/>
+    <qualifier name="db_xref"             handler="api" method="dbXRef"/>
+    <qualifier name="note"                handler="api" method="note"/>
+    <qualifier name="allele"              ignore="true"/>
+    <qualifier name="product"             handler="crypto" method="product"/>
+    <qualifier name="EC_number"           handler="api" method="ECNumber"/>
+    <qualifier name="protein_id"          handler="api" method="transcriptProteinId"/>
+    <qualifier name="transl_except"       handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"         handler="api" method="setProvidedTranslation"/>
+
+    <!-- from mRNA records -->
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="function" ignore="true"/>
+    <qualifier name="standard_name" ignore="true"/>
+  </feature>
+
+  <!-- genebank gene feature qualifiers reshaped into new coding_gene created
+       from cds/rna, so ignore this feature -->
+  <feature name="gene" ignore="true">
+    <qualifier name="gene"/>
+    <qualifier name="locus_tag"/>
+    <qualifier name="note"/>
+  </feature>
+
+  <feature name="rRNA_gene" so="rRNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="gene"                 ignore="true"/>
+  </feature>
+
+  <feature name="misc_RNA_gene" so="non_protein_coding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+  </feature>
+
+  <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="rpt_type" ignore="true"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+  </feature>
+
+  <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+  </feature>
+
+  <feature name="source" table="DoTS::IsolateSource" so="">
+    <qualifier name="chromosome"/>
+	  <!-- check the collection_date later, not fit in dots.source table H.W. 9/20/2007 -->
+    <qualifier name="collection_date"/>
+    <qualifier name="collected_by"/>
+    <qualifier name="environmental_sample"/>
+    <qualifier name="virion"/>
+    <qualifier name="isolation_source"/> 
+    <qualifier name="PCR_primers"/> 
+    <qualifier name="specific_host"/> 
+    <qualifier name="clone"/> 
+    <qualifier name="lab_host"/> 
+    <qualifier name="cell_type"/> 
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="isolate"/>
+    <qualifier name="mol_type"/>
+    <qualifier name="organism"/>
+    <qualifier name="serotype"/>
+    <qualifier name="strain"/>
+    <qualifier name="dev_stage"/>
+    <qualifier name="country"/> 
+    <qualifier name="note"/>
+    <qualifier name="tissue_type"/>
+    <qualifier name="haplotype"/>
+  </feature>
+
+  <feature name="tRNA_gene" so="tRNA_encoding">
+    <qualifier name="gene"/>
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+  </feature>
+
+  <feature name="unsure" ignore="true">
+  </feature>
+
+  <feature name="mRNA" ignore="true">
+    <!-- mRNA qualifiers are also in CDS -->
+  </feature>
+
+  <feature name="variation" table="DoTS::Miscellaneous" so="">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+  </feature>
+
+  <feature name="transcript" so="transcript">
+  <!-- created by the reshaper -->
+  </feature>
+
+  <feature name="exon" so="exon">
+  <!-- created by the reshaper -->
+  </feature>
+
+  <feature name="misc_feature" table="DoTS::Miscellaneous" so="located_sequence_feature">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="gene"                 ignore="true"/>
+  </feature>
+
+  <feature name="misc_feature_gene" so="located_sequence_feature">
+    <qualifier name="locus_tag" column="source_id"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="gene"                 ignore="true"/>
+  </feature>
+  
+  <feature name="polyA_site" so="polyA_site" ignore="true">
+  </feature>
+
+</mapping>

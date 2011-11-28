@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long qw(GetOptions);
+
+my ($login, $password, $tuningMgrMgrPwd, $svn, $script, $skipInstances);
+
+# parse command line
+GetOptions("login=s" => \$login,
+           "password=s" => \$password,
+           "svn=s" => \$svn,
+           "script=s" => \$script,
+           "skipInstances=s" => \$skipInstances,
+           "tuningMgrMgrPwd=s" => \$tuningMgrMgrPwd,
+	  );
+
+if (!$password || !$svn || !$script) {
+  usage();
+  die;
+}
+
+$tuningMgrMgrPwd = $password if !$tuningMgrMgrPwd;
+
+# store blacklist, if supplied
+my %blacklist;
+foreach my $blacklistedInstance (split(/,/, $skipInstances)) {
+  $blacklist{$blacklistedInstance} = 1;
+}
+
+$login = "apidb" if !$login;
+
+my $instanceCount = 0;
+foreach my $reportLine (`tuningMgrMgr list -password $tuningMgrMgrPwd |tail -n +3|cut -c14-65`) {
+  if ($reportLine =~ /^(\S*)\s.*$svn/) {
+    my $instance = $1;
+    next if $blacklist{$instance};
+    print "\n\npatching instance $instance with SQL script ${script}.sql\n";
+    my $commandLine = "sqlplus $login/$password\@$instance \@$script";
+    my $returnCode = system($commandLine);
+
+    if ($returnCode) {
+      die "trying to run command line \"$commandLine\"\n";
+    }
+    $instanceCount++;
+  }
+}
+
+print "updated $instanceCount instances.\n";
+
+###############################################################################
+
+sub usage {
+  print
+q{
+Script to run an SQL script on each database instance with a given Subversion URL
+
+Usage:
+
+apiPatchInstances -svn <branch> [ -login <Oracle_login> ] -password <password>
+                  [ -tuningMgrMgrPwd <tuning_manager_password> ]
+                  -script <scriptName> -skipInstances <blacklist>
+
+options:
+  svn             a string (such as "trunk" or "api-build-10") which occurs in
+                  the Subversion URL of database instances which should be included
+  login           Oracle username (or "schema" in Oracle parlance) to log in as
+  password        database login password
+  tuningMgrMgrPwd database login password needed by "tuningMgrMgr" script (if
+                  different from "password" option value
+  script          SQL script to be run on each matching database instance. The
+                  script should end with an "exit" command. The script name should
+                  end in ".sql"; this suffix should be omitted on the command line
+  skipInstances   comma-separated list of instances to skip
+
+This script finds instances to opearate on by querying the tuning manager
+registry (apidb_r.TuningInstance and apidb_r.TuningFamily, which are replicated
+in the apicomm instances). If you aren't sure which instances are on a given
+branch, try the "tuningMgrMgr list" command, or test on an innocuous script,
+such as "select * from apidb.InstanceMetaInfo" or
+"select sys_context ('USERENV', 'SERVICE_NAME') from dual".
+
+Note that the script should end with "exit", lest sqlplus wait for console input
+on each instance after the commands are finished.
+};
+}
+
+

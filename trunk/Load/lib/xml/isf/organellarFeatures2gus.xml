@@ -1,0 +1,51 @@
+<mapping>
+
+  <bioperlSeqPreprocessor
+           class="ApiCommonData::Load::Cds2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <feature name="coding_gene">
+ <validator name="validateGene"     handler="api" method="validateGene"/>
+    <qualifier name="gene" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="locus_tag" handler="api" method="gene"/>
+    <qualifier name="secondary_id" handler="api" method="setSecondaryId"/>
+    <qualifier name="note" handler="api" method="note"/>
+    <qualifier name="product" handler="api" method="product"/>
+    <qualifier name="protein_id" handler="api" method="dbXRef"/>
+    <qualifier name="db_xref" handler="api" method="dbXRef"/>
+    <qualifier name="codon_start" ignore="true"/>
+    <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" ignore="true"/>
+  </feature>
+
+  <feature name="rRNA_gene">
+    <qualifier name="gene" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="product" handler="api" method="product"/>
+  </feature>
+
+  <feature name="source" ignore="true"/>
+ 
+  <feature name="tRNA_gene">
+    <qualifier name="gene" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note" handler="api" method="note"/>
+    <qualifier name="product" handler="api" method="product"/>
+  </feature>
+
+  <feature name="intron" table="DoTS::IntronFeature" so="intron">
+    <qualifier name="gene" column="source_id"/>
+  </feature>
+
+  <feature name="exon">
+  </feature>
+
+  <feature name="transcript" table="DoTS::Transcript" so="transcript">
+  </feature>
+
+  <feature name="gene" ignore="true"/>
+
+</mapping>
