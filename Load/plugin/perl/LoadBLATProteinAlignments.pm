@@ -40,6 +40,9 @@ use FileHandle;
 
 my $VERSION = '$Revision: 9951 $'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
 
+my $TPREF = 'DoTS';
+my $BLATSCHEMA = 'DoTS';
+
 my $purposeBrief = <<PURPOSEBRIEF;
 Load a set of BLAT alignments into GUS.
 PURPOSEBRIEF
@@ -50,7 +53,7 @@ PLUGIN_PURPOSE
 
 #check the documentation for this
 my $tablesAffected = [
-                      ['DoTS::BlatProteinAlignment', '']
+                      ['$BLATSCHEMA::BlatProteinAlignment', '']
                      ];
 
 my $tablesDependedOn = [
@@ -293,9 +296,6 @@ my $argsDeclaration = [
                                   isList => 0,
                                  }),
                       ];
-
-my $TPREF = 'DoTS';
-my $BLATSCHEMA = 'DoTS';
 
 
 	
