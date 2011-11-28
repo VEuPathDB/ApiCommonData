@@ -13,7 +13,7 @@ package ApiCommonData::Load::Plugin::LoadBLATProteinAlignments;
 #
 # Jonathan Crabtree
 #
-# $Revision: 9951 $ $Date: 2011-11-22 12:56:57 -0500 (Tue, 22 Nov 2011) $ $Author: pinney $
+# $Revision$ $Date$ $Author$
 # ----------------------------------------------------------------------
 
 # ========================================================================
@@ -38,7 +38,7 @@ use FileHandle;
 # --------------------------- Global Variables ---------------------------
 # ========================================================================
 
-my $VERSION = '$Revision: 9951 $'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
+my $VERSION = '$Revision$'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
 
 my $TPREF = 'DoTS';
 my $BLATSCHEMA = 'DoTS';
@@ -339,7 +339,7 @@ sub new {
    bless($self,$class);
 
    $self->initialize({requiredDbVersion => 3.6,
-                      cvsRevision => '$Revision: 9951 $', # cvs fills this in!
+                      cvsRevision => '$Revision$', # cvs fills this in!
                       name => ref($self),
                       argsDeclaration => $argsDeclaration,
                       documentation => $documentation
