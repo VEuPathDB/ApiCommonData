@@ -295,7 +295,7 @@ my $argsDeclaration = [
                       ];
 
 my $TPREF = 'DoTS';
-my $BLATSCHEMA = 'ApiDB';
+my $BLATSCHEMA = 'DoTS';
 
 
 	
