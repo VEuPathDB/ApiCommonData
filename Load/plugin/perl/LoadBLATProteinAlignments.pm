@@ -899,7 +899,10 @@ sub loadAlignment {
    my $ns           = $align->get('num_ns');
    my $alignedBases = ($matches + $mismatches + $repmatches + $ns);
    my $alignPct     = ($alignedBases / $qSize) * 100.0;
-   return 0 if ($alignPct < $minQueryPct);
+   if ($alignPct < $minQueryPct){
+##     print STDERR "$query_id vs $target_id: fails to meet minQueryPct ($minQueryPct) with $alignPct\n";
+     return 0; 
+   }
 
    # TO DO - only retrieve sequence if needed?
 
