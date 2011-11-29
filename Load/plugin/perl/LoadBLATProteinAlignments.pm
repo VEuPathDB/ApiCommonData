@@ -41,7 +41,7 @@ use FileHandle;
 my $VERSION = '$Revision$'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
 
 my $TPREF = 'DoTS';
-my $BLATSCHEMA = 'DoTS';
+my $BLATSCHEMA = 'ApiDB';
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Load a set of BLAT alignments into GUS.
@@ -156,7 +156,7 @@ my $argsDeclaration = [
                        integerArg({
                                    name => 'commit_interval',
                                    descr => 'Commit after this number of entries have been inserted.',
-                                   default => 5000,
+                                   default => 500,
                                    constraintFunc=> undef,
                                    reqd  => 0,
                                    isList => 0,
