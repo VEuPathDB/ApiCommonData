@@ -41,7 +41,7 @@ use FileHandle;
 my $VERSION = '$Revision$'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
 
 my $TPREF = 'DoTS';
-my $BLATSCHEMA = 'ApiDB';
+my $BLATSCHEMA = 'DoTS';
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Load a set of BLAT alignments into GUS.
