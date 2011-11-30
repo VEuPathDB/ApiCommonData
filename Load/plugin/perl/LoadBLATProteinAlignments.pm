@@ -946,8 +946,9 @@ sub loadAlignment {
      my @ts = split(",",$tmpTS);
      my $a = scalar(@ts) - 1;
      for($a;$a >= 0;$a--){
-       $blockSizes .= "$bs[$a],";
-       $tStarts .= ($tlength - $ts[$a] - $bs[$a]).",";
+       my $fbs = 3 * $bs[$a];
+       $blockSizes .= "$fbs,";
+       $tStarts .= ($tlength - $ts[$a] - $fbs).",";
      }
    }else{
      $blockSizes = $align->getRaw('block_sizes');
