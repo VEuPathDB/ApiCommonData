@@ -932,6 +932,28 @@ sub loadAlignment {
    }
    my $isConsist = ($qualityId == 1 ? 1 : 0);
 
+   ##need to deal with the target sequence when reversecomplemented
+   my $isRev = $strand =~ /-/ ? 1 : 0;
+   my $blockSizes = "";
+   my $tStarts = "";
+   if($isRev){
+     my $tlength = $align->get('t_size');
+     my $tmpBS = $align->getRaw('block_sizes');
+     chop $tmpBS;
+     my @bs = split(",",$tmpBS);
+     my $tmpTS = $align->getRaw('t_starts');
+     chop $tmpTS;
+     my @ts = split(",",$tmpTS);
+     my $a = scalar(@ts) - 1;
+     for($a;$a >= 0;$a--){
+       $blockSizes .= "$bs[$a],";
+       $tStarts .= ($tlength - $ts[$a] - $bs[$a]).",";
+     }
+   }else{
+     $blockSizes = $align->getRaw('block_sizes');
+     $tStarts = $align->getRaw('t_starts');
+   }
+
    my @values = ($query_id,
                  $target_id,
                  $queryTableId,
@@ -951,16 +973,16 @@ sub loadAlignment {
                  $numSpans,
                  $qs, $qe,
                  $ts, $te,
-                 ($strand eq '-') ? 1 : 0,
+                 $isRev,
                  $alignedBases,
                  $align->get('rep_matches'),
                  $align->get('num_ns'),
                  $align->getScore(),
                  0,
                  $qualityId,
-                 $align->getRaw('block_sizes'),
+                 $blockSizes,
                  $align->getRaw('q_starts'),
-                 $align->getRaw('t_starts')
+                 $tStarts
                 );
    $sth->execute(@values)
    or die "$sql failed with values: \n" . join(", ", @values)  . "\n";
