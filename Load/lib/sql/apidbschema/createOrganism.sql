@@ -4,7 +4,7 @@ CREATE TABLE apidb.Organism (
  project_name                 VARCHAR2(20) NOT NULL,
  abbrev                       VARCHAR2(20) NOT NULL,
  abbrev_public                VARCHAR2(20) NOT NULL,
- name_for_filenames           VARCHAR2(30) NOT NULL,
+ name_for_filenames           VARCHAR2(50) NOT NULL,
  abbrev_orthomcl              VARCHAR2(20) NOT NULL,
  abbrev_strain                VARCHAR2(20) NOT NULL,
  abbrev_ref_strain            VARCHAR2(20) NOT NULL,
