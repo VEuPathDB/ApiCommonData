@@ -936,22 +936,25 @@ sub loadAlignment {
    my $isRev = $strand =~ /-/ ? 1 : 0;
    my $blockSizes = "";
    my $tStarts = "";
+   my $tlength = $align->get('t_size');
+   my $tmpBS = $align->getRaw('block_sizes');
+   chop $tmpBS;
+   my @bs = split(",",$tmpBS);
+   my $tmpTS = $align->getRaw('t_starts');
+   chop $tmpTS;
+   my @ts = split(",",$tmpTS);
+   my $a = scalar(@ts) - 1;
    if($isRev){
-     my $tlength = $align->get('t_size');
-     my $tmpBS = $align->getRaw('block_sizes');
-     chop $tmpBS;
-     my @bs = split(",",$tmpBS);
-     my $tmpTS = $align->getRaw('t_starts');
-     chop $tmpTS;
-     my @ts = split(",",$tmpTS);
-     my $a = scalar(@ts) - 1;
      for($a;$a >= 0;$a--){
        my $fbs = 3 * $bs[$a];
        $blockSizes .= "$fbs,";
        $tStarts .= ($tlength - $ts[$a] - $fbs).",";
      }
    }else{
-     $blockSizes = $align->getRaw('block_sizes');
+     for(my $a = 0;$a <scalar(@ts);$a++){
+       my $fbs = 3 * $bs[$a];
+       $blockSizes .= "$fbs,";
+     }
      $tStarts = $align->getRaw('t_starts');
    }
 
