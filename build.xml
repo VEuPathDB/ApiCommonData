@@ -11,13 +11,6 @@
     </ant>
   </target>  
 
-  <target name="DJob-Installation">
-    <ant antfile="../DJob/build.xml" target="DJob-Installation">
-      <property name="project" value="DJob"/>
-      <property name="version" value="3.0.1"/>
-    </ant>
-  </target>  
-
   <target name="DoTS-Installation">
     <ant antfile="../DoTS/build.xml" target="DoTS-Installation">
       <property name="project" value="DoTS"/>
@@ -53,14 +46,6 @@
       <property name="version" value="internal/plasmodb_5-0beta-0"/>
     </ant>
   </target>    
-
-  <target name="DJob-Checkout" unless="DJob.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/DJob" />
-      <property name="project" value="DJob"/>
-      <property name="version" value="expect"/>
-    </ant>
-  </target>  
 
   <target name="DoTS-Checkout" unless="DoTS.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false">
@@ -102,13 +87,11 @@
     <available file="../FgpUtil" type="dir" property="FgpUtil.present" />
     <available file="../WDK" type="dir" property="WDK.present" />
     <available file="../GUS" type="dir" property="GUS.present" />
-    <available file="../DJob" type="dir" property="DJob.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
     <available file="../ApiCommonShared" type="dir" property="ApiCommonShared.present" />
     <antcall target="FgpUtil-Checkout" />
     <antcall target="WDK-Checkout" />
     <antcall target="GUS-Checkout" />
-    <antcall target="DJob-Checkout" />
     <antcall target="DoTS-Checkout" />
     <antcall target="ApiCommonShared-Checkout" />
   </target>
@@ -129,9 +112,6 @@
       <property name="project" value="GUS"/>
     </ant>
     <ant target="defaultProjectUpdate">
-      <property name="project" value="DJob"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
       <property name="project" value="DoTS"/>
     </ant>
     <ant target="defaultProjectUpdate">
@@ -145,7 +125,6 @@
 
   <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
                                             GUS-Installation,
-                                            DJob-Installation,
                                             DoTS-Installation,
                                             WDK-Installation,
                                             ApiCommonShared-Installation,
