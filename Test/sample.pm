@@ -1,3 +1,0 @@
-		     cvsRevision => '$Revision$',
-
-
