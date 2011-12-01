@@ -3375,11 +3375,11 @@ from
            '' as main_profile_name,
            'TriTrypDB' as project_id
     from dual
-    UNION
-    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
+--    UNION
+--    select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+--           '' as main_profile_name,
+--           'TriTrypDB' as project_id
+--    from dual
     ) pm, GeneAttributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
@@ -4265,22 +4265,22 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
       'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
-UNION
-select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
-       'Nilsson::TcSpliceSites' as module, 
-       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
-       'The coverage values in the graph are displayed in log2 scale' as description,
-       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
-       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
-        290 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
-from dual
+--UNION
+--select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+--       'Nilsson::TcSpliceSites' as module, 
+--       'Splice Leader mapping of <i>T. cruzi</i>' as display_name,
+--       'The coverage values in the graph are displayed in log2 scale' as description,
+--       '<i>T.cruzi</i> Amastigote JBP1 knockout, Amastigote wild type, Epimastigote JBP1 knockout, Epimastigote wild type, Metacyclic JBP1 knockout, Metacyclic wild type, Trypomastigote JBP1 knockout, Trypomastigote wild type' as x_axis,
+--       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+--' as y_axis,
+--        290 as order_num,
+--        'TRUE' as mainOpen,
+--        'FALSE' as dataOpen,
+--       'coverage,pct' as visible_parts,
+--        '' as dataTable,
+--      'expression' as type,
+--        'Tcruzi_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
+--from dual
 ) d,   (select distinct ps.name, ga.organism, ga.species
     from apidb.profile p, apidb.profileset ps, geneattributes ga
     where p.profile_set_id = ps.profile_set_id and ga.source_id = p.source_id
