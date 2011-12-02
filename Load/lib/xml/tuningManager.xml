@@ -1749,6 +1749,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.na_feature_id,
        CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
+       decode(ed.name,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type,
        CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'Su_SNPs'
        WHEN ed.name = 'Pf_Broad_SNPs_RSRC' THEN 'Broad_SNPs'
        WHEN ed.name = 'Broad SNPs' THEN 'Broad_SNPs'
@@ -5160,7 +5161,7 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
               CASE WHEN sva.product = '*' OR  svb.product = '*' THEN 1 ELSE 0 END AS stop,
-              decode(sa.dataset,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type
+              sa.type
        FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
             dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
        WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
