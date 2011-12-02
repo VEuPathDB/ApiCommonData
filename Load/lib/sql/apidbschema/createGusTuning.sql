@@ -62,6 +62,22 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
 
+
+-- schema changes for GUS tables
+
+alter table dots.NaFeatureImp modify (source_id varchar2(80));
+
+alter table sres.EnzymeClass modify (description varchar2(200));
+
+alter table sres.GoEvidenceCode modify (name varchar2(20));
+
+alter table sres.dbref modify (SECONDARY_IDENTIFIER varchar2(150));
+alter table sres.dbref modify (LOWERCASE_SECONDARY_IDENTIFIER varchar2(150));
+
+alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
+
+alter table dots.NaFeatureImp modify (name varchar(80));
+
 -- indexes for orthomcl keyword and pfam searches
 CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
     indextype IS ctxsys.ctxcat;
@@ -72,18 +88,6 @@ CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
 CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
     indextype IS ctxsys.ctxcat;
 
-
--- schema changes for GUS tables
-
-alter table dots.NaFeatureImp modify (source_id varchar2(80));
-
-alter table sres.EnzymeClass modify (description varchar2(200));
-
-alter table sres.GoEvidenceCode modify (name varchar2(20));
-
-alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
-
-alter table dots.NaFeatureImp modify (name varchar(80));
 
 -- add this to prevent race condition in which we write duplicate rows
 -- when plugins first run in a workflow on a brand new instance
