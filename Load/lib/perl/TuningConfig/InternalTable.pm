@@ -252,7 +252,7 @@ sub update {
   chomp($dateString);
   ApiCommonData::Load::TuningConfig::Log::addLog("    Rebuilding tuning table " . $self->{name} . " on $dateString");
 
-  $self->dropIntermediateTables($dbh);
+  $self->dropIntermediateTables($dbh, $prefix);
 
   my $updateError;
 
@@ -361,7 +361,7 @@ sub update {
 
   return "broken" if $updateError;
 
-  $self->dropIntermediateTables($dbh, 'warn on nonexistence');
+  $self->dropIntermediateTables($dbh, $prefix, 'warn on nonexistence');
 
   # publish main table
   $self->publish($self->{name}, $suffix, $dbh, $purgeObsoletes, $prefix) or return "broken";
@@ -498,13 +498,13 @@ sub hasDependencyCycle {
 }
 
 sub dropIntermediateTables {
-  my ($self, $dbh, $warningFlag) = @_;
+  my ($self, $dbh, $prefix, $warningFlag) = @_;
 
   foreach my $intermediate (@{$self->{intermediateTables}}) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    must drop intermediate table $intermediate->{name}");
+    ApiCommonData::Load::TuningConfig::Log::addLog("    must drop intermediate table $prefix$intermediate->{name}");
 
     my $sql = <<SQL;
-       drop table $intermediate->{name}
+       drop table $prefix$intermediate->{name}
 SQL
 
     $dbh->{PrintError} = 0;
