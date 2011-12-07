@@ -135,11 +135,11 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="SequencePieceClosure">
+  <tuningTable name="SequencePieceClosure" prefixEnabled="true">
     <externalDependency name="dots.SequencePiece"/>
     <sql>
       <![CDATA[
-        create table SequencePieceClosure&1 nologging as
+        create table &prefixSequencePieceClosure&1 nologging as
         select sp.sequence_piece_id,
                sp.virtual_na_sequence_id,
                sp.piece_na_sequence_id, 
@@ -150,7 +150,10 @@ tablespace indx
                sp.start_position,
                sp.end_position, 
                sp.modification_date,
-               1 as edge_level from dots.SequencePiece sp
+               1 as edge_level
+        from dots.SequencePiece sp, dots.NaSequence ns
+        where sp.piece_na_sequence_id = ns.na_sequence_id
+          and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
       ]]>
     </sql>
     <sql>
@@ -158,7 +161,7 @@ tablespace indx
         /* known issue: this should be run not just once, but iteratively
            until it doesn't create new records.  Currently (7/2008),
            SequencePieces aren't nested even once. */
-        insert into SequencePieceClosure&1
+        insert into &prefixSequencePieceClosure&1
                     (edge_level, virtual_na_sequence_id, piece_na_sequence_id,
                      distance_from_left, strand_orientation, modification_date, 
                      start_position, end_position, sequence_order, sequence_piece_id)
@@ -174,7 +177,7 @@ tablespace indx
                higher.end_position - lower.distance_from_left, 
                higher.sequence_order,
                dots.sequencepiece_sq.nextval
-        from SequencePieceClosure&1 higher, SequencePieceClosure&1 lower
+        from &prefixSequencePieceClosure&1 higher, &prefixSequencePieceClosure&1 lower
         where higher.piece_na_sequence_id = lower.virtual_na_sequence_id
          and higher.start_position >= lower.start_position + lower.distance_from_left
          and higher.end_position <= lower.end_position + lower.distance_from_left
@@ -182,7 +185,7 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="FeatureLocation">
+  <tuningTable name="FeatureLocation" prefixEnabled="true">
     <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaLocation"/>
@@ -191,7 +194,7 @@ tablespace indx
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
-create table FeatureLocation&1 NOLOGGING as
+create table &prefixFeatureLocation&1 NOLOGGING as
 select case
          when nf.subclass_view = 'GeneFeature'
               and db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
@@ -224,6 +227,7 @@ where nf.na_feature_id = nl.na_feature_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and ns.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
+  and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
 union
 select -- virtual feature locations mapped through SequencePiece
        case
@@ -285,17 +289,18 @@ where nf.na_feature_id = nl.na_feature_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and contig.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
+  and (contig.taxon_id = '&filterValue' or '&filterValue' = '')
       ]]>
     </sql>
     <sql>
       <![CDATA[
-update FeatureLocation&1
+update &prefixFeatureLocation&1
 set is_top_level = 1
       ]]>
     </sql>
     <sql>
       <![CDATA[
-update FeatureLocation&1 fl
+update &prefixFeatureLocation&1 fl
 set is_top_level = 0 
 where na_sequence_id in (select distinct piece_na_sequence_id 
                          from SequencePieceClosure spc
@@ -310,14 +315,14 @@ commit
     </sql>
     <sql>
       <![CDATA[
-create index featloc_ix&1 on FeatureLocation&1
+create index featloc_ix&1 on &prefixFeatureLocation&1
              (feature_type, na_sequence_id, start_min, end_max, is_reversed, feature_source_id, na_feature_id,external_database_release_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index featloc2_ix&1 on FeatureLocation&1
+create index featloc2_ix&1 on &prefixFeatureLocation&1
              (na_sequence_id, start_min, end_max, is_reversed, sequence_ontology_id)
 tablespace indx
       ]]>
@@ -325,20 +330,20 @@ tablespace indx
     <sql>
       <![CDATA[
 create index fl_seq_st_end_feat_idx&1
-      on FeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
+      on &prefixFeatureLocation&1 (na_sequence_id,start_min,end_max,na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index featloc3_ix&1 on FeatureLocation&1
+create index featloc3_ix&1 on &prefixFeatureLocation&1
              (na_feature_id, na_sequence_id, is_top_level)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index featloc4_ix&1 on FeatureLocation&1
+create index featloc4_ix&1 on &prefixFeatureLocation&1
              (feature_type, is_top_level, na_feature_id)
 tablespace indx
       ]]>
@@ -346,27 +351,27 @@ tablespace indx
     <sql>
       <![CDATA[
 create index featloc5_ix&1
-on FeatureLocation&1 
+on &prefixFeatureLocation&1 
 (na_sequence_id, feature_type, start_min, end_max, parent_id, na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index featloc6_ix&1 on FeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
+create index featloc6_ix&1 on &prefixFeatureLocation&1 (feature_source_id, is_top_level, na_sequence_id, is_reversed)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index featloc7_ix&1 on FeatureLocation&1
+create index featloc7_ix&1 on &prefixFeatureLocation&1
              (feature_type, sequence_source_id, start_min, is_reversed, end_max, feature_source_id, na_feature_id)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
 
-  <tuningTable name="GeneId">
+  <tuningTable name="GeneId" prefixEnabled="true">
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
@@ -378,7 +383,7 @@ tablespace indx
     <externalDependency name="apidb.GeneFeatureName"/>
     <sql>
       <![CDATA[
-CREATE TABLE GeneId&1 NOLOGGING AS
+CREATE TABLE &prefixGeneId&1 NOLOGGING AS
 SELECT mapping.id, mapping.gene, mapping.unique_mapping,
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
@@ -494,8 +499,10 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       and gf.external_database_release_id =r.external_database_release_id
       and r.external_database_id = d.external_database_id
       and n.is_preferred = 1
-) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed, dots.NaSequence ns
 where mapping.gene = gf.source_id
+  and gf.na_sequence_id = ns.na_sequence_id
+  and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
   and gf.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
@@ -513,42 +520,42 @@ GROUP BY mapping.id, mapping.gene, mapping.unique_mapping
     </sql>
     <sql>
       <![CDATA[
-update GeneId&1
+update &prefixGeneId&1
 set unique_mapping = 1
 where lower(id) in (select lower_id
                     from (select distinct lower(id) as lower_id, gene
-                          from GeneId&1) case_independent_mapping
+                          from &prefixGeneId&1) case_independent_mapping
                     group by lower_id
                     having count(*) = 1)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX GeneId_gene_idx&1 ON GeneId&1 (gene, id)
+CREATE INDEX GeneId_gene_idx&1 ON &prefixGeneId&1 (gene, id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX GeneId_id_idx&1 ON GeneId&1 (id, gene)
+CREATE INDEX GeneId_id_idx&1 ON &prefixGeneId&1 (id, gene)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX GeneId_uniqid_idx&1 ON GeneId&1 (unique_mapping, id, gene)
+CREATE INDEX GeneId_uniqid_idx&1 ON &prefixGeneId&1 (unique_mapping, id, gene)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX GeneId_lowid_idx&1 ON GeneId&1 (lower(id), gene)
+CREATE INDEX GeneId_lowid_idx&1 ON &prefixGeneId&1 (lower(id), gene)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE INDEX GeneId_uniqlowid_idx&1 ON GeneId&1 (unique_mapping, lower(id), gene)
+CREATE INDEX GeneId_uniqlowid_idx&1 ON &prefixGeneId&1 (unique_mapping, lower(id), gene)
 tablespace indx
       ]]>
     </sql>
@@ -918,7 +925,7 @@ tablespace indx
   </tuningTable>
 
 
-  <tuningTable name="GeneAttributes">
+  <tuningTable name="GeneAttributes" prefixEnabled="true">
     <internalDependency name="GeneId"/>
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GenomicSequence"/>
@@ -966,7 +973,7 @@ tablespace indx
     <intermediateTable name="GeneProteinAttributes"/>
     <sql>
       <![CDATA[
-CREATE TABLE GoTermList NOLOGGING AS
+CREATE TABLE &prefixGoTermList NOLOGGING AS
 SELECT *
 FROM (  -- work around sometime Oracle bug ORA-00942
       SELECT source_id, ontology, source,
@@ -1002,7 +1009,7 @@ FROM (  -- work around sometime Oracle bug ORA-00942
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE GeneGoAttributes NOLOGGING AS
+CREATE TABLE &prefixGeneGoAttributes NOLOGGING AS
 SELECT DISTINCT gene.source_id,
        substr(annotated_go_component.go_terms, 1, 300) AS annotated_go_component,
        substr(annotated_go_function.go_terms, 1, 300) AS annotated_go_function,
@@ -1011,22 +1018,22 @@ SELECT DISTINCT gene.source_id,
        substr(predicted_go_function.go_terms, 1, 300) AS predicted_go_function,
        substr(predicted_go_process.go_terms, 1, 300) AS predicted_go_process
 FROM (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'annotated' AND ontology = 'cellular_component')
        annotated_go_component,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'annotated' AND ontology = 'molecular_function')
        annotated_go_function,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'annotated' AND ontology = 'biological_process')
        annotated_go_process,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'predicted' AND ontology = 'cellular_component')
        predicted_go_component,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'predicted' AND ontology = 'molecular_function')
        predicted_go_function,
-     (SELECT * FROM GoTermList
+     (SELECT * FROM &prefixGoTermList
       WHERE source = 'predicted' AND ontology = 'biological_process')
        predicted_go_process
 WHERE gene.source_id = annotated_go_component.source_id(+)
@@ -1051,13 +1058,13 @@ WHERE gene.source_id = annotated_go_component.source_id(+)
     </sql>
     <sql>
       <![CDATA[
-create index GeneGoAttr_sourceId ON GeneGoAttributes (source_id)
+create index GeneGoAttr_sourceId ON &prefixGeneGoAttributes (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE DerisiExpn NOLOGGING AS
+CREATE TABLE &prefixDerisiExpn NOLOGGING AS
 SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
        derisi_max_timing, derisi_min_timing, derisi_min_level,
        max_fold_induction as derisi_max_fold_induction
@@ -1084,13 +1091,13 @@ WHERE gene.source_id = expn.source_id(+)
     </sql>
     <sql>
       <![CDATA[
-create index Derisi_sourceId ON DerisiExpn (source_id)
+create index Derisi_sourceId ON &prefixDerisiExpn (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE WinzelerExpn NOLOGGING AS
+CREATE TABLE &prefixWinzelerExpn NOLOGGING AS
 SELECT gene.source_id, expn.winzeler_max_level, winzeler_max_pct,
        winzeler_max_timing, winzeler_min_timing, winzeler_min_level
 FROM (SELECT DISTINCT gene AS source_id from GeneId) gene,
@@ -1110,13 +1117,13 @@ WHERE gene.source_id = expn.source_id(+)
     </sql>
     <sql>
       <![CDATA[
-create index Winzeler_sourceId ON WinzelerExpn (source_id)
+create index Winzeler_sourceId ON &prefixWinzelerExpn (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE ToxoExpn NOLOGGING AS
+CREATE TABLE &prefixToxoExpn NOLOGGING AS
 select g.source_id, 
        type3_type1_fold_change,
        type3_type2_fold_change,
@@ -1153,13 +1160,13 @@ where g.source_id = type3vstype1.source_id
     </sql>
     <sql>
       <![CDATA[
-create index Toxo_sourceId ON ToxoExpn (source_id)
+create index Toxo_sourceId&1 ON &prefixToxoExpn (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE GeneProteinAttributes NOLOGGING AS
+CREATE TABLE &prefixGeneProteinAttributes NOLOGGING AS
 SELECT gene.source_id,
        protein.tm_count, protein.molecular_weight,
        protein.isoelectric_point, protein.min_molecular_weight,
@@ -1223,13 +1230,13 @@ WHERE gene.source_id = protein.source_id(+)
     </sql>
     <sql>
       <![CDATA[
-create index GPA_sourceId ON GeneProteinAttributes (source_id)
+create index GPA_sourceId&1 ON &prefixGeneProteinAttributes (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-CREATE TABLE GeneAttributes&1 NOLOGGING AS
+CREATE TABLE &prefixGeneAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        gf.source_id, gf.na_feature_id,
        REPLACE(so.term_name, '_', ' ') AS gene_type,
@@ -1311,10 +1318,10 @@ FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.SplicedNaSequence sns,
-     GeneProteinAttributes protein, GeneGoAttributes go,
-     DerisiExpn DerisiExpn, WinzelerExpn WinzelerExpn,
-     ToxoExpn ToxoExpn, GenomicSequence sequence,
-     dots.geneinstance gi, TaxonSpecies ts, sres.TaxonName species_name,
+     &prefixGeneProteinAttributes protein, &prefixGeneGoAttributes go,
+     &prefixDerisiExpn DerisiExpn, &prefixWinzelerExpn WinzelerExpn,
+     &prefixToxoExpn ToxoExpn, GenomicSequence sequence,
+     dots.geneinstance gi, &prefixTaxonSpecies ts, sres.TaxonName species_name,
      (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
@@ -1417,6 +1424,7 @@ WHERE gf.source_id = gene.source_id
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
+  AND (sequence.taxon_id = '&filterValue' or '&filterValue' = '')
   AND gf.sequence_ontology_id = so.sequence_ontology_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
@@ -1455,7 +1463,7 @@ WHERE gf.source_id = gene.source_id
     <sql>
       <![CDATA[
 create table GeneAttributesDuplicates nologging as
-select ga.source_id, count(*) as id_count from GeneAttributes&1 ga
+select ga.source_id, count(*) as id_count from &prefixGeneAttributes&1 ga
 group by ga.source_id having count(*) > 1
       ]]>
     </sql>
@@ -1463,67 +1471,67 @@ group by ga.source_id having count(*) > 1
     <sql>
       <![CDATA[
 create unique index GeneAttr_sourceId&1
-       ON GeneAttributes&1 (source_id)
+       ON &prefixGeneAttributes&1 (source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create unique index GeneAttr_srcPrj&1
-       ON GeneAttributes&1 (source_id, project_id)
+       ON &prefixGeneAttributes&1 (source_id, project_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_exon_ix&1
-       ON GeneAttributes&1 (exon_count, source_id)
+       ON &prefixGeneAttributes&1 (exon_count, source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_loc_ix&1
-       ON GeneAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
+       ON &prefixGeneAttributes&1 (na_sequence_id, start_min, end_max, is_reversed)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_feat_ix&1
-       ON GeneAttributes&1 (na_feature_id)
+       ON &prefixGeneAttributes&1 (na_feature_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_geneid_ix&1
-       ON GeneAttributes&1 (gene_id)
+       ON &prefixGeneAttributes&1 (gene_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_orthoname_ix&1
-       ON GeneAttributes&1 (orthomcl_name, source_id, taxon_id, gene_type)
+       ON &prefixGeneAttributes&1 (orthomcl_name, source_id, taxon_id, gene_type)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create index GeneAttr_ortholog_ix&1
-       ON GeneAttributes&1 (source_id, na_sequence_id, start_min, end_max, orthomcl_name)
+       ON &prefixGeneAttributes&1 (source_id, na_sequence_id, start_min, end_max, orthomcl_name)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-  update GeneAttributes&1
+  update &prefixGeneAttributes&1
   set exon_count = 1
   where exon_count > 1
    and project_id = 'TriTrypDB' 
    and source_id in (
-                select source_id from GeneAttributes&1
+                select source_id from &prefixGeneAttributes&1
               minus
                 select source_id
                 from (
@@ -1531,7 +1539,7 @@ tablespace indx
                           abs(rightLoc.start_min - leftLoc.end_max) as len
                   from dots.ExonFeature left, FeatureLocation leftLoc,
                        dots.ExonFeature right, FeatureLocation rightLoc,
-                       GeneAttributes&1 ga
+                       &prefixGeneAttributes&1 ga
                   where left.parent_id = right.parent_id
                     and left.parent_id = ga.na_feature_id
                     and (left.order_number = right.order_number - 1
@@ -1549,18 +1557,18 @@ tablespace indx
     </sql>
     <sql>
       <![CDATA[
-update GeneAttributes&1 ga
-set ga.orthomcl_name = (select distinct gb.orthomcl_name from GENEATTRIBUTES&1 gb
-                     where gb.gene_id = ga.GENE_ID
+update &prefixGeneAttributes&1 ga
+set ga.orthomcl_name = (select distinct gb.orthomcl_name from &prefixGeneAttributes&1 gb
+                     where gb.gene_id = ga.gene_id
                      and gb.orthomcl_name is not null
                      and gb.source_id != gb.orthomcl_name)
 where ga.organism like 'Toxo%' 
-and ga.ORTHOMCL_NAME is null
+and ga.orthomcl_name is null
       ]]>
     </sql>
     <sql>
       <![CDATA[
-        update GeneAttributes&1
+        update &prefixGeneAttributes&1
         set orthomcl_name = 'ORTH_' || gene_id || '.tmp'
         where orthomcl_name is null
         and gene_id is not null
@@ -1568,14 +1576,14 @@ and ga.ORTHOMCL_NAME is null
     </sql>
     <sql>
       <![CDATA[
-        update GeneAttributes&1
+        update &prefixGeneAttributes&1
         set orthomcl_name = source_id
         where orthomcl_name is null
       ]]>
     </sql>
     <sql>
       <![CDATA[
-       alter table GeneAttributes&1
+       alter table &prefixGeneAttributes&1
        add (
             paralog_number number,
             ortholog_number number
@@ -1584,19 +1592,19 @@ and ga.ORTHOMCL_NAME is null
     </sql>
     <sql>
       <![CDATA[
-       update GeneAttributes&1 set ortholog_number = 0,paralog_number = 0
+       update &prefixGeneAttributes&1 set ortholog_number = 0,paralog_number = 0
       ]]>
     </sql>
     <sql>
       <![CDATA[
-       update GeneAttributes&1 gaup
+       update &prefixGeneAttributes&1 gaup
        set paralog_number = (select count(*)
-                               from GeneAttributes&1 g1
+                               from &prefixGeneAttributes&1 g1
                                where g1.orthomcl_name = gaup.orthomcl_name
                                and g1.organism = gaup.organism
                                and gaup.source_id != g1.source_id),
            ortholog_number = (select count(*)
-                               from GeneAttributes&1 g1
+                               from &prefixGeneAttributes&1 g1
                                where g1.orthomcl_name = gaup.orthomcl_name
                                and g1.organism != gaup.organism)
         where gaup.gene_type = 'protein coding'
@@ -1604,12 +1612,12 @@ and ga.ORTHOMCL_NAME is null
     </sql>
   </tuningTable>
 
-  <tuningTable name="GenomicSequence">
+  <tuningTable name="GenomicSequence" prefixEnabled="true">
     <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="sres.SequenceOntology"/>
     <sql>
       <![CDATA[
-CREATE TABLE GenomicSequence&1 NOLOGGING AS
+CREATE TABLE &prefixGenomicSequence&1 NOLOGGING AS
   SELECT ens.na_sequence_id, ens.taxon_id,
          SUBSTR(ens.source_id, 1, 50) AS source_id,
          LOWER(SUBSTR(ens.source_id, 1, 50)) AS lowercase_source_id,
@@ -1622,6 +1630,7 @@ CREATE TABLE GenomicSequence&1 NOLOGGING AS
   WHERE ens.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name != 'EST'
     AND so.term_name != 'oligo'
+    AND (ens.taxon_id = '&filterValue' or '&filterValue' = '')
     AND -- see both? use the VirtualSequence.
         ens.source_id IN (SELECT source_id FROM dots.ExternalNaSequence
                          MINUS
@@ -1634,29 +1643,30 @@ UNION
          external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
          chromosome_order_num, sequence_ontology_id
   FROM dots.VirtualSequence
+  WHERE (taxon_id = '&filterValue' or '&filterValue' = '')
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index GS_sourceId&1 ON GenomicSequence&1 (source_id, na_sequence_id)
+create index GS_sourceId&1 ON &prefixGenomicSequence&1 (source_id, na_sequence_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index GS_lcSourceId&1 ON GenomicSequence&1 (lowercase_source_id)
+create index GS_lcSourceId&1 ON &prefixGenomicSequence&1 (lowercase_source_id)
 tablespace indx
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create index GS_naSeqId&1 ON GenomicSequence&1 (na_sequence_id)
+create index GS_naSeqId&1 ON &prefixGenomicSequence&1 (na_sequence_id)
 tablespace indx
       ]]>
     </sql>
   </tuningTable>
 
-  <tuningTable name="SequenceAttributes">
+  <tuningTable name="SequenceAttributes" prefixEnabled="true">
     <internalDependency name="GenomicSequence"/>
     <internalDependency name="SequencePieceClosure"/>
     <externalDependency name="dots.DbRefNaSequence"/>
@@ -1668,7 +1678,7 @@ tablespace indx
     <externalDependency name="sres.TaxonName"/>
     <sql>
       <![CDATA[
-CREATE TABLE SequenceAttributes&1 NOLOGGING AS
+CREATE TABLE &prefixSequenceAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(sequence.source_id, 1, 60) AS source_id, sequence.a_count,
        sequence.c_count, sequence.g_count, sequence.t_count,
@@ -1706,6 +1716,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      (SELECT distinct piece_na_sequence_id, 0 as is_top_level
       FROM SequencePieceClosure) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
+  AND (sequence.taxon_id = '&filterValue' or '&filterValue' = '')
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
@@ -1717,17 +1728,17 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
     </sql>
     <sql>
       <![CDATA[
-create unique index pk_SeqAttr_&1 ON SequenceAttributes&1 (lower(source_id), project_id)
+create unique index pk_SeqAttr_&1 ON &prefixSequenceAttributes&1 (lower(source_id), project_id)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create unique index SeqAttr_source_id&1 ON SequenceAttributes&1 (source_id)
+create unique index SeqAttr_source_id&1 ON &prefixSequenceAttributes&1 (source_id)
       ]]>
     </sql>
     <sql>
       <![CDATA[
-create unique index SeqAttr_naseqid&1 ON SequenceAttributes&1 (na_sequence_id)
+create unique index SeqAttr_naseqid&1 ON &prefixSequenceAttributes&1 (na_sequence_id)
       ]]>
     </sql>
   </tuningTable>
@@ -5576,12 +5587,12 @@ tablespace indx
     </sql>
   </tuningTable>
 
-  <tuningTable name="TaxonSpecies">
+  <tuningTable name="TaxonSpecies" prefixEnabled="true">
     <internalDependency name="SequenceAttributes"/>
     <externalDependency name="sres.Taxon"/>
     <sql>
       <![CDATA[
-create table TaxonSpecies&1 as    
+create table &prefixTaxonSpecies&1 as    
 select t.taxon_id, species.taxon_id as species_taxon_id
 from sres.Taxon species, (select distinct sa.taxon_id
       from SequenceAttributes sa) t
