@@ -1718,6 +1718,59 @@ tablespace indx
 
   </tuningTable>
 
+  <tuningTable name="ApidbTuning.OrganismTree">
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="toxo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismTree" dblink="piro.tuning"/>
 
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
+      <source dblink="tritryp.tuning"/>
+      <source dblink="piro.tuning"/>
+
+
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismTree@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismTree@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismTree@micro.tuning
+            where project_id = 'MicrosporidiaDB'
+          ]]>
+        </query>
+      </source>
+
+    </unionization>
+
+  </tuningTable>
 
 </tuningConfig>
