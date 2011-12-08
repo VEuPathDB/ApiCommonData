@@ -27,40 +27,114 @@
 <tuningConfig>
 
   <tuningTable name="ApidbTuning.OrganismAbbreviationWS">
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="toxo.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationWS" dblink="piro.tuning"/>
 
     <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
+      <source dblink="piro.tuning"/>
+
+
 
       <source>
         <query>
           <![CDATA[
             select *
-            from ApidbTuning.OrganismAbbreviationWS@tritryp.tuning
+            from ApidbTuning.OrganismAbbreviationWS@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismAbbreviationWS@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismAbbreviationWS@micro.tuning
+            where project_id = 'MicrosporidiaDB'
           ]]>
         </query>
       </source>
 
     </unionization>
+
   </tuningTable>
 
   <tuningTable name="ApidbTuning.OrganismAbbreviationBlast">
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="plasmo.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="toxo.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="tritryp.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="trich.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="amoeba.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="micro.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAbbreviationBlast" dblink="piro.tuning"/>
 
     <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="plasmo.tuning"/>
+      <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
+      <source dblink="piro.tuning"/>
+
+
 
       <source>
         <query>
           <![CDATA[
             select *
-            from ApidbTuning.OrganismAbbreviationBlast@tritryp.tuning
+            from ApidbTuning.OrganismAbbreviationBlast@trich.tuning
+            where project_id = 'TrichDB'
+          ]]>
+        </query>
+      </source>
+      
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismAbbreviationBlast@amoeba.tuning
+            where project_id = 'AmoebaDB'
+          ]]>
+        </query>
+      </source>
+
+      <source>
+        <query>
+          <![CDATA[
+            select *
+            from ApidbTuning.OrganismAbbreviationBlast@micro.tuning
+            where project_id = 'MicrosporidiaDB'
           ]]>
         </query>
       </source>
 
     </unionization>
-  </tuningTable>
+
+  </tuningTable>  
 
 
   <tuningTable name="ApidbTuning.EstAttributes">
