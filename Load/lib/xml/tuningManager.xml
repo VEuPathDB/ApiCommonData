@@ -6470,12 +6470,13 @@ tablespace indx
     <sql>
       <![CDATA[
        create table OrganismAbbreviationWS&1 nologging as
-       select oa.organism, ot.parentTerm as parent, oa.abbreviation
+       select oa.organism, ot.parentTerm as parent, oa.abbreviation, ot.project_id
        from OrganismAbbreviation oa, OrganismTree ot
        where ot.term = oa.organism
        union
+       select special.organism, special.parent,special.abbreviation, ot.project_id from OrganismTree ot,(
   -- ToxoDB Apicoplast
-  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union  
+  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union
   -- PiroplasmaDB Plastid and Mitochondrial
   select 'Babesia bovis T2Bo mitochondrial' as organism,'Babesia bovis' as parent, 'BbovisT2BoMito' as abbreviation from dual union
   select 'Babesia bovis T2Bo plastid' as organism, 'Babesia bovis' as parent, 'BbovisT2BoPlastid' as abbreviation from dual union
@@ -6493,7 +6494,8 @@ tablespace indx
   -- PlasmoDB Plasmid And Mitochondrial
   select 'Plasmodium falciparum 3D7 mitochondrial' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumMito' as abbreviation from dual union
   select 'Plasmodium falciparum 3D7 plastid' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumPlastid' as abbreviation from dual union
-  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'Plasmodium vivax' as parent, 'PvivaxMito' as abbreviation from dual       
+  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'Plasmodium vivax' as parent, 'PvivaxMito' as abbreviation from dual)
+          where special.parent = ot.term
       ]]>
     </sql>
   </tuningTable>
@@ -6653,11 +6655,14 @@ tablespace indx
  <!-- Special BLAST  abbreviations which are not standard organism names -->
   <tuningTable name="OrganismAbbreviationBlast">
     <internalDependency name="OrganismAbbreviationWS"/>
+    <internalDependency name="OrganismTree"/>
     <sql>
       <![CDATA[
        create table OrganismAbbreviationBlast&1 nologging as
-       select organism, parent, abbreviation from OrganismAbbreviationWS
+       select organism, parent, abbreviation, project_id from OrganismAbbreviationWS
        union
+       select special.organism, special.parent, special.abbreviation, ot.project_id from OrganismTree ot,
+       (
   -- ToxoDB ESTs
   select 'Toxoplasma gondii' as organism, 'Toxoplasma' as parent, 'Tgondii' as abbreviation from dual union  
   -- ToxoDB Isolates TODO !!
@@ -6696,7 +6701,8 @@ tablespace indx
   select 'Theileria parva' as organism, 'Theileria' as parent, 'TparvaMuguga' as abbreviation from dual union
   select 'Babesia bovis' as organism, 'Babesia' as parent, 'BbovisT2Bo' as abbreviation from dual union
   -- EuPathDB Other ESTs
-  select 'Other Apicomplexan ESTs' as organism, 'Apicomplexa' as parent, 'Other' as abbreviation from dual
+  select 'Other Apicomplexan ESTs' as organism, 'Apicomplexa' as parent, 'Other' as abbreviation from dual) special
+      where special.parent = ot.term
       ]]>
     </sql>
   </tuningTable>
