@@ -119,7 +119,7 @@ sub ExportToGFF {
  
   $rowcount = &WriteGFF(\$sth,$species);
 
-  print ("0 rows were returned by the query:\n $query \n") unless $rowcount > 0;
+  die ("0 rows were returned by the query:\n $query \n") unless $rowcount > 0;
 }
 
 
