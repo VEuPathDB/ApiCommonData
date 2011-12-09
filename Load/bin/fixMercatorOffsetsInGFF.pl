@@ -15,13 +15,13 @@ my($fastaFile,$gffFile,$outFile,$gffRegex,$fastaRegex);
             "fastaRegex|fr=s"=> \$fastaRegex,
             );
 
-die "provide fasta, gff and output files on command line\nfixMercatorOffsetsInGFF.pl --f <fastaFile> --g <gffFile> --o <outFile> --fr <fastaRegex ['^\>(\S+)']> --gr <gffRegex for sequence id ['(\S+)']>\n" unless (-e "$fastaFile" && -e "$gffFile" && $outFile);
+die "provide fasta, gff and output files on command line\nfixMercatorOffsetsInGFF.pl --f <fastaFile> --g <gffFile> --o <outFile> --fr <fastaRegex ['^\>(\S+)']> --gr <gffRegex for sequence id ['(\S+)']>\n" unless ($fastaFile && $gffFile && $outFile);
 
 $fastaRegex = '^\>(\S+)' unless $fastaRegex;
 $gffRegex = '(\S+)' unless $gffRegex;
 
 ##parse fasta file ....
-open(S,"$fastaFile");
+open(S,"$fastaFile") || die "Can't open fasta file '$fastaFile'\n";
 
 my %seq; 
 my $id = "";
@@ -38,7 +38,7 @@ close S;
 print STDERR "Parsed ",scalar(keys%seq)," sequences\n";
 
 ##now the gff file
-open(G,"$gffFile");
+open(G,"$gffFile") || die "Can't open gff file '$gffFile'\n";
 my %genes;
 my @lines;
 while(<G>){
