@@ -153,7 +153,7 @@ tablespace indx
                1 as edge_level
         from dots.SequencePiece sp, dots.NaSequence ns
         where sp.piece_na_sequence_id = ns.na_sequence_id
-          and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
+          and (ns.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
       ]]>
     </sql>
     <sql>
@@ -227,7 +227,7 @@ where nf.na_feature_id = nl.na_feature_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and ns.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
-  and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
+  and (ns.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
 union
 select -- virtual feature locations mapped through SequencePiece
        case
@@ -289,7 +289,7 @@ where nf.na_feature_id = nl.na_feature_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and contig.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
-  and (contig.taxon_id = '&filterValue' or '&filterValue' = '')
+  and (contig.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
       ]]>
     </sql>
     <sql>
@@ -502,7 +502,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
 ) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed, dots.NaSequence ns
 where mapping.gene = gf.source_id
   and gf.na_sequence_id = ns.na_sequence_id
-  and (ns.taxon_id = '&filterValue' or '&filterValue' = '')
+  and (ns.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
   and gf.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
   AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
@@ -1424,7 +1424,7 @@ WHERE gf.source_id = gene.source_id
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
-  AND (sequence.taxon_id = '&filterValue' or '&filterValue' = '')
+  AND (sequence.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
   AND gf.sequence_ontology_id = so.sequence_ontology_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
@@ -1630,7 +1630,7 @@ CREATE TABLE &prefixGenomicSequence&1 NOLOGGING AS
   WHERE ens.sequence_ontology_id = so.sequence_ontology_id
     AND so.term_name != 'EST'
     AND so.term_name != 'oligo'
-    AND (ens.taxon_id = '&filterValue' or '&filterValue' = '')
+    AND (ens.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
     AND -- see both? use the VirtualSequence.
         ens.source_id IN (SELECT source_id FROM dots.ExternalNaSequence
                          MINUS
@@ -1643,7 +1643,7 @@ UNION
          external_database_release_id, SUBSTR(chromosome, 1, 40) AS chromosome,
          chromosome_order_num, sequence_ontology_id
   FROM dots.VirtualSequence
-  WHERE (taxon_id = '&filterValue' or '&filterValue' = '')
+  WHERE (taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
       ]]>
     </sql>
     <sql>
@@ -1716,7 +1716,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
      (SELECT distinct piece_na_sequence_id, 0 as is_top_level
       FROM SequencePieceClosure) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
-  AND (sequence.taxon_id = '&filterValue' or '&filterValue' = '')
+  AND (sequence.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
