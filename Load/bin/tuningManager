@@ -130,7 +130,7 @@ eval {
     }
     close(PROGRAM);
     my $exitCode = $? >> 8;
-  die "invalid conifig file" if $exitCode;
+  die "invalid config file" if $exitCode;
 
   my ($config) = &parseConfigFile($configFile);
 
