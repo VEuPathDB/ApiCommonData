@@ -63,7 +63,9 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: either \"p
   unless ($propFile || $password);
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance\" must be specified")
   unless $instance;
-&usage unless ($instance && ($propFile || $password));
+ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"configFile\" must be specified if \"prefix\" is used")
+  unless ($configFile || !$prefix);
+&usage unless ($instance && ($propFile || $password) && ($configFile || !$prefix));
 
 $cleanupAge = 0 if !defined $cleanupAge;
 
@@ -398,6 +400,7 @@ Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>}
                       --instance <dbInstance> {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
                      {--cleanupWarnOnly} {--cleanupAge <days>} {--forceUpdate}
+                     {--prefix <prefix>} {--filterValue <value>}
 
 options:
   configFile      an xml file describing the tables to be created
@@ -413,6 +416,8 @@ options:
   forceUpdate     perform update even if current_updater flag is set
   maxWait         limit, in hours, to wait if another tuning manager is updating the database
   debug           print debugging info
+  prefix          create tuning tables and synonyms with supplied prefix
+  filterValue     substitute supplied macro value for "&prefix" macro
 
 
 Sample config file XML:
