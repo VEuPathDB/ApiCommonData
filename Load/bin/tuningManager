@@ -119,8 +119,19 @@ eval {
     die("instance name \"$instance\" does not match apidb.InstanceMetaInfo.instance_nickname \"" . $tuningRegistry->getInstanceName() . "\"");
   }
 
+  # get and validate config file
   $configFile = getConfigFileName($configFile, $tuningRegistry, $prefix);
   ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
+    open(PROGRAM, "validateXmlWithRng $ENV{GUS_HOME}/lib/rng/tuningManager.rng $configFile |");
+    while (<PROGRAM>) {
+      my $line = $_;
+      chomp($line);
+      ApiCommonData::Load::TuningConfig::Log::addLog($line);
+    }
+    close(PROGRAM);
+    my $exitCode = $? >> 8;
+  die "invalid conifig file" if $exitCode;
+
   my ($config) = &parseConfigFile($configFile);
 
   # create an object for each <tuningTable> entity
@@ -149,7 +160,7 @@ eval {
   }
 
   # validate config / check external files
-  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Validating configuration file and checking external files");
+  ApiCommonData::Load::TuningConfig::Log::addLogBanner("Using configuration file and checking external files");
   my $undefinedInternal;
   my $nonexistentExternal;
   my $nonexistentExternalTuningTable;
