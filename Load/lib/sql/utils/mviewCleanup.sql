@@ -24,7 +24,7 @@ WHERE mview_name IN (SELECT mview_name
                     MINUS
                      SELECT table_name
                      FROM all_synonyms)
-  AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
+  AND REGEXP_REPLACE(mview_name, '[0-9][0-9][0-9][0-9]$', 'fournumbers')
       LIKE '%fournumbers'
   AND owner != 'SYS'
 ORDER BY mview_name;
@@ -42,7 +42,7 @@ WHERE table_name IN (SELECT table_name
                     MINUS
                      SELECT mview_name
                      FROM all_mviews)
-  AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
+  AND REGEXP_REPLACE(table_name, '[0-9][0-9][0-9][0-9]$', 'fournumbers')
       LIKE '%fournumbers'
   AND table_name NOT LIKE 'QUERY_RESULT_%'
   AND owner != 'SYS'
