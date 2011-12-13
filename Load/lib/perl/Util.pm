@@ -331,8 +331,30 @@ sub getCodingSequenceFromExons {
   return($codingSequence);
 }
 
+sub getExtDbRlsVerFromExtDbRlsName {
+  my ($plugin, $extDbRlsName) = @_;
+
+  my $sql = "select version from sres.externaldatabaserelease edr, sres.externaldatabase ed
+             where ed.name = '$extDbRlsName'
+             and edr.external_database_id = ed.external_database_id";
+
+  my $stmt = $plugin->prepareAndExecute($sql);
+  
+  my @verArray;
+
+  while ( my($version) = $stmt->fetchrow_array()) {
+      push @verArray, $version;
+  }
+  $stmt->finish();
+
+  die "No ExtDbRlsVer found for '$extDbRlsName'" unless(scalar(@verArray) > 0);
+
+  die "trying to find unique ext db version for '$extDbRlsName', but more than one found" if(scalar(@verArray) > 1);
+
+  return @verArray[0];
+
+}
 
 
 1;
-
 
