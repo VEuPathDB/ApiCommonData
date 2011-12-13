@@ -18,7 +18,7 @@ use GUS::Model::SRes::Taxon;
 
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
-
+use ApiCommonData::Load::Util;
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -95,8 +95,8 @@ integerArg({name => 'ncbiTaxId',
        reqd  => 0,
        isList => 0,
       }),
- stringArg({name => 'soVer',
-       descr => 'Sequence ontology version',
+ stringArg({name => 'extDbRlsName',
+       descr => 'External Database Release name of Sequence ontology',
        constraintFunc=> undef,
        reqd  => 1,
        isList => 0,
@@ -590,7 +590,9 @@ sub getVirDbRlsId {
 sub getSOTermId {
   my($self,$SOTerm) = @_;
 
-  my $soVer = $self->getArg('soVer');
+  my $extDbRlsName = $self->getArg('extDbRlsName');
+
+  my $soVer =  ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
 
   my $SO = GUS::Model::SRes::SequenceOntology->new({'term_name' => $SOTerm,'so_version' => $soVer});
 
