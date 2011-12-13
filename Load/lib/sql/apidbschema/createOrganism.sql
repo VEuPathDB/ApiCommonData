@@ -11,8 +11,6 @@ CREATE TABLE apidb.Organism (
  is_reference_strain          NUMBER(1) NOT NULL,
  is_annotated_genome          NUMBER(1) NOT NULL,
  has_temporary_ncbi_taxon_id  NUMBER(1) NOT NULL,
- has_plastid_genome_seq       NUMBER(1) NOT NULL,
- has_mito_genome_seq          NUMBER(1) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                   NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,

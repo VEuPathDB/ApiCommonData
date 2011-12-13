@@ -93,16 +93,6 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 0,
 		 isList => 0,
 	       }),
-     booleanArg({ name => 'hasPlastidGenomeSeq',
-		 descr => '',
-		 reqd  => 0,
-		 isList => 0,
-	       }),
-     booleanArg({ name => 'hasMitoGenomeSeq',
-		 descr => '',
-		 reqd  => 0,
-		 isList => 0,
-	       }),
     ];
 
 
@@ -178,8 +168,6 @@ sub run {
   my $isReferenceStrain = $self->getArg('isReferenceStrain');
   my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
   my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
-  my $hasPlastidGenomeSeq = $self->getArg('hasPlastidGenomeSeq');
-  my $hasMitoGenomeSeq = $self->getArg('hasMitoGenomeSeq');
   my $projectName = $self->getArg('projectName');
 
   # validate full name against ncbi taxon id
@@ -224,8 +212,6 @@ sub run {
 						    'is_reference_strain' => $isReferenceStrain,
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'has_temporary_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
-						    'has_plastid_genome_seq' => $hasPlastidGenomeSeq,
-						    'has_mito_genome_seq' => $hasMitoGenomeSeq,
 						   });
 
   $organism->submit() unless $organism->retrieveFromDB();
