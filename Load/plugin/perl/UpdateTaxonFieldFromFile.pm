@@ -6,6 +6,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::TaxonName;
 use GUS::Model::SRes::Taxon;
+use ApiCommonData::Load::Util;
 
 $| = 1;
 
@@ -164,9 +165,7 @@ sub processFile {
 
   my $extDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
 
-  my $extDbRelSpec=$extDbRlsName."|".$extDbRlsVer;
-
-  my $extDbRlsId = $self->getExtDbRlsId($extDbRelSpec);
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName."|".$extDbRlsVer);
 
   my $tableName = $self->getArg('tableName');
   $tableName =~ s/::/./;
@@ -294,7 +293,11 @@ sub getUpdateIds {
   my ($self,$sourceIds) = @_;
   my $updatedRows = 0;
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
+  my $extDbRlsName = $self->getArg('extDbRlsName');
+
+  my $extDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
+
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName."|".$extDbRlsVer);
 
   my $tableName = $self->getArg('tableName');
   $tableName =~ s/::/./;
