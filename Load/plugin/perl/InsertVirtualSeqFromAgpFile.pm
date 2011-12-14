@@ -95,7 +95,7 @@ integerArg({name => 'ncbiTaxId',
        reqd  => 0,
        isList => 0,
       }),
- stringArg({name => 'extDbRlsName',
+ stringArg({name => 'soExtDbRlsName',
        descr => 'External Database Release name of Sequence ontology',
        constraintFunc=> undef,
        reqd  => 1,
@@ -590,9 +590,9 @@ sub getVirDbRlsId {
 sub getSOTermId {
   my($self,$SOTerm) = @_;
 
-  my $extDbRlsName = $self->getArg('extDbRlsName');
+  my $soExtDbRlsName = $self->getArg('soExtDbRlsName');
 
-  my $soVer =  ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
+  my $soVer =  ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $soExtDbRlsName);
 
   my $SO = GUS::Model::SRes::SequenceOntology->new({'term_name' => $SOTerm,'so_version' => $soVer});
 
