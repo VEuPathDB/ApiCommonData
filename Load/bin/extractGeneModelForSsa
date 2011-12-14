@@ -9,14 +9,14 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery);
+my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery,$topLevel);
 
 &GetOptions("verbose!" => \$verbose,
             "outputFile=s" => \$outputFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "taxonId=s" => \$taxonId,
             "coordinates=s" => \$coordinates,
-	    );
+	    "topLevel!" => \$topLevel);
 
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -97,13 +97,13 @@ $dbh->disconnect;
 sub GetGeneQuery {
 
 
-return ("select gf.source_id, gf.na_feature_id,
+  my $sql = "select gf.source_id, gf.na_feature_id,
                   nl.start_min -1 as start_min ,
                   nl.end_max,
                   decode(nl.is_reversed, 1, '-', '+') as strand,
                   substr(ns.source_id, 1, 50) AS sequence_id,gf.na_sequence_id,
                   exons.exon_count
-             from dots.GeneFeature gf, dots.NaLocation nl, dots.NaSequence ns,
+             from dots.GeneFeature gf, dots.NaLocation nl, dots.NaSequence ns, apidbtuning.geneattributes ga,
                   (select parent_id, count(*) as exon_count
                    from dots.ExonFeature
                    group by parent_id) exons
@@ -112,30 +112,56 @@ return ("select gf.source_id, gf.na_feature_id,
               and gf.na_sequence_id = ns.na_sequence_id
               and ns.taxon_id = ?
               and exons.parent_id = gf.na_feature_id
-            order by sequence_id,start_min,end_max,source_id");
+              and gf.source_id = ga.source_id
+            order by sequence_id,start_min,end_max,source_id";
+  if ($topLevel) {
+    $sql = "select source_id, na_feature_id,
+            start_min -1 as start_min, end_max,
+            decode(is_reversed, 1, '-', '+') as strand,
+            substr(sequence_id, 1, 50) AS sequence_id,na_sequence_id,
+            exon_count
+            from apidbtuning.geneattributes
+            where source_id is not null
+            and taxon_id = ?
+            order by sequence_id,start_min,end_max,source_id";
+  }
+  return $sql;
 }
 
 sub GetExonQuery {
 
 
-  return ("select least(nl.start_min, nl.end_max)-1 as start_min,
+  my $sql = "select least(nl.start_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.end_max) as end_max
-             from dots.ExonFeature ef, dots.NaLocation nl
+             from dots.ExonFeature ef, dots.NaLocation nl,apidbtuning.geneattributes ga,
             where ef.na_feature_id = nl.na_feature_id
               and ef.parent_id =  ?
               and ef.na_sequence_id =  ?
-         order by start_min,end_max");
+              and ef.parent_id = ga.na_feature_id
+            order by start_min,end_max";
+
+  if ($topLevel) {
+    $sql = "select least(start_min, end_max)-1 as start_min,
+                   greatest(start_min,end_max) as end_max
+            from apidbtuning.FeatureLocation
+            where parent_id = ?
+            and na_sequence_id = ?
+            and feature_type = 'ExonFeature'
+            and is_top_level = 1";
+  }
+
+  return $sql;
 }
 
 sub GetGeneQueryOnCDS {
 
 
-return ("select gf.source_id, gf.na_feature_id,
+  my $sql = "select gf.source_id, gf.na_feature_id,
                 exons.start_min, exons.end_max,
                 decode(exons.is_reversed, 1, '-', '+') as strand,
                 substr(ns.source_id, 1, 50) as sequence_id,
                 gf.na_sequence_id, exons.exon_count
-           from dots.GeneFeature gf, dots.NaSequence ns,
+           from dots.GeneFeature gf, dots.NaSequence ns, apidbtuning.geneattributes ga,
                 (  select parent_id, least(min(coding_start), min(coding_end)) - 1 as start_min,
                           greatest(max(coding_start), max(coding_end)) as end_max,
                           count(*) as exon_count,
@@ -148,19 +174,49 @@ return ("select gf.source_id, gf.na_feature_id,
             and gf.source_id is not null
             and gf.na_sequence_id = ns.na_sequence_id
             and ns.taxon_id = ?
-          order by sequence_id, start_min, end_max, source_id");
+            and gf.source_id = ga.source_id
+          order by sequence_id, start_min, end_max, source_id";
+
+  if ($topLevel) {
+    $sql = "select source_id, na_feature_id, 
+            least(coding_start, coding_end) - 1 as start_min,
+            greatest(coding_start, coding_end) as end_max,
+            decode(is_reversed, 1, '-', '+') as strand,
+            substr(sequence_id, 1, 50) as sequence_id,
+            na_sequence_id, exon_count
+            from apidbtuning.geneattributes
+            where taxon_id = ?
+            order by sequence_id, start_min, end_max, source_id";
+  }
+
+  return $sql;
 }
 
 sub GetExonQueryOnCDS {
 
 
-  return ("select least(ef.coding_start, ef.coding_end)-1 as start_min,
+  my $sql = "select least(ef.coding_start, ef.coding_end)-1 as start_min,
                   greatest(ef.coding_start, ef.coding_end) as end_max
-             from dots.ExonFeature ef
+             from dots.ExonFeature ef,apidbtuning.geneattributes ga
             where ef.parent_id = ?
               and ef.na_sequence_id =  ?
               and ef.coding_start is not null
-         order by start_min, end_max");
+              and ef.parent_id = ga.na_feature_id
+         order by start_min, end_max";
+
+  if ($topLevel) {
+    $sql = "select least(coding_start, coding_end)-1 as start_min,
+                   greatest(coding_start, coding_end) as end_max
+            from apidbtuning.FeatureLocation
+            where parent_id = ?
+            and na_sequence_id = ?
+            and coding_start is not null
+            and feature_type = 'ExonFeature'
+            and is_top_level = 1";
+  }
+
+  return $sql;
+
 }
 
 
