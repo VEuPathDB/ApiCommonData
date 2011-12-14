@@ -55,8 +55,8 @@ sub getArgumentsDeclaration{
 		reqd  => 0,
 		isList => 0
 	       }),
-     stringArg({name => 'extDbRelSpec',
-              descr => 'the database source for the rows being updated in database_name|db_rel_ver format',
+     stringArg({name => 'extDbRlsName',
+              descr => 'the database name for the rows being updated',
               constraintFunc => undef,
               reqd => 1,
               isList => 0
@@ -160,7 +160,13 @@ sub processFile {
 
   ##NOTE: we can't afford the large memory footprint of the entire file so need to just pull in rows that we need.
 
-  my $extDbRlsId = $self->getExtDbRlsId($self->getArg('extDbRelSpec'));
+  my $extDbRlsName = $self->getArg('extDbRlsName');
+
+  my $extDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
+
+  my $extDbRelSpec=$extDbRlsName."|".$extDbRlsVer;
+
+  my $extDbRlsId = $self->getExtDbRlsId($extDbRelSpec);
 
   my $tableName = $self->getArg('tableName');
   $tableName =~ s/::/./;
