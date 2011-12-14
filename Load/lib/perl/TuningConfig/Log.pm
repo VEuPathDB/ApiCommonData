@@ -32,8 +32,10 @@ BEGIN {
   sub addLog {
     my ($message) = @_;
 
-    $message =~ s/\n/\n$indentString/;
-    $message = $indentString . $message;
+    my $dateString = `date '+%Y/%m/%d %H:%M:%S'`;
+    chomp ($dateString);
+    $message =~ s/\n/\n$dateString| $indentString/;
+    $message = "$dateString| $indentString$message";
 
     $| = 1;
     print STDERR "$message\n";
@@ -50,8 +52,10 @@ BEGIN {
   sub addLogPreamble {
     my ($message) = @_;
 
-    $message =~ s/\n/\n$indentString/;
-    $message = $indentString . $message;
+    my $dateString = `date '+%Y/%m/%d %H:%M:%S'`;
+    chomp ($dateString);
+    $message =~ s/\n/\n$dateString| $indentString/;
+    $message = "$dateString| $indentString$message";
 
     $| = 1;
     print STDERR "$message\n";
@@ -181,7 +185,7 @@ sub getProcessInfo {
 }
 
 sub logRebuild {
-  my ($dbh, $name, $buildDuration, $instanceName, $dblink) = @_;
+  my ($dbh, $name, $buildDuration, $instanceName, $dblink, $recordCount) = @_;
 
   my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
   my $updater = getProcessInfo();
@@ -189,8 +193,8 @@ sub logRebuild {
   $dbh->do(<<SQL) or addErrorLog("\n" . $dbh->errstr . "\n");
 insert into apidb_r.TuningTableLog\@$dblink
 (instance_nickname, name, suffix, updater, timestamp, row_count, build_duration)
-select '$instanceName', '$name', '$suffix', '$updater', sysdate, count(*), '$buildDuration'
-from $name
+select '$instanceName', '$name', '$suffix', '$updater', sysdate, '$recordCount', '$buildDuration'
+from dual
 SQL
 
 }

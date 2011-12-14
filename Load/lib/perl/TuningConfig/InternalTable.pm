@@ -377,18 +377,34 @@ sub update {
       if $self->storeDefinition($dbh);
 
   my $buildDuration = time - $startTime;
+  my $recordCount = getRecordCount($dbh, $self->{name}, $prefix);
   ApiCommonData::Load::TuningConfig::Log::addLog("    $buildDuration seconds to rebuild tuning table "
-                                                 . $self->{name});
+                                                 . $self->{name} . " with record count of " . $recordCount);
 
   if ($maxRebuildMinutes) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("table rebuild took longer than $maxRebuildMinutes minute maximum.")
       if ($buildDuration > $maxRebuildMinutes * 60)
   }
 
-  ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink())
+  ApiCommonData::Load::TuningConfig::Log::logRebuild($dbh, $self->{name}, $buildDuration, $registry->getInstanceName(), $registry->getDblink(), $recordCount)
       if !$prefix;
 
   return "neededUpdate"
+}
+
+sub getRecordCount {
+
+  my ($dbh, $name, $prefix) = @_;
+
+  my $stmt = $dbh->prepare(<<SQL);
+    select count(*) from $prefix$name
+SQL
+  $stmt->execute()
+    or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+  my ($recordCount) = $stmt->fetchrow_array();
+  $stmt->finish();
+
+  return $recordCount;
 }
 
 sub storeDefinition {
