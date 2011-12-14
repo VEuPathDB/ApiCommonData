@@ -8,6 +8,7 @@ use GUS::Model::DoTS::GOAssociationInstance;
 use GUS::Model::DoTS::GOAssociationInstanceLOE;
 use GUS::Model::DoTS::GOAssociation;
 use GUS::Model::DoTS::GOAssocInstEvidCode;
+use ApiCommonData::Load::Util;
 
 use FileHandle;
 use Carp;
@@ -85,8 +86,8 @@ my $argsDeclaration =
 		   format => '',
 	          }),
 
-         stringArg({name => 'goExternalDatabaseSpec',
-	    descr => 'Targeted GO Term database release (in "name|version" fomat)',
+         stringArg({name => 'goExtDbRlsName',
+	    descr => 'Targeted GO Term database name',
 	    constraintFunc => undef,
 	    reqd => 1,
 	    isList => 0
@@ -175,8 +176,14 @@ sub run {
     $self->{newAssocCount} = 0;
     $self->{instanceCount} = 0;
 
+    my $goExtDbRlsName = $self->getArg('goExtDbRlsName');
+
+    my $goExtDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $goExtDbRlsName);
+
+    my $goExternalDatabaseSpec=$goExtDbRlsName."|".$goExtDbRlsVer;
+
     my $goDbRlsId = 
-      $self->getExtDbRlsId($self->getArg('goExternalDatabaseSpec'));
+      $self->getExtDbRlsId($goExternalDatabaseSpec);
 
     $self->{targetTableId}
       = $self->className2TableId($self->getArg('targetTable'));
