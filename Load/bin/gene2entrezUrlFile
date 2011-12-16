@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+my ($inputFile,$verbose);
+&GetOptions("inputFile=s" => \$inputFile,
+            "verbose!" => \$verbose);
+
+open (TABFILE, "$inputFile") or die "Cannot open file for reading:  $!";;
+
+while (<TABFILE>){
+  chomp;
+  my @arr = split(/\t/, $_);
+  my $URL = "http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene&cmd=search&term=$arr[0]";
+  print OUT "$arr[0]\t$URL\n";
+}
+
+close(TABFILE);
+
+
+
