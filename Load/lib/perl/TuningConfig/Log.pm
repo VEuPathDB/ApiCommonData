@@ -170,9 +170,11 @@ sub mailLog {
     if getErrorsEncounteredFlag();
 
   foreach my $recipient (split(/,/, $recipientList)) {
-    open(MAIL, "|mail -s '$subject' $recipient");
-    print MAIL getLog();
-    close(MAIL);
+    if ($recipient && ($recipient ne "none")) {
+      open(MAIL, "|mail -s '$subject' $recipient");
+      print MAIL getLog();
+      close(MAIL);
+    }
   }
 
   unlink(getLogfile());
