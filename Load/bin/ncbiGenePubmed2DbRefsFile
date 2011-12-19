@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+use Data::Dumper;
+
+my ($gene2pubmedFile,$geneInfoFile,$taxId,$verbose);
+&GetOptions("gene2pubmedFile=s" => \$gene2pubmedFile,
+	    "geneInfoFile=s" => \$geneInfoFile,
+	    "taxId=s" => \$taxId,
+            "verbose!" => \$verbose);
+
+usage() unless ($gene2pubmedFile,$geneInfoFile,$taxId);
+
+my $subNCBITaxaList = `getSubNCBITaxaList --NCBITaxId $taxId`;
+
+die "\nError calling 'getSubNCBITaxaList --NCBITaxId $taxId" if $? >> 8;
+#print STDERR "$subNCBITaxaList\n";
+
+my @taxaLists = split(/\,/,$subNCBITaxaList);
+
+my %taxaListHash;
+
+foreach (@taxaLists) {
+  chomp;
+  $taxaListHash{$_}=1;
+}
+
+my (%geneinfo);
+
+if ($gene2pubmedFile =~ /\.gz$/) {
+  open (PUBMED, "zcat $gene2pubmedFile|") || die "File '$gene2pubmedFile' not found\n";
+} else {
+  open (PUBMED, "$gene2pubmedFile") || die "File '$gene2pubmedFile' not found\n";
+}
+
+if ($geneInfoFile =~ /\.gz$/) {
+  open (GENEINFO, "zcat $geneInfoFile|") || die "File '$geneInfoFile' not found\n";
+} else {
+  open (GENEINFO, "$geneInfoFile") || die "File '$geneInfoFile' not found\n";
+}
+
+while (<GENEINFO>) {
+
+  chomp;
+  my @myVals = split(/\t/, $_);
+
+  if ($taxaListHash{$myVals[0]}) {
+      $geneinfo{$myVals[1]}=$myVals[2];
+  }
+}
+
+<PUBMED>;
+
+while (<PUBMED>) {
+
+  chomp;
+  my @myVals = split(/\t/, $_);
+
+  if ($taxaListHash{$myVals[0]}) {
+      foreach my $source_id (keys %geneinfo){
+	  if ($source_id eq $myVals[1] ){
+	            print OUT "$geneinfo{$source_id}\t$myVals[2]\t$source_id\t\n";
+	  }
+      }
+  }
+}
+
+sub usage {
+  print STDERR "
+usage: ncbiGenePubmed2DbRefsFile --gene2pubmedFile gene2pubmed.gz --geneInfoFile All_Protozoa.gene_info.gz --taxId ncbi_tax_id
+
+(gene2pubmedFile and geneInfoFile are allowed to be gzipped)
+
+see here for sample input files:  
+ftp://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/Protozoa/All_Protozoa.gene_info.gz
+ftp://ftp.ncbi.nih.gov/gene/DATA/gene2pubmed.gz
+
+output columns:  LocusTag Pubmed GeneID 
+                 PB400905.00.0   15637271        3416925
+";
+
+  exit(1);
+}
+
