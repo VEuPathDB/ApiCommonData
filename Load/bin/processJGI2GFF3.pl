@@ -42,23 +42,23 @@ for my $scaffold(keys %HOH){
 
 		my $geneName = $HOH{$scaffold}{$gene}{'geneid'};
 
-		print "$scaffold\tVBI\tgene\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName\";\n";
+		print "$scaffold\tJGI\tgene\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName\";\n";
 		
-		print "$scaffold\tVBI\tmRNA\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName"."T0\"; Parent \"$prefix$geneName\";\n";
+		print "$scaffold\tJGI\tmRNA\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName"."T0\"; Parent \"$prefix$geneName\";\n";
 		if($start[0]){
 		
-			print "$scaffold\tVBI\tstart_codon\t$start[0]\t$start[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"start_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$scaffold\tJGI\tstart_codon\t$start[0]\t$start[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"start_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
 		}
 
 		for(my $i=0;$i<$#exon;$i+=2){
 
 				
-			print "$scaffold\tVBI\texon\t$exon[$i]\t$exon[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$exon_num:exon\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$scaffold\tJGI\texon\t$exon[$i]\t$exon[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$exon_num:exon\"; Parent \"$prefix$geneName"."T0\";\n";
 			
 			
 			if($CDS[$i]){	
 				
-				print "$scaffold\tVBI\tCDS\t$CDS[$i]\t$CDS[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$cds_num:CDS\"; Parent \"$prefix$geneName"."T0\";\n";
+				print "$scaffold\tJGI\tCDS\t$CDS[$i]\t$CDS[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$cds_num:CDS\"; Parent \"$prefix$geneName"."T0\";\n";
 			$cds_num++;
 
 			}
@@ -68,7 +68,7 @@ for my $scaffold(keys %HOH){
 		
 		if($stop[0]){
 		
-			print "$scaffold\tVBI\tstop_codon\t$stop[0]\t$stop[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"stop_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$scaffold\tJGI\tstop_codon\t$stop[0]\t$stop[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"stop_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
 		}
 
 	}
