@@ -13,7 +13,7 @@ package ApiCommonData::Load::Plugin::LoadBLATProteinAlignments;
 #
 # Jonathan Crabtree
 #
-# $Revision: 44200 $ $Date: 2011-11-29 21:58:00 -0500 (Tue, 29 Nov 2011) $ $Author: brunkb $
+# $Revision: 44726 $ $Date: 2011-12-21 18:41:22 -0500 (Wed, 21 Dec 2011) $ $Author: brunkb $
 # ----------------------------------------------------------------------
 
 # ========================================================================
@@ -38,10 +38,10 @@ use FileHandle;
 # --------------------------- Global Variables ---------------------------
 # ========================================================================
 
-my $VERSION = '$Revision: 44200 $'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
+my $VERSION = '$Revision: 44726 $'; $VERSION =~ s/Revision://; $VERSION =~ s/\$//g; $VERSION =~ s/ //g; #'
 
 my $TPREF = 'DoTS';
-my $BLATSCHEMA = 'DoTS';
+my $BLATSCHEMA = 'ApiDB';
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Load a set of BLAT alignments into GUS.
@@ -339,7 +339,7 @@ sub new {
    bless($self,$class);
 
    $self->initialize({requiredDbVersion => 3.6,
-                      cvsRevision => '$Revision: 44200 $', # cvs fills this in!
+                      cvsRevision => '$Revision: 44726 $', # cvs fills this in!
                       name => ref($self),
                       argsDeclaration => $argsDeclaration,
                       documentation => $documentation
@@ -536,7 +536,7 @@ sub getBlatAlignmentIds {
   my $targetExtDbRelId = $self->getArg('target_db_rel_id');
 
    my $sql = "select distinct (query_aa_sequence_id) "
-   . "from DoTS.BlatProteinAlignment "
+   . "from $BLATSCHEMA.BlatProteinAlignment "
    . "where query_table_id = $queryTableId "
    . ($queryTaxonId ? "and query_taxon_id = $queryTaxonId " : "")
    . ($queryExtDbRelId ? "and query_external_db_release_id = $queryExtDbRelId " : "")
@@ -569,7 +569,7 @@ sub getAlignmentGroups {
    my $targetExtDbRelId = $self->getArg('target_db_rel_id');
 
    my $sql = "select query_aa_sequence_id, blat_alignment_id, score, percent_identity "
-   . "from DoTS.BlatProteinAlignment "
+   . "from $BLATSCHEMA.BlatProteinAlignment "
    . "where query_table_id = $queryTableId "
    . ($queryTaxonId ? "and query_taxon_id = $queryTaxonId " : "")
    . ($queryExtDbRelId ? "and query_external_db_release_id = $queryExtDbRelId " : "")
@@ -618,7 +618,7 @@ sub keepBestAlignments {
    my ($tot_al, $tot_bs) = (0,0);
 
    foreach my $sid (@$blatIds) {
-     $dbh->do("update DoTS.BlatProteinAlignment set is_best_alignment = 0 "
+     $dbh->do("update $BLATSCHEMA.BlatProteinAlignment set is_best_alignment = 0 "
 		  . "where blat_alignment_id = $sid and is_best_alignment != 0" );
    }
    $dbh->commit() if $self->getArg('commit');
@@ -640,7 +640,7 @@ sub keepBestAlignments {
        my $is_best = ($grpSize == 1 || $score >= $percentTop * $best_score);
        if ($is_best) {
 	 $tot_bs++;
-	 $dbh->do("update DoTS.BlatProteinAlignment set is_best_alignment = 1 "
+	 $dbh->do("update $BLATSCHEMA.BlatProteinAlignment set is_best_alignment = 1 "
 		  . "where blat_alignment_id = $bid" );
 	 if (($tot_bs % $commitInterval) == 0) {
 	   $dbh->commit() if $self->getArg('commit');
@@ -660,7 +660,7 @@ sub keepBestAlignments {
       print "# TODO: keep only one alignment per query\n";
    } elsif ($keepBest == 2) {
       print "deleting non-top alignments ...\n";
-      my $sql = "delete DoTS.BlatProteinAlignment "
+      my $sql = "delete $BLATSCHEMA.BlatProteinAlignment "
       . "where query_table_id = $queryTableId "
       . ($queryTaxonId ? "and query_taxon_id = $queryTaxonId " : "")
       . "and target_table_id = $targetTableId "
@@ -1043,7 +1043,7 @@ sub getGenomeVersion {
 sub undoTables {
   my ($self) = @_;
 
-  return ('DoTS.BlatProteinAlignment'
+  return ('$BLATSCHEMA.BlatProteinAlignment'
 	 );
 }
 
