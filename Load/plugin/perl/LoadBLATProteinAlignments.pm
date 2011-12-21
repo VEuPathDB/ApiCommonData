@@ -1043,7 +1043,7 @@ sub getGenomeVersion {
 sub undoTables {
   my ($self) = @_;
 
-  return ('$BLATSCHEMA.BlatProteinAlignment'
+  return ("$BLATSCHEMA.BlatProteinAlignment"
 	 );
 }
 
