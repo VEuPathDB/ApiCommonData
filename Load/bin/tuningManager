@@ -130,7 +130,8 @@ eval {
     }
     close(PROGRAM);
     my $exitCode = $? >> 8;
-  die "invalid config file" if $exitCode;
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid config file") if $exitCode;
+#   die "invalid config file" if $exitCode;
 
   my ($config) = &parseConfigFile($configFile);
 
