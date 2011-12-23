@@ -2424,7 +2424,11 @@ CREATE TABLE Polymorphism&1 NOLOGGING AS
          sa.pvalue as pvalue_a, sb.pvalue as pvalue_b,
          snp.external_database_release_id,
          snp.parent_id as gene_na_feature_id,
-         nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id
+         nl.is_reversed as gene_is_reversed, gf.source_id as gene_source_id,
+         case when sa.product is null then 1 else 0 end as non_coding,
+         case when sa.product = sb.product then 1 else 0 end as synonymous,
+         case when sa.product != sb.product then 1 else 0 end as non_synonymous,
+         case when sa.product = '*' OR  sb.product = '*' then 1 else 0 end as stop
   FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
        FeatureLocation fl, FeatureLocation nl, dots.GeneFeature gf
   WHERE sa.strain < sb.strain
