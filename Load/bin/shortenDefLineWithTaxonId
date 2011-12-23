@@ -5,6 +5,7 @@
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
 
+use File::Basename;
 use Getopt::Long qw(GetOptions);
 use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
@@ -49,11 +50,6 @@ EOSQL
   CREATE INDEX gi2ncbiTaxonId_ix ON gi2ncbiTaxonId (gi, ncbiTaxonId)
 EOSQL
 
-  my $insertSql = $dbh->prepare(<<EOSQL);
-  INSERT INTO gi2ncbiTaxonId (gi, ncbiTaxonId)
-            VALUES (        ?,      ?)
-EOSQL
-
   my $searchSql = $dbh->prepare(<<EOSQL);
   SELECT ncbiTaxonId
   FROM   gi2ncbiTaxonId
@@ -61,24 +57,56 @@ EOSQL
 EOSQL
 
 if ($taxonIdMappingFile){
-
-    open(MAPPING, "< $taxonIdMappingFile")|| die "File not found\n";
-
-    while(<MAPPING>){
-	    if (/^(\d+)\s(\d+)/){
-		$insertSql->execute($1, $2);
-	    }
-
-    }
-    close MAPPING;
+    my $directories = dirname($taxonIdMappingFile);
+    open(C,">$directories/loadGi2ncbiTaxonId.ctl") || die "Unable to open $directories/loadGi2ncbiTaxonId.ctl for writing\n";
+    print C "LOAD DATA
+             INFILE '$taxonIdMappingFile'
+             APPEND
+             INTO TABLE gi2ncbiTaxonId
+             FIELDS TERMINATED BY '\\t'
+             TRAILING NULLCOLS
+             (gi,
+              ncbiTaxonId
+             )\n";
+    close C;
+    print STDERR "processnig taxonIdMapping File\n";
+    system("sqlLoader.pl --file $directories/loadGi2ncbiTaxonId.ctl");
 }
 
 open(IN, "< $inputFile");
 open(OUT, "> $outputFile");
-
+    print STDERR "processnig nr File\n";
 while(<IN>){
-	if(/(^\>gi\S+)/){
-	    $newDefLine = $1;
+	if(/^\>gi/){
+	    my @descList=split('gi\|', $_);
+	    my $shorDefLine = $descList[0]."gi|".$descList[1];
+	    if ($shorDefLine =~ /gi\|(\d*)\|(\w*)\|(\S*?)\|\S*\s*(.*)/){
+		my $secondary_id = $1; 
+		my $external_db = $2;
+		my $source_id = $3;
+		my $description = $4;
+		$description =~ s/\"//g;
+		if (($external_db eq 'gnl') || ($external_db eq 'pir') || ($external_db eq 'prf') || ($external_db eq 'pat')){
+		    if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
+			$source_id = $1;
+		    }
+		    else{
+			die "ERROR: Unable to parse source id  for gnl, pir, pat, or prf.\n";
+		    }
+		} elsif ($external_db eq 'pdb'){
+		    if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
+			$source_id = $source_id . "." . "$1" if $1;
+		    }
+		    else{
+			die "ERROR: Unable to parse source id for pdb.\n";
+		    }
+		} elsif (!$source_id){
+		    $source_id = $secondary_id;
+		    $external_db = 'genpept';
+		}
+		$shorDefLine=">gi|".$secondary_id ."|" . $external_db ."|" . $source_id ."|". $description
+	    }
+	    $newDefLine = $shorDefLine;
 	}else{
 	    $newDefLine = $_;
 	}
@@ -99,4 +127,4 @@ while(<IN>){
 close IN;
 close OUT;
 
-$dbh->do("DROP TABLE gi2ncbiTaxonId");
+#$dbh->do("DROP TABLE gi2ncbiTaxonId");
