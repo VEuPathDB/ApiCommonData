@@ -348,7 +348,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.AALocation',
-	  'DoTS.AAFeature','Core.Algorithm'
+	  'DoTS.AAFeature'
 	 );
 }
 

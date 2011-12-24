@@ -689,7 +689,6 @@ sub undoTables {
     DoTS.MassSpecFeature
     DoTS.NALocation
     DoTS.NAFeature
-    Core.AlgorithmParam
     Core.AlgorithmInvocation
     );
 }

@@ -495,7 +495,6 @@ sub undoTables {
 	  'DoTS.AALocation',
 	  'DoTS.DbRefAAFeature',
 	  'DoTS.DomainFeature',
-	  'Core.Algorithm',
 	  ApiCommonData::Load::Utility::GOAnnotater->undoTables()
 	 );
 }

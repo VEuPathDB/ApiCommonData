@@ -289,8 +289,7 @@ sub makeNaLoc {
 sub undoTables {
   my ($self) = @_;
 
-  return ('Core.Algorithm',
-	  'DoTS.NALocation',
+  return ('DoTS.NALocation',
 	  'DoTS.ArrayElementFeature',
 	 );
 }

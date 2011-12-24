@@ -82,7 +82,7 @@ return "Successfully did nothing\n";
 sub undoTables {
   my ($self) = @_;
 
-  return ('Core.AlgorithmParam',
+  return (
 	 );
 }
 
