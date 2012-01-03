@@ -274,7 +274,7 @@ select -- virtual feature locations mapped through SequencePiece
        end as coding_end, nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
-     SequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
+     &prefixSequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
      sres.TaxonName tn,
      (select edr.external_database_release_id, ed.name
       from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
@@ -303,7 +303,7 @@ set is_top_level = 1
 update &prefixFeatureLocation&1 fl
 set is_top_level = 0 
 where na_sequence_id in (select distinct piece_na_sequence_id 
-                         from SequencePieceClosure spc
+                         from &prefixSequencePieceClosure spc
                          where fl.start_min >= spc.start_position
                          and fl.end_max <= spc.end_position)
       ]]>
@@ -1714,7 +1714,7 @@ FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
       FROM sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE edr.external_database_id = ed.external_database_id) db,
      (SELECT distinct piece_na_sequence_id, 0 as is_top_level
-      FROM SequencePieceClosure) virtualization
+      FROM &prefixSequencePieceClosure) virtualization
 WHERE sequence.taxon_id = tn.taxon_id(+)
   AND (sequence.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
   AND tn.name_class = 'scientific name'
@@ -2108,7 +2108,7 @@ tablespace indx
                is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
                tstarts, sp.virtual_na_sequence_id, sp.distance_from_left, sp.start_position, sp.end_position,
                sp.strand_orientation, piece.length, vti.table_id as virtual_target_table_id
-        from dots.BlatAlignment ba, SequencePieceClosure sp, dots.NaSequence piece,
+        from dots.BlatAlignment ba, &prefixSequencePieceClosure sp, dots.NaSequence piece,
              dots.NaSequence virtualseq, core.TableInfo vti
         where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
           and sp.start_position <= target_start
@@ -5316,7 +5316,7 @@ select sim.similarity_id, scaffold.na_sequence_id as query_id, sim.subject_id,
        simp.is_reversed as span_is_reversed,
        'virtual' as location_mapping
 from dots.similarity sim, dots.similarityspan simp, core.TableInfo ti,
-     dots.NaSequence contig, SequencePieceClosure sp, dots.NaSequence scaffold
+     dots.NaSequence contig, &prefixSequencePieceClosure sp, dots.NaSequence scaffold
 where sim.similarity_id = simp.similarity_id
   and sim.query_table_id = ti.table_id
   and ti.name = 'ExternalNASequence'
