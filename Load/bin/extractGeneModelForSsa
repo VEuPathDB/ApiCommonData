@@ -9,14 +9,16 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery,$topLevel);
+my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery,$topLevel$dbName,$dbVersion);
 
 &GetOptions("verbose!" => \$verbose,
             "outputFile=s" => \$outputFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "taxonId=s" => \$taxonId,
             "coordinates=s" => \$coordinates,
-	    "topLevel!" => \$topLevel);
+	    "topLevel!" => \$topLevel,
+            "dbName=s" => \$dbName,
+            "dbVersion=s" => \$dbVersion);
 
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -103,7 +105,7 @@ sub GetGeneQuery {
                   decode(nl.is_reversed, 1, '-', '+') as strand,
                   substr(ns.source_id, 1, 50) AS sequence_id,gf.na_sequence_id,
                   exons.exon_count
-             from dots.GeneFeature gf, dots.NaLocation nl, dots.NaSequence ns, apidbtuning.geneattributes ga,
+             from dots.GeneFeature gf, dots.NaLocation nl, dots.NaSequence ns, sres.externaldatabase db, sres.externaldatabaserelease dbr,
                   (select parent_id, count(*) as exon_count
                    from dots.ExonFeature
                    group by parent_id) exons
@@ -112,7 +114,9 @@ sub GetGeneQuery {
               and gf.na_sequence_id = ns.na_sequence_id
               and ns.taxon_id = ?
               and exons.parent_id = gf.na_feature_id
-              and gf.source_id = ga.source_id
+              and db.name = $dbName
+              and dbr.version = $dbVersion
+              and gf.external_database_release_id = dbr.external_database_release_id
             order by sequence_id,start_min,end_max,source_id";
   if ($topLevel) {
     $sql = "select source_id, na_feature_id,
@@ -133,11 +137,11 @@ sub GetExonQuery {
 
   my $sql = "select least(nl.start_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.end_max) as end_max
-             from dots.ExonFeature ef, dots.NaLocation nl,apidbtuning.geneattributes ga,
+             from dots.ExonFeature ef, dots.NaLocation nl,dots.genefeature gf,
             where ef.na_feature_id = nl.na_feature_id
               and ef.parent_id =  ?
               and ef.na_sequence_id =  ?
-              and ef.parent_id = ga.na_feature_id
+              and ef.parent_id = gf.na_feature_id
             order by start_min,end_max";
 
   if ($topLevel) {
@@ -161,7 +165,7 @@ sub GetGeneQueryOnCDS {
                 decode(exons.is_reversed, 1, '-', '+') as strand,
                 substr(ns.source_id, 1, 50) as sequence_id,
                 gf.na_sequence_id, exons.exon_count
-           from dots.GeneFeature gf, dots.NaSequence ns, apidbtuning.geneattributes ga,
+           from dots.GeneFeature gf, dots.NaSequence ns, sres.externaldatabase db, sres.externaldatabaserelease dbr,
                 (  select parent_id, least(min(coding_start), min(coding_end)) - 1 as start_min,
                           greatest(max(coding_start), max(coding_end)) as end_max,
                           count(*) as exon_count,
@@ -174,7 +178,9 @@ sub GetGeneQueryOnCDS {
             and gf.source_id is not null
             and gf.na_sequence_id = ns.na_sequence_id
             and ns.taxon_id = ?
-            and gf.source_id = ga.source_id
+            and db.name = $dbName
+            and dbr.version = $dbVersion
+            and gf.external_database_release_id = dbr.external_database_release_id
           order by sequence_id, start_min, end_max, source_id";
 
   if ($topLevel) {
@@ -197,11 +203,11 @@ sub GetExonQueryOnCDS {
 
   my $sql = "select least(ef.coding_start, ef.coding_end)-1 as start_min,
                   greatest(ef.coding_start, ef.coding_end) as end_max
-             from dots.ExonFeature ef,apidbtuning.geneattributes ga
+             from dots.ExonFeature ef,dots.genefeature gf
             where ef.parent_id = ?
               and ef.na_sequence_id =  ?
               and ef.coding_start is not null
-              and ef.parent_id = ga.na_feature_id
+              and ef.parent_id = gf.na_feature_id
          order by start_min, end_max";
 
   if ($topLevel) {
