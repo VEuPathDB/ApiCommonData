@@ -299,7 +299,7 @@ eval {
 
   # cleanup
   ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
-  cleanup($dbh, $cleanupAge, $cleanupWarnOnly);
+  cleanup($dbh, $cleanupAge, $cleanupWarnOnly, $prefix);
 
   # summary
   if (!$tableCount) {
@@ -545,7 +545,7 @@ sub parseConfigFile {
 }
 
 sub cleanup {
-  my ($dbh, $cleanupAge, $cleanupWarnOnly) = @_;
+  my ($dbh, $cleanupAge, $cleanupWarnOnly, $prefix) = @_;
   my $cleanupCount = 0;
 
   # drop any tables that are listed as obsolete more than the threshold
@@ -595,20 +595,26 @@ SQL
   $select->finish();
   $delete->finish();
 
-  # check for obsolete tables not in apidb.ObsoleteTuningTable
-  # note that the backslash in the regex is to protect the dollar-sign from Perl
-  # it's really "zero or more digits, followed by end-of-line": [0-9]*$
+  # check for obsolete tuning tables that begin with $prefix (whether or not
+  # that's the empty string) and are not listed in apidb.ObsoleteTuningTable.
+  # If $prefix is defined, drop any matching obsolete unlisted tuning tables.
+  # (That's safe because the workflow will prevent two instances of the same
+  # organism's tuning manager from running at the same time.) If $prefix isn't
+  # defined (i.e. we aren't in a workflow), issue a warning.
   my $newTablesTerm = '';
   if (ApiCommonData::Load::TuningConfig::TableSuffix::suffixDefined()) {
     my $suffix = ApiCommonData::Load::TuningConfig::TableSuffix::getSuffix($dbh);
     $newTablesTerm = "and atab.table_name not like '%$suffix%'";
   }
+  # note that the backslash in the regex is to protect the dollar-sign from Perl
+  # it's really "zero or more digits, followed by end-of-line": [0-9]*$
   $sql = <<SQL;
 select owner || '.' || table_name
 from (select atab.owner, atab.table_name
       from all_synonyms asyn, all_tables atab
       where asyn.owner = atab.owner
         and regexp_replace(atab.table_name, '[0-9]*\$', '') = asyn.synonym_name
+        and atab.table_name like upper('$prefix\%')
         $newTablesTerm
     minus select table_owner, table_name from all_synonyms)
 minus select name from apidb.ObsoleteTuningTable
@@ -618,17 +624,13 @@ SQL
   $stmt->execute()
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   while (my ($table) = $stmt->fetchrow_array()) {
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("Obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . consider dropping it");
-# We used to drop these tables (i.e. ones with names ending in [at least] four
-# digits but with no synonym pointing to them). But it sometimes happened that
-# the long-running Sanger web-service client was still making its table (and
-#  therefore didn't have a synonym pointed at it) when a faster-running tuning
-#  manager process completed and, in its cleanup, DROPPED THE
-#  STILL-UNDER-CONSTRUCTION TABLE. So now, we'll just log an error that this
-# table (apparently) needs to be cleaned up.
-#
-#    $dbh->do("drop table $table")
-#       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    if ($prefix) {
+      ApiCommonData::Load::TuningConfig::Log::addLog("Dropping obsolete tuning table $table, which is not listed in apidb.ObsoleteTuningTable.");
+      $dbh->do("drop table $table")
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    } else {
+      ApiCommonData::Load::TuningConfig::Log::addLog("WARNING: Obsolete tuning table $table is not listed in apidb.ObsoleteTuningTable. . . consider dropping it");
+    }
   }
 
   $stmt->finish();
