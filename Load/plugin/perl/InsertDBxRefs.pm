@@ -222,7 +222,16 @@ sub getMapping {
     my $methodName = $$tables{$tableName}->{getId};
     my $method = "ApiCommonData::Load::Util::$methodName";
 
-    my $featId = &$method($self, $sourceId, $geneExtDbRlsId);
+    my $featId;
+
+    if ($self->getArg('organismAbbrev')){
+
+	$featId = &$method($self, $sourceId, $geneExtDbRlsId, $self->getArg('organismAbbrev'));
+    }
+    else{
+
+	my $featId = &$method($self, $sourceId, $geneExtDbRlsId);
+    }
 
     unless($featId){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
