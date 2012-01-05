@@ -26,6 +26,7 @@ my $db = Bio::DB::GenPept->new();
 open (IDS, "< $inFile") or die "Cannot open file '$inFile':$!\n";
 open (OUT, "> $outFile") or die "Cannot open file '$outFile' for writing: $!\n";
 my%seen;
+my $foundSeq=0;
 while (<IDS>) {
   chomp;
 
@@ -41,15 +42,17 @@ while (<IDS>) {
   my $seq = $db->get_Seq_by_acc($accession);
   if ($seq) {
     print OUT ">".$accession." ".$seq->desc()." length=".$seq->length()."\n".&breakSequence($seq->seq());
+    $foundSeq++;
   } else {
-    die "Cannot find entry in Protein for accession number '$accession'\n";
+    print STDERR "Cannot find entry in Protein for accession number '$accession'\n";
   }
 }
 
 close(IDS);
 close(OUT);
 
-
+die "No sequences found in Protein" unless $foundSeq;
+ 
 sub breakSequence{
   my($seq,$lineLength,$beginSpace) = @_;
 
