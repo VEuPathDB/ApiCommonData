@@ -9,13 +9,14 @@ use Getopt::Long;
 
 #----------------Get UID and PWD/ database handle---------------
 
-my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery,$topLevel$dbName,$dbVersion);
+my ($verbose,$gusConfigFile,$outputFile,$taxonId,$coordinates,$GeneQuery,$ExonQuery,$topLevel,$dbName,$dbVersion,$tuningTablePrefix);
 
 &GetOptions("verbose!" => \$verbose,
             "outputFile=s" => \$outputFile,
             "gusConfigFile=s" => \$gusConfigFile,
             "taxonId=s" => \$taxonId,
             "coordinates=s" => \$coordinates,
+	    "tuningTablePrefix=s" => \$tuningTablePrefix,
 	    "topLevel!" => \$topLevel,
             "dbName=s" => \$dbName,
             "dbVersion=s" => \$dbVersion);
@@ -114,8 +115,8 @@ sub GetGeneQuery {
               and gf.na_sequence_id = ns.na_sequence_id
               and ns.taxon_id = ?
               and exons.parent_id = gf.na_feature_id
-              and db.name = $dbName
-              and dbr.version = $dbVersion
+              and db.name = '$dbName'
+              and dbr.version = '$dbVersion'
               and gf.external_database_release_id = dbr.external_database_release_id
             order by sequence_id,start_min,end_max,source_id";
   if ($topLevel) {
@@ -124,7 +125,7 @@ sub GetGeneQuery {
             decode(is_reversed, 1, '-', '+') as strand,
             substr(sequence_id, 1, 50) AS sequence_id,na_sequence_id,
             exon_count
-            from apidbtuning.geneattributes
+            from ${tuningTablePrefix}geneattributes
             where source_id is not null
             and taxon_id = ?
             order by sequence_id,start_min,end_max,source_id";
@@ -137,7 +138,7 @@ sub GetExonQuery {
 
   my $sql = "select least(nl.start_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.end_max) as end_max
-             from dots.ExonFeature ef, dots.NaLocation nl,dots.genefeature gf,
+             from dots.ExonFeature ef, dots.NaLocation nl,dots.genefeature gf
             where ef.na_feature_id = nl.na_feature_id
               and ef.parent_id =  ?
               and ef.na_sequence_id =  ?
@@ -147,7 +148,7 @@ sub GetExonQuery {
   if ($topLevel) {
     $sql = "select least(start_min, end_max)-1 as start_min,
                    greatest(start_min,end_max) as end_max
-            from apidbtuning.FeatureLocation
+            from ${tuningTablePrefix}FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and feature_type = 'ExonFeature'
@@ -178,8 +179,8 @@ sub GetGeneQueryOnCDS {
             and gf.source_id is not null
             and gf.na_sequence_id = ns.na_sequence_id
             and ns.taxon_id = ?
-            and db.name = $dbName
-            and dbr.version = $dbVersion
+            and db.name = '$dbName'
+            and dbr.version = '$dbVersion'
             and gf.external_database_release_id = dbr.external_database_release_id
           order by sequence_id, start_min, end_max, source_id";
 
@@ -190,7 +191,7 @@ sub GetGeneQueryOnCDS {
             decode(is_reversed, 1, '-', '+') as strand,
             substr(sequence_id, 1, 50) as sequence_id,
             na_sequence_id, exon_count
-            from apidbtuning.geneattributes
+            from ${tuningTablePrefix}geneattributes
             where taxon_id = ?
             order by sequence_id, start_min, end_max, source_id";
   }
@@ -213,7 +214,7 @@ sub GetExonQueryOnCDS {
   if ($topLevel) {
     $sql = "select least(coding_start, coding_end)-1 as start_min,
                    greatest(coding_start, coding_end) as end_max
-            from apidbtuning.FeatureLocation
+            from ${tuningTablePrefix}FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and coding_start is not null
