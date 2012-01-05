@@ -109,6 +109,13 @@ my $argsDeclaration =
 	      isList => 0,
 	     }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
    enumArg({name => 'tableName',
 	    descr => 'The name of the mapping table for the sequences we are loading DBxRefs for. The default table for this plugin is "DoTS.DbRefNAFeature".  Note: If loading AAFeatures, then the provided source_ids must be AA source_ids not gene source_ids',
 	    constraintFunc=> undef,
