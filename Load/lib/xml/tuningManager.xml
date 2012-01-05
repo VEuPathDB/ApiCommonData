@@ -465,7 +465,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       SELECT pred_loc.feature_source_id AS id,
              gene_loc.feature_source_id AS gene,
              'overlapping predicted gene source_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-      FROM FeatureLocation gene_loc, FeatureLocation pred_loc,
+      FROM &prefixFeatureLocation gene_loc, &prefixFeatureLocation pred_loc,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE pred_loc.feature_type = 'GenePrediction'
         AND gene_loc.feature_type = 'GeneFeature'
@@ -1017,7 +1017,7 @@ SELECT DISTINCT gene.source_id,
        substr(predicted_go_component.go_terms, 1, 300) AS predicted_go_component,
        substr(predicted_go_function.go_terms, 1, 300) AS predicted_go_function,
        substr(predicted_go_process.go_terms, 1, 300) AS predicted_go_process
-FROM (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
+FROM (SELECT DISTINCT gene AS source_id FROM &prefixGeneId) gene,
      (SELECT * FROM &prefixGoTermList
       WHERE source = 'annotated' AND ontology = 'cellular_component')
        annotated_go_component,
@@ -1068,7 +1068,7 @@ CREATE TABLE &prefixDerisiExpn NOLOGGING AS
 SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
        derisi_max_timing, derisi_min_timing, derisi_min_level,
        max_fold_induction as derisi_max_fold_induction
-FROM (SELECT DISTINCT gene AS source_id from GeneId) gene,
+FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
      (SELECT * FROM (SELECT p.source_id,
                             p.max_expression AS derisi_max_level,
                             p.equiv_max AS derisi_max_timing,
@@ -1100,7 +1100,7 @@ tablespace indx
 CREATE TABLE &prefixWinzelerExpn NOLOGGING AS
 SELECT gene.source_id, expn.winzeler_max_level, winzeler_max_pct,
        winzeler_max_timing, winzeler_min_timing, winzeler_min_level
-FROM (SELECT DISTINCT gene AS source_id from GeneId) gene,
+FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
      (SELECT p.source_id,
              p.max_expression AS winzeler_max_level,
              p.max_percentile AS winzeler_max_pct,
@@ -1174,7 +1174,7 @@ SELECT gene.source_id,
        protein.aromaticity_score, protein.cds_length, protein.protein_length,
        protein.ec_numbers,
        protein.signalp_scores, protein.signalp_peptide, protein.aa_sequence_id
-FROM (SELECT DISTINCT gene AS source_id from GeneId) gene,
+FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
      (SELECT gf.source_id, taf.na_feature_id, tas.aa_sequence_id,tas.molecular_weight,
              tas.length AS protein_length,
              greatest(taf.translation_start, taf.translation_stop)
@@ -1314,21 +1314,21 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
             WHEN (synsnps.syn_snps is null) THEN null
             ELSE round((nssnps.nonsyn_snps / synsnps.syn_snps),2) END as nonsyn_syn_ratio,
        protein.signalp_scores,protein.signalp_peptide, sequence.taxon_id, protein.aa_sequence_id
-FROM dots.GeneFeature gf, FeatureLocation nl, sres.SequenceOntology so,
+FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
      sres.Taxon, sres.TaxonName tn, dots.RnaType rt1, dots.RnaType rt2,
      dots.Transcript t, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.SplicedNaSequence sns,
      &prefixGeneProteinAttributes protein, &prefixGeneGoAttributes go,
      &prefixDerisiExpn DerisiExpn, &prefixWinzelerExpn WinzelerExpn,
-     &prefixToxoExpn ToxoExpn, GenomicSequence sequence,
+     &prefixToxoExpn ToxoExpn, &prefixGenomicSequence sequence,
      dots.geneinstance gi, &prefixTaxonSpecies ts, sres.TaxonName species_name,
-     (SELECT DISTINCT gene AS source_id FROM GeneId) gene,
+     (SELECT DISTINCT gene AS source_id FROM &prefixGeneId) gene,
      (SELECT parent_id, count(*) AS exon_count
       FROM dots.ExonFeature
       GROUP BY parent_id) exons,
      (SELECT parent_id, max(coding_start) as max_coding_start, min(coding_start) as min_coding_start,
              max(coding_end) as max_coding_end, min(coding_end) as min_coding_end
-      FROM FeatureLocation
+      FROM &prefixFeatureLocation
       WHERE feature_type = 'ExonFeature'
         AND is_top_level = 1
       GROUP BY parent_id) coding_range,
@@ -1537,8 +1537,8 @@ tablespace indx
                 from (
                   select 'intron' as type, ga.source_id,
                           abs(rightLoc.start_min - leftLoc.end_max) as len
-                  from dots.ExonFeature left, FeatureLocation leftLoc,
-                       dots.ExonFeature right, FeatureLocation rightLoc,
+                  from dots.ExonFeature left, &prefixFeatureLocation leftLoc,
+                       dots.ExonFeature right, &prefixFeatureLocation rightLoc,
                        &prefixGeneAttributes&1 ga
                   where left.parent_id = right.parent_id
                     and left.parent_id = ga.na_feature_id
@@ -1699,7 +1699,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        nvl(virtualization.is_top_level, 1) as is_top_level,
        sequence.na_sequence_id
 FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
-     GenomicSequence sequence,
+     &prefixGenomicSequence sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
       FROM dots.dbrefNaSequence drns, sres.DbRef dr,
            sres.ExternalDatabaseRelease gb_edr, sres.ExternalDatabase gb_ed
@@ -5599,7 +5599,7 @@ tablespace indx
 create table &prefixTaxonSpecies&1 as    
 select t.taxon_id, species.taxon_id as species_taxon_id
 from sres.Taxon species, (select distinct sa.taxon_id
-      from SequenceAttributes sa) t
+      from &prefixSequenceAttributes sa) t
 where species.taxon_id in (select taxon_id from sres.taxon
                            connect by taxon_id = prior parent_id and prior rank != 'species'
                            start with taxon_id = t.taxon_id)
