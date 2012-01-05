@@ -125,7 +125,7 @@ sub GetGeneQuery {
             decode(is_reversed, 1, '-', '+') as strand,
             substr(sequence_id, 1, 50) AS sequence_id,na_sequence_id,
             exon_count
-            from ${tuningTablePrefix}geneattributes
+            from ApidbTuning.${tuningTablePrefix}geneattributes
             where source_id is not null
             and taxon_id = ?
             order by sequence_id,start_min,end_max,source_id";
@@ -148,7 +148,7 @@ sub GetExonQuery {
   if ($topLevel) {
     $sql = "select least(start_min, end_max)-1 as start_min,
                    greatest(start_min,end_max) as end_max
-            from ${tuningTablePrefix}FeatureLocation
+            from ApidbTuning.${tuningTablePrefix}FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and feature_type = 'ExonFeature'
@@ -191,7 +191,7 @@ sub GetGeneQueryOnCDS {
             decode(is_reversed, 1, '-', '+') as strand,
             substr(sequence_id, 1, 50) as sequence_id,
             na_sequence_id, exon_count
-            from ${tuningTablePrefix}geneattributes
+            from ApidbTuning.${tuningTablePrefix}geneattributes
             where taxon_id = ?
             order by sequence_id, start_min, end_max, source_id";
   }
@@ -214,7 +214,7 @@ sub GetExonQueryOnCDS {
   if ($topLevel) {
     $sql = "select least(coding_start, coding_end)-1 as start_min,
                    greatest(coding_start, coding_end) as end_max
-            from ${tuningTablePrefix}FeatureLocation
+            from ApidbTuning.${tuningTablePrefix}FeatureLocation
             where parent_id = ?
             and na_sequence_id = ?
             and coding_start is not null
