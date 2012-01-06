@@ -153,7 +153,7 @@ sub run {
   
 	  $processed++;
       }else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId and external database release id $productReleaseId cannot be found");
+	  $self->log("WARNING","Gene Feature with source id '$sourceId' and external database release id '$productReleaseId' cannot be found");
       }
       
       $self->undefPointerCache();
