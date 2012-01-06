@@ -372,6 +372,16 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="GeneId" prefixEnabled="true">
+  <!-- GeneId maps any valid ID for a gene onto its official ID. These two quantities
+       are stored in the "id" and "gene" columns, respectively. The "unique_mapping"
+       column is set to 1 for IDs which map to only one gene.
+
+       Most of the CREATE TABLE statement is made up of the union of nine subqueries,
+       each of which looks in a different place for gene IDs. Each subquery populates
+       the "union_member" field with a different literal string, to make it easier to
+       understand which part (or parts) of the SQL is responsible for each ID-to-gene
+       mapping.
+    -->
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
@@ -384,12 +394,12 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE &prefixGeneId&1 NOLOGGING AS
-SELECT mapping.id, mapping.gene, mapping.unique_mapping,
+SELECT mapping.id, mapping.gene, cast (null as NUMBER) as unique_mapping,
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
              gf.source_id AS gene,
-             'Transcript.protein_id before dot' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'Transcript.protein_id before dot' as union_member, ed.name as database_name
       FROM dots.Transcript t, dots.GeneFeature gf,
            sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE t.parent_id = gf.na_feature_id
@@ -399,7 +409,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT t.protein_id AS id,
              gf.source_id AS gene,
-             'Transcript.protein_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'Transcript.protein_id' as union_member, ed.name as database_name
       FROM dots.Transcript t, dots.GeneFeature gf,
            sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE t.parent_id = gf.na_feature_id
@@ -409,7 +419,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
-             'DbRef.primary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'DbRef.primary_identifier' as union_member, ed.name as database_name
       FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
            sres.ExternalDatabase ed
@@ -432,7 +442,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.secondary_identifier AS id, 
              gf.source_id AS gene,
-             'DbRef.secondary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'DbRef.secondary_identifier' as union_member, ed.name as database_name
       FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
            sres.ExternalDatabase ed
@@ -451,7 +461,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
-             'genbank DbRef.primary_identifier' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'genbank DbRef.primary_identifier' as union_member, ed.name as database_name
       FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
             sres.ExternalDatabase ed
@@ -464,7 +474,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT pred_loc.feature_source_id AS id,
              gene_loc.feature_source_id AS gene,
-             'overlapping predicted gene source_id' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+             'overlapping predicted gene source_id' as union_member, ed.name as database_name
       FROM &prefixFeatureLocation gene_loc, &prefixFeatureLocation pred_loc,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE pred_loc.feature_type = 'GenePrediction'
@@ -476,36 +486,36 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
         AND pred_loc.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
      UNION
-      SELECT ng.name AS alias, gf.source_id AS gene,
-             'NaGene' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
+      SELECT ng.name AS id, gf.source_id AS gene,
+             'NaGene' as union_member, ed.name as database_name
       FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE gf.na_feature_id = nfng.na_feature_id
         AND ng.na_gene_id = nfng.na_gene_id
         AND gf.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
- UNION
-  SELECT source_id AS alias, source_id AS gene,
-         'same ID' as union_member, ed.name as database_name, cast (null as NUMBER) as unique_mapping
-  FROM dots.GeneFeature gf,
-       sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-  WHERE gf.external_database_release_id = edr.external_database_release_id
-    AND edr.external_database_id = ed.external_database_id
- UNION
-     SELECT n.name AS alias, gf.source_id AS gene,
-         'gene name' as union_member, d.name as database_name, cast (null as NUMBER) as unique_mapping
+     UNION
+      SELECT source_id AS id, source_id AS gene,
+             'same ID' as union_member, ed.name as database_name
+      FROM dots.GeneFeature gf,
+           sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+      WHERE gf.external_database_release_id = edr.external_database_release_id
+        AND edr.external_database_id = ed.external_database_id
+     UNION
+      SELECT n.name AS id, gf.source_id AS gene,
+             'gene name' as union_member, d.name as database_name
       from apidb.GeneFeatureName n, dots.genefeature gf, sres.externaldatabaserelease r, sres.externaldatabase d
       where n.na_feature_id = gf.na_feature_id
-      and gf.external_database_release_id =r.external_database_release_id
-      and r.external_database_id = d.external_database_id
-      and n.is_preferred = 1
-) mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed, dots.NaSequence ns
+        and gf.external_database_release_id =r.external_database_release_id
+        and r.external_database_id = d.external_database_id
+        and n.is_preferred = 1)
+     mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed, dots.NaSequence ns
 where mapping.gene = gf.source_id
   and gf.na_sequence_id = ns.na_sequence_id
   and (ns.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
   and gf.external_database_release_id = edr.external_database_release_id
   and edr.external_database_id = ed.external_database_id
-  AND ed.name NOT IN ('GLEAN predictions', 'GlimmerHMM predictions',
+  and ed.name not in ('GLEAN predictions', 'GlimmerHMM predictions',
                       'TigrScan', 'TwinScan predictions',
                       'TwinScanEt predictions',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
@@ -515,7 +525,7 @@ where mapping.gene = gf.source_id
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
                       'Tbrucei427_AutoMAGI_Annotations_RSRC')
-GROUP BY mapping.id, mapping.gene, mapping.unique_mapping
+group by mapping.id, mapping.gene
       ]]>
     </sql>
     <sql>
