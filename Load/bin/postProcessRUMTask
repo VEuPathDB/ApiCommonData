@@ -8,7 +8,9 @@ use Getopt::Long;
 
 
 
-my($inputDir, $mainResultDir, $numSubtasks,$haveTranscripts,$genomeFastaFile, $geneAnnotationFile,$perlScriptsDir,$strandSpecific,$createJunctions) = @_;
+my($inputDir, $mainResultDir, $numSubtasks,$haveTranscripts,$genomeFastaFile, $geneAnnotationFile,$strandSpecific,$createJunctions) = @_;
+
+my $perlScriptsDir = "$ENV{GUS_HOME}/bin";
 
 &GetOptions("mainResultDir=s" => \$mainResultDir,
             "numSubtasks=i" => \$numSubtasks, 
@@ -48,7 +50,6 @@ if (!-e "$mainResultDir/RUM_Unique") {
     print STDERR "  Adding $f\n";
     &runCmd("cat $mainResultDir/$f >> $mainResultDir/RUM_Unique.tmp");
   }
-  sleep 10;
   &runCmd("/bin/mv $mainResultDir/RUM_Unique.tmp $mainResultDir/RUM_Unique");
   foreach my $f (@unique) {
     unlink($f);
@@ -67,7 +68,6 @@ if (!-e "$mainResultDir/RUM_NU") {
     &runCmd("cat $mainResultDir/$f >> $mainResultDir/RUM_NU.tmp");
     unlink($f);
   }
-  sleep 10;
   &runCmd("/bin/mv $mainResultDir/RUM_NU.tmp $mainResultDir/RUM_NU");
   foreach my $f (@nu) {
     unlink($f);
@@ -101,7 +101,6 @@ if (-e "$mainResultDir/RUM_sam.1") { #input file still exists so need to run.
     print STDERR "  Adding $f\n";
     &runCmd("cat $mainResultDir/$f >> $mainResultDir/RUM.sam_tmp");
   }
-  sleep 10;
   &runCmd("/bin/mv $mainResultDir/RUM.sam_tmp $mainResultDir/RUM.sam");
   foreach my $f (&sortResultFiles('RUM_sam.*')) {
     unlink($f);
