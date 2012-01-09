@@ -333,8 +333,7 @@ sub update {
                       . " -propfile '" . $self->{propfile} . "'"
                       . " -password '" . $self->{password} . "'"
                       . " -schema '" . $self->{schema} . "'"
-#                     . " -project '" . $registry->getProjectId() . "'"
-#                     . " -version '" . $registry->getVersion() . "'"
+                      . " -branch '" . $registry->getSubversionBranch() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
                       . $debug
