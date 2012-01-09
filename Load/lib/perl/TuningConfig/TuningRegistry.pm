@@ -59,6 +59,22 @@ sub getSubversionUrl {
     return($self->{subversion_url});
 }
 
+sub getSubversionBranch {
+    my ($self) = @_;
+
+    my $Url = getSubversionUrl;
+
+    my $branch;
+
+    if ($Url =~ /ApiCommonData.(.*).Load.lib/) {
+      $branch = $1;
+    } else {
+      ApiCommonData::Load::TuningConfig::Log::addErrorLog("Can't parse branch out of Subversion URL \"$Url\"");
+    }
+
+    return($branch);
+}
+
 sub getNotifyEmails {
     my ($self) = @_;
 
