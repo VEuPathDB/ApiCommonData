@@ -334,20 +334,20 @@ sub gene2centraldogma {
 
 #     $type = $feather->primary_tag();
 
-#    if ($type eq 'pseudogene') {
-#        $type = 'gene';
-#        $feather->primary_tag('gene');
-#        $feather->add_tag_value("pseudo","");
-#     } 
+    if ($tag eq 'pseudogene') {
+      $type = 'gene';
+      $feature->primary_tag('gene');
+      $feature->add_tag_value("pseudo","");
+    } 
      
 #     if ($type eq 'gene') {
 #        my $gene = makeBioperlFeature("coding_gene", $feature->location, $bp_seq_obj);
 #     }
 
-    if ($tag eq 'gene') {
+    if ($tag eq 'gene' || $tag eq 'pseudogene') {
 	$type = 'coding_gene';
-    } elsif ($tag eq 'pseudogene') {
-	$type = 'pseudo_gene';
+#    } elsif ($tag eq 'pseudogene') {
+#	$type = 'pseudo_gene';
    } else {
 	$type = $feature->primary_tag . '_gene';
     }
@@ -356,10 +356,10 @@ sub gene2centraldogma {
 
     my $gene = makeBioperlFeature($type, $feature->location, $bp_seq_obj);
 
-    if ($type eq 'pseudo_gene') {
-	$gene->add_tag_value("pseudo",""); 
-	$gene->primary_tag('pseudo_gene');
-    }
+#    if ($type eq 'pseudo_gene') {
+#	$gene->add_tag_value("pseudo",""); 
+#	$gene->primary_tag('pseudo_gene');
+#    }
 	    
     # Copy the name of the feature to our new gene object
     my ($name) = $feature->get_tag_values('Name');
@@ -375,20 +375,20 @@ sub gene2centraldogma {
     my $transcript = makeBioperlFeature("transcript", $feature->location, $bp_seq_obj);
    
 
-#    foreach my $tag ($featre->get_all_tags){
-#    if ($tag eq 'pseudo'){
-#                $feature->primary_tag("coding_gene");
-#                my $geneLoc = $feature->location();
-#                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bp_seq_obj);
-#                my @exonLocs = $geneLoc->each_Location();
-#               foreach my $exonLoc (@exonLocs){
-#                        my $exon = &makeBioperlFeature("exon",$exonLoc,$bp_seq_obj);
-#                        $transcript->add_SeqFeature($exon);
-#                }
-#                $feature->add_SeqFeature($transcript);
-#                $bp_seq_obj->add_SeqFeature($feature);
-#           }
-#    }
+    foreach my $tag ($feature->get_all_tags){
+    if ($tag eq 'pseudo'){
+      $feature->primary_tag("coding_gene");
+      my $geneLoc = $feature->location();
+      $transcript = &makeBioperlFeature("transcript", $geneLoc, $bp_seq_obj);
+      my @exonLocs = $geneLoc->each_Location();
+      foreach my $exonLoc (@exonLocs){
+        my $exon = &makeBioperlFeature("exon",$exonLoc,$bp_seq_obj);
+        $transcript->add_SeqFeature($exon);
+      }
+#      $feature->add_SeqFeature($transcript);
+#      $bp_seq_obj->add_SeqFeature($feature);
+    }
+  } 
  
     # Unnecessary.
 #    $transcript    = copy_attributes($feature,$transcript);
@@ -475,7 +475,7 @@ sub gene2centraldogma {
 		if ($codingStart <= $exon->location->end && $codingStart >= $exon->location->start) {
 		    
 		    # ncRNAs shouldn't have start/stop values
-		    if ($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene') {
+		    if ($gene->primary_tag ne 'coding_gene') {
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');		    
 		    } else {
