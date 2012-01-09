@@ -62,7 +62,7 @@ sub getSubversionUrl {
 sub getSubversionBranch {
     my ($self) = @_;
 
-    my $Url = getSubversionUrl;
+    my $Url = $self->getSubversionUrl;
 
     my $branch;
 
