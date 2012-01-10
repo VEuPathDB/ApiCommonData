@@ -137,7 +137,7 @@ sub GetExonQuery {
 
   my $sql = "select least(nl.start_min, nl.end_max)-1 as start_min,
                   greatest(nl.start_min, nl.end_max) as end_max
-             from dots.ExonFeature ef, dots.NaLocation nl,dots.genefeature gf,
+             from dots.ExonFeature ef, dots.NaLocation nl,dots.genefeature gf
             where ef.na_feature_id = nl.na_feature_id
               and ef.parent_id =  ?
               and ef.na_sequence_id =  ?
