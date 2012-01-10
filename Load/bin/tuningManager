@@ -683,7 +683,7 @@ SQL
   if ($updater ne $processInfo) {
     my $updateLockoutMsg = <<MSG;
 Another tuningManager process appears to be updating the database. CURRENT_UPDATER is set to "$updater".
-Continuing in read-only mode, but not updating tuning tables. If this process ($updater) is not runnning, you can override this lockout by rerunning tuningManager with the "--forceUpdate" option.
+Continuing in read-only mode, but not updating tuning tables. If this process ($updater) is not running, you can override this lockout by rerunning tuningManager with the "--forceUpdate" option.
 MSG
     ApiCommonData::Load::TuningConfig::Log::addErrorLog($updateLockoutMsg);
     return("fail");
