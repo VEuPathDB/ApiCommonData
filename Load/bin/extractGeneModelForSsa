@@ -178,8 +178,8 @@ sub GetGeneQueryOnCDS {
             and gf.source_id is not null
             and gf.na_sequence_id = ns.na_sequence_id
             and ns.taxon_id = ?
-            and db.name = $dbName
-            and dbr.version = $dbVersion
+            and db.name = '$dbName'
+            and dbr.version = '$dbVersion'
             and gf.external_database_release_id = dbr.external_database_release_id
           order by sequence_id, start_min, end_max, source_id";
 
