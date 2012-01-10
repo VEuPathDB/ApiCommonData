@@ -90,6 +90,8 @@ sub run {
 
   my $dataFile = $self->getArg('dataFile');
 
+  $self->error() unless -e $dataFile;
+
   my $configFile = "$dataFile" . ".ctrl";
  
   my $logFile = "$dataFile" . ".log";
@@ -104,7 +106,16 @@ sub run {
 
   my ($dbi, $type, $db) = split(':', $dbiDsn);
 
-  system("sqlldr $login/$password\@$db control=$configFile log=$logFile") if($self->getArg('commit'));
+  my $cmd = "sqlldr $login/$password\@$db control=$configFile log=$logFile";
+
+  $self->log("Running cmd:\n$cmd");
+
+  if($self->getArg('commit')) {
+      system($cmd) == 0
+	  or die "Failed: $?";
+  } else {
+      $self->log("In no-commit mode.  Did not run cmd");
+  }
     
   return "Processed lines from data files";
 }
