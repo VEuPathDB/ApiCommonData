@@ -17,6 +17,8 @@ $date = join("",split(/-/,$date));
 
 my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis, $db, $format,$seqFileExtension, $dbInstance, $username, $passwd, $extDb, $dbh, $dsn, $idQualifier, $goQualifier, $productQualifier);
 
+my $append = 0;
+
 &GetOptions('verbose' => \$verbose,
             'help|h' => \$help,
             'fileOrDir=s' => \$inFileDir,
@@ -34,7 +36,8 @@ my ($verbose, $help, $inFileDir, $outFile, $taxonId, $evidenceCode, $annotBasis,
 	    'id_qualifier=s'       =>  \$idQualifier,
 	    'go_qualifier=s'       => \$goQualifier,
 	    'product_qualifier=s'  => \$productQualifier,
-            
+            'append'          => sub {$append = 1},
+
            );
 
 
@@ -57,7 +60,11 @@ if(!($evidenceCode)){
 }
 
 my $goAssocFh = FileHandle->new();
-$goAssocFh->open(">$outFile");
+if($append){
+    $goAssocFh->open(">>$outFile") || die ("Could not open $outFile for writing");
+}else{
+    $goAssocFh->open(">$outFile") || die ("Could not open $outFile for writing");
+}
 
 my @inputFiles = &getInputFiles($inFileDir,$seqFileExtension);
 
@@ -306,6 +313,7 @@ sub usage {
 [--passwd <password for database instance>] \\
 [--ext_db <extDbName|extDbVer for Gene Ontology>] \\
 [--verbose <boolean-a little extra STDERR out>] \\
+[--append <if GO list should be appended to file (boolean)>] \\
 --help|h
 ";
   print STDERR $usage;
