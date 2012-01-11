@@ -230,7 +230,7 @@ sub getMapping {
     }
     else{
 
-	my $featId = &$method($self, $sourceId, $geneExtDbRlsId);
+	$featId = &$method($self, $sourceId, $geneExtDbRlsId);
     }
 
     unless($featId){
