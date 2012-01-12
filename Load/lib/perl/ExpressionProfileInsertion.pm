@@ -118,7 +118,7 @@ sub makeProfile {
 
   if ($sourceIdType eq 'gene') {
     $subjectTableId = $plugin->className2TableId('DoTS::GeneFeature');
-    $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,$sourceId,,$optionalOrganismAbbrev);
+    $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,$sourceId,0,$optionalOrganismAbbrev);
     if($subjectRowId){
 	# ensure we are loading the source id from genefeature and not an alias
 	my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $subjectRowId});
