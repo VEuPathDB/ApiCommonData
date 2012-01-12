@@ -24,14 +24,16 @@ my $argsDeclaration =
    stringArg({name => 'seqTableA',
 	      descr => 'where do we find sequence A',
 	      constraintFunc => undef,
-	      reqd => 1,
+              default => 'DoTS.NASequence',
+	      reqd => 0,
 	      isList => 0
 	     }),
 
    stringArg({name => 'seqTableB',
 	      descr => 'where do we find sequence B',
 	      constraintFunc => undef,
-	      reqd => 1,
+              default => 'DoTS.NASequence',
+	      reqd => 0,
 	      isList => 0
 	     }),
 
