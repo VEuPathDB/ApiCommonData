@@ -6,6 +6,8 @@ use strict;
 
 use GUS::PluginMgr::Plugin;
 
+use GUS::Model::DoTS::NASequence;
+
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::SyntenyAnchor;
 use Data::Dumper;
@@ -21,33 +23,6 @@ my $argsDeclaration =
 	     isList         => 0,
 	   }),
 
-   stringArg({name => 'seqTableA',
-	      descr => 'where do we find sequence A',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 0
-	     }),
-
-   stringArg({name => 'seqTableB',
-	      descr => 'where do we find sequence B',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 0
-	     }),
-
-   stringArg({name => 'extDbRlsSpecA',
-	      descr => 'where do we find source_id\'s from sequence A',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 1
-	     }),
-
-   stringArg({name => 'extDbRlsSpecB',
-	      descr => 'where do we find source_id\'s from sequence B',
-	      constraintFunc => undef,
-	      reqd => 1,
-	      isList => 1
-	     }),
 
    stringArg({name => 'syntenyDbRlsSpec',
 	      descr => 'what is the external database release info for the synteny data being loaded',
@@ -114,17 +89,6 @@ sub run {
   my ($self) = @_;
 
   my $file = $self->getArg('inputFile');
-  my(@extDbRlsIdA, @extDbRlsIdB);
-
-  foreach my $extDbRlsSpecA (@{$self->getArg('extDbRlsSpecA')}){
-      push(@extDbRlsIdA,$self->getExtDbRlsId($extDbRlsSpecA));
-  }
-  my $extDbRlsIdA = join(",",@extDbRlsIdA);
-
-  foreach my $extDbRlsSpecB (@{$self->getArg('extDbRlsSpecB')}){
-      push(@extDbRlsIdB,$self->getExtDbRlsId($extDbRlsSpecB));
-  }
-  my $extDbRlsIdB = join(",",@extDbRlsIdB);
 
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
 
@@ -132,10 +96,16 @@ sub run {
 
   open(IN, "<$file") or $self->error("Couldn't open file '$file': $!\n");
 
+  my (@synA, @synB);
+
   while (<IN>) {
     chomp;
 
-    $self->_handleSyntenySpan($_, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId);
+    my ($synA, $synB) = $self->_handleSyntenySpan($_, $synDbRlsId);
+
+    push(@synA, $synA);
+    push(@synB, $synB);
+
     $count++;
 
     if($count && $count % 500 == 0) {
@@ -146,8 +116,8 @@ sub run {
   }
   close(IN);
 
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdA);
-  $self->insertAnchors($synDbRlsId, $extDbRlsIdB);
+  $self->insertAnchors(\@synA);
+  $self->insertAnchors(\@synB);
 
   my $anchorCount = $self->getAnchorCount();
 
@@ -189,15 +159,15 @@ B<Return Type:> ARRAY
 =cut
 
 sub _handleSyntenySpan {
-  my ($self, $line, $extDbRlsIdA, $extDbRlsIdB, $synDbRlsId) = @_;
+  my ($self, $line, $synDbRlsId) = @_;
 
   my ($a_id, $b_id,
       $a_start, $a_len,
       $b_start, $b_len,
       $strand) = split(" ", $line);
 
-  my $a_pk = $self->getNaSequenceId($a_id, $extDbRlsIdA, $self->getArg('seqTableA'));
-  my $b_pk = $self->getNaSequenceId($b_id, $extDbRlsIdB, $self->getArg('seqTableB'));
+  my $a_pk = $self->getNaSequenceId($a_id);
+  my $b_pk = $self->getNaSequenceId($b_id);
 
   my $a_end = $a_start + $a_len - 1;
   my $b_end = $b_start + $b_len - 1;
@@ -243,20 +213,19 @@ sub makeSynteny {
 						  is_reversed => $isReversed,
 						  external_database_release_id => $synDbRlsId,
 						});
-  $synteny->submit();
-
   return $synteny;
 }
 
 #--------------------------------------------------------------------------------
 
 sub getNaSequenceId {
-  my ($self, $sourceId, $extDbRlsId, $seqTable) = @_;
+  my ($self, $sourceId) = @_;
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "SELECT na_sequence_id FROM $seqTable
-             WHERE  source_id = ? AND external_database_release_id IN ($extDbRlsId)";
+  my $sql = "SELECT s.na_sequence_id FROM dots.nasequence s, sres.sequenceontology so
+             WHERE  so.sequence_ontology_id = s.sequence_ontology_id and s.source_id = ? 
+              and so.term_name in ( 'supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')";
 
   my $sh = $dbh->prepare($sql);
 
@@ -264,7 +233,7 @@ sub getNaSequenceId {
 
 
   if(scalar @ids != 1) {
-    $self->error("Sql Should return only one value: $sql\n for values: $sourceId and $extDbRlsId");
+    $self->error("Sql Should return only one value: $sql\n for values: $sourceId");
   }
   return $ids[0];
 }
@@ -272,49 +241,29 @@ sub getNaSequenceId {
 #--------------------------------------------------------------------------------
 
 sub insertAnchors {
-  my ($self, $synDbRlsId, $extDbRlsIdA, $extDbSpec) = @_;
+  my ($self, $synRows) = @_;
 
-  my $algorithmInvocation = $self->getAlgInvocation();
-  my $algorithmInvocationId = $algorithmInvocation->getId();
-
-  $self->log("Inserting anchors, with '$extDbSpec' as reference");
-
-  my ($gene2orthologGroup, $orthologGroup2refGenes)
-    = $self->findOrthologGroups($extDbRlsIdA);
+  my $gene2orthologGroup = $self->findOrthologGroups();
 
   my $genesLocStmt = $self->prepareGenesLocStmt();
 
-  my $retrieveSyntenySql = "
-select syn.*
-from apidb.Synteny syn, dots.NaSequence seq
-where syn.external_database_release_id = $synDbRlsId
-and seq.na_sequence_id = syn.a_na_sequence_id
-and seq.external_database_release_id IN ($extDbRlsIdA)
-and syn.row_alg_invocation_id = $algorithmInvocationId
-";
-
-
-  my $syntenyStmt = $self->getDbHandle()->prepareAndExecute($retrieveSyntenySql);
-
-  while(my $syntenyRow = $syntenyStmt->fetchrow_hashref) {
+  foreach my $syntenyObj (@$synRows) {
 
     my $refGenes = $self->findGenes($genesLocStmt,
-				    $syntenyRow->{A_NA_SEQUENCE_ID},
-				    $syntenyRow->{A_START},
-				    $syntenyRow->{A_END});
+				    $syntenyObj->getANaSequenceId(),
+				    $syntenyObj->getAStart(),
+				    $syntenyObj->getAEnd()
+                                    );
 
     my $synGenes = $self->findGenes($genesLocStmt,
-				    $syntenyRow->{B_NA_SEQUENCE_ID},
-				    $syntenyRow->{B_START},
-				    $syntenyRow->{B_END});
+				    $syntenyObj->getBNaSequenceId(),
+				    $syntenyObj->getBStart(),
+				    $syntenyObj->getBEnd()
+                                   );
 
     # ordered by refGene loc
     my $genePairs = $self->findOrthologPairs($refGenes, $synGenes,
-					     $gene2orthologGroup,
-					     $orthologGroup2refGenes);
-
-    my $syntenyObj = GUS::Model::ApiDB::Synteny->new({synteny_id => $syntenyRow->{SYNTENY_ID}});
-    $syntenyObj->retrieveFromDB();
+					     $gene2orthologGroup);
 
     my $anchors = $self->createSyntenyAnchors($syntenyObj, $genePairs);
 
@@ -377,12 +326,12 @@ sub createSyntenyAnchors {
 sub prepareGenesLocStmt {
   my ($self) = @_;
 
-  my $sql = "select na_feature_id, start_min, end_max
-from ApidbTuning.FeatureLocation
-where feature_type = 'GeneFeature'
-and na_sequence_id = ?
-and start_min > ?
-and end_max < ?";
+  my $sql = "select f.na_feature_id, l.start_min, l.end_max
+             from dots.nalocation l, dots.genefeature f
+             where l.na_feature_id = f.na_feature_id
+             and f.na_sequence_id = ?
+             and l.start_min > ?
+             and l.end_max < ?";
 
   return $self->getDbHandle()->prepare($sql);
 }
@@ -405,7 +354,7 @@ B<Return Type:> ARRAY
 =cut
 
 sub findOrthologGroups {
-  my ($self, $extDbRlsIdA) = @_;
+  my ($self) = @_;
 
 my $sql;
 
@@ -428,14 +377,11 @@ my $sql;
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
   my $gene2orthologGroup = {};
-  my $orthologGroup2refGenes = {};
+
   while (my ($geneFeatId, $ssgId, $extDbRlsId) = $stmt->fetchrow_array()) {
      $gene2orthologGroup->{$geneFeatId} = $ssgId;
-     if ($extDbRlsId = $extDbRlsIdA) {
-       $orthologGroup2refGenes->{$ssgId}->{$geneFeatId} = 1;
-     }
   }
-  return ($gene2orthologGroup, $orthologGroup2refGenes);
+  return $gene2orthologGroup
 }
 
 #--------------------------------------------------------------------------------
@@ -488,16 +434,17 @@ B<Return Type:> ARRAYREF
 =cut
 
 sub findOrthologPairs {
-  my ($self, $refGenes, $synGenes, $gene2orthologGroup, $orthologGroup2refGenes) = @_;
+  my ($self, $refGenes, $synGenes, $gene2orthologGroup) = @_;
 
   my @genePairs;
   foreach my $synGene (@$synGenes) {
     my $ssgId = $gene2orthologGroup->{$synGene->{id}};
+    next unless($ssgId);
 
     foreach my $refGene (@$refGenes) {
-      my $geneFeatureId = $refGene->{id};
+      my $ssgIdRef = $gene2orthologGroup->{$refGene->{id}};
 
-      if ($orthologGroup2refGenes->{$ssgId}->{$geneFeatureId}) {
+      if ($ssgId eq $ssgIdRef) {
 	my $genePair = {refStart=>$refGene->{start},
 			refEnd=>$refGene->{end},
 			synStart=>$synGene->{start},
@@ -523,7 +470,6 @@ sub findOrthologPairs {
 	  push(@sortedPairsFiltered,$sortedPair);
 	  $prevRefStart = $sortedPair->{refStart};
 	  $prevRefEnd = $sortedPair->{refEnd};
-	  
       }else{
 	  print STDERR "This gene pair has been removed because of overlap with another gene :";
 	  print STDERR Dumper $sortedPair;
