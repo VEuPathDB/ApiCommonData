@@ -36,6 +36,13 @@ my $argsDeclaration  =
 		 reqd  => 1,
 		 isList => 0
 	       }),
+
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
 ];
 
 return $argsDeclaration;
@@ -151,7 +158,7 @@ sub insertPhenotypeFeature {
 
 
 
-           my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId) ;
+           my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId, 0, $self->getArg('organismAbbrev')) ;
 	   if ($naFeatureId){
 
 	       my $phenofeature = GUS::Model::ApiDB::PhenotypeFeature->new({external_database_release_id => $extDbReleaseId,
