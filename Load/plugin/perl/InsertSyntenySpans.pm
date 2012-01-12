@@ -223,7 +223,7 @@ sub getNaSequenceId {
 
   my $dbh = $self->getQueryHandle();
 
-  my $sql = "SELECT s.na_sequence_id FROM dots.nasequence s, sres.sequence ontology so
+  my $sql = "SELECT s.na_sequence_id FROM dots.nasequence s, sres.sequenceontology so
              WHERE  so.sequence_ontology_id = s.sequence_ontology_id and s.source_id = ? 
               and so.term_name in ( 'supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')";
 
@@ -257,7 +257,7 @@ sub insertAnchors {
 
     my $synGenes = $self->findGenes($genesLocStmt,
 				    $syntenyObj->getBNaSequenceId(),
-				    $syntenyObj->getAStart(),
+				    $syntenyObj->getBStart(),
 				    $syntenyObj->getBEnd()
                                    );
 
@@ -439,11 +439,12 @@ sub findOrthologPairs {
   my @genePairs;
   foreach my $synGene (@$synGenes) {
     my $ssgId = $gene2orthologGroup->{$synGene->{id}};
+    next unless($ssgId);
 
     foreach my $refGene (@$refGenes) {
       my $ssgIdRef = $gene2orthologGroup->{$refGene->{id}};
 
-      if ($ssgId == $$ssgIdRef) {
+      if ($ssgId eq $ssgIdRef) {
 	my $genePair = {refStart=>$refGene->{start},
 			refEnd=>$refGene->{end},
 			synStart=>$synGene->{start},
@@ -469,7 +470,6 @@ sub findOrthologPairs {
 	  push(@sortedPairsFiltered,$sortedPair);
 	  $prevRefStart = $sortedPair->{refStart};
 	  $prevRefEnd = $sortedPair->{refEnd};
-	  
       }else{
 	  print STDERR "This gene pair has been removed because of overlap with another gene :";
 	  print STDERR Dumper $sortedPair;
