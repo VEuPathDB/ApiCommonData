@@ -53,6 +53,13 @@ my $argsDeclaration =
 	      isList => 0
 	     }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
 ];
 
 my $purpose = <<PURPOSE;
@@ -127,7 +134,8 @@ sub run {
 			    $self->{sourceIdTypes}->[$i],
 			    $self->{loadProfileElement}->[$i],
 			    $self->getArg('tolerateMissingIds'),
-			    0);
+			    0,
+			    $self->getArg('organismAbbrev'));
   }
   return "Inserted profiles: " . join(", ", @{$self->{profileSetNames}});
 }

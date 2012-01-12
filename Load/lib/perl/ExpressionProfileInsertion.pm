@@ -40,7 +40,7 @@ sub parseInputFile {
 
 # build a profile set and its profiles from in-memory data structures
 sub processInputProfileSet {
-  my ($plugin, $dbRlsId, $header, $profileRows, $name, $descrip, $sourceIdType, $loadProfileElement, $tolerateMissingIds, $averageReplicates) = @_;
+  my ($plugin, $dbRlsId, $header, $profileRows, $name, $descrip, $sourceIdType, $loadProfileElement, $tolerateMissingIds, $averageReplicates, $optionalOrganismAbbrev) = @_;
 
   $plugin->log("Processing '$name'");
 
@@ -63,7 +63,8 @@ sub processInputProfileSet {
 				$elementCount,
 				$sourceIdType,
 				$tolerateMissingIds,
-				$loadProfileElement);
+				$loadProfileElement,
+			        $optionalOrganismAbbrev);
     if ($profile) {
       $profile->submit();
       $count++;
@@ -105,7 +106,7 @@ sub makeProfileSet {
 }
 
 sub makeProfile {
-  my ($plugin, $profileRow, $profileSetId, $elementCount, $sourceIdType, $tolerateMissingIds, $loadProfileElement) = @_;
+  my ($plugin, $profileRow, $profileSetId, $elementCount, $sourceIdType, $tolerateMissingIds, $loadProfileElement, $optionalOrganismAbbrev) = @_;
 
   my $subject_id;
   my $sourceId = shift(@$profileRow);
@@ -117,8 +118,7 @@ sub makeProfile {
 
   if ($sourceIdType eq 'gene') {
     $subjectTableId = $plugin->className2TableId('DoTS::GeneFeature');
-    $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,
-								 $sourceId);
+    $subjectRowId = &ApiCommonData::Load::Util::getGeneFeatureId($plugin,$sourceId,,$optionalOrganismAbbrev);
     if($subjectRowId){
 	# ensure we are loading the source id from genefeature and not an alias
 	my $geneFeature = GUS::Model::DoTS::GeneFeature->new({na_feature_id => $subjectRowId});
