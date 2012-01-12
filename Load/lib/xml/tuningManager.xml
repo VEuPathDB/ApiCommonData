@@ -2014,6 +2014,7 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND best.query_na_sequence_id(+) = ens.na_sequence_id
   AND ens.na_sequence_id = aseq.na_sequence_id(+)
   AND aseq.assembly_na_sequence_id = asm.na_sequence_id(+)
+AND aseq.row_alg_invocation_id != 678
       ]]>
     </sql>
     <sql>
@@ -2441,7 +2442,7 @@ CREATE TABLE Polymorphism&1 NOLOGGING AS
          case when sa.product = '*' OR  sb.product = '*' then 1 else 0 end as is_stop
   FROM dots.SnpFeature snp, dots.SeqVariation sa, dots.SeqVariation sb,
        FeatureLocation fl, FeatureLocation nl, dots.GeneFeature gf
-  WHERE sa.strain <= sb.strain
+  WHERE (sa.strain < sb.strain OR (sa.strain = sb.strain AND sa.na_feature_id < sb.na_feature_id) )
     AND sa.allele != sb.allele
     AND sa.parent_id = sb.parent_id
     AND sa.parent_id = snp.na_feature_id
