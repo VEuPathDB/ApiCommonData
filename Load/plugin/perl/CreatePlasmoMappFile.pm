@@ -18,20 +18,14 @@ my $argsDeclaration =
 	      reqd  => 1,
 	      isList => 0
 	     }),
-   stringArg({name => 'outDir',
-	      descr => 'directory path for output file',
-	      constraintFunc=> undef,
-	      reqd  => 1,
-	      isList => 0
-	     }),
    stringArg({name => 'table',
 	      descr => 'table that will be eventually used to load MAPP data',
 	      constraintFunc => undef,
 	      reqd => 1,
 	      isList => 0
 	     }),
-   fileArg({name => 'outputFile',
-	    descr => 'output file for loading of MAPP data',
+   fileArg({name => 'outFile',
+	    descr => 'output file, with full path, for loading of MAPP data',
 	    reqd => 1,
 	    mustExist => 0,
 	    format => '0',
@@ -94,7 +88,7 @@ sub run {
   eval "require ($table)";
 
   # gather the list of all input files in a single file
-  my $files = $self->getArg('outDir') . "/inputFiles.txt";
+  my $files;
   my $inDir =  $self->getArg('inDir');
   my $cmd="ls $inDir > $files";
   system($cmd);
@@ -127,7 +121,7 @@ sub processFile {
   my ($na_sequence_id, $source_id, $dir, $val);
 
   my $inFilePath = $self->getArg('inDir') . "/" .$inFile;
-  my $outFile = $self->getArg('outDir') . "/" . $self->getArg('outputFile');
+  my $outFile = $self->getArg('outFile');
 
   open(INFILE,"<". $inFilePath) or die "cannot open $inFile for reading: $!\n";
   open(OUTFILE, ">>" . $outFile) or die "cannot open $outFile for appending: $!\n";
