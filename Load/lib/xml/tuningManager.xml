@@ -3173,6 +3173,19 @@ from
     from dual
     UNION
 
+    select 'C.neoformans NRG1 Expression' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+    select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+
+
+
     -- ToxoDB --
     select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
            '' as main_profile_name,
@@ -3453,6 +3466,43 @@ select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_
 from (
 
 -- FungiDB
+
+select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
+       'NeurosporaCrassaOR74A::RnaSeqHyphalGrowth' as module,
+       'RNA Seq' as display_name,
+       'EXPERIMENT DESCRIPTION' as description,
+       'SAMPLE_DESCRIPTION' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+select 'C.neoformans NRG1 Expression' as profile_name,
+       'CryptococcusNeoformansGrubiiH99::RnaSeqNrg1' as module,
+       'RNA Seq' as display_name,
+       'EXPERIMENT DESCRIPTION' as description,
+       'SAMPLE DESCRIPTION' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+
+
 select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
        'RhizopusOryzae::RnaSeqHyphalTip' as module,
        'RNA Seq' as display_name,
