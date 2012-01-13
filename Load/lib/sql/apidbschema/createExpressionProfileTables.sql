@@ -142,10 +142,10 @@ create table ApiDB.ProfileElement (
 );
 
 CREATE INDEX apiDB.pe_element_order_ind
-ON apiDB.ProfileElement(element_order, profile_element_id);
+ON apiDB.ProfileElement(element_order, profile_id, value);
 
 CREATE INDEX apiDB.pe_profid_ind
-ON apiDB.ProfileElement(profile_id, profile_element_id);
+ON apiDB.ProfileElement(profile_id, element_order, value);
 
 CREATE SEQUENCE apiDB.ProfileElement_sq;
 
@@ -208,7 +208,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'ProfileElementName',
-       'Standard', 'profile_element_id',
+       'Standard', 'profile_element_name_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
