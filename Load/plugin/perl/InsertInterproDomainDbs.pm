@@ -180,7 +180,7 @@ sub loadHMMFormat {
    while (<DFILE>) {
      chomp;
      if (/^\/\//) {
-       $dataHash->{ACC} =~ s/\.\d+\.(?:fs|ls)$// if $dbName eq 'PFAM';  # lose any version info (eg, PF00032.1.fs)
+       $dataHash->{ACC} =~ s/\.\d+\.?(?:fs|ls)?$// if $dbName eq 'PFAM';  # lose any version info (eg, PF00032.1.fs)
        next if $seen{$dataHash->{ACC}}++;
        $self->submitDbRef($dbName, $dataHash->{ACC}, $dataHash->{NAME},
 			  $dataHash->{DESC}, $logFreq, ++$eCount);
