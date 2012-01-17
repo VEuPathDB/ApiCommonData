@@ -31,6 +31,7 @@ use Bio::Coordinate::GeneMapper;
 
 # debugging
 use Data::Dumper;
+use ApiCommonData::Load::Util;
 
 sub new {
   my ($class) = @_;
@@ -221,7 +222,8 @@ sub addRecordsToGenes {
     my $official = 0;
     my @gf;
     foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
-      my $naFeature = GUS::Model::DoTS::NAFeature->new({'source_id' => $id}); 
+      my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $id, $self->{geneExtDbRlsId}, $self->getArg('organismAbbrev')) ;
+      my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
       if ($naFeature->retrieveFromDB()) {
   my $isOfficial=0;
   my @geneExtDbRlsIdList = split (/,/,$self->{geneExtDbRlsId});
@@ -1105,6 +1107,20 @@ sub declareArgs {
               isList          =>  0
              }),
 
+   stringArg({
+              name            =>  'developmentalStage',
+              descr           =>  'organism developmental stage analyzed',
+              constraintFunc  =>  undef,
+              reqd            =>  0,
+              isList          =>  0
+             }),
+
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
   ];
 
 }
