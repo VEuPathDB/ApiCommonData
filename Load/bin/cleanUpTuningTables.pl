@@ -56,14 +56,15 @@ foreach(@allSynonyms) {
 }
 
 
-my $d_sh = $dbh->prepare("   select table_name, regexp_replace(table_name, '[0-9][0-9][0-9][0-9]', '') as syn
-from all_tables
-where regexp_replace(table_name, '[0-9][0-9][0-9][0-9]', 'fournumbers')
+my $d_sh = $dbh->prepare("select tab.table_name, syn.synonym_name as syn
+from all_tables tab, all_synonyms syn
+where regexp_replace(tab.table_name, '[0-9][0-9][0-9][0-9]\$', 'fournumbers')
       like '\%fournumbers'
-  AND owner = '$schema'
-  AND table_name not like 'QUERY_RESULT_%'");
+  AND tab.owner = '$schema'
+  AND tab.owner = syn.owner
+  AND syn.table_name = tab.table_name
+  AND tab.table_name not like 'QUERY_RESULT_%'");
 $d_sh->execute();
-
 
 my %all4D;
 while(my ($table, $synonym) = $d_sh->fetchrow_array()) {
