@@ -1,0 +1,82 @@
+#!/usr/bin/perl
+
+## script to shorten the seqs in a fasta file and fix the defline length to be consistent
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+
+use Getopt::Long;
+
+use strict;
+
+my $debug = 0;
+
+$| = 1;
+#############################################################################################################
+###creates a fasta file from an input fasta file but shortening any seqs over a given length to that length
+### and creating an abbreviated defline with >id 
+#############################################################################################################
+
+
+my $inputFile;
+my $outputFile;
+my $finalLength;
+
+
+&GetOptions("inputFile=s" => \$inputFile,
+            "outputFile=s" => \$outputFile,
+            "finalLength=i" => \$finalLength
+            );
+
+
+
+unless ($inputFile && $outputFile && $finalLength){ 
+    die "Usage: shortenFastaSeqs --finalLength <INTEGER> --inputFile <FILE> --outputFile <FILEPATH> ";}
+
+die "Cannot find '$inputFile':$!\n" unless (-e $inputFile);
+
+my $in  = Bio::SeqIO->new(-file => "$inputFile" , '-format' => 'Fasta');
+my $out  = Bio::SeqIO->new(-file => ">$outputFile" , '-format' => 'Fasta');
+
+
+while ( my $seq = $in->next_seq() ) {
+  my $len = $seq->length;
+  my $id = $seq->id;
+  my $string = $seq->seq;
+  if ($len > $finalLength){
+    $string = $seq->subseq(1,$finalLength);
+  }
+
+   my $newSeq = Bio::Seq->new( -seq => $string,
+                                 -id  => $id,
+			       );
+
+  $out->write_seq($newSeq);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
