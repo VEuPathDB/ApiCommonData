@@ -3470,8 +3470,8 @@ from (
 select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
        'NeurosporaCrassaOR74A::RnaSeqHyphalGrowth' as module,
        'RNA Seq' as display_name,
-       'EXPERIMENT DESCRIPTION' as description,
-       'SAMPLE_DESCRIPTION' as x_axis,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Neurospora crassa</i>.' as description,
+       'Sample Time point (hours)' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         10 as order_num,
@@ -3487,8 +3487,8 @@ select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
 select 'C.neoformans NRG1 Expression' as profile_name,
        'CryptococcusNeoformansGrubiiH99::RnaSeqNrg1' as module,
        'RNA Seq' as display_name,
-       'EXPERIMENT DESCRIPTION' as description,
-       'SAMPLE DESCRIPTION' as x_axis,
+       'Unpublished <i>Cryptococcus neoformans</i> var. <i>grubii</i> H99 data from Teresea O'Meara et al from <a href="http://mgm.duke.edu/microbial/mycology/alspaugh/">Alspaugh Lab</a> at Duke University on Wild Type, nrg1 KO, and Nrg1 overexpression.'  as description,
+       'Wildtype, nrg1-KO, and Nrg1 overexpression' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         10 as order_num,
@@ -3497,7 +3497,7 @@ select 'C.neoformans NRG1 Expression' as profile_name,
        'coverage,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        '' as attribution
+       '' as attribution
     from dual
 
     UNION
