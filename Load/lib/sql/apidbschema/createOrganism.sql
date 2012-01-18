@@ -35,6 +35,10 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
 
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq_1
+UNIQUE (is_reference_strain, abbrev_ref_strain);
+
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Organism TO gus_w;
 GRANT SELECT ON apidb.Organism TO gus_r;
 
