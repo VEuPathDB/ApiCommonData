@@ -49,18 +49,14 @@ while ( my $seq = $in->next_seq() ) {
                                  -id  => $id
 			    );
 
-
   $out->write_seq($newSeq);
 
-  my $cmd =  "cd $outputDir ; $psipredPath/runpsipred_single ${id}.fsa";
-  system($cmd);
-  my $status = $? >> 8;
-  if ($status) {
- #   unlink($tmpFile);
-    die "Failed with status '$status running cmd: \n$cmd'\n";
-  }
 
-  `rm -f $outputDir/${id}.fsa`;
+  &runPsipred_single($outputDir,$psipredPath, $id);
+
+  &removeTempFile($outputDir, $id);
+
+  &fixAndMoveSS2File($outputDir, $id);
 
   $count++;
 
@@ -69,5 +65,45 @@ while ( my $seq = $in->next_seq() ) {
 
 
 print STDERR "$count";
+
+sub runPsipred_single {
+  my($outputDir,$psipredPath, $id)=@_;
+
+  my $cmd =  "cd $outputDir ; $psipredPath/runpsipred_single ${id}.fsa";
+  system($cmd);
+  my $status = $? >> 8;
+  if ($status) {
+    die "Failed with status '$status running cmd: \n$cmd'\n";
+  }
+}
+
+sub removeTempFile {
+  my($outputDir, $id)=@_;
+
+  my $cmd = "rm -f $outputDir/${id}.fsa";
+  system($cmd);
+  my $status = $? >> 8;
+  if ($status) {
+    die "Failed with status '$status running cmd: \n$cmd'\n";
+  }
+}
+
+sub fixAndMoveSS2File {
+  my($outputDir, $id)=@_;
+
+  return if $id !~ /_DASH_/;
+
+  my $idc = $id;
+
+  $idc =~ s/_DASH_/-/g;
+
+  my $cmd3 = "mv $outputDir/${id}.ss2 $outputDir/${idc}.ss2";
+  system($cmd3);
+  my $status = $? >> 8;
+  if ($status) {
+    die "Failed with status '$status running cmd: \n$cmd3'\n";
+  }
+}
+
 
 1;
