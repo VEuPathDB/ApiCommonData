@@ -93,6 +93,13 @@ my $argsDeclaration =
 	    isList => 0
 	   }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
  stringArg({name => 'restart',
 	    descr => 'a list of algInvocation numbers for runs that failed',
 	    constraintFunc => undef,
@@ -150,9 +157,15 @@ sub run{
     my $sourceId = $data[0];
 
     unless(%done->{$sourceId}){
+    
+	my $aaSeqId;
 
-      my $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId);
-
+	if ($self->getArg('organismAbbrev')){
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$self->getArg('organismAbbrev'));
+	}else{
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId);
+        }
+	
       if($aaSeqId){
 
 	my $newPredAAFeat = $self->createPredictedAAFeature($extDbRls, $sourceId, $aaSeqId);
