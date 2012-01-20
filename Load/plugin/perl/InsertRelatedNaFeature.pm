@@ -37,6 +37,13 @@ my $argsDeclaration =
 	     constraintFunc => undef,
 	   }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
 ];
 
 my $purpose = <<PURPOSE;
@@ -105,9 +112,17 @@ sub run {
     chomp;
 
     my ($so, $st, $val) = split('\|', $_);
+    my ($naFeatureId,$assocNaFeatureId)
 
-    my $naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so);
-    my $assocNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $st);
+    if ($self->getArg('organismAbbrev')){
+         $naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so,0,$self->getArg('organismAbbrev'));
+         $assocNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $st,0,$self->getArg('organismAbbrev'));	
+    }else{
+	$naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so);
+	$assocNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $st);
+    }
+
+
 
     $self->log("WARNING", "No naFeatureId for Source_id $so.") if(!$naFeatureId);
     $self->log("WARNING", "No naFeatureId for Source_id $st.") if(!$assocNaFeatureId);
