@@ -109,7 +109,6 @@ sub run {
 }
 
 sub _parseTerms {
-
   my ($self, $fh, $seen) = @_;
 
   my $block = "";
@@ -134,13 +133,17 @@ sub _parseTerms {
 }
 
 sub _processBlock {
-
   my ($self, $block, $seen) = @_;
+
+  my @evidCodes = keys (%%seen);
 
   my ($name, $def) = $self->_parseBlock($block);
 
+  # if evidence code seen already, ignore it repeat occurrence.
+  return  if ($name &&  (grep {$_ eq $name} @evidCodes));
+
   return unless ($name && $name =~ m/^\w+$/);
-  
+
   my $evidenceCode = GUS::Model::SRes::GOEvidenceCode->new({name => $name, description => $def});
   $evidenceCode->submit();
 
@@ -149,11 +152,12 @@ sub _processBlock {
 }
 
 sub _parseBlock {
-
   my ($self, $block) = @_;
+
    $block =~ s/synonym:\s"<new synonym>"\sRELATED \[\]//;
 #  my ($name) = $block =~ m/^exact_synonym:\s+(.*)/ms;
-  my ($name) = $block =~ m/^synonym:\s+(.*)/ms ;
+  my ($name) = $block =~ m/^synonym:\s+([ ":?][A-Z].*)/ms ;
+
   if ($name) {
     ($name) = extract_quotelike($name);
     $name =~ s/\A"|"\Z//msg;
