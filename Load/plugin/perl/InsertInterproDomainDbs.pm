@@ -473,8 +473,6 @@ sub undoTables {
 
   return (
 		'SRes.DbRef',
-  		'SRes.ExternalDatabaseRelease',
-		'SRes.ExternalDatabase'
      );
 }
 
