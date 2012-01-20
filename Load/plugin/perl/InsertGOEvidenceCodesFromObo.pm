@@ -135,7 +135,7 @@ sub _parseTerms {
 sub _processBlock {
   my ($self, $block, $seen) = @_;
 
-  my @evidCodes = keys (%%seen);
+  my @evidCodes = keys (%$seen);
 
   my ($name, $def) = $self->_parseBlock($block);
 
