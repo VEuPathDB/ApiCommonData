@@ -198,7 +198,7 @@ sub getAASeqIdFromGeneId {
   
   my $geneFeatId;
   if($optionalOrganismAbbrev){  
-      $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, $optionalOrganismAbbrev);
+      $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, 0,$optionalOrganismAbbrev);
   }else{
        $geneFeatId = getGeneFeatureId($plugin, $geneSourceId);
   }
