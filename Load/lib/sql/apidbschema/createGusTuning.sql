@@ -76,7 +76,9 @@ alter table sres.dbref modify (LOWERCASE_SECONDARY_IDENTIFIER varchar2(150));
 
 alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
 
-alter table dots.NaFeatureImp modify (name varchar(80));
+alter table dots.NaFeatureImp modify (name varchar2(80));
+
+alter table dots.Est modify (accession varchar2(50));
 
 -- indexes for orthomcl keyword and pfam searches
 CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
