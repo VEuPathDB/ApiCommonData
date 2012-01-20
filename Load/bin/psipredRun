@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+
+use Getopt::Long;
+
+use strict;
+
+my $debug = 0;
+
+$| = 1;
+#############################################################################################################
+###gets each sequential fasta seq from input and creates a one seq temp file named using the identifier
+###runs runpsipred_single on each temp file which creates an ouput file in the given dir 
+###output file named the same as temp but with an alternate suffix (.ss2) -  removes temp file
+#############################################################################################################
+
+
+my $inputFile;
+my $outputDir;
+my $psipredPath;
+
+&GetOptions("inputFile=s" => \$inputFile,
+            "outputDir=s" => \$outputDir,
+            "psipredPath=s" => \$psipredPath
+            );
+
+my $count;
+
+unless ($inputFile && $outputDir && $psipredPath){ 
+    die "Usage: psipredRun  --inputFile --outputDir --psipredPath ";}
+
+die "Cannot find '$inputFile':$!\n" unless (-e $inputFile);
+
+my $in  = Bio::SeqIO->new(-file => "$inputFile" , '-format' => 'Fasta');
+
+while ( my $seq = $in->next_seq() ) {
+  my $id = $seq->id;
+
+
+  my $string = $seq->seq;
+
+  $string = $seq->subseq(1,9999) if $seq->length >= 10000;
+
+  my $out  = Bio::SeqIO->new(-file => ">${outputDir}/${id}.fsa" , '-format' => 'Fasta'); 
+
+  my $newSeq = Bio::Seq->new( -seq => $string,
+                                 -id  => $id
+			    );
+
+
+  $out->write_seq($newSeq);
+
+  my $cmd =  "cd $outputDir ; $psipredPath/runpsipred_single ${id}.fsa";
+  system($cmd);
+  my $status = $? >> 8;
+  if ($status) {
+ #   unlink($tmpFile);
+    die "Failed with status '$status running cmd: \n$cmd'\n";
+  }
+
+  `rm -f $outputDir/${id}.fsa`;
+
+  $count++;
+
+  print STDERR "$count" if ($count%100 == 0);
+}
+
+
+print STDERR "$count";
+
+1;
