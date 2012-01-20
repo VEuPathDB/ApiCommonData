@@ -15,9 +15,9 @@
     <qualifier name="locus_tag" handler="api" method="gene"/>
     <qualifier name="secondary_id" handler="api" method="setSecondaryId"/>
     <qualifier name="note" handler="api" method="note"/>
-    <qualifier name="product" handler="api" method="product"/>
+    <qualifier name="product" 		ignore="true"/>
     <qualifier name="protein_id" handler="api" method="dbXRef"/>
-    <qualifier name="db_xref" handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="translation" handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/>
@@ -25,7 +25,7 @@
 
   <feature name="rRNA_gene">
     <qualifier name="gene" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="product" handler="api" method="product"/>
+    <qualifier name="product"		ignore="true"/>
   </feature>
 
   <feature name="source" ignore="true"/>
@@ -33,7 +33,7 @@
   <feature name="tRNA_gene">
     <qualifier name="gene" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note" handler="api" method="note"/>
-    <qualifier name="product" handler="api" method="product"/>
+    <qualifier name="product"		ignore="true"/>
   </feature>
 
   <feature name="intron" table="DoTS::IntronFeature" so="intron">
