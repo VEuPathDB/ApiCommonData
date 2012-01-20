@@ -112,7 +112,7 @@ sub run {
     chomp;
 
     my ($so, $st, $val) = split('\|', $_);
-    my ($naFeatureId,$assocNaFeatureId)
+    my ($naFeatureId,$assocNaFeatureId);
 
     if ($self->getArg('organismAbbrev')){
          $naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so,0,$self->getArg('organismAbbrev'));
