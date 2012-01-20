@@ -312,15 +312,8 @@ sub processSnpFile{
     $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
     $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
 
-    try {
-      $self->_addMajorMinorInfo($snpFeature);
-      $snpFeature->submit();
-    } catch GUS::PluginMgr::PluginUserError with {
-      my $e = shift;
-      my $msg = $e->text();
-
-      $self->log("WARNING:  $msg");
-    };
+    $self->_addMajorMinorInfo($snpFeature);
+    $snpFeature->submit() || die "couldn't submit snpFeature for '$snpFeature'";
 
     $self->undefPointerCache();
 
