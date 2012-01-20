@@ -105,11 +105,13 @@ stringArg({ name            => 'checkSQL',
              constraintFunc   => undef,
              isList          => 0 }),
 
- booleanArg({name            => 'putativeFullLength',
-             descr     => 'indicates all sequences are putatively full length, alternative to regex',
-             reqd            => 0,
-             constraintFunc   => undef,
-             isList          => 0 }),
+ enumArg({  name => 'putativeFullLength',
+	    descr => 'indicates all sequences are putatively full length, alternative to regex. true or false',
+	    constraintFunc => undef,
+	    reqd => 1,
+	    isList => 0,
+	    enum => "true,false",
+	 }),
 
  fileArg({   name            => 'fastaFile',
 	     descr           => 'The name of the input fasta file',
@@ -442,7 +444,7 @@ sub processFile{
 	    if ($putativeFullLengthRegex && /$putativeFullLengthRegex/) {
 	      $putativeFullLength = 1;
 	    }
-	    elsif ($self->getArg('putativeFullLength')) {
+	    elsif ($self->getArg('putativeFullLength') eq 'true') {
 	      $putativeFullLength = 1;
 	    }
 	    else {
