@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+
+use strict;
+
+# temporary script to fix legacy web service dirs
+
+my $projects = [
+		['AmoebaDB', '1.7'],
+		['CryptoDB', '4.6'],
+		['EuPathDB', '2.10'],
+		['GiardiaDB', '2.5'],
+		['MicrosporidiaDB', '2.0'],
+		['PiroplasmaDB', '1.1'],
+		['PlasmoDB', '8.2'],
+		['ToxoDB', '7.2'],
+		['TrichDB', '1.3'],
+		['TriTrypDB', '4.0'],
+	       ];
+
+# just do sample for testing
+$projects = [
+	     ['PlasmoDB', '9.9'],
+];
+
+my $blastMacros = [
+		   ['CDS', '_AnnotatedCDSs'],
+		   ['EST', '_ESTs'],
+		   ['Genomics', '_Genome'],
+		   ['Transcripts', '_AnnotatedTranscripts'],
+		   ['ORF', '_ORFs_AA'],
+		   ['Proteins', '_AnnotatedProteins'],
+		   ['Mito', '_mitochondrial_chromosome'],
+		   ['Plastid', '_apicoplast_chromosome'],
+		  ];
+
+
+my $motifMacros = [
+		   ['Genomic', '_Genome'],
+		   ['ORFs', '_ORFs_AA'],
+		   ['Proteins', '_AnnotatedProteins'],
+		   ['Mito', '_mitochondrial_chromosome'],
+		   ['Plastid', '_apicoplast_chromosome'],
+		  ];
+
+
+my $apiSiteFiles = '/eupath/data/apiSiteFiles/webServices';
+
+foreach my $proj (@$projects) {
+  my $projDir = "$apiSiteFiles/$proj->[0]/release-$proj->[1]";
+  foreach my $blastMacro (@$blastMacros) {
+    my $cmd = "renameFilesWithMacro $blastMacro->[0] $blastMacro->[1] $projDir/blast";
+    print STDERR "$cmd\n";
+    system($cmd) == 0 || die "failed running:\n $cmd\n";
+  }
+
+  foreach my $motifMacro (@$motifMacros) {
+    my $cmd = "renameFilesWithMacro $motifMacro->[0] $motifMacro->[1] $projDir/motif";
+    print STDERR "$cmd\n";
+    system($cmd) == 0 || die "failed running:\n $cmd\n";
+  }
+  my $cmd = "renameFilesWithMacro _$proj->[0]. . $projDir/motif";   # remove proj name suffix
+  print STDERR "$cmd\n";
+  system($cmd) == 0 || die "failed running:\n $cmd\n";
+}
+
