@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+use strict;
+use Cwd;
+
+my ($macro, $value, $rootDir) = @ARGV;
+
+usage() unless ($macro && $value && $rootDir);
+
+die "rootDir must be a full path" unless $rootDir =~ /^\//;
+
+correctDir($rootDir, '');
+correctFile($rootDir, '');
+
+sub correctDir {
+  my ($pwd, $dir) = @_;
+
+  opendir(DIR, "$pwd/$dir") || die "Can't open dir '$pwd/$dir'\n";
+  my @files = readdir(DIR);
+  close(DIR);
+
+  foreach my $file (@files)  {
+    next if $file =~ /^\.+$/;
+    if (-d "$pwd/$dir/$file") {
+      correctDir("$pwd/$dir", $file);
+      correctFile("$pwd/$dir", $file);
+    }
+  }
+
+  foreach my $file (@files)  {
+    next if $file =~ /^\.+$/;
+    if (-f "$pwd/$dir/$file") {
+      correctFile("$pwd/$dir", $file);
+    }
+  }
+
+}
+
+sub correctFile {
+  my ($pwd, $file) = @_;
+
+  if ($file =~ /$macro/) {
+    my $newFile = $file;
+    $newFile =~ s/$macro/$value/;
+    print STDERR "renaming $file to $newFile\n";
+    rename("$pwd/$file", "$pwd/$newFile") || die "Could not rename $file to $newFile\n";
+  }
+}
+
+
+sub usage {
+  print STDERR "
+
+rename all files and directories in a directory structure, replacing an embedded macro with a value.  For example, rename all files with the macro CURRENT to have instead 2.0.  Such as release-CURRENT-ORFs.fasta
+
+usage: renameFilesWithMacro macro value rootDir
+
+Note:  to test if this succeeded, run this command in the root dir:
+  % dir -R | grep YOUR_MACRO
+
+";
+
+  exit 1;
+}
