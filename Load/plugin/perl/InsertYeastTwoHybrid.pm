@@ -40,6 +40,12 @@ my $argsDeclaration =
 	    constraintFunc => undef,
 	    isList         => 0, }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
 ];
 
 my $purpose = <<PURPOSE;
@@ -122,8 +128,8 @@ sub run {
       }
     }
 
-    my $baitGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{bait_ORF}]);
-    my $preyGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{prey_ORF}]);
+    my $baitGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{bait_ORF}], 0, $self->getArg('organismAbbrev'));
+    my $preyGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{prey_ORF}], 0, $self->getArg('organismAbbrev'));
 
     next if(!$baitGeneFeatureId || !$preyGeneFeatureId);
 
