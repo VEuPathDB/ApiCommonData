@@ -399,7 +399,7 @@ SELECT mapping.id, mapping.gene, cast (null as NUMBER) as unique_mapping,
        SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
              gf.source_id AS gene,
-             'Transcript.protein_id before dot' as union_member, ed.name as database_name
+             'Transcript.protein_id before dot' as union_member, ed.name as database_name -- dots.Transcript.protein_id, trimmed at period
       FROM dots.Transcript t, dots.GeneFeature gf,
            sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE t.parent_id = gf.na_feature_id
@@ -409,7 +409,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT t.protein_id AS id,
              gf.source_id AS gene,
-             'Transcript.protein_id' as union_member, ed.name as database_name
+             'Transcript.protein_id' as union_member, ed.name as database_name -- dots.Transcript.protein_id
       FROM dots.Transcript t, dots.GeneFeature gf,
            sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
       WHERE t.parent_id = gf.na_feature_id
@@ -419,7 +419,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
-             'DbRef.primary_identifier' as union_member, ed.name as database_name
+             'DbRef.primary_identifier' as union_member, ed.name as database_name -- sres.DbRef.primary_identifier
       FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
            sres.ExternalDatabase ed
@@ -442,7 +442,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.secondary_identifier AS id, 
              gf.source_id AS gene,
-             'DbRef.secondary_identifier' as union_member, ed.name as database_name
+             'DbRef.secondary_identifier' as union_member, ed.name as database_name -- sres.DbRef.secondary_identifier
       FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
            sres.ExternalDatabase ed
@@ -461,7 +461,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
-             'genbank DbRef.primary_identifier' as union_member, ed.name as database_name
+             'genbank DbRef.primary_identifier' as union_member, ed.name as database_name -- sres.DbRef.primary_identifier for Genbank records
       FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
             sres.ExternalDatabase ed
@@ -474,7 +474,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
       SELECT pred_loc.feature_source_id AS id,
              gene_loc.feature_source_id AS gene,
-             'overlapping predicted gene source_id' as union_member, ed.name as database_name
+             'overlapping predicted gene source_id' as union_member, ed.name as database_name -- dots.GeneFeature.source_id for predicted genes that overlap
       FROM &prefixFeatureLocation gene_loc, &prefixFeatureLocation pred_loc,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE pred_loc.feature_type = 'GenePrediction'
@@ -487,7 +487,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
         AND edr.external_database_id = ed.external_database_id
      UNION
       SELECT ng.name AS id, gf.source_id AS gene,
-             'NaGene' as union_member, ed.name as database_name
+             'NaGene' as union_member, ed.name as database_name -- dots.NaGene.name
       FROM dots.GeneFeature gf, dots.NaFeatureNaGene nfng, dots.NaGene ng,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE gf.na_feature_id = nfng.na_feature_id
@@ -496,14 +496,14 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
         AND edr.external_database_id = ed.external_database_id
      UNION
       SELECT source_id AS id, source_id AS gene,
-             'same ID' as union_member, ed.name as database_name
+             'same ID' as union_member, ed.name as database_name -- same ID (reflexive mapping)
       FROM dots.GeneFeature gf,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE gf.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
      UNION
       SELECT n.name AS id, gf.source_id AS gene,
-             'gene name' as union_member, d.name as database_name
+             'gene name' as union_member, d.name as database_name -- apidb.GeneFeatureName.name
       from apidb.GeneFeatureName n, dots.genefeature gf, sres.externaldatabaserelease r, sres.externaldatabase d
       where n.na_feature_id = gf.na_feature_id
         and gf.external_database_release_id =r.external_database_release_id
