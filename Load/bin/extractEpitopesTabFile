@@ -25,6 +25,8 @@ my $dsn = $gusconfig->{props}->{dbiDsn};
 my $dbh = DBI->connect($dsn, $u, $pw) ||  die "Couldn't connect to database: " . DBI->errstr;
 $dbh->{RaiseError} = 1;
 $dbh->{AutoCommit} = 0;
+$dbh->{LongReadLen} = 66000;
+$dbh->{LongTruncOk} = 1;
 
 my $sql = "
 select s.sequence, s.description
@@ -42,6 +44,7 @@ while (my ($seq, $description ) = $sth->fetchrow_array()) {
   my ($iedbId, $epiName, $strain, $accession) = split(/\|/,$description);
   print OUT "$accession\t$iedbId\t$strain\t$seq\t$epiName\n" if $seq;
 }
+$dbh->disconnect;
 
 sub usage {
 
