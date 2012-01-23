@@ -395,8 +395,8 @@ tablespace indx
       <![CDATA[
 CREATE TABLE &prefixGeneId&1 NOLOGGING AS
 SELECT mapping.id, mapping.gene, cast (null as NUMBER) as unique_mapping,
-       SUBSTR(apidb.tab_to_string(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab),'; '), 1, 80) as union_member, 
-       SUBSTR(apidb.tab_to_string(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab),'; '), 1, 80) as database_name
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab)),'; '), 1, 80) as union_member, 
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab)),'; '), 1, 80) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
              gf.source_id AS gene,
              'Transcript.protein_id before dot' as union_member, ed.name as database_name -- dots.Transcript.protein_id, trimmed at period
@@ -987,7 +987,7 @@ CREATE TABLE &prefixGoTermList NOLOGGING AS
 SELECT *
 FROM (  -- work around sometime Oracle bug ORA-00942
       SELECT source_id, ontology, source,
-             apidb.tab_to_string(CAST(COLLECT(name order by name) AS apidb.varchartab), ', ')
+             apidb.tab_to_string(set(cast(COLLECT(name order by name) as apidb.varchartab)), ', ')
                AS go_terms
       FROM (SELECT DISTINCT gf.source_id, o.ontology, gt.name,
                         DECODE(gail.name, 'Interpro', 'predicted', 'annotated')
@@ -1208,8 +1208,8 @@ FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
                    GROUP BY tmaf.aa_sequence_id) tms
              GROUP BY tms.aa_sequence_id) transmembrane,
             (SELECT aa_sequence_id,
-                    SUBSTR(apidb.tab_to_string(CAST(COLLECT(ec_number order by ec_number)
-                                               AS apidb.varchartab), '; '),
+                    SUBSTR(apidb.tab_to_string(set(cast(COLLECT(ec_number order by ec_number)
+                                               as apidb.varchartab)), '; '),
                            1, 300)
                       AS ec_numbers
              FROM (SELECT DISTINCT asec.aa_sequence_id,
@@ -1219,7 +1219,7 @@ FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
              GROUP BY aa_sequence_id) ec,
              (SELECT spf.aa_sequence_id,'NN Sum: ' || ( spf.maxy_conclusion + spf.maxc_conclusion + spf.maxs_conclusion + spf.means_conclusion ) ||
               ', NN D: ' || round(((spf.means_score + spf.maxy_score) / 2),2) || ', HMM Prob: ' || round(spf.signal_probability,2) as scores,
-               apidb.tab_to_string(CAST(COLLECT(decode(spf.algorithm_name,'SignalPhmm','HMM: ','NN: ') || dbms_lob.substr(s.sequence,aal.end_max,1) order by spf.algorithm_name, dbms_lob.substr(s.sequence, aal.end_max, 1)) AS apidb.varchartab), ', ') as pep
+               apidb.tab_to_string(set(cast(COLLECT(decode(spf.algorithm_name,'SignalPhmm','HMM: ','NN: ') || dbms_lob.substr(s.sequence,aal.end_max,1) order by spf.algorithm_name, dbms_lob.substr(s.sequence, aal.end_max, 1)) as apidb.varchartab)), ', ') as pep
               FROM dots.signalpeptidefeature spf, dots.aalocation aal,dots.AASEQUENCE s
               WHERE spf.aa_sequence_id = s.aa_sequence_id 
               and  aal.aa_feature_id = spf.aa_feature_id
@@ -1836,10 +1836,10 @@ FROM dots.SnpFeature snp, FeatureLocation snp_loc,
       WHERE subclass_view not in ('ExternalNASequence', 'VirtualSequence')
      ) chromosome_info,
      (select sf.na_feature_id, 
-             apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.allele END order by sv.allele) AS apidb.varchartab), ', ') as minor_allele,                
-             apidb.tab_to_string(CAST(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.product END order by sv.product) AS apidb.varchartab), ', ') as minor_product,
-             apidb.tab_to_string(CAST(COLLECT(CASE WHEN sv.allele != sf.major_allele THEN sv.strain END order by sv.strain) AS apidb.varchartab), ', ') as minor_strains,
-             apidb.tab_to_string(CAST(COLLECT(CASE WHEN sv.allele = sf.major_allele THEN sv.strain END order by sv.strain) AS apidb.varchartab), ', ') as major_strains
+             apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.allele END order by sv.allele) as apidb.varchartab)), ', ') as minor_allele,                
+             apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.product END order by sv.product) as apidb.varchartab)), ', ') as minor_product,
+             apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele != sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as minor_strains,
+             apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele = sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as major_strains
       from dots.SNPFEATURE sf, dots.SEQVARIATION sv
       where sv.parent_id = sf.na_feature_id
       group by sf.na_feature_id) strain_info
@@ -2552,8 +2552,8 @@ FROM (
        AND pinfo.project_id = etn.row_project_id
       ) iso
    left join (select na_sequence_id, 
-               apidb.tab_to_string(CAST(COLLECT(product order by product) AS apidb.varchartab),'; ') as product, 
-               apidb.tab_to_string(CAST(COLLECT(product_alias order by product_alias) AS apidb.varchartab),'; ') as product_alias 
+               apidb.tab_to_string(set(cast(COLLECT(product order by product) as apidb.varchartab)),'; ') as product, 
+               apidb.tab_to_string(set(cast(COLLECT(product_alias order by product_alias) as apidb.varchartab)),'; ') as product_alias 
                from dots.isolatefeature group by na_sequence_id) prod
            on prod.na_sequence_id = iso.na_sequence_id
        )
@@ -2772,8 +2772,8 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
 from dots.SageTagFeature f, FeatureLocation l, dots.NaSequence s,
      sres.TaxonName tn, rad.SageTag st, 
      (select a.na_feature_id,
-             apidb.tab_to_string(CAST(COLLECT(b.gene_source_id order by b.gene_source_id) AS apidb.varchartab),'; ') as gene_source_id,
-             apidb.tab_to_string(CAST(COLLECT(ga.product order by ga.product) AS apidb.varchartab),'; ') as gene_product,
+             apidb.tab_to_string(set(cast(COLLECT(b.gene_source_id order by b.gene_source_id) as apidb.varchartab)),'; ') as gene_source_id,
+             apidb.tab_to_string(set(cast(COLLECT(ga.product order by ga.product) as apidb.varchartab)),'; ') as gene_product,
              count(b.gene_source_id) as gene_count
       from dots.sagetagfeature a, (
                              select distinct a.na_feature_id,
@@ -5475,8 +5475,8 @@ tablespace indx
       <![CDATA[
 create table SnpsWithIsolates&1 NOLOGGING as
 select iso_ext_db_name,snp_source_id, 
- apidb.tab_to_string(CAST(COLLECT(CASE WHEN frequency < 0.5 THEN allele END order by allele) AS apidb.varchartab), ', ') as minor_allele,
- apidb.tab_to_string(CAST(COLLECT(CASE WHEN frequency > 0.5 THEN allele END order by allele) AS apidb.varchartab), ', ') as major_allele,
+ apidb.tab_to_string(set(cast(COLLECT(CASE WHEN frequency < 0.5 THEN allele END order by allele) as apidb.varchartab)), ', ') as minor_allele,
+ apidb.tab_to_string(set(cast(COLLECT(CASE WHEN frequency > 0.5 THEN allele END order by allele) as apidb.varchartab)), ', ') as major_allele,
  to_char(min(frequency), '0.99') as minor_allele_frequency,
  min(number_isolates) as number_isolates
 from (
