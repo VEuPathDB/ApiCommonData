@@ -134,7 +134,6 @@ sub WriteGFF {
   my $rowcount = 0;
 
   while (my  @Recordrow = $$StatementHandle->fetchrow_array) {
-
     my $SequenceFeature = Bio::SeqFeature::Gene::Exon->new(-seq_id       => $Recordrow[0],
                                                            -start        => $Recordrow[3], 
                                                            -end          => $Recordrow[4],
@@ -144,7 +143,7 @@ sub WriteGFF {
                                                            -source_tag   => $Recordrow[1],
                                                            -display_name => $Recordrow[8],
                                                            -score        => $Recordrow[5],
-                                                           -tag          => {ID => $Recordrow[8], parent => $Recordrow[8]}
+                                                           -tag          => {ID => $Recordrow[8], parent => $Recordrow[9]}
                                                           );
 
     $GFFString->write_feature($SequenceFeature);
@@ -190,7 +189,8 @@ sub GetExonQuery {
                   '.' as gff_score,
                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                   '.' as gff_frame,
-                  ef.source_id as gff_group
+                  ef.source_id as feature_id,
+                  regexp_replace(ef.source_id, '-[[:digit:]]+$', '') as gene_source_id
            FROM   DoTS.ExonFeature ef,
                   ApidbTuning.${tuningTablePrefix}FeatureLocation nl,
                   DoTS.NaSequence ns
@@ -218,7 +218,8 @@ sub GetCDSQuery {
                         from dots.ExonFeature ef2
                         where parent_id = ef.parent_id
                           and order_number < ef.order_number), 3), 3) as gff_frame,
-                  ef.source_id as gff_group
+                  ef.source_id as feature_id,
+                  gf.source_id as gene_source_id
            FROM   DoTS.GeneFeature gf,
                   DoTS.Transcript rna,
                   DoTS.ExonFeature ef,
