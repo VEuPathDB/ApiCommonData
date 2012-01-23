@@ -20,11 +20,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="EC_number"            handler="api" method="ECNumber"/>
+    <qualifier name="EC_number"			ignore="true"/>
     <qualifier name="protein_id"           handler="api" method="genbankDbXRef"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
@@ -44,11 +44,11 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="gene"     handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="EC_number"            handler="api" method="ECNumber"/>
+    <qualifier name="EC_number"			ignore="true"/>
     <qualifier name="protein_id"           handler="api" method="genbankDbXRef"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
@@ -73,8 +73,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
 
 
@@ -82,7 +82,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -105,13 +105,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="">
     <qualifier name="chromosome"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="isolate"/>
     <qualifier name="mol_type" ignore="true"/>
     <qualifier name="organism"/>
@@ -136,10 +136,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="selenocysteine"       handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true">
@@ -157,7 +157,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="transcript" so="transcript">
   <qualifier name="gene" ignore="true"/>
   <qualifier name="note" handler="api" method="note"/>
-  <qualifier name="product" handler="api" method="product"/>
+  <qualifier name="product"			ignore="true"/>
   <!-- created by the reshaper -->
   </feature>
 
@@ -175,7 +175,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="pseudo" handler="api" method="setPseudo"/>
   </feature>
 
@@ -183,7 +183,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene" column="source_id"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
