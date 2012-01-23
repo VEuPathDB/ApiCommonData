@@ -165,4 +165,11 @@ sub getNaSeqId {
   return $seq_id;
 }
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.plasmoMapp');
+}
+
+
 1;
