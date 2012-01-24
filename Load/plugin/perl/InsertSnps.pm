@@ -114,7 +114,7 @@ sub getArgumentsDeclaration{
 		descr => 'Which gff format is the gff file in',
 		constraintFunc=> undef,
 		reqd  => 0,
-                default => 'gff2',
+                default => '2',
 		isList => 0,
 	       }),
      booleanArg({name => 'NGS_SNP',
@@ -210,7 +210,7 @@ sub run {
   my $file = $self->getArg('snpFile');
 
   my $gffIO = Bio::Tools::GFF->new(-file => $file,
-                                   -gff_format => $self->getArg('gffFormat'),
+                                   -gff_version => $self->getArg('gffFormat'),
                                   );
 
   my $naSeqToLocationsHashRef =  $self->getAllTranscriptLocations ();
