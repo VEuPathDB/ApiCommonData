@@ -163,12 +163,12 @@ sub run {
   my $tag = $self->getArg('sourceIdTag');
 
   my $gffIn  = Bio::Tools::GFF->new(-file => "<$inFile",
-				    -gff_format => $gffFormat,
+				    -gff_version => $gffFormat,
 				    -preferred_groups => [$groupTag]
 				   );
 
   my $gffOut = Bio::Tools::GFF->new(-file => ">$outFile",
-				    -gff_format => $gffFormat,
+				    -gff_version => $gffFormat,
 				    -preferred_groups => [$groupTag]
 				   );
 

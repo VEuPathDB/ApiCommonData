@@ -181,7 +181,7 @@ sub processFile {
 
   my $row;
   my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('fileName'),
-				   -gff_format => 2
+				   -gff_version => 2
 				  ) or $self->userError("Could not open gff file for reading.\n");
 
   while (my $feature = $gffIO->next_feature()) {
