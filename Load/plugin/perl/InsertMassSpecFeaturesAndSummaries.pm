@@ -51,8 +51,24 @@ sub new {
 sub run {
   my ($self) = @_;
   $self->{featuresAdded} = $self->{summariesAdded} = $self->{summariesSkipped} = 0;
-    
-  my $inputFile = $self->getArg('inputFile');    
+  
+  my @inputFiles;
+  my $sampleConfig;
+  my $inputFileDirectory = $self->getArg('inputDir');
+  opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
+  while (my $file = readdir(INDIR)) {
+    if($file=~m/_preprocessed\.tab$/i){
+      push(@inputFiles,$file)
+    }
+    elsif($file='MassSpecSample.config') {
+      $sampleConfig=$file;
+
+    }
+    else {
+      next;
+    }
+  }
+  closedir INDIR;
   my $record = {};
   my $recordSet = [];
   my $mss;
@@ -63,54 +79,57 @@ sub run {
   $self->{geneExtDbRlsId} = join ',', map{$self->getExtDbRlsId($_)} split (/,/,$self->getArg('geneExternalDatabaseSpec'));
   my $minPMatch = $self->getArg('minPercentPeptidesToMap');
   $self->{minPepToMatch} = $minPMatch ? $minPMatch : 50;
-
   ##prepare the query statements
   $self->prepareSQLStatements();
-
-  open(F, $inputFile) or die "Could not open $inputFile: $!\n";
-
-  while (<F>) {
-    chomp;
-
-    next if /^\s*$/;
-    if (/^# /) {
-      $state = 'gene';
-      undef $record;
-      next;
-    } elsif(/^## start/) {
-      $state = 'peptide';
-      undef $peptide;
-      next;
-    } elsif(/^## relative_position/) {
-      $state = 'residue';
-      next;
-    } elsif($state eq 'gene') {
-      $record = $self->initRecord($_);
-      push @{$recordSet}, $record;
-    } elsif($state eq 'peptide') {
-      $peptide = $self->addMassSpecFeatureToRecord($_, $record);
-    } elsif($state eq 'residue') {
-      &addResidueToPeptide($_, $peptide);
-    } else {
-      die "Something wrong in the file on this line: $_\n";
+  
+  foreach my $inputFile (@inputFiles) {
+    my $inputFileLocation = $inputFileDirectory.'/'.$inputFile;
+    $inputFileLocation =~s/\/*/\//;
+    open(F, $inputFileLocation) or die "Could not open $inputFile: $!\n";
+    while (<F>) {
+      chomp;
+      
+      next if /^\s*$/;
+      if (/^# /) {
+        $state = 'gene';
+        undef $record;
+        $record->{file} = $inputFile;
+        next;
+      } elsif(/^## start/) {
+        $state = 'peptide';
+        undef $peptide;
+        next;
+      } elsif(/^## relative_position/) {
+        $state = 'residue';
+        next;
+      } elsif($state eq 'gene') {
+        $record = $self->initRecord($_);
+        push @{$recordSet}, $record;
+      } elsif($state eq 'peptide') {
+        $peptide = $self->addMassSpecFeatureToRecord($_, $record);
+      } elsif($state eq 'residue') {
+        &addResidueToPeptide($_, $peptide);
+      } else {
+        die "Something wrong in the file on this line: $_\n";
+      }
+      $self->undefPointerCache();
     }
-    $self->undefPointerCache();
+    close F;
   }
-
-  ##now need to loop through records and assign to genes ..
-  $self->addRecordsToGenes($recordSet);
+    ##now need to loop through records and assign to genes ..
+    $self->addRecordsToGenes($recordSet);
     
-  $self->pruneDuplicateAndEmptyRecords($recordSet);
-  $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords}) if $self->{copiedRecords};
+    $self->pruneDuplicateAndEmptyRecords($recordSet);
+    $self->pruneDuplicateAndEmptyRecords($self->{copiedRecords}) if $self->{copiedRecords};
     
-  warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
-  $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
-  if($self->{copiedRecords}){
-    warn "inserting into db for ".scalar(@{$self->{copiedRecords}}). " copied records\n" if $self->getArg('mapOnly');
-    $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly'); 
-  }
-
-  $self->setResultDescr(<<"EOF");
+    warn "inserting into db for ".scalar(@$recordSet). " records\n" if $self->getArg('mapOnly');
+    $self->insertRecordsIntoDb($recordSet) unless $self->getArg('mapOnly');    
+    if($self->{copiedRecords}){
+      warn "inserting into db for ".scalar(@{$self->{copiedRecords}}). " copied records\n" if $self->getArg('mapOnly');
+      $self->insertRecordsIntoDb($self->{copiedRecords}) unless $self->getArg('mapOnly'); 
+    }
+    
+    $self->setResultDescr(<<"EOF");
     
 Added $self->{featuresAdded} @{[ ($self->{featuresAdded} == 1) ? 'feature':'features' ]} and $self->{summariesAdded} @{[ ($self->{summariesAdded} == 1) ? 'summary':'summaries' ]}.
 Skipped $self->{summariesSkipped} @{[ ($self->{summariesSkipped} == 1) ? 'summary':'summaries' ]}.
@@ -1044,14 +1063,13 @@ sub nextRecord {
 sub declareArgs {
   [
 
-   fileArg({
-            name            =>  'inputFile',
-            descr           =>  'Name of file containing the mass spec features',
+   directoryArg({
+            name            =>  'inputDir',
+            descr           =>  'Name of file directory containing the mass spec features input files',
             constraintFunc  =>  undef,
             reqd            =>  1,
             isList          =>  0,
             mustExist       =>  1,
-            format          =>  'Text'
            }),
 
    stringArg({
