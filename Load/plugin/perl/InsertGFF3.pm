@@ -32,7 +32,7 @@ sub getArgsDeclaration {
          format => 'Nine column tab delimited file in the order seqid, source, type, start, end, score, strand, phase, attribute',
        }),
      stringArg({ name => 'gffFormat',
-     descr => '1 or 2. not support gff3 format yet',
+     descr => '[1,2,3]',
      constraintFunc=> undef,
      reqd  => 1,
      isList => 0,
@@ -134,7 +134,7 @@ sub run {
   my $processed;
 
   my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
-                                   -gff_format => $self->getArg('gffFormat'),
+                                   -gff_version => $self->getArg('gffFormat'),
                                   );
 
   while (my $feature = $gffIO->next_feature()) {
