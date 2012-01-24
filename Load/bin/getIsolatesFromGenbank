@@ -69,7 +69,7 @@ for (my $i=0; $i<$batchCount; $i++) {
   my $sliceEnd = ($i+1)*$batchSize-1;
   $sliceEnd = $#uniqueAccs if $sliceEnd > $#uniqueAccs;
   my @tmp = @uniqueAccs[$sliceStart .. $sliceEnd];
-  $batches[$i] = join(",", @tmp);
+  $batches[$i] = join(",", @tmp) if (scalar @tmp>0);
 }
 
 foreach my $batch (@batches) {
