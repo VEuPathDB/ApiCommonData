@@ -10,6 +10,11 @@ use GUS::Model::DoTS::NASequence;
 
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::SyntenyAnchor;
+
+use Bio::Tools::GFF;
+use CBIL::Util::V;
+
+
 use Data::Dumper;
 
 my $argsDeclaration = 
@@ -22,6 +27,33 @@ my $argsDeclaration =
 	     constraintFunc => undef,
 	     isList         => 0,
 	   }),
+
+
+   fileArg({ name           => 'gffFileA',
+	     descr          => 'gff file for exon locations which was input to mercator',
+	     reqd           => 1,
+	     mustExist      => 1,
+	     format         => 'gff',
+	     constraintFunc => undef,
+	     isList         => 0,
+	   }),
+
+   fileArg({ name           => 'gffFileB',
+	     descr          => 'gff file for exon locations which was input to mercator',
+	     reqd           => 1,
+	     mustExist      => 1,
+	     format         => 'gff',
+	     constraintFunc => undef,
+	     isList         => 0,
+	   }),
+
+     stringArg({ name => 'gffVersion',
+                 descr => '[1,2,3]',
+                 constraintFunc=> undef,
+                 isList => 0,
+                 reqd => 0,
+                 default => 3,
+         }),
 
 
    stringArg({name => 'syntenyDbRlsSpec',
@@ -68,6 +100,13 @@ my $documentation = { purpose=>$purpose,
 		      notes=>$notes
 		    };
 
+#--------------------------------------------------------------------------------
+
+sub setGeneLocations {$_[0]->{_gene_locations} = $_[1]}
+sub getGeneLocations {$_[0]->{_gene_locations}}
+
+#--------------------------------------------------------------------------------
+
 sub new {
     my ($class) = @_;
     my $self = {};
@@ -88,6 +127,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  my $geneLocations = $self->readGeneLocationsFromGFFs();
+  $self->setGeneLocations($geneLocations);
+
   my $file = $self->getArg('inputFile');
 
   my $synDbRlsId = $self->getExtDbRlsId($self->getArg('syntenyDbRlsSpec'));
@@ -106,7 +148,8 @@ sub run {
     push(@synA, $synA);
     push(@synB, $synB);
 
-    $count++;
+    # 2 Synteny rows each
+    $count = $count + 2;
 
     if($count && $count % 500 == 0) {
       $self->log("Read $count lines... Inserted " . $count*2 . " ApiDB::Synteny");
@@ -122,6 +165,60 @@ sub run {
   my $anchorCount = $self->getAnchorCount();
 
   return "inserted $count synteny spans and $anchorCount anchors ";
+}
+
+#--------------------------------------------------------------------------------
+
+sub addGffFeatures {
+  my ($self, $allFeatureLocations, $gff) = @_;
+
+  my $gffVersion = $self->getArg('gffVersion');
+
+  my $gffIO = Bio::Tools::GFF->new(-gff_version => $gffVersion,
+                                   -file => $gff
+                                  );
+
+  while (my $feature = $gffIO->next_feature()) {
+    my $seqId = $feature->seq_id();
+    my ($gene) = $feature->get_tag_values('parent');
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+
+    push @{$allFeatureLocations->{$seqId}->{$gene}}, $start;
+    push @{$allFeatureLocations->{$seqId}->{$gene}}, $end;
+  }
+
+  $gffIO->close();
+}
+
+#--------------------------------------------------------------------------------
+
+sub readGeneLocationsFromGFFs {
+  my ($self) = @_;
+
+  my $gffFileA = $self->getArg('gffFileA');
+  my $gffFileB = $self->getArg('gffFileB');
+
+  my $allFeatureLocations = {};
+  $self->addGffFeatures($allFeatureLocations, $gffFileA);
+  $self->addGffFeatures($allFeatureLocations, $gffFileB);
+
+  my $geneLocations = {};
+  foreach my $seqId (keys %$allFeatureLocations) {
+    foreach my $gene (keys %{$allFeatureLocations->{$seqId}}) {
+      my $min = CBIL::Util::V::min(@{$allFeatureLocations->{$seqId}->{$gene}});
+      my $max = CBIL::Util::V::max(@{$allFeatureLocations->{$seqId}->{$gene}});
+
+      push @{$geneLocations->{$seqId}}, {gene => $gene,
+                                         min => $min,
+                                         max => $max,
+                                        };
+    }
+  }
+
+  return $geneLocations;
 }
 
 #--------------------------------------------------------------------------------
@@ -235,6 +332,9 @@ sub getNaSequenceId {
   if(scalar @ids != 1) {
     $self->error("Sql Should return only one value: $sql\n for values: $sourceId");
   }
+
+  $self->{_nasequence_source_ids}->{$ids[0]} = $sourceId;
+
   return $ids[0];
 }
 
@@ -245,31 +345,23 @@ sub insertAnchors {
 
   my $gene2orthologGroup = $self->findOrthologGroups();
 
-  my $genesLocStmt = $self->prepareGenesLocStmt();
-
   foreach my $syntenyObj (@$synRows) {
 
-    my $refGenes = $self->findGenes($genesLocStmt,
-				    $syntenyObj->getANaSequenceId(),
+    my $refGenes = $self->findGenes($syntenyObj->getANaSequenceId(),
 				    $syntenyObj->getAStart(),
 				    $syntenyObj->getAEnd()
                                     );
 
-    my $synGenes = $self->findGenes($genesLocStmt,
-				    $syntenyObj->getBNaSequenceId(),
+    my $synGenes = $self->findGenes($syntenyObj->getBNaSequenceId(),
 				    $syntenyObj->getBStart(),
 				    $syntenyObj->getBEnd()
                                    );
 
-    # ordered by refGene loc
-    my $genePairs = $self->findOrthologPairs($refGenes, $synGenes,
-					     $gene2orthologGroup);
+    my $pairs = $self->findAnchorPairs($refGenes, $synGenes,
+                                       $gene2orthologGroup, $syntenyObj);
 
-    my $anchors = $self->createSyntenyAnchors($syntenyObj, $genePairs);
 
-    foreach my $anchor (@$anchors) {
-      $self->addAnchorToGusObj($anchor, $syntenyObj);
-    }
+    $self->createSyntenyAnchors($syntenyObj, $pairs);
 
     $syntenyObj->submit();
     $self->undefPointerCache();
@@ -279,61 +371,37 @@ sub insertAnchors {
 
 #--------------------------------------------------------------------------------
 
-
 sub createSyntenyAnchors {
-  my ($self, $syntenyObj, $genePairs) = @_;
+  my ($self, $syntenyObj, $pairs) = @_;
 
-  my $rev = $syntenyObj->getIsReversed();
+  my @sortedPairs = sort {$a->[0] <=> $b->[0] } @$pairs;
 
-  my $anchors = [];
+  my $prevRefLoc = -9999999999;
+  my $lastRefLoc = 9999999999;
 
-  my $anchorsCursor = 0;
-
-  my $synLoc = $rev ? $syntenyObj->getBEnd() : $syntenyObj->getBStart();
-  $self->addAnchor($syntenyObj->getAStart(),
-                   $synLoc,
-                   $anchors, 
-                   $anchorsCursor++,
-                   0);
-
-  foreach my $genePair (@$genePairs) {
-
-    if ($genePair->{refStart} > $syntenyObj->getAStart()) {
-      $self->addAnchor($genePair->{refStart},
-                       $genePair->{$rev? 'synEnd':'synStart'},
-                       $anchors, $anchorsCursor++,
-                       0);
+  for(my $i = 0; $i < scalar @sortedPairs; $i++) {
+    my $nextRefLoc;
+    if($i == scalar(@sortedPairs) - 1) {
+      $nextRefLoc = $lastRefLoc;
+    }
+    else {
+      $nextRefLoc = $sortedPairs[$i+1]->[0];
     }
 
-    if ($genePair->{refEnd} < $syntenyObj->getAEnd()) {
-      $self->addAnchor($genePair->{refEnd},
-                       $genePair->{$rev? 'synStart':'synEnd'},
-                       $anchors, $anchorsCursor++,
-                       0);
-    }
+    my $refLoc = $sortedPairs[$i]->[0];
+    my $synLoc = $sortedPairs[$i]->[1];
+
+    my $anchor = {prev_ref_loc=> $prevRefLoc,
+                  ref_loc=> $refLoc,
+                  next_ref_loc=> $nextRefLoc,
+                  syntenic_loc=> $synLoc
+                 };
+
+    $self->addAnchorToGusObj($anchor, $syntenyObj);
+
+    $prevRefLoc = $refLoc;
   }
 
-  $synLoc = $rev ? $syntenyObj->getBStart() : $syntenyObj->getBEnd();
-  $self->addAnchor($syntenyObj->getAEnd(),
-                   $synLoc,
-                   $anchors, $anchorsCursor++,
-                   1);
-  return $anchors;
-}
-
-#--------------------------------------------------------------------------------
-
-sub prepareGenesLocStmt {
-  my ($self) = @_;
-
-  my $sql = "select f.na_feature_id, l.start_min, l.end_max
-             from dots.nalocation l, dots.genefeature f
-             where l.na_feature_id = f.na_feature_id
-             and f.na_sequence_id = ?
-             and l.start_min > ?
-             and l.end_max < ?";
-
-  return $self->getDbHandle()->prepare($sql);
 }
 
 #--------------------------------------------------------------------------------
@@ -356,23 +424,16 @@ B<Return Type:> ARRAY
 sub findOrthologGroups {
   my ($self) = @_;
 
-my $sql;
-
-
-
-
-    $sql = "select g.na_feature_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
+my $sql = "select g.source_id as sequence_id, to_char(ssg.group_id) as sequence_group_id, g.external_database_release_id
     from apidb.CHROMOSOME6ORTHOLOGY ssg, dots.genefeature g
     where g.source_id = ssg.source_id
     UNION
-    select ssg.sequence_id, to_char(ssg.sequence_group_id), g.external_database_release_id
+    select g.source_id, to_char(ssg.sequence_group_id), g.external_database_release_id
     from dots.SequenceSequenceGroup ssg, dots.genefeature g, Core.TableInfo t
     where t.name = 'GeneFeature'
     and g.na_feature_id = ssg.sequence_id
     and t.table_id = ssg.source_table_id
     ";
-
-
 
   my $stmt = $self->getDbHandle()->prepareAndExecute($sql);
 
@@ -403,13 +464,17 @@ B<Return Type:> ARRAYREF
 =cut
 
 sub findGenes {
-  my ($self, $stmt, $na_sequence_id, $start, $end) = @_;
+  my ($self, $na_sequence_id, $start, $end) = @_;
 
-  $stmt->execute($na_sequence_id, $start, $end);
+  my $seqId = $self->{_nasequence_source_ids}->{$na_sequence_id};
+  my $allLocations = $self->getGeneLocations();
 
   my @genes;
-  while (my ($naFeatId, $geneStart, $geneEnd) = $stmt->fetchrow_array()) {
-    push(@genes, {id => $naFeatId, start => $geneStart, end => $geneEnd});
+
+  foreach my $geneLocation (@{$allLocations->{$seqId}}) {
+    if($geneLocation->{min} > $start && $geneLocation->{max} < $end) {
+      push @genes, $geneLocation;
+    }
   }
 
   return \@genes;
@@ -417,7 +482,7 @@ sub findGenes {
 
 #--------------------------------------------------------------------------------
 
-=item I<findOrthologPairs>
+=item I<findAnchorPairs>
 
 B<Parameters:>
 
@@ -433,93 +498,62 @@ B<Return Type:> ARRAYREF
 
 =cut
 
-sub findOrthologPairs {
-  my ($self, $refGenes, $synGenes, $gene2orthologGroup) = @_;
+sub findAnchorPairs {
+  my ($self, $refGenes, $synGenes, $gene2orthologGroup, $syntenyObj) = @_;
 
-  my @genePairs;
+  my $genePairsHashRef = {};
   foreach my $synGene (@$synGenes) {
-    my $ssgId = $gene2orthologGroup->{$synGene->{id}};
+    my $ssgId = $gene2orthologGroup->{$synGene->{gene}};
     next unless($ssgId);
 
     foreach my $refGene (@$refGenes) {
-      my $ssgIdRef = $gene2orthologGroup->{$refGene->{id}};
+      my $ssgIdRef = $gene2orthologGroup->{$refGene->{gene}};
 
       if ($ssgId eq $ssgIdRef) {
-	my $genePair = {refStart=>$refGene->{start},
-			refEnd=>$refGene->{end},
-			synStart=>$synGene->{start},
-			synEnd=>$synGene->{end}};
-
-	push(@genePairs, $genePair);
+        push @{$genePairsHashRef->{start}->{$refGene->{min}}}, ($synGene->{min}, $synGene->{max});
+        push @{$genePairsHashRef->{end}->{$refGene->{max}}}, ($synGene->{min}, $synGene->{max});
       }
     }
   }
 
-  # Sort by ref first then syn
-  my @sortedPairs = sort { $a->{refStart} <=> $b->{refStart} || 
-                             $a->{synStart} <=> $b->{synEnd} } @genePairs;
+  my @pairs;
 
-  my @sortedPairsFiltered;
-
-  my $prevRefStart = 0;
-  my $prevRefEnd = 0;
-
-
-  foreach my $sortedPair (@sortedPairs){
-      if($sortedPair->{refStart} > $prevRefEnd){
-	  push(@sortedPairsFiltered,$sortedPair);
-	  $prevRefStart = $sortedPair->{refStart};
-	  $prevRefEnd = $sortedPair->{refEnd};
-      }else{
-	  print STDERR "This gene pair has been removed because of overlap with another gene :";
-	  print STDERR Dumper $sortedPair;
-      }
-
-  }
-
-  return \@sortedPairsFiltered;
-
-}
-
-#--------------------------------------------------------------------------------
-
-sub addAnchor {
-  my ($self, $refLoc, $synLoc, $anchors, $anchorsCursor, $addFinalToo) = @_;
-
-  my $rightEdge = 9999999999;
-  my $leftEdge = -9999999999;
-
-  my $anchor = {prev_ref_loc=> $leftEdge,
-                ref_loc=> $refLoc,
-                next_ref_loc=> $rightEdge,
-                syntenic_loc=> $synLoc};
-
-  $anchors->[$anchorsCursor] = $anchor;
-
-  my $prevAnchor = $anchors->[$anchorsCursor - 1];
-  my $prevGeneAnchor = $anchorsCursor - 2 > 0 ? $anchors->[$anchorsCursor - 2] : undef;
-
-  if ($anchorsCursor > 0) {
-
-    # paralog group
-    if($prevGeneAnchor && $anchor->{ref_loc} == $prevGeneAnchor->{ref_loc}) {
-      $prevGeneAnchor->{next_ref_loc} = $leftEdge;
-      $prevAnchor->{next_ref_loc} = $leftEdge;
-      $anchor->{prev_ref_loc} = $rightEdge;
+  foreach my $refStart (keys %{$genePairsHashRef->{start}}) {
+    my $synStart;
+    if($syntenyObj->getIsReversed()) {
+      $synStart = CBIL::Util::V::max(@{$genePairsHashRef->{start}->{$refStart}});
     }
     else {
-      $prevAnchor->{next_ref_loc} = $refLoc;
-      $anchor->{prev_ref_loc} = $prevAnchor->{ref_loc}; 
+      $synStart = CBIL::Util::V::min(@{$genePairsHashRef->{start}->{$refStart}});
     }
-
-    # take care of the last in a paralog group 
-    if($prevGeneAnchor && $anchor->{ref_loc} != $prevGeneAnchor->{ref_loc} && $prevAnchor->{prev_ref_loc} == $rightEdge) {
-      $prevGeneAnchor->{next_ref_loc} = $prevAnchor->{ref_loc};
-    }
+    push @pairs, [$refStart,$synStart];
   }
+
+  foreach my $refEnd (keys %{$genePairsHashRef->{end}}) {
+    my $synEnd;
+    if($syntenyObj->getIsReversed()) {
+      $synEnd = CBIL::Util::V::min(@{$genePairsHashRef->{end}->{$refEnd}});
+    }
+    else {
+      $synEnd = CBIL::Util::V::max(@{$genePairsHashRef->{end}->{$refEnd}});
+    }
+    push @pairs, [$refEnd,$synEnd];
+  }
+
+  if($syntenyObj->getIsReversed()) {
+    push @pairs, [$syntenyObj->getAStart(), $syntenyObj->getBEnd()];
+    push @pairs, [$syntenyObj->getAEnd(), $syntenyObj->getBStart()];
+  }
+  else {
+    push @pairs, [$syntenyObj->getAStart(), $syntenyObj->getBStart()];
+    push @pairs, [$syntenyObj->getAEnd(), $syntenyObj->getBEnd()];
+  }
+
+  return \@pairs;
 }
 
 #--------------------------------------------------------------------------------
+
 
 sub addAnchorToGusObj {
   my ($self, $anchor, $syntenyObj) = @_;
