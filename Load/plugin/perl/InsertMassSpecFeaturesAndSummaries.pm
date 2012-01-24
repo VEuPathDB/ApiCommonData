@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 45288 $',
+                     cvsRevision       => '$Revision: 45291 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -83,6 +83,7 @@ sub run {
   $self->prepareSQLStatements();
   
   foreach my $inputFile (@inputFiles) {
+    warn "now reading input file $inputFile \n";
     my $inputFileLocation = $inputFileDirectory.'/'.$inputFile;
     $inputFileLocation =~s/\/*/\//;
     open(F, $inputFileLocation) or die "Could not open $inputFile: $!\n";
@@ -92,8 +93,6 @@ sub run {
       next if /^\s*$/;
       if (/^# /) {
         $state = 'gene';
-        undef $record;
-        $record->{file} = $inputFile;
         next;
       } elsif(/^## start/) {
         $state = 'peptide';
@@ -104,6 +103,7 @@ sub run {
         next;
       } elsif($state eq 'gene') {
         $record = $self->initRecord($_);
+        $record->{file}=$inputFile;
         push @{$recordSet}, $record;
       } elsif($state eq 'peptide') {
         $peptide = $self->addMassSpecFeatureToRecord($_, $record);
@@ -743,12 +743,11 @@ sub insertMassSpecSummary {
   }
 
   my $mss = GUS::Model::ApiDB::MassSpecSummary->new({
-                                                     'file'                          => $record->{file},
                                                      'aa_sequence_id'                => $record->{aaSequenceId},
                                                      'is_expressed'                  => 1,
                                                      'developmental_stage'           => $record->{devStage},
                                                      'sequence_count'                => $record->{sequenceCount},
-                                                     'number_of_spans'                => scalar(keys%peps),
+                                                     'number_of_spans'               => scalar(keys%peps),
                                                      'prediction_algorithm_id'       => $self->getPredictionAlgId,
                                                      'spectrum_count'                => $record->{spectrumCount},
                                                      'aa_seq_length'                 => $record->{seqLength},
@@ -756,6 +755,7 @@ sub insertMassSpecSummary {
                                                      'aa_seq_pi'                     => $record->{seqPI},
                                                      'aa_seq_percent_covered'        => $self->computeSequenceCoverage($record),
                                                      'external_database_release_id'  => $self->{extDbRlsId},
+                                                     'sample_file'                   => $record->{file},
                                                     });
 
   $mss->submit();
