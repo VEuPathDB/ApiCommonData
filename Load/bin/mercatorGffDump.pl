@@ -65,7 +65,6 @@ foreach my  $Taxon_ID (keys (%SpeciesHash)) {
 
   print("Preparing to export exons for $species...\n");
   my $ExonQuery = &GetExonQuery($Taxon_ID);
-  
   &ExportToGFF(\$dbh,$ExonQuery);
 
   print("Finished exporting exons for $species...preparing to export CDS for $species\n");
@@ -190,7 +189,7 @@ sub GetExonQuery {
                   decode(nl.is_reversed, 1, '-', '+') as gff_strand,
                   '.' as gff_frame,
                   ef.source_id as feature_id,
-                  regexp_replace(ef.source_id, '-[[:digit:]]+$', '') as gene_source_id
+                  regexp_replace(ef.source_id, '-[[:digit:]]+\$', '') as gene_source_id
            FROM   DoTS.ExonFeature ef,
                   ApidbTuning.${tuningTablePrefix}FeatureLocation nl,
                   DoTS.NaSequence ns
