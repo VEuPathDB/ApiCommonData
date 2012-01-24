@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 45163 $',
+                     cvsRevision       => '$Revision: 45288 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -743,6 +743,7 @@ sub insertMassSpecSummary {
   }
 
   my $mss = GUS::Model::ApiDB::MassSpecSummary->new({
+                                                     'file'                          => $record->{file},
                                                      'aa_sequence_id'                => $record->{aaSequenceId},
                                                      'is_expressed'                  => 1,
                                                      'developmental_stage'           => $record->{devStage},
