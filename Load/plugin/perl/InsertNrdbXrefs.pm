@@ -77,6 +77,13 @@ my $argsDeclaration =
                constraintFunc => undef,
                isList=> 1
               }),
+
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
   ];
 
 
@@ -280,7 +287,16 @@ sub getMapping {
     my $methodName = $$tables{$tableName}->{getId};
     my $method = "ApiCommonData::Load::Util::$methodName";
 
-    my $featId = &$method($self, $sourceId);
+    my $featId;
+
+    if ($self->getArg('organismAbbrev')){
+
+	$featId = &$method($self, $sourceId, 0, $self->getArg('organismAbbrev'));
+    }
+    else{
+
+	$featId = &$method($self, $sourceId);
+    }
 
     unless($featId){
       $self->log("Skipping: source_id '$sourceId' not found in database.");
