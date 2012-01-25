@@ -436,88 +436,107 @@ grant execute on apidb.alphanumeric_str to public;
 create or replace function apidb.project_id (organism varchar2)
 return varchar2
 is
+   project varchar2(80);
 begin
-   case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
-         when 'theileria'
-           then return 'PiroplasmaDB';
-         when 'babesia'
-           then return 'PiroplasmaDB';
-         when 'cryptosporidium'
-           then return 'CryptoDB';
-         when 'plasmodium'
-           then return 'PlasmoDB';
-         when 'toxoplasma'
-           then return 'ToxoDB';
-         when 'neospora'
-           then return 'ToxoDB';
-	 when 'endotrypanum'
-	   then return 'TriTrypDB';
-         when 'leishmania'
-           then return 'TriTrypDB';
-         when 'trypanosoma'
-           then return 'TriTrypDB';
-         when 'crithidia'
-           then return 'TriTrypDB';
-         when 'trichomonas'
-           then return 'TrichDB';
-         when 'phytomonas'
-           then return 'TrichDB';
-         when 'giardia'
-           then return 'GiardiaDB';
-         when 'entamoeba'
-           then return 'AmoebaDB';
-         when 'encephalitozoon'
-           then return 'MicrosporidiaDB';
-         when 'enterocytozoon'
-           then return 'MicrosporidiaDB';
-         when 'anncaliia'
-           then return 'MicrosporidiaDB';
-         when 'edhazardia'
-           then return 'MicrosporidiaDB';
-         when 'nosema'
-           then return 'MicrosporidiaDB';
-         when 'vittaforma'
-           then return 'MicrosporidiaDB';
-         when 'vavraia'
-           then return 'MicrosporidiaDB';
-         when 'nematocida'
-           then return 'MicrosporidiaDB';
-         when 'octosporea'
-           then return 'MicrosporidiaDB';
-         when 'gregarina'
-           then return 'ToxoDB';
-         when 'sarcocystis'
-           then return 'OrphanDB';
-         when 'eimeria'
-           then return 'ToxoDB';
-         when 'gibberella'
-           then return 'FungiDB';
-         when 'neurospora'
-           then return 'FungiDB';
-         when 'cryptococcus'
-           then return 'FungiDB';
-         when 'aspergillus'
-           then return 'FungiDB';
-         when 'coccidioides'
-           then return 'FungiDB';
-         when 'magnaporthe'
-           then return 'FungiDB';
-         when 'candida'
-           then return 'FungiDB';
-         when 'puccinia'
-           then return 'FungiDB';
-         when 'saccharomyces'
-           then return 'FungiDB';
-         when 'fusarium'
-           then return 'FungiDB';
-         when 'rhizopus'
-           then return 'FungiDB';
-         when 'tremella'
-           then return 'FungiDB';
-         else raise_application_error(-20101,
-                                      'project_id() function called with unknown organism "'
-                                      || organism || '"' );
+
+    -- check organism table
+    begin
+
+      select distinct project_name
+      into project
+      from apidb.Organism o, sres.TaxonName tn
+      where o.taxon_id = tn.taxon_id
+        and tn.name = organism;
+
+    exception
+
+      when NO_DATA_FOUND then
+         -- use hardwired genus->project mappings
+         case substr(lower(organism), 1, instr(organism||' ', ' ') - 1)
+               when 'theileria'
+                 then project := 'PiroplasmaDB';
+               when 'babesia'
+                 then project := 'PiroplasmaDB';
+               when 'cryptosporidium'
+                 then project := 'CryptoDB';
+               when 'plasmodium'
+                 then project := 'PlasmoDB';
+               when 'toxoplasma'
+                 then project := 'ToxoDB';
+               when 'neospora'
+                 then project := 'ToxoDB';
+               when 'endotrypanum'
+                 then project := 'TriTrypDB';
+               when 'leishmania'
+                 then project := 'TriTrypDB';
+               when 'trypanosoma'
+                 then project := 'TriTrypDB';
+               when 'crithidia'
+                 then project := 'TriTrypDB';
+               when 'trichomonas'
+                 then project := 'TrichDB';
+               when 'phytomonas'
+                 then project := 'TrichDB';
+               when 'giardia'
+                 then project := 'GiardiaDB';
+               when 'entamoeba'
+                 then project := 'AmoebaDB';
+               when 'encephalitozoon'
+                 then project := 'MicrosporidiaDB';
+               when 'enterocytozoon'
+                 then project := 'MicrosporidiaDB';
+               when 'anncaliia'
+                 then project := 'MicrosporidiaDB';
+               when 'edhazardia'
+                 then project := 'MicrosporidiaDB';
+               when 'nosema'
+                 then project := 'MicrosporidiaDB';
+               when 'vittaforma'
+                 then project := 'MicrosporidiaDB';
+               when 'vavraia'
+                 then project := 'MicrosporidiaDB';
+               when 'nematocida'
+                 then project := 'MicrosporidiaDB';
+               when 'octosporea'
+                 then project := 'MicrosporidiaDB';
+               when 'gregarina'
+                 then project := 'ToxoDB';
+               when 'sarcocystis'
+                 then project := 'OrphanDB';
+               when 'eimeria'
+                 then project := 'ToxoDB';
+               when 'gibberella'
+                 then project := 'FungiDB';
+               when 'neurospora'
+                 then project := 'FungiDB';
+               when 'cryptococcus'
+                 then project := 'FungiDB';
+               when 'aspergillus'
+                 then project := 'FungiDB';
+               when 'coccidioides'
+                 then project := 'FungiDB';
+               when 'magnaporthe'
+                 then project := 'FungiDB';
+               when 'candida'
+                 then project := 'FungiDB';
+               when 'puccinia'
+                 then project := 'FungiDB';
+               when 'saccharomyces'
+                 then project := 'FungiDB';
+               when 'fusarium'
+                 then project := 'FungiDB';
+               when 'rhizopus'
+                 then project := 'FungiDB';
+               when 'tremella'
+                 then project := 'FungiDB';
+               else raise_application_error(-20101,
+                                            'project_id() function called with unknown organism "'
+                                            || organism || '"' );
       end case;
+    end;
+
+    return project;
+
 end project_id;
 /
 
