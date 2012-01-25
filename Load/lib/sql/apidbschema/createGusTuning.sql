@@ -71,14 +71,16 @@ alter table sres.EnzymeClass modify (description varchar2(200));
 
 alter table sres.GoEvidenceCode modify (name varchar2(20));
 
-alter table sres.dbref modify (SECONDARY_IDENTIFIER varchar2(150));
-alter table sres.dbref modify (LOWERCASE_SECONDARY_IDENTIFIER varchar2(150));
+alter table sres.DbRef modify (secondary_identifier varchar2(150));
+alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
 
-alter table dots.SequencePiece add ( start_position number(12), end_position number(12) );
+alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
 
 alter table dots.NaFeatureImp modify (name varchar2(80));
 
 alter table dots.Est modify (accession varchar2(50));
+
+alter table sres.ExternalDatabase modify (name varchar2(150));
 
 -- indexes for orthomcl keyword and pfam searches
 CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
