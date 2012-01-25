@@ -49,11 +49,9 @@ FROM Dots.GeneFeature
 ";
 
     my $sql = "
-select dbref.secondary_identifier, gf.na_feature_id
-from SRes.DBRef dbref, dots.genefeature gf, sres.externaldatabaserelease edr
-where edr.external_database_release_id = dbref.external_database_release_id
-and dbref.primary_identifier = gf.source_id
-and edr.id_type in ('previous id','alternate id')
+select gi.id, gf.na_feature_id
+from ApidbTuning.GeneId gi, dots.genefeature gf
+where gi.gene = gf.source_id
 ";
 
     if($geneExtDbRlsId){
@@ -64,12 +62,10 @@ FROM Dots.GeneFeature
 where external_database_release_id in ($geneExtDbRlsId)
 ";
     $sql = "
-select dbref.secondary_identifier, gf.na_feature_id
-from SRes.DBRef dbref, dots.genefeature gf, sres.externaldatabaserelease edr
-where edr.external_database_release_id = dbref.external_database_release_id
-and dbref.primary_identifier = gf.source_id
-and edr.id_type in ('previous id','alternate id')
-and gf.external_database_release_id in  ($geneExtDbRlsId)
+select gi.id, gf.na_feature_id
+from ApidbTuning.GeneId gi, dots.genefeature gf
+where gi.gene = gf.source_id
+and gf.external_database_release_id in ($geneExtDbRlsId)
 ";
     }
     
