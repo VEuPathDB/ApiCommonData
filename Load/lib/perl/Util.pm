@@ -261,9 +261,15 @@ AND taf.na_feature_id = t.na_feature_id
 # warning: this method issues a query each time it is called, ie, it is
 #          slow when used repeatedly.  should be rewritten to do a batch
 sub getTranslatedAAFeatureIdFromGeneSourceId {
-    my ($plugin, $sourceId) = @_;
+    my ($plugin, $sourceId, $geneExtDbRlsId, $optionalOrganismAbbrev) = @_;
 
-    my $geneFeatId = getGeneFeatureId($plugin, $sourceId);
+    my $geneFeatId;
+      if($optionalOrganismAbbrev){  
+	  $geneFeatId = getGeneFeatureId($plugin, $sourceId, $geneExtDbRlsId,$optionalOrganismAbbrev);
+      }else{
+	  $geneFeatId = getGeneFeatureId($plugin, $sourceId);
+      }
+
     my $sql = "
 SELECT taf.aa_feature_id
 FROM Dots.Transcript t, Dots.TranslatedAAFeature taf
