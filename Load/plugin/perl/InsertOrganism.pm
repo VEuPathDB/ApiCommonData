@@ -60,6 +60,12 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
+     stringArg({ name => 'genomeSource',
+		 descr => 'eg GeneDB',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
      stringArg({ name => 'abbrevOrthomcl',
 		 descr => 'eg tgon',
 		 constraintFunc=> undef,
@@ -162,6 +168,7 @@ sub run {
   my $abbrev = $self->getArg('abbrev');
   my $abbrevPublic = $self->getArg('abbrevPublic');
   my $nameForFilenames = $self->getArg('nameForFilenames');
+  my $genomeSource = $self->getArg('genomeSource');
   my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
   my $abbrevStrain = $self->getArg('abbrevStrain');
   my $abbrevRefStrain = $self->getArg('abbrevRefStrain');
@@ -206,6 +213,7 @@ sub run {
 						    'abbrev' => $abbrev,
 						    'abbrev_public' => $abbrevPublic,
 						    'name_for_filenames' => $nameForFilenames,
+						    'genome_source' => $genomeSource,
 						    'abbrev_orthomcl' => $abbrevOrthomcl,
 						    'abbrev_strain' => $abbrevStrain,
 						    'abbrev_ref_strain' => $abbrevRefStrain,
