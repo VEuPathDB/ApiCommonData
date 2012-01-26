@@ -38,7 +38,13 @@ sub getArgsDeclaration {
      constraintFunc=> undef,
      reqd  => 1,
      isList => 0
-         })
+         }),
+     stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
     ];
 
   return $argsDeclaration;
@@ -135,7 +141,8 @@ sub run {
       @genes = @elements[2..(@elements-1)];
       
       foreach my $gene (@genes) {
-        my $geneFeat = GUS::Model::DoTS::GeneFeature->new({source_id => $gene});
+	  my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $gene, 0, $self->getArg('organismAbbrev')) ;
+          my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'na_feature_id' => $naFeatureId});
           if ($geneFeat->retrieveFromDB) {
             $geneFeature{$gene} = $geneFeat->getNaFeatureId();
           } 
