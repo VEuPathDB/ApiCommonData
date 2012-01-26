@@ -101,6 +101,13 @@ my $argsDeclaration =
 	    isList => 0
 	   }),
 
+   stringArg({name => 'organismAbbrev',
+	      descr => 'if supplied, use a prefix to use for tuning manager tables',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
  stringArg({name => 'restart',
 	    descr => 'a list of algInvocation numbers for runs that failed',
 	    constraintFunc => undef,
@@ -161,7 +168,13 @@ sub run{
 
     unless(%done->{$sourceId}){
 
-      my $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $sourceId);
+	my $aaSeqId;
+
+	if ($self->getArg('organismAbbrev')){
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$extDbRls,$self->getArg('organismAbbrev'));
+	}else{
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$extDbRls);
+        }
 
       if($aaSeqId){
 
