@@ -161,7 +161,7 @@ sub run{
 	my $aaSeqId;
 
 	if ($self->getArg('organismAbbrev')){
-	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$self->getArg('organismAbbrev'));
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,0,$self->getArg('organismAbbrev'));
 	}else{
 	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId);
         }
