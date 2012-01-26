@@ -50,7 +50,7 @@ FROM Dots.GeneFeature
 
     my $sql = "
 select gi.id, gf.na_feature_id
-from ApidbTuning.GeneId gi, dots.genefeature gf
+from ApidbTuning.${tmPrefix}GeneId gi, dots.genefeature gf
 where gi.gene = gf.source_id
 ";
 
@@ -63,7 +63,7 @@ where external_database_release_id in ($geneExtDbRlsId)
 ";
     $sql = "
 select gi.id, gf.na_feature_id
-from ApidbTuning.GeneId gi, dots.genefeature gf
+from ApidbTuning.${tmPrefix}GeneId gi, dots.genefeature gf
 where gi.gene = gf.source_id
 and gf.external_database_release_id in ($geneExtDbRlsId)
 ";
@@ -197,7 +197,7 @@ sub getAASeqIdFromGeneId {
   my ($plugin, $geneSourceId, $geneExtDbRlsId, $optionalOrganismAbbrev) = @_;
   
   my $geneFeatId;
-  if($optionalOrganismAbbrev){  
+  if($optionalOrganismAbbrev){ 
       $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, $geneExtDbRlsId,$optionalOrganismAbbrev);
   }else{
        $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, $geneExtDbRlsId);
