@@ -131,7 +131,8 @@ begin
 			    dbms_output.put_line( '    Updating stats for index '||i.index_name );
 			    dbms_stats.gather_index_stats(ownname => s.schema, indname => i.index_name, estimate_percent => 100, degree => 2);
 		    end loop;
-			dbms_stats.lock_table_stats(ownname => s.schema, tabname => t.table_name);
+                        -- locking statistics was creating problems (redmine #7658)
+			-- dbms_stats.lock_table_stats(ownname => s.schema, tabname => t.table_name);
 		end loop;
 	end loop;
 end;
