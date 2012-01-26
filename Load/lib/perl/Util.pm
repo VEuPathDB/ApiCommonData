@@ -194,13 +194,13 @@ sub getAASeqIdFromFeatId {
 # warning: this method issues a query each time it is called, ie, it is
 #          slow when used repeatedly.  should be rewritten to do a batch
 sub getAASeqIdFromGeneId {
-  my ($plugin, $geneSourceId, $optionalOrganismAbbrev) = @_;
+  my ($plugin, $geneSourceId, $geneExtDbRlsId, $optionalOrganismAbbrev) = @_;
   
   my $geneFeatId;
   if($optionalOrganismAbbrev){  
-      $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, 0,$optionalOrganismAbbrev);
+      $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, $geneExtDbRlsId,$optionalOrganismAbbrev);
   }else{
-       $geneFeatId = getGeneFeatureId($plugin, $geneSourceId);
+       $geneFeatId = getGeneFeatureId($plugin, $geneSourceId, $geneExtDbRlsId);
   }
 
 
