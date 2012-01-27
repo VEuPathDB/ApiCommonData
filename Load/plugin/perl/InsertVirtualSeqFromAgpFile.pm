@@ -549,8 +549,8 @@ sub  makeSequencePiece {
 
   my $seqPiece = GUS::Model::DoTS::SequencePiece->new({sequence_order => $pieceNumber,
 						       strand_orientation => $orientation,
-						       #start_position => $start,
-						       #end_position => $end,
+						       start_position => $start,
+						       end_position => $end,
 						       distance_from_left => $offset,
 						       piece_na_sequence_id => $pieceId});
 
