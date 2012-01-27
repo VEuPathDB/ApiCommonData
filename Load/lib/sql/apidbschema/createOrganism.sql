@@ -30,7 +30,7 @@ ADD CONSTRAINT organism_pk PRIMARY KEY (organism_id);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq
-UNIQUE (taxon_id, project_name);
+UNIQUE (taxon_id);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
