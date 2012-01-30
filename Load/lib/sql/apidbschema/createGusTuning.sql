@@ -82,8 +82,16 @@ alter table dots.Est modify (accession varchar2(50));
 
 alter table sres.ExternalDatabase modify (name varchar2(150));
 
-alter table sres.ExternalDatabaseRelease add (id_is_alias number(1));
-
+alter table sres.ExternalDatabaseRelease
+ add (id_is_alias  number(1),
+      data_type    varchar2(255),
+      data_subtype varchar2(255),
+      taxon_id     number(12),
+      constraint externaldatabaserelease_fk02
+        foreign key (taxon_id)
+        references sres.taxon 
+        validate
+     );
 -- indexes for orthomcl keyword and pfam searches
 CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
     indextype IS ctxsys.ctxcat;
