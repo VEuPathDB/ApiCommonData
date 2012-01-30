@@ -9,11 +9,6 @@ use Data::Dumper;
 
 my $argsDeclaration =
 [
- booleanArg ({name => 'isLogged',
-              descr => 'Set to true if the values are log base 2',
-              reqd => 0,
-              default => 0
-             }),
    stringArg({name           => 'profileSetNames',
 	      descr          => 'Names of ProfileSets to update',
 	      reqd           => 0,
@@ -188,7 +183,7 @@ sub processProfileSet {
   $self->log("Processing ProfileSet $profileSetName");
 
   my $sql = "
-SELECT source_id, profile_as_string, no_evidence_of_expr, profile_id
+SELECT source_id, profile_as_string, no_evidence_of_expr, profile_id, ps.is_logged, ps.base
 FROM apidb.profile p, apidb.profileset ps
 WHERE ps.name = '$profileSetName'
 AND ps.external_database_release_id = $dbRlsId
@@ -204,7 +199,7 @@ AND p.profile_set_id = ps.profile_set_id
   my %sourceId2profileId;
 
   $self->log("  First pass to read profiles and compute statistics");
-  while (my ($sourceId, $profileString, $dud, $profileId)
+  while (my ($sourceId, $profileString, $dud, $profileId, $isLogged, $base)
 	 = $sth->fetchrow_array()) {
 
     if ($dud == 1) {
@@ -230,7 +225,8 @@ AND p.profile_set_id = ps.profile_set_id
 
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
-				   $timePointMap, $sourceId);
+				   $timePointMap, $sourceId,
+                                   $isLogged, $base,);
     $inductionSum += $statsById->{$sourceId}->{ind_ratio};
     $profileCount++;
   }
@@ -320,7 +316,7 @@ sub secondPass {
 
 sub calculateSummaryStats {
     my ($self, $profileHashRef, $percentileHashRef, $timePointMappingRef,
-       $sourceId) = @_;
+       $sourceId, $isLogged, $base) = @_;
     my %profileHash = %{$profileHashRef};
     my %percentileHash = %{$percentileHashRef} if $self->getArg('percentProfileSet');
     my %timePointMapping = %{$timePointMappingRef} if $timePointMappingRef;
@@ -350,14 +346,15 @@ sub calculateSummaryStats {
 	    $min = $profileHash{$key};
 	    $minKey = $key;
 	}
-    }    
+    }
+
     $resultHash{'max_expression'} = $max unless ($max eq 'NA');
     $resultHash{'min_expression'} = $min  unless ($min eq 'NA');
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
 
-    if($self->getArg('isLogged')) {
-      $resultHash{'ind_ratio'} = 2 ** $max / 2 ** $min;
+    if($isLogged)) {
+      $resultHash{'ind_ratio'} = $base ** $max / $base ** $min;
     }
     else {
       if($min == 0) {
