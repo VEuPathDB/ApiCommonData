@@ -14,6 +14,8 @@ create table ApiDB.ProfileSet (
  y_axis_units          varchar2(100),
  source_id_type        VARCHAR(200),
  element_count         NUMBER(3),
+ is_logged             NUMBER(1),
+ base                  NUMBER(2),
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
  USER_WRITE            NUMBER(1),

@@ -12,6 +12,7 @@ CREATE TABLE apidb.MassSpecSummary (
  aa_seq_length                NUMBER(12),
  aa_seq_molecular_weight      NUMBER(12),
  aa_seq_pi                    FLOAT(126),
+ sample_file                  VARCHAR2(128),
  modification_date            date NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
