@@ -133,6 +133,8 @@ sub run {
 			    $self->{profileSetDescrips}->[$i],
 			    $self->{sourceIdTypes}->[$i],
 			    $self->{loadProfileElement}->[$i],
+                            $self->{isLogged}->[$i],
+                            $self->{base}->[$i],
 			    $self->getArg('tolerateMissingIds'),
 			    0,
 			    $self->getArg('organismAbbrev'));
@@ -158,6 +160,14 @@ sub readConfigFile {
     push(@{$self->{sourceIdTypes}}, $vals[3]);
     push(@{$self->{skipSecondRow}}, $vals[4]);
     push(@{$self->{loadProfileElement}}, $vals[5]);
+    if ($vals[6]) {
+      push(@{$self->{isLogged}}, $vals[6]);
+      push(@{$self->{base}}, $vals[7]);
+    }
+    else {
+      push(@{$self->{isLogged}}, 0);
+      push(@{$self->{base}}, undef);
+    }
   }
 }
 
