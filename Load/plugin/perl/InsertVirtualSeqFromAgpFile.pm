@@ -324,7 +324,10 @@ sub processFile {
 
   }
 
- $numVirInserted += $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder);
+  $chromosomeOrder=$self->getArg('chromosomesInOrder') ? $numVirInserted : $refChromosomeOrderMapping->{$virAcc}->{chrom_order_num};
+  $chromosome=$refChromosomeOrderMapping->{$virAcc}->{chromosome};
+ 
+  $numVirInserted += $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder, $chromosome);
 
   $self->log("$numVirInserted VirtualSequences rows inserted\n");
 
@@ -347,8 +350,8 @@ sub getChromOrderMapping{
 
     my @arr = split(/\t/, $_);
 
-    $chromosomeOrderMapping{$arr[0]}->{chrom_order_num} = $arr[1]; 
-    $chromosomeOrderMapping{$arr[0]}->{chromosome} = $arr[2] if $arr[2];
+    $chromosomeOrderMapping{$arr[0]}->{chromosome} = $arr[1]; 
+    $chromosomeOrderMapping{$arr[0]}->{chrom_order_num} = $arr[2] if $arr[2];
   }
 
   return \%chromosomeOrderMapping;
