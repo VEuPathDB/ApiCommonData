@@ -1,4 +1,4 @@
-package ApiCommonData::Load::ltarParrotTraII2BioperlTree;
+package ApiCommonData::Load::ltarParrotTarII2BioperlTree;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
