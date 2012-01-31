@@ -25,7 +25,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"           column="source_id"/>
      <qualifier name="codon_start"         ignore="true"/>
     <qualifier name="citation" ignore="true"/>
-    <qualifier name="db_xref"             handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"             ignore="true"/>
     <qualifier name="note"                handler="api" method="note"/>
     <qualifier name="pseudo"         column="is_pseudo"/>
     <qualifier name="allele"/>
@@ -56,7 +56,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="rRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            column="source_id"/>
      <qualifier name="product"              />
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
   </feature>
@@ -67,7 +67,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              />
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
 
@@ -75,7 +75,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region" ignore="true">
@@ -106,7 +106,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="lab_host"/> 
     <qualifier name="cell_type"/> 
     <qualifier name="cell_line"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="isolate"/>
     <qualifier name="mol_type"/>
     <qualifier name="organism"/>
@@ -140,14 +140,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            />
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
 
@@ -177,7 +177,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"           column="source_id"/>
      <qualifier name="codon_start"         ignore="true"/>
     <qualifier name="citation"/>
-    <qualifier name="db_xref"             handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"             ignore="true"/>
     <qualifier name="note"                handler="api" method="note"/>
     <qualifier name="pseudo"         column="is_pseudo"/>
     <qualifier name="allele"/>
@@ -232,14 +232,14 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature" ignore="true">
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="gene"                 ignore="true"/>
   </feature>
 
   <feature name="misc_feature_gene" so="sequence_feature" ignore="true">
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="gene"                 ignore="true"/>
   </feature>
 
@@ -279,7 +279,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 <feature name="ncRNA" so="gene_fragment" ignore="true">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 ignore="true"/>
   </feature>
