@@ -40,12 +40,12 @@ sub parseInputFile {
 
 # build a profile set and its profiles from in-memory data structures
 sub processInputProfileSet {
-  my ($plugin, $dbRlsId, $header, $profileRows, $name, $descrip, $sourceIdType, $loadProfileElement,$isLogged,$base,$tolerateMissingIds, $averageReplicates,$isLogged,$base,$optionalOrganismAbbrev) = @_;
+  my ($plugin, $dbRlsId, $header, $profileRows, $name, $descrip, $sourceIdType, $loadProfileElement,$isLogged,$base,$tolerateMissingIds, $averageReplicates,$optionalOrganismAbbrev) = @_;
 
   $plugin->log("Processing '$name'");
 
   my $profileSet = &makeProfileSet($plugin, $dbRlsId, $header, $name,
-				    $descrip, $sourceIdType,$isLogged,$base);
+				    $descrip, $sourceIdType, $isLogged, $base);
 
   $profileSet->submit();
   my $profileSetId = $profileSet->getId();
@@ -80,7 +80,7 @@ sub processInputProfileSet {
 }
 
 sub makeProfileSet {
-  my ($plugin, $dbRlsId, $header, $name, $descrip, $sourceIdType,$isLogged, $base) = @_;
+  my ($plugin, $dbRlsId, $header, $name, $descrip, $sourceIdType, $isLogged, $base) = @_;
   $base ='' unless defined $base;
 
   my @header = @{$header};
