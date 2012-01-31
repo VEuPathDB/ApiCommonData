@@ -4,6 +4,8 @@ CREATE TABLE apidb.DataSource (
  version                      VARCHAR2(20) NOT NULL,
  is_species_scope             NUMBER(1),
  taxon_id                     NUMBER(12),
+ category                     VARCHAR2(100),
+ subcategory                  VARCHAR2(100),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,
