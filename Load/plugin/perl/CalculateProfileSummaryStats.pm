@@ -9,6 +9,7 @@ use Data::Dumper;
 
 my $argsDeclaration =
 [
+   # profileSetNames and percentProfileSet are deprecated and may be removed in the future. please use profileSetSpecs
    stringArg({name           => 'profileSetNames',
 	      descr          => 'Names of ProfileSets to update',
 	      reqd           => 0,
@@ -226,7 +227,7 @@ AND p.profile_set_id = ps.profile_set_id
     $statsById->{$sourceId} =
       $self->calculateSummaryStats($profileHash, $percentHash,
 				   $timePointMap, $sourceId,
-                                   $isLogged, $base,);
+                                   $isLogged, $base);
     $inductionSum += $statsById->{$sourceId}->{ind_ratio};
     $profileCount++;
   }
@@ -315,8 +316,7 @@ sub secondPass {
 }
 
 sub calculateSummaryStats {
-    my ($self, $profileHashRef, $percentileHashRef, $timePointMappingRef,
-       $sourceId, $isLogged, $base) = @_;
+    my ($self, $profileHashRef, $percentileHashRef, $timePointMappingRef, $sourceId, $isLogged, $base) = @_;
     my %profileHash = %{$profileHashRef};
     my %percentileHash = %{$percentileHashRef} if $self->getArg('percentProfileSet');
     my %timePointMapping = %{$timePointMappingRef} if $timePointMappingRef;
@@ -353,7 +353,7 @@ sub calculateSummaryStats {
     $resultHash{'time_of_max_expr'} = $maxKey;
     $resultHash{'time_of_min_expr'} = $minKey;
 
-    if($isLogged)) {
+    if($isLogged) {
       $resultHash{'ind_ratio'} = $base ** $max / $base ** $min;
     }
     else {
