@@ -28,17 +28,17 @@ sub getArgsDeclaration {
 	       mustExist => 1,
 	       format => 'Two column tab delimited file in the order identifier, product',
 	     }),
-     stringArg({ name => 'productDbName',
-		 descr => 'externaldatabase name for product name source',
+     stringArg({ name => 'projectName',
+		 descr => 'project name for product name source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
-	       }),
-     stringArg({ name => 'productDbVer',
-		 descr => 'externaldatabaserelease version used for product name source',
-		 constraintFunc=> undef,
-		 reqd  => 1,
-		 isList => 0
+#	       }),
+#     stringArg({ name => 'productDbVer',
+#		 descr => 'externaldatabaserelease version used for product name source',
+#		 constraintFunc=> undef,
+#		 reqd  => 1,
+#		 isList => 0
 	       })
     ];
 
@@ -120,8 +120,13 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $productReleaseId = $self->getExtDbRlsId($self->getArg('productDbName'),
-						 $self->getArg('productDbVer')) || $self->error("Can't find external_database_release_id for product name source");
+  #my $productReleaseId = $self->getExtDbRlsId($self->getArg('productDbName'),
+  #						 $self->getArg('productDbVer')) || $self->error("Can't find external_database_release_id for product name source");
+
+  my $projectName = $self->getArg('projectName');
+  my $projectInfo =  GUS::Model::Core::ProjectInfo->new({name => $projectName});
+  $projectInfo->retrieveFromDB();
+  my $projectId = $projectInfo->getProjectId();
 
   my $tabFile = $self->getArg('file');
 
@@ -141,7 +146,7 @@ sub run {
 
       my $preferred = 0;
 	       
-      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $productReleaseId});
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
       
 
       if($geneFeature->retrieveFromDB()){
@@ -151,11 +156,12 @@ sub run {
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
-	  $self->makeGeneFeatProduct($productReleaseId,$nafeatureId,$product,$preferred);
+	  #$self->makeGeneFeatProduct($productReleaseId,$nafeatureId,$product,$preferred);
+	  $self->makeGeneFeatProduct($projectId, $nafeatureId, $product, $preferred);
   
 	  $processed++;
       }else{
-	  $self->log("WARNING","Gene Feature with source id '$sourceId' and external database release id '$productReleaseId' cannot be found");
+	  $self->log("WARNING","Gene Feature with source id '$sourceId' and project name '$projectName' at project Id '$projectId' cannot be found");
       }
       
       $self->undefPointerCache();
@@ -169,7 +175,8 @@ sub run {
 
 
 sub makeGeneFeatProduct {
-  my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
+  #my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
+  my ($self, $projectId, $naFeatId, $product, $preferred) = @_;
 
   my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
@@ -177,7 +184,7 @@ sub makeGeneFeatProduct {
 
   unless ($geneFeatProduct->retrieveFromDB()){
       $geneFeatProduct->set("is_preferred",$preferred);
-      $geneFeatProduct->set("external_database_release_id",$productReleaseId);
+      $geneFeatProduct->set("row_project_id", $projectId);
       $geneFeatProduct->submit();
   }else{
       $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId");
