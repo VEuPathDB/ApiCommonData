@@ -1,0 +1,73 @@
+#!/usr/bin/perl
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use DBI;
+use DBD::Oracle;
+
+use Getopt::Long;
+
+use CBIL::Util::PropertySet;
+
+## Make a tab-separated file with 2 columns, gene_source_id in both columns
+## The file will be used to load dbxref unity links
+
+
+my ($gusConfigFile, $organismAbbrev, $outputFile);
+
+&GetOptions('gus_config_file=s' => \$gusConfigFile,
+            'organismAbbrev=s' => \$organismAbbrev,
+            'outputFile=s' => \$outputFile,
+            );
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+
+unless($organismAbbrev) {
+  die "Error:  organismAbbrev was not specified";
+}
+
+unless(-e $gusConfigFile) {
+  die "Error:  gus config file [$gusConfigFile] does not exist";
+}
+
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $u = $gusconfig->{props}->{databaseLogin};
+my $pw = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+
+
+my $sql = <<SQL;
+  SELECT gf.source_id
+  FROM dots.genefeature gf, dots.nasequence nas, apidb.organism org
+  WHERE gf.na_sequence_id = nas.na_sequence_id
+  AND nas.taxon_id = org.taxon_id
+  AND org.abbrev = '$organismAbbrev'
+SQL
+
+
+my $sh = $dbh->prepare($sql);
+$sh->execute();
+
+my @geneIds;
+while (my $id = $sh->fetchrow_array()) {
+    push(@geneIds, $id);
+}
+$sh->finish();
+
+
+open(FILE, ">$outputFile");
+foreach my $id (@geneIds) {
+  print FILE "$id\$id\n";
+}
+close(FILE);
+
+
+$dbh->disconnect();
+
+1;
