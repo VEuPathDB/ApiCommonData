@@ -7,14 +7,11 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile,$extDbSpec,$outFile,$verbose,$dbRefNAFeatureExtDbSpec);
+my ($gusConfigFile,$genomeExtDbSpec,$outFile,$verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
-	    "extDbSpec=s" => \$extDbSpec,
-	    "dbRefNAFeatureExtDbSpec=s" => \$dbRefNAFeatureExtDbSpec,
+	    "genomeExtDbSpec=s" => \$genomeExtDbSpec,
 	    "verbose!" => \$verbose,
 	    "outfile=s" => \$outFile);
-
-
 
 print STDERR "Establishing dbi login\n";
 
@@ -28,24 +25,11 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
-my $extDbRlsId = getDbRlsId($extDbSpec);
+my $genomeExtDbRlsId = getDbRlsId($genomeExtDbSpec);
 
 my $dbRefNAFeatureExtDbRls;
 
-if($dbRefNAFeatureExtDbSpec){
-
-    my @dbRefNAFeatureExtDbSpecList = split(/,/, $dbRefNAFeatureExtDbSpec);
-
-    foreach my $db (@dbRefNAFeatureExtDbSpecList){
-
-	$dbRefNAFeatureExtDbRls .= getDbRlsId($db).",";
-
-    }
-
-    $dbRefNAFeatureExtDbRls =~ s/(,)$//g;
-}
-
-my $sql = "select source_id,na_feature_id from dots.genefeature where external_database_release_id = $extDbRlsId";
+my $sql = "select source_id,na_feature_id from dots.genefeature where external_database_release_id = $genomeExtDbRlsId";
 
 my $stmt1 = $dbh->prepareAndExecute($sql);
 
@@ -55,9 +39,18 @@ while(my ($sourceId,$naFeatId) = $stmt1->fetchrow_array()) {
   $genes{$sourceId}->{'nafeat'} = $naFeatId;
 }
 
-$sql = "select ng.name from dots.nagene ng,dots.nafeaturenagene nn where nn.na_feature_id = ? and ng.na_gene_id = nn.na_gene_id";
-
-$sql .= " union select df.primary_identifier from SRes.DbRef df, DoTS.DbRefNAFeature dfnf where dfnf.db_ref_id=df.db_ref_id and df.primary_identifier is not null and df.external_database_release_id in ($dbRefNAFeatureExtDbRls) and dfnf.na_feature_id =?" if ($dbRefNAFeatureExtDbRls);
+$sql = "
+select ng.name
+from dots.nagene ng,dots.nafeaturenagene nn
+where nn.na_feature_id = ?
+and ng.na_gene_id = nn.na_gene_id
+UNION
+select df.primary_identifier
+from SRes.DbRef df, DoTS.DbRefNAFeature dfnf, SRes.ExternalDatabaseRelease edr
+where dfnf.db_ref_id = df.db_ref_id
+and df.external_database_release_id = edr.external_database_release_id
+and edr.id_is_alias = 1
+and dfnf.na_feature_id =?";
 
 my $stmt2 = $dbh->prepare($sql);
 
