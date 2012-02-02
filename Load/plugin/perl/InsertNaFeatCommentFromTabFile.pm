@@ -10,7 +10,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::NAFeatureComment;
 use ApiCommonData::Load::Util;
-use GUS::Model::Core::ProjectInfo;
+use GUS::Model::ApiDB::Organism;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -27,8 +27,8 @@ sub getArgsDeclaration {
 	       mustExist => 1,
 	       format => 'Two column tab delimited file in the order identifier, comment',
 	     }),
-     stringArg({ name => 'projectName',
-		 descr => 'project name for gene comment source',
+     stringArg({ name => 'organismAbbrev',
+		 descr => 'organismAbbrev for gene comment source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
@@ -113,10 +113,10 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $projectName = $self->getArg('projectName');
-  my $projectInfo =  GUS::Model::Core::ProjectInfo->new({name => $projectName});
-  $projectInfo->retrieveFromDB();
-  my $projectId = $projectInfo->getProjectId();
+  my $organismAbbrev = $self->getArg('organismAbbrev');
+  my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
+  $organismInfo->retrieveFromDB();
+  my $projectId = $organismInfo->getRowProjectId();
 
   my $tabFile = $self->getArg('file');
 
@@ -142,7 +142,7 @@ sub run {
 	  $processed++;
 
       }else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId and project name '$projectName' at project ID '$projectId' cannot be found");
+	  $self->log("WARNING","Gene Feature with source id: $sourceId and organism '$organismAbbrev' cannot be found");
       }
      $self->undefPointerCache();
 
@@ -158,7 +158,7 @@ sub makeNaFeatComment {
   my ($self,$naFeatId,$comment) = @_;
 
   my $naFeatComment = GUS::Model::DoTS::NAFeatureComment->new({'na_feature_id' => $naFeatId,
-						              'comment_string' => $comment,});
+						              'comment_string' => $comment});
 
   $naFeatComment->submit();
 }

@@ -12,7 +12,7 @@ use GUS::Model::ApiDB::GeneFeatureProduct;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use ApiCommonData::Load::Util;
-use GUS::Model::Core::ProjectInfo;
+use GUS::Model::ApiDB::Organism;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -29,17 +29,11 @@ sub getArgsDeclaration {
 	       mustExist => 1,
 	       format => 'Two column tab delimited file in the order identifier, product',
 	     }),
-     stringArg({ name => 'projectName',
-		 descr => 'project name for product name source',
+     stringArg({ name => 'organismAbbrev',
+		 descr => 'organismAbbrev for product name source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
-#	       }),
-#     stringArg({ name => 'productDbVer',
-#		 descr => 'externaldatabaserelease version used for product name source',
-#		 constraintFunc=> undef,
-#		 reqd  => 1,
-#		 isList => 0
 	       })
     ];
 
@@ -121,13 +115,10 @@ sub new {
 sub run {
   my $self = shift;
 
-  #my $productReleaseId = $self->getExtDbRlsId($self->getArg('productDbName'),
-  #						 $self->getArg('productDbVer')) || $self->error("Can't find external_database_release_id for product name source");
-
-  my $projectName = $self->getArg('projectName');
-  my $projectInfo =  GUS::Model::Core::ProjectInfo->new({name => $projectName});
-  $projectInfo->retrieveFromDB();
-  my $projectId = $projectInfo->getProjectId();
+  my $organismAbbrev = $self->getArg('organismAbbrev');
+  my $organismInfo = GUS::Model::ApiDB::Organism->new({'abbrev' => $organismAbbrev});
+  $organismInfo->retrieveFromDB();
+  my $projectId = $organismInfo->getRowProjectId();
 
   my $tabFile = $self->getArg('file');
 
@@ -157,12 +148,12 @@ sub run {
 
 	  my $nafeatureId = $geneFeature->getNaFeatureId();
     
-	  #$self->makeGeneFeatProduct($productReleaseId,$nafeatureId,$product,$preferred);
-	  $self->makeGeneFeatProduct($projectId, $nafeatureId, $product, $preferred);
+          my $productReleaseId = $geneFeature->getExternalDatabaseReleaseId();
+	  $self->makeGeneFeatProduct($productReleaseId,$nafeatureId,$product,$preferred);
   
 	  $processed++;
       }else{
-	  $self->log("WARNING","Gene Feature with source id '$sourceId' and project name '$projectName' at project Id '$projectId' cannot be found");
+	  $self->log("WARNING","Gene Feature with source id '$sourceId' and organism '$organismAbbrev' cannot be found");
       }
       
       $self->undefPointerCache();
@@ -176,8 +167,7 @@ sub run {
 
 
 sub makeGeneFeatProduct {
-  #my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
-  my ($self, $projectId, $naFeatId, $product, $preferred) = @_;
+  my ($self,$productReleaseId,$naFeatId,$product,$preferred) = @_;
 
   my $geneFeatProduct = GUS::Model::ApiDB::GeneFeatureProduct->new({'na_feature_id' => $naFeatId,
 						                    'product' => $product,
@@ -185,7 +175,7 @@ sub makeGeneFeatProduct {
 
   unless ($geneFeatProduct->retrieveFromDB()){
       $geneFeatProduct->set("is_preferred",$preferred);
-      $geneFeatProduct->set("row_project_id", $projectId);
+      $geneFeatProduct->set("external_database_release_id",$productReleaseId);
       $geneFeatProduct->submit();
   }else{
       $self->log("WARNING","product $product already exists for na_feature_id: $naFeatId");
