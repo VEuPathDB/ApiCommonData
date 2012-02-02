@@ -3,7 +3,7 @@
 use strict;
 
 my $apilocHtmlFile = $ARGV[0];
-my $organismFullName = $ARGV[1];
+my $apilocOrganismName = $ARGV[1];  # the name of our organism in the apiloc file (which might be different then ours)
 
 usage() unless $apilocHtmlFile;
 
@@ -16,7 +16,7 @@ open(F, $apilocHtmlFile) || die "can't open html file '$apilocHtmlFile'";
 while(<F>){
   next if /common/;  # skip a junky line of html
   next unless /gene\/$organismFullName\/(.*?)\"/;
-  print "$1\thttp://apiloc.bio21.unimelb.edu.au/apiloc/apiloc/gene/$organismFullName/$1\n" unless ($ids{$1});
+  print "$1\t$1\n" unless ($ids{$1});
   $ids{$1}=1;
 }
 
@@ -27,9 +27,9 @@ Scrape IDs from an ApiLoc html file (eg, http://apiloc.bio21.unimelb.edu.au/apil
 
 output dbxrefs.
 
-usage:  makeDbxRefsFromApiLocHtml apiloc_html_file organism_full_name
+usage:  makeDbxRefsFromApiLocHtml apiloc_html_file apiloc_organism_name
 
-(organism full name is the one used at ApiLoc.org)
+(apiloc organism name is the one used at ApiLoc.org)
 
 
 ";
