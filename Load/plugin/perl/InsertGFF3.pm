@@ -114,7 +114,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 39370 $',
+                        cvsRevision => '$Revision: 39371 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -292,3 +292,5 @@ sub undoTables {
     ApiDB.GFF3AttributeKey
     );
 }
+
+1;
