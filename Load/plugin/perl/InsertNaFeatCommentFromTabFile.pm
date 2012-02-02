@@ -10,6 +10,7 @@ use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::NAFeatureComment;
 use ApiCommonData::Load::Util;
+use GUS::Model::Core::ProjectInfo;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -26,14 +27,8 @@ sub getArgsDeclaration {
 	       mustExist => 1,
 	       format => 'Two column tab delimited file in the order identifier, comment',
 	     }),
-     stringArg({ name => 'genomeDbName',
-		 descr => 'externaldatabase name for gene comment source',
-		 constraintFunc=> undef,
-		 reqd  => 1,
-		 isList => 0
-	       }),
-     stringArg({ name => 'genomeDbVer',
-		 descr => 'externaldatabaserelease version used for gene comment source',
+     stringArg({ name => 'projectName',
+		 descr => 'project name for gene comment source',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0
@@ -118,8 +113,10 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $genomeReleaseId = $self->getExtDbRlsId($self->getArg('genomeDbName'),
-						 $self->getArg('genomeDbVer')) || $self->error("Can't find external_database_release_id for genome");
+  my $projectName = $self->getArg('projectName');
+  my $projectInfo =  GUS::Model::Core::ProjectInfo->new({name => $projectName});
+  $projectInfo->retrieveFromDB();
+  my $projectId = $projectInfo->getProjectId();
 
   my $tabFile = $self->getArg('file');
 
@@ -134,7 +131,7 @@ sub run {
 
       my ($sourceId, $comment) = split(/\t/,$_);
 
-      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, external_database_release_id => $genomeReleaseId});
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
 
       if($geneFeature->retrieveFromDB()){
 
@@ -145,7 +142,7 @@ sub run {
 	  $processed++;
 
       }else{
-	  $self->log("WARNING","Gene Feature with source id: $sourceId and external database release id $genomeReleaseId cannot be found");
+	  $self->log("WARNING","Gene Feature with source id: $sourceId and project name '$projectName' at project ID '$projectId' cannot be found");
       }
      $self->undefPointerCache();
 
