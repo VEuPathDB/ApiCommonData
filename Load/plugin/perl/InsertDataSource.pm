@@ -66,6 +66,20 @@ my $argsDeclaration =
 	      isList => 0,
 	     }),
 
+   stringArg({name => 'type',
+	      descr => 'the type of this data source.',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
+   stringArg({name => 'subType',
+	      descr => 'the sub-type of this data source.  might be used to differentiate different datasets from one type in the application code',
+	      reqd => 0,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
    booleanArg({name => 'isSpeciesScope',
 	      descr => 'true if the dataset applies to the species.  (In which case the taxonId is for the reference strain)',
 	      reqd => 1,
@@ -99,11 +113,15 @@ sub run {
     my $version = $self->getArg('version');
     my $taxonId = $self->getArg('taxonId');
     my $isSpeciesScope = $self->getArg('isSpeciesScope');
+    my $type = $self->getArg('type');
+    my $subType = $self->getArg('subType');
 
     my $objArgs = {
 	name   => $dataSourceName,
 	version  => $version,
-        taxon_id => $taxonId
+        taxon_id => $taxonId,
+        type => $type,
+        subType => $subType,
     };
     $objArgs->{is_Species_Scope} = $isSpeciesScope if $taxonId;
 
