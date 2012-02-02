@@ -12,6 +12,7 @@ use GUS::Model::ApiDB::GeneFeatureProduct;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use ApiCommonData::Load::Util;
+use GUS::Model::Core::ProjectInfo;
 
 # ----------------------------------------------------------
 # Load Arguments
