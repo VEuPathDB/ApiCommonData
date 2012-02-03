@@ -48,10 +48,8 @@ open(OUT, ">$outputFile")
   or die "Couldn't open outputFile for writing: $!\n";
 
 ##strip leading | so is backward compatible with older code
-print STDERR "sourceIdRegex: '$sourceIdRegex'\n";
 if($sourceIdRegex =~ /^\\\|(\S+)/){
   $sourceIdRegex = $1;
-  print STDERR "sourceIdRegex postFix: '$sourceIdRegex'\n";
 }
 
 my %proteins;
