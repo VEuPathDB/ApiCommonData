@@ -73,12 +73,12 @@ while(my $seq = $nr->next_seq()) {
     # Defline is a concatenation of these...
     my $defLine = $seq->display_id() . " " . $seq->desc();
 
-    my @defLines = split(/gi/,$defLine);
+    my @defLines = split(/gi\|/,$defLine);
 
     foreach my $def (@defLines){
       next if($def eq '');  #ignore leading empty space
 
-      $def =~ m/^\|(\d+)\|(\w+)\|/;
+      $def =~ m/^(\d+)\|(\w+)\|/;
       $giNumber = $1;
       $extDb = $2;
 
@@ -88,6 +88,7 @@ while(my $seq = $nr->next_seq()) {
         unless($accession = $2) {
           $accession = $1;
         }
+        next unless $accession;  ##could this get assigned the empty string?
         print OUT "gi: $giNumber, db: $extDb, accession: $accession\n" if $verbose;
 
         print OUT "$sourceId\t$giNumber\t$accession\t$extDb\n";
