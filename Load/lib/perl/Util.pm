@@ -32,15 +32,6 @@ sub getGeneFeatureId {
 
   if (!$plugin->{_sourceIdGeneFeatureIdMap}) {
 
-#      my $tmPrefix = "";
-#      if ($optionalOrganismAbbrev) {
-#	  my $sql = "select organism_id from apidb.organism where abbrev = '$optionalOrganismAbbrev'";
-#	  my $stmt = $plugin->prepareAndExecute($sql);
-#	  my($organism_id) = $stmt->fetchrow_array();
-#	  die "Can't find row in ApiDB.Organism with abbrev = '$optionalOrganismAbbrev'" unless $organism_id;
-#	  $tmPrefix = "P${organism_id}_";
-#      }
-
     $plugin->{_sourceIdGeneFeatureIdMap} = {};
 
     my $sql_preferred = "
@@ -48,19 +39,13 @@ SELECT source_id, na_feature_id
 FROM Dots.GeneFeature
 ";
 
-#    my $sql = "
-#select gi.id, gf.na_feature_id
-#from ApidbTuning.${tmPrefix}GeneId gi, dots.genefeature gf
-#where gi.gene = gf.source_id
-#";
-
     my $sql = "
 select dbref.primary_identifier, gf.na_feature_id
 from   SRes.DBRef DBRef, DoTS.GeneFeature gf, DoTS.DBRefNaFeature naf, SRes.externaldatabaserelease edr
 where  edr.external_database_release_id = dbref.external_database_release_id
 and    dbref.db_ref_id = naf.db_ref_id
 and    naf.na_feature_id = gf.na_feature_id
-and    edr.id_type in ('previous id','alternate id')
+and    edr.id_is_alias = 1 
 ";
 
 
@@ -73,21 +58,13 @@ FROM Dots.GeneFeature
 where external_database_release_id in ($geneExtDbRlsId)
 ";
 
-#    $sql = "
-#select gi.id, gf.na_feature_id
-#from ApidbTuning.${tmPrefix}GeneId gi, dots.genefeature gf
-#where gi.gene = gf.source_id
-#and gf.external_database_release_id in ($geneExtDbRlsId)
-#";
-
-
     $sql = "
 select dbref.primary_identifier, gf.na_feature_id
 from   SRes.DBRef DBRef, dots.GeneFeature gf,DoTS.DBRefNaFeature naf, sres.externaldatabaserelease edr
 where  edr.external_database_release_id = dbref.external_database_release_id
 and    dbref.db_ref_id = naf.db_ref_id
 and    naf.na_feature_id = gf.na_feature_id
-and    edr.id_type in ('previous id','alternate id')
+and    edr.id_is_alias = 1 
 and    gf.external_database_release_id in  ($geneExtDbRlsId)
 ";
 
