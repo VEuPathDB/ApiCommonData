@@ -74,12 +74,6 @@ and    gf.external_database_release_id in  ($geneExtDbRlsId)
     
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
-        $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
-    }
-    $stmt->finish();
-
-    my $prefStmt = $plugin->prepareAndExecute($sql_preferred);
-    while ( my($source_id, $na_feature_id) = $prefStmt->fetchrow_array()) {
      if (exists ($plugin->{_sourceIdGeneFeatureIdMap}->{$source_id})) {
          $nonUniqueIds{$source_id} = $na_feature_id;
          delete $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id};
@@ -87,6 +81,12 @@ and    gf.external_database_release_id in  ($geneExtDbRlsId)
       if (not exists $nonUniqueIds{$source_id}) {
         $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
       }
+         }
+    $stmt->finish();
+
+    my $prefStmt = $plugin->prepareAndExecute($sql_preferred);
+    while ( my($source_id, $na_feature_id) = $prefStmt->fetchrow_array()) {
+     $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
     }
     $prefStmt->finish();
   }
