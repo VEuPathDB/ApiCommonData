@@ -74,13 +74,7 @@ and    gf.external_database_release_id in  ($geneExtDbRlsId)
     
     my $stmt = $plugin->prepareAndExecute($sql);
     while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
-      if (exists ($plugin->{_sourceIdGeneFeatureIdMap}->{$source_id})) {
-         $nonUniqueIds{$source_id} = $na_feature_id;
-         delete $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id};
-      }
-      if (not exists $nonUniqueIds{$source_id}) {
         $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
-      }
     }
     $stmt->finish();
 
