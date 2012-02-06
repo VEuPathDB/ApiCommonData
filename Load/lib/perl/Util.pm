@@ -81,7 +81,7 @@ and    gf.external_database_release_id in  ($geneExtDbRlsId)
       if (not exists $nonUniqueIds{$source_id}) {
         $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
       }
-         }
+    }
     $stmt->finish();
 
     my $prefStmt = $plugin->prepareAndExecute($sql_preferred);
@@ -89,6 +89,7 @@ and    gf.external_database_release_id in  ($geneExtDbRlsId)
      $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
     }
     $prefStmt->finish();
+
   }
 
   return $plugin->{_sourceIdGeneFeatureIdMap}->{$sourceId};
