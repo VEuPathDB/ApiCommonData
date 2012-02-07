@@ -128,7 +128,7 @@ sub run {
     my $objArgs = {
 	name   => $dataSourceName,
 	version  => $version,
-	externalDatabaseName   => $externalDatabaseName,
+	external_database_name   => $externalDatabaseName,
         taxon_id => $taxonId,
         type => $type,
         subType => $subType,
