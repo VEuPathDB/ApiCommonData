@@ -59,6 +59,14 @@ my $argsDeclaration =
 	      constraintFunc => undef,
 	      isList => 0,
 	     }),
+
+   stringArg({name => 'externalDatabaseName',
+	      descr => 'name of the external database associated with this data source.',
+	      reqd => 1,
+	      constraintFunc => undef,
+	      isList => 0,
+	     }),
+
    stringArg({name => 'taxonId',
 	      descr => 'the taxonId for the organism (not the species) of the data source.  Omit if global scope',
 	      reqd => 0,
@@ -110,6 +118,7 @@ sub run {
     my ($self) = @_; 
 
     my $dataSourceName = $self->getArg('dataSourceName');
+    my $externalDatabaseName = $self->getArg('externalDatabaseName');
     my $version = $self->getArg('version');
     my $taxonId = $self->getArg('taxonId');
     my $isSpeciesScope = $self->getArg('isSpeciesScope');
@@ -119,6 +128,7 @@ sub run {
     my $objArgs = {
 	name   => $dataSourceName,
 	version  => $version,
+	externalDatabaseName   => $externalDatabaseName,
         taxon_id => $taxonId,
         type => $type,
         subType => $subType,
