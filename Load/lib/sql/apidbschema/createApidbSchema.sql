@@ -26,6 +26,10 @@ GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
 
+-- must be GRANTed directly (not just through GUS_R) for use in project_id() function
+GRANT SELECT ON core.ProjectInfo to ApiDB;
+GRANT SELECT ON sres.TaxonName to ApiDB;
+
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,
     group_read, group_write, other_read, other_write, row_user_id,

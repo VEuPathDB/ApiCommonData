@@ -443,11 +443,12 @@ begin
     -- check organism table
     begin
 
-      select distinct project_name
+      select distinct pi.name
       into project
-      from apidb.Organism o, sres.TaxonName tn
-      where o.taxon_id = tn.taxon_id
-        and tn.name = organism;
+      from sres.TaxonName tn, apidb.Organism o, core.ProjectInfo pi
+      where tn.name = organism
+      and o.taxon_id = tn.taxon_id
+      and pi.project_id = o.row_project_id;
 
     exception
 
