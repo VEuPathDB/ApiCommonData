@@ -150,8 +150,9 @@ sub readConfigFile {
   while (<CONFIG_FILE>) {
     chomp;
     my @vals = split(/\t/, $_);
-    scalar(@vals) == 6
-      || $self->userError("Config file has invalid line: '$_'");
+    if (scalar(@vals) <6 || scalar(@vals) > 8) { 
+      $self->userError("Config file has invalid line: '$_'");
+    }
 
     push(@{$self->{inputFiles}}, $vals[0]);
     -r "$inputDir/$vals[0]" || $self->userError("Can't open file '$inputDir/$vals[0]' for reading");
