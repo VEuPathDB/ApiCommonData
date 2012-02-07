@@ -621,7 +621,7 @@ begin
 
     offset := (syntenic_point - left_syntenic_loc) * scaling_factor;
 
-    return left_ref_loc + offset;
+    return round(left_ref_loc + offset);
 end syntenic_location_mapping;
 /
 
