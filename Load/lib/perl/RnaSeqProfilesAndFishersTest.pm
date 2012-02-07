@@ -10,8 +10,10 @@ use CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers;
 
 use Data::Dumper;
 
+use strict;
+
 my $outputFileBase = "profiles";
-my $fileSuffixBase = "intensity";
+my $fileSuffixBase = "int";
 my $minSuffix = ".min";
 my $maxSuffix = ".max";
 my $diffSuffix = ".diff";
@@ -28,9 +30,17 @@ sub new {
     my $requiredParams = ['profileSetName',
                           'samples',
                          ];
-  print Dumper $args;
-  #get samples and cout, if more then one, require isPairedEnd
+
   my $self = $class->SUPER::new($args, $requiredParams);
+
+  if(scalar @{$args->{samples}} > 1 ) {
+    my $isPairedEnd = $self->getIsPairedEnd();
+    unless($isPairedEnd eq 'yes' || $isPairedEnd eq 'no') {
+      CBIL::TranscriptExpression::Error->new("isPairedEnd param must equal [yes] or [no]")->throw();
+    }
+  }
+
+
   return $self;
 }
 
@@ -38,45 +48,48 @@ sub munge {
   my ($self) = @_;
   my $profileSetName = $self->getProfileSetName();
   my $samples = $self->getSamples();
-  my $minProfileHash = {mainDirectory => $self->getMainDirectory,
-                        outputFile => $outputFileBase.$minSuffix,
-                        makePercentiles => 1,
-                        fileSuffix => $fileSuffixBasemin.$minSuffix,
-                        profileSetName => $profileSetName,
-                        samples => $samples
-                       };
-  my $minProfile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->new($minProfileHash);
+
+  my $minProfile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->
+    new({mainDirectory => $self->getMainDirectory,
+         outputFile => $outputFileBase.$minSuffix,
+         makePercentiles => 1,
+         fileSuffix => $fileSuffixBase.$minSuffix,
+         profileSetName => $profileSetName,
+         samples => $samples
+        });
   $minProfile->munge();
-  my $maxProfileHash ={mainDirectory => $self->getMainDirectory,
-                       outputFile => $outputFileBase.$maxSuffix,
-                       makePercentiles => 0,
-                       fileSuffix => $fileSuffixBase.$maxSuffix,
-                       profileSetName => $profileSetName,
-                       samples => $samples,
-                       doNotLoad => 1
-                      };
-  my $maxProfile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->new($maxProfileHash);
+
+  my $maxProfile = CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles->
+    new({mainDirectory => $self->getMainDirectory,
+         outputFile => $outputFileBase.$maxSuffix,
+         makePercentiles => 0,
+         fileSuffix => $fileSuffixBase.$maxSuffix,
+         profileSetName => $profileSetName,
+         samples => $samples,
+         doNotLoad => 1
+        });
   $maxProfile->munge();
+
   my $diffProfileSetName = $profileSetName.'-diff';
-  my $diffProfileHash ={mainDirectory => $self->getMainDirectory,
-                        outputFile => $outputFileBase.$diffSuffix,
-                        minuendFile => $outputFileBase.$maxSuffix,
-                        subtrahendFile => $outputFileBase.$minSuffix,
-                        profileSetName => $diffProfileSetName
-                       };
-
-  my $diffProfile = CBIL::TranscriptExpression::DataMunger::ProfileDifferences->new($diffProfileHash);
+  my $diffProfile = CBIL::TranscriptExpression::DataMunger::ProfileDifferences->
+    new({mainDirectory => $self->getMainDirectory,
+         outputFile => $outputFileBase.$diffSuffix,
+         minuendFile => $outputFileBase.$maxSuffix,
+         subtrahendFile => $outputFileBase.$minSuffix,
+         profileSetName => $diffProfileSetName
+        });
   $diffProfile->munge();
-  my $isPairedEnd = $self->getIsPairedEnd();
-  unless (scalar @$samples == 1 ) {
-    my $fishersHash = {mainDirectory => $self->getMainDirectory,
-                       profileSetName => $profileSetName,
-                       conditions => $samples,
-                       isPairedEnd => $isPairedEnd
-                      };
-    my $fishers = CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers->new($fishersHash);
-$fishers->munge();
 
+  if(scalar @$samples > 1) {
+    my $isPairedEnd = $self->getIsPairedEnd();
+
+    my $fishers = CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers->
+      new({mainDirectory => $self->getMainDirectory,
+           profileSetName => $profileSetName,
+           conditions => $samples,
+           isPairedEnd => $isPairedEnd
+          });
+    $fishers->munge();
   }
 }
 1;
