@@ -150,7 +150,7 @@ sub readConfigFile {
   while (<CONFIG_FILE>) {
     chomp;
     my @vals = split(/\t/, $_);
-    if (scalar(@vals) <6 || scalar(@vals) > 8) { 
+    if (scalar(@vals) <7 || scalar(@vals) > 8) { 
       $self->userError("Config file has invalid line: '$_'");
     }
 
