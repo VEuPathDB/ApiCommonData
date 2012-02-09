@@ -104,6 +104,8 @@ FAIL
   return ($documentation);
 }
 
+
+
 sub new {
   my $class = shift;
   my $self = {};
@@ -125,6 +127,8 @@ sub new {
   return $self;
 }
 
+
+
 sub run {
   my $self = shift;
 
@@ -144,7 +148,9 @@ sub run {
   }
 
   return "$processed gff3 lines parsed and loaded";
+
 }
+
 
 sub getNaSequencefromSourceId {
    my ($self, $seqid) = @_;
@@ -160,6 +166,8 @@ sub getNaSequencefromSourceId {
    return $naSeq;
 }
 
+
+
 sub getSOfromSoTerm {
    my ($self, $soterm) = @_;
    if(my $found = $self->{soids}->{$soterm}) {
@@ -173,6 +181,9 @@ sub getSOfromSoTerm {
    $self->{soids}->{$soterm} = $SOTerm;
    return $SOTerm;
 }
+
+
+
 sub getGFF3AttributeKeys{
  my ($self, $key) = @_;
    if(my $found = $self->{attr_keys}->{$key}) {
@@ -183,6 +194,10 @@ sub getGFF3AttributeKeys{
    unless($attrKey->retrieveFromDB){
      print 'key $key added to GFF3AttributeKeys'; 
      $attrKey->submit();
+   }
+}
+
+
 
 sub getGFF3AttributeKey{
  my ($self, $key) = @_;
@@ -230,6 +245,7 @@ sub insertGFF3{
   my $id = '';
   my @tags = $feature->get_all_tags();
   my @attr;
+
   foreach my $tag(@tags) {
     # change to uc string eq
     if (uc($tag) eq "PARENT"){
