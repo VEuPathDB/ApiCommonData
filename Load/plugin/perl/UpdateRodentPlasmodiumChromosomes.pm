@@ -99,16 +99,18 @@ sub run {
 
   for my $href (@all_data){
     # method to get the active source_id (as all pfal source_id in input file are not current)
-    $href->{gene_left} = $self->getActiveGeneId($href->{gene_left});
-    $href->{gene_right} = $self->getActiveGeneId($href->{gene_right});
+
+
+    my $leftNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_left});
+    my $rightNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_right});
 
     # method to assign genomic locations in the hash
     if ($href->{is_reversed}){
-      $href->{min_position} = $self->getMinGenomicPosition($href->{gene_right});
-      $href->{max_position} = $self->getMaxGenomicPosition($href->{gene_left});
+      $href->{min_position} = $self->getMinGenomicPosition($rightNaFeatureId);
+      $href->{max_position} = $self->getMaxGenomicPosition($leftNaFeatureId);
     }else{
-      $href->{min_position} = $self->getMinGenomicPosition($href->{gene_left});
-      $href->{max_position} = $self->getMaxGenomicPosition($href->{gene_right});
+      $href->{min_position} = $self->getMinGenomicPosition($leftNaFeatureId);
+      $href->{max_position} = $self->getMaxGenomicPosition($rightNaFeatureId);
     }
 
     # the array of External Database Names of rodent species
@@ -197,7 +199,7 @@ sub getMinGenomicPosition {
   my ($self, $gene_id) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT nal.start_min FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.source_id = ? AND  nal.na_feature_id = gf.na_feature_id");
+  my $stmt = $dbh->prepare("SELECT nal.start_min FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
 
   $stmt->execute($gene_id);
   my ($startm) = $stmt->fetchrow_array();
@@ -211,7 +213,7 @@ sub getMaxGenomicPosition {
   my ($self, $gene_id) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT nal.end_max FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.source_id = ? AND  nal.na_feature_id = gf.na_feature_id");
+  my $stmt = $dbh->prepare("SELECT nal.end_max FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
 
   $stmt->execute($gene_id);
   my ($end) = $stmt->fetchrow_array();
@@ -292,7 +294,7 @@ sub mapContigWithChromosome {
 }
 
 
-sub makeChromosomeAssignments {
+sub makeChromosmeAssignments {
   my ($self, $mapref2) = @_;
 
   my $count=0;
@@ -351,5 +353,12 @@ sub assignChromosomesToContigs {
 
   return $seq_id;
 }
+
+
+sub undoTables {
+  qw(ApiDB::RodentChrColors);
+}
+
+
 1;
 
