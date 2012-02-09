@@ -16,7 +16,7 @@ if (!$inputFile || !$outputIndexDir) {
   die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH>\n";
 }
 
-my $cmd = "/files/software/bowtie/current/bowtie-build";
+my $cmd = "/eupath/software/bowtie/current/bowtie-build";
 
 $cmd .= " -C" if $colorspace;
 
@@ -33,5 +33,5 @@ sub exeCmd{
   system($cmd);
   my $status = $? >> 8;
   print STDERR "status=$status\n";
-  #die "Failed with status '$status running cmd: $cmd'" if $status;
+  die "Failed with status '$status running cmd: $cmd'" if $status;
 }
