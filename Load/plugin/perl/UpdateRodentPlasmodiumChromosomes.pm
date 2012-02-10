@@ -294,7 +294,7 @@ sub mapContigWithChromosome {
 }
 
 
-sub makeChromosmeAssignments {
+sub makeChromosomeAssignments {
   my ($self, $mapref2) = @_;
 
   my $count=0;
