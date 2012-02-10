@@ -48,14 +48,30 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq5
 UNIQUE (abbrev_public);
 
--- replace this w/ a trigger
---ALTER TABLE apidb.Organism
---ADD CONSTRAINT organism_uniq6
---UNIQUE (is_reference_strain, abbrev_ref_strain);
-
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT OrgAbbrev_fk FOREIGN KEY (abbrev_ref_strain)
+REFERENCES apidb.Organism (abbrev);
+
+create or replace trigger apidb.referenceStrain
+  before insert or update on apidb.Organism
+  for each row
+begin
+    if :new.is_reference_strain = 1 and :new.abbrev_ref_strain is not null and :new.abbrev_ref_strain != :new.abbrev then
+        raise_application_error(-20102, 'is_reference_strain is set but abbrev_ref_strain points elsewhere');
+    end if;
+
+    if (:new.is_reference_strain is null or :new.is_reference_strain = 0) and :new.abbrev_ref_strain = :new.abbrev then
+        raise_application_error(-20103, 'is_reference_strain not set but abbrev_ref_strain points to self');
+    end if;
+
+end;
+/
+
+show errors
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Organism TO gus_w;
 GRANT SELECT ON apidb.Organism TO gus_r;
