@@ -70,12 +70,12 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
     <qualifier name="locus_tag" column="source_id"/>
      <qualifier name="note" handler="api"/>
-    <qualifier name="curation" handler="api" method="note"/>
-    <qualifier name="rpt_family"/>
-    <qualifier name="rpt_type"/>
+    <qualifier name="curation" ignore="true"/>
+    <qualifier name="rpt_family" 	ignore="true"/>
+    <qualifier name="rpt_type"		ignore="true"/>
     <qualifier name="rpt_unit_seq" handler="api" method="rptUnit"/>
     <qualifier name="satellite"  ignore="true"/>
-    <qualifier name="comment_Nterm" handler="api" method="commentNterm"/>
+    <qualifier name="comment_Nterm" ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
@@ -134,13 +134,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="variation" table="DoTS::Miscellaneous" so="">
     <qualifier name="locus_tag" column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="note"                 ignore="true"/>
   </feature>
 
   <feature name="transcript" so="transcript">
   <!-- created by the reshaper -->
   <qualifier name="locus_tag" ignore="true"/>
-  <qualifier name="product" handler="api" method="product"/>
+  <qualifier name="product"	ignore="true"/>
   <qualifier name="note" ignore="true"/>
   <qualifier name="transcript_id" ignore="true"/>
   <qualifier name="selenocysteine"       ignore="true"/>
@@ -162,21 +162,21 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
   <feature name="misc_feature_gene" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
   </feature>
   <feature name="pseudo_gene" so="pseudogene" table="DoTS::GeneFeature">
     <qualifier name="locus_tag" column="source_id"/>
-     <qualifier name="note" handler="api" method="note"/>
+     <qualifier name="note"		ignore="true"/>
      <qualifier name="is_pseudo" column="is_pseudo"/>
      <qualifier name="pseudo" ignore="true"/>
   </feature>

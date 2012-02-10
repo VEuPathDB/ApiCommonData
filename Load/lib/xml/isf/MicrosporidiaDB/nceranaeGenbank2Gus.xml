@@ -144,7 +144,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="transcript" so="transcript">
   <!-- created by the reshaper -->
   <qualifier name="locus_tag" ignore="true"/>
-  <qualifier name="product" handler="api" method="product"/>
+  <qualifier name="product"	ignore="true"/>
   <qualifier name="note" ignore="true"/>
   <qualifier name="transcript_id" ignore="true"/>
   <qualifier name="selenocysteine"       ignore="true"/>
@@ -168,13 +168,13 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
 
   <feature name="misc_feature_gene" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
   </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
