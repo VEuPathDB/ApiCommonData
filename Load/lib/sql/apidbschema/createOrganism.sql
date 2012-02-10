@@ -29,16 +29,32 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_pk PRIMARY KEY (organism_id);
 
 ALTER TABLE apidb.Organism
-ADD CONSTRAINT organism_uniq
+ADD CONSTRAINT organism_uniq1
 UNIQUE (taxon_id);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq2
+UNIQUE (abbrev);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq3
+UNIQUE (abbrev_orthomcl);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq4
+UNIQUE (name_for_filenames);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq5
+UNIQUE (abbrev_public);
+
+ALTER TABLE apidb.Organism
+ADD CONSTRAINT organism_uniq6
+UNIQUE (is_reference_strain, abbrev_ref_strain);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
-
-ALTER TABLE apidb.Organism
-ADD CONSTRAINT organism_uniq_1
-UNIQUE (is_reference_strain, abbrev_ref_strain);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Organism TO gus_w;
 GRANT SELECT ON apidb.Organism TO gus_r;
