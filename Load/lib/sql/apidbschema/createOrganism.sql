@@ -29,7 +29,7 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_pk PRIMARY KEY (organism_id);
 
 ALTER TABLE apidb.Organism
-ADD CONSTRAINT organism_uniq1
+ADD CONSTRAINT organism_uniq
 UNIQUE (taxon_id);
 
 ALTER TABLE apidb.Organism
@@ -48,9 +48,10 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq5
 UNIQUE (abbrev_public);
 
-ALTER TABLE apidb.Organism
-ADD CONSTRAINT organism_uniq6
-UNIQUE (is_reference_strain, abbrev_ref_strain);
+-- replace this w/ a trigger
+--ALTER TABLE apidb.Organism
+--ADD CONSTRAINT organism_uniq6
+--UNIQUE (is_reference_strain, abbrev_ref_strain);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
