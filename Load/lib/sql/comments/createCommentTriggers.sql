@@ -188,9 +188,10 @@ end;
 -- But the recording of affected comment IDs must be separated from the updating
 -- of those comments' content strings, to avoid the dread
 -- "ORA-04091: table CommentReference is mutating, trigger/function may not see it".
--- This is a issue for CommentReference (unlike Comments and CommentStableId) because
--- the affected
--- 
+-- This is an issue for CommentReference (unlike Comments and CommentStableId) because
+-- the affected TextSearchableComment records must aggregate all author records
+-- in CommentReference.
+--
 -- hence, three triggers, plus a package to let them share info
 
 create or replace package comments2.cmntRef_trggr_pkg
