@@ -45,7 +45,7 @@ $dbh->disconnect();
 
 my $result = join(',', @arr);
 
-die "there is no value returned for the query:\n\t$idSQL\n" unless $result;
+die "there is no value returned for the query:\n\t$idSQL\n" if scalar(@arr) == 0;
 
 print $result;
 
