@@ -303,9 +303,10 @@ sub insertGFF3{
 
 sub undoTables {
   qw(
-    ApiDB.GFF3
     ApiDB.GFF3Attributes
     ApiDB.GFF3AttributeKey
+    ApiDB.GFF3
+
     );
 }
 
