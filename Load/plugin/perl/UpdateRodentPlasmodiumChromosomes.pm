@@ -364,9 +364,11 @@ sub assignChromosomesToContigs {
   return $seq_id;
 }
 
-
 sub undoTables {
-  qw(ApiDB::RodentChrColors);
+  my ($self) = @_;
+
+  return ('ApiDB.RodentChrColors',
+	 );
 }
 
 
