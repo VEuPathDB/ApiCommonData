@@ -24,15 +24,21 @@ insert into apidb.TextSearchableComment
             (comment_id, source_id, project_id, organism, content)
 select c.comment_id, ci.stable_id, c.project_name, c.organism,
        c.headline || '|' || c.content || '|' ||  u.first_name || ' '
-       || u.last_name || '(' || u.organization || ')' || apidb.author_list(c.comment_id)
+       || u.last_name || '(' || u.organization || ')' || authlist.authors
 from comments2.comments c, userlogins3.users u,
      (select comment_id, stable_id from comments2.comments
        union
-       select comment_id, stable_id from comments2.commentStableId) ci
+       select comment_id, stable_id from comments2.commentStableId) ci,
+    (select comment_id, apidb.tab_to_string(set(CAST(COLLECT(source_id) AS apidb.varchartab)), ', ')
+    as authors
+    from comments2.CommentReference
+    where database_name = 'author'
+    group by comment_id) authlist
 where c.comment_target_id = 'gene'
   and c.comment_id = ci.comment_id
-  and c.user_id = u.user_id(+);
+  and c.user_id = u.user_id(+)
+  and c.comment_id = authlist.comment_id(+);
 
 select count(*) "after insert" from apidb.TextSearchableComment;
 
-exit
+-- exit
