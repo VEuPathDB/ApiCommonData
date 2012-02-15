@@ -42,12 +42,6 @@ sub getArgumentsDeclaration{
               reqd  => 0,
               isList => 1,
              }),
-     integerArg({name  => 'paramValue',
-                 descr => 'value used in the function (raw frequency X paramValue)/total raw frequencies in library',
-                 constraintFunc=> undef,
-                 reqd  => 1,
-                 isList => 0
-                }),
      stringArg({name => 'fileDir',
 		descr => 'directory path for subdir for this studyName containg all the assay data and cfg files',
 		constraintFunc=> undef,
@@ -124,12 +118,35 @@ sub run {
 
   my $assays = $self->getAssays();
 
-  my $fileSets = $self->makeFiles($protParamId,$assays,$protocolId, $displayNameMap);
+  my $normalizationFactor = $self->calculateNormalizationFactor($assays);
+
+  my $fileSets = $self->makeFiles($protParamId,$assays,$protocolId, $displayNameMap, $normalizationFactor);
 
   my $resultDescrip = "$fileSets assay cfg and data file sets made";
 
   $self->setResultDescr($resultDescrip);
   $self->logData($resultDescrip);
+}
+
+sub calculateNormalizationFactor {
+  my ($self, $assays) = @_;
+
+  my @assayIds = map { $_->getId() } @$assays;
+  my $assayIdString = join(',', @assayIds);
+  
+  my $sql = "select max(total) from (
+select r.quantification_id, sum(r.tag_count) total 
+from rad.sagetagresult r, rad.quantification q, rad.acquisition a
+where r.quantification_id = q.quantification_id
+and q.acquisition_id = a.acquisition_id
+and a.assay_id in ($assayIdString)
+group by r.quantification_id)";
+
+  my @queryResults = $self->sqlAsArray( Sql => $sql );
+
+  $self->error("Error Calculating Normalization factor") unless($queryResults[0]);
+
+  return $queryResults[0];
 }
 
 sub makeDisplayNameHash {
@@ -238,7 +255,7 @@ sub getAssays {
 }
 
 sub makeFiles {
-  my ($self,$protocolParamId,$assays,$protocolId, $displayNameMap) = @_;
+  my ($self,$protocolParamId,$assays,$protocolId, $displayNameMap,$normalizationFactor) = @_;
 
   my $fileSets;
 
@@ -251,9 +268,9 @@ sub makeFiles {
 
     my ($tagFreqs,$total) = $self->getTagFreqs($ass);
 
-    $self->makeDataFile($ass,$tagFreqs,$total);
+    $self->makeDataFile($ass,$tagFreqs,$total,$normalizationFactor);
 
-    $self->makeCfgFile($protocolParamId,$logicalGroupId,$ass,$protocolId);
+    $self->makeCfgFile($protocolParamId,$logicalGroupId,$ass,$protocolId,$normalizationFactor);
 
     $fileSets++;
   }
@@ -332,7 +349,7 @@ sub getTagFreqs {
 
 
 sub makeDataFile {
-  my ($self,$ass,$tagCount,$total) = @_;
+  my ($self,$ass,$tagCount,$total,$normalizationFactor) = @_;
 
   my $assName = $ass->getName();
 
@@ -351,10 +368,10 @@ sub makeDataFile {
 
   print FILE "row_id\tfloat_value\n";
 
-  my $paramValue = $self->getArg('paramValue');
+#  my $paramValue = $self->getArg('paramValue');
 
   foreach my $compElemId (keys %$tagCount) {
-    my $value = ($tagCount->{$compElemId} * $paramValue)/$total;
+    my $value = ($tagCount->{$compElemId} * $normalizationFactor)/$total;
 
     next unless($value > 0);
     print FILE "$compElemId\t$value\n";
@@ -364,13 +381,13 @@ sub makeDataFile {
 }
 
 sub makeCfgFile {
-  my ($self,$protParamId,$logicalGroupId,$ass,$protocolId) = @_;
+  my ($self,$protParamId,$logicalGroupId,$ass,$protocolId,$normalizationFactor) = @_;
 
   my $assName = $ass->getName();
 
   my $studyName = $self->getArg('studyName');
 
-  my $paramValue = $self->getArg('paramValue');
+#  my $paramValue = $self->getArg('paramValue');
 
   $studyName =~ s/\s/_/g;
 
@@ -393,7 +410,7 @@ sub makeCfgFile {
   analysis_date\t$date
   protocol_param_id1\t$protParamId
   logical_group_id1\t$logicalGroupId
-  protocol_param_value1\t$paramValue
+  protocol_param_value1\t$normalizationFactor
   analysis_name\tSAGETag
 XX
 }
