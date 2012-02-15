@@ -289,8 +289,8 @@ sub insertGFF3{
                                 'id_attr' => $id
                                  });
 
-  $gff3->setParent($naSeq);
-  $gff3->setParent($sotermObj);
+  $gff3->setNaSequenceId($naSeq);
+  $gff3->setSequenceOntologyId($sotermObj);
   $gff3->setAttr($attr);
 
   foreach my $attribute(@attr) {
