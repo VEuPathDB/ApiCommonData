@@ -228,7 +228,7 @@ sub insertGFF3{
 
   my $seqid = $feature->seq_id;
   my $naSeq = $self->getNaSequencefromSourceId($seqid);
-
+  die "can't find na_sequence_id for '$seqid'" unless $naSeq;
   my $soterm = $feature->primary_tag;
   my $sotermObj = $self->getSOfromSoTerm($soterm);
 
