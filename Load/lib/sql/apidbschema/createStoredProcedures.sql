@@ -532,8 +532,8 @@ begin
                when 'tremella'
                  then project := 'FungiDB';
                else raise_application_error(-20101,
-                                            'project_id() function called with unknown organism "'
-                                            || organism || '"' );
+                                            'project_id("'
+                                            || organism || '"): unknown project assignment' );
       end case;
     end;
 
