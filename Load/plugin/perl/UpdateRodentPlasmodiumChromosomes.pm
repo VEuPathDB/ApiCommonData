@@ -109,7 +109,7 @@ sub run {
 
     my $leftNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_left});
     my $rightNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_right});
-
+    next unless ($leftNaFeatureId &&$ rightNaFeatureId);
     # method to assign genomic locations in the hash
     if ($href->{is_reversed}){
       $href->{min_position} = $self->getMinGenomicPosition($rightNaFeatureId);
@@ -207,7 +207,6 @@ sub getMinGenomicPosition {
 
   my $dbh = $self->getQueryHandle();
   my $stmt = $dbh->prepare("SELECT nal.start_min FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
-
   $stmt->execute($gene_id);
   my ($startm) = $stmt->fetchrow_array();
   $self->undefPointerCache();
@@ -221,7 +220,6 @@ sub getMaxGenomicPosition {
 
   my $dbh = $self->getQueryHandle();
   my $stmt = $dbh->prepare("SELECT nal.end_max FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
-
   $stmt->execute($gene_id);
   my ($end) = $stmt->fetchrow_array();
 
