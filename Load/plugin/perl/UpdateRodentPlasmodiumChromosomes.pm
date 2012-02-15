@@ -109,7 +109,7 @@ sub run {
 
     my $leftNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_left});
     my $rightNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_right});
-    next unless ($leftNaFeatureId &&$ rightNaFeatureId);
+    next unless ($leftNaFeatureId && $rightNaFeatureId);
     # method to assign genomic locations in the hash
     if ($href->{is_reversed}){
       $href->{min_position} = $self->getMinGenomicPosition($rightNaFeatureId);
