@@ -232,6 +232,9 @@ sub insertGFF3{
   my $soterm = $feature->primary_tag;
   my $sotermObj = $self->getSOfromSoTerm($soterm);
 
+  my $naSeqId = $naSeq->getNaSequenceId();
+  my $soId = $sotermObj->getSequenceOntologyId();
+
   my $snpStart = $feature->location()->start();
   my $snpEnd = $feature->location()->end();
   my $strand = $feature->location()->strand() == -1 ? 1 : 0;
@@ -289,8 +292,8 @@ sub insertGFF3{
                                 'id_attr' => $id
                                  });
 
-  $gff3->setNaSequenceId($naSeq);
-  $gff3->setSequenceOntologyId($sotermObj);
+  $gff3->setNaSequenceId($naSeqId);
+  $gff3->setSequenceOntologyId($soId);
   $gff3->setAttr($attr);
 
   foreach my $attribute(@attr) {
