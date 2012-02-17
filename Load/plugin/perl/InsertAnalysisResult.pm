@@ -195,7 +195,7 @@ sub validateHeader {
 sub makeLogicalGroup {
   my ($self, $profileElements, $analysisName, $profileSetName) = @_;
 
-  return unless($profileElements);
+  return unless($profileElements && $profileSetName);
 
   my ($tableId) = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = 'ProfileElementName'" );
 
