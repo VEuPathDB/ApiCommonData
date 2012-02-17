@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Getopt::Long;
+
+use Data::Dumper;
+
+my ($help, $file, $outputFile, $name, $protocol, @protocolParams, $profileSet, $profileElementNames, $protocolType);
+
+&GetOptions('help|h' => \$help,
+            'file=s' => \$file,
+            'outputFile=s' => \$outputFile,
+            'name=s' => \$name,
+            'protocol=s' => \$protocol,
+            'protocolType=s' => \$protocolType,
+            'protocolParam=s' => \@protocolParams,
+            'profileSet=s' => \$profileSet,
+            'profileElementNames=s' => \$profileElementNames, # this is a '|' separated string
+           );
+
+&usage() if($help);
+
+unless($file && $outputFile && $name && $protocol) {
+    &usage();
+}
+
+sub usage {
+    print STDERR "writeRadAnalysisConfig --file=s --outputFile <FILE> --name=s --protocol=s [--protocolParam=list] [--profileSet=s] [profileElementNames=s] [--protocolType]\n";
+    exit;
+}
+
+my @columns = ('datafile', 'analysisname', 'protocolname', 'protocoltype','profilesetname','profileelementnames');
+
+
+my @pv;
+foreach(@protocolParams) {
+    my ($pp, $pv) = split(/\|/, $_);
+    push @columns, $pp;
+    push @pv, $pv;
+}
+
+
+open(OUT, "> $outputFile") or die "Cannot open $outputFile for writing: $!";
+
+print OUT join("\t", @columns) . "\n";
+
+print OUT "$file\t$name\t$protocol\t$protocolType\t$profileSet\t$profileElementNames\t" . join("\t", @pv) . "\n";
+
+close OUT;
+
+
