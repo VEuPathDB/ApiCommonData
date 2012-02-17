@@ -52,10 +52,6 @@ ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
 
-ALTER TABLE apidb.Organism
-ADD CONSTRAINT OrgAbbrev_fk FOREIGN KEY (abbrev_ref_strain)
-REFERENCES apidb.Organism (abbrev);
-
 create or replace trigger apidb.referenceStrain
   before insert or update on apidb.Organism
   for each row
