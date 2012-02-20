@@ -436,10 +436,11 @@ sub getProtocol {
 
   for(my $i = 6; $i < scalar @$configHeader; $i++){
       my $protocolParamName = $configHeader->[$i]; 
-
       my $protocolParam = GUS::Model::RAD::ProtocolParam->new({protocol_id => $protocolId,
                                                           name => $protocolParamName}); 
-      $protocolParam->setParent($protocol) unless $protocolParam->retrieveFromDB(); 
+      $protocolParam->setParent($protocol); 
+      $protocolParam->submit() unless $protocolParam->retrieveFromDB();
+
   }
   return $protocol;
 }
