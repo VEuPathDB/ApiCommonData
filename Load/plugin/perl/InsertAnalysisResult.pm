@@ -396,6 +396,7 @@ sub createAnalysis {
   my @protocolParamList =$protocol->getChildren('RAD::ProtocolParam',1);
 
   for(my $i = 6; $i < scalar @$configRow; $i++){
+      next unless ($configRow->[$i]);
       my $analysisParamValue=$configRow->[$i]; 
       my $analysisParam = GUS::Model::RAD::AnalysisParam->new({value => $analysisParamValue});
       $analysisParam->setParent($analysis); 
