@@ -74,7 +74,7 @@ for (my $i=0; $i<$batchCount; $i++) {
 
 foreach my $batch (@batches) {
   print STDERR ".";
-  my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb";
+  my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb&retmode=text";
   my $gb_result = get($url);
   print STDERR "\n$url\n\n" if $PRINT_URLS;
 
