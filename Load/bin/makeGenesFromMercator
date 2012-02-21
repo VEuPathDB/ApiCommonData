@@ -18,7 +18,7 @@ use ApiCommonData::Load::Util;
 
 use CBIL::Util::V;
 
-my ($gusConfigFile,$mercatorOutputDir,$extDbRelIds,$gene_type,$useGeneAttributes,@gffFiles,$gffVersion);
+my ($gusConfigFile,$mercatorOutputDir,@gffFiles,$gffVersion);
 my $verbose;
 my $cndSrcBin = "/usr/local/bin/cndsrc-2006-09-19/bin/";
 
@@ -26,21 +26,25 @@ my $cndSrcBin = "/usr/local/bin/cndsrc-2006-09-19/bin/";
             "gusConfigFile|gc=s" => \$gusConfigFile,
             "mercatorOutputDir|mod=s" => \$mercatorOutputDir,
             "cndSrcBin|b=s" => \$cndSrcBin,
-            "extDbRelIds|rel=s" => \$extDbRelIds,
-            "geneType|t=s" => \$gene_type,
-            "useGeneAttributes|uga!" => \$useGeneAttributes,
             "gff_file=s" => \@gffFiles,
             "gff_version=s" => \$gffVersion,
            );
 
-die "you MUST provide --gusConfigFile|gc <gusconfigfile> --mercatorOutputDir|md <dir with mercator output> --cndSrcBin|b <bin directory for mercator execs> --extDbRelIds|rel <comma delimited list of ids> --useGeneAttributes|uga --verbose|v \n" unless ($mercatorOutputDir && $cndSrcBin && ($extDbRelIds || $useGeneAttributes)); 
-
-my $type = $gene_type eq 'protein_coding' ? '=' : $gene_type eq 'rna_coding' ? '!=' : die "ERROR: you must provide --gene_type <(protein_coding|rna_coding)> on the command line\n";
+die "you MUST provide --gusConfigFile|gc <gusconfigfile> --mercatorOutputDir|md <dir with mercator output> --cndSrcBin|b <bin directory for mercator execs> --verbose|v \n" unless ($mercatorOutputDir && $cndSrcBin && ($gusConfigFile)); 
 
 die "ERROR: mercatorOutputDir '$mercatorOutputDir' not found\n" unless -d "$mercatorOutputDir/alignments";
 die "ERROR: $cndSrcBin '$cndSrcBin' not found\n" unless -f "$cndSrcBin/sliceAlignment";
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+if(scalar @gffFiles > 1) {
+  foreach(@gffFiles) {
+    die "ERROR:  gffFile $_ does not exist\n" unless(-e $_);
+  }
+} else {
+  die "ERROR:  This script requires at least 2 gff files be passed\n";
+}
+
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
