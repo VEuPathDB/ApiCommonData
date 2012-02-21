@@ -5,6 +5,8 @@ use strict;
 use GUS::Model::DoTS::TranslatedAAFeature;
 use GUS::Model::DoTS::TranslatedAASequence;
 
+use Bio::Tools::GFF;
+
 # Note: this method was previously called getNASequenceId, which was misleading
 # return null if not found:  be sure to check handle that condition!!
 sub getSplicedNASequenceId {
@@ -386,6 +388,32 @@ sub getExtDbRlsVerFromExtDbRlsName {
   return @verArray[0];
 
 }
+
+sub addGffFeatures {
+  my ($allFeatureLocations, $gffFile, $gffVersion) = @_;
+
+  die "HASHREF expected but not found" unless(ref($allFeatureLocations) eq 'HASH');
+
+  my $gffIO = Bio::Tools::GFF->new(-gff_version => $gffVersion,
+                                   -file => $gffFile
+                                  );
+
+  while (my $feature = $gffIO->next_feature()) {
+    my $seqId = $feature->seq_id();
+    my ($gene) = $feature->get_tag_values('parent');
+
+    my $location = $feature->location();
+    my $start = $location->start();
+    my $end = $location->end();
+    my $strand = $location->strand();
+
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{strand}}, $start;
+    push @{$allFeatureLocations->{$seqId}->{$gene}->{strand}}, $end;
+  }
+
+  $gffIO->close();
+}
+
 
 
 1;
