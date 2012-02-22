@@ -30,8 +30,6 @@ my $cndSrcBin = "/usr/local/bin/cndsrc-2006-09-19/bin/";
             "gff_version=s" => \$gffVersion,
            );
 
-die "you MUST provide --gusConfigFile|gc <gusconfigfile> --mercatorOutputDir|md <dir with mercator output> --cndSrcBin|b <bin directory for mercator execs> --verbose|v \n" unless ($mercatorOutputDir && $cndSrcBin && ($gusConfigFile)); 
-
 die "ERROR: mercatorOutputDir '$mercatorOutputDir' not found\n" unless -d "$mercatorOutputDir/alignments";
 die "ERROR: $cndSrcBin '$cndSrcBin' not found\n" unless -f "$cndSrcBin/sliceAlignment";
 
@@ -44,7 +42,6 @@ if(scalar @gffFiles > 1) {
 } else {
   die "ERROR:  This script requires at least 2 gff files be passed\n";
 }
-
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
