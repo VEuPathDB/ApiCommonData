@@ -55,20 +55,19 @@ sub run {
   my @inputFiles;
   my $sampleConfig;
   my $inputFileDirectory = $self->getArg('inputDir');
+  my $fileNameRegex = $self->getArg('fileNameRegex');
+
   opendir (INDIR, $inputFileDirectory) or die "could not open $inputFileDirectory: $!/n";
   while (my $file = readdir(INDIR)) {
-    if($file=~m/_preprocessed\.tab$/i){
-      push(@inputFiles,$file)
-    }
-    elsif($file='MassSpecSample.config') {
-      $sampleConfig=$file;
-
-    }
-    else {
-      next;
-    }
+    next unless($file=~m/$fileNameRegex/);
+    push(@inputFiles,$file)
   }
   closedir INDIR;
+
+  unless(scalar @inputFiles > 0) {
+    $self->error("No files found in $inputFileDirectory matching the regex /$fileNameRegex/");
+  }
+
   my $record = {};
   my $recordSet = [];
   my $mss;
@@ -1072,6 +1071,14 @@ sub declareArgs {
             isList          =>  0,
             mustExist       =>  1,
            }),
+
+   stringArg({
+              name            =>  'fileNameRegex', 
+              descr           =>  'pattern to match for al files in the inputDir',
+              constraintFunc  =>  undef,
+              reqd            =>  1,
+              isList          =>  0
+             }),
 
    stringArg({
               name            =>  'externalDatabaseSpec', # For proteome
