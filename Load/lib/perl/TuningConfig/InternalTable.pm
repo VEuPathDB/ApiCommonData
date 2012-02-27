@@ -453,7 +453,8 @@ sub getDefString {
   $defString .= join(" ", @{$unionizations}) if $unionizations;
 
   my $programs = $self->getPrograms();
-  $defString .= join(" ", @{$programs}) if $programs;
+#  $defString .= join(" ", @{$programs}) if $programs;
+  $defString .= Dumper(@{$programs}) if $programs;
 
   $self->{defString} = $defString;
 
