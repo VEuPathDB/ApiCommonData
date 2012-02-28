@@ -62,7 +62,7 @@ sub preprocess {
 
 		$geneFeature = $bioperlFeatureTree; 
 
-		print STDERR Dumper $geneFeature;
+#		print STDERR Dumper $geneFeature;
 		if(!($geneFeature->has_tag("locus_tag"))){
 		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}      
