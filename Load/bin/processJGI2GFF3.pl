@@ -12,7 +12,7 @@ my %geneHash;
 my $exon_num;
 my $cds_num;
 my $prefix=$ARGV[1];
-my $lengthThreshold=10000;
+my $lengthThreshold=50000;
 
 for my $scaffold(keys %HOH){
 	
@@ -44,7 +44,7 @@ for my $scaffold(keys %HOH){
 		
 		#Check if gene is longer than threshold then comment that line
 		
-		if($exon[-1] - $exon[0] > $lengthThreshold){
+		if(($exon[-1] - $exon[0]) > $lengthThreshold){
 			$comment="#";
 		}
 
