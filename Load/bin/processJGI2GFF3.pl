@@ -111,6 +111,10 @@ while(<PRED>){
 }
 
 seek(PRED,0,0);
+# The names are not uniq in some species, so increment names each time it
+# encounters a new block;
+my $nameIncr;
+my $prev;
 
 while(<PRED>){
 
@@ -127,13 +131,17 @@ while(<PRED>){
 		
 		my $name;
 
-		#print "line last is $line[$last]\n";
 		
 		if($line[$last] =~ /name\s+\"(\S+)\"/){
 			$name =$1;
+			if($name !~ $prev){
+				$nameIncr++;
+			}
+			$prev=$name;
 		}
 		
-		$line[$last] = $name;
+		
+		$line[$last] = $name."_$nameIncr";
 			
 			if($_ =~ /start_codon/i){
 			
