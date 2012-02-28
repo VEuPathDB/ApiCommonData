@@ -42,12 +42,15 @@ FROM Dots.GeneFeature
 ";
 
     my $sql = "
-select dbref.primary_identifier, gf.na_feature_id
-from   SRes.DBRef DBRef, DoTS.GeneFeature gf, DoTS.DBRefNaFeature naf, SRes.externaldatabaserelease edr
+select dbref.primary_identifier, gf.na_feature_id, (abs(nl.start_min - nl.end_max) + 1) as transcript_length
+from   SRes.DBRef DBRef, DoTS.GeneFeature gf, DoTS.DBRefNaFeature naf,
+       SRes.externaldatabaserelease edr, DoTS.Transcript t, DoTS.NaLocation nl
 where  edr.external_database_release_id = dbref.external_database_release_id
 and    dbref.db_ref_id = naf.db_ref_id
-and    naf.na_feature_id = gf.na_feature_id
 and    edr.id_is_alias = 1 
+and    naf.na_feature_id = gf.na_feature_id
+and    t.parent_id = gf.na_feature_id
+and    nl.na_feature_id = t.na_feature_id
 ";
 
 
@@ -61,29 +64,35 @@ where external_database_release_id in ($geneExtDbRlsId)
 ";
 
     $sql = "
-select dbref.primary_identifier, gf.na_feature_id
-from   SRes.DBRef DBRef, dots.GeneFeature gf,DoTS.DBRefNaFeature naf, sres.externaldatabaserelease edr
+select dbref.primary_identifier, gf.na_feature_id, (abs(nl.start_min - nl.end_max) + 1) as transcript_length
+from   SRes.DBRef DBRef, dots.GeneFeature gf,DoTS.DBRefNaFeature naf,
+       SRes.externaldatabaserelease edr, DoTS.Transcript t, DoTS.NaLocation nl
 where  edr.external_database_release_id = dbref.external_database_release_id
 and    dbref.db_ref_id = naf.db_ref_id
-and    naf.na_feature_id = gf.na_feature_id
 and    edr.id_is_alias = 1 
 and    gf.external_database_release_id in  ($geneExtDbRlsId)
+and    naf.na_feature_id = gf.na_feature_id
+and    t.parent_id = gf.na_feature_id
+and    nl.na_feature_id = t.na_feature_id
 ";
 
     }
  
-    my %nonUniqueIds;
+    my %transcriptLength;
     
     my $stmt = $plugin->prepareAndExecute($sql);
-    while ( my($source_id, $na_feature_id) = $stmt->fetchrow_array()) {
-     if (exists ($plugin->{_sourceIdGeneFeatureIdMap}->{$source_id})) {
-         $nonUniqueIds{$source_id} = $na_feature_id;
-         delete $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id};
-      }
-      if (not exists $nonUniqueIds{$source_id}) {
+    while ( my($source_id, $na_feature_id, $transcriptLen) = $stmt->fetchrow_array()) {
+      if (exists ($plugin->{_sourceIdGeneFeatureIdMap}->{$source_id})) {
+         if ($transcriptLen > $transcriptLength{$source_id}) {
+            $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
+            $transcriptLength{$source_id} = $transcriptLen
+         }
+      } else {
         $plugin->{_sourceIdGeneFeatureIdMap}->{$source_id} = $na_feature_id;
+        $transcriptLength{$source_id} = $transcriptLen
       }
     }
+
     $stmt->finish();
 
     my $prefStmt = $plugin->prepareAndExecute($sql_preferred);
