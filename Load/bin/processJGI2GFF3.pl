@@ -12,10 +12,13 @@ my %geneHash;
 my $exon_num;
 my $cds_num;
 my $prefix=$ARGV[1];
+my $lengthThreshold=10000;
 
 for my $scaffold(keys %HOH){
 	
 	for my $gene(keys %{$HOH{$scaffold}}){
+
+		my $comment='';
 	
 		
 		$exon_num=1;
@@ -39,26 +42,31 @@ for my $scaffold(keys %HOH){
 			@CDS = sort{$a <=> $b} @{ $HOH{$scaffold}{$gene}{'CDS'}};
 		}
 		
+		#Check if gene is longer than threshold then comment that line
+		
+		if($exon[-1] - $exon[0] > $lengthThreshold){
+			$comment="#";
+		}
 
 		my $geneName = $HOH{$scaffold}{$gene}{'geneid'};
 
-		print "$scaffold\tJGI\tgene\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName\";\n";
+		print "$comment$scaffold\tJGI\tgene\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName\";\n";
 		
-		print "$scaffold\tJGI\tmRNA\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName"."T0\"; Parent \"$prefix$geneName\";\n";
+		print "$comment$scaffold\tJGI\tmRNA\t$exon[0]\t$exon[-1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName"."T0\"; Parent \"$prefix$geneName\";\n";
 		if($start[0]){
 		
-			print "$scaffold\tJGI\tstart_codon\t$start[0]\t$start[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"start_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$comment$scaffold\tJGI\tstart_codon\t$start[0]\t$start[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"start_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
 		}
 
 		for(my $i=0;$i<$#exon;$i+=2){
 
 				
-			print "$scaffold\tJGI\texon\t$exon[$i]\t$exon[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$exon_num:exon\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$comment$scaffold\tJGI\texon\t$exon[$i]\t$exon[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$exon_num:exon\"; Parent \"$prefix$geneName"."T0\";\n";
 			
 			
 			if($CDS[$i]){	
 				
-				print "$scaffold\tJGI\tCDS\t$CDS[$i]\t$CDS[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$cds_num:CDS\"; Parent \"$prefix$geneName"."T0\";\n";
+				print "$comment$scaffold\tJGI\tCDS\t$CDS[$i]\t$CDS[$i+1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"$prefix$geneName.$cds_num:CDS\"; Parent \"$prefix$geneName"."T0\";\n";
 			$cds_num++;
 
 			}
@@ -68,7 +76,7 @@ for my $scaffold(keys %HOH){
 		
 		if($stop[0]){
 		
-			print "$scaffold\tJGI\tstop_codon\t$stop[0]\t$stop[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"stop_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
+			print "$comment$scaffold\tJGI\tstop_codon\t$stop[0]\t$stop[1]\t.\t$HOH{$scaffold}{$gene}{'strand'}\t.\tID \"stop_$geneName.1\"; Parent \"$prefix$geneName"."T0\";\n";
 		}
 
 	}
