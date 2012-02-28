@@ -146,6 +146,9 @@ sub run{
   my $extDbRls = $self->getExtDbRlsId($self->getArg('extDbRelSpec'))
       || die "Couldn't retrieve external database!\n";
 
+  my $seqExtDbRls = $self->getExtDbRlsId($self->getArg('seqExtDbRelSpec'))
+      || die "Couldn't retrieve the sequence external database!\n";
+
 
   my $motifId = $self->insertMotif($extDbRls, $motif, $length);
 
@@ -171,9 +174,9 @@ sub run{
 	my $aaSeqId;
 
 	if ($self->getArg('organismAbbrev')){
-	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$extDbRls,$self->getArg('organismAbbrev'));
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$seqExtDbRls,$self->getArg('organismAbbrev'));
 	}else{
-	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$extDbRls);
+	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,$seqExtDbRls);
         }
 
       if($aaSeqId){
