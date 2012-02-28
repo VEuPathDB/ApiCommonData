@@ -450,10 +450,9 @@ sub getDefString {
   $defString .= join(" ", @{$perls}) if $perls;
 
   my $unionizations = $self->getUnionizations();
-  $defString .= join(" ", @{$unionizations}) if $unionizations;
+  $defString .= Dumper(@{$unionizations}) if $unionizations;
 
   my $programs = $self->getPrograms();
-#  $defString .= join(" ", @{$programs}) if $programs;
   $defString .= Dumper(@{$programs}) if $programs;
 
   $self->{defString} = $defString;
