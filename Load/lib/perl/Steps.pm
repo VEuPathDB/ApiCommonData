@@ -1132,6 +1132,22 @@ sub copyProteomeFile {
   $mgr->endStep($signal);
 }
 
+sub copyOrthoMCLProteinsFile {
+  my ($mgr) = @_;
+  my $propertySet = $mgr->{propertySet};
+
+  my $signal = "Copying_orthoMCL_proteins_file";
+
+  return if $mgr->startStep("Copying orthoMCL proteins file to seqfiles", $signal);
+
+  my $file = $propertySet->getProp('orthoProteinsFile');
+
+  unless (-e $file){die "$file does not exist\n";}
+
+  $mgr->runCmd("cp -a  $file $mgr->{dataDir}/seqfiles/ProteinSeqs.fsa");
+
+  $mgr->endStep($signal);
+}
 
 sub copyDirectory {
   my ($mgr, $from, $to, $dir) = @_;

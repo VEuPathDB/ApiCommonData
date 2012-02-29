@@ -17,13 +17,11 @@
     <qualifier name="translation"      handler="api" method="setProvidedTranslation"/>
     <qualifier name="pseudo"           handler="api" method="setPseudo"/>
     <qualifier name="partial"           handler="api" method="setPseudo"/>
-    <qualifier name="EC_number"        handler="api" method="ECNumber"/>
-    <qualifier name="product"          handler="api" method="product"/>
-    <qualifier name="literature"       handler="plasmo" method="literature"/>
-    <qualifier name="obsolete_product" handler="plasmo" method="obsoleteProduct"/>
+    <qualifier name="EC_number"         	ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="literature"       ignore="true"/>
     <qualifier name="curation"         handler="api" method="note"/>
     <qualifier name="cuartion"         handler="api" method="note"/>
-    <qualifier name="controlled_curation" handler="plasmo" method="noteWithAuthor"/>
     <qualifier name="paralog"          ignore="true"/>
     <qualifier name="ortholog"         ignore="true"/>
     <qualifier name="note"             handler="api" method="note"/>
@@ -35,8 +33,8 @@
     <qualifier name="obselete_name"    handler="api" method="gene"/>
     <qualifier name="temporary_systematic_id"    handler="api" method="gene"/>
     <qualifier name="gene"             handler="api" method="gene"/>
-    <qualifier name="protein_id"       handler="api" method="genbankDbXRef"/>
-    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="protein_id"       		ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="codon_start"            ignore="true"/>
     <qualifier name="GO"                     ignore="true"/>
     <qualifier name="go_from_interpro"       ignore="true"/>
@@ -84,11 +82,11 @@
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="gene"             handler="api" method="gene"/>
-    <qualifier name="product"              handler="api" method="product"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="synonym"              handler="api" method="gene"/>
     <qualifier name="curation"             handler="api" method="note"/>
-    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="controlled_curation"  ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
     <qualifier name="percent_id"           ignore="true"/>
@@ -110,8 +108,8 @@
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="curation"             handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
     <qualifier name="domain"               ignore="true"/>
     <qualifier name="ncRNA_class"          ignore="true"/>
@@ -120,13 +118,13 @@
 
   <feature name="tRNA_gene" so="tRNA_encoding">
     <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="product"             handler="api" method="product"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="anticodon"           handler="api" method="anticodon"/>
     <qualifier name="note"                handler="api" method="note"/>
     <qualifier name="curation"            handler="api" method="note"/>
     <qualifier name="obsolete_name"       handler="api" method="gene"/>
     <qualifier name="synonym"             handler="api" method="gene"/>
-    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
    <qualifier name="pseudo"           handler="api" method="setPseudo"/>
     <qualifier name="gene"                handler="api" method="gene"/>
@@ -140,8 +138,8 @@
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="curation"             handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"          handler="api" method="dbXRef"/>
+    <qualifier name="product"			ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
   <qualifier name="pseudo"           ignore="true"/>
   </feature>
@@ -244,7 +242,7 @@
     <qualifier name="obsolete_name"          ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="primary_name"           ignore="true"/>
-    <qualifier name="product"                ignore="true"/>
+    <qualifier name="product"			ignore="true"/>
     <qualifier name="psu_db_xref"            ignore="true"/>
     <qualifier name="score"                  ignore="true"/>
     <qualifier name="signal"                 ignore="true"/>
@@ -272,7 +270,7 @@
     <qualifier name="systematic_id" column="source_id"/>
     <qualifier name="controlled_curation"   ignore="true"/>
     <qualifier name="so_type"               ignore="true"/>
-    <qualifier name="db_xref"               ignore="true"/>
+    <qualifier name="db_xref"			ignore="true"/>
   </feature>
 
   <feature name="intron" ignore="true"/>

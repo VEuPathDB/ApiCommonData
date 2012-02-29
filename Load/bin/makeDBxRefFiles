@@ -135,6 +135,7 @@ while ( my $seq = $in->next_seq() ) {
 			      
 			      my($type,@ids) = split(/\:/,$tagValuePair);
 			      $type = &trim($type);
+			      $type =~ s/\//\-/;
 			      $outFileHash{lc($type)} = "${outDir}/${outFilePrefix}_".lc($type).".txt";
 			  }
 		      }
@@ -224,6 +225,7 @@ while ( my $seq = $in->next_seq() ) {
 				  my $dbxrefId = join("\t",@ids);
 				  
 				  $type = &trim($type);
+				  $type =~ s/\//\-/;
 				  $dbxrefId = &trimIds($dbxrefId);
 
 				  $dbxrefFhHash{lc($type)}->print("$id\t$dbxrefId\n");
@@ -255,6 +257,7 @@ while ( my $seq = $in->next_seq() ) {
 				      $dbxrefId = join("\t",@ids);
 				  }
 				  $type = &trim($type);
+				  $type =~ s/\//\-/;
 				  $dbxrefId = &trimIds($dbxrefId);
 
 				  $dbxrefFhHash{lc($type)}->print("$id\t$dbxrefId\n");

@@ -122,15 +122,17 @@ eval {
   # get and validate config file
   $configFile = getConfigFileName($configFile, $tuningRegistry, $prefix);
   ApiCommonData::Load::TuningConfig::Log::addLog("Using config file \"$configFile\"");
-    open(PROGRAM, "validateXmlWithRng $ENV{GUS_HOME}/lib/rng/tuningManager.rng $configFile |");
-    while (<PROGRAM>) {
-      my $line = $_;
-      chomp($line);
-      ApiCommonData::Load::TuningConfig::Log::addLog($line);
-    }
-    close(PROGRAM);
-    my $exitCode = $? >> 8;
-    ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid config file") if $exitCode;
+  my $validationCmd = "validateXmlWithRng $ENV{GUS_HOME}/lib/rng/tuningManager.rng $configFile |";
+  ApiCommonData::Load::TuningConfig::Log::addLog("Validating XML:\n" . $validationCmd);
+  open(PROGRAM, $validationCmd);
+  while (<PROGRAM>) {
+    my $line = $_;
+    chomp($line);
+    ApiCommonData::Load::TuningConfig::Log::addLog($line);
+  }
+  close(PROGRAM);
+  my $exitCode = $? >> 8;
+  ApiCommonData::Load::TuningConfig::Log::addErrorLog("invalid config file") if $exitCode;
 #   die "invalid config file" if $exitCode;
 
   my ($config) = &parseConfigFile($configFile);

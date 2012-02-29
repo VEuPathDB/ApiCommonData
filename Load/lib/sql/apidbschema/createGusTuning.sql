@@ -92,6 +92,9 @@ alter table sres.ExternalDatabaseRelease
         references sres.taxon 
         validate
      );
+
+alter table sres.Reference modify (author varchar2(2000));
+
 -- indexes for orthomcl keyword and pfam searches
 CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
     indextype IS ctxsys.ctxcat;

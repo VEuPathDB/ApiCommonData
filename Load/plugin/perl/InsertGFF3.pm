@@ -104,6 +104,8 @@ FAIL
   return ($documentation);
 }
 
+
+
 sub new {
   my $class = shift;
   my $self = {};
@@ -114,7 +116,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 39371 $',
+                        cvsRevision => '$Revision: 45916 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -124,6 +126,8 @@ sub new {
 
   return $self;
 }
+
+
 
 sub run {
   my $self = shift;
@@ -144,7 +148,9 @@ sub run {
   }
 
   return "$processed gff3 lines parsed and loaded";
+
 }
+
 
 sub getNaSequencefromSourceId {
    my ($self, $seqid) = @_;
@@ -160,6 +166,8 @@ sub getNaSequencefromSourceId {
    return $naSeq;
 }
 
+
+
 sub getSOfromSoTerm {
    my ($self, $soterm) = @_;
    if(my $found = $self->{soids}->{$soterm}) {
@@ -173,6 +181,9 @@ sub getSOfromSoTerm {
    $self->{soids}->{$soterm} = $SOTerm;
    return $SOTerm;
 }
+
+
+
 sub getGFF3AttributeKeys{
  my ($self, $key) = @_;
    if(my $found = $self->{attr_keys}->{$key}) {
@@ -183,6 +194,10 @@ sub getGFF3AttributeKeys{
    unless($attrKey->retrieveFromDB){
      print 'key $key added to GFF3AttributeKeys'; 
      $attrKey->submit();
+   }
+}
+
+
 
 sub getGFF3AttributeKey{
  my ($self, $key) = @_;
@@ -213,9 +228,12 @@ sub insertGFF3{
 
   my $seqid = $feature->seq_id;
   my $naSeq = $self->getNaSequencefromSourceId($seqid);
-
+  die "can't find na_sequence_id for '$seqid'" unless $naSeq;
   my $soterm = $feature->primary_tag;
   my $sotermObj = $self->getSOfromSoTerm($soterm);
+
+  my $naSeqId = $naSeq->getNaSequenceId();
+  my $soId = $sotermObj->getSequenceOntologyId();
 
   my $snpStart = $feature->location()->start();
   my $snpEnd = $feature->location()->end();
@@ -230,6 +248,7 @@ sub insertGFF3{
   my $id = '';
   my @tags = $feature->get_all_tags();
   my @attr;
+
   foreach my $tag(@tags) {
     # change to uc string eq
     if (uc($tag) eq "PARENT"){
@@ -273,8 +292,8 @@ sub insertGFF3{
                                 'id_attr' => $id
                                  });
 
-  $gff3->setParent($naSeq);
-  $gff3->setParent($sotermObj);
+  $gff3->setNaSequenceId($naSeqId);
+  $gff3->setSequenceOntologyId($soId);
   $gff3->setAttr($attr);
 
   foreach my $attribute(@attr) {
@@ -287,9 +306,10 @@ sub insertGFF3{
 
 sub undoTables {
   qw(
-    ApiDB.GFF3
     ApiDB.GFF3Attributes
     ApiDB.GFF3AttributeKey
+    ApiDB.GFF3
+
     );
 }
 

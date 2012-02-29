@@ -11,9 +11,9 @@ use GUS::Model::DoTS::NASequence;
 use GUS::Model::ApiDB::Synteny;
 use GUS::Model::ApiDB::SyntenyAnchor;
 
-use Bio::Tools::GFF;
 use CBIL::Util::V;
 
+use ApiCommonData::Load::Util;
 
 use Data::Dumper;
 
@@ -169,52 +169,30 @@ sub run {
 
 #--------------------------------------------------------------------------------
 
-sub addGffFeatures {
-  my ($self, $allFeatureLocations, $gff) = @_;
-
-  my $gffVersion = $self->getArg('gffVersion');
-
-  my $gffIO = Bio::Tools::GFF->new(-gff_version => $gffVersion,
-                                   -file => $gff
-                                  );
-
-  while (my $feature = $gffIO->next_feature()) {
-    my $seqId = $feature->seq_id();
-    my ($gene) = $feature->get_tag_values('parent');
-
-    my $location = $feature->location();
-    my $start = $location->start();
-    my $end = $location->end();
-
-    push @{$allFeatureLocations->{$seqId}->{$gene}}, $start;
-    push @{$allFeatureLocations->{$seqId}->{$gene}}, $end;
-  }
-
-  $gffIO->close();
-}
-
-#--------------------------------------------------------------------------------
-
 sub readGeneLocationsFromGFFs {
   my ($self) = @_;
 
   my $gffFileA = $self->getArg('gffFileA');
   my $gffFileB = $self->getArg('gffFileB');
 
+  my $gffVersion = $self->getArg('gffVersion');
+
   my $allFeatureLocations = {};
-  $self->addGffFeatures($allFeatureLocations, $gffFileA);
-  $self->addGffFeatures($allFeatureLocations, $gffFileB);
+  ApiCommonData::Load::Util::addGffFeatures($allFeatureLocations, $gffFileA, $gffVersion);
+  ApiCommonData::Load::Util::addGffFeatures($allFeatureLocations, $gffFileB, $gffVersion);
 
   my $geneLocations = {};
   foreach my $seqId (keys %$allFeatureLocations) {
     foreach my $gene (keys %{$allFeatureLocations->{$seqId}}) {
-      my $min = CBIL::Util::V::min(@{$allFeatureLocations->{$seqId}->{$gene}});
-      my $max = CBIL::Util::V::max(@{$allFeatureLocations->{$seqId}->{$gene}});
+      foreach my $strand (keys %{$allFeatureLocations->{$seqId}->{$gene}}) {
+        my $min = CBIL::Util::V::min(@{$allFeatureLocations->{$seqId}->{$gene}->{$strand}});
+        my $max = CBIL::Util::V::max(@{$allFeatureLocations->{$seqId}->{$gene}->{$strand}});
 
-      push @{$geneLocations->{$seqId}}, {gene => $gene,
-                                         min => $min,
-                                         max => $max,
-                                        };
+        push @{$geneLocations->{$seqId}}, {gene => $gene,
+                                           min => $min,
+                                           max => $max,
+                                          };
+      }
     }
   }
 

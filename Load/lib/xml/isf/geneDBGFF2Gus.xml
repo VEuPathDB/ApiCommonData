@@ -276,7 +276,13 @@ necessarily by what's defined in the input (eg. Genbank) file
    <qualifier name="Name"         column="standard_name"/>
   </feature>
 
-
+  <feature name="centromere" table="DoTS::Miscellaneous" so="centromere">
+    <qualifier name="ID"		column="source_id"/>
+    <qualifier name="feature_id"        ignore="true"/>
+    <qualifier name="isObsolete"        ignore="true"/>
+    <qualifier name="literature"        ignore="true"/>
+    <qualifier name="timelastmodified"        ignore="true"/>
+  </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
@@ -489,6 +495,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="history" ignore="true"/>
     <qualifier name="literature" ignore="true"/>
     <qualifier name="eMBL_qualifier" ignore="true"/>
+    <qualifier name="orthologous_to" ignore="true"/>
   </feature>
 
   <feature name="three_prime_UTR" table="DoTS::UTRFeature" so="three_prime_UTR">

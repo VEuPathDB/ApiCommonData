@@ -22,8 +22,14 @@ my $argsDeclaration =
 	    format => 'VI      1       light blue      #CCFFFF 0       MAL6P1.23       132606  MAL6P1.283      648830',
 	    constraintFunc => undef,
 	    isList => 0, }),
-   stringArg({name => 'extDbNames',
-              descr => 'list of External Database Names of rodent species for which chromosomes need to be assigned',
+   stringArg({name => 'falciparum_organism',
+              descr => 'P. falciparum organism name',
+              reqd => 1,
+              isList => 0,
+              constraintFunc => undef,
+             }),
+   stringArg({name => 'rodent_organisms',
+              descr => 'list of rodent organism names for which chromosomes need to be assigned (P. berghei and P. yoelii)',
               reqd => 1,
               isList => 1,
               constraintFunc => undef,
@@ -76,7 +82,7 @@ sub new {
   bless($self,$class);
 
   $self->initialize({ requiredDbVersion => 3.6,
-		      cvsRevision       => '$Revision: 22515 $',
+		      cvsRevision       => '$Revision: 45872 $',
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
 		      documentation     => $documentation});
@@ -99,24 +105,27 @@ sub run {
 
   for my $href (@all_data){
     # method to get the active source_id (as all pfal source_id in input file are not current)
-    $href->{gene_left} = $self->getActiveGeneId($href->{gene_left});
-    $href->{gene_right} = $self->getActiveGeneId($href->{gene_right});
 
+
+    my $leftNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_left});
+    my $rightNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_right});
+    next unless ($leftNaFeatureId && $rightNaFeatureId);
     # method to assign genomic locations in the hash
     if ($href->{is_reversed}){
-      $href->{min_position} = $self->getMinGenomicPosition($href->{gene_right});
-      $href->{max_position} = $self->getMaxGenomicPosition($href->{gene_left});
+      $href->{min_position} = $self->getMinGenomicPosition($rightNaFeatureId);
+      $href->{max_position} = $self->getMaxGenomicPosition($leftNaFeatureId);
     }else{
-      $href->{min_position} = $self->getMinGenomicPosition($href->{gene_left});
-      $href->{max_position} = $self->getMaxGenomicPosition($href->{gene_right});
+      $href->{min_position} = $self->getMinGenomicPosition($leftNaFeatureId);
+      $href->{max_position} = $self->getMaxGenomicPosition($rightNaFeatureId);
     }
+    my $falciparum_organism = $self->getArg('falciparum_organism');
 
-    # the array of External Database Names of rodent species
-    my @RMP_ext_db_names =@{$self->getArg('extDbNames')};
+    # list of rodent organism names
+    my @RMP_organisms =@{$self->getArg('rodent_organisms')};
 
-    for my $db_name (@RMP_ext_db_names) {
+    for my $rmp_org (@RMP_organisms) {
       # method to look at synteny data and find RMP contigs
-      my $contigsRef = $self->getRMPContigs($href->{pfal_chr}, $href->{min_position}, $href->{max_position}, $db_name);
+      my $contigsRef = $self->getRMPContigs($href->{pfal_chr}, $href->{min_position}, $href->{max_position}, $falciparum_organism, $rmp_org);
 
       # method to collect the full list of which RMP contig goes with what RMP chromosome/s.
       $mappingref = $self->mapContigWithChromosome($href->{rmp_chr}, $contigsRef, $mappingref);
@@ -197,8 +206,7 @@ sub getMinGenomicPosition {
   my ($self, $gene_id) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT nal.start_min FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.source_id = ? AND  nal.na_feature_id = gf.na_feature_id");
-
+  my $stmt = $dbh->prepare("SELECT nal.start_min FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
   $stmt->execute($gene_id);
   my ($startm) = $stmt->fetchrow_array();
   $self->undefPointerCache();
@@ -211,8 +219,7 @@ sub getMaxGenomicPosition {
   my ($self, $gene_id) = @_;
 
   my $dbh = $self->getQueryHandle();
-  my $stmt = $dbh->prepare("SELECT nal.end_max FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.source_id = ? AND  nal.na_feature_id = gf.na_feature_id");
-
+  my $stmt = $dbh->prepare("SELECT nal.end_max FROM dots.GeneFeature gf, dots.NALocation nal WHERE  gf.na_feature_id = ? AND  nal.na_feature_id = gf.na_feature_id");
   $stmt->execute($gene_id);
   my ($end) = $stmt->fetchrow_array();
 
@@ -222,27 +229,30 @@ sub getMaxGenomicPosition {
 
 
 sub getRMPContigs {
-  my ($self, $pf_ch, $min, $max, $ext_db) = @_;
+  my ($self, $pf_ch, $min, $max, $pf_org, $rmp_org) = @_;
   my @rmp_contigs;
   my $pf_seq_id = $self->getNaSeqId($pf_ch);
 
   ($min, $max) = ($max, $min) if $min > $max;
   my $dbh = $self->getQueryHandle();
+
   my $sql = "SELECT count(*), source_id, na_sequence_id FROM (
                SELECT b.source_id, b.na_sequence_id
                FROM apidb.synteny syn,apidb.syntenyAnchor anch,
                     dots.externalnasequence a, dots.externalnasequence b,
-                    sres.externaldatabaserelease edr,sres.externaldatabase ed
-               WHERE ed.name = '$ext_db'
-               AND edr.external_database_id = ed.external_database_id
-               AND syn.external_database_release_id = edr.external_database_release_id
-               AND syn.a_start <= $max
+                    sres.taxonName tnA, sres.taxonName tnB
+               WHERE syn.a_start <= $max
                AND syn.a_end >= $min
                AND syn.a_na_sequence_id = $pf_seq_id
                AND a.na_sequence_id = syn.a_na_sequence_id
+               AND a.taxon_id = tnA.taxon_id
+               and tnA.name = '$pf_org'
                AND b.na_sequence_id = syn.b_na_sequence_id
+               AND b.taxon_id = tnB.taxon_id
+               and tnB.name = '$rmp_org'
                AND anch.synteny_id = syn.synteny_id
              ) GROUP BY source_id, na_sequence_id";
+
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
@@ -351,5 +361,14 @@ sub assignChromosomesToContigs {
 
   return $seq_id;
 }
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.RodentChrColors',
+	 );
+}
+
+
 1;
 

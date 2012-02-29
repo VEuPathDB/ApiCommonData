@@ -195,7 +195,7 @@ sub validateHeader {
 sub makeLogicalGroup {
   my ($self, $profileElements, $analysisName, $profileSetName) = @_;
 
-  return unless($profileElements);
+  return unless($profileElements && $profileSetName);
 
   my ($tableId) = $self->sqlAsArray( Sql => "select table_id from core.tableinfo where name = 'ProfileElementName'" );
 
@@ -396,6 +396,7 @@ sub createAnalysis {
   my @protocolParamList =$protocol->getChildren('RAD::ProtocolParam',1);
 
   for(my $i = 6; $i < scalar @$configRow; $i++){
+      next unless ($configRow->[$i]);
       my $analysisParamValue=$configRow->[$i]; 
       my $analysisParam = GUS::Model::RAD::AnalysisParam->new({value => $analysisParamValue});
       $analysisParam->setParent($analysis); 
@@ -435,10 +436,11 @@ sub getProtocol {
 
   for(my $i = 6; $i < scalar @$configHeader; $i++){
       my $protocolParamName = $configHeader->[$i]; 
-
       my $protocolParam = GUS::Model::RAD::ProtocolParam->new({protocol_id => $protocolId,
                                                           name => $protocolParamName}); 
-      $protocolParam->setParent($protocol) unless $protocolParam->retrieveFromDB(); 
+      $protocolParam->setParent($protocol); 
+      $protocolParam->submit() unless $protocolParam->retrieveFromDB();
+
   }
   return $protocol;
 }

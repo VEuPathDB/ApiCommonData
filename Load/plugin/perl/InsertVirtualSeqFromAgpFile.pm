@@ -34,7 +34,7 @@ fileArg({name => 'agpFile',
         }),
 
 fileArg({name => 'chromosomeOrderMappingFile',
-         descr => 'Tab-delimited file containing source_id,chromosome_order_number,chromosome_order mapping if chromosomes are not numerical and randomly ordered in file',
+         descr => 'Tab-delimited file containing source_id,chromosome_number,chromosome_order_number mapping if virtualSeqSOTerm is chromosome',
          constraintFunc=> undef,
          reqd  => 0,
          isList => 0,
