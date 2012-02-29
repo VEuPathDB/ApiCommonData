@@ -103,44 +103,31 @@ GRANT execute ON apidb.tab_to_string TO gus_r;
 GRANT execute ON apidb.tab_to_string TO gus_w;
 
 -------------------------------------------------------------------------------
-create or replace procedure
-apidb.apidb_unanalyzed_stats
+create or replace procedure apidb.analyze (schema_name IN varchar2, table_name IN varchar2)
+authid current_user -- run with the privileges of the database user who calls it, not the owner (which is apidb)
 is
-
-tab_count   SMALLINT;
-ind_count   SMALLINT;
-
 begin
-    for s in (select distinct(owner) schema from all_tables where owner in ('APIDB', 'APIDBTUNING') )
-	loop
-		dbms_output.put_line('Checking stats for the '||s.schema||' schema');
-		for t in (select distinct(table_name) from
-					(select distinct(table_name) table_name from all_tables where owner = s.schema and last_analyzed is null
-				  			union
-				  	 select distinct(table_name) table_name from all_indexes where table_owner = s.schema and last_analyzed is null))
-		loop
-			dbms_stats.unlock_table_stats(ownname => s.schema, tabname => t.table_name);
-			select count(table_name) into tab_count from all_tables
-				where owner = s.schema and table_name = t.table_name and last_analyzed is null;
-			if tab_count >0 then
-			   dbms_output.put_line( '  Updating stats for table '||t.table_name );
-			   dbms_stats.gather_table_stats(ownname => s.schema, tabname => t.table_name, estimate_percent => 100, degree => 2);
-			end if;
-			for i in (select distinct(index_name) index_name from all_indexes where owner = s.schema and table_name = t.table_name and last_analyzed is null and INDEX_TYPE != 'DOMAIN')
-		    loop
-			    dbms_output.put_line( '    Updating stats for index '||i.index_name );
-			    dbms_stats.gather_index_stats(ownname => s.schema, indname => i.index_name, estimate_percent => 100, degree => 2);
-		    end loop;
-                        -- locking statistics was creating problems (redmine #7658)
-			-- dbms_stats.lock_table_stats(ownname => s.schema, tabname => t.table_name);
-		end loop;
-	end loop;
+    -- table stats
+    dbms_output.put_line( '  Updating stats for table ' || schema_name || '.' || table_name );
+    dbms_stats.gather_table_stats(ownname => schema_name, tabname => table_name, estimate_percent => 100, degree => 2);
+
+    -- index stats
+    for i in (select distinct owner as index_owner, index_name
+              from all_indexes
+              where table_owner = schema_name
+                and table_name = table_name
+                and last_analyzed is null
+                and index_type != 'DOMAIN')
+    loop
+        dbms_output.put_line( '    Updating stats for index ' || i.index_owner || '.' || i.index_name);
+        dbms_stats.gather_index_stats(ownname => i.index_owner, indname => i.index_name, estimate_percent => 100, degree => 2);
+    end loop;
 end;
 /
 
 show errors
-GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_r;
-GRANT execute ON apidb.apidb_unanalyzed_stats TO gus_w;
+GRANT execute ON apidb.analyze TO gus_r;
+GRANT execute ON apidb.analyze TO gus_w;
 
 -------------------------------------------------------------------------------
 /* ========================================================================== *

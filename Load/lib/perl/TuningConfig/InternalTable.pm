@@ -603,13 +603,13 @@ SQL
 
   # drop obsolete table, if we're doing that (and it exists)
   if (defined $synonymRtn && $purgeObsoletes && $oldTable) {
-    ApiCommonData::Load::TuningConfig::Log::addLog("    purging obsolete table " . $oldTable);    
+    ApiCommonData::Load::TuningConfig::Log::addLog("    purging obsolete table " . $oldTable);
     $dbh->do("drop table " . $oldTable)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
   }
 
-  # Run stored procedure to analye any apidb tables that need it
-  $dbh->do("BEGIN apidb.apidb_unanalyzed_stats; END;")
+  # Run stored procedure to analye new table
+  $dbh->do("BEGIN apidb.analyze('" . $self->{schema} . "', '$prefix$tuningTableName$suffix'); END;")
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
   return $synonymRtn
