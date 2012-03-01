@@ -1,25 +1,15 @@
+-------------------------------------------------------------------------------
 create or replace function apidb.reverse_complement_clob (seq clob)
 return clob
 is
     rslt clob;
     idx  number;
-    base char;
 begin
     rslt := '';
-    if seq is not null
-    then
-        for idx IN 1 .. length(seq)
-        loop
-            base := substr(seq, idx, 1);
-            case upper(base)
-                when 'A' then rslt := 'T' || rslt;
-                when 'C' then rslt := 'G' || rslt;
-                when 'G' then rslt := 'C' || rslt;
-                when 'T' then rslt := 'A' || rslt;
-                else rslt := base || rslt;
-            end case;
-        end loop;
-    end if;
+    for idx in reverse 1 .. length(seq) loop
+        rslt := rslt
+                || translate(substr(seq, idx, 1), 'atugcyrkmbdhvATUGCYRKMBDHV', 'taacgrymkvhdbTAACGRYMKVHDB');
+    end loop;
     return rslt;
 end reverse_complement_clob;
 /
@@ -34,22 +24,13 @@ create or replace function apidb.reverse_complement (seq varchar2)
 return varchar2
 is
     rslt varchar2(4000);
-    idx    number;
+    idx  number;
 begin
     rslt := '';
-    if seq is not null
-    then
-        for idx IN 1 .. length(seq)
-        loop
-            case upper(substr(seq, idx, 1))
-                when 'A' then rslt := 'T' || rslt;
-                when 'C' then rslt := 'G' || rslt;
-                when 'G' then rslt := 'C' || rslt;
-                when 'T' then rslt := 'A' || rslt;
-                else rslt := substr(seq, idx, 1) || rslt;
-            end case;
-        end loop;
-    end if;
+    for idx in reverse 1 .. length(seq) loop
+        rslt := rslt
+                || translate(substr(seq, idx, 1), 'atugcyrkmbdhvATUGCYRKMBDHV', 'taacgrymkvhdbTAACGRYMKVHDB');
+    end loop;
     return rslt;
 end reverse_complement;
 /
