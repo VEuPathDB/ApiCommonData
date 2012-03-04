@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl -w 
 
 # This script converts JGI jff into ISF compatible format
 # Takes 2 arguments, 1. Is the gff file 2. Is the gene prefix
@@ -92,40 +92,60 @@ my %HOH;
 my %geneNameHash;
 
 open PRED, $fileName or die "Can't open file $!\n";
+my $prevName;
+my $num;
+my @arr;
 
+# Modify the name string in the gff. Since the name string is NOT uniq 
+# This block modifies, so that name remains unique
 while(<PRED>){
+	my $name;
+	if(/name\s+\"(\S+)\"/){
+		$name = $1;
+		if($name !~ $prevName){
+			$num++;
+		}
+		$prevName=$name;
+		my $tmp = $name."_$num";
+	my $line = $_;
+	$line  =~ s/$name/$tmp/;
+	push @arr, $line;
+	}
+}
+
+		
+close(PRED);
+
+foreach my $line(@arr){
 	
 	my $gene_id;
 	
 	my $name;
 	
 
-	if(/name\s+\"(\S+)\";\s+transcriptId\s+(\d+)/){
+	if($line =~ /name\s+\"(\S+)\";\s+transcriptId\s+(\d+)/){
 	
-		
 		$name    = $1;
 		$gene_id = $2;
+		
+
 		$geneNameHash{$name}=$gene_id;
 	}
 
+
 }
 
-seek(PRED,0,0);
 # The names are not uniq in some species, so increment names each time it
 # encounters a new block;
-my $nameIncr;
-my $prev;
 
-while(<PRED>){
+foreach my $tmp (@arr){
 
-	chomp;
-	
-	if(/^#/){
+	if($tmp =~ /^#/){
 		next;
 	}	
 	
 		
-		my @line = split(/\t/,$_);
+		my @line = split(/\t/,$tmp);
 		
 		my $last = scalar(@line) - 1;
 		
@@ -134,27 +154,22 @@ while(<PRED>){
 		
 		if($line[$last] =~ /name\s+\"(\S+)\"/){
 			$name =$1;
-			if($name !~ $prev){
-				$nameIncr++;
-			}
-			$prev=$name;
 		}
 		
-		
-		$line[$last] = $name."_$nameIncr";
+		$line[$last] = $name;		
 			
-			if($_ =~ /start_codon/i){
+			if($tmp =~ /start_codon/i){
 			
 				push(@{$HOH{$line[0]}->{$line[$last]}->{'start_codon'}}, $line[3], $line[4]);
 			}
-			elsif($_ =~ /stop_codon/i){
+			elsif($tmp =~ /stop_codon/i){
 				push(@{$HOH{$line[0]}->{$line[$last]}->{'stop_codon'}}, $line[3], $line[4]);
 			}
-			elsif($_ =~/CDS/i){
+			elsif($tmp =~/CDS/i){
 
 				push(@{$HOH{$line[0]}->{$line[$last]}->{'CDS'}}, $line[3], $line[4]);
 			}
-			elsif($_ =~/exon/i){
+			elsif($tmp =~/exon/i){
 
 				push(@{$HOH{$line[0]}->{$line[$last]}->{'exon'}}, $line[3], $line[4]);
 			}
@@ -163,13 +178,12 @@ while(<PRED>){
 
 		$HOH{$line[0]}->{$line[$last]}->{'score'} = $line[5];
 		
-		$HOH{$line[0]}->{$line[$last]}->{'geneid'} = $geneNameHash{$name};
+		$HOH{$line[0]}->{$line[$last]}->{'geneid'} = $geneNameHash{$line[$last]};
 
 
 
 }
 
-close PRED;
 return %HOH;
 
 }
