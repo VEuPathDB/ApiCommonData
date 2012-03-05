@@ -98,21 +98,23 @@ my @arr;
 
 # Modify the name string in the gff. Since the name string is NOT uniq 
 # This block modifies, so that name remains unique
-while(<PRED>){
-	my $name;
-	if(/name\s+\"(\S+)\"/){
-		$name = $1;
-		if($name !~ $prevName){
-			$num++;
-		}
-		$prevName=$name;
-		my $tmp = $name."_$num";
-	my $line = $_;
-	$line  =~ s/$name/$tmp/;
-	push @arr, $line;
-	}
-}
 
+while(<PRED>){
+        chomp;
+        my $name;
+        if(/name\s+\"(.*?)\"/){
+                $name = $1;
+                if($name !~ $prevName){
+                        $num++;
+                }
+                $prevName=$name;
+                my $tmp = $name."_$num";
+        my @tmparr = split(/\t/,$_);
+        $tmparr[-1]  =~ s/$name/$tmp/;
+        my $line = join("\t",@tmparr);
+        push @arr, $line;
+        }
+}
 		
 close(PRED);
 
