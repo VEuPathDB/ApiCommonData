@@ -13,7 +13,7 @@ use Data::Dumper;
 use strict;
 
 my $outputFileBase = "profiles";
-my $fileSuffixBase = "int";
+my $fileSuffixBase = "intensity";
 my $minSuffix = ".min";
 my $maxSuffix = ".max";
 my $diffSuffix = ".diff";
@@ -30,7 +30,6 @@ sub new {
     my $requiredParams = ['profileSetName',
                           'samples',
                          ];
-
   my $self = $class->SUPER::new($args, $requiredParams);
 
   if(scalar @{$args->{samples}} > 1 ) {
