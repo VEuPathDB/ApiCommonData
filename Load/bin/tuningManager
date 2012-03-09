@@ -32,6 +32,8 @@ ApiCommonData::Load::TuningConfig::Log::addLogPreamble("Starting tuningManager a
 					       . " at $timestamp with arguments:\n"
 					       . join(' ', @ARGV));
 
+my $noArgs = !@ARGV; # check for no arguments now, before GetOptions consumes @ARGV
+
 my ($configFile, $propFile, $instance, $schema, $password, $tables,
     $doUpdate, $debug, $notifyEmail, $cleanupWarnOnly, $cleanupAge, $forceUpdate,
     $maxWait, $logfile, $prefix, $filterValue);
@@ -66,6 +68,8 @@ ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"instance
 ApiCommonData::Load::TuningConfig::Log::addErrorLog("parameter error: \"configFile\" must be specified if \"prefix\" is used")
   unless ($configFile || !$prefix);
 &usage unless ($instance && ($propFile || $password) && ($configFile || !$prefix));
+
+exit if ($noArgs); # don't send a log email if they only want usage
 
 $cleanupAge = 0 if !defined $cleanupAge;
 
@@ -408,9 +412,9 @@ die if ApiCommonData::Load::TuningConfig::Log::getErrorsEncounteredFlag();
 sub usage {
   ApiCommonData::Load::TuningConfig::Log::addLog(
 q{
-Create/update "tuning tables", denormalized copies of data used to improve web site performance.
+Create/update "tuning tables", denormalized copies of data for better web site performance.
 
-Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>} 
+Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>}
                       --instance <dbInstance> {--password <dbPassword>}
                      {--doUpdate} --notifyEmail <emailAddressList> { --debug }
                      {--cleanupWarnOnly} {--cleanupAge <days>} {--forceUpdate}
@@ -418,7 +422,7 @@ Usage: tuningManager {--configFile <configXmlPath>} {--propFile <filename>}
 
 options:
   configFile      an xml file describing the tables to be created
-  propFile        pathname of a file containing database username and password
+  propFile        file contains XML tuningProps entity containing password, schema, dblink, dbaEmail, or maxRebuildMinutes entities
   instance        the database instance to login and craete objects in
   schema          the schema (database user) to login and craete objects in
   password        database login password
@@ -433,65 +437,18 @@ options:
   prefix          create tuning tables and synonyms with supplied prefix
   filterValue     substitute supplied macro value for "&prefix" macro
 
+examples:
 
-Sample config file XML:
-<tuningConfig>
+tuningManager -instance <db instance> -propFile <propFile> # minimal usage, using XML from svn
 
-  <tuningIndex table="dots.NaSequence" name="naSeq_srcSubclass_ix">
-     source_id, subclass_id
-  </tuningIndex>
+tuningManager -instance <db instance> -password <password> # password on command line instead of propFile
 
-  <tuningTable name="EstAlignmentGeneSummary">
-    <internalDependency name="BlatAlignmentLocation"/>
-    <internalDependency name="GeneAttributes"/>
-    <externalDependency name="sres.SequenceOntology"/>
-    <intermediateTables name="EstAlignmentGene"/>
-    <sql>
-      CREATE TABLE EstAlignmentGene AS
-      SELECT ba.blat_alignment_id, ba.query_na_sequence_id, e.accession,
-               e.library_id, ba.query_taxon_id, ba.target_na_sequence_id,
-               ba.query_bases_aligned / (query_sequence.length)
-               * 100 AS percent_est_bases_aligned,
-               ga.source_id AS gene
-        FROM BlatAlignmentLocation ba, dots.Est e, dots.AssemblySequence aseq,
-             GeneAttributes ga, GenomicSequence sequence,
-             dots.NaSequence query_sequence, sres.SequenceOntology so
-        WHERE e.na_sequence_id = ba.query_na_sequence_id
-          AND query_sequence.sequence_ontology_id = so.sequence_ontology_id
-          AND so.term_name = 'EST'
-          AND ba.target_na_sequence_id = sequence.na_sequence_id
-    </sql>
-    <sql>
-      CREATE TABLE EstAlignmentGeneSummary&1 AS
-      SELECT * FROM EstAlignmentNoGene
-      UNION
-      SELECT * FROM EstAlignmentGene
-    </sql>
-    <sql>
-      CREATE INDEX EstSumm_libOverlap_ix&1
-                   ON EstAlignmentGeneSummary&1
-                      (library_id, percent_identity, is_consistent,
-                       est_gene_overlap_length, percent_est_bases_aligned)
-    </sql>
-    <sql>
-      CREATE INDEX EstSumm_estSite_ix&1
-                   ON EstAlignmentGeneSummary&1
-                      (target_sequence_source_id, target_start, target_end,
-                       library_id)
-    </sql>
-  </tuningTable>
+tuningManager -instance <db instance> -propFile <propFile> -configFile <XML file> -notifyEmail <me@upenn.edu> # typical development usage
 
-</tuningConfig>
-
-Sample prop file:
-<tuningProps>
-  <password>JoeSentMe</password>
-  <schema>ApidbTuning</schema>
-  <maxRebuildMinutes>180</maxRebuildMinutes>
-  <dbaEmail>tuningMgr@pcbi.upenn.edu</dbaEmail>
-  <fromEmail>TuningMgr@pcbi.upenn.edu</fromEmail>
-  <dblink>alt.login_comment</dblink>
-</tuningProps>
+The last example shows typical usage for testing new or changed tuning-manager XML.
+Specifying the XML file on the command line makes it possible to test the code
+before checking it in, and giving your own email address with the -notifyEmail
+parameter keeps the log file from being sent to the tuning-manager email list.
 });
 }
 
