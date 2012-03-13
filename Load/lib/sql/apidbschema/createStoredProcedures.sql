@@ -411,12 +411,11 @@ begin
     -- check organism table
     begin
 
-      select distinct pi.name
+      select distinct o.project_name
       into project
-      from sres.TaxonName tn, apidb.Organism o, core.ProjectInfo pi
+      from sres.TaxonName tn, apidb.Organism o
       where SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism,' ',1,1)-1))
-      and o.taxon_id = tn.taxon_id
-      and pi.project_id = o.row_project_id;
+      and o.taxon_id = tn.taxon_id;
 
     exception
 
