@@ -27,6 +27,67 @@ create index dots.SeqvarStrain_ix
   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
   tablespace INDX; 
 
+-- constrain NaSequence source_ids to be unique
+alter table dots.NaSequenceImp
+add constraint source_id_uniq
+unique (source_id);
+
+--------------------------------------------------------------------------------
+-- constrain GeneFeature source_ids to be unique
+
+create or replace package dots.GeneId_trggr_pkg
+as
+    type geneIdList is table of varchar2(120) index by binary_integer;
+         stale    geneIdList;
+         empty    geneIdList;
+     end;
+/
+
+-- once per statement, initialize the list of GeneFeature source IDs potentially added to NaFeatureImp
+create or replace trigger dots.geneId_setup
+before insert or update on dots.NaFeatureImp
+begin
+    GeneId_trggr_pkg.stale := GeneId_trggr_pkg.empty;
+end;
+/
+
+-- once per row, if it's a GeneFeature, note the new source_id
+create or replace trigger dots.geneId_markId
+before insert or update on dots.NaFeatureImp
+for each row
+declare
+    i    number default GeneId_trggr_pkg.stale.count+1;
+begin
+  if :new.subclass_view = 'GeneFeature' and :new.source_id is not null then
+    GeneId_trggr_pkg.stale(i) := :new.source_id;
+  end if;
+end;
+/
+
+-- after the statement, check that none of the new source_ids are duplicated
+create or replace trigger dots.geneId_checkDups
+   after insert or update on dots.NaFeatureImp
+declare
+  record_count number;
+begin
+    for i in 1 .. GeneId_trggr_pkg.stale.count loop
+
+        begin
+          select count(*)
+          into record_count
+          from dots.GeneFeature
+          where source_id = GeneId_trggr_pkg.stale(i);
+        end;
+
+        if record_count > 1 then
+          raise_application_error(-20103, 'Duplicate source id "' || GeneId_trggr_pkg.stale(i) || '" in GeneFeature');
+        end if;
+    end loop;
+end;
+/
+
+--------------------------------------------------------------------------------
+
 -- upgrade GUS_W to support CTXSYS indexes (Oracle Text)
 GRANT EXECUTE ON CTXSYS.CTX_CLS TO GUS_W;
 GRANT EXECUTE ON CTXSYS.CTX_DDL TO GUS_W;
