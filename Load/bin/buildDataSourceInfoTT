@@ -79,22 +79,54 @@ sub loadDataSources {
 
     print STDERR "loading $infile";
 
-    my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile, $wdkReferenceCategories);
+#    my $dataSourceInfos = ReFlow::DataSource::DataSourceInfos->new($infile, $wdkReferenceCategories);
+     my $dbDataSourcesList = ApiCommonShared::Model::DataSourceList->new($dbh); 
+     my $dataSourceAttributions = ApiCommonShared::Model::DataSourceAttributions->new($infile, $wdkReferenceCategories,$dbDataSourcesList);
 
     if($debug){
 	print STDERR "DATA SOURCE INFO:  ";
-	print STDERR Dumper $dataSourceInfos;
+	print STDERR Dumper $dataSourceAttributions;
     }
 
 
-    my $insertDs = $dbh->prepare(<<SQL);
-      insert into apidb.DataSourceInfo$suffix
-                  (data_source_id, display_name, categories,
-                   description, contact, institution, public_url)
-                   values (?, ?, ?, ?, ?, ?, ?)
+    my $insertDsAttrib = $dbh->prepare(<<SQL);
+      insert into ApiDB.DataSourceAttribution$suffix
+                  (data_source_id, display_name, description,summary,
+                   protocol, caveat, ackowledgement, releasepolicy)
+                   values (?, ?, ?, ?, ?, ?, ?, ?)
 SQL
 
-    my $insertDsp = $dbh->prepare(<<SQL);
+    my $queryContact = $dbh->prepare(<<SQL);
+         select contact_id from Sres.Contact where name = ? and email = ?
+SQL     
+
+    my $insertDsCntctLink = $dbh->prepare(<<SQL);
+      insert into ApiDB.DataSourceContact$suffix
+                  (contact_id,data_source_id, is_primary_contact)
+                  values(?, ?, ?)
+SQL
+
+    my $insertDsCntctLinkNew = $dbh->prepare(<<SQL);
+      insert into ApiDB.DataSourceContact$suffix
+                  (contact_id,data_source_id, is_primary_contact)
+      select DataSourceContact_sq$suffix.currval, ?, ?
+      from dual
+SQL
+
+    my $insertDsCntct = $dbh->prepare(<<SQL);
+      insert into Sres.Contact$suffix
+                  (contact_id,name,email,country,state,city,address1,address2,zip)
+      select DataSourceContact_sq$suffix.nextval, ?, ?, ?, ?, ?, ?, ?, ?
+      from dual
+SQL
+
+     my $insertDsURL = $dbh->prepare(<<SQL);
+      insert into ApiDB.DataSourceAttributionURL$suffix
+                  (data_source_id,URL_Type,URL_Description,URL)
+                   values (?, ?, ?, ?)
+SQL
+ 
+      my $insertDsp = $dbh->prepare(<<SQL);
       insert into apidb.DataSourceInfoPublication$suffix
                   (data_source_publication_id, data_source_id, pmid, doi, citation, abstract)
       select DataSourceInfoPub_sq$suffix.nextval, ?, ?, ?, ?, ?
@@ -107,22 +139,63 @@ SQL
       select DataSourceInfoRef_sq$suffix.nextval, ?, ?, ?, ?
       from dual
 SQL
+ 
 
-    my %loadedDatasets = getLoadedDatasets($dbh);
-    foreach my $dsName ($dataSourceInfos->getDataSourceInfoNames()) {
+ #   my %loadedDatasets = getLoadedDatasets($dbh);
+
+    foreach my $dsName ($dataSourceAttributions->getDataSourceAttributionNames()) {
       chomp($dsName);
-      my $ds = $dataSourceInfos->getDataSourceInfo($dsName);
+
+      my $ds = $dataSourceAttributions->getDataSourceAttribution($dsName);
       print STDERR "data source: \"$dsName\"" if $debug;
-      my $dataSourceId = $loadedDatasets{$dsName};
-      if (!$dataSourceId) {
+
+      my $dbDataSource = $dbDataSourcesList->dataSourceHashByName{$dsName};
+      my $dataSourceId = $dbDataSource->{ID};
+
+      if (!$dbDataSource) {
 	print STDERR "skipping [$dsName] because $dsName does not exist in apidb.DataSource\n" if $debug;
 	next;
       }
-      $insertDs->execute($dataSourceId, $ds->getDisplayName(),
-                       $ds->getCategory(),
-                       $ds->getDescription(), $ds->getContact(),
-                       $ds->getInstitution(), $ds->getPublicUrl())
-	or die "inserting a DataSourceInfo record";
+
+      $insertDsAttrib->execute($dataSourceId, $ds->getDisplayName(),
+                       $ds->getDescription(), $ds->getSummary(), $ds->getProtocol(),
+                       $ds->getCaveat(), $ds->getAcknowledgement(), $ds->releasePolicy())
+	or die "inserting a DataSourceAttribution record";
+
+
+
+      foreach my $linkObj ($ds->getAssociatedLinks()) {
+	print STDERR "Dumping External Links:\n" . Dumper($linkObj) if $debug;
+	foreach my $extLink (@$linkObj) {
+          $insertDsURL->execute($dataSourceId, $extLink->{type}, $extLink->{linkDescription}, $extLink->{url})
+	    or die "inserting a DataSetExternalLinks record";
+	}
+      }
+
+    
+
+      foreach my $contactObj ($ds->getContacts()) {
+        print STDERR "Dumping contacts:\n" . Dumper($contactObj) if $debug;
+        foreach my $contact (@$contactObj) {
+
+          #See if contact already exists in Sres Table
+          $queryContact->execute($contact->{name}, $concat->{email})
+           or die "getting DataSource name/ID pairs";
+
+           #If it exists then link the data source to the existing contact record 
+           if (my($contactId) = $queryContact->fetchrow_array()) {
+             $insertDsCntctLink->execute($contactId,$dataSourceId,$contact->isPrimaryContact())
+             or die "inserting a DataSourceContactLink record"; 
+           } else {
+            #If it does'nt, then insert records in both tables
+             $insertDsCntct->execute($contact->{name}, $contact->{email}, $contact->{country}, $contact->{state}, $contact->{city}, $contact->{institution}, $contact->{address}, $contact->{zip})
+             or die "inserting a DataSourceContact record";
+             $insertDsCntctLinkNew->execute($dataSourceId,$contact->isPrimaryContact())
+             or die "inserting a DataSourceContactLink record";
+           }
+        }
+      }
+
 
       foreach my $publicationList ($ds->getPublications()) {
 	print STDERR "Dumping publication:\n" . Dumper($publicationList) if $debug;
@@ -143,36 +216,38 @@ SQL
     }
 }
 
-sub getLoadedDatasets {
-  my ($dbh) = @_;
+#sub getLoadedDatasets {
+#  my ($dbh) = @_;
 
-  my $query = $dbh->prepare(<<SQL);
-    select name, data_source_id from apidb.DataSource
-SQL
+#  my $query = $dbh->prepare(<<SQL);
+#    select name, data_source_id from apidb.DataSource
+#SQL
 
-  $query->execute()
-    or die "getting DataSource name/ID pairs";
+#  $query->execute()
+#    or die "getting DataSource name/ID pairs";
 
-  my %datasetHash;
-  while (my ($dsName, $dsId) = $query->fetchrow_array()) {
-    $datasetHash{$dsName} = $dsId;
-  }
+#  my %datasetHash;
+#  while (my ($dsName, $dsId) = $query->fetchrow_array()) {
+#    $datasetHash{$dsName} = $dsId;
+#  }
 
-  return %datasetHash;
-}
+#  return %datasetHash;
+#}
+
 
 sub createTables {
     my ($dbh, $suffix) = @_;
 
-    $dbh->do(<<SQL) or die "creating DataSourceInfo table";
-      create table apidb.DataSourceInfo$suffix (
+    $dbh->do(<<SQL) or die "creating DataSourceAttribution table";
+      create table ApiDB.DataSourceAttribution$suffix (
         data_source_id               number(12),
         display_name                 varchar2(200),
-        public_url                   varchar2(200),
-        categories                   varchar2(80),
+        summary                   varchar2(200),
+        protocol                   varchar2(80),
         description                  varchar2(4000),
-        contact                      varchar2(80),
-        institution                  varchar2(120),
+        caveat                      varchar2(80),
+        acknowledgement                  varchar2(120),
+        releasepolicy                  varchar2(120),
         constraint DataSourceInf_pk$suffix primary key (data_source_id)
       )
 SQL
