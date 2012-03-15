@@ -37,7 +37,7 @@ GRANT SELECT ON apidb.Workflow_sq TO gus_w;
 create table apidb.WorkflowStep (
   workflow_step_id    number(10),
   workflow_id         number(10),
-  name                varchar(200),
+  name                varchar(300),
   host_machine        varchar(30),
   process_id          number(10),
   state               varchar(30),
