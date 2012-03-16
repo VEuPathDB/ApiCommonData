@@ -80,7 +80,7 @@ begin
         end;
 
         if record_count > 1 then
-          raise_application_error(-20103, 'Duplicate source id "' || GeneId_trggr_pkg.stale(i) || '" in GeneFeature');
+          raise_application_error(-20103, 'Error:  trying to write source_id "' || GeneId_trggr_pkg.stale(i) || '" to DoTS.GeneFeature but that source_id already exists');
         end if;
     end loop;
 end;
