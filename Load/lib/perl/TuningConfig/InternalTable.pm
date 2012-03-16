@@ -609,7 +609,7 @@ SQL
   }
 
   # Run stored procedure to analye new table
-  $dbh->do("BEGIN apidb.analyze('" . $self->{schema} . "', '$prefix$tuningTableName$suffix'); END;")
+  $dbh->do("BEGIN apidb.analyze('" . $self->{schema} . "', '$prefix$table$suffix'); END;")
     or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
   return $synonymRtn
