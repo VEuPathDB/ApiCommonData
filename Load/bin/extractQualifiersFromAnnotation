@@ -303,7 +303,7 @@ sub usage {
 Extract function data from annotation as well as alias, dbxref, and comments
 Function data includes product, go association, ec_number, and gene name
 
-Usage:  extractFunctionFromAnnotation --format --fileOrDir --config [--outputDir --db --taxonId]
+Usage:  extractQualifiersFromAnnotation --format --fileOrDir --config [--outputDir --db --taxonId]
 
 where
   --format:	embl, genbank, gff2, gff3, tigr (or any format supported by bioperl's SeqIO)
@@ -474,3 +474,58 @@ sub makeAggregators {
     } @aggregators;
   return @aggregators;
 }
+
+
+#############################################################################################################
+#############################################################################################################
+## 
+##  Sample of config file
+##
+##  <feature name="CDS"   method="">
+##    <qualifier name="EC_number"	method="ec"/>
+##    <qualifier name="GO_component"    method="associationsC"/>
+##    <qualifier name="GO_function"     method="associationsF"/>
+##    <qualifier name="GO_process"      method="associationsP"/>
+##    <qualifier name="citation"  	ignore="true"/>
+##    <qualifier name="codon_start"	ignore="true"/>
+##    <qualifier name="db_xref"   	method="dbxref"/>
+##    <qualifier name="function"  	ignore="true"/>
+##    <qualifier name="gene"      	method="geneName"/>
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="note"      	method="comments"/>
+##    <qualifier name="product"   	method="products"/>
+##    <qualifier name="protein_id"      method="aliases"/>
+##    <qualifier name="transl_table"    ignore="true"/>
+##    <qualifier name="translation"     ignore="true"/>
+##  </feature>
+##
+##  <feature name="rRNA"  method="">
+##    <qualifier name="citation"  	ignore="true"/>
+##    <qualifier name="db_xref"   	method="dbxref"/>
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="note"      	method="comments"/>
+##    <qualifier name="product"   	method="products"/>
+##  </feature>
+##
+##  <feature name="tRNA"  method="">
+##    <qualifier name="locus_tag" 	method="sourceId"/>
+##    <qualifier name="product"   	method="products"/>
+##  </feature>
+##
+##  <feature name="repeat_region" ignore="true">
+##    <qualifier name="citation"	ignore="true"/>
+##    <qualifier name="rpt_type"	ignore="true"/>
+##  </feature>
+##
+##
+##
+## Note:
+##  1. For the feature that includes qualifier need to be extracted, make it as method=""
+##     For the feature that does not include qualifier need to be extracted, make it as ignore="true"
+##  2. For the qualifier that need to be extracted, assign the method, such as method="products"
+##     For the qualifier that does not need to be extracted, make it as ignore="true"
+##
+################################################################################################################
+################################################################################################################
+
+
