@@ -386,5 +386,13 @@ sub calculateSummaryStats {
 }
 
 
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.Profile'
+	 );
+}
+
+
 1;
 
