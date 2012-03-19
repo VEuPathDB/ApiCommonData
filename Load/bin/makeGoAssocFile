@@ -199,7 +199,7 @@ q{
                 if ($qualifier eq 'GO_component' || $qualifier eq 'GO_function' || $qualifier eq 'GO_process') {
                     my $aspect;
                     foreach my $value ($feature->get_tag_values($qualifier)){
-                        if ($value =~ /GO:(\d+)/) {
+                        if ($value =~ /GO:(\d+)/ || $value =~ /\[\D+(\d+)\]/) {
                                 $goId = "GO:".$1;
                         }
                         if ($qualifier eq 'GO_component'){
