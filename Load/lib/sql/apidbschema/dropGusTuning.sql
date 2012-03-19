@@ -17,4 +17,10 @@ drop constraint source_id_uniq;
 
 alter table dots.sequencePiece DROP ( start_position, end_position );
 
+alter table sres.ExternalDatabaseRelease
+ drop (id_is_alias,
+      data_type,
+      data_subtype,
+      taxon_id);
+
 exit
