@@ -169,6 +169,7 @@ while ( my $seq = $in->next_seq() ) {
 		    }
 		    
 		}
+q{
 		if ($qualifier eq 'GO_process'){
 		    foreach my $value ($feature->get_tag_values($qualifier)){
 			$value =~ /^(.+)\[\D+(\d+)\]/;
@@ -194,6 +195,26 @@ while ( my $seq = $in->next_seq() ) {
 		  $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\tC\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
 		}
 	      }
+};
+                if ($qualifier eq 'GO_component' || $qualifier eq 'GO_function' || $qualifier eq 'GO_process') {
+                    my $aspect;
+                    foreach my $value ($feature->get_tag_values($qualifier)){
+                        if ($value =~ /GO:(\d+)/) {
+                                $goId = "GO:".$1;
+                        }
+                        if ($qualifier eq 'GO_component'){
+                                $aspect = "C";
+                        }elsif ($qualifier eq 'GO_function'){
+                                $aspect = "F";
+                        }elsif ($qualifier eq 'GO_process'){
+                                $aspect = "P";
+                        }else{
+                                $aspect = "";
+                        }
+                        $goAssocFh->print("$db\t$sourceId\t$sourceId\t\t$goId\t\t$evidenceCode\t$annotBasis\t$aspect\t$product\t$sourceId\tgene\ttaxon:$taxonId\t$date\t$annotBasis\n");
+                    }
+                }
+
 	    }
 	    if(!($goId)){
 		if($feature->has_tag('note')){
