@@ -29,6 +29,7 @@ $date = join("",split(/-/,$date));
 
 #my $count = 0;
 #my $subCount = 0;
+my %done;
 
 my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
 	$db, $taxonId, 
@@ -145,7 +146,8 @@ foreach my $file (@files) {
 									}
 									$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n");
 								} else {
-									$funcFhHash{$qualifier}->print("$sourceId\t$value\n");
+									$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if (!$done{$sourceId}{$value});
+									$done{$sourceId}{$value} = "done";
 								}	
 							}
 						}
