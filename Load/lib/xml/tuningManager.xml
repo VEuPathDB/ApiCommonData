@@ -1356,16 +1356,15 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
         and ed.name = 'deprecated genes') deprecated,
      (select sf.parent_id,count(*) as total_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
-            'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
+      where d.name not in ('pfal3D7_SNP_Broad_gff_RSRC','Broad SNPs','Sanger falciparum SNPs', 'pfal3D7_SNP_sanger_ItGhana_gff_RSRC', 'Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC')
       and d.external_database_id = rel.external_database_id
       and sf.external_database_release_id = rel.external_database_release_id
       and sf.parent_id is not null
       group by sf.parent_id) totsnps,
      (select sf.parent_id,count(*) as nonsyn_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
-             'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
+      where d.name not in ('pfal3D7_SNP_Broad_gff_RSRC','Broad SNPs','Sanger falciparum SNPs','pfal3D7_SNP_sanger_ItGhana_gff_RSRC',
+             'Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC','X.Su SNPs','pfal3D7_SNP_XSu_gff_RSRC','Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC')
         and d.external_database_id = rel.external_database_id
         and sf.external_database_release_id = rel.external_database_release_id
         and sf.parent_id is not null
@@ -1373,8 +1372,8 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
       group by sf.parent_id) nssnps,
      (select sf.parent_id,count(*) as syn_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
-      where d.name not in ('Pf_Broad_SNPs_RSRC','Broad SNPs','Sanger falciparum SNPs','sangerItGhanaSnps_RSRC',
-             'Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC')
+      where d.name not in ('pfal3D7_SNP_Broad_gff_RSRC','Broad SNPs','Sanger falciparum SNPs','pfal3D7_SNP_sanger_ItGhana_gff_RSRC',
+             'Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC','X.Su SNPs','pfal3D7_SNP_XSu_gff_RSRC','Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC
         and d.external_database_id = rel.external_database_id
         and sf.external_database_release_id = rel.external_database_release_id
         and sf.parent_id is not null
@@ -1768,16 +1767,16 @@ CREATE TABLE SnpAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
-       CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'NIH SNPs'
+       CASE WHEN ed.name in ('pfal3D7_SNP_XSu_gff_RSRC','X.Su SNPs') THEN 'NIH SNPs'
        ELSE ed.name END AS dataset,
        decode(ed.name,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type,
-       CASE WHEN ed.name in ('Pf_XSuSnps_RSRC','X.Su SNPs') THEN 'Su_SNPs'
-       WHEN ed.name = 'Pf_Broad_SNPs_RSRC' THEN 'Broad_SNPs'
+       CASE WHEN ed.name in ('pfal3D7_SNP_XSu_gff_RSRC','X.Su SNPs') THEN 'Su_SNPs'
+       WHEN ed.name = 'pfal3D7_SNP_Broad_gff_RSRC' THEN 'Broad_SNPs'
        WHEN ed.name = 'Broad SNPs' THEN 'Broad_SNPs'
-       WHEN ed.name in ('sangerItGhanaSnps_RSRC','Sanger falciparum SNPs') THEN 'sangerItGhanaSnps'
-       WHEN ed.name in ('Sanger reichenowi SNPs','sangerPReichenowiSnps_RSRC') THEN 'sangerReichenowiSnps'
-       WHEN ed.name in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs') THEN 'plasmoDbCombinedSnps'
-       WHEN ed.name in ('Winzeler Array - Plasmodium Genetic Variation','WinzelerGeneticVariationArray_RSRC') THEN 'WinzelerGeneticVariationArray'
+       WHEN ed.name in ('pfal3D7_SNP_sanger_ItGhana_gff_RSRC','Sanger falciparum SNPs') THEN 'sangerItGhanaSnps'
+       WHEN ed.name in ('Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC') THEN 'sangerReichenowiSnps'
+       WHEN ed.name in ('pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','PlasmoDB combined SNPs') THEN 'plasmoDbCombinedSnps'
+       WHEN ed.name in ('Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC') THEN 'WinzelerGeneticVariationArray'
        WHEN ed.name = 'Genomic Sequence SNPs' THEN 'AmitAlignmentSnps'
        WHEN ed.name = 'Genetic Markers - David Sibley' THEN 'GeneticMarkers_Sibley'
        WHEN ed.name = 'John Boothroyd lab at Stanford' THEN 'ME49_SNPs'
@@ -5439,7 +5438,7 @@ where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
 and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
-and sa.dataset in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs','Broad SNPs','Pf_Broad_SNPs_RSRC')
+and sa.dataset in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs','Broad SNPs','pfal3D7_SNP_Broad_gff_RSRC')
       ]]>
     </sql>
     <sql>
