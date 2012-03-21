@@ -81,7 +81,7 @@ my @sourceIdQualifiers = grep { $$qualifierHash{$_} eq 'sourceId' } keys %$quali
 my $sourceIdQualifier = $sourceIdQualifiers[0];
 print "\$sourceIdQualifier = $sourceIdQualifier\n";
 
-my (%outputHash, %funcFhHash, %dbxrefOutput, %dbxrefFhHash);
+my (%outputHash, %funcFhHash, %dbxrefOutput, %dbxrefFhHash, $goOutput, $goFh);
 foreach my $k (sort keys %$qualifierHash) {
 	my $output;
 	if ($outputDir) {
@@ -92,10 +92,23 @@ foreach my $k (sort keys %$qualifierHash) {
 	$outputHash{$k} = $output;
 }
 
+if ($outputDir) {
+	$goOutput = "$outputDir\/go_associations.gas";
+} else {
+	$goOutput = "go_associations.gas";
+}
+
 foreach my $k (sort keys %outputHash) {
 	#print "Inside outputHash, $k, $outputHash{$k}\n";
-	$funcFhHash{$k} = FileHandle->new();
-	$funcFhHash{$k}->open(">$outputHash{$k}") || die "Can not open file $outputHash{$k} to write.\n";
+	if ($outputHash{$k} !~ /sourceId/ && $outputHash{$k} !~ /dbxref/ && $outputHash{$k} !~ /association/) {
+		$funcFhHash{$k} = FileHandle->new();
+		$funcFhHash{$k}->open(">$outputHash{$k}") || die "Can not open file $outputHash{$k} to write.\n";
+	} elsif ($outputHash{$k} =~ /association/) {
+		if (!$goFh) {
+			$goFh = FileHandle->new();
+			$goFh->open(">$goOutput") || die "Can not open file $goOutput to write.\n";
+		}
+	}
 }
 
 foreach my $file (@files) {
@@ -112,7 +125,6 @@ foreach my $file (@files) {
 			$unflattener->unflatten_seq(-seq => $bioperlSeq,
 								-use_magic => 1);
 		}
-
 		foreach my $bioperlFeature ($bioperlSeq->get_SeqFeatures()) {
 			my $sourceId;
 			my $type = $bioperlFeature->primary_tag();
@@ -122,13 +134,12 @@ foreach my $file (@files) {
 				}else {
 					print "No sourceId value available for $sourceIdQualifier in $type\n";
 				}
-
 				foreach my $qualifier ($bioperlFeature->get_all_tags()) {
-					if ($funcFhHash{$qualifier}) {		
+					if ($outputHash{$qualifier}) {		
 						if ($outputHash{$qualifier} =~ /associations/) {
 							my $outputLine = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
-							$funcFhHash{$qualifier}->print("$outputLine\n");
-							#$count++;
+							#$funcFhHash{$qualifier}->print("$outputLine\n");
+							$goFh->print("$outputLine\n");
 						} else { 
 							my @values = $bioperlFeature->get_tag_values($qualifier);
 							foreach my $value (@values) {
@@ -146,7 +157,7 @@ foreach my $file (@files) {
 									}
 									$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n");
 								} else {
-									$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if (!$done{$sourceId}{$value});
+									$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && !$done{$sourceId}{$value});
 									$done{$sourceId}{$value} = "done";
 								}	
 							}
@@ -166,19 +177,8 @@ foreach my $k (sort keys %funcFhHash) {
 	$funcFhHash{$k}->close();
 }
 
+$goFh->close() if ($goFh);
 
-##### combine GO in 1 file
-my $goOutput = "go_associations.txt";
-open (GOUT, ">$goOutput" ) || die "can not open $goOutput to write.\n";
-
-foreach my $k (sort keys %outputHash) {
-	if ($k =~ /^GO/ || $k =~ /^gO/) {
-		open (GR, "$outputHash{$k}") || die "can not open file $outputHash{$k} to read.\n";
-		print GOUT <GR>;
-		close GR;
-	}
-}
-close GOUT;
 
 #############################
 sub processGoAsso {
