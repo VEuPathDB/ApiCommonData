@@ -38,7 +38,7 @@ SELECT core.tableinfo_sq.nextval, 'IsolateGPS',
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE lower(name) = 'apidb') d
-WHERE 'isolatevocabulary' NOT IN (SELECT lower(name) FROM core.TableInfo
+WHERE 'isolategps' NOT IN (SELECT lower(name) FROM core.TableInfo
                                     where database_id = d.database_id);
 
 
