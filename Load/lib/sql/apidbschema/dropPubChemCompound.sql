@@ -1,3 +1,3 @@
-DROP TABLE bindu.PubChemCompound;
+DROP TABLE apidb.PubChemCompound;
 
 exit;

@@ -1,4 +1,5 @@
-CREATE TABLE bindu.PubChemCompound (
+CREATE TABLE apidb.PubChemCompound (
+ pubchem_compound_id      NUMBER(10),
  compound_id             NUMBER(10),
  property                VARCHAR2(20) NOT NULL,
  type                    VARCHAR2(20) NOT NULL,
@@ -14,11 +15,14 @@ CREATE TABLE bindu.PubChemCompound (
  ROW_GROUP_ID            NUMBER(3),
  ROW_PROJECT_ID          NUMBER(4),
  ROW_ALG_INVOCATION_ID   NUMBER(12),
- PRIMARY KEY (compound_id)
+ PRIMARY KEY (pubchem_compound_id)
 );
 
-GRANT insert, select, update, delete ON bindu.PubChemCompound TO gus_w;
-GRANT select ON bindu.PubChemCompound TO gus_r;
+CREATE SEQUENCE apidb.PubChemCompound_sq;
+
+GRANT insert, select, update, delete ON apidb.PubChemCompound TO gus_w;
+GRANT select ON apidb.PubChemCompound TO gus_r;
+GRANT select ON apidb.PubChemCompound_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
@@ -27,12 +31,12 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'PubChemCompound',
-       'Standard', 'compound_id',
+       'Standard', 'pubchem_compound_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'bindu') d
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'PubChemCompound' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
