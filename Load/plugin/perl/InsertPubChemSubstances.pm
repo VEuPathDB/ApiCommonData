@@ -34,8 +34,8 @@ sub getArgsDeclaration {
      stringArg({ name => 'fileName',
 		 descr => 'xml data file',
 		 constraintFunc=> undef,
-		 reqd  => 0,
-		 isList => 1,
+		 reqd  => 1,
+		 isList => 0,
 		 mustExist => 0,
 	       })
     ];
@@ -130,8 +130,9 @@ sub run {
 
 
   my $fileDir = $self->getArg('fileDir');
-  my $file = $self->getArg('fileName');
+  my $fileName = $self->getArg('fileName');
 
+  my $file = $fileDir. "/" . $fileName;
   $twig->parsefile($file);
 
   $self->insertPubChemSubstance();
@@ -173,9 +174,10 @@ sub insertPubChemSubstance {
 	  }
 	}
       }
-      $count++;
-      $self->undefPointerCache() if $count % 100 == 0;
     }
+    $count++;
+    $self->undefPointerCache() if $count % 100 == 0;
+
 
     $self->log("Inserted entries for $count PubChem Substances.");
   }
@@ -183,7 +185,7 @@ sub insertPubChemSubstance {
 }
 
 sub get_ID {
-  my ($self, $twig, $ele) = @_;
+  my ($twig, $ele) = @_;
   my $id = $ele->first_child('PC-ID_id')->text;
 
   $subst_id = $id;
@@ -191,7 +193,7 @@ sub get_ID {
 }
 
 sub get_Syns {
-  my ($self, $twig, $ele) = @_;
+  my ($twig, $ele) = @_;
 
   my @desc = $ele->find_by_tag_name('PC-Substance_synonyms_E');
   my @synonyms;
@@ -204,7 +206,7 @@ sub get_Syns {
 
 
 sub get_KEGG {
-  my ($self, $twig, $ele) = @_;
+  my ($twig, $ele) = @_;
   my $name = $ele->first_child('PC-DBTracking_name')->text;
   my $id = $ele->first_child('PC-DBTracking_source-id')->text;
 
@@ -213,7 +215,7 @@ sub get_KEGG {
 
 
 sub get_CID {
-  my ($self, $twig, $ele) = @_;
+  my ($twig, $ele) = @_;
   my @cidArr = $ele->find_by_tag_name('PC-CompoundType_id_cid');
 
   foreach my $cid (@cidArr) {
