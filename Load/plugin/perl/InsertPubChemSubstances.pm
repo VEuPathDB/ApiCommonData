@@ -9,9 +9,10 @@ package ApiCommonData::Load::Plugin::InsertPubChemSubstances;
 use strict;
 use warnings;
 
+##ApiDB
 use XML::Twig;
 use GUS::PluginMgr::Plugin;
-use GUS::Model::bindu::PubChemSubstance;
+use GUS::Model::ApiDB::PubChemSubstance;
 
 
 my %subst;
@@ -50,7 +51,7 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Substances out of a single XML file, into bindu.PubChemSubstance
+Plugin to load PubChem Substances out of a single XML file, into ApiDB.PubChemSubstance
 DESCR
 
   my $purpose = <<PURPOSE;
@@ -65,7 +66,7 @@ PURPOSEBRIEF
 NOTES
 
   my $tablesAffected = <<AFFECT;
-bindu.PubChemSubstance
+ApiDB.PubChemSubstance
 AFFECT
 
   my $tablesDependedOn = <<TABD;
@@ -154,7 +155,7 @@ sub insertPubChemSubstance {
       if ($p ne 'synonymns') {
 	# print "$sid, $p, " . $subst{$sid}{$p} . " \n";
 
-	my $pubChemSubst = GUS::Model::bindu::PubChemSubstance->new({ substance_id => $sid,
+	my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 								      property     => $p,
 								      value        => $subst{$sid}{$p}
 								    });
@@ -166,7 +167,7 @@ sub insertPubChemSubstance {
 	  # skip KEGG_ID, as it is repeated as a synonym in the XML file
 	  # print "$sid, synonymn, $s \n" if ($s ne $subst{$sid}{KEGG});
 	  if ($s ne $subst{$sid}{KEGG}) {
-	    my $pubChemSubst = GUS::Model::bindu::PubChemSubstance->new({ substance_id => $sid,
+	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									  property     => $p,
 									  value        => $s
 									});
@@ -226,7 +227,7 @@ sub get_CID {
 sub undoTables {
   my ($self) = @_;
 
-  return ('bindu.PubChemSubstance');
+  return ('ApiDB.PubChemSubstance');
 }
 
 
