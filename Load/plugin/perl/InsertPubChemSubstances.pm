@@ -9,7 +9,6 @@ package ApiCommonData::Load::Plugin::InsertPubChemSubstances;
 use strict;
 use warnings;
 
-##ApiDB
 use XML::Twig;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemSubstance;
@@ -153,7 +152,6 @@ sub insertPubChemSubstance {
 
     foreach my $p (@props) {
       if ($p ne 'synonymns') {
-	# print "$sid, $p, " . $subst{$sid}{$p} . " \n";
 
 	my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 								      property     => $p,
@@ -179,12 +177,12 @@ sub insertPubChemSubstance {
     $count++;
     $self->undefPointerCache() if $count % 100 == 0;
 
-
     $self->log("Inserted entries for $count PubChem Substances.");
   }
 
 }
 
+# get substance ID
 sub get_ID {
   my ($twig, $ele) = @_;
   my $id = $ele->first_child('PC-ID_id')->text;
@@ -193,6 +191,7 @@ sub get_ID {
 
 }
 
+# get the synonymn list
 sub get_Syns {
   my ($twig, $ele) = @_;
 
@@ -205,7 +204,7 @@ sub get_Syns {
   $subst{$subst_id}{synonymns} = \@synonyms;
 }
 
-
+#get the KEGG ID
 sub get_KEGG {
   my ($twig, $ele) = @_;
   my $name = $ele->first_child('PC-DBTracking_name')->text;
@@ -215,6 +214,7 @@ sub get_KEGG {
 }
 
 
+#get the compound ID (CID)
 sub get_CID {
   my ($twig, $ele) = @_;
   my @cidArr = $ele->find_by_tag_name('PC-CompoundType_id_cid');
