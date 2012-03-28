@@ -5200,21 +5200,21 @@ tablespace indx
 CREATE TABLE Subcellular&1 NOLOGGING AS
 select ga.source_id, 'ht' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
-where ed.name in ('subcellular motif from Haldar','Haldar_Subcellular_motifs_RSRC')
+where ed.name in ('subcellular motif from Haldar','pfal3D7_cellularLocation_Haldar_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
 union
 select ga.source_id, 'pexel' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
-where ed.name in ('subcellular motif from Cowman','Cowman_Subcellular_motifs_RSRC')
+where ed.name in ('subcellular motif from Cowman','pfal3D7_cellularLocation_Cowman_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
 union
 select ga.source_id, 'apicoplast' as targetting_domain
 from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
-where ed.name in ('apicoplast targeting data from 4.4','Pf_ApicoplastTargeting_RSRC')
+where ed.name in ('apicoplast targeting data from 4.4','pfal3D7_cellularLocation_ApicoplastTargeting_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
   and paf.source_id = ga.source_id
@@ -5297,7 +5297,7 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               sa.type
        FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
             dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
-       WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','Pf_plasmoDbCombinedSnps_RSRC','Widmer SNPs')
+       WHERE sa.dataset IN ('InsertSnps.pm NGS SNPs INTERNAL','Genomic Sequence SNPs','pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','Widmer SNPs')
          AND sva.parent_id = sa.na_feature_id
          AND sva.parent_id = svb.parent_id
          AND sva.strain  < svb.strain
@@ -5482,7 +5482,7 @@ where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
 and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
-and sa.dataset in ('Pf_plasmoDbCombinedSnps_RSRC','PlasmoDB combined SNPs','Broad SNPs','pfal3D7_SNP_Broad_gff_RSRC')
+and sa.dataset in ('pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','PlasmoDB combined SNPs','Broad SNPs','pfal3D7_SNP_Broad_gff_RSRC')
       ]]>
     </sql>
     <sql>
@@ -6183,7 +6183,7 @@ tablespace indx
        FROM SnpAttributes sa,
             dots.SeqVariation var
        WHERE var.parent_id = sa.na_feature_id
-         and sa.dataset = 'Pf_plasmoDbCombinedSnps_RSRC'
+         and sa.dataset = 'pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC'
       ]]>
     </sql>
   </tuningTable>
