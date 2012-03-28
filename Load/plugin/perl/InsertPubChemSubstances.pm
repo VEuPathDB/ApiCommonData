@@ -157,7 +157,8 @@ sub insertPubChemSubstance {
 								      property     => $p,
 								      value        => $subst{$sid}{$p}
 								    });
-	$pubChemSubst->submit();
+	# add entry unless it already exists in the table
+	$pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 
       } else {
 	my @syns = @{ $subst{$sid}{synonymns} };
@@ -169,7 +170,8 @@ sub insertPubChemSubstance {
 									  property     => $p,
 									  value        => $s
 									});
-	    $pubChemSubst->submit();
+	    # add entry unless it already exists in the table
+	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 	  }
 	}
       }
@@ -177,7 +179,7 @@ sub insertPubChemSubstance {
     $count++;
     $self->undefPointerCache() if $count % 100 == 0;
 
-    $self->log("Inserted entries for $count PubChem Substances.");
+    $self->log("Processed entries for $count PubChem Substance(s).");
   }
 
 }
