@@ -1,6 +1,6 @@
 CREATE TABLE apidb.PubChemSubstance (
- pubchem_substance_id      NUMBER(10),
- substance_id            NUMBER(10),
+ pubchem_substance_id    NUMBER(10),
+ substance_id            NUMBER(10) NOT NULL,
  property                VARCHAR2(20) NOT NULL,
  value                   VARCHAR2(100) NOT NULL,
  MODIFICATION_DATE       DATE,

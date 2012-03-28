@@ -1,8 +1,8 @@
 CREATE TABLE apidb.PubChemCompound (
- pubchem_compound_id      NUMBER(10),
- compound_id             NUMBER(10),
+ pubchem_compound_id     NUMBER(10),
+ compound_id             NUMBER(10) NOT NULL,
  property                VARCHAR2(20) NOT NULL,
- type                    VARCHAR2(20) NOT NULL,
+ type                    VARCHAR2(20),
  value                   VARCHAR2(100) NOT NULL,
  MODIFICATION_DATE       DATE,
  USER_READ               NUMBER(1),
