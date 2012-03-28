@@ -126,45 +126,7 @@ foreach my $file (@files) {
 								-use_magic => 1);
 		}
 		foreach my $bioperlFeature ($bioperlSeq->get_SeqFeatures()) {
-			my $sourceId;
-			my $type = $bioperlFeature->primary_tag();
-			if ($$featureHash{$type}) {
-				if ($bioperlFeature->has_tag("$sourceIdQualifier")) {
-					($sourceId) = $bioperlFeature->get_tag_values("$sourceIdQualifier");
-				}else {
-					print "No sourceId value available for $sourceIdQualifier in $type\n";
-				}
-				foreach my $qualifier ($bioperlFeature->get_all_tags()) {
-					if ($outputHash{$qualifier}) {		
-						if ($outputHash{$qualifier} =~ /associations/) {
-							my $outputLine = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
-							#$funcFhHash{$qualifier}->print("$outputLine\n");
-							$goFh->print("$outputLine\n");
-						} else { 
-							my @values = $bioperlFeature->get_tag_values($qualifier);
-							foreach my $value (@values) {
-								$sourceId = &trimIds($sourceId);
-								$value = &trim($value);
-								if ($outputHash{$qualifier} =~ /dbxref/) {
-									my ($dbxrefType, $dbxrefId) = split (/:/, $value);
-									$dbxrefType =~ s/\//\_/;
-									if (!$dbxrefOutput{lc($dbxrefType)}) {
-										$dbxrefOutput{lc($dbxrefType)} = "dbxref_".lc($dbxrefType).".txt";
-										print "dbxref output file is $dbxrefOutput{lc($dbxrefType)}\n";	
-										$dbxrefFhHash{lc($dbxrefType)} = FileHandle->new();
-										$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
-												|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
-									}
-									$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n");
-								} else {
-									$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && !$done{$sourceId}{$value});
-									$done{$sourceId}{$value} = "done";
-								}	
-							}
-						}
-		    		}			
-				}
-			}
+			&processFeature($bioperlFeature, "root");
 		}
 	}
 }
@@ -181,6 +143,52 @@ $goFh->close() if ($goFh);
 
 
 #############################
+sub processFeature {
+	my ($bioperlFeature, $parent) = @_;
+
+	my $sourceId;
+	my $type = $bioperlFeature->primary_tag();
+	if ($$featureHash{$type}) {
+		if ($bioperlFeature->has_tag("$sourceIdQualifier")) {
+			($sourceId) = $bioperlFeature->get_tag_values("$sourceIdQualifier");
+		}else {
+			print "No sourceId value available for $sourceIdQualifier in $type\n";
+		}
+		foreach my $qualifier ($bioperlFeature->get_all_tags()) {
+			if ($outputHash{$qualifier}) {		
+				if ($outputHash{$qualifier} =~ /associations/) {
+					my $outputLine = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
+					$goFh->print("$outputLine\n");
+				} else { 
+					my @values = $bioperlFeature->get_tag_values($qualifier);
+					foreach my $value (@values) {
+						$sourceId = &trimIds($sourceId);
+						$value = &trim($value);
+						if ($outputHash{$qualifier} =~ /dbxref/) {
+							my ($dbxrefType, $dbxrefId) = split (/:/, $value);
+							$dbxrefType =~ s/\//\_/;
+							if (!$dbxrefOutput{lc($dbxrefType)}) {
+								$dbxrefOutput{lc($dbxrefType)} = "dbxref_".lc($dbxrefType).".txt";
+								print "dbxref output file is $dbxrefOutput{lc($dbxrefType)}\n";	
+								$dbxrefFhHash{lc($dbxrefType)} = FileHandle->new();
+								$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
+										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
+							}
+							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n");
+						} else {
+							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && !$done{$sourceId}{$value});
+							$done{$sourceId}{$value} = "done";
+						}	
+					}
+				}
+			}			
+		}
+	}
+	for my $subFeature ($bioperlFeature->get_SeqFeatures()) {
+		processFeature($subFeature, $type);
+	}
+}
+
 sub processGoAsso {
 	my ($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date) = @_;
 
