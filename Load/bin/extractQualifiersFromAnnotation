@@ -121,7 +121,7 @@ foreach my $file (@files) {
 	}	
 
 	while (my $bioperlSeq = $bioperlSeqIO->next_seq() ) {
-		if ($unflatten && ($format eq 'genbank') || ($format eq 'embl')) {
+		if ($unflatten &&  ( ($format eq 'genbank') || ($format eq 'embl') ) )  {
 			$unflattener->unflatten_seq(-seq => $bioperlSeq,
 								-use_magic => 1);
 		}
