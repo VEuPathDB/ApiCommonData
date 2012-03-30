@@ -86,12 +86,8 @@ sub run {
       chomp;
       next unless $_;
 
-      if(/(.+)\(\d+\)/) {
-	  $continent = lc($1);
+      my ($country,$continent) = split(/\t/, $_);
 	  $continent =~ s/\s$//g;
-      }
-      else {
-	  my $country = $_;
 	  $country =~ s/\s$//g;
 	  my $profile = GUS::Model::ApiDB::Continents->
 	      new({country => $country,
@@ -103,10 +99,7 @@ sub run {
 	  if ($count % 1000 == 0) {
 	      $self->log("Inserted $count Entries into Continents");
 	      $self->undefPointerCache();
-
 	  }
-      }
-
   }
   return("Loaded $count ApiDB::Continents");
 }
