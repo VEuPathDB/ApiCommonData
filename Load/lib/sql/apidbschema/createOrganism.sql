@@ -3,14 +3,18 @@ CREATE TABLE apidb.Organism (
  taxon_id                     number(12) not null,
  project_name                 VARCHAR2(20) NOT NULL,
  abbrev                       VARCHAR2(20) NOT NULL,
- abbrev_public                VARCHAR2(20) NOT NULL,
+ public_abbrev                VARCHAR2(20) NOT NULL,
  name_for_filenames           VARCHAR2(50) NOT NULL,
  genome_source                VARCHAR2(50) NOT NULL,
- abbrev_orthomcl              VARCHAR2(20) NOT NULL,
- abbrev_strain                VARCHAR2(20) NOT NULL,
- abbrev_ref_strain            VARCHAR2(20) NOT NULL,
+ orthomcl_abbrev              VARCHAR2(20) NOT NULL,
+ strain_abbrev                VARCHAR2(20) NOT NULL,
+ ref_strain_abbrev            VARCHAR2(20) NOT NULL,
  is_reference_strain          NUMBER(1) NOT NULL,
  is_annotated_genome          NUMBER(1) NOT NULL,
+ is_family_representative     NUMBER(1) NOT NULL,
+ family_representative_abbrev VARCHAR2(20) NOT NULL,
+ family_ncbi_taxon_ids        VARCHAR2(200),
+ family_name_for_files        VARCHAR2(200),
  has_temporary_ncbi_taxon_id  NUMBER(1) NOT NULL,
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
@@ -38,7 +42,7 @@ UNIQUE (abbrev);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq3
-UNIQUE (abbrev_orthomcl);
+UNIQUE (orthomcl_abbrev);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq4
@@ -46,7 +50,7 @@ UNIQUE (name_for_filenames);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_uniq5
-UNIQUE (abbrev_public);
+UNIQUE (public_abbrev);
 
 ALTER TABLE apidb.Organism
 ADD CONSTRAINT organism_fk1 FOREIGN KEY (taxon_id)
@@ -56,12 +60,12 @@ create or replace trigger apidb.referenceStrain
   before insert or update on apidb.Organism
   for each row
 begin
-    if :new.is_reference_strain = 1 and :new.abbrev_ref_strain is not null and :new.abbrev_ref_strain != :new.abbrev then
-        raise_application_error(-20102, 'is_reference_strain is set but abbrev_ref_strain points elsewhere');
+    if :new.is_reference_strain = 1 and :new.ref_strain_abbrev  is not null and :new.ref_strain_abbrev  != :new.abbrev then
+        raise_application_error(-20102, 'is_reference_strain is set but ref_strain_abbrev  points elsewhere');
     end if;
 
-    if (:new.is_reference_strain is null or :new.is_reference_strain = 0) and :new.abbrev_ref_strain = :new.abbrev then
-        raise_application_error(-20103, 'is_reference_strain not set but abbrev_ref_strain points to self');
+    if (:new.is_reference_strain is null or :new.is_reference_strain = 0) and :new.ref_strain_abbrev  = :new.abbrev then
+        raise_application_error(-20103, 'is_reference_strain not set but ref_strain_abbrev  points to self');
     end if;
 
 end;

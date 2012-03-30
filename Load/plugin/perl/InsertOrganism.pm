@@ -48,7 +48,7 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'abbrevPublic',
+     stringArg({ name => 'publicAbbrev',
 		 descr => 'eg tgME49',
 		 constraintFunc=> undef,
 		 reqd  => 1,
@@ -66,19 +66,19 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'abbrevOrthomcl',
+     stringArg({ name => 'orthomclAbbrev',
 		 descr => 'eg tgon',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'abbrevStrain',
+     stringArg({ name => 'strainAbbrev',
 		 descr => 'eg ME49',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
 	       }),
-     stringArg({ name => 'abbrevRefStrain',
+     stringArg({ name => 'refStrainAbbrev',
 		 descr => 'the reference strains abbrev eg tgonME49',
 		 constraintFunc=> undef,
 		 reqd  => 1,
@@ -99,6 +99,30 @@ use GUS::Model::ApiDB::Organism;
 		 reqd  => 0,
 		 isList => 0,
 	       }),
+     booleanArg({ name => 'isFamilyRepresentative',
+		 descr => '',
+		 reqd  => 0,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'familyRepOrganismAbbrev',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'familyNcbiTaxonIds',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 0,
+		 isList => 0,
+	       }),
+     stringArg({ name => 'familyNameForFiles',
+		 descr => '',
+		 constraintFunc=> undef,
+		 reqd  => 0,
+		 isList => 0,
+	       }),
+
     ];
 
 
@@ -166,15 +190,19 @@ sub run {
   my $ncbiTaxonId = $self->getArg('ncbiTaxonId');
   my $speciesNcbiTaxonId = $self->getArg('speciesNcbiTaxonId');
   my $abbrev = $self->getArg('abbrev');
-  my $abbrevPublic = $self->getArg('abbrevPublic');
+  my $abbrevPublic = $self->getArg('publicAbbrev');
   my $nameForFilenames = $self->getArg('nameForFilenames');
   my $genomeSource = $self->getArg('genomeSource');
-  my $abbrevOrthomcl = $self->getArg('abbrevOrthomcl');
-  my $abbrevStrain = $self->getArg('abbrevStrain');
-  my $abbrevRefStrain = $self->getArg('abbrevRefStrain');
+  my $abbrevOrthomcl = $self->getArg('orthomclAbbrev');
+  my $abbrevStrain = $self->getArg('strainAbbrev');
+  my $abbrevRefStrain = $self->getArg('refStrainAbbrev');
   my $isReferenceStrain = $self->getArg('isReferenceStrain');
   my $isAnnotatedGenome = $self->getArg('isAnnotatedGenome');
   my $hasTemporaryNcbiTaxonId = $self->getArg('hasTemporaryNcbiTaxonId');
+  my $isFamilyRepresentative = $self->getArg('isFamilyRepresentative');
+  my $familyRepOrganismAbbrev = $self->getArg('familyRepOrganismAbbrev');
+  my $familyNcbiTaxonIds = $self->getArg('familyNcbiTaxonIds');
+  my $familyNameForFiles = $self->getArg('familyNameForFiles');
   my $projectName = $self->getArg('projectName');
 
   # validate full name against ncbi taxon id
@@ -211,15 +239,19 @@ sub run {
   my $organism =  GUS::Model::ApiDB::Organism->new({'taxon_id' => $taxon_id,
 						    'project_name' => $projectName,
 						    'abbrev' => $abbrev,
-						    'abbrev_public' => $abbrevPublic,
+						    'public_abbrev' => $abbrevPublic,
 						    'name_for_filenames' => $nameForFilenames,
 						    'genome_source' => $genomeSource,
-						    'abbrev_orthomcl' => $abbrevOrthomcl,
-						    'abbrev_strain' => $abbrevStrain,
-						    'abbrev_ref_strain' => $abbrevRefStrain,
+						    'orthomcl_abbrev' => $abbrevOrthomcl,
+						    'strain_abbrev' => $abbrevStrain,
+						    'ref_strain_abbrev' => $abbrevRefStrain,
 						    'is_reference_strain' => $isReferenceStrain,
 						    'is_annotated_genome' => $isAnnotatedGenome,
 						    'has_temporary_ncbi_taxon_id' => $hasTemporaryNcbiTaxonId,
+						    'is_family_representative' => $isFamilyRepresentative,
+						    'family_representative_abbrev' => $familyRepOrganismAbbrev,
+						    'family_ncbi_taxon_ids' => $familyNcbiTaxonIds,
+						    'family_name_for_files' => $familyNameForFiles,
 						   });
 
   $organism->submit() unless $organism->retrieveFromDB();

@@ -12,9 +12,14 @@ $| = 1;
 
 my $PRINT_URLS = 1;
 
-my ($speciesNcbiTaxonId, $outputFile) = @ARGV;
+my ($outputFile, $organismAbbrev) = @ARGV;
 
-&usage unless $speciesNcbiTaxonId && $outputFile;
+my $parentNcbiTaxonIds;
+if (!$organismAbbrev) {
+    $parentNcbiTaxonIds = chomp(<STDIN>);
+}
+
+die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $ncbiTaxonIds;
 
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
@@ -23,7 +28,7 @@ my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
 
 
 # use eutils to run query at ncbi.  returns a handle on a set of records
-my $query = buildQueryString($speciesNcbiTaxonId);
+my $query = buildQueryString($organismAbbrev, $parentNcbiTaxonIds);
 my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 my $esearch_result = get("$esearch$query");
 print STDERR "$esearch$query\n\n" if $PRINT_URLS;
@@ -93,9 +98,14 @@ sub usage {
 
 Use NCBI's eutils to fetch isolate sequences from genbank.  All sequences
 are concatenated into a single genbank file.  Gets isolates for all NCBI
-taxon IDs that are children of the provided speciesNcbiTaxonId
+taxon IDs that are *children* of the provided ncbiTaxonIds (including
+those provided).
 
-usage: getIsolatesFromGenbank speciesNcbiTaxonId outputFile
+Takes a comma delimited list of taxon IDs on stdin.
+
+usage: 
+  getIsolatesFromGenbank outputfile organismAbbrev
+  echo '12433,7680' | getIsolatesFromGenbank outputFile
 
 (Prints a . to STDERR for each batch of sequences it gets.)
 
@@ -106,7 +116,7 @@ usage: getIsolatesFromGenbank speciesNcbiTaxonId outputFile
 }
 
 sub buildQueryString {
-  my ($speciesNcbiTaxonId) = @_;
+  my ($organismAbbrev, $parentNcbiTaxonIds) = @_;
 
   my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
   my @properties = ();
@@ -117,10 +127,18 @@ sub buildQueryString {
   my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
   $dbh->{RaiseError} = 1;
 
+  # either get parent ncbi taxon ids from organism table or stdin
+  my $inStmt = "
+     select familyNcbiTaxonIds
+     from apidb.organism
+     where organismAbbrev = '$organismAbbrev'";
+
+  $inStmt = $parentNcbiTaxonIds if $parentNcbiTaxonIds;
+
   my $sql = <<SQL;
   select ncbi_tax_id
-  from SRes.Taxon
-  start with ncbi_tax_id in ($speciesNcbiTaxonId)
+  from SRes.Taxon, apidb.organism
+  start with ncbi_tax_id in ($inStmt)
   connect by prior taxon_id = parent_id
 SQL
 
