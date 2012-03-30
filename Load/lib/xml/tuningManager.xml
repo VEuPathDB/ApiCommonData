@@ -6550,4 +6550,13 @@ tablespace indx
     <program commandLine="buildGbrowseImageUrlTT"/>
   </tuningTable>
 
+  <tuningTable name="ApiDBTuning.DataSourceAttribution" alwaysUpdate="true">
+    <!-- internalDependency name="apidb.SequenceAttributes"/ -->
+    <ancillaryTable name="ApiDBTuning.DataSourceContact"/>
+    <ancillaryTable name="ApiDBTuning.DataSourceAttributionURL"/>
+    <ancillaryTable name="ApiDBTuning.DataSourceAttrPublication"/>
+    <ancillaryTable name="ApiDBTuning.DataSourceWdkReference"/>
+    <program commandLine="buildDataSourceAttributionsTT"/>
+  </tuningTable>
+
 </tuningConfig>
