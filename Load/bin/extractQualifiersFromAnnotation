@@ -174,9 +174,9 @@ sub processFeature {
 								$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
 										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
 							}
-							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n");
+							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
 						} else {
-							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && !$done{$sourceId}{$value});
+							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value});
 							$done{$sourceId}{$value} = "done";
 						}	
 					}
@@ -240,7 +240,7 @@ sub processGoAsso {
 							$dbrefs = $with;
 					}	
 				}
-				return "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy";
+				return "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy" if ($sourceId && $goId);
 		    }
 		}
 	} else {
