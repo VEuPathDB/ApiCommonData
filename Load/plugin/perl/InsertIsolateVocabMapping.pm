@@ -17,15 +17,6 @@ $| = 1;
 my $argsDeclaration =
 [
 
-   fileArg({name => 'productXmlFile',
-	    descr => 'xml file with corrections to product mappings',
-	    reqd => 0,
-	    mustExist => 1,
-	    format => '',
-	    constraintFunc => undef,
-	    isList => 0,
-	   }),
-
    fileArg({name => 'geographicXmlFile',
 	    descr => 'xml file with corrections to geographic location mappings',
 	    reqd => 0,
@@ -61,7 +52,7 @@ Insert mappings between isolates and controlled vocabularies.
 PURPOSEBRIEF
 
 my $purpose = <<PLUGIN_PURPOSE;
-Insert mappings between isolates and controlled vocabularies for four fields: host, geographic loc, source, and product.  The first three are mapped by finding matches between those fields in the isolate sequence (provided with the isolates from the original provider) and values in the vocabularly already loaded into the database.  the xml files provide mappings for the case in which the isolate feature fields do not map into the vocabulary, ie, corrected mappings.  in the case of product, all mappings are provided by the xml file, as they are based on blast hits to sequence in the database, and the original provider did not have that information.  
+Insert mappings between isolates and controlled vocabularies for three fields: host, geographic loc, and isolation source.  They are mapped by finding matches between those fields in the isolate sequence (provided with the isolates from the original provider) and values in the vocabularly already loaded into the database.  the xml files provide mappings for the case in which the isolate feature fields do not map into the vocabulary, ie, corrected mappings. 
 PLUGIN_PURPOSE
 
 my $tablesAffected = [
@@ -111,13 +102,11 @@ sub run {
     my ($self) = @_;
 
     my $sourceXmlFile = $self->getArg('sourceXmlFile');
-    my $productXmlFile = $self->getArg('productXmlFile');
     my $locationXmlFile = $self->getArg('geographicXmlFile');
     my $hostXmlFile = $self->getArg('hostXmlFile');
 
     my $count;
     $count += $self->insert($sourceXmlFile, 'isolation_source') if $sourceXmlFile;
-    $count += $self->insert($productXmlFile, 'product') if $productXmlFile;
     $count += $self->insert($locationXmlFile, 'geographic_location') if $locationXmlFile;
     $count += $self->insert($hostXmlFile, 'specific_host') if $hostXmlFile;
     return "Inserted $count rows into IsolateMapping";
