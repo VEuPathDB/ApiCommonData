@@ -35,6 +35,8 @@ sub preprocess {
     my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
 
     if(!($bioperlSeq->molecule =~ /rna/i)){
+	$unflattener->error_threshold(1);   
+	$unflattener->report_problems(\*STDERR);  
 	$unflattener->unflatten_seq(-seq=>$bioperlSeq,
                                  -use_magic=>1);
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
