@@ -59,8 +59,6 @@ while (my $seq = $seqIO->next_seq()) {
 			} else {
 				print "Warning: no locus_tag found for $type at $locs. check the input file.\n";
 			}
-		} else {
-			print "Feature $type at location $locs does not have related locus_tag\n";		
 		}
 		$seq->add_SeqFeature($subfeature);
 	}
