@@ -142,6 +142,7 @@ sub insertManuallyMappedTerms {
     # Get na_sequence_id for the orig, BUT isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $isolateVocabularyIds->{$mapTerm}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
+    next if (!$naSequenceIds);
     $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $naSequenceIds);
   }
   return $count;
