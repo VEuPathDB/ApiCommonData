@@ -250,7 +250,7 @@ sub processFile {
 
   my (%virtual,$refChromosomeOrderMapping,$chromosomeOrder,$chromosome);
 
-  if ($self->getArg('chromosomeOrderMappingFile')){
+  if ($self->getArg('chromosomeOrderMappingFile') && $self->getArg('virtualSeqSOTerm') eq 'chromosome' ){
 
       my $chromosomeOrderMappingFile = $self->getArg('chromosomeOrderMappingFile') ;
 
@@ -299,7 +299,7 @@ sub processFile {
 
       }
 
-      die "No chromosome or chromosome order information provided for virtual sequence\n" if (!($chromosomeOrder || $self->getArg('notChromosomes')) || !($chromosome || $self->getArg('notChromosomes')));
+      die "No chromosome or chromosome order information provided for virtual sequence\n" if ( (!($chromosomeOrder || $self->getArg('notChromosomes')) || !($chromosome || $self->getArg('notChromosomes')) ) && $self->getArg('virtualSeqSOTerm') eq 'chromosome');
 
       $self->makeVirtualSequence(\%virtual, $virAcc, $chromosomeOrder, $chromosome);
 
