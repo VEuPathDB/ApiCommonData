@@ -25,20 +25,6 @@
     </ant>
   </target>  
 
-  <target name="WDK-Installation">
-    <ant antfile="../WDK/build.xml" target="WDK-Installation">
-      <property name="project" value="WDK"/>
-      <property name="version" value=""/>
-    </ant>
-  </target>  
-
-  <target name="ApiCommonShared-Installation">
-    <ant antfile="../ApiCommonShared/build.xml" target="ApiCommonShared-Installation">
-      <property name="project" value="WDK"/>
-      <property name="version" value=""/>
-    </ant>
-  </target>  
-
   <target name="GUS-Checkout" unless="GUS.present"> 
     <ant target="defaultProjectCheckout" inheritAll="false"> 
       <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/GusAppFramework" />
@@ -63,37 +49,17 @@
     </ant>
   </target>
 
-  <target name="WDK-Checkout" unless="WDK.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/gus/WDK" />
-      <property name="project" value="WDK"/>
-      <property name="version" value="WDK_version_1-28"/>
-    </ant>
-  </target>  
-
-  <target name="ApiCommonShared-Checkout" unless="ApiCommonShared.present"> 
-    <ant target="defaultProjectCheckout" inheritAll="false">
-      <property name="svnurl" value="https://www.cbil.upenn.edu/svn/apidb/ApiCommonShared" />
-      <property name="project" value="ApiCommonShared"/>
-      <property name="version" value="api-build-9"/>
-    </ant>
-  </target>  
-
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooo    Checkout    oooooooooooooooooooooooooo -->
   <!-- oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo -->
 
   <target name="ApiCommonData-ChildCheckout">
     <available file="../FgpUtil" type="dir" property="FgpUtil.present" />
-    <available file="../WDK" type="dir" property="WDK.present" />
     <available file="../GUS" type="dir" property="GUS.present" />
     <available file="../DoTS" type="dir" property="DoTS.present" />
-    <available file="../ApiCommonShared" type="dir" property="ApiCommonShared.present" />
     <antcall target="FgpUtil-Checkout" />
-    <antcall target="WDK-Checkout" />
     <antcall target="GUS-Checkout" />
     <antcall target="DoTS-Checkout" />
-    <antcall target="ApiCommonShared-Checkout" />
   </target>
   
   
@@ -106,16 +72,10 @@
       <property name="project" value="FgpUtil"/>
     </ant>
     <ant target="defaultProjectUpdate">
-      <property name="project" value="WDK"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
       <property name="project" value="GUS"/>
     </ant>
     <ant target="defaultProjectUpdate">
       <property name="project" value="DoTS"/>
-    </ant>
-    <ant target="defaultProjectUpdate">
-      <property name="project" value="ApiCommonShared"/>
     </ant>
   </target>
 
@@ -126,8 +86,6 @@
   <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
                                             GUS-Installation,
                                             DoTS-Installation,
-                                            WDK-Installation,
-                                            ApiCommonShared-Installation,
                                             ApiCommonData/Load-Installation,
                                             ApiCommonData/Dump-Installation">
 
