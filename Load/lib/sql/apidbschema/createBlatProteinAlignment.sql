@@ -50,7 +50,7 @@ create table apidb.BlatProteinAlignment (
         constraint blatproteinalignment_fk03 foreign key (query_table_id) references core.tableinfo (table_id) validate, 
         constraint blatproteinalignment_fk04 foreign key (query_taxon_id) references sres.taxon (taxon_id) validate, 
         constraint blatproteinalignment_fk05 foreign key (query_external_db_release_id) references sres.externaldatabaserelease (external_database_release_id) validate,
-         constraint blatproteinalignment_fk06 foreign key (target_table_id) references core.tableinfo (table_id) validate, 
+        constraint blatproteinalignment_fk06 foreign key (target_table_id) references core.tableinfo (table_id) validate, 
         constraint blatproteinalignment_fk07 foreign key (target_taxon_id) references sres.taxon (taxon_id) validate, 
         constraint blatproteinalignment_fk08 foreign key (target_external_db_release_id) references sres.externaldatabaserelease (external_database_release_id) validate, 
         constraint blatproteinalignment_fk09 foreign key (blat_alignment_quality_id) references dots.blatalignmentquality (blat_alignment_quality_id) validate, 
@@ -59,6 +59,14 @@ tablespace gus pctfree 10 initrans 1 maxtrans 255 storage ( initial 64k buffer_p
 
 create sequence apidb.BlatProteinAlignment_sq;
 grant select, alter on apidb.BlatProteinAlignment_sq to gus_w;
+
+create index bpa_ix1 on apidb.BlatProteinAlignment (query_table_id, query_aa_sequence_id, query_start, query_end);
+create index bpa_ix2 on apidb.BlatProteinAlignment (target_table_id, target_na_sequence_id, target_start, target_end);
+create index bpa_ix3 on apidb.BlatProteinAlignment (query_taxon_id, blat_protein_alignment_id);
+create index bpa_ix4 on apidb.BlatProteinAlignment (query_external_db_release_id, blat_protein_alignment_id);
+create index bpa_ix5 on apidb.BlatProteinAlignment (target_taxon_id, blat_protein_alignment_id);
+create index bpa_ix6 on apidb.BlatProteinAlignment (target_external_db_release_id, blat_protein_alignment_id);
+create index bpa_ix7 on apidb.BlatProteinAlignment (blat_alignment_quality_id, blat_protein_alignment_id);
 
 grant select on apidb.BlatProteinAlignment to gus_r;
 grant insert, update, delete on apidb.BlatProteinAlignment to gus_w;
