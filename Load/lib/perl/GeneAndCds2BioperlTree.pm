@@ -229,7 +229,7 @@ sub traverseSeqFeatures {
 
 		    if(defined $CDSLocation){
 			my $codonStart = 0;
-
+			my $CDSLength = 0;
 
 			for my $qualifier ($gene->get_all_tags()) {
 			    if($qualifier eq 'codon_start'){
@@ -266,10 +266,14 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
+		
+				$CDSLength += (abs($codingEnd - $codingStart) +1);
 		    }else{
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');
 		    }
+				$transcript->add_tag_value("CDSLength", $CDSLength);
+
 		    $transcript->add_SeqFeature($exon);
 		}
 		
