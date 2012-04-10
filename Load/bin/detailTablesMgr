@@ -303,7 +303,7 @@ sub runFullRecordFile{
 
     `mkdir -p $dir`;
 
-    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${organism}${ucType}_${project}-${release}.txt >${organism}${ucType}File.out  2> ${organism}${ucType}File.err";
+    my $cmd = "createFullRecordFile -record ${ucType}RecordClasses.${ucType}RecordClass -sqlFile $sqlDir/tmp_${type}.sql -cacheTable $table -model $project  --dumpFile ${dir}/${project}-${release}_${organism}${ucType}.txt >${organism}${ucType}File.out  2> ${organism}${ucType}File.err";
 
     print STDERR "Running cmd:\t$cmd\n\n";
 
