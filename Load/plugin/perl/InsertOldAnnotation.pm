@@ -31,6 +31,20 @@ sub getArgsDeclaration {
 		 reqd  => 1,
 		 isList => 0,
 		 mustExist => 1,
+	       }),
+
+     stringArg({name => 'extDbName',
+		descr => 'External database from whence this data came',
+		constraintFunc=> undef,
+		reqd  => 1,
+		isList => 0
+	       }),
+
+     stringArg({name => 'extDbRlsVer',
+		descr => 'Version of external database from whence this data came',
+		constraintFunc=> undef,
+		reqd  => 1,
+		isList => 0
 	       })
     ];
 
@@ -109,7 +123,11 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $file = $self->getArg('gffFile');
+  my $file = $self->getArg('gffFile') or die "Couldn't open the file!\n";
+  my $dbRlsId = $self->getExtDbRlsId($self->getArg('extDbName'),
+				     $self->getArg('extDbRlsVer'))
+      or die "Couldn't retrieve external database!\n";
+
   my %geneHash;
   my @columns;
   my $count = 0;
@@ -193,7 +211,7 @@ sub run {
   close(FILE);
 
   print "Total Genes = $count\n";
-  $self->collectData(\%geneHash);
+  $self->collectData($dbRlsId,\%geneHash);
 
 }
 
@@ -217,7 +235,7 @@ sub fixDescript {
 
 
 sub collectData {
-  my ($self, $hashRef) = @_;
+  my ($self, $dbRlsId, $hashRef) = @_;
   my $count = 0;
   my %geneHash = %{$hashRef};
   my @data = keys(%geneHash);
@@ -230,13 +248,13 @@ sub collectData {
 
     # product
     my $product = $geneHash{$gene}{product};
-    $self->insertOldAnnotation($gene, $count, 'product', $geneHash{$gene}{product});
+    $self->insertOldAnnotation($count, $gene, $dbRlsId, 'product', $geneHash{$gene}{product});
 
     # GO IDs
     my $goArrRef = $geneHash{$gene}{GO};
     if ( $goArrRef) {
       foreach my $go (@{$goArrRef}) {
-	$self->insertOldAnnotation($gene, $count, 'GO', $go);
+	$self->insertOldAnnotation($count, $gene, $dbRlsId, 'GO', $go);
       }
     }
 
@@ -244,14 +262,14 @@ sub collectData {
     my $ecArrRef = $geneHash{$gene}{EC};
     if ($ecArrRef) {
       foreach my $ec (@{$ecArrRef}) {
-	$self->insertOldAnnotation($gene, $count, 'EC', $ec);
+	$self->insertOldAnnotation($count, $gene, $dbRlsId, 'EC', $ec);
       }
     }
 
 
     # sequence
     my $seq = $geneHash{$gene}{sequence};
-    $self->insertOldSequence($gene, $count, $geneHash{$gene}{sequence});
+    $self->insertOldSequence($count, $gene, $dbRlsId, $geneHash{$gene}{sequence});
 
   }
 
@@ -259,11 +277,12 @@ sub collectData {
 }
 
 sub insertOldAnnotation {
-  my ($self, $id, $count, $type, $value) = @_;
+  my ($self, $count, $id, $dbRlsId, $type, $value) = @_;
 
   my $oldAnnotation = GUS::Model::ApiDB::OldAnnotation->new({ source_id => $id,
 							      type      => $type,
-							      value     => $value
+							      value     => $value,
+							      external_database_release_id =>$dbRlsId
 							    });
   $oldAnnotation->submit();
 
@@ -272,10 +291,11 @@ sub insertOldAnnotation {
 
 
 sub insertOldSequence {
-  my ($self, $id, $count, $sequence) = @_;
+  my ($self, $count, $id, $dbRlsId, $sequence) = @_;
 
   my $oldSequence = GUS::Model::ApiDB::OldCodingSequence->new({ source_id       => $id,
-								coding_sequence => $sequence
+								coding_sequence => $sequence,
+								external_database_release_id =>$dbRlsId
 							      });
   $oldSequence->submit();
 
