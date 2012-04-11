@@ -212,24 +212,20 @@ sub traverseSeqFeatures {
 	    $transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-	    
-
-	 
 		
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $gene = &copyQualifiers($subFeature, $gene);
 		    $CDSLocation  = $subFeature->location;
 		}
+			my $CDSLength = 0;
 		if($subFeature->primary_tag eq 'exon'){
 		    my $exon = $subFeature;
 		    my $codingStart = $exon->location->start;
 		    my $codingEnd = $exon->location->end;
 
-
 		    if(defined $CDSLocation){
 			my $codonStart = 0;
-			my $CDSLength = 0;
 
 			for my $qualifier ($gene->get_all_tags()) {
 			    if($qualifier eq 'codon_start'){
@@ -241,7 +237,6 @@ sub traverseSeqFeatures {
 	 		       $gene->remove_tag('selenocysteine');
 			       $gene->add_tag_value('selenocysteine','selenocysteine');
 			    }
-			    
 			}
 			$codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
 			$codingEnd = $CDSLocation->end() if ($codingEnd > $CDSLocation->end());
@@ -266,16 +261,15 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
-		
 				$CDSLength += (abs($codingEnd - $codingStart) +1);
+
 		    }else{
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');
 		    }
-				$transcript->add_tag_value("CDSLength", $CDSLength);
-
 		    $transcript->add_SeqFeature($exon);
 		}
+				$transcript->add_tag_value("CDSLength", $CDSLength);
 		
 	    }
 
