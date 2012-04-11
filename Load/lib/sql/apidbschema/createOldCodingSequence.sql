@@ -1,5 +1,6 @@
 CREATE TABLE apidb.OldCodingSequence (
  old_coding_sequence_id      NUMBER(10),
+ source_id                   VARCHAR2(80) NOT NULL,
  coding_sequence             CLOB NOT NULL,
  MODIFICATION_DATE           DATE,
  USER_READ                   NUMBER(1),
