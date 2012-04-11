@@ -1,21 +1,26 @@
 CREATE TABLE apidb.OldAnnotation (
- old_annotation_id       NUMBER(10),
- source_id               VARCHAR2(80) NOT NULL,
- type                    VARCHAR2(10) NOT NULL,
- value                   VARCHAR2(400) NOT NULL,
- MODIFICATION_DATE       DATE,
- USER_READ               NUMBER(1),
- USER_WRITE              NUMBER(1),
- GROUP_READ              NUMBER(1),
- GROUP_WRITE             NUMBER(1),
- OTHER_READ              NUMBER(1),
- OTHER_WRITE             NUMBER(1),
- ROW_USER_ID             NUMBER(12),
- ROW_GROUP_ID            NUMBER(3),
- ROW_PROJECT_ID          NUMBER(4),
- ROW_ALG_INVOCATION_ID   NUMBER(12),
+ old_annotation_id            NUMBER(10),
+ source_id                    VARCHAR2(80) NOT NULL,
+ type                         VARCHAR2(10) NOT NULL,
+ value                        VARCHAR2(400) NOT NULL,
+ external_database_release_id NUMBER(12) NOT NULL,
+ MODIFICATION_DATE            DATE,
+ USER_READ                    NUMBER(1),
+ USER_WRITE                   NUMBER(1),
+ GROUP_READ                   NUMBER(1),
+ GROUP_WRITE                  NUMBER(1),
+ OTHER_READ                   NUMBER(1),
+ OTHER_WRITE                  NUMBER(1),
+ ROW_USER_ID                  NUMBER(12),
+ ROW_GROUP_ID                 NUMBER(3),
+ ROW_PROJECT_ID               NUMBER(4),
+ ROW_ALG_INVOCATION_ID        NUMBER(12),
  PRIMARY KEY (old_annotation_id)
 );
+
+ALTER TABLE apidb.OldAnnotation
+ADD CONSTRAINT old_annotation_fk1 FOREIGN KEY (external_database_release_id)
+REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
 CREATE SEQUENCE apidb.OldAnnotation_sq;
 
