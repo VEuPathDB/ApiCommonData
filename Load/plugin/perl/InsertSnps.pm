@@ -611,7 +611,7 @@ sub createSnpFeature {
 
     $seqVar->setParent($snpFeature);
     $seqVar->setParent($naSeq);
-
+  }
 ## don't know why we need all these locations for seqvariations ... they are always the same as the parent snpfeature
 #    my $svLoc = $self->getNaLoc($start, $end);
 #    $seqVar->addChild($svLoc);
@@ -637,7 +637,6 @@ sub createSnpFeature {
       $snpFeature->setReferenceNa($referenceBase);
     }
 
-  }
   return $snpFeature;
 }
 
