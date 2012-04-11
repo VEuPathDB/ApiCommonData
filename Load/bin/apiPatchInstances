@@ -34,7 +34,7 @@ foreach my $reportLine (`tuningMgrMgr list -password $tuningMgrMgrPwd |tail -n +
   if ($reportLine =~ /^(\S*)\s.*$svn/) {
     my $instance = $1;
     next if $blacklist{$instance};
-    print "\n\npatching instance $instance with SQL script ${script}.sql\n";
+    print "\n\npatching instance $instance with SQL script ${script}.sql at " . `date` . "\n";
     my $commandLine = "sqlplus $login/$password\@$instance \@$script";
     my $returnCode = system($commandLine);
 
