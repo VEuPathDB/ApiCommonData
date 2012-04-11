@@ -3613,7 +3613,7 @@ select 'Cparvum_RT_PCR_Kissinger' as profile_name,
 -- ToxoDB
 select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
        'Roos::ToxoLineages::Ver1' as module,
-       'Tachyzoite differential expression profiling of three archetypal T. gondii lineages' as display_name,
+       'Expression profiling of <i>Toxoplasma gondii</i> tachyzoites (str RH/GT1/Pru/ME49/CTG/Veg)' as display_name,
        'Determination of strain-specific differential expression by profiling wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of <i>T. gondii</i>' as description,
        'Strain' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3)' as y_axis,
@@ -3631,7 +3631,7 @@ select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_
 
 select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
        'Roos::TzBz' as module,
-       'Bradyzoite Differentiation (Multiple 6-hr Time Points)' as display_name,
+       'Bradyzoite differentiation (str Pru/RH, alkali/NaNP/-CO2, 6-hr sampling 0-72 hr)' as display_name,
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type I RH lacking HXGPRT and UPRT. A total of three experimental conditions were used to promote in vitro bradyzoite differentiation: Alkaline conditions (D10 media adjusted to pH 8.2), CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2), and sodium nitroprusside (SNP) exposure (D10 with 100uM SNP). All conditions were applied 6hr post-inoculation and each media was exchanged every twelve hours post-inoculation.' as description,
        'Time in hours' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
@@ -3647,7 +3647,7 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
     UNION
 select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
        'Boothroyd::TzBz' as module,
-       'Bradyzoite Differentiation (3-day time series)' as display_name,
+       'Bradyzoite differentiation (str Pru, alkali, 24-hr sampling 0-4d)' as display_name,
        'T. gondii Type II Prugniaud parasites lacking HXGPRT were inoculated at and MOI of 2 and differentiated in RPMI 1640 lacking sodium bicarbonate, low FCS, and high pH (8.1). RNA was collected from either tachyzoite (2 days post inoculation before monolayer lysis) or bradyzoite cultures (2-days, 3-days and 4-days of induction). ' as description,
        'Time in days' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
@@ -3663,7 +3663,7 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
     UNION
 select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
        'Dzierszinski::TzBz' as module,
-       'Bradyzoite Differentiation (Extended time series)' as display_name,
+       'Bradyzoite differentiation (str Pru/Veg, -CO2, multiple samples 2-14d)' as display_name,
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type III VEG. CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2) was used to induce in vitro bradyzoite differentiation. ' as description,
        'Time in days' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
@@ -3679,7 +3679,7 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
     UNION
 select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
        'White::TzBz' as module,
-       'Bradyzoite Differentiation (Single Time-Point)' as display_name,
+       'Bradyzoite differentiation (str GT1/ME49/CTG, Cmpd1/alkali, t=0/48 hr)' as display_name,
        'Bradyzoite genes were induced following a 48 hour treatment with compound 1 or alkaline condition. Strains used in this study: Type I-GT1, Type II-Me49B7 and Type III-CTG.' as description,
        'Treatment/Condition' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
@@ -3696,7 +3696,7 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
 
    select 'M.White Cell Cycle Microarray profiles' as profile_name,
        'White::CellCycle' as module,
-       'Cell Cycle' as display_name,
+       'Transcriptomics across the intracellular tachyzoite cell cycle (str RH, synchronized, 1-hr sampling)' as display_name,
        'The RH<sup>TK+</sup> strain used in this analysis expresses a fusion protein of herpes simplex thymidine kinase and chloramphenicol acetyltransferase (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  Synchronization of RH<sup>TK+</sup> parasites with thymidine followed published protocols (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  <b>In this synchrony model parasites released from thymidine immediately progress through S, mitosis and then cytokinesis</b>.  The first G1 phase is the start of the next cycle.  All time points represent microarray hybridization results from duplicate, independent biological replicates.  <br><br><b>The R0-12 time course represents ~1-2/3 divisions</b> with tachyzoite cell cycle phase repeats R1,R2=R8,R9, R3=R10, R4=R11, and R5=R12 (<a href="http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0012354">Behnke et al., 2010</a>)' as description,
        'Time point in hours' as x_axis,
        'RMA Value in upper graph or expression percentile value in lower graph.' as y_axis,
@@ -3712,7 +3712,7 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
 UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
        'Reid::TgME49RnaSeq' as module,
-       '<i>T. gondii ME49</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
+       'Expression profiling of <i>T. gondii</i> tachyzoites (str ME49, d3/4, RNA-seq)' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
@@ -3763,7 +3763,7 @@ from dual
 UNION
 select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
        'Boothroyd::TgME49M4' as module,
-       'Transcriptome analsysis of oocyst, tachyzoite, and bradyzoite development in the type II strain M4' as display_name,
+       'Expression profiling of <i>T. gondii</i> oocyst, tachyzoite & bradyzoite stages (str M4)' as display_name,
        'There were three primary objectives to the overall experiment. <br/> I. Describe the transcriptome of the oocyst through its development beginning with the freshly excreted, unsporulated oocyst at "Day 0" to a fully sporulated and mature oocyst at "Day 10" and including a mid-sporulation timepoint at "Day 4".  <br/>II. Compare the transcriptomes of <i>in vitro</i> vs. <i>in vivo</i> derived bradyzoites.<br/> III. Compare expression data from three life stages (oocyst, bradyzoite and tachyzoite) from the same parasite isolate, M4, which has been been characterized as a Type II strain.' as description,
        '1. Time post infection or sporulation (i.e. 4d vs 8d Bradyzoites and 4d vs 10d sporulated oocyst). <br/>2. Developmental form (Oocyst, Tachyzoite, Bradyzoite). <br/> 3. Bradyzoite samples - obtained <i>in vitro</i> vs. <i>in vivo</i>' as x_axis,
        'The RMA values in log2 scale.' as y_axis,
@@ -3779,7 +3779,7 @@ from dual
     UNION
 select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
        'Sullivan::GCN5A' as module,
-       'Differential experssion of TgGCN5-A null mutant under alkaline growth conditions compared to wild type' as display_name,
+       'TgGCN5-A null mutants during bradyzoite differentiation (str RH, alkali treatment)' as display_name,
        'Disruption of the gene encoding for TgGCN5-A in type I RH strain did not produce a severe phenotype under normal culture conditions, but here we show that the TgGCN5-A null mutant is deficient in responding to alkaline pH,a common stress used to induce bradyzoite differentiation in vitro. We performed a genome- wide analysis of the Toxoplasma transcriptional response to alkaline pH stress, finding that parasites deleted for TgGCN5-A fail to up-regulate 74% of the stress response genes that are induced 2-fold or more in wild-type. Using chromatin immunoprecipitation, we verify an enrichment of TgGCN5-A at the upstream regions of genes activated by alkaline pH exposure. The TgGCN5-A knockout is also incapable of up-regulating key marker genes expressed during development of the latent cyst form, and is impaired in its ability to recover from alkaline stress. Complementation of the TgGCN5-A knockout restores the expression of these stress-induced genes and reverses the stress recovery defect.' as description,
         'There are 4 samples divided based on two criteria
            1. Strain Type 
@@ -3802,7 +3802,7 @@ from dual
 
 select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
        'Carruthers::IntraExtraDiff' as module,
-       'T.G. Intracelluar v. Extrcelluar Expression' as display_name,
+       'Intracellular vs. extracellular tachyzoites (str RH)' as display_name,
 	   'Three sample types were harvested: extracellular, intracellular 0hr, intracellular 2hr. 2 replicates each. Expression for >80% of the regulated genes exhibits a steady downregulation during invasion.' as description,
        'Sample Type
             1. Extracellular: Harvested from outside the cell, pre-invasion
@@ -3822,7 +3822,7 @@ select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_n
 
 select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
        'Matrajt::BzMutant' as module,
-       'T.g. Differentiation Mutant Transcript Expression' as display_name,
+       'Bradyzoite differentiation mutants (str RH & mutants, -CO2)' as display_name,
        'Expression profiles of seven mutant strains (B7,P11,7K,11K,12K,13P, and 11P) at both the Extracellular tachyzoite and bradyzoite stages were examined, using the T. gondii RH strain as a control. In addition, the expression profile of the intracellular tachyzoite for the T. gondii RH control strain was also provided for comparison. 17 sample types are provided in total' as description,
        'Sample Type
             1. Control: Tachyzoite
@@ -3856,7 +3856,7 @@ select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as pr
 
 select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
        'Matrajt::BzTimeSeries' as module,
-       'T.g. Differentiation Time Series' as display_name,
+       'Bradyzoite differentiation (str RH, -CO2, 24-hr sampling 0-4d)' as display_name,
        'Expression profiles of the T. gondii RH extracelluar tachyzoite stage are compared to its bradyzoite stage at 4 time points (24, 36, 48, and 72 hours post invasion)' as description,
        'Sample Type
             1. Extracellular Tachyzoite
@@ -3878,7 +3878,7 @@ select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_
 
 select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
        'Matrajt::BzEgress' as module,
-       'T.g. Differentiation Mutant Expression, 11 Hours Post-Egress' as display_name,
+       'Bradyzoite differentiation mutants after egress (str RH & mutants)' as display_name,
        'The expression profile of T. gondii RH 11 hours post egress was compared to that of the same strain in the extracellular tachyzoite stage, as well as 2 mutant strains (13P and B7) which were also collected 11 hours post egress' as description,
        'Sample Type
             1. Extracellular Tachyzoite 
