@@ -197,14 +197,15 @@ tablespace indx
 create table &prefixFeatureLocation&1 NOLOGGING as
 select case
          when nf.subclass_view = 'GeneFeature'
-              and db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+              and (nf.is_predicted = 1 or 
+                   db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
                               'TigrScan', 'TwinScan predictions',
                               'TwinScanEt predictions', -- not 'tRNAscan-SE',
                               'P. falciparum Evigan Gene Models','Evigan_RSRC',
                               'Pfalciparum workshop annotations reviewed and changed',
                               'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
                               'Old annotation for ME49',
-                              'Tbrucei427_AutoMAGI_Annotations_RSRC')
+                              'Tbrucei427_AutoMAGI_Annotations_RSRC'))
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -232,13 +233,15 @@ union
 select -- virtual feature locations mapped through SequencePiece
        case
          when nf.subclass_view = 'GeneFeature'
-              and  db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
-                          'TigrScan', 'TwinScan predictions',
-                          'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                          'P. falciparum Evigan Gene Models','Evigan_RSRC',
-                          'Pfalciparum workshop annotations reviewed and changed',
-                          'Old annotation for ME49',
-                          'Tbrucei427_AutoMAGI_Annotations_RSRC')
+              and (nf.is_predicted = 1 or 
+                   db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
+                              'TigrScan', 'TwinScan predictions',
+                              'TwinScanEt predictions', -- not 'tRNAscan-SE',
+                              'P. falciparum Evigan Gene Models','Evigan_RSRC',
+                              'Pfalciparum workshop annotations reviewed and changed',
+                              'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
+                              'Old annotation for ME49',
+                              'Tbrucei427_AutoMAGI_Annotations_RSRC'))
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -525,6 +528,7 @@ where mapping.gene = gf.source_id
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
                       'Tbrucei427_AutoMAGI_Annotations_RSRC')
+  and gf.is_predicted != 1
 group by mapping.id, mapping.gene
       ]]>
     </sql>
@@ -1427,6 +1431,7 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
       group by na_feature_id
      ) any_name
 WHERE gf.source_id = gene.source_id
+  AND gf.is_predicted != 1
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
