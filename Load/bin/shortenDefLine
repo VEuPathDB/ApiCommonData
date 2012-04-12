@@ -12,6 +12,11 @@ GetOptions("inputFile=s"     => \$inputFile,
            "outputFile=s"    => \$outputFile,
           );
 
+############################################################
+#creates a defline with a single record source using swissprot preferentially (the first swissprot in a defline if there is more than one)
+#rearranges the defline to create a uniform format
+############################################################ 
+
 unless (-e $inputFile) {
   die "\nERROR:  Must supply a valid input file!\nUsage: shortenDefLine --inputFile <FILE> --outputFile <FILE>\n\nPURPOSE: shortens the NRDB deflines to the first gi number (cuts at the first space) so that BLAST doesn't choke on the return strings.\n";
 }
@@ -20,37 +25,47 @@ open(IN, "< $inputFile");
 open(OUT, "> $outputFile");
 
 while(<IN>){
-	if(/^\>gi/){
-	    my @descList=split('gi\|', $_);
-	    my $shorDefLine = $descList[0]."gi|".$descList[1];
-	    if ($shorDefLine =~ /gi\|(\d*)\|(\w*)\|(\S*?)\|\S*\s*(.*)/){
-		my $secondary_id = $1; 
-		my $external_db = $2;
-		my $source_id = $3;
-		my $description = $4;
-		$description =~ s/\"//g;
-		if (($external_db eq 'gnl') || ($external_db eq 'pir') || ($external_db eq 'prf') || ($external_db eq 'pat')){
-		    if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
-			$source_id = $1;
-		    }
-		    else{
-			die "ERROR: Unable to parse source id  for gnl, pir, pat, or prf.\n";
-		    }
-		} elsif ($external_db eq 'pdb'){
-		    if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
-			$source_id = $source_id . "." . "$1" if $1;
-		    }
-		    else{
-			die "ERROR: Unable to parse source id for pdb.\n";
-		    }
-		} elsif (!$source_id){
-		    $source_id = $secondary_id;
-		    $external_db = 'genpept';
-		}
-		$shorDefLine=">gi|".$secondary_id ."|" . $external_db ."|" . $source_id ."|". $description
-	    }
-	    print OUT "$shorDefLine\n";
-	}else{
-		print OUT;
+  my $shorDefLine;
+  if(/^\>gi/){
+    chomp;
+    my @descList=split('gi\|', $_);
+    foreach my $mem (@descList) {
+      if ($mem =~ /sp\|/){
+	$shorDefLine = $descList[0]."gi|".$mem;
+	last;
+      }
+    }
+    if (!$shorDefLine){
+      $shorDefLine = $descList[0]."gi|".$descList[1];
+    }
+    if ($shorDefLine =~ /gi\|(\d*)\|(\w*)\|(\S*?)\|\S*\s*(.*)/){
+      my $secondary_id = $1; 
+      my $external_db = $2;
+      my $source_id = $3;
+      my $description = $4;
+      $description =~ s/\"//g;
+      if (($external_db eq 'gnl') || ($external_db eq 'pir') || ($external_db eq 'prf') || ($external_db eq 'pat')){
+	if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
+	  $source_id = $1;
 	}
+	else{
+	  die "ERROR: Unable to parse source id  for gnl, pir, pat, or prf.\n";
+	}
+      } elsif ($external_db eq 'pdb'){
+	if ($shorDefLine =~ /gi\|\d*\|\w*\|\w*\|(\S*)/){
+	  $source_id = $source_id . "." . "$1" if $1;
+	}
+	else{
+	  die "ERROR: Unable to parse source id for pdb.\n";
+	}
+      } elsif (!$source_id){
+	$source_id = $secondary_id;
+	$external_db = 'genpept';
+      }
+      $shorDefLine=">gi|".$secondary_id ."|" . $external_db ."|" . $source_id ."|". $description
+    }
+    print OUT "$shorDefLine\n";
+  }else{
+    print OUT;
+  }
 }
