@@ -528,7 +528,7 @@ where mapping.gene = gf.source_id
                       'Pfalciparum workshop annotations reviewed and changed',
                       'Annotation for T. gondii ME49 - typeII:2005-08-01',
                       'Tbrucei427_AutoMAGI_Annotations_RSRC')
-  and gf.is_predicted != 1
+  and (gf.is_predicted != 1 OR gf.is_predicted is null)
 group by mapping.id, mapping.gene
       ]]>
     </sql>
@@ -1431,7 +1431,7 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
       group by na_feature_id
      ) any_name
 WHERE gf.source_id = gene.source_id
-  AND gf.is_predicted != 1
+  AND (gf.is_predicted != 1 OR gf.is_predicted is null)
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
