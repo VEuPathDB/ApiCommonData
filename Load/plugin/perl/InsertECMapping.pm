@@ -16,8 +16,8 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use FileHandle;
 use Carp;
-use ApiCommonData::Load::Utility::ECAnnotater;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Utility::ECAnnotater;
+use GUS::Supported::Util;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -129,7 +129,7 @@ sub getMapping {
       || die "Couldn't retrieve external database!\n";
 
 
-  my $annotater = ApiCommonData::Load::Utility::ECAnnotater->new();
+  my $annotater = GUS::Supported::Utility::ECAnnotater->new();
 
   open (ECMAP, "$mappingFile") ||
                     die ("Can't open the file $mappingFile.  Reason: $!\n");
@@ -148,7 +148,7 @@ sub getMapping {
 	$self->log("Processing Pfid: $locusTag, ECNumber: $ecNumber\n");
 
         my $aaSeq = 
-	  ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $locusTag);
+	  GUS::Supported::Util::getAASeqIdFromGeneId($self, $locusTag);
         my $ecAssociation = {
                     'ecNumber' => $ecNumber,
                     'evidenceDescription' => $evidenceDescription,

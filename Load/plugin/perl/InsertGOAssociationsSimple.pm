@@ -8,7 +8,7 @@ use GUS::Model::DoTS::GOAssociationInstance;
 use GUS::Model::DoTS::GOAssociationInstanceLOE;
 use GUS::Model::DoTS::GOAssociation;
 use GUS::Model::DoTS::GOAssocInstEvidCode;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use FileHandle;
 use Carp;
@@ -178,7 +178,7 @@ sub run {
 
     my $goExtDbRlsName = $self->getArg('goExtDbRlsName');
 
-    my $goExtDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $goExtDbRlsName);
+    my $goExtDbRlsVer = GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $goExtDbRlsName);
 
     my $goExternalDatabaseSpec=$goExtDbRlsName."|".$goExtDbRlsVer;
 

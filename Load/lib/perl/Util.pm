@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Util;
+package GUS::Supported::Util;
 
 use strict;
 

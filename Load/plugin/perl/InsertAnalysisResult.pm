@@ -17,7 +17,7 @@ use GUS::Model::RAD::ProtocolParam;
 
 use GUS::Model::RAD::LogicalGroup;
 use GUS::Model::RAD::LogicalGroupLink;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 $| = 1;
 
@@ -358,11 +358,11 @@ sub getNaFeatureId {
   my @naFeatures;
 
   if ($naFeatureView eq 'GeneFeature'){
-      my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
+      my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
 
       push @naFeatures, $naFeatureId;
   }else{
-      my $naFeatureIds =  ApiCommonData::Load::Util::getNaFeatureIdsFromSourceId($self, $sourceId, $naFeatureView);
+      my $naFeatureIds =  GUS::Supported::Util::getNaFeatureIdsFromSourceId($self, $sourceId, $naFeatureView);
 
       @naFeatures = @$naFeatureIds;
   }

@@ -10,7 +10,7 @@ use GUS::Model::DoTS::PredictedAAFeature;
 use GUS::Model::DoTS::AALocation;
 use GUS::Model::DoTS::TranslatedAASequence;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 
 my $purposeBrief = <<PURPOSEBRIEF;
@@ -161,9 +161,9 @@ sub run{
 	my $aaSeqId;
 
 	if ($self->getArg('organismAbbrev')){
-	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId,0,$self->getArg('organismAbbrev'));
+	      $aaSeqId = &GUS::Supported::Util::getAASeqIdFromGeneId($self,$sourceId,0,$self->getArg('organismAbbrev'));
 	}else{
-	      $aaSeqId = &ApiCommonData::Load::Util::getAASeqIdFromGeneId($self,$sourceId);
+	      $aaSeqId = &GUS::Supported::Util::getAASeqIdFromGeneId($self,$sourceId);
         }
 	
       if($aaSeqId){

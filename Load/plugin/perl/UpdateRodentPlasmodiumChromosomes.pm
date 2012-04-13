@@ -8,7 +8,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::ApiDB::RodentChrColors;
@@ -107,8 +107,8 @@ sub run {
     # method to get the active source_id (as all pfal source_id in input file are not current)
 
 
-    my $leftNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_left});
-    my $rightNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $href->{gene_right});
+    my $leftNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $href->{gene_left});
+    my $rightNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $href->{gene_right});
     next unless ($leftNaFeatureId && $rightNaFeatureId);
     # method to assign genomic locations in the hash
     if ($href->{is_reversed}){

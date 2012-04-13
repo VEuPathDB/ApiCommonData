@@ -25,7 +25,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use GUS::Model::ApiDB::GeneInteraction;
 
@@ -128,8 +128,8 @@ sub run {
       }
     }
 
-    my $baitGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{bait_ORF}], 0, $self->getArg('organismAbbrev'));
-    my $preyGeneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $features[$index{prey_ORF}], 0, $self->getArg('organismAbbrev'));
+    my $baitGeneFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $features[$index{bait_ORF}], 0, $self->getArg('organismAbbrev'));
+    my $preyGeneFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $features[$index{prey_ORF}], 0, $self->getArg('organismAbbrev'));
 
     next if(!$baitGeneFeatureId || !$preyGeneFeatureId);
 

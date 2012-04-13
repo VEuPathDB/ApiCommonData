@@ -13,7 +13,7 @@ use GUS::Model::ApiDB::SyntenyAnchor;
 
 use CBIL::Util::V;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use Data::Dumper;
 
@@ -178,8 +178,8 @@ sub readGeneLocationsFromGFFs {
   my $gffVersion = $self->getArg('gffVersion');
 
   my $allFeatureLocations = {};
-  ApiCommonData::Load::Util::addGffFeatures($allFeatureLocations, $gffFileA, $gffVersion);
-  ApiCommonData::Load::Util::addGffFeatures($allFeatureLocations, $gffFileB, $gffVersion);
+  GUS::Supported::Util::addGffFeatures($allFeatureLocations, $gffFileA, $gffVersion);
+  GUS::Supported::Util::addGffFeatures($allFeatureLocations, $gffFileB, $gffVersion);
 
   my $geneLocations = {};
   foreach my $seqId (keys %$allFeatureLocations) {

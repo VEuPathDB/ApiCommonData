@@ -7,7 +7,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use GUS::Model::ApiDB::GeneProfileCorrelation;
 use GUS::Model::ApiDB::ProfileSet;
@@ -100,7 +100,7 @@ sub run {
     my @row = split("\t", $_);
 
     for(my $i = 1; $i < scalar @row; $i++){
-      my $geneFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $row[0]);
+      my $geneFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $row[0]);
       my $correlationValue = $row[$i];
 
       my @profiles = split("-", $colNames[$i]);

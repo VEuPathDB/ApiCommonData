@@ -12,7 +12,7 @@ use GUS::Model::DoTS::Transcript;
 use GUS::Model::DoTS::ExonFeature;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::Repeats;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use Data::Dumper;
 

@@ -13,7 +13,7 @@ use GUS::Model::DoTS::OrthologExperiment;
 use GUS::Model::DoTS::SequenceGroup;
 use GUS::Model::Core::TableInfo;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 
 my $argsDeclaration =
@@ -177,8 +177,8 @@ sub run {
 
     my $sourceIdTable = $self->getArg('ElementResultTable');
     my %sourceid_method =
-      ('DoTS::GeneFeature'=> \&ApiCommonData::Load::Util::getGeneFeatureId,
-       'DoTS::SplicedNASequence'=> \&ApiCommonData::Load::Util::getSplicedNASequenceId);
+      ('DoTS::GeneFeature'=> \&GUS::Supported::Util::getGeneFeatureId,
+       'DoTS::SplicedNASequence'=> \&GUS::Supported::Util::getSplicedNASequenceId);
     foreach my $sourceId (@foundIds) {
 
       my @allIds = split(/\//, $sourceId);

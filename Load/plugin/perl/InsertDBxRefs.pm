@@ -19,7 +19,7 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use FileHandle;
 use Carp;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::SRes::DbRef;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
@@ -220,7 +220,7 @@ sub getMapping {
     my $idColumn = $$tables{$tableName}->{idColumn};
 
     my $methodName = $$tables{$tableName}->{getId};
-    my $method = "ApiCommonData::Load::Util::$methodName";
+    my $method = "GUS::Supported::Util::$methodName";
 
     my $featId;
 

@@ -9,7 +9,7 @@ use GUS::PluginMgr::Plugin;
 
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::NAFeatureComment;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
 
 # ----------------------------------------------------------

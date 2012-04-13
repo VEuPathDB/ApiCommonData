@@ -16,7 +16,7 @@ use GUS::Model::DoTS::Repeats;
 use GUS::Model::ApiDB::GeneFeatureProduct;
 use GUS::Model::DoTS::SplicedNASequence;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use Data::Dumper;
 
 # this is the list of so terms that this file uses.  we have them here so we

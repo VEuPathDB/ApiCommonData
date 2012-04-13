@@ -11,7 +11,7 @@ use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::ApiDB::GeneFeatureProduct;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::ApiDB::Organism;
 
 # ----------------------------------------------------------

@@ -17,7 +17,7 @@ use strict;
 use DBI;
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::ApiDB::GeneFeatureName;
 use GUS::Model::SRes::ExternalDatabase;

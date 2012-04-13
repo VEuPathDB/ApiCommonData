@@ -16,8 +16,8 @@ use strict;
 use DBI;
 use CBIL::Util::Disp;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Util;
-use ApiCommonData::Load::Utility::ECAnnotater;
+use GUS::Supported::Util;
+use GUS::Supported::Utility::ECAnnotater;
 use Data::Dumper;
 
 # ----------------------------------------------------------
@@ -154,7 +154,7 @@ sub run{
   $self->logAlgInvocationId;
   $self->logCommit;
 
-  my $annotater = ApiCommonData::Load::Utility::ECAnnotater->new();
+  my $annotater = GUS::Supported::Utility::ECAnnotater->new();
 
   open(ECFILE, $file)
     || die "can't open file $file";
@@ -165,7 +165,7 @@ sub run{
        chomp;
        my ($gene,$ec) = $self->parseRow($_);
        if ($gene & $ec) {
-       my $aaSeq = ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $gene);
+       my $aaSeq = GUS::Supported::Util::getAASeqIdFromGeneId($self, $gene);
        my $ecAssociation = {
                     'ecNumber' => $ec,
                     'evidenceDescription' => $evidenceDescription,
@@ -197,7 +197,7 @@ return ($gene, $ec);
 }
 
 sub undoTables {
-    ApiCommonData::Load::Utility::ECAnnotater->undoTables();
+    GUS::Supported::Utility::ECAnnotater->undoTables();
 }
 
 return 1;

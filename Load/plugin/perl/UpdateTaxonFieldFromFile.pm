@@ -6,7 +6,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::TaxonName;
 use GUS::Model::SRes::Taxon;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 $| = 1;
 
@@ -163,7 +163,7 @@ sub processFile {
 
   my $extDbRlsName = $self->getArg('extDbRlsName');
 
-  my $extDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
+  my $extDbRlsVer = GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
 
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName."|".$extDbRlsVer);
 
@@ -295,7 +295,7 @@ sub getUpdateIds {
 
   my $extDbRlsName = $self->getArg('extDbRlsName');
 
-  my $extDbRlsVer = ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
+  my $extDbRlsVer = GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $extDbRlsName);
 
   my $extDbRlsId = $self->getExtDbRlsId($extDbRlsName."|".$extDbRlsVer);
 

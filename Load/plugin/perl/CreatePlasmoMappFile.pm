@@ -7,7 +7,7 @@ use warnings;
 
 use FileHandle;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::DoTS::NASequence;
 
 my $argsDeclaration =

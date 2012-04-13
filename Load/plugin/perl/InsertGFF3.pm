@@ -14,7 +14,7 @@ use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GFF3;
 use GUS::Model::ApiDB::GFF3AttributeKey;
 use GUS::Model::ApiDB::GFF3Attributes;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 # ----------------------------------------------------------
 # Load Arguments

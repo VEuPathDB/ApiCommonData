@@ -7,7 +7,7 @@ use strict;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use GUS::Model::ApiDB::RelatedNaFeature;
 use GUS::Model::ApiDB::ProfileSet;
@@ -115,11 +115,11 @@ sub run {
     my ($naFeatureId,$assocNaFeatureId);
 
     if ($self->getArg('organismAbbrev')){
-         $naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so,0,$self->getArg('organismAbbrev'));
-         $assocNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $st,0,$self->getArg('organismAbbrev'));	
+         $naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $so,0,$self->getArg('organismAbbrev'));
+         $assocNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $st,0,$self->getArg('organismAbbrev'));	
     }else{
-	$naFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $so);
-	$assocNaFeatureId = ApiCommonData::Load::Util::getGeneFeatureId($self, $st);
+	$naFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $so);
+	$assocNaFeatureId = GUS::Supported::Util::getGeneFeatureId($self, $st);
     }
 
 

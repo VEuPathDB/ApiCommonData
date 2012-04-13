@@ -13,7 +13,7 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 use ApiCommonData::Load::MultAlignMercatorMavid;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 #use GUS::Model::DoTS::TranslatedAASequence;
 
 use CBIL::Util::V;
@@ -60,7 +60,7 @@ my %seqGenes;
 
 my $gffLocations = {};
 foreach my $gffFile (@gffFiles) {
-  ApiCommonData::Load::Util::addGffFeatures($gffLocations, $gffFile, $gffVersion);
+  GUS::Supported::Util::addGffFeatures($gffLocations, $gffFile, $gffVersion);
 }
 
 

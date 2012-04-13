@@ -18,7 +18,7 @@ use GUS::Model::SRes::Taxon;
 
 use Bio::PrimarySeq;
 use Bio::Tools::SeqStats;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 sub getArgsDeclaration {
 my $argsDeclaration  =
@@ -595,7 +595,7 @@ sub getSOTermId {
 
   my $soExtDbRlsName = $self->getArg('soExtDbRlsName');
 
-  my $soVer =  ApiCommonData::Load::Util::getExtDbRlsVerFromExtDbRlsName($self, $soExtDbRlsName);
+  my $soVer =  GUS::Supported::Util::getExtDbRlsVerFromExtDbRlsName($self, $soExtDbRlsName);
 
   my $SO = GUS::Model::SRes::SequenceOntology->new({'term_name' => $SOTerm,'so_version' => $soVer});
 

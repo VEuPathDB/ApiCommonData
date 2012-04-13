@@ -9,7 +9,7 @@ use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PhenotypeFeature;
 use Data::Dumper;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use Scalar::Util 'reftype';
 
 
@@ -158,7 +158,7 @@ sub insertPhenotypeFeature {
 
 
 
-           my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId, 0, $self->getArg('organismAbbrev')) ;
+           my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $sourceId, 0, $self->getArg('organismAbbrev')) ;
 	   if ($naFeatureId){
 
 	       my $phenofeature = GUS::Model::ApiDB::PhenotypeFeature->new({external_database_release_id => $extDbReleaseId,

@@ -10,7 +10,7 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::ApiDB::GeneFeatureLodScore;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -141,7 +141,7 @@ sub run {
       @genes = @elements[2..(@elements-1)];
       
       foreach my $gene (@genes) {
-	  my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $gene, 0, $self->getArg('organismAbbrev')) ;
+	  my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $gene, 0, $self->getArg('organismAbbrev')) ;
           my $geneFeat = GUS::Model::DoTS::GeneFeature->new({'na_feature_id' => $naFeatureId});
           if ($geneFeat->retrieveFromDB) {
             $geneFeature{$gene} = $geneFeat->getNaFeatureId();

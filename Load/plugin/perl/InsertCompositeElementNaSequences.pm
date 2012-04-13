@@ -5,7 +5,7 @@ use strict 'vars';
 
 use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::RAD::CompositeElementNASequence;
 
 
@@ -162,7 +162,7 @@ AND sof.source_id is not null
     }
     $count++;
     my $transcriptSequenceId =
-      ApiCommonData::Load::Util::getTranscriptSequenceIdFromGeneSourceId($self, $geneSourceId);
+      GUS::Supported::Util::getTranscriptSequenceIdFromGeneSourceId($self, $geneSourceId);
 
     if (!$transcriptSequenceId) {
       my $msg = "no transcript seq found for gene '$geneSourceId'";

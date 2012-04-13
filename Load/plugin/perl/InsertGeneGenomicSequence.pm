@@ -8,7 +8,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use FileHandle;
 
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::ApiDB::GeneGenomicSequence_Split;

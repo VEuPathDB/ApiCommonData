@@ -17,7 +17,7 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use GUS::Model::ApiDB::GeneFeatureProduct;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -490,7 +490,7 @@ sub getTranscriptSeq{
                                               external_database_release_id => $scanReleaseId
                                              });
 
-  my $transcriptSeq = ApiCommonData::Load::Util::getCodingSequenceFromExons($exonFeats);
+  my $transcriptSeq = GUS::Supported::Util::getCodingSequenceFromExons($exonFeats);
 
 
   $transcriptNaSeq->setSequence($transcriptSeq);

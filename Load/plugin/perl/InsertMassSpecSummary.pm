@@ -8,7 +8,7 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use GUS::Model::DoTS::ExternalNASequence;
 use GUS::Model::RAD::ElementNASequence;
 use GUS::Model::ApiDB::MassSpecSummary;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use Data::Dumper;
 
 
@@ -128,7 +128,7 @@ sub run {
     my @data = split(/\t/);
     scalar(@data) == 10 || $self->error("wrong number of columns in line: '$_'");
     my $aaSeqId = 
-      ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $data[0]);
+      GUS::Supported::Util::getAASeqIdFromGeneId($self, $data[0]);
 
     if (!$aaSeqId) {
       if ($tolerateMissingIds) {

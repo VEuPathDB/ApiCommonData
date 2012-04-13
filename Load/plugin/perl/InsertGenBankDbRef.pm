@@ -22,7 +22,7 @@ use GUS::Model::DoTS::DbRefNASequence;
 use GUS::Model::DoTS::AASequenceDbRef;
 use GUS::Model::DoTS::NASequence;
 use GUS::Model::DoTS::AASequence;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 my $purposeBrief = <<PURPOSEBRIEF;
 Plugin to insert associations between GenBank and AA or NA sequences from a tab delimited file.
@@ -211,7 +211,7 @@ sub createAASequenceDbRef{
       foreach my $sourceId (@{$sourceIdList}){
 
 	my $aaSeqId = 
-	  ApiCommonData::Load::Util::getAASeqIdFromGeneId($self, $sourceId);
+	  GUS::Supported::Util::getAASeqIdFromGeneId($self, $sourceId);
 
 	if (!$aaSeqId){
 	  $self->log("The source_id $sourceId could not be found");

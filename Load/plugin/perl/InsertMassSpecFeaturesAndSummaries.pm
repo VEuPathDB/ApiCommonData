@@ -31,7 +31,7 @@ use Bio::Coordinate::GeneMapper;
 
 # debugging
 use Data::Dumper;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 
 sub new {
   my ($class) = @_;
@@ -240,7 +240,7 @@ sub addRecordsToGenes {
     my $official = 0;
     my @gf;
     foreach my $id ($record->{proteinId},split(/\|/,$record->{description})) {
-      my $naFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $id, $self->{geneExtDbRlsId}, $self->getArg('organismAbbrev')) ;
+      my $naFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $id, $self->{geneExtDbRlsId}, $self->getArg('organismAbbrev')) ;
       my $naFeature = GUS::Model::DoTS::NAFeature->new({'na_feature_id' => $naFeatureId}); 
       if ($naFeature->retrieveFromDB()) {
   my $isOfficial=0;

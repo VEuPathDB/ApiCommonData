@@ -16,7 +16,7 @@ use GUS::PluginMgr::Plugin;
 use lib "$ENV{GUS_HOME}/lib/perl";
 use FileHandle;
 use Carp;
-use ApiCommonData::Load::Util;
+use GUS::Supported::Util;
 use GUS::Model::DoTS::NAGene;
 use GUS::Model::DoTS::GeneFeature;
 use GUS::Model::DoTS::NAFeatureNAGene;
@@ -122,7 +122,7 @@ sub makeNaFeatureNaGene {
 
   my @geneFeatureIds;
 
-  my $geneFeatureId =  ApiCommonData::Load::Util::getGeneFeatureId($self, $sourceId);
+  my $geneFeatureId =  GUS::Supported::Util::getGeneFeatureId($self, $sourceId);
 
   push @geneFeatureIds, $geneFeatureId;
 

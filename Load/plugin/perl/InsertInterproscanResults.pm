@@ -6,7 +6,7 @@ use strict;
 use DBI;
 use XML::Twig;
 use XML::Simple;
-use ApiCommonData::Load::Utility::GOAnnotater;
+use GUS::Supported::Utility::GOAnnotater;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
@@ -175,7 +175,7 @@ sub run {
 
   my $goVersion = $self->getArg('goVersion');
   $self->{GOAnnotater} =
-    ApiCommonData::Load::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"]);
+    GUS::Supported::Utility::GOAnnotater->new($self, ["GO_RSRC^$goVersion"]);
 
   $self->{extDbRlsId} = $self->getExtDbRlsId($self->getArg('extDbName'),
 					     $self->getArg('extDbRlsVer'));
@@ -495,7 +495,7 @@ sub undoTables {
 	  'DoTS.AALocation',
 	  'DoTS.DbRefAAFeature',
 	  'DoTS.DomainFeature',
-	  ApiCommonData::Load::Utility::GOAnnotater->undoTables()
+	  GUS::Supported::Utility::GOAnnotater->undoTables()
 	 );
 }
 
