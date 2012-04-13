@@ -9,16 +9,17 @@ use CBIL::Util::PropertySet;
 
 $| = 1;
 
-my $PRINT_URLS = 1;
+my $PRINT_URLS = 0;
 
 my ($outputFile, $organismAbbrev) = @ARGV;
 
 my $parentNcbiTaxonIds;
 if (!$organismAbbrev) {
-    $parentNcbiTaxonIds = chomp(<STDIN>);
+  my $taxonIdsFromStdIn = <STDIN>;
+  $parentNcbiTaxonIds = chomp($taxonIdsFromStdIn);
 }
 
-die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $ncbiTaxonIds;
+die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $parentNcbiTaxonIds;
 
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
@@ -44,19 +45,26 @@ for (my $i=0; $i<$batchCount; $i++) {
 }
 
 # get the isolate records (in batches)
+my $c;
 foreach my $batch (@giBatches) {
+  $c++;
   print STDERR ".";
   my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb&retmode=text";
   my $gb_result = get($url);
+  print STDERR "batch $c\n";
   print STDERR "\n$url\n\n" if $PRINT_URLS;
 
-  die "Failed getting gb result\n" unless $gb_result;
+  if (!$gb_result) {
+    print STDERR "retrying";
+    $gb_result = get($url);  # retry one time
+    die "Failed getting gb result\n" unless $gb_result;
+  }
   open(FILE, ">>$outputFile") || die "Could not open output file '$outputFile'\n";
   print FILE "$gb_result";
   close(FILE);
 }
 
-print STDERR "\nFetched " . scalar(@batches) . " isolate batches containing $uniqueAccCount unique isolate records.\n";
+print STDERR "\nFetched " . scalar(@giBatches) . " isolate batches containing $giCount unique isolate records.\n";
 
 
 ##############################################################################################
@@ -120,15 +128,15 @@ sub buildQueryStrings {
 
   # either get parent ncbi taxon ids from organism table or stdin
   my $inStmt = "
-     select familyNcbiTaxonIds
+     select FAMILY_NCBI_TAXON_IDS
      from apidb.organism
-     where organismAbbrev = '$organismAbbrev'";
+     where abbrev = '$organismAbbrev'";
 
   $inStmt = $parentNcbiTaxonIds if $parentNcbiTaxonIds;
 
   my $sql = <<SQL;
   select ncbi_tax_id
-  from SRes.Taxon, apidb.organism
+  from SRes.Taxon
   start with ncbi_tax_id in ($inStmt)
   connect by prior taxon_id = parent_id
 SQL
@@ -139,7 +147,7 @@ SQL
   # run the query and the taxon ids,  break them into batches of 100
   # so we don't form URLs that are too long
   my %ncbiTaxIdsHash;
-  my @ncbiTaxIdsBatches;
+  my $ncbiTaxIdsBatches;
   my $count;
   my $batchIndex = 0;
 #  $ncbiTaxIdsBatches->[$batchIndex] = [];
@@ -148,7 +156,7 @@ SQL
 	  $ncbiTaxIdsHash{$currentTaxon} = 1;
 	  push(@{$ncbiTaxIdsBatches->[$batchIndex]}, $currentTaxon);
 	  if ($count++ == 100) {
-	      $batch++;
+	      $batchIndex++;
 	      $count = 0;
 	  }
       }
@@ -160,8 +168,8 @@ SQL
       my $queryString = join("OR", @queries);
       push(@queryStrings,$queryString);
   }
-
-  return \@queryStrings;
+  print STDERR "found $batchIndex batches\n";
+  return @queryStrings;
 }
 
 sub usage {
