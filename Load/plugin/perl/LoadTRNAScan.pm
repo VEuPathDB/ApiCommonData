@@ -307,7 +307,6 @@ sub getGeneFeat {
 						     'sequence_ontology_id' => $soIds->{'geneFeat'},
 						     'external_database_release_id' => $scanReleaseId,
 						     'source_id' => $sourceId,
-						     'is_predicted' => 1,
 						     'score' => $tRNAs->{$seqSourceId}->{$tRNA}->{'score'},
 						     'is_pseudo' => $isPseudo,
 						     'product' => ""});
@@ -343,7 +342,6 @@ sub getTranscript {
 						      'sequence_ontology_id' => $soIds->{'transcript'},
 						      'external_database_release_id' => $scanReleaseId,
 						      'source_id' => $sourceId,
-						      'is_predicted' => 1,
 						      'is_pseudo' => $isPseudo,
 						      'product' => "tRNA $product"});
 
