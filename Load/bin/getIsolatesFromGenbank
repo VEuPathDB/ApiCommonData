@@ -7,7 +7,6 @@ use DBI;
 use DBD::Oracle;
 use CBIL::Util::PropertySet;
 
-
 $| = 1;
 
 my $PRINT_URLS = 1;
@@ -25,59 +24,27 @@ die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
 my $db      = "nuccore";
 my $utils = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
-
-
-# use eutils to run query at ncbi.  returns a handle on a set of records
-my $query = buildQueryString($organismAbbrev, $parentNcbiTaxonIds);
 my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
-my $esearch_result = get("$esearch$query");
-print STDERR "$esearch$query\n\n" if $PRINT_URLS;
-die "Failed running esearch query" unless defined $esearch_result;
 
-$esearch_result =~ m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s || die "Can't parse results from esearch\n";
-
-# We matched $Count genbank records.  We can get them using $QueryKey and
-# $WebEnv as IDs for our query result
-my $Count    = $1;
-my $QueryKey = $2;
-my $WebEnv   = $3;
-
-print STDERR "Query found $Count genbank records\n";
-
-exit(0) unless $Count;
-
-# assume we can fit all these results easily in memory
-my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
-
-print STDERR "$efetch\n\n" if $PRINT_URLS;
-my $efetch_result = get($efetch);
-open(FF,">/home/sfischer/junk/gbyuck");
-print FF $efetch_result;
-close(FF);
-
-die "Failed getting efetch result\n" unless $efetch_result;
-
-my $batchSize = 100;
-
-my @uniqueAccs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
-
-my $uniqueAccCount = scalar(@uniqueAccs);
-
-print STDERR "found $uniqueAccCount unique genbank Ids\n";
-my $batchCount = int($uniqueAccCount / $batchSize + 1);
+# get isolate GIs for our list of taxa (and their child taxa)
+my @giList = getGiList($organismAbbrev, $parentNcbiTaxonIds);
+my $giCount = scalar(@giList);
+print STDERR "found $giCount unique genbank Ids\n";
 
 # group the GIs into batches, to reduce internet accesses.
-my @batches;
-my $totcount;
+my $batchSize = 100;
+my @giBatches;
+my $batchCount = int($giCount / $batchSize + 1);
 for (my $i=0; $i<$batchCount; $i++) {
   my $sliceStart = $i*$batchSize;
   my $sliceEnd = ($i+1)*$batchSize-1;
-  $sliceEnd = $#uniqueAccs if $sliceEnd > $#uniqueAccs;
-  my @tmp = @uniqueAccs[$sliceStart .. $sliceEnd];
-  $batches[$i] = join(",", @tmp) if (scalar @tmp>0);
+  $sliceEnd = $#giList if $sliceEnd > $#giList;
+  my @tmp = @giList[$sliceStart .. $sliceEnd];
+  $giBatches[$i] = join(",", @tmp) if (scalar @tmp>0);
 }
 
-foreach my $batch (@batches) {
+# get the isolate records (in batches)
+foreach my $batch (@giBatches) {
   print STDERR ".";
   my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb&retmode=text";
   my $gb_result = get($url);
@@ -89,33 +56,57 @@ foreach my $batch (@batches) {
   close(FILE);
 }
 
-
 print STDERR "\nFetched " . scalar(@batches) . " isolate batches containing $uniqueAccCount unique isolate records.\n";
 
 
-sub usage {
-  print STDERR "
+##############################################################################################
 
-Use NCBI's eutils to fetch isolate sequences from genbank.  All sequences
-are concatenated into a single genbank file.  Gets isolates for all NCBI
-taxon IDs that are *children* of the provided ncbiTaxonIds (including
-those provided).
+sub getGiList {
+    my ($organismAbbrev, $parentNcbiTaxonIds) = @_;
 
-Takes a comma delimited list of taxon IDs on stdin.
+    # use eutils to run query at ncbi.  returns a handle on a set of records
+    my @queries = buildQueryStrings($organismAbbrev, $parentNcbiTaxonIds);
 
-usage: 
-  getIsolatesFromGenbank outputfile organismAbbrev
-  echo '12433,7680' | getIsolatesFromGenbank outputFile
+    my @giList;
+    foreach my $query (@queries) {
+	my $esearch_result = get("$esearch$query");
+	print STDERR "$esearch$query\n\n" if $PRINT_URLS;
+	die "Failed running esearch query" unless defined $esearch_result;
 
-(Prints a . to STDERR for each batch of sequences it gets.)
+	$esearch_result =~ m|<Count>(\d+)</Count>.*<QueryKey>(\d+)</QueryKey>.*<WebEnv>(\S+)</WebEnv>|s || die "Can't parse results from esearch\n";
 
-";
+        # We matched $Count genbank records.  We can get them using $QueryKey and
+        # $WebEnv as IDs for our query result
+	my $Count    = $1;
+	my $QueryKey = $2;
+	my $WebEnv   = $3;
 
-  exit(1);
+	print STDERR "Query found $Count genbank records\n";
 
+	next unless $Count;
+
+        # assume we can fit all these results easily in memory
+	my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
+
+	print STDERR "$efetch\n\n" if $PRINT_URLS;
+	my $efetch_result = get($efetch);
+	open(FF,">/home/sfischer/junk/gbyuck");
+	print FF $efetch_result;
+	close(FF);
+
+	die "Failed getting efetch result\n" unless $efetch_result;
+
+	my @gis = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
+	push(@giList, @gis);
+    }
+    return @giList;
 }
 
-sub buildQueryString {
+# expand provided parentNcbiTaxonIds to the list of them plus their children.
+# for each taxon and child taxon in our list, format an expression to get the isolate GIs for that taxon
+# join these with an OR.  but, only join at most 100 into one string, to submit in one html request.
+# return a set of strings to submit as html requests
+sub buildQueryStrings {
   my ($organismAbbrev, $parentNcbiTaxonIds) = @_;
 
   my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
@@ -145,13 +136,53 @@ SQL
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
 
-  my %ncbiTaxIds;
+  # run the query and the taxon ids,  break them into batches of 100
+  # so we don't form URLs that are too long
+  my %ncbiTaxIdsHash;
+  my @ncbiTaxIdsBatches;
+  my $count;
+  my $batchIndex = 0;
+#  $ncbiTaxIdsBatches->[$batchIndex] = [];
   while (my($currentTaxon) = $stmt->fetchrow_array()) {
-    $ncbiTaxIds{$currentTaxon} = 1;
-    print STDERR "including NCBI taxon id $currentTaxon\n";
+      if (!$ncbiTaxIdsHash{$currentTaxon}) {
+	  $ncbiTaxIdsHash{$currentTaxon} = 1;
+	  push(@{$ncbiTaxIdsBatches->[$batchIndex]}, $currentTaxon);
+	  if ($count++ == 100) {
+	      $batch++;
+	      $count = 0;
+	  }
+      }
   }
 
-  my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} keys(%ncbiTaxIds);
-  my $query = join("OR", @queries);
-  return $query;
+  my @queryStrings;
+  foreach my $batch (@$ncbiTaxIdsBatches) {
+      my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} @$batch;
+      my $queryString = join("OR", @queries);
+      push(@queryStrings,$queryString);
+  }
+
+  return \@queryStrings;
 }
+
+sub usage {
+  print STDERR "
+
+Use NCBI's eutils to fetch isolate sequences from genbank.  All sequences
+are concatenated into a single genbank file.  Gets isolates for all NCBI
+taxon IDs that are *children* of the provided ncbiTaxonIds (including
+those provided).
+
+Takes a comma delimited list of taxon IDs on stdin.
+
+usage: 
+  getIsolatesFromGenbank outputfile organismAbbrev
+  echo '12433,7680' | getIsolatesFromGenbank outputFile
+
+(Prints a . to STDERR for each batch of sequences it gets.)
+
+";
+
+  exit(1);
+
+}
+
