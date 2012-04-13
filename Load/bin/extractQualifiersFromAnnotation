@@ -30,6 +30,7 @@ $date = join("",split(/-/,$date));
 #my $count = 0;
 #my $subCount = 0;
 my %done;
+my %doneGO;
 
 my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
 	$db, $taxonId, 
@@ -158,7 +159,8 @@ sub processFeature {
 			if ($outputHash{$qualifier}) {		
 				if ($outputHash{$qualifier} =~ /associations/) {
 					my $outputLine = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
-					$goFh->print("$outputLine\n");
+					$goFh->print("$outputLine\n") if (!$doneGO{$outputLine});
+					$doneGO{$outputLine} = $outputLine;
 				} else { 
 					my @values = $bioperlFeature->get_tag_values($qualifier);
 					foreach my $value (@values) {
