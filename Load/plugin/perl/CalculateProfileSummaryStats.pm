@@ -144,6 +144,9 @@ sub makeTimePointMap {
   open(FILE, $timePointMapFile);
 
   my %map;
+
+  my $header = <FILE>;
+
   while (<FILE>) {
     chomp;
     my @cols = split(/\t/, $_);
@@ -383,6 +386,14 @@ sub calculateSummaryStats {
     $resultHash{'max_percentile'} = $maxPercentile;
 
    return \%resultHash;
+}
+
+
+sub undoTables {
+  my ($self) = @_;
+
+  return ('ApiDB.Profile'
+	 );
 }
 
 
