@@ -197,15 +197,7 @@ tablespace indx
 create table &prefixFeatureLocation&1 NOLOGGING as
 select case
          when nf.subclass_view = 'GeneFeature'
-              and (nf.is_predicted = 1 or 
-                   db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
-                              'TigrScan', 'TwinScan predictions',
-                              'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                              'P. falciparum Evigan Gene Models','Evigan_RSRC',
-                              'Pfalciparum workshop annotations reviewed and changed',
-                              'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                              'Old annotation for ME49',
-                              'Tbrucei427_AutoMAGI_Annotations_RSRC'))
+              and nf.is_predicted = 1
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -218,12 +210,8 @@ select case
        nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
-     dots.ExonFeature ef, sres.TaxonName tn,
-     (select edr.external_database_release_id, ed.name
-      from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-      where edr.external_database_id = ed.external_database_id) db
+     dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
-  and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = ns.na_sequence_id
   and nl.na_feature_id = ef.na_feature_id(+)
   and ns.taxon_id = tn.taxon_id
@@ -233,15 +221,7 @@ union
 select -- virtual feature locations mapped through SequencePiece
        case
          when nf.subclass_view = 'GeneFeature'
-              and (nf.is_predicted = 1 or 
-                   db.name in ('GLEAN predictions', 'GlimmerHMM predictions',
-                              'TigrScan', 'TwinScan predictions',
-                              'TwinScanEt predictions', -- not 'tRNAscan-SE',
-                              'P. falciparum Evigan Gene Models','Evigan_RSRC',
-                              'Pfalciparum workshop annotations reviewed and changed',
-                              'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                              'Old annotation for ME49',
-                              'Tbrucei427_AutoMAGI_Annotations_RSRC'))
+              and nf.is_predicted = 1
            then 'GenePrediction'
          else nf.subclass_view
        end as feature_type,
@@ -278,12 +258,8 @@ select -- virtual feature locations mapped through SequencePiece
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
      &prefixSequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
-     sres.TaxonName tn,
-     (select edr.external_database_release_id, ed.name
-      from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr
-      where edr.external_database_id = ed.external_database_id) db
+     sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
-  and nf.external_database_release_id = db.external_database_release_id(+)
   and nf.na_sequence_id = contig.na_sequence_id
   and nf.na_sequence_id = sp.piece_na_sequence_id
   and sp.start_position <= nl.start_min
@@ -511,23 +487,11 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       where n.na_feature_id = gf.na_feature_id
         and gf.external_database_release_id =r.external_database_release_id
         and r.external_database_id = d.external_database_id
-        and n.is_preferred = 1)
-     mapping, dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed, dots.NaSequence ns
+        and n.is_preferred = 1) mapping,
+      dots.GeneFeature gf, dots.NaSequence ns
 where mapping.gene = gf.source_id
   and gf.na_sequence_id = ns.na_sequence_id
   and (ns.taxon_id = '&filterValue' or nvl('&filterValue', 0) = 0)
-  and gf.external_database_release_id = edr.external_database_release_id
-  and edr.external_database_id = ed.external_database_id
-  and ed.name not in ('GLEAN predictions', 'GlimmerHMM predictions',
-                      'TigrScan', 'TwinScan predictions',
-                      'TwinScanEt predictions',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Old annotation for ME49','P. falciparum Evigan Gene Models','Evigan_RSRC',
-                      'P. yoelii Provisional Annotations from Kappe','Pyoelii_Kappe_Annotation_RSRC',
-                      'Sanger P. falciparum old annotations','Pfalciparum_old_annotations_RSRC',
-                      'Pfalciparum workshop annotations reviewed and changed',
-                      'Annotation for T. gondii ME49 - typeII:2005-08-01',
-                      'Tbrucei427_AutoMAGI_Annotations_RSRC')
   and (gf.is_predicted != 1 OR gf.is_predicted is null)
 group by mapping.id, mapping.gene
       ]]>
@@ -1431,7 +1395,6 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
       group by na_feature_id
      ) any_name
 WHERE gf.source_id = gene.source_id
-  AND (gf.is_predicted != 1 OR gf.is_predicted is null)
   AND gf.na_feature_id = nl.na_feature_id
   AND nl.is_top_level = 1
   AND nl.na_sequence_id = sequence.na_sequence_id
