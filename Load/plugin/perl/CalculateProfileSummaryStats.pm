@@ -144,6 +144,9 @@ sub makeTimePointMap {
   open(FILE, $timePointMapFile);
 
   my %map;
+
+  my $header = <FILE>;
+
   while (<FILE>) {
     chomp;
     my @cols = split(/\t/, $_);
