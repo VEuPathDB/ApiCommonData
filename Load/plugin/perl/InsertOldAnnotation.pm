@@ -169,10 +169,13 @@ sub run {
 	    my @dbxref = split(/,/, $value);
 
 	    foreach my $x (@dbxref){
-	      push (@ecArr, $x) if ($x =~ /EC/);
+	      if ($x =~ /EC/) {
+		$x =~s/EC\://; # strip out the 'EC:'
+		push (@ecArr, $x);
+	      }
 	    }
 
-	    $geneHash{$gene}{EC} = \@ecArr if ($#ecArr >0);
+	    $geneHash{$gene}{EC} = \@ecArr if ($#ecArr + 1);
 	  }
 
 	  if ($key eq 'description') {
@@ -210,7 +213,7 @@ sub run {
 
   close(FILE);
 
-  print "Total Genes = $count\n";
+  print "PARSED Total Genes = $count\n";
   $self->collectData($dbRlsId,\%geneHash);
 
 }
