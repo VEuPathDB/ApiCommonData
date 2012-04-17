@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+
+#########################################################################################################################################################################
+## script to parse file downloaded from Uniprot using 
+## wget --output-document=file --content-disposition "www.uniprot.org/uniprot/?query=taxonomy%3a5811+AND+keyword%3a181&force=yes&format=tab&columns=id,genes,organism,ec"
+## script creates two column tab delimited file: gene(locus tag) and EC number
+#########################################################################################################################################################################
+
+my ($inFile,$outFile,$verbose);
+&GetOptions("verbose!" => \$verbose,
+	    "outfile=s" => \$outFile,
+	    "infile=s" => \$inFile);
+
+die "printUniprotGeneToECFile --infile --outfile" unless ($outFile && $inFile);
+
+open(FILE,$inFile);
+
+open(OUT,">$outFile");
+
+while(<FILE>){
+  chomp;
+
+  my $tags;
+
+  my $ec;
+
+  my @line = split(/\t/, $_);
+
+  if ($line[3] && $line[1] !~ /Gene/ && $line[1] !~ /names/){
+
+    $tags = getTags(\@line);
+
+    $ec = getECNums(\@line);
+  }
+
+  printFile($tags, $ec);
+}
+
+sub getTags {
+  my ($line)= @_;
+
+  my @tags = split(/\s/,@$line->[1]);
+
+  return \@tags;
+
+}
+
+sub getECNums {
+  my ($line)= @_;
+
+  my @ec = split(/\;\s*/,@$line->[3]);
+
+  return \@ec;
+
+}
+
+sub printFile {
+  my ($tags,$ec) = @_;
+
+  foreach my $tag (@$tags){
+    foreach my $ecNum (@$ec){
+      print OUT "$tag\t$ecNum\n";
+    }
+  }
+}
