@@ -17,7 +17,7 @@ CREATE TABLE apidb.OldCodingSequence (
  PRIMARY KEY (old_coding_sequence_id)
 );
 
-ALTER TABLE OldCodingSequence
+ALTER TABLE apidb.OldCodingSequence
 ADD CONSTRAINT old_coding_sequence_fk1 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
