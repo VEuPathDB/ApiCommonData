@@ -38,9 +38,9 @@ open(FILE,$inFile);
 
 open(OUT,">$outFile");
 
-#my ($taxonId) = getTaxonId($orgAbbrev, $dbh);
+my ($taxonId) = getTaxonId($orgAbbrev, $dbh);
 
-my $genes = getLocusTags(16001);
+my $genes = getLocusTags($taxonId);
 
 parseInputAndPrint($genes);
 
