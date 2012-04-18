@@ -213,12 +213,12 @@ sub traverseSeqFeatures {
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
 		
+			my $CDSLength = 0;
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $gene = &copyQualifiers($subFeature, $gene);
 		    $CDSLocation  = $subFeature->location;
 		}
-			my $CDSLength = 0;
 		if($subFeature->primary_tag eq 'exon'){
 		    my $exon = $subFeature;
 		    my $codingStart = $exon->location->start;
@@ -269,9 +269,9 @@ sub traverseSeqFeatures {
 		    }
 		    $transcript->add_SeqFeature($exon);
 		}
-				$transcript->add_tag_value("CDSLength", $CDSLength);
 		
 	    }
+				$transcript->add_tag_value("CDSLength", $CDSLength);
 
 	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
