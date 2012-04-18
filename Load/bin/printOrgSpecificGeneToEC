@@ -7,6 +7,11 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
+#########################################################################################################################################################################
+## script to parse file downloaded from Uniprot using 
+## wget --output-document=file --content-disposition "www.uniprot.org/uniprot/?query=taxonomy%3a5811+AND+keyword%3a181&force=yes&format=tab&columns=id,genes,organism,ec"
+## script creates two column tab delimited file: gene(locus tag) and EC number, file is specific to the organism indicated by orgAbbrev
+#########################################################################################################################################################################
 
 my ($gusConfigFile,$inFile,$outFile,$orgAbbrev,$verbose);
  &GetOptions("gusConfigFile=s" => \$gusConfigFile,
@@ -15,7 +20,7 @@ my ($gusConfigFile,$inFile,$outFile,$orgAbbrev,$verbose);
  	    "infile=s" => \$inFile,
             "orgAbbrev=s" => \$orgAbbrev);
 
-
+die "printOrgSpecificGeneToECFile --infile --outfile --orgAbbrev" unless ($outFile && $inFile && $orgAbbrev);
 
 print STDERR "Establishing dbi login\n";
 
@@ -33,13 +38,11 @@ open(FILE,$inFile);
 
 open(OUT,">$outFile");
 
-my $taxonId = getTaxonId($orgAbbrev, $dbh);
+#my ($taxonId) = getTaxonId($orgAbbrev, $dbh);
 
-my $genes = getLocusTags($taxonId);
+my $genes = getLocusTags(16001);
 
-printFile($genes);
-
-
+parseInputAndPrint($genes);
 
 sub getTaxonId {
   my ($abbrev, $dbh) = @_;
@@ -81,17 +84,57 @@ sub getLocusTags {
 }
 
 
-sub printFile {
+sub parseInputAndPrint {
   my ($genes) = @_;
 
   while(<FILE>){
     chomp;
-    my @arr = split(/\t/, $_);
-    $arr[0] =~ s/\s//g;
-    if (%$genes->{$arr[0]} == 1){
-      print OUT "$_\n";
+
+    my $tags;
+
+    my $ec;
+
+    my @line = split(/\t/, $_);
+
+    if ($line[3] && $line[1] !~ /Gene/ && $line[1] !~ /names/){
+
+      $tags = getTags(\@line);
+
+      $ec = getECNums(\@line);
+    }
+    printFile($tags,$ec,$genes);
+  }
+}
+
+sub getTags {
+  my ($line)= @_;
+
+  my @tags = split(/\s/,@$line->[1]);
+
+  return \@tags;
+
+}
+
+sub getECNums {
+  my ($line)= @_;
+
+  my @ec = split(/\;\s*/,@$line->[3]);
+
+  return \@ec;
+
+}
+
+sub printFile {
+  my ($tags,$ec, $genes) = @_;
+
+  foreach my $tag (@$tags){
+    if (%$genes->{$tag} == 1){
+      foreach my $ecNum (@$ec){
+	print OUT "$tag\t$ecNum\n";
+      }
     }
   }
 }
+
 
 
