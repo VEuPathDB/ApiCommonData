@@ -1,0 +1,97 @@
+#!/usr/bin/perl
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+
+my ($gusConfigFile,$inFile,$outFile,$orgAbbrev,$verbose);
+ &GetOptions("gusConfigFile=s" => \$gusConfigFile,
+ 	    "verbose!" => \$verbose,
+ 	    "outfile=s" => \$outFile,
+ 	    "infile=s" => \$inFile,
+            "orgAbbrev=s" => \$orgAbbrev);
+
+
+
+print STDERR "Establishing dbi login\n";
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+
+open(FILE,$inFile);
+
+open(OUT,">$outFile");
+
+my $taxonId = getTaxonId($orgAbbrev, $dbh);
+
+my $genes = getLocusTags($taxonId);
+
+printFile($genes);
+
+
+
+sub getTaxonId {
+  my ($abbrev, $dbh) = @_;
+
+  my $stmt = $dbh->prepare("select taxon_id from apidb.organism where abbrev = ?");
+
+  $stmt->execute($abbrev);
+
+  my ($taxonId) = $stmt->fetchrow_array();
+
+  return $taxonId;
+}
+
+sub getLocusTags {
+  my ($taxonId) = @_;
+
+  my %genes;
+
+  my $stmt = $dbh->prepare("select gf.source_id from dots.genefeature gf, dots.nasequence na where na.taxon_id = ? and na.na_sequence_id = gf.na_sequence_id");
+
+  $stmt->execute($taxonId);
+
+   while (my ($sourceId) = $stmt->fetchrow_array()){
+     $genes{$sourceId} = 1;
+   }
+
+  my $sql = "select d.primary_identifier from sres.dbref d, dots.dbrefnafeature dnf, sres.externaldatabaserelease dbr, dots.genefeature gf, dots.nasequence na where d.external_database_release_id = dbr.external_database_release_id and dbr.id_type in ('previous_id','alternate_id') and d.db_ref_id = dnf.db_ref_id and dnf.na_feature_id = gf.na_feature_id and gf.na_sequence_id = na.na_sequence_id and na.taxon_id = ?";
+
+   my $stmt2 = $dbh->prepare($sql);
+
+   $stmt2->execute($taxonId);
+
+   while (my ($primaryId) = $stmt2->fetchrow_array()){
+     $genes{$primaryId} = 1;
+   }
+
+  return \%genes;
+
+}
+
+
+sub printFile {
+  my ($genes) = @_;
+
+  while(<FILE>){
+    chomp;
+    my @arr = split(/\t/, $_);
+    $arr[0] =~ s/\s//g;
+    if (%$genes->{$arr[0]} == 1){
+      print OUT "$_\n";
+    }
+  }
+}
+
+
