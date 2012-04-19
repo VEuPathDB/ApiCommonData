@@ -480,6 +480,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
       WHERE gf.external_database_release_id = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
+                    
      UNION
       SELECT n.name AS id, gf.source_id AS gene,
              'gene name' as union_member, d.name as database_name -- apidb.GeneFeatureName.name
@@ -1431,6 +1432,8 @@ WHERE gf.source_id = gene.source_id
   AND gf.na_feature_id = preferred_name.na_feature_id(+)
   AND gf.na_feature_id = any_product.na_feature_id(+)
   AND gf.na_feature_id = any_name.na_feature_id(+)
+  AND (gf.is_predicted != 1 OR gf.is_predicted is null)
+  AND tn.name not in ('Plasmodium gallinaceum','Plasmodium reichenowi')
       ]]>
     </sql>
 <!-- 
