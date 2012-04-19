@@ -2857,180 +2857,7 @@ SELECT * FROM AsmAlignmentGene
     </sql>
   </tuningTable>
 
-  <tuningTable name="PlasmoExpressionGraphs">
-    <externalDependency name="apidb.Profile"/>
-    <externalDependency name="apidb.ProfileSet"/>
-    <internalDependency name="GeneAttributes"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE PlasmoExpressionGraphs&1 NOLOGGING AS
-SELECT gf.source_id,
-       COUNT(pf_rna_seq) AS graph_pf_rna_seq,
-       COUNT(zb_pvivax) AS graph_zb_pvivax,
-       COUNT(derisi_winzeler) AS graph_derisi_winzeler,
-       COUNT(winzeler) AS graph_winzeler, COUNT(ThreeD7) AS graph_3d7,
-       COUNT(HB3) AS graph_hb3, COUNT(Dd2) AS graph_dd2,
-       COUNT(waters) AS graph_waters, COUNT(gametocyte) as graph_gametocyte,
-       COUNT(cowman) AS graph_cowman, COUNT(mexp128) AS graph_mexp128,
-       COUNT(mexp494) AS graph_mexp494, COUNT(kappe) as graph_kappe,
-       COUNT(daily) as graph_daily,
-       COUNT(newbold) as graph_newbold,
-       COUNT(westenberger) as graph_westenberger,
-       COUNT(winzeler_py_mixed) as graph_winzeler_py_mixed,
-       COUNT(su_cq) as graph_su_cq,
-       COUNT(cowman_sir2) as graph_cowman_sir2,
-       COUNT(waters_dozi) as graph_waters_dozi
-FROM GeneAttributes gf,
-     (SELECT p1.source_id, 1 AS derisi_winzeler
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p3, apidb.profileSet ps3,
-           apidb.profile p5, apidb.profileSet ps5,
-           apidb.profile p7, apidb.profileSet ps7
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p5.profile_set_id = ps5.profile_set_id
-        AND p7.profile_set_id = ps7.profile_set_id
-        AND p1.source_id = p3.source_id
-        AND p1.source_id = p5.source_id
-        AND p1.source_id = p7.source_id
-        AND ps1.name = 'DeRisi HB3 Smoothed'
-        AND ps3.name = 'DeRisi 3D7 Smoothed'
-        AND ps5.name = 'DeRisi Dd2 Smoothed'
-        AND ps7.name = 'winzeler_cc_sorbExp') combo,
-     (SELECT p1.source_id, 1 AS zb_pvivax
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name = 'ZB Pvivax time series 3') zbpvivax, 
-     (SELECT p1.source_id, 1 AS pf_rna_seq
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name in('P. falciparum Newbold mRNA Seq data', 'P.falciparum RNA Sequence Profiles')) pfrnaseq, 
-     (SELECT p1.source_id, 1 AS winzeler
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name = 'winzeler_cc_sorbExp') winzeler,
-     (SELECT p1.source_id, 1 AS threeD7
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi 3D7 Smoothed'
-        AND ps2.name = 'DeRisi 3D7 non-smoothed'
-         AND ps3.name = 'red percentile - DeRisi 3D7 Smoothed') threeD7,
-     (SELECT p1.source_id, 1 AS HB3
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi HB3 Smoothed'
-        AND ps2.name = 'DeRisi HB3 non-smoothed'
-         AND ps3.name = 'red percentile - DeRisi HB3 Smoothed') HB3,
-     (SELECT p1.source_id, 1 AS Dd2
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2,
-           apidb.profile p3, apidb.profileSet ps3
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p3.profile_set_id = ps3.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND p1.source_id = p3.source_id
-        AND ps1.name = 'DeRisi Dd2 Smoothed'
-        AND ps2.name = 'DeRisi Dd2 non-smoothed'
-         AND ps3.name = 'red percentile - DeRisi Dd2 Smoothed') Dd2,
-     (SELECT p1.source_id, 1 AS waters
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND ps1.name = 'red percentile - Waters HPE') waters,
-     (SELECT p1.source_id, 1 AS gametocyte
-      FROM apidb.profile p1, apidb.profileSet ps1,
-           apidb.profile p2, apidb.profileSet ps2
-      WHERE p1.profile_set_id = ps1.profile_set_id
-        AND p2.profile_set_id = ps2.profile_set_id
-        AND p1.source_id = p2.source_id
-        AND ps1.name = ' winzeler_NF54_gametocyte'
-        AND ps2.name = ' winzeler_3D7_gametocyte') gametocyte,
-    (SELECT p.source_id, 1 AS cowman
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Profiles of Cowman Invasion KO-sir2_knockout'
-        AND p.profile_set_id = ps.profile_set_id) cowman,
-    (SELECT p.source_id, 1 AS mexp128
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4'
-        AND p.profile_set_id = ps.profile_set_id) mexp128,
-    (SELECT p.source_id, 1 AS mexp494
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Identification of genome wide gene copy number polymorphisms in Plasmodium falciparum'
-        AND p.profile_set_id = ps.profile_set_id) mexp494,
-    (SELECT p1.source_id, 1 AS kappe
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'kappe_all_comparisons_profiles'
-       AND p1.profile_set_id = ps1.profile_set_id) kappe,
-    (SELECT p1.source_id, 1 AS daily
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'percentile - daily_patient-number'
-       AND p1.profile_set_id = ps1.profile_set_id) daily,
-    (SELECT p1.source_id, 1 AS newbold
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'newbold gene profiles sorted mild-severe'
-       AND p1.profile_set_id = ps1.profile_set_id) newbold,
-    (SELECT p1.source_id, 1 AS westenberger
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'westenberger vivax expression profile'
-       AND p1.profile_set_id = ps1.profile_set_id) westenberger,
-    (SELECT p1.source_id, 1 AS winzeler_py_mixed
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'winzeler py mixed'
-       AND p1.profile_set_id = ps1.profile_set_id) winzeler_py_mixed,
-    (SELECT p1.source_id, 1 AS cowman_sir2
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'Profiles of E-TABM-438 from Cowman'
-       AND p1.profile_set_id = ps1.profile_set_id) cowman_sir2,
-    (SELECT p1.source_id, 1 AS su_cq
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'E-GEOD-10022 array from Su'
-       AND p1.profile_set_id = ps1.profile_set_id) su_cq,
-    (SELECT p1.source_id, 1 AS waters_dozi
-      FROM apidb.profile p1, apidb.profileSet ps1
-      WHERE ps1.name = 'P. berghei DOZI array data'
-       AND p1.profile_set_id = ps1.profile_set_id) waters_dozi
-  WHERE gf.source_id = combo.source_id(+)
-  AND gf.source_id = winzeler.source_id(+)
-  AND gf.source_id = threeD7.source_id(+)
-  AND gf.source_id = HB3.source_id(+)
-  AND gf.source_id = Dd2.source_id(+)
-  AND gf.source_id = waters.source_id(+)
-  AND gf.source_id = gametocyte.source_id(+)
-  AND gf.source_id = cowman.source_id(+)
-  AND gf.source_id = mexp128.source_id(+)
-  AND gf.source_id = mexp494.source_id(+)
-  AND gf.source_id = kappe.source_id(+)
-  AND gf.source_id = daily.source_id(+)
-  AND gf.source_id = newbold.source_id(+)
-  AND gf.source_id = zbpvivax.source_id(+)
-  AND gf.source_id = pfrnaseq.source_id(+)
-  AND gf.source_id = westenberger.source_id(+)
-  AND gf.source_id = winzeler_py_mixed.source_id(+)
-  AND gf.source_id = cowman_sir2.source_id(+)
-  AND gf.source_id = su_cq.source_id(+)
-  AND gf.source_id = waters_dozi.source_id(+)
-GROUP BY gf.source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index PlasmoExp_sourceId_idx&1 ON PlasmoExpressionGraphs&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
+
 
   <tuningTable name="ToxoExpressionGraphs">
     <internalDependency name="GeneAttributes"/>
@@ -3287,13 +3114,31 @@ from
 
     -- PlasmoDB --
 
-    select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
+    select 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
     UNION
 
-    select 'E-GEOD-10022 array from Su' as profile_name,
+    select 'Profiles of Cowman Invasion KO-averaged' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'winzeler_cc_tempExp' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select ' winzeler_3D7_gametocyte' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'newbold gene profiles sorted mild-severe' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
@@ -3310,18 +3155,80 @@ from
           'PlasmoDB' as project_id
     from dual
     UNION
+
     select 'P.falciparum duffy mRNA Seq data' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
     UNION
-    select '' as profile_name,
+
+    select 'DeRisi HB3 Smoothed' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
-
     UNION
+
+    select 'DeRisi 3D7 Smoothed' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
     select 'Profiles of Derisi HalfLife-half_life' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'E-GEOD-10022 array from Su   ' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'percentile - daily_patient-number' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'pfal3D7_Stunnenberg_pi_time_series' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'P. berghei DOZI array data' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'Waters HP' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'ZB Pvivax time series 1' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'westenberger vivax expression profile' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'kappe_all_comparisons_profiles' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'winzeler py mixed' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
@@ -3968,7 +3875,7 @@ select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
        'In this study, genome-wide expression level polymorphisms (ELPs) were examined in a genetic cross between phenotypically distinct parasite clones of <i>P. falciparum</i> (HB3 and Dd2). Using cDNA microarray hybridizations from the progeny of a genetic cross, gene expression quantitative trait loci (eQTLs) were mapped in an experimental population of malaria parasites. Each gene''s transcript level was used as a segregating phenotype to identify regions of the Plasmodium genome dictating transcriptional variation.' as description,
        'Progeny' as x_axis,
        'Loess Normalized Values (log2(R/G)) or expression percentile value.' as y_axis,
-        160 as order_num,
+        14 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'expr,pct' as visible_parts,
@@ -3986,10 +3893,10 @@ select 'E-GEOD-10022 array from Su' as profile_name,
        'Mutations in PfCRT confer chloroquine (CQ) resistance in P. falciparum. Point mutations in the homolog of the mammalian multidrug resistance gene (pfmdr1) can also modulate the levels of CQ response. However, parasites with the same pfcrt and pfmdr1 alleles exhibit a wide range of drug sensitivity, suggesting that additional genes contribute to levels of CQ resistance (CQR).<br>3 isogenic lines which have different drug resistance profiles corresponding to unique mutations in the pfcrt gene (106/1K76, 106/176I, and 106/76I-352K) were used to study changes in gene expression with and without chloroquine  and genomic variations, i.e. copy number (CN) changes.' as description,
        'isogenic line' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress v1.0.3) or expression percentile value.' as y_axis,
-        110 as order_num,
+        8 as order_num,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
        'E-GEOD-10022_array' as attribution
@@ -4003,10 +3910,10 @@ select 'Profiles of E-TABM-438 from Cowman' as profile_name,
        'Pfsir2A and Pfsir2B KOs expression profiling in intra-erythrocytic stages' as description,
        'intra-erythrocytic stage' as x_axis,
        'RMA Normalized Values (log base 2 generated with RMAExpress) or expression percentile value. ' as y_axis,
-        120 as order_num,
+        9 as order_num,
         'FALSE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
        'New_Cowman_Sir2_KO' as attribution
@@ -4018,15 +3925,15 @@ UNION
 
 
 select 'P. falciparum Newbold mRNA Seq data' as profile_name,
-       'PfRNASeq::Ver1' as module,
+       'PfRNASeq::Ver2' as module,
        '<i>P.falciparum</i> RNA Sequence Profiles - Intraerythrocytic Cycle' as display_name,
        'Illumina-based massively parallel sequencing was used to gain new insight into the transcriptome (RNA-Seq) of the human malaria parasite, <i>P. falciparum</i>. Using data collected at seven time points during the intraerythrocytic developmental cycle, we (i) detect novel gene transcripts; (ii) correct hundreds of gene models; (iii) propose alternative splicing events; and (iv) predict 5 prime and 3 prime untranslated regions.' as description,
        'Hours in the intraerythrocytic developmental cycle' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene; Values plotted are log base 2' as y_axis,
-        130 as order_num,
+        10 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'coverage_line,coverage,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
         'Pfalciparum_RNA_Seq' as attribution
@@ -4034,16 +3941,16 @@ from dual
 
 
 UNION
-select '' as profile_name,
+select 'pfal3D7_Stunnenberg_pi_time_series' as profile_name,
        'Stunnenberg::PfRBCRnaSeq' as module,
        '<i>P. falciparum</i> post infection (RBC) RNA Seq (time series)' as display_name,
        'Total RNA was collected from one synchronous 3D7 parasite population at 5, 10, 15, 20, 25, 30, 35 and 40 hours post-invasion of intraerythrocytic development. mRNAs were enriched using polyA-selection (Oligotex dT, Qiagen), fragmented and converted to double-stranded cDNA. All samples were prepared for Illumina sequencing using a customized bias-free sample preparation protocol and sequenced for 76bp from one side of each fragment on an Illumina GAII machine. The scaled graph represents the expression level scaled to the amount of RNA isolated / nucleus to normalize for difference in total RNA produced at different stages of the iRBC cycle. More detail about the scaling can be found on the <a href="showQuestion.do?questionFullName=InternalQuestions.GenesByRNASeqEvidence">P.f. post infection (RBC) RNA-seq time series (fold change)</a> query page.' as description,
        'Time Point post infection' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene; Values plotted are log base 2' as y_axis,
-        140 as order_num,
+        11 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage,pct' as visible_parts,
+       'coverage_line,coverage,scaled_coverage,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
         'RNASeqCoveragePlot_Stunnenberg' as attribution
@@ -4057,10 +3964,10 @@ select 'P.falciparum duffy mRNA Seq data' as profile_name,
        'NSR-seq was used to analyze the transcriptome of an unsynchronized in vitro culture of human malaria parasite P. falciparum reference strain 3D7, and two pools of field isolates from malaria-infected pregnant women and children adapted to short-term in vitro culture and matched by the percentage of rings, trophozoites and schizonts.' as description,
        'Parasites from pregnant women, Parasites from children, 3D7' as x_axis,
        'X/(Y * Z) where X = num bases of reads mapped to the gene; Y = total number of bases (in billions) of reads mapped; Z = length of the gene; Values plotted are log base 2' as y_axis,
-        150 as order_num,
+        12 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'coverage' as visible_parts,
+       'coverage,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
         'RNASeqCoveragePlot_Patrick_Duffy' as attribution
@@ -4074,7 +3981,7 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'Intraerythrocytic development of Plasmodium 3d7 with the addition of actinomycin D (actD), to achieve transcription inhibition. The mRNA half-life data was obtained from the supplementary material provided with the publication.  Normalized expression levels were calculated for each probe and then averaged for every gene.' as description,
        'Erythrocytic lifecycle stages for barplot or time in minutes' as x_axis,
        'mRNA half-lives for each stage of erythrocytic development (in minutes) for barplot or expression level normalized to the 0 Hour' as y_axis,
-       157 as order_num,
+       13 as order_num,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
        'half_life,expr_val' as visible_parts,
@@ -4083,6 +3990,232 @@ select 'Profiles of Derisi HalfLife-half_life' as profile_name,
        'GSE8099_metaData' as attribution
 from dual
 UNION
+
+
+
+select 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4' as profile_name,
+       'MEXP128::Ver2' as module,
+       'Intraerythrocytic comparison of antigenic and adherent variant clones of P. falciparum 3D7' as display_name,
+       'Comparison of expression profile of two 3D7 isogenic clones : 3D7S8.4 vs. 3D7AH1S2 (M=log2(3D7S8.4/3D7AH1S2) at three different stages of intraerythrocytic cycle: ring, trophozite and schizont stage. ' as description,
+       '' as x_axis,
+       '' as y_axis,
+       5 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+
+
+select 'Profiles of Cowman Invasion KO-averaged' as profile_name,
+       'Cowman::Ver2' as module,
+       'Sir2 and invasion pathway studies (WT vs. KO)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       6 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+select 'winzeler_cc_tempExp' as profile_name,
+       'Winzeler::Cc' as module,
+       'Intraerythrocytic 3D7 (photolithographic oligo array)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       2 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'winzeler,rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+select ' winzeler_3D7_gametocyte' as profile_name,
+       'WbcGametocytes::Ver2' as module,
+       'Gametocyte 3D7/NF54 (photolithographic oligo array)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       3 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+
+select 'newbold gene profiles sorted mild-severe' as profile_name,
+       'Newbold::Ver2' as module,
+       'Ex vivo intraerythrocitic expression assays of Plasmodium falciparum in malaria infected patients' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       7 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+select 'DeRisi HB3 Smoothed' as profile_name,
+       'DeRisi::Combined' as module,
+       'Developmental series (glass slide oligo array)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       4 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'expr_val_HB3,percentile_HB3,lifeStages_HB3,expr_val_3D7,percentile_3D7,lifeStages_3D7,expr_val_Dd2,percentile_Dd2,lifeStages_Dd2' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+-- select 'percentile - daily_patient-number' as profile_name,
+--        'Daily::SortedRmaAndPercentiles' as module,
+--        'Distinct physiological states of Plasmodium falciparum in malaria infected patients' as display_name,
+--        '' as description,
+--        '' as x_axis,
+--        '' as y_axis,
+--        157 as order_num,
+--        'FALSE' as mainOpen,
+--        'FALSE' as dataOpen,
+--        '' as visible_parts,
+--        '' as dataTable,
+--        'expression' as type,
+--        '' as attribution
+-- from dual
+-- UNION
+
+select 'P. berghei DOZI array data' as profile_name,
+       'Waters::Dozi' as module,
+       'P.Berghei Differential Expression - DOZI KO vs. WT' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       15 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+select 'Waters HP' as profile_name,
+       'Waters::Ver2' as module,
+       'P. berghei expression' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       16 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
+select 'ZB Pvivax time series 1' as profile_name,
+       'ZBPvivaxTS::Ver2' as module,
+       'Intraerythrocytic Time Series' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       17 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+select 'westenberger vivax expression profile' as profile_name,
+       'WestenbergerVivax::Ver2' as module,
+       'Asexual parasites from patient blood samples' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       18 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+select 'kappe_all_comparisons_profiles' as profile_name,
+       'Kappe::ReplicatesAveraged' as module,
+       'Relative expression profiles between liver, mosquito, and red cell stage parasites' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       19 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile,percentile_combined' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+select 'winzeler py mixed' as profile_name,
+       'WinzelerYoelii::Ver2' as module,
+       '' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       20 as order_num,
+       'FALSE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+select 'DeRisi 3D7 Smoothed' as profile_name,
+       'DeRisiWinzeler::Ver2' as module,
+       'Overlay of Intraerythrocytic Expression Profiles' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+       1 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'derisi,winzeler,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+UNION
+
 
 -- AmoebaDB --
 select 'EhistolyticaAffyProfiles' as profile_name,
@@ -6364,12 +6497,13 @@ tablespace indx
 
  <!-- Query to group projects by higher level taxonomy --> 
   <tuningTable name="ProjectIdTaxonLevel">
+    <internalDependency name="SequenceAttributes"/>
     <sql>
       <![CDATA[
        CREATE TABLE ProjectIdTaxonLevel&1 NOLOGGING AS
-	 SELECT * FROM( 
-		SELECT 'PlasmoDB' AS project_id,
-			   'Apicomplexa' AS  taxon_node 
+       SELECT p.project_id, taxon_node, organism
+          FROM (SELECT 'PlasmoDB' AS project_id,
+		       'Apicomplexa' AS  taxon_node 
 		FROM dual 
 		UNION
 		SELECT 'CryptoDB' AS project_id,
@@ -6403,11 +6537,9 @@ tablespace indx
 		SELECT 'TrichDB' AS project_id,
 		           'Trichomonadida' AS taxon_node
 		FROM dual
-		UNION
-		SELECT 'FungiDB' AS project_id,
-		           'Fungi' AS taxon_node
-		FROM dual
-        )     
+        ) p,
+        (select distinct project_id, organism from apidbtuning.sequenceattributes) s
+        where p.project_id = s.project_id
 	]]>
     </sql>
   </tuningTable>
@@ -6496,6 +6628,7 @@ tablespace indx
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
+            AND ptl.organism = sa.organism
            UNION
            -- all organisms from sequenceattributes as organism, taxon_node as term, parentterm is null
            SELECT DISTINCT CASE WHEN sa.organism = 'Cryptosporidium parvum'
@@ -6508,6 +6641,7 @@ tablespace indx
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
+            AND ptl.organism = sa.organism
           )
     	]]>
     </sql>
