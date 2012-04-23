@@ -6,11 +6,11 @@
 use strict;
 use Getopt::Long;
 
-my($targetDir,$sourceDir,$projectName);
+my($targetDir,$sourceDir,$projectName,$projectName);
 
 &GetOptions("targetDir|t=s" => \$targetDir, 
             "sourceDir|s=s" => \$sourceDir,
-            "projectName=s" => \$projectDir
+            "projectName=s" => \$projectName
             );
 
 die "you must use fully qualified path for --targetDir and --sourceDir --projectName\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// && $projectName =~ /DB/);
@@ -37,16 +37,9 @@ foreach my $org (@orgs){
     chdir($dir);
     my @files = glob("*");
     foreach my $file (@files){
-      my $fn;
-#      if($dir eq 'blast'){
-        $fn = "${org}${file}_$projectName";
-#        print STDERR "$fn\n";
-#      }elsif($dir eq 'motif'){
-#        $fn = $file;
-#        $fn =~ s/^\w+-CURRENT_//;
-#      }else{
-#        print STDERR "ERROR: unrecognized diretory $dir\n";
-#      }
+      next if ($file =~ m/^\./);	  
+      my ($name,$ext) = split(/\./,$file);
+      my $fn = "${org}${name}_${projectName}.${ext}";
       my $cmd ="cp $file $targetDir/$dir/$fn";
       print STDERR "$cmd\n";
       system($cmd);
