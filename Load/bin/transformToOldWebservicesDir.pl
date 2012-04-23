@@ -6,13 +6,14 @@
 use strict;
 use Getopt::Long;
 
-my($targetDir,$sourceDir);
+my($targetDir,$sourceDir,$projectName);
 
 &GetOptions("targetDir|t=s" => \$targetDir, 
             "sourceDir|s=s" => \$sourceDir,
+            "projectName=s" => \$projectDir
             );
 
-die "you must use fully qualified path for --targetDir and --sourceDir\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\//);
+die "you must use fully qualified path for --targetDir and --sourceDir --projectName\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// && $projectName =~ /DB/);
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 mkdir("$targetDir") unless -e "$targetDir";
 mkdir("$targetDir/blast") unless -e "$targetDir/blast";
@@ -38,7 +39,7 @@ foreach my $org (@orgs){
     foreach my $file (@files){
       my $fn;
 #      if($dir eq 'blast'){
-        $fn = "$org$file";
+        $fn = "${org}${file}_$projectName";
 #        print STDERR "$fn\n";
 #      }elsif($dir eq 'motif'){
 #        $fn = $file;
