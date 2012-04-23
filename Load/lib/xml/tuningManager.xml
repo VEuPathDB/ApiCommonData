@@ -6442,7 +6442,7 @@ tablespace indx
   select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
   select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual union
    -- All projects which use the Workflow can get this directly from the organism table
-  select tn.name as organism, o.abbrev as abbreviation
+  select tn.name as organism, o.name_for_filenames as abbreviation
   from apidb.organism o, sres.taxonname tn
   where o.taxon_id = tn.taxon_id
   and tn.name_class = 'scientific name'
