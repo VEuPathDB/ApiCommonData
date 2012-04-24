@@ -4192,9 +4192,16 @@ UNION
 select 'kappe_all_comparisons_profiles' as profile_name,
        'Kappe::ReplicatesAveraged' as module,
        'Relative expression profiles between liver, mosquito, and red cell stage parasites' as display_name,
-       '' as description,
-       '' as x_axis,
-       '' as y_axis,
+       'Relative expression profiles between liver, mosquito, and red cell stage parasites' as description,
+       'ooSpz: Sporozoites from infected A. stephensi mosquitoes midguts (harvested 10 days after mosquito feeding)<br/>
+       sgSpz: Sporozoites from infected A. stephensi mosquitoes salivary glands (harvested 15 days after mosquito feeding)<br/>
+       LS24: Isolated liver stage infected hepatocytes 24 hrs after in vivo infection<br/>
+       LS40: Isolated liver stage infected hepatocytes 40 hrs after in vivo infection<br/>
+       LS50: Isolated liver stage infected hepatocytes 50 hrs after in vivo infection<br/>
+       Schz: Purified erythrocytic schizonts<br/>
+       BS: mixed erythrocytic stages when parasitemia was at 5-10%' as x_axis,
+       'Expression Values represent the relative expression level between pairs of conditions expressed as base-2 logarithms (note that M is in units of 2-fold change so in a comparison M = 0 denotes equal expression, M = +/-1 denotes a 2-fold difference in expression between the compared samples, etc.) - each is the average of all arrays representing the indicated comparison. <br/>
+       Percentile graph gives the expression percentile of the two conditions for each of the comparisons - each is the average percentile over all arrays representing that comparision.' as y_axis,
        19 as order_num,
        'FALSE' as mainOpen,
        'FALSE' as dataOpen,
