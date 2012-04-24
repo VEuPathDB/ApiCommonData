@@ -95,6 +95,9 @@ sub new {
 sub run {
   my ($self) = @_;
 
+  ##set so doesn't update the algorithminvocation of updated objects
+  $self->getDb()->setDoNotUpdateAlgoInvoId(1);
+
   my $timePointMap =
     $self->makeTimePointMap($self->getArg('timePointsMappingFile'));
 
