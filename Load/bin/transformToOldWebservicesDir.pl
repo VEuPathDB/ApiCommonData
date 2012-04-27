@@ -6,14 +6,14 @@
 use strict;
 use Getopt::Long;
 
-my($targetDir,$sourceDir,$projectName,$projectName);
+my($targetDir,$sourceDir);
 
-&GetOptions("targetDir|t=s" => \$targetDir, 
-            "sourceDir|s=s" => \$sourceDir,
-            "projectName=s" => \$projectName
+&GetOptions("targetDir|t=s" => \$targetDir,
+            "sourceDir|s=s" => \$sourceDir
+
             );
 
-die "you must use fully qualified path for --targetDir and --sourceDir --projectName\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// && $projectName =~ /DB/);
+die "you must use fully qualified path for --targetDir and --sourceDir\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// );
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 mkdir("$targetDir") unless -e "$targetDir";
 mkdir("$targetDir/blast") unless -e "$targetDir/blast";
@@ -37,9 +37,23 @@ foreach my $org (@orgs){
     chdir($dir);
     my @files = glob("*");
     foreach my $file (@files){
-      next if ($file =~ m/^\./);	  
+      next if ($file =~ m/^\./);
       my ($name,$ext) = split(/\./,$file);
-      my $fn = "${org}${name}_${projectName}.${ext}";
+
+      # adjustments for blast and motif filenames, in accordance other component sites
+      if ($dir eq 'blast') {
+	$name = 'ORF' if ($name eq 'ORFs_AA');
+	$name = 'Genomics' if ($name eq 'Genome');
+	$name = 'EST' if ($name eq 'ESTs');
+	$name = 'Proteins' if ($name eq 'AnnotatedProteins');
+	$name = 'Transcripts' if ($name eq 'AnnotatedTranscripts');
+      }
+      if ($dir eq 'motif') {
+	$name = 'ORFs' if ($name eq 'ORFs_AA');
+	$name = 'Genomic' if ($name eq 'Genome');
+      }
+
+      my $fn = "${org}${name}.${ext}";
       my $cmd ="cp $file $targetDir/$dir/$fn";
       print STDERR "$cmd\n";
       system($cmd);
@@ -48,4 +62,4 @@ foreach my $org (@orgs){
   } 
   chdir($sourceDir);
 }
-  
+
