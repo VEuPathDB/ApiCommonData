@@ -13,10 +13,13 @@ use Bio::Seq::RichSeq;
 my (%hash, %cn);  # column name
 my $file = shift or die "cannot open the Isolate Submission Excel form\n";
 
+my $col = 0;
 while(<DATA>) {
   chomp;
-  my ($col, $col_head, $col_title, $col_name) = split /,/, $_;
+  next if /^$/;
+  my ($col_head, $col_title, $col_name) = split /,/, $_;
   $cn{$col_name} = $col;
+  $col++; 
 }
 
 my $parser = Spreadsheet::ParseExcel->new( CellHandler => \&cell_handler,
@@ -58,7 +61,8 @@ my $purpose      = $hash{17}{1};
 my $release_date = $hash{18}{1};
 
 
-my @author_list  = split /,/, $authors;
+
+my @author_list  = split /\,/, $authors;
 my $count = @author_list;
 
 my $author_form = "";
@@ -67,7 +71,11 @@ for(my $i=1; $i<=$count; $i++) {
   my $name = $author_list[$i-1];
   $name =~ s/\s+$//g;
   $name =~ s/^\s+//g;
-  my ($f, $l) = split /\s/, $name;
+
+  my @names = split /\s/, $name;
+
+  my $f = shift(@names);
+  my $l = pop(@names);
 
   $author_form .= " -F 'author_first_$i=$f' -F 'author_mi_$i=' -F 'author_last_$i=$l' -F 'author_suffix_$i='";
 }
@@ -145,36 +153,46 @@ while(my ($k, $v) = each %hash) {
   my $source       = $hash{$k}{$cn{isolation_source}};
 
   my $seq1                 = $hash{$k}{$cn{seq1}};
-  my $seq1_fwd_primer_name = $hash{$k}{$cn{seq1_fwd_primer_name}};
-  my $seq1_fwd_primer_seq  = $hash{$k}{$cn{seq1_fwd_primer_seq}};
-  my $seq1_rev_primer_name = $hash{$k}{$cn{seq1_rev_primer_name}};
-  my $seq1_rev_primer_seq  = $hash{$k}{$cn{seq1_rev_primer_seq}};
+  my $seq1_primer_names    = $hash{$k}{$cn{seq1_primer_names}};
+  my $seq1_primer_seqs     = $hash{$k}{$cn{seq1_primer_seqs}};
   my $seq1_product         = $hash{$k}{$cn{seq1_product}};
   my $seq1_desc            = $hash{$k}{$cn{seq1_desc}};
+  my $seq1_genbank         = $hash{$k}{$cn{seq1_genbank}};
+  my $seq1_trace           = $hash{$k}{$cn{seq1_trace}};
 
   my $seq2                 = $hash{$k}{$cn{seq2}};
-  my $seq2_fwd_primer_name = $hash{$k}{$cn{seq2_fwd_primer_name}};
-  my $seq2_fwd_primer_seq  = $hash{$k}{$cn{seq2_fwd_primer_seq}};
-  my $seq2_rev_primer_name = $hash{$k}{$cn{seq2_rev_primer_name}};
-  my $seq2_rev_primer_seq  = $hash{$k}{$cn{seq2_rev_primer_seq}};
+  my $seq2_primer_names    = $hash{$k}{$cn{seq2_primer_names}};
+  my $seq2_primer_seqs     = $hash{$k}{$cn{seq2_primer_seqs}};
   my $seq2_product         = $hash{$k}{$cn{seq2_product}};
   my $seq2_desc            = $hash{$k}{$cn{seq2_desc}};
+  my $seq2_genbank         = $hash{$k}{$cn{seq2_genbank}};
+  my $seq2_trace           = $hash{$k}{$cn{seq2_trace}};
 
   my $seq3                 = $hash{$k}{$cn{seq3}};
-  my $seq3_fwd_primer_name = $hash{$k}{$cn{seq3_fwd_primer_name}};
-  my $seq3_fwd_primer_seq  = $hash{$k}{$cn{seq3_fwd_primer_seq}};
-  my $seq3_rev_primer_name = $hash{$k}{$cn{seq3_rev_primer_name}};
-  my $seq3_rev_primer_seq  = $hash{$k}{$cn{seq3_rev_primer_seq}};
+  my $seq3_primer_names    = $hash{$k}{$cn{seq3_primer_names}};
+  my $seq3_primer_seqs     = $hash{$k}{$cn{seq3_primer_seqs}};
   my $seq3_product         = $hash{$k}{$cn{seq3_product}};
   my $seq3_desc            = $hash{$k}{$cn{seq3_desc}};
+  my $seq3_genbank         = $hash{$k}{$cn{seq3_genbank}};
+  my $seq3_trace           = $hash{$k}{$cn{seq3_trace}};
 
   my $seq4                 = $hash{$k}{$cn{seq4}};
-  my $seq4_fwd_primer_name = $hash{$k}{$cn{seq4_fwd_primer_name}};
-  my $seq4_fwd_primer_seq  = $hash{$k}{$cn{seq4_fwd_primer_seq}};
-  my $seq4_rev_primer_name = $hash{$k}{$cn{seq4_rev_primer_name}};
-  my $seq4_rev_primer_seq  = $hash{$k}{$cn{seq4_rev_primer_seq}};
+  my $seq4_primer_names    = $hash{$k}{$cn{seq4_primer_names}};
+  my $seq4_primer_seqs     = $hash{$k}{$cn{seq4_primer_seqs}};
   my $seq4_product         = $hash{$k}{$cn{seq4_product}};
   my $seq4_desc            = $hash{$k}{$cn{seq4_desc}};
+  my $seq4_genbank         = $hash{$k}{$cn{seq4_genbank}};
+  my $seq4_trace           = $hash{$k}{$cn{seq4_trace}};
+
+  my($seq1_fwd_primer_name, $seq1_rev_primer_name) = split /;/, $seq1_primer_names;
+  my($seq2_fwd_primer_name, $seq2_rev_primer_name) = split /;/, $seq2_primer_names;
+  my($seq3_fwd_primer_name, $seq3_rev_primer_name) = split /;/, $seq3_primer_names;
+  my($seq4_fwd_primer_name, $seq4_rev_primer_name) = split /;/, $seq4_primer_names;
+
+  my($seq1_fwd_primer_seq, $seq1_rev_primer_seq) = split /;/, $seq1_primer_seqs;
+  my($seq2_fwd_primer_seq, $seq2_rev_primer_seq) = split /;/, $seq2_primer_seqs;
+  my($seq3_fwd_primer_seq, $seq3_rev_primer_seq) = split /;/, $seq3_primer_seqs;
+  my($seq4_fwd_primer_seq, $seq4_rev_primer_seq) = split /;/, $seq4_primer_seqs;
 
   $country    .= ", $city" if $city;
   $country    .= ", $state" if $state;
@@ -260,54 +278,58 @@ my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
 system($cmd);
 
 __DATA__
-0,A,Isolate ID,isolate_id
-1,B,Day,day
-2,C,Month,month
-3,D,Year,year
-4,E,Isolate Species,species
-5,F,Genotype,genotype
-6,G,Subtype,subtype
-7,H,Other Organism,organism
-8,I,Country,country
-9,J,Region - State or Province,state
-10,K,County,county
-11,L,City/Village/Locality,city
-12,M,Latitude/Longitude Coordinates,gps
-13,N,Environment Source,isolation_source
-14,O,Host Species,host
-15,P,blank/hidden column P,hidden
-16,Q,Race/Breed,breed
-17,R,Age,age
-18,S,Sex,sex
-19,T,Host Material,material
-20,U,Symptoms,symptoms
-21,V,Non-human Habitat,habitat
-22,W,Additional Notes,note
-23,X,Sequence 1 Product or Locus Name,seq1_product
-24,Y,Sequence 1 Forward Primer Name,seq1_fwd_primer_name
-25,Z,Sequence 1 Forward Primer Seq,seq1_fwd_primer_seq
-26,AA,Sequence 1 Reverse Primer Name,seq1_rev_primer_name
-27,AB,Sequence 1 Reverse Primer Seq,seq1_rev_primer_seq
-28,AC,Sequence 1 Description,seq1_desc
-29,AD,Sequence 1,seq1
-30,AE,Sequence 2 Product or Locus Name,seq2_product
-31,AF,Sequence 2 Forward Primer Name,seq2_fwd_primer_name
-32,AG,Sequence 2 Forward Primer Seq,seq2_fwd_primer_seq
-33,AH,Sequence 2 Reverse Primer Name,seq2_rev_primer_name
-34,AI,Sequence 2 Reverse Primer Seq,seq2_rev_primer_seq
-35,AJ,Sequence 2 Description,seq2_desc
-36,AK,Sequence 2,seq2
-37,AL,Sequence 3 Product or Locus Name,seq3_product
-38,AM,Sequence 3 Forward Primer Name,seq3_fwd_primer_name
-39,AN,Sequence 3 Forward Primer Seq,seq3_fwd_primer_seq
-40,AO,Sequence 3 Reverse Primer Name,seq3_rev_primer_name
-41,AP,Sequence 3 Reverse Primer Seq,seq3_rev_primer_seq
-42,AQ,Sequence 3 Description,seq3_desc
-43,AR,Sequence 3,seq3
-44,AS,Sequence 4 Product or Locus Name,seq4_product
-45,AT,Sequence 4 Forward Primer Name,seq4_fwd_primer_name
-46,AU,Sequence 4 Forward Primer Seq,seq4_fwd_primer_seq
-47,AV,Sequence 4 Reverse Primer Name,seq4_rev_primer_name
-48,AW,Sequence 4 Reverse Primer Seq,seq4_rev_primer_seq
-49,AX,Sequence 4 Description,seq4_desc
-50,AY,Sequence 4,seq4
+A,Isolate ID,isolate_id
+B,Day,day
+C,Month,month
+D,Year,year
+E,Day,e_day
+F,Month,e_month
+G,Year,e_year
+H,Isolate Species,species
+I,Genotype,genotype
+J,Subtype,subtype
+K,Other Organism,organism
+L,Country,country
+M,Region - State or Province,state
+N,County,county
+O,City/Village/Locality,city
+P,Latitude,lat
+Q,Longitude,lng
+R,Altitude,alt
+S,Environment Source,isolation_source
+T,Host Species,host
+U,Race/Breed,breed
+V,Age,age
+W,Sex,sex
+X,Host Material,material
+Y,Symptoms,symptoms
+Z,Non-human Habitat,habitat
+AA,Additional Notes,note
+AB,Sequence 1 Product or Locus Name,seq1_product
+AC,Sequence 1 Primer Name,seq1_primer_names
+AD,Sequence 1 Primer Seq,seq1_primer_seqs
+AE,Sequence 1 Description,seq1_desc
+AF,Sequence 1,seq1
+AG,Sequence 1 Genbank Number,seq1_genbank
+AH,Sequence 1 Trace File,seq1_trace
+AI,Sequence 2 Product or Locus Name,seq2_product
+AJ,Sequence 2 Primer Name,seq2_primer_names
+AK,Sequence 2 Primer Seq,seq2_primer_seqs
+AL,Sequence 2 Description,seq2_desc
+AM,Sequence 2,seq2
+AN,Sequence 2 Genbank Number,seq2_genbank
+AO,Sequence 2 Trace File,seq2_trace
+AP,Sequence 3 Product or Locus Name,seq3_product
+AQ,Sequence 3 Primer Name,seq3_primer_names
+AR,Sequence 3 Primer Seq,seq3_primer_seqs
+AS,Sequence 3 Description,seq3_desc
+AT,Sequence 3,seq3
+AU,Sequence 3 Genbank Number,seq3_genbank
+AV,Sequence 3 Trace File,seq3_trace
+AW,Sequence 4 Product or Locus Name,seq4_product
+AX,Sequence 4 Primer Name,seq4_primer_names
+AY,Sequence 4 Primer Seq,seq4_primer_seqs
+AZ,Sequence 4 Description,seq4_desc
+BA,Sequence 4,seq4
+BB,Sequence 4 Genbank Number,seq4_genbank
+BC,Sequence 4 Trace File,seq4_trace
