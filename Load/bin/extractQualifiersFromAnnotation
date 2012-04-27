@@ -153,7 +153,9 @@ sub processFeature {
 		if ($bioperlFeature->has_tag("$sourceIdQualifier")) {
 			($sourceId) = $bioperlFeature->get_tag_values("$sourceIdQualifier");
 		}else {
-			print "No sourceId value available for $sourceIdQualifier in $type\n";
+			my $eStart = $bioperlFeature->location->start();
+			my $eEnd = $bioperlFeature->location->end();
+			print "No sourceId value available for $sourceIdQualifier in $type at $eStart\.\.$eEnd\n";
 		}
 		foreach my $qualifier ($bioperlFeature->get_all_tags()) {
 			if ($outputHash{$qualifier}) {		
