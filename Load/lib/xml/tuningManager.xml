@@ -3199,7 +3199,7 @@ from
     from dual
     UNION
 
-    select 'E-GEOD-10022 array from Su   ' as profile_name,
+    select 'E-GEOD-10022 array from Su' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
@@ -3248,6 +3248,12 @@ from
     UNION
 
     select 'winzeler py mixed' as profile_name,
+           '' as main_profile_name,
+          'PlasmoDB' as project_id
+    from dual
+    UNION
+
+    select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
            '' as main_profile_name,
           'PlasmoDB' as project_id
     from dual
@@ -3889,7 +3895,7 @@ select 'giar sage tag frequencies sense' as profile_name,
 
 
 select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
-       'Ferdig::Combined' as module,
+       'Ferdig::DD2_X_HB3' as module,
        'Expression Data for HB3 x DD2 Progeny' as display_name,
        'In this study, genome-wide expression level polymorphisms (ELPs) were examined in a genetic cross between phenotypically distinct parasite clones of <i>P. falciparum</i> (HB3 and Dd2). Using cDNA microarray hybridizations from the progeny of a genetic cross, gene expression quantitative trait loci (eQTLs) were mapped in an experimental population of malaria parasites. Each gene''s transcript level was used as a segregating phenotype to identify regions of the Plasmodium genome dictating transcriptional variation.' as description,
        'Progeny' as x_axis,
@@ -3897,7 +3903,7 @@ select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
         14 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'expr,pct' as visible_parts,
+       'xy_scatter,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
        'Ferdig_Pfalciparum_eQTL_RSRC' as attribution
@@ -3944,7 +3950,7 @@ UNION
 
 
 select 'P. falciparum Newbold mRNA Seq data' as profile_name,
-       'PfRNASeq::Ver2' as module,
+       'Newbold::IRBC' as module,
        '<i>P.falciparum</i> RNA Sequence Profiles - Intraerythrocytic Cycle' as display_name,
        'Illumina-based massively parallel sequencing was used to gain new insight into the transcriptome (RNA-Seq) of the human malaria parasite, <i>P. falciparum</i>. Using data collected at seven time points during the intraerythrocytic developmental cycle, we (i) detect novel gene transcripts; (ii) correct hundreds of gene models; (iii) propose alternative splicing events; and (iv) predict 5 prime and 3 prime untranslated regions.' as description,
        'Hours in the intraerythrocytic developmental cycle' as x_axis,
@@ -4078,7 +4084,7 @@ UNION
 
 
 select 'newbold gene profiles sorted mild-severe' as profile_name,
-       'Newbold::Ver2' as module,
+       'Newbold::Patients' as module,
        'Ex vivo intraerythrocitic expression assays of Plasmodium falciparum in malaria infected patients' as display_name,
        '' as description,
        'Patients with diverse sympotoms of malaria. Plasmodium falciparum directly from the blood of infected individuals was cultured to examine patterns of mature-stage gene expression in patient isolates.' as x_axis,
@@ -4225,7 +4231,7 @@ select 'winzeler py mixed' as profile_name,
 from dual
 UNION
 select 'DeRisi 3D7 Smoothed' as profile_name,
-       'DeRisiWinzeler::Ver2' as module,
+       'OverlayIRBC::Ver2' as module,
        'Overlay of Intraerythrocytic Expression Profiles' as display_name,
        '1. Studies by the Derisi Lab of P. falciparum strains HB3, 3D7, and Dd2 used glass slide arrays. 2. Studies by the Winzeler Lab of Sorbitol- and Temperature-synchronized 3D7 strain parasites used Affymetrix oligonucleotide arrays.' as description,
        'Hours Post-Erythrocytic Invasion' as x_axis,
