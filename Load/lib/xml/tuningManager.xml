@@ -6503,11 +6503,8 @@ tablespace indx
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffold' as abbreviation from dual union
   -- TrichDB Repeat Genes
-  select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'Trichomonas vaginalis' as parent, 'TvaginalisRG' as abbreviation from dual union  
-  -- PlasmoDB Plasmid And Mitochondrial
-  select 'Plasmodium falciparum 3D7 mitochondrial' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumMito' as abbreviation from dual union
-  select 'Plasmodium falciparum 3D7 plastid' as organism, 'Plasmodium falciparum' as parent, 'PfalciparumPlastid' as abbreviation from dual union
-  select 'Plasmodium vivax SaI-1 mitochondrial' as organism, 'Plasmodium vivax' as parent, 'PvivaxMito' as abbreviation from dual) special
+  select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'Trichomonas vaginalis' as parent, 'TvaginalisRG' as abbreviation from dual
+) special
           where special.parent = ot.term
       ]]>
     </sql>
@@ -6703,8 +6700,14 @@ tablespace indx
   select 'Plasmodium vivax' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
   select 'Plasmodium yoelii' as organism, 'Plasmodium', 'Pyoelii' as abbreviation from dual union
   -- PlasmoDB Isolates
-  select 'Plasmodium Barcode Isolates' as organism, 'Plasmodium' as parent, 'PlasmodiumBarcode' as abbreviation from dual union
-  select 'Plasmodium Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Plasmodium' as abbreviation from dual union
+  select 'P. falciparum Barcode Isolates' as organism, 'Plasmodium' as parent, 'PfalciparumBarcode' as abbreviation from dual union
+  select 'P. berghei Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pberghei' as abbreviation from dual union
+  select 'P. chabaudi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pchabaudi' as abbreviation from dual union
+  select 'P. falciparum Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pfalciparum' as abbreviation from dual union
+  select 'P. knowlesi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pknowlesi' as abbreviation from dual union
+  select 'P. reichenowi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Preichenowi' as abbreviation from dual union
+  select 'P. vivax Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
+  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
    -- TriTrypDD ESTs which are different than above
   select 'Trypanosoma brucei' as organism, 'Trypanosoma' as parent, 'Tbrucei' as abbreviation from dual union
   select 'Trypanosoma cruzi' as organism, 'Trypanosoma' as parent, 'Tcruzi' as abbreviation from dual union
