@@ -6,14 +6,15 @@
 use strict;
 use Getopt::Long;
 
-my($targetDir,$sourceDir);
+my($targetDir,$sourceDir,$projectName,$projectName);
 
 &GetOptions("targetDir|t=s" => \$targetDir,
-            "sourceDir|s=s" => \$sourceDir
+            "sourceDir|s=s" => \$sourceDir,
+            "projectName=s" => \$projectName
 
             );
 
-die "you must use fully qualified path for --targetDir and --sourceDir\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// );
+die "you must use fully qualified path for --targetDir and --sourceDir --projectName\\n" unless ($sourceDir =~ /^\// && $targetDir =~ /^\// && $projectName =~ /DB/ );
 die "sourceDir $sourceDir does not exist\n" unless -d "$sourceDir";
 mkdir("$targetDir") unless -e "$targetDir";
 mkdir("$targetDir/blast") unless -e "$targetDir/blast";
@@ -39,6 +40,7 @@ foreach my $org (@orgs){
     foreach my $file (@files){
       next if ($file =~ m/^\./);
       my ($name,$ext) = split(/\./,$file);
+      my $fn;  # final name for the copied file
 
       # adjustments for blast and motif filenames, in accordance other component sites
       if ($dir eq 'blast') {
@@ -47,13 +49,16 @@ foreach my $org (@orgs){
 	$name = 'EST' if ($name eq 'ESTs');
 	$name = 'Proteins' if ($name eq 'AnnotatedProteins');
 	$name = 'Transcripts' if ($name eq 'AnnotatedTranscripts');
+
+	$fn = "${org}${name}.${ext}";
       }
       if ($dir eq 'motif') {
 	$name = 'ORFs' if ($name eq 'ORFs_AA');
 	$name = 'Genomic' if ($name eq 'Genome');
+
+	$fn = "${org}${name}_${projectName}.${ext}";
       }
 
-      my $fn = "${org}${name}.${ext}";
       my $cmd ="cp $file $targetDir/$dir/$fn";
       print STDERR "$cmd\n";
       system($cmd);
