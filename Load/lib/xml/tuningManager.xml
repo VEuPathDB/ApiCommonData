@@ -1946,8 +1946,8 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
          AS other_count,
        ens.length,
        l.dbest_name,
-       NVL(l.vector, 'unknown') AS vector,
-       NVL(l.stage, 'unknown') AS stage,
+       nvl(regexp_replace(l.vector, '^\s+$', null), 'unknown') AS vector,
+       nvl(regexp_replace(l.stage, '^\s+$', null), 'unknown') AS stage,
        SUBSTR(CASE
                 WHEN tn.name = 'Giardia lamblia' THEN 'Giardia Assemblage A isolate WB' 
                 ELSE tn.name
