@@ -2360,14 +2360,27 @@ tablespace indx
     <externalDependency name="dots.SeqVariation"/>
     <sql>
       <![CDATA[
-       CREATE TABLE SnpStrains&1 NOLOGGING AS
-         select distinct sv.strain,sa.organism,sf.external_database_release_id,d.name as extdb_name
-         from dots.snpfeature sf, dots.seqvariation sv, SequenceAttributes sa,
-         SRES.externaldatabase d, SRES.externaldatabaserelease rel
-         where sa.na_sequence_id = sf.na_sequence_id
-         and sf.na_feature_id = sv.parent_id
-         and sf.external_database_release_id = rel.external_database_release_id
-         and rel.external_database_id = d.external_database_id
+CREATE TABLE SnpStrains&1 NOLOGGING AS
+  SELECT distinct sv.strain,
+                  sa.organism,
+                  sf.external_database_release_id,
+                  CASE WHEN d.name='pfal3D7_SNP_sanger_PReichenowi_gff_RSRC' THEN 0
+                       WHEN d.name='pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC' THEN 0
+                       WHEN d.name='pfal3D7_SNP_sanger_ItGhana_gff_RSRC' THEN 0
+                       WHEN d.name='pfal3D7_SNP_Broad_gff_RSRC' THEN 0
+                       WHEN d.name='pfal3D7_SNP_XSu_gff_RSRC' THEN 0
+                       ELSE 1 
+                  END as is_queryable,
+                  d.name as extdb_name
+  FROM   DoTS.SnpFeature sf, 
+         DoTS.SeqVariation sv, 
+         SequenceAttributes sa,
+         SRES.externaldatabase d, 
+         SRES.externaldatabaserelease rel
+  WHERE sa.na_sequence_id = sf.na_sequence_id
+    AND sf.na_feature_id = sv.parent_id
+    AND sf.external_database_release_id = rel.external_database_release_id
+    AND rel.external_database_id = d.external_database_id
       ]]>
     </sql>
     <sql>
