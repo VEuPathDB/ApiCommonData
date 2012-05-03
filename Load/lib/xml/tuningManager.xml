@@ -199,6 +199,9 @@ select case
          when nf.subclass_view = 'GeneFeature'
               and nf.is_predicted = 1
            then 'GenePrediction'
+         when nf.subclass_view = 'Miscellaneous' 
+              and nf.is_predicted = 1
+           then 'Prediction'
          else nf.subclass_view
        end as feature_type,
        nf.source_id as feature_source_id, ns.source_id as sequence_source_id,
