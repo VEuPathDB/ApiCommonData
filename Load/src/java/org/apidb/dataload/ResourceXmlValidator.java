@@ -14,7 +14,9 @@ import org.gusdb.fgputil.CliUtil;
 
 public class ResourceXmlValidator extends XmlParser {
 
-    private static final Logger logger = Logger.getLogger(ResourceXmlValidator.class);
+    @SuppressWarnings("unused")
+    private static final Logger logger = Logger.getLogger(ResourceXmlValidator.class.getName());
+
     public ResourceXmlValidator() {
         super("lib/rng/resources.rng");
     }
