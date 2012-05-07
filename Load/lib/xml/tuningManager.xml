@@ -3019,6 +3019,12 @@ from
            'FungiDB' as project_id
     from dual
     UNION
+    select 'C albicans comprehensive annotation' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+
 
 
     -- ToxoDB --
@@ -3454,6 +3460,24 @@ select 'N Crassa population genomics' as profile_name,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         11 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
+select 'C albicans comprehensive annotation' as profile_name,
+       'CandidaAlbicansSC5314::RnaSeqCompAnn' as module,
+       'C albicans comprehensive annotation' as display_name,
+       'Candida albicans data from Michael Snyder et al from <a href="http://snyderlab.stanford.edu/">Synder Lab</a> at Stanford University on Comprehensive Annotation of the transcriptome of the human fugal pathogen Candida albicans using RNA-Seq'   as description,
+       'Calb_CellwallDamagingEnvironment_CongoRed, Calb_HighOxidativeStress, Calb_LowOxidativeStress, Calb_mediaContainingSerum, Calb_medium_at_PH4, Calb_medium_at_PH8, Calb_NitrosativeStress, Calb_NonCellwallDamageEnvironment_control, Calb_NonNitrosativeEnvironment_control, Calb_NonOxidationStress_control, Calb_YPD, Calb_YPDmedia, Calb_YPDmedia_containingSerum' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        12 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,percentile' as visible_parts,
