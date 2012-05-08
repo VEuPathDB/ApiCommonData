@@ -7,7 +7,7 @@ my $apilocOrganismName = $ARGV[1];  # the name of our organism in the apiloc fil
 
 usage() unless $apilocHtmlFile;
 
-my $organismFullName =~ s/ /%20/;
+$apilocOrganismName =~ s/ /%20/;
 
 # <li><a href="/apiloc/apiloc/gene/Neospora%20caninum/NCLIV_036400">NCLIV_036400</a> (GRA1)
 
@@ -15,7 +15,7 @@ my %ids;
 open(F, $apilocHtmlFile) || die "can't open html file '$apilocHtmlFile'";
 while(<F>){
   next if /common/;  # skip a junky line of html
-  next unless /gene\/$organismFullName\/(.*?)\"/;
+  next unless /gene\/$apilocOrganismName\/(.*?)\"/;
   print "$1\t$1\n" unless ($ids{$1});
   $ids{$1}=1;
 }
