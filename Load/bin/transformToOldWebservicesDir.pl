@@ -54,7 +54,7 @@ foreach my $org (@orgs){
       }
       if ($dir eq 'motif') {
 	$name = 'ORFs' if ($name eq 'ORFs_AA');
-	$name = 'Genomic' if ($name eq 'Genome');
+	$name = 'Genomic' if ($name eq 'GenomeDoubleStrand');
 
 	$fn = "${org}${name}_${projectName}.${ext}";
       }
