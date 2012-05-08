@@ -5366,33 +5366,34 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="Subcellular">
-    <internalDependency name="GeneAttributes"/>
+    <internalDependency name="GeneId"/>
     <externalDependency name="dots.AaFeatureImp"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
       <![CDATA[
 CREATE TABLE Subcellular&1 NOLOGGING AS
-select ga.source_id, 'ht' as targetting_domain
-from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
+select distinct gi.gene as source_id, targetting_domain
+from (
+select paf.source_id, 'ht' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf
 where ed.name in ('subcellular motif from Haldar','pfal3D7_cellularLocation_Haldar_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
-  and paf.source_id = ga.source_id
 union
-select ga.source_id, 'pexel' as targetting_domain
-from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
+select paf.source_id, 'pexel' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf
 where ed.name in ('subcellular motif from Cowman','pfal3D7_cellularLocation_Cowman_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
-  and paf.source_id = ga.source_id
 union
-select ga.source_id, 'apicoplast' as targetting_domain
-from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf, GeneAttributes ga
+select paf.source_id, 'apicoplast' as targetting_domain
+from sres.ExternalDatabase ed, sres.ExternalDatabaseRelease edr, dots.PredictedAaFeature paf
 where ed.name in ('apicoplast targeting data from 4.4','pfal3D7_cellularLocation_ApicoplastTargeting_RSRC')
   and ed.external_database_id = edr.external_database_id
   and edr.external_database_release_id = paf.external_database_release_id
-  and paf.source_id = ga.source_id
+) sc, GeneId gi
+where gi.id = sc.source_id
       ]]>
     </sql>
     <sql>
