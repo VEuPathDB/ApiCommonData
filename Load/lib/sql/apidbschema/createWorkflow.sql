@@ -171,7 +171,6 @@ GRANT SELECT ON apidb.WorkflowStepAlgInvocation_sq TO gus_w;
 create table apidb.WorkflowStepParamValue (
   workflow_step_param_value_id number(10),
   workflow_step_id number(10),
-  workflow_step_class_name varchar(100);
   param_name varchar(100);
   param_value varchar(500);
 );
