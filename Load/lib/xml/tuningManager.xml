@@ -3024,6 +3024,11 @@ from
            'FungiDB' as project_id
     from dual
     UNION
+    select 'S Pombe Dicer Protein' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
 
 
 
@@ -3478,6 +3483,25 @@ select 'C albicans Comprehensive Annotation' as profile_name,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
 ' as y_axis,
         12 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
+
+select S Pombe Dicer Protein' as profile_name,
+       'Spombe972h::RnaSeqDicer' as module,
+       'S Pombe Dicer Protein' as display_name,
+       'Schizosaccharomyces pombe data from Pierre Barraud et al from ETH Zurich on nuclear retention of fission yeast Dicer'   as description,
+       'dcr1Delta, dcr1Deltaloop2, dcr1-SHSS, Wild Type' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        13 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
        'coverage,percentile' as visible_parts,
