@@ -39,6 +39,7 @@ sub getGeneFeatureId {
     my $sql_preferred = "
 SELECT source_id, na_feature_id
 FROM Dots.GeneFeature
+where (is_predicted is null or is_predicted !=1)
 ";
 
     my $sql = "
@@ -71,7 +72,6 @@ from   SRes.DBRef DBRef, dots.GeneFeature gf,DoTS.DBRefNaFeature naf,
 where  edr.external_database_release_id = dbref.external_database_release_id
 and    dbref.db_ref_id = naf.db_ref_id
 and    edr.id_is_alias = 1 
-and    (gf.is_predicted is null or gf.is_predicted !=1)
 and    gf.external_database_release_id in  ($geneExtDbRlsId)
 and    naf.na_feature_id = gf.na_feature_id
 and    t.parent_id = gf.na_feature_id
