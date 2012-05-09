@@ -12,6 +12,7 @@
 
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="locus_tag"    handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="id"    handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="translation"      handler="api" method="setProvidedTranslation"/>
@@ -133,6 +134,7 @@
   </feature>
 
   <feature name="transcript" so="transcript">
+    <qualifier name="CDSLength"             ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true"/>

@@ -17,6 +17,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
     <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="gene"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"  ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
@@ -158,6 +159,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene" ignore="true"/>
     <qualifier name="note" ignore="true"/>
     <qualifier name="product"			ignore="true"/>
+    <qualifier name="CDSLength"			ignore="true"/>
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="exon">
