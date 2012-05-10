@@ -171,8 +171,8 @@ GRANT SELECT ON apidb.WorkflowStepAlgInvocation_sq TO gus_w;
 create table apidb.WorkflowStepParamValue (
   workflow_step_param_value_id number(10),
   workflow_step_id number(10),
-  param_name varchar(100);
-  param_value varchar(500);
+  param_name varchar(100),
+  param_value varchar(500)
 );
 
 ALTER TABLE apidb.WorkflowStepParamValue
@@ -187,7 +187,7 @@ ON apidb.WorkflowStepParamValue (workflow_step_id, workflow_step_param_value_id)
 
 ALTER TABLE apidb.WorkflowStepParamValue
 ADD CONSTRAINT workflow_step_param_value_uniq
-UNIQUE (workflow_step_id, workflow_step_class_name, param_name);
+UNIQUE (workflow_step_id,param_name);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.WorkflowStepParamValue TO gus_w;
 GRANT SELECT ON apidb.WorkflowStepParamValue TO gus_r;
