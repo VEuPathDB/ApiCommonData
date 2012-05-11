@@ -172,7 +172,12 @@ sub processFeature {
 							my ($dbxrefType, $dbxrefId) = split (/:/, $value);
 							$dbxrefType =~ s/\//\_/;
 							if (!$dbxrefOutput{lc($dbxrefType)}) {
-								$dbxrefOutput{lc($dbxrefType)} = "dbxref_".lc($dbxrefType).".txt";
+								if ($outputDir) {
+									$dbxrefOutput{lc($dbxrefType)} = "$outputDir\/dbxref_".lc($dbxrefType).".txt";
+								} else {
+									$dbxrefOutput{lc($dbxrefType)} = "dbxref_".lc($dbxrefType).".txt";
+								}
+
 								print "dbxref output file is $dbxrefOutput{lc($dbxrefType)}\n";	
 								$dbxrefFhHash{lc($dbxrefType)} = FileHandle->new();
 								$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
