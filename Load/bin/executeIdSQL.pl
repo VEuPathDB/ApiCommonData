@@ -16,7 +16,7 @@ my ($verbose,$gusConfigFile,$idSQL);
             "idSQL=s" => \$idSQL,
             );
 
-die "usage: executeIdSQL.pl --idSQL 'sql query' --configFile gusConfigFile\n" unless $idSQL;
+die "usage: executeIdSQL.pl --idSQL 'sql query' [ --configFile gusConfigFile ]\n" unless $idSQL;
 
 #============================================
 
