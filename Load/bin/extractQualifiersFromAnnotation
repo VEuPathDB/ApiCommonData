@@ -160,9 +160,11 @@ sub processFeature {
 		foreach my $qualifier ($bioperlFeature->get_all_tags()) {
 			if ($outputHash{$qualifier}) {		
 				if ($outputHash{$qualifier} =~ /associations/) {
-					my $outputLine = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
-					$goFh->print("$outputLine\n") if (!$doneGO{$outputLine});
-					$doneGO{$outputLine} = $outputLine;
+					my @outputLines = &processGoAsso($bioperlFeature, $sourceId, $qualifier, $db, $taxonId, $date);
+					foreach my $outputLine (@outputLines) {
+						$goFh->print("$outputLine\n") if (!$doneGO{$outputLine});
+						$doneGO{$outputLine} = $outputLine;
+					}
 				} else { 
 					my @values = $bioperlFeature->get_tag_values($qualifier);
 					foreach my $value (@values) {
@@ -208,6 +210,8 @@ sub processGoAsso {
 	$synonym = $sourceId;
 	$assignedBy = $db;
 
+	my @retLines;
+
 	if ($qualifier eq 'GO_component' || $qualifier eq 'GO_function' || $qualifier eq 'GO_process') {
 	    foreach my $value ($bioperlFeature->get_tag_values($qualifier)){
 		if ($value =~ /^GO:(\d+)[.*| - (.*)]/) {
@@ -220,7 +224,7 @@ sub processGoAsso {
 		}
 		$aspect = &getAspectForGo ($qualifier);
 
-		return "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy";
+		push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
 	    }
 	} elsif (lc($qualifier) eq 'go') {
 		foreach my $value ($bioperlFeature->get_tag_values($qualifier)) {
@@ -249,12 +253,15 @@ sub processGoAsso {
 							$dbrefs = $with;
 					}	
 				}
-				return "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy" if ($sourceId && $goId);
+				if ($sourceId && $goId) {
+					push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+				}
 		    }
 		}
 	} else {
-		return "$qualifier has not been configured yet.\n";
+		print "extract GO ERROR, $qualifier has not been configured yet.\n";
 	}
+	return @retLines;
 }
 
 sub getAspectForGo {
