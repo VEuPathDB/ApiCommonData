@@ -240,6 +240,8 @@ sub processGoAsso {
 							$aspect = &getAspectForGo($itemValue);
 					}
 					$evidenceCode = uc(&trim($itemValue)) if (lc($item) eq 'evidence');
+					$evidenceCode = getGoEvidenceCode ($evidenceCode);
+
 					$goId = &trim($itemValue) if (lc($item) eq 'goid');
 					$date = &trim($itemValue) if (lc($item) eq 'date');
 					$dbrefs = &trim($itemValue) if (lc($item) eq 'db_xref');
@@ -282,6 +284,25 @@ sub getAspectForGo {
 	return $aspect;
 }
 
+sub getGoEvidenceCode {
+	my ($string) = @_;
+	
+	if ($string =~ /INFERRED FROM ELECTRONIC ANNOTATION/i) {
+		return "IEA";
+	} elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/) {
+		return "ISO";
+	} elsif ($string =~ /NOT RECORDED/) {
+		return "NR";
+	#} elsif ($string =~ //) {
+	#	return "";
+	#} elsif ($string =~ //) {
+	#	return "";
+	} else {
+		return $string;
+	}
+}
+
+	
 sub getConfig {
 	my ($config) = @_;
 	my (%features, %qualifiers);
