@@ -12,23 +12,23 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 
 my $file; 
-my $output = 'coverageSnps.gff';
+my $outputFile = 'coverageSnps.gff';
 my $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
 my $referenceOrganism;
+my $referenceStrain;
 my $verbose;
 
-&GetOptions("configFile|f=s" => \$file, 
-            "gusConfigFile|gc=s"=> \$gusConfigFile,
-            "output|o=s"=> \$output,
+&GetOptions("gusConfigFile|gc=s"=> \$gusConfigFile,
+            "outputFile|o=s"=> \$outputFile,
             "verbose|v!"=> \$verbose,
             "referenceOrganism|r=s"=> \$referenceOrganism,
             );
 
-if (! -e $file && $referenceOrganism){
+if (!$referenceOrganism){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
-  generateCoverageSnps.pl --configFile|f <config file with two tab delimited columns (filename\tstrain)> --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to> --output|o <outputFile [coverageSnps.gff]> --verbose!
+  generateCoverageSnpsFromDB.pl --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to> --referenceStrain <strain of reference organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose!
 endOfUsage
 }
 
@@ -43,11 +43,33 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle();
 
-open(O,">$output") || die "unable to open $output for output\n";
+open(O,">$outputFile") || die "unable to open $outputFile for output\n";
+
+##need to get the list of strains and external_db_ids
+my $strainSQL = <<SQL;
+select sv.strain,sv.external_database_release_id,count(*)
+from dots.snpfeature sf, DOTS.seqvariation sv,SRES.externaldatabase d, SRES.externaldatabaserelease rel
+where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
+and rel.external_database_id = d.external_database_id
+and sf.external_database_release_id = rel.external_database_release_id
+and sf.organism = '$referenceOrganism'
+and sv.parent_id = sf.na_feature_id
+group by sv.strain,sv.external_database_release_id
+SQL
+
+my $strainStmt = $dbh->prepare($strainSQL);
+$strainStmt->execute();
+my %strains;
+while(my($strain,$rel_id,$count) = $strainStmt->fetchrow_array()){
+  print STDERR "Strain: ($strain,$rel_id,$count)\n" if $verbose;
+  $strains{$rel_id} = $strain;
+}
+
+print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
 
 
 my $snpSQL = <<EOSQL;
-select sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sv.strain,sv.allele
+select sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sv.allele,sv.external_database_release_id,sf.reference_strain
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
 SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
@@ -68,67 +90,80 @@ print STDERR "Returning rows from snp query\n";
 while(my $row = $stmt->fetchrow_hashref()){
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{id} = $row->{SNP_ID};
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{ref} = $row->{REFERENCE_NA};
-  $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{strains}->{$row->{STRAIN}} = $row->{ALLELE}; ##could be multiple alleles but doesn't matter as not adding any new ones if there is at least one
+  $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{strains}->{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ALLELE}; ##could be multiple alleles but doesn't matter as not adding any new ones if there is at least one
+  if($referenceStrain && $referenceStrain ne $row->{REFERENCE_STRAIN}){
+    die "ERROR: there are multiple references strains for this organism: $referenceStrain, $row->{REFERENCE_STRAIN}\n";
+  }
+  $referenceStrain = $row->{REFERENCE_STRAIN} unless $referenceStrain;
   $ct++;
-  print STDERR "Processed $ct rows\n" if ($verbose && $ct % 10000 == 0);
+  print STDERR "Retrieved $ct rows\n" if ($verbose && $ct % 10000 == 0);
 }
 
-$db->logout();
+##need the ext_db_rel_id for reference strain as want to add to strains if not there.
+my $refSQL = <<EOSQL;
+select distinct s.external_database_release_id
+from dots.nasequence s,dots.snpfeature sf,SRES.externaldatabase d, SRES.externaldatabaserelease rel
+where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
+and rel.external_database_id = d.external_database_id
+and sf.external_database_release_id = rel.external_database_release_id
+and sf.organism = '$referenceOrganism'
+and s.na_sequence_id = sf.na_sequence_id
+EOSQL
 
-print STDERR "Identified SNPs on ",scalar(keys%snps)," sequences\n" if $verbose;
+my $refStmt = $dbh->prepare($refSQL);
+$refStmt->execute();
+my @tmpEx;
+while(my($id) = $refStmt->fetchrow_array()){
+  push(@tmpEx,$id);
+}
+die "ERROR getting reference external_database_release_id: query returned more than one row\n" if scalar(@tmpEx) > 1;
+$strains{$tmpEx[0]} = $referenceStrain unless $strains{$tmpEx[0]};
+my $referenceDbRelId = $tmpEx[0];
 
-open(C, "$file") || die "unable to open config file $file\n";
+my $ntSQL = <<EOSQL;
+select dbms_lob.substr(sequence,1,?)
+from dots.nasequence
+where source_id = ?
+and external_database_release_id = ?
+EOSQL
+
+my $ntStmt = $dbh->prepare($ntSQL);
+
 my %newSnps;
-while(<C>){
-  chomp;
-  my($f,$strain) = split("\t",$_);
-  next unless $strain;
-  open(F, "$f") || die "unable to open file $file\n";
-  print STDERR "Processing file $f for strain $strain\n";
-  my $ctLines = 0;
-  my $ctSnps = 0;
-  while(<F>){
-    next if /^Chrom\s+Position/;
-    $ctLines++;
-    print STDERR "$f: Processed $ctLines\n" if ($verbose && $ctLines % 100000 == 0);
-    chomp;
-    my @tmp = split("\t",$_);
-    next if (!$snps{$tmp[0]}->{$tmp[1]} || $snps{$tmp[0]}->{$tmp[1]}->{strains}->{$strain});
-    ##snp here and not present in this strain .... only add if like reference as already processed for snps 
-    my $reference = $snps{$tmp[0]}->{$tmp[1]}->{ref};
-    print STDERR "WARNING: $tmp[0]:$tmp[1] - reference alleles not same ($tmp[2] - $reference)\n" unless $tmp[2] eq $reference;
-    next if $tmp[3] ne $reference;
-#    print STDERR "Identified coverage snp $tmp[0]:$tmp[1] for $strain\n" if $verbose;
-    $ctSnps++;
-    $newSnps{$tmp[0]}->{$tmp[1]}->{ref} = $reference;
-    $newSnps{$tmp[0]}->{$tmp[1]}->{id} = $snps{$tmp[0]}->{$tmp[1]}->{id};
-    push(@{$newSnps{$tmp[0]}->{$tmp[1]}->{strains}},"$strain:$tmp[3]:".&getCoverage(\@tmp).":".&getPercent(\@tmp).":$tmp[9]:");
-#    last if $ctSnps >= 100;
+my $ctSnps = 0;
+foreach my $seqid (keys%snps){
+  foreach my $loc (keys%{$snps{$seqid}}){
+    ##now loop through the strains and if not present here generate snp
+    my @alleles;
+    my $snpid = $snps{$seqid}->{$loc}->{id};
+    my $refna = $snps{$seqid}->{$loc}->{ref};
+    foreach my $dbrelid (keys%strains){
+#      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
+      next if $snps{$seqid}->{$loc}->{strains}->{$dbrelid}; ##already have this one
+      push(@alleles,$strains{$dbrelid}.":".$refna."::::") if $refna eq &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
+    }
+    if(scalar(@alleles) >= 1){
+      print O "$seqid\tNGS_SNP\tSNP\t$loc\t$loc\t.\t+\t.\tID $snpid; Allele \"".join("\" \"",@alleles)."\";\n";
+      $ctSnps++;
+      print STDERR "Created $ctSnps SNPs\n" if ($verbose && $ctSnps % 10000 == 0);
+      exit(0) if $ctSnps > 20;
+    }
   }
-  close F;
 }
 
-##now print out the gff file ...
-my $ctsnps = 0;
-foreach my $seqid (keys(%newSnps)){
-  foreach my $loc (sort{$a <=> $b}keys(%{$newSnps{$seqid}})){
-    $ctsnps++;
-    my @alleles = @{$newSnps{$seqid}->{$loc}->{strains}};
-    my $snpid = $newSnps{$seqid}->{$loc}->{id};
-    print O "$seqid\tNGS_SNP\tSNP\t$loc\t$loc\t.\t+\t.\tID $snpid; Allele \"".join("\" \"",@alleles)."\";\n";
-  }
-}
-print STDERR "Coverage SNPs: Added strains to $ctsnps SNPs\n";
+print STDERR "Coverage SNPs: Added strains to $ctSnps SNPs\n";
 
 close O;
 
-sub getCoverage {
-  my($line) = @_;
-  return $line->[4] + $line->[5];
-}
+$db->logout();
 
-sub getPercent {
-  my($line) = @_;
-  chop $line->[6];
-  return $line->[2] eq $line->[3] ? 100 - $line->[6] : $line->[6];
+sub getNt {
+  my($pos,$sid,$extid) = @_;
+  my @tmp;
+  $ntStmt->execute($pos,$sid,$extid);
+  while(my($nt) = $ntStmt->fetchrow_array()){
+    push(@tmp,$nt);
+  }
+  die "getNt ERROR: query returned more than one row for ($pos,$sid,$extid)\n" if scalar(@tmp) > 1;
+  return $tmp[0];
 }

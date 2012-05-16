@@ -5,9 +5,10 @@ use Getopt::Long;
 
 my($fastaFile,$mateA,$mateB,$bwaIndex,$strain,$snpsOnly);
 my $out = "result";
-my $varscan = "/Users/brunkb/Software_Downloads/varscan/VarScan.v2.2.5.jar";
-my $percentCutoff = 80; ## use to generate consensus
-my $minPercentCutoff; ## use for snps and indels
+my $varscan = "/home/brunkb/software/varscan/VarScan.v2.2.10.jar";
+my $gatk = "/home/brunkb/software/GATK/11-Apr-2012/GenomeAnalysisTK-1.5-25-gf46f7d0/GenomeAnalysisTK.jar";
+my $consPercentCutoff = 60; ## use to generate consensus
+my $snpPercentCutoff; ## use for snps and indels
 my $editDistance = 0.04;
 
 &GetOptions("fastaFile|f=s" => \$fastaFile, 
@@ -16,9 +17,10 @@ my $editDistance = 0.04;
             "outputPrefix|o=s" => \$out,
             "bwaIndex|b=s" => \$bwaIndex,
             "varscan|v=s" => \$varscan,
+            "gatk|g=s" => \$gatk,
             "strain|s=s" => \$strain,
-            "percentCutoff|pc=s" => \$percentCutoff,
-            "minPercentCutoff|mpc=s" => \$minPercentCutoff,
+            "consPercentCutoff|cpc=s" => \$consPercentCutoff,
+            "snpPercentCutoff|spc=s" => \$snpPercentCutoff,
             "editDistance|ed=s" => \$editDistance,
             "snpsOnly!" => \$snpsOnly,
             );
@@ -31,41 +33,82 @@ die "bwa indices not found\n" unless -e "$bwaIndex.amb";
 die "you must provide a strain\n" unless $strain;
 ##should add in usage
 
-$minPercentCutoff = $percentCutoff unless $minPercentCutoff;
+$snpPercentCutoff = $consPercentCutoff unless $snpPercentCutoff;
 
-print STDERR "runBWA_HTS.pl ... parameter values:\n\tfastaFile=$fastaFile\n\tbwa_index=$bwaIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tstrain=$strain\n\tpercentCutoff=$percentCutoff\n\tminPercentCutoff=$minPercentCutoff\n\teditDistance=$editDistance\n\tvarscan=$varscan\n\n";
+print STDERR `date`.": runBWA_HTS.pl ... parameter values:\n\tfastaFile=$fastaFile\n\tbwa_index=$bwaIndex\n\tmateA=$mateA\n\tmateB=$mateB\n\toutputPrefix=$out\n\tstrain=$strain\n\tconsPercentCutoff=$consPercentCutoff\n\tminPercentCutoff=$snpPercentCutoff\n\teditDistance=$editDistance\n\tvarscan=$varscan\n\n";
 
 ## indices ..  bwa index -p <prefix for indices> <fastafile>  ##optional -c flag if colorspace
 
-system("(bwa aln -t 4 -n $editDistance $bwaIndex $mateA > $out.mate1.sai) >& $out.bwa_aln_mate1.log");
+## do we want to check to see if bwa indices are present and if not, create?
+
+my $cmd = "(bwa aln -t 4 -n $editDistance $bwaIndex $mateA > $out.mate1.sai) >& $out.bwa_aln_mate1.log";
+print STDERR `date`.": $cmd\n\n";
+
+system($cmd);
 
 if(-e "$mateB"){
-  system("(bwa aln -t 4 -n $editDistance $bwaIndex $mateB > $out.mate2.sai) >& $out.bwa_aln_mate2.log");
+  $cmd = "(bwa aln -t 4 -n $editDistance $bwaIndex $mateB > $out.mate2.sai) >& $out.bwa_aln_mate2.log";
+  print STDERR `date`.": $cmd\n\n";
+  system($cmd);
 
-  system("(bwa sampe $bwaIndex $out.mate1.sai $out.mate2.sai $mateA $mateB > $out.sam) >& $out.bwa_sampe.log");
+  $cmd = "(bwa sampe -r '@RG\tID:EuP\tSM:$strain\tPL:Illumina' $bwaIndex $out.mate1.sai $out.mate2.sai $mateA $mateB > $out.sam) >& $out.bwa_sampe.log";
+  print STDERR `date`.": $cmd\n\n";
+  system($cmd);
 }else{
-  print STDERR "Aligning in single end mode only\n";
+  print STDERR `date`.": Aligning in single end mode only\n";
   
-  system("(bwa samse $bwaIndex $out.mate1.sai $mateA > $out.sam) >& $out.bwa_samse.log");
+  $cmd = "(bwa samse -r '@RG\tID:EuP\tSM:$strain\tPL:Illumina' $bwaIndex $out.mate1.sai $mateA > $out.sam) >& $out.bwa_samse.log";
+  print STDERR `date`.": $cmd\n\n";
+  system($cmd);
 }
 
-system("samtools faidx $fastaFile") unless -e "$fastaFile.fai";
+$cmd = "samtools faidx $fastaFile") unless -e "$fastaFile.fai";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
-system("(samtools view -t $fastaFile.fai -uS $out.sam | samtools sort - $out) >& $out.samtools_view.log");
+$cmd = "(samtools view -t $fastaFile.fai -uS $out.sam | samtools sort - $out) >& $out.samtools_view.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
-system("(samtools pileup -f $fastaFile $out.bam > $out.pileup) &> $out.pileup.err");
+$cmd = "samtools index $out.bam";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
-my $pc = $percentCutoff / 100;
-my $mpc = $minPercentCutoff / 100;
 
-system("(java -jar $varscan pileup2snp $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $out.varscan.snps ) >& $out.varscan_snps.log");
+$cmd = "java -Xmx2g -jar $gatk -I $out.bam -R $fastaFile -T RealignerTargetCreator -o forIndelRealigner.intervals >& realignerTargetCreator.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
-system("parseVarscanToGFF.pl --f $out.varscan.snps --strain $strain --pc $minPercentCutoff --o $out.SNPs.gff >& $out.parseVarscan.err");
+my $outGatk = $out . "_gatk";
+$cmd = "java -Xmx2g -jar $gatk -I $out.bam -R $fastaFile -T IndelRealigner -targetIntervals forIndelRealigner.intervals -o $outGatk.bam >& indelRealigner.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
+
+## I wonder if would be good to sort again here?
+
+$cmd = "(samtools pileup -f $fastaFile $outGatk.bam > $outGatk.pileup) &> $outGatk.pileup.err";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
+
+my $pc = $consPercentCutoff / 100;
+my $mpc = $snpPercentCutoff / 100;
+
+$cmd = "(java -Xmx2g -jar $varscan pileup2snp $outGatk.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $outGatk.varscan.snps ) >& $outGatk.varscan_snps.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
+
+$cmd = "parseVarscanToGFF.pl --f $outGatk.varscan.snps --strain $strain --pc $snpPercentCutoff --o $outGatk.SNPs.gff >& $outGatk.parseVarscan.err";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
 exit(0) if $snpsOnly;
 
-system("(java -jar $varscan pileup2indel $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $out.varscan.indels ) >& $out.varscan_indels.log");
+$cmd = "(java -Xmx2g -jar $varscan pileup2indel $outGatk.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $mpc > $outGatk.varscan.indels ) >& $outGatk.varscan_indels.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
 
-system("(java -jar $varscan pileup2cns $out.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $pc > $out.varscan.cons ) >& $out.varscan_cons.log");
+$cmd = "(java -Xmx2g -jar $varscan pileup2cns $outGatk.pileup --p-value 0.01 --min-coverage 5 --min-var-freq $pc > $outGatk.varscan.cons ) >& $outGatk.varscan_cons.log";
+print STDERR `date`.": $cmd\n\n";
+system($cmd);
 
