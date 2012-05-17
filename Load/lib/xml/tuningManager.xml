@@ -1591,6 +1591,7 @@ and ga.orthomcl_name is null
       ]]>
     </sql>
     <sql>
+      <![CDATA[
     update &prefixGeneAttributes&1 gattr
     set (gattr.context_start, gattr.context_end) = (select context_start, context_end 
                                                     from (select ga.source_id, 
@@ -1606,6 +1607,7 @@ and ga.orthomcl_name is null
                                                           group by ga.source_id, ga.context_start, ga.context_end, ga.start_min, ga.end_max
                                                           having count(*) > 10) gattrup
                                                     where gattrup.source_id = gattr.source_id
+      ]]>
     </sql>
   </tuningTable>
 
