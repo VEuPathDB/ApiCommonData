@@ -3539,6 +3539,56 @@ Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/raw
     from dual
     UNION
 
+select 'H arabidopsidis infection expression profile' as profile_name,
+       'HyaarEmoy2::HyaarInfection' as module,
+       'RNA Seq' as display_name,
+       'Baxter, Tripathy et. al Science(2010) Vol. 330 no. 6010 pp. 1549-1551 ' as description,
+       'Biological replicates' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+  UNION
+
+select 'P ramorum expression during sporulation and different media profile' as profile_name,
+       'PhyraPr102::PhyraCondition' as module,
+       'RNA Seq' as display_name,
+       'Un-published' as description,
+       'Experimental replicates' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+    UNION
+
+select 'P sojae expression during Infection and mycelial stage' as profile_name,
+       'PhysoP6497::PhysoInfection' as module,
+       'RNA Seq' as display_name,
+       'Tyler et al. Science (2006): Vol. 313 no. 5791 pp. 1261-1266' as description,
+       'Experimental replicates' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+' as y_axis,
+        10 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+    from dual
+    UNION
 
 
 -- CryptoDB 
