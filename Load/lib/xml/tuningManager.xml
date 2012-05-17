@@ -1590,6 +1590,23 @@ and ga.orthomcl_name is null
         where gaup.gene_type = 'protein coding'
       ]]>
     </sql>
+    <sql>
+    update &prefixGeneAttributes&1 gattr
+    set (gattr.context_start, gattr.context_end) = (select context_start, context_end 
+                                                    from (select ga.source_id, 
+                                                                 round(ga.context_start + (least(ga.start_min, ga.end_max)- ga.context_start) * (10/count(*)) ) as context_start,
+                                                                 round(ga.context_end - (ga.context_end - greatest(ga.start_min, ga.end_max)) * (10/count(*)) ) as context_end
+                                                          from &prefixGeneAttributes&1 ga,
+                                                               &prefixFeatureLocation fl
+                                                          where fl.is_top_level =  1
+                                                          and fl.feature_type =  'GeneFeature'
+                                                          and ga.sequence_id = fl.sequence_source_id
+                                                          and least(fl.start_min, fl.end_max) >= ga.context_start
+                                                          and greatest(fl.start_min, fl.end_max) <= ga.context_end
+                                                          group by ga.source_id, ga.context_start, ga.context_end, ga.start_min, ga.end_max
+                                                          having count(*) > 10) gattrup
+                                                    where gattrup.source_id = gattr.source_id
+    </sql>
   </tuningTable>
 
   <tuningTable name="GenomicSequence" prefixEnabled="true">
