@@ -6431,6 +6431,8 @@ tablespace indx
 
   <!-- This table will eventually be replaced by workflow -->
   <tuningTable name="OrganismAbbreviation">
+    <externalDependency name="sres.taxonname"/>
+    <externalDependency name="apidb.organism"/>
     <sql>
       <![CDATA[
        CREATE TABLE OrganismAbbreviation&1 NOLOGGING AS
