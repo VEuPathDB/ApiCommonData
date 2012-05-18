@@ -49,13 +49,13 @@ sub getArgumentsDeclaration{
 		isList => 0
 	       }),
      stringArg({name => 'naExternalDatabaseName',
-		descr => 'sres.externaldatabase.name for the genome sequences',
+		descr => 'sres.externaldatabase.name for the reference genome sequences',
 		constraintFunc => undef,
 		reqd => 1,
 		isList => 0
 	       }),
      stringArg({name => 'naExternalDatabaseVersion',
-		descr => 'sres.externaldatabaserelease.version for the genome sequences',
+		descr => 'sres.externaldatabaserelease.version for the reference genome sequences',
 		constraintFunc => undef,
 		reqd => 1,
 		isList => 0
@@ -119,6 +119,13 @@ sub getArgumentsDeclaration{
 	       }),
      booleanArg({name => 'NGS_SNP',
 		descr => 'these snps are being generated as NGS snps and will reuse the snp at this location',
+		constraintFunc=> undef,
+		reqd  => 0,
+                default => 0,
+		isList => 0,
+	       }),
+     booleanArg({name => 'NgsUpdateSnpFeature',
+		descr => 'if NGS_SNP then will only update the SNP feature based on the SeqVariations if this is set to true',
 		constraintFunc=> undef,
 		reqd  => 0,
                 default => 0,
@@ -270,49 +277,52 @@ sub processSnpFile{
 
     my $snpFeature = $self->createSnpFeature($feature);
 
-    my $snpStart = $feature->location()->start();
-    my $snpEnd = $feature->location()->end();
+    ##have snpFeature with all seqvars here .. only want to update if !NGS_SNP || NgsUpdateSnpFeature
+    if(!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature')){
+      my $snpStart = $feature->location()->start();
+      my $snpEnd = $feature->location()->end();
+      
+      # MAL??
+      my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp')->getId();
+      
+      my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+      my $transcriptId;
+      
+      my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+      
+      my $isCoding = $codingSequence ne $mockCodingSequence;
+      
+      my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
+      
+      if($transcript) {
+        $transcriptId = $transcript->getId();
 
-    # MAL??
-    my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp') -> getId();
+        my $geneFeatureId = $transcript->get('parent_id');
+        $snpFeature->set('parent_id', $geneFeatureId);
+      }
 
-    my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
-    my $transcriptId;
+      if($isCoding) {
+        $snpFeature->setIsCoding(1);
+        $snpFeature->setPositionInCds($codingSnpStart);
+        
+        my $startPositionInProtein = $self->calculateAminoAcidPosition($codingSnpStart);
+        my $endPositionInProtein = $self->calculateAminoAcidPosition($codingSnpEnd);
 
-    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+        ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
+        $snpFeature->setPositionInProtein($startPositionInProtein);
 
-    my $isCoding = $codingSequence ne $mockCodingSequence;
+        my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
+        $snpFeature->setReferenceAa($refAaSequence);
+      } else {
+        $snpFeature->setIsCoding(0);
+      }
 
-    my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
+      $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
+      $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
 
-    if($transcript) {
-      $transcriptId = $transcript->getId();
-
-      my $geneFeatureId = $transcript->get('parent_id');
-      $snpFeature->set('parent_id', $geneFeatureId);
+      $self->_addMajorMinorInfo($snpFeature);
     }
 
-    if($isCoding) {
-      $snpFeature->setIsCoding(1);
-      $snpFeature->setPositionInCds($codingSnpStart);
-
-      my $startPositionInProtein = $self->calculateAminoAcidPosition($codingSnpStart);
-      my $endPositionInProtein = $self->calculateAminoAcidPosition($codingSnpEnd);
-
-      ## THE POSTION IN PROTEIN IS WHERE THE SNP STARTS...
-      $snpFeature->setPositionInProtein($startPositionInProtein);
-
-      my $refAaSequence = $self->_getAminoAcidSequenceOfSnp($codingSequence, $startPositionInProtein, $endPositionInProtein);
-      $snpFeature->setReferenceAa($refAaSequence);
-    }
-    else {
-      $snpFeature->setIsCoding(0);
-    }
-
-    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
-    $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
-
-    $self->_addMajorMinorInfo($snpFeature);
     $snpFeature->submit() || die "couldn't submit snpFeature for '$snpFeature'";
 
     $self->undefPointerCache();
@@ -560,7 +570,7 @@ sub createSnpFeature {
   ## so can generate complete picture of snp.
   my $fromDB = 0;
   $fromDB = $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
-  $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP');
+  $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP') && $self->getArg('NgsUpdateSnpFeature');
 
   my $naLoc;
   if(! $fromDB){
@@ -571,12 +581,13 @@ sub createSnpFeature {
   }
 
   foreach ($feature->get_tag_values('Allele')) {
-    my ($strain, $base, $coverage, $percent, $quality, $pvalue) = split(':', $_);
+    my ($strain, $base, $coverage, $percent, $quality, $pvalue, $seqVarExtRelId) = split(':', $_);
 
     # Reverse Compliment if it is on the Reverse Strand
-    if($strand == -1) {
-      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
-    }
+    # no, shouldn't do this .. should always store on forward strand .. can reverse complement when displaying if necessary.
+#    if($strand == -1) {
+#      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
+#    }
 
     if($strand == 0) {
       $self->userError("Unknown strand for sourceId $sourceId");
@@ -593,7 +604,7 @@ sub createSnpFeature {
 
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
-           'external_database_release_id' => $extDbRlsId,
+           'external_database_release_id' => $seqVarExtRelId ? $seqVarExtRelId : $extDbRlsId,
            'name' => $name,
            'sequence_ontology_id' => $soId,
            'strain' => $strain,
@@ -620,12 +631,17 @@ sub createSnpFeature {
     my $haveRef = 0;
     my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
     foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
-      $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
+      if($self->getArg('NGS_SNP')){
+        $haveRef = 1 if ($c->getExternalDatabaseReleaseId() == $naSeq->getExternalDatabaseReleaseId() && $c->getAllele() eq $referenceBase);
+      }else{
+        $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
+      }
     }
-    if(!$haveRef){  ##create a reference seqvar here ...
+    if(!$haveRef && (!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature'))){  ##create a reference seqvar here ...
+      ## but if NGS_SNP then only create the reference if NgsUpdateSnpFeature is true
       my $seqVar =  GUS::Model::DoTS::SeqVariation->
         new({'source_id' => $sourceId,
-             'external_database_release_id' => $extDbRlsId,
+             'external_database_release_id' => $self->getArg('') ? $naSeq->getExternalDatabaseReleaseId()  : $extDbRlsId,
              'name' => $name,
              'sequence_ontology_id' => $soId,
              'strain' => $ref,
