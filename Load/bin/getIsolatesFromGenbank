@@ -41,21 +41,27 @@ print STDERR "Query found $Count genbank records\n";
 
 exit(0) unless $Count;
 
-# assume we can fit all these results easily in memory
-my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv";
+my $summaryBatches = $count / 10000 + 1;
+my $retstart = 1;
+my %uniqueAccs;
 
-print STDERR "$efetch\n\n" if $PRINT_URLS;
-my $efetch_result = get($efetch);
-open(FF,">/home/sfischer/junk/gbyuck");
-print FF $efetch_result;
-close(FF);
+while($summaryBatches--) {
 
-die "Failed getting efetch result\n" unless $efetch_result;
+    # assume we can fit all these results easily in memory. gets at most 10000
+    my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
+
+    print STDERR "$efetch\n\n" if $PRINT_URLS;
+    my $efetch_result = get($efetch);
+
+    die "Failed getting efetch result\n" unless $efetch_result;
+
+    my @accs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
+    map { $uniqueAccs{$_} = 1} @accs;
+    $retstart += 10000;
+}
 
 my $batchSize = 100;
-
-my @uniqueAccs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
-
+my @uniqueAccs = keys(%uniqueAccs);
 my $uniqueAccCount = scalar(@uniqueAccs);
 
 print STDERR "found $uniqueAccCount unique genbank Ids\n";
