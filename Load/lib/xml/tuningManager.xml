@@ -1590,10 +1590,13 @@ and ga.orthomcl_name is null
         where gaup.gene_type = 'protein coding'
       ]]>
     </sql>
+<!--
+This code will scale the context start and end so that ~ 10 genes appear in the genomic context;  it is breaking ... setting most to null;  This was added to help with the gbrwose popup/labels problems.... that is now a nonissue.   This code isn't as important
     <sql>
       <![CDATA[
     update &prefixGeneAttributes&1 gattr
-    set (gattr.context_start, gattr.context_end) = (select context_start, context_end 
+    set (gattr.context_start, gattr.context_end) = (select nvl(context_start, gattr.context_start), 
+                                                           nvl(context_end, gattr.context_end)
                                                     from (select ga.source_id, 
                                                                  round(ga.context_start + (least(ga.start_min, ga.end_max)- ga.context_start) * (10/count(*)) ) as context_start,
                                                                  round(ga.context_end - (ga.context_end - greatest(ga.start_min, ga.end_max)) * (10/count(*)) ) as context_end
@@ -1610,6 +1613,8 @@ and ga.orthomcl_name is null
                                                     )
       ]]>
     </sql>
+-->
+
   </tuningTable>
 
   <tuningTable name="GenomicSequence" prefixEnabled="true">
