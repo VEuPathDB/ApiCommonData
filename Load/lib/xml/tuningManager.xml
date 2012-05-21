@@ -3016,7 +3016,13 @@ from
     from dual
     UNION
 
-    select 'H. arabidopsidis infection expression profile' as profile_name,
+    select 'H. arabidopsidis expression during infection' as profile_name,
+          '' as main_profile_name,
+           'FungiDB' as project_id
+    from dual
+    UNION
+
+    select 'P. ramorum expression in Chlamydospora, P. ramorum expression in zoospores, P. ramorum expression is Tomato media, P. ramorum expression in V8 Liquid media' as profile_name,
           '' as main_profile_name,
            'FungiDB' as project_id
     from dual
@@ -3544,8 +3550,8 @@ Raw Data is available <a href="http://genome-www.stanford.edu/cellcycle/data/raw
     from dual
     UNION
 
-select 'H. arabidopsidis infection expression profile' as profile_name,
-       'HyaarEmoy2::HyaarInfection' as module,
+select 'H. arabidopsidis expression during infection' as profile_name,
+       'HyaarEmoy2::RnaSeqInfection' as module,
        'RNA Seq' as display_name,
        'Baxter, Tripathy et. al Science(2010) Vol. 330 no. 6010 pp. 1549-1551 ' as description,
        'Biological replicates' as x_axis,
@@ -3561,8 +3567,8 @@ select 'H. arabidopsidis infection expression profile' as profile_name,
     from dual
   UNION
 
-select 'P ramorum expression during sporulation and different media profile' as profile_name,
-       'PhyraPr102::PhyraCondition' as module,
+select 'P. ramorum expression in Chlamydospora, P. ramorum expression in zoospores, P. ramorum expression is Tomato media, P. ramorum expression in V8 Liquid media' as profile_name,
+       'PhyraPr102::RnaSeqCondition' as module,
        'RNA Seq' as display_name,
        'Un-published' as description,
        'Experimental replicates' as x_axis,
