@@ -140,14 +140,14 @@ foreach my $seqid (keys%snps){
     foreach my $dbrelid (keys%strains){
 #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
       next if $snps{$seqid}->{$loc}->{strains}->{$dbrelid}; ##already have this one
-      push(@alleles,$strains{$dbrelid}.":".$refna."::::") if $refna eq &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
+      push(@alleles,$strains{$dbrelid}.":".$refna.":::::$dbrelid") if $refna eq &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
     }
     if(scalar(@alleles) >= 1){
       print O "$seqid\tNGS_SNP\tSNP\t$loc\t$loc\t.\t+\t.\tID $snpid; Allele \"".join("\" \"",@alleles)."\";\n";
       $ctSnps++;
       print STDERR "Created $ctSnps SNPs\n" if ($verbose && $ctSnps % 10000 == 0);
-      exit(0) if $ctSnps > 20;
     }
+#    last if $ctSnps % 10 == 0; ##limit output when testing ..
   }
 }
 
