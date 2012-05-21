@@ -45,8 +45,7 @@ my $summaryBatches = $Count / 10000 + 1;
 my $retstart = 1;
 my %uniqueAccs;
 
-while($summaryBatches--) {
-
+while(1) {
     # assume we can fit all these results easily in memory. gets at most 10000
     my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
 
@@ -58,6 +57,8 @@ while($summaryBatches--) {
     my @accs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
     map { $uniqueAccs{$_} = 1} @accs;
     $retstart += 10000;
+    $summaryBatches--;
+    last unless $summaryBatches;
 }
 
 my $batchSize = 100;
