@@ -38,33 +38,13 @@ my $QueryKey = $2;
 my $WebEnv   = $3;
 
 print STDERR "Query found $Count genbank records\n";
-
 exit(0) unless $Count;
 
-my $summaryBatches = $Count / 10000 + 1;
-my $retstart = 1;
-my %uniqueAccs;
+my @uniqueAccs = getAccs($Count, $QueryKey, $WebEnv);
 
-while(1) {
-    # assume we can fit all these results easily in memory. gets at most 10000
-    my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
-
-    print STDERR "$efetch\n\n" if $PRINT_URLS;
-    my $efetch_result = get($efetch);
-
-    die "Failed getting efetch result\n" unless $efetch_result;
-
-    my @accs = $efetch_result =~ /\<Id\>(\d+)/g; # (actually gi's)
-    map { $uniqueAccs{$_} = 1} @accs;
-    $retstart += 10000;
-    $summaryBatches--;
-    last unless $summaryBatches;
-}
-
-my $batchSize = 100;
-my @uniqueAccs = keys(%uniqueAccs);
 my $uniqueAccCount = scalar(@uniqueAccs);
 
+my $batchSize = 100;
 print STDERR "found $uniqueAccCount unique genbank Ids\n";
 my $batchCount = int($uniqueAccCount / $batchSize + 1);
 
@@ -143,4 +123,29 @@ SQL
   my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} keys(%ncbiTaxIds);
   my $query = join("OR", @queries);
   return $query;
+}
+
+sub getAccs {
+    my ($Count, $QueryKey, $WebEnv) = @_;
+     my $summaryBatches = int($Count / 10000 + 1);
+     my $retstart = 1;
+     my %uniqueAccs;
+
+     while(1) {
+	 # gets at most 10000
+	 my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
+
+	 print STDERR "$efetch\n\n" if $PRINT_URLS;
+	 my $efetch_result = get($efetch);
+
+	 die "Failed getting efetch result\n" unless $efetch_result;
+
+	 my @accs = $efetch_result =~ /\<Id\>(\d+)/g; # get unique accs
+	 map { $uniqueAccs{$_} = 1} @accs;
+	 $retstart += 10000;
+	 $summaryBatches--;
+	 last unless $summaryBatches;
+     }
+
+     return keys(%uniqueAccs);
 }
