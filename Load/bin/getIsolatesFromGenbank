@@ -40,13 +40,13 @@ my $WebEnv   = $3;
 print STDERR "Query found $Count genbank records\n";
 exit(0) unless $Count;
 
-my @uniqueAccs = getAccs($Count, $QueryKey, $WebEnv);
+my @uniqueGIs = getGIs($Count, $QueryKey, $WebEnv);
 
-my $uniqueAccCount = scalar(@uniqueAccs);
+my $uniqueGICount = scalar(@uniqueGIs);
 
 my $batchSize = 100;
-print STDERR "found $uniqueAccCount unique genbank Ids\n";
-my $batchCount = int($uniqueAccCount / $batchSize + 1);
+print STDERR "found $uniqueGICount unique genbank Ids\n";
+my $batchCount = int($uniqueGICount / $batchSize + 1);
 
 # group the GIs into batches, to reduce internet accesses.
 my @batches;
@@ -54,8 +54,8 @@ my $totcount;
 for (my $i=0; $i<$batchCount; $i++) {
   my $sliceStart = $i*$batchSize;
   my $sliceEnd = ($i+1)*$batchSize-1;
-  $sliceEnd = $#uniqueAccs if $sliceEnd > $#uniqueAccs;
-  my @tmp = @uniqueAccs[$sliceStart .. $sliceEnd];
+  $sliceEnd = $#uniqueGIs if $sliceEnd > $#uniqueGIs;
+  my @tmp = @uniqueGIs[$sliceStart .. $sliceEnd];
   $batches[$i] = join(",", @tmp) if (scalar @tmp>0);
 }
 
@@ -72,7 +72,7 @@ foreach my $batch (@batches) {
 }
 
 
-print STDERR "\nFetched " . scalar(@batches) . " isolate batches containing $uniqueAccCount unique isolate records.\n";
+print STDERR "\nFetched " . scalar(@batches) . " isolate batches containing $uniqueGICount unique isolate records.\n";
 
 
 sub usage {
@@ -125,11 +125,11 @@ SQL
   return $query;
 }
 
-sub getAccs {
+sub getGIs {
     my ($Count, $QueryKey, $WebEnv) = @_;
      my $summaryBatches = int($Count / 10000 + 1);
      my $retstart = 1;
-     my %uniqueAccs;
+     my %uniqueGIs;
 
      while(1) {
 	 # gets at most 10000
@@ -140,12 +140,12 @@ sub getAccs {
 
 	 die "Failed getting efetch result\n" unless $efetch_result;
 
-	 my @accs = $efetch_result =~ /\<Id\>(\d+)/g; # get unique accs
-	 map { $uniqueAccs{$_} = 1} @accs;
+	 my @GIs = $efetch_result =~ /\<Id\>(\d+)/g; # get unique GIs
+	 map { $uniqueGIs{$_} = 1} @GIs;
 	 $retstart += 10000;
 	 $summaryBatches--;
 	 last unless $summaryBatches;
      }
 
-     return keys(%uniqueAccs);
+     return keys(%uniqueGIs);
 }
