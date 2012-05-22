@@ -15,8 +15,9 @@ my ($outputFile, $organismAbbrev) = @ARGV;
 
 my $parentNcbiTaxonIds;
 if (!$organismAbbrev) {
-  my $taxonIdsFromStdIn = <STDIN>;
-  $parentNcbiTaxonIds = chomp($taxonIdsFromStdIn);
+  my @taxonIdsFromStdIn = <STDIN>;
+  $parentNcbiTaxonIds = $taxonIdsFromStdIn[0];
+  chomp($parentNcbiTaxonIds);
 }
 
 die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $parentNcbiTaxonIds;
@@ -30,12 +31,13 @@ my $esearch = "$utils/esearch.fcgi?db=$db&retmax=1&usehistory=y&term=";
 # get isolate GIs for our list of taxa (and their child taxa)
 my @giList = getGiList($organismAbbrev, $parentNcbiTaxonIds);
 my $giCount = scalar(@giList);
-print STDERR "found $giCount unique genbank Ids\n";
+print STDERR "Found $giCount unique GIs total\n";
 
 # group the GIs into batches, to reduce internet accesses.
 my $batchSize = 100;
 my @giBatches;
 my $batchCount = int($giCount / $batchSize + 1);
+print STDERR "Group GIs into $batchCount batches of 100.  Issue an efetch query for each batch to get genbank records\n";
 for (my $i=0; $i<$batchCount; $i++) {
   my $sliceStart = $i*$batchSize;
   my $sliceEnd = ($i+1)*$batchSize-1;
@@ -51,7 +53,7 @@ foreach my $batch (@giBatches) {
   print STDERR ".";
   my $url = "$utils/efetch.fcgi?db=$db&id=$batch&rettype=gb&retmode=text";
   my $gb_result = get($url);
-  print STDERR "batch $c\n";
+  print STDERR "batch $c\n" if $PRINT_URLS;
   print STDERR "\n$url\n\n" if $PRINT_URLS;
 
   if (!$gb_result) {
@@ -72,10 +74,14 @@ print STDERR "\nFetched " . scalar(@giBatches) . " isolate batches containing $g
 sub getGiList {
     my ($organismAbbrev, $parentNcbiTaxonIds) = @_;
 
+    print STDERR "Construct a set of esearch query strings which include at most 100 taxa each.\n";
     # use eutils to run query at ncbi.  returns a handle on a set of records
     my @queries = buildQueryStrings($organismAbbrev, $parentNcbiTaxonIds);
+    my $querytot = scalar(@queries);
+    print STDERR "  constructed $querytot esearch queries.  \nRun each esearch query to get handles on a set of genbank records.\n";
 
     my @giList;
+    my $queryCnt = 1;
     foreach my $query (@queries) {
 	my $esearch_result = get("$esearch$query");
 	print STDERR "$esearch$query\n\n" if $PRINT_URLS;
@@ -89,7 +95,8 @@ sub getGiList {
 	my $QueryKey = $2;
 	my $WebEnv   = $3;
 
-	print STDERR "Query found $Count genbank records\n";
+	print STDERR "Esearch query #$queryCnt found $Count genbank records\n";
+	$queryCnt++;
 
 	next unless $Count;
 
@@ -116,17 +123,20 @@ sub buildQueryStrings {
   $dbh->{RaiseError} = 1;
 
   # either get parent ncbi taxon ids from organism table or stdin
-  my $inStmt = "
+  my $inClause;
+  if ($parentNcbiTaxonIds) {
+    $inClause = $parentNcbiTaxonIds;
+  } else {
+    $inClause = "
      select FAMILY_NCBI_TAXON_IDS
      from apidb.organism
      where abbrev = '$organismAbbrev'";
-
-  $inStmt = $parentNcbiTaxonIds if $parentNcbiTaxonIds;
+  }
 
   my $sql = <<SQL;
   select ncbi_tax_id
   from SRes.Taxon
-  start with ncbi_tax_id in ($inStmt)
+  start with ncbi_tax_id in ($inClause)
   connect by prior taxon_id = parent_id
 SQL
 
@@ -157,7 +167,6 @@ SQL
       my $queryString = join("OR", @queries);
       push(@queryStrings,$queryString);
   }
-  print STDERR "found $batchIndex batches\n";
   return @queryStrings;
 }
 
@@ -167,6 +176,7 @@ sub getGIs {
      my $retstart = 1;
      my %uniqueGIs;
 
+    print STDERR "  running $summaryBatches esummary queries to get GIs in batches of 10000 \n";
      while(1) {
 	 # gets at most 10000
 	 my $efetch = "$utils/esummary.fcgi?db=$db&query_key=$QueryKey&WebEnv=$WebEnv&retstart=$retstart&retmax=10000";
@@ -193,7 +203,7 @@ sub usage {
 Use NCBI's eutils to fetch isolate sequences from genbank.  All sequences
 are concatenated into a single genbank file.  Gets isolates for all NCBI
 taxon IDs that are *children* of the provided parent ncbiTaxonIds (including
-those provided).
+those provided).  Reads the GUS database to get taxon tree info.
 
 usage: 
   getIsolatesFromGenbank outputfile organismAbbrev
