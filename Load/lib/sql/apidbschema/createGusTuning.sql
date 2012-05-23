@@ -143,8 +143,6 @@ alter table dots.Est modify (accession varchar2(50));
 
 alter table sres.ExternalDatabase modify (name varchar2(150));
 
-alter table sres.ExternalDatabaseRelease add (id_is_alias  number(1));
-
 alter table sres.Reference modify (author varchar2(2000));
 
 -- indexes for orthomcl keyword and pfam searches
