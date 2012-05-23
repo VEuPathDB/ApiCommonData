@@ -22,6 +22,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="GC_signal" ignore="true"/>
   <feature name="CAAT_signal" ignore="true"/>
   <feature name="RBS" ignore="true"/>
+  <feature name="mobile_element" ignore="true"/>
+  <feature name="source" ignore="true"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -68,6 +70,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
+    <qualifier name="experiment" ignore="true" />`
   </feature>
 
   <feature name="tRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
