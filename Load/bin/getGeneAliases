@@ -27,8 +27,6 @@ my $dbh = $db->getQueryHandle(0);
 
 my $genomeExtDbRlsId = getDbRlsId($genomeExtDbSpec);
 
-my $dbRefNAFeatureExtDbRls;
-
 my $sql = "select source_id,na_feature_id from dots.genefeature where external_database_release_id = $genomeExtDbRlsId";
 
 my $stmt1 = $dbh->prepareAndExecute($sql);
@@ -56,12 +54,8 @@ my $stmt2 = $dbh->prepare($sql);
 
 
 foreach my $sourceId (keys %genes) {
-    
-    if ($dbRefNAFeatureExtDbRls){
-	$stmt2->execute($genes{$sourceId}->{'nafeat'},$genes{$sourceId}->{'nafeat'});
-    }else{
-	$stmt2->execute($genes{$sourceId}->{'nafeat'});
-    }
+
+  $stmt2->execute($genes{$sourceId}->{'nafeat'},$genes{$sourceId}->{'nafeat'});
 
   while(my ($name) = $stmt2->fetchrow_array()){
     push(@{$genes{$sourceId}->{'aliases'}},$name);
