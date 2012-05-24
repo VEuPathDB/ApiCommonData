@@ -138,7 +138,8 @@ SQL
 SQL
       }
 
-      my $stmt = $dbh->prepare($sql);
+      my $stmt = $dbh->prepare($sql)
+	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
       $stmt->execute()
 	or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
       $stmt->finish();
