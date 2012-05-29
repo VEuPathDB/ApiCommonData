@@ -11,16 +11,11 @@ $| = 1;
 
 my $PRINT_URLS = 0;
 
-my ($outputFile, $organismAbbrev) = @ARGV;
+my ($parentNcbiTaxonIds, $outputFile) = @ARGV;
 
-my $parentNcbiTaxonIds;
-if (!$organismAbbrev) {
-  my @taxonIdsFromStdIn = <STDIN>;
-  $parentNcbiTaxonIds = $taxonIdsFromStdIn[0];
-  chomp($parentNcbiTaxonIds);
-}
+my $organismAbbrev;
 
-die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $parentNcbiTaxonIds;
+die "Must provide parent taxon IDs\n" unless $parentNcbiTaxonIds;
 
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
