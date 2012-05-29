@@ -167,6 +167,13 @@ SQL
       my $queryString = join("OR", @queries);
       push(@queryStrings,$queryString);
   }
+
+  foreach my $batch (@$ncbiTaxIdsBatches) {
+      my @queries = map {"(((txid${_}[Organism:exp]) AND (strain)) NOT (genome))"} @$batch;
+      my $queryString = join("OR", @queries);
+      push(@queryStrings,$queryString);
+  }
+
   return @queryStrings;
 }
 
