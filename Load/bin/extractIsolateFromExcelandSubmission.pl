@@ -137,8 +137,8 @@ while(my ($k, $v) = each %hash) {
   my $state        = $hash{$k}{$cn{state}};
   my $county       = $hash{$k}{$cn{county}};
   my $city         = $hash{$k}{$cn{city}};
-  my $day          = $hash{$k}{$cn{day}};
-  my $month        = $hash{$k}{$cn{month}};
+  my $day          = $hash{$k}{$cn{day}} || '01';
+  my $month        = $hash{$k}{$cn{month}} || 'Jan';
   my $year         = $hash{$k}{$cn{year}};
   my $host         = $hash{$k}{$cn{host}};
   my $genotype     = $hash{$k}{$cn{genotype}};
@@ -194,18 +194,24 @@ while(my ($k, $v) = each %hash) {
   my($seq3_fwd_primer_seq, $seq3_rev_primer_seq) = split /;/, $seq3_primer_seqs;
   my($seq4_fwd_primer_seq, $seq4_rev_primer_seq) = split /;/, $seq4_primer_seqs;
 
-  $country    .= ", $city" if $city;
-  $country    .= ", $state" if $state;
+  $country    .= ": $city" if $city;
   $country    .= ", $county" if $county;
+  $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
-  $year        .= "-$month" if $month;
-  $year        .= "-$day" if $day;
 
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
   $note .= "; purpose of sample collection: $purpose" if $purpose;
   $note =~ s/^; //;
+
+  my @mon = qw/null Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
+  $month =~ s/^0// if $month;
+
+  my $collection_date = "";
+  $collection_date  = sprintf("%02d", $day);
+  $collection_date .= "-". $mon[$month]; 
+  $collection_date .= "-$year" if $year;
 
   die "Cannot find isolate species. Please check column E\n" unless $species;
 
@@ -240,7 +246,7 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[genotype=$genotype]" if $genotype;
     $modifier .= "[subtype=$subtype]" if $subtype;
     $modifier .= "[isolation-source=$source]" if $source;
-    $modifier .= "[collection-date=$year]" if $year;
+    $modifier .= "[collection-date=$collection_date]" if $year;
     $modifier .= "[host=$host]" if $host;
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
