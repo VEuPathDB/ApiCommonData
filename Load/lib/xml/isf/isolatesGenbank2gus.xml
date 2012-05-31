@@ -197,6 +197,11 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="standard_name"/>
   </feature>
 
+  <feature name="mobile_element" table="DoTS::IsolateFeature" so="transposable_element">
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="mobile_element_type" column="label"/>
+  </feature>
+
   <!--  from ToxoDB -->
   <feature name="RFLP" table="DoTS::IsolateFeature" so="RFLP_fragment">
     <qualifier name="locus_tag" column="source_id"/>
