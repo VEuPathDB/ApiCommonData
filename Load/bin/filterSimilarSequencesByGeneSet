@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+
+# extract the maximal subset of the SimilarSequences table involving only proteins from the given fasta file
+
+use strict;
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+
+use Getopt::Long;
+use GUS::Supported::GusConfig;
+use GUS::ObjRelP::DbiDatabase;
+
+my ($gusConfigFile, $suffix, $proteinsFile, $verbose);
+&GetOptions("gusConfigFile=s" => \$gusConfigFile,
+	    "suffix=s" => \$suffix,
+	    "proteinsFile=s" => \$proteinsFile,
+	    "verbose!" => \$verbose);
+
+&usage
+  if !$proteinsFile
+     || !$suffix;
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+
+my $dbh = $db->getQueryHandle(0);
+
+  open(F, $proteinsFile) || die "Can't open proteins file '$proteinsFile'\n";
+
+  # make a table to hold proteins
+  $dbh->do(<<SQL);
+    create table apidb.ProteinList${suffix} nologging as
+    select query_id as id from apidb.SimilarSequences\@orth500n where 1=0
+SQL
+
+  # prepare an insert statement
+  my $insert = $dbh->prepare(<<SQL) or die;
+    insert into apidb.ProteinList${suffix} values (?)
+SQL
+
+  # insert protein IDs from file
+  while(<F>) {
+    next unless /\>\s*(\S+)/;
+    $insert->execute($1);
+  }
+
+  # index protein table
+  $dbh->do(<<SQL);
+    create index ProteinList_ix on apidb.ProteinList${suffix}(id)
+SQL
+
+  # extract the subset of SimilarSequences in which both genes are in the given set
+  $dbh->do(<<SQL) or die "trying";
+          insert into apidb.SimilarSequences$suffix
+                      (query_id, subject_id, query_taxon_id, subject_taxon_id,
+                       evalue_mant, evalue_exp, percent_identity, percent_match)
+          select query_id, subject_id, query_taxon_id, subject_taxon_id,
+                 evalue_mant, evalue_exp, percent_identity, percent_match
+          from apidb.SimilarSequences\@orth500n ss, apidb.ProteinList${suffix} p1, apidb.ProteinList${suffix} p2
+          where ss.query_id = p1.id
+            and ss.subject_id = p2.id
+SQL
+
+  # drop protein table
+  $dbh->do(<<SQL);
+    drop table apidb.ProteinList${suffix}
+SQL
+
+sub usage {
+  print STDERR <<USAGE;
+
+filterSimilarSequencesByGeneSet -suffix <suffix> -proteinsFile <fasta-file>
+
+
+USAGE
+}
