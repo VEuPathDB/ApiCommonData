@@ -161,8 +161,6 @@ sub insertAutomaticTerms {
     my $field = $sqlTerm->getField();
     my $type = $sqlTerm->getType();
 
-    next if($type eq 'product');
-
     # Get na_sequence_id for the orig, AND isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $isolateVocabularyIds->{$term}->{$type};
     my $naSequenceIds = $dotsIsolatesNaSequences->{$table}->{uc($field)}->{$term};
@@ -205,21 +203,12 @@ sub queryDotsIsolates {
 
   my $data = {};
 
-  my %all_sql = ('IsolateFeature' => <<Sql,
-select distinct na_sequence_id, source_id, product from dots.isolatefeature
-Sql
-             'IsolateSource' => <<Sql,
+  my %all_sql = ('IsolateSource' => <<Sql,
 select distinct na_sequence_id, country, specific_host, isolation_source from dots.isolatesource
 Sql
-# probably not needed anymore
-             'ExternalNaSequence' => <<Sql,
-select distinct s.na_sequence_id, s.source_id from dots.nasequence s, dots.isolatesource i where i.na_sequence_id = s.na_sequence_id
-Sql
-            );
+		);
 
-  my @tables = ('IsolateFeature', 'IsolateSource',
-		'ExternalNaSequence'
-      );
+  my @tables = ('IsolateSource' );
 
   my $dbh = $self->getDbh();
 
@@ -229,7 +218,6 @@ Sql
     $sh->execute();
 
     while(my $row = $sh->fetchrow_hashref) {
-#      my $identifier = $table eq 'IsolateFeature' ? $row->{NA_FEATURE_ID} : $row->{NA_SEQUENCE_ID};
       my $identifier = $row->{NA_SEQUENCE_ID};
 
       foreach my $field (keys %$row) {

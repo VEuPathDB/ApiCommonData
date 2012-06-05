@@ -73,7 +73,7 @@ sub extract {
   my $queryField = $self->getType() eq 'geographic_location' ? 'country' : $self->getType();
   my $type = $self->getType();
 
-  my $table = $type eq 'product' ? 'IsolateFeature' : 'IsolateSource';
+  my $table = 'IsolateSource';
 
   my $sql = <<SQL;
 select distinct $queryField as term

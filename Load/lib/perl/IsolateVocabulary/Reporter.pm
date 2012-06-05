@@ -73,9 +73,6 @@ sub report {
   foreach my $vocabTerm (@{$sqlTerms}) {
     next if($vocabTerm->getAlreadyMaps());
 
-    # there is no good way to check this for products
-    next if($type eq 'product');
-    
     my $term = $vocabTerm->getTerm();
 
     unless($xmlTermsHash->{$term}) {

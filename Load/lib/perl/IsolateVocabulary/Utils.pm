@@ -25,7 +25,6 @@ sub isValidType {
 
   my @allowed = ('geographic_location',
                  'specific_host',
-                 'product',
                  'isolation_source'
                 );
 
