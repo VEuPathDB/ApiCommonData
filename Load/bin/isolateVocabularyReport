@@ -36,7 +36,11 @@ my $vocabFileReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileR
 print STDERR "\nextracting terms from vocab file\n";
 my $vocabTerms = $vocabFileReader->extract();
 
-my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $vocabTerms, $type);
+print STDERR  "\ncollecting terms from vocab file\n";
+my $termsInVocab = $vocabFileReader->getTermsInVocab();
+
+
+my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $vocabTerms, $type, $termsInVocab);
 
 print STDERR "\nmaking report\n";
 $reporter->report();
@@ -46,7 +50,7 @@ sub usage {
   my ($m) = @_;
 
   print STDERR "$m\n\n" if($m);
-  print STDERR "perl isolateVocabularyReport --type geographic_location|specific_host|product|isolation_source --xml_file xmlfile --vocab_file vocabfile [--gus_config_file gusconfigfile] \n";
+  print STDERR "perl isolateVocabularyReport --type geographic_location|specific_host|isolation_source --xml_file xmlfile --vocab_file vocabfile [--gus_config_file gusconfigfile] \n";
   print STDERR "
 
 Report terms used in isolates loaded into the database but not found in the provided vocabulary file.
