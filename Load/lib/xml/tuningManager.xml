@@ -6715,6 +6715,27 @@ tablespace indx
         ) p,
         (select distinct project_id, organism from apidbtuning.sequenceattributes) s
         where p.project_id = s.project_id
+        union 
+        select s.project_id as project_id, 
+              Case when (s.organism like 'Aspergillus%' or
+                     s.organism like 'Emericella%' or
+                     s.organism like 'Candida%' or
+                     s.organism like 'Neurospora%' or
+                     s.organism like 'Saccharomyces%' or
+                     s.organism like 'Schizosaccharomyces%' or
+                     s.organism like 'Sordaria%')
+               then 'Ascomycota' 
+               when ( s.organism like 'Tremella%' or
+                      s.organism like 'Cryptococcus%' )
+               then 'Basidiomycota'
+               when (s.organism like 'Hyaloperonospora%' or
+                     s.organism like 'Phytophthora%' or
+                     s.organism like 'Pythium%' )
+               then 'Heterokontophyta'
+               end as taxon_node,
+               s.organism as organism
+        from apidbtuning.sequenceattributes s
+        where s.project_id = 'FungiDB'
 	]]>
     </sql>
   </tuningTable>
