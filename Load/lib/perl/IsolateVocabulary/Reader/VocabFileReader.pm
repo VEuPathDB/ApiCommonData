@@ -98,6 +98,24 @@ SQL
   return \@sqlTerms;
 }
 
+sub getTermsInVocab {
+  my ($self) = @_;
+  my @termsInVocab;
+
+  open(F, $self->getVocabFile()) || die "Can't open vocab file for reading";
+  my $res = {};
+
+  while(<F>) {
+    chomp;
+    my @line = split(/\t/);
+    scalar(@line) == 3 || die "invalid line in vocab file";
+
+    my ($term, $type) = ($line[0], $line[2]);
+    $res->{$term}->{$type} = 1;
+  }
+
+  return $res;
+}
 
 1;
 
