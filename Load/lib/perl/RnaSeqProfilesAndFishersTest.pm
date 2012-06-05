@@ -23,6 +23,7 @@ my $diffSuffix = ".diff";
  sub getProfileSetName          { $_[0]->{profileSetName} }
  sub getSamples                 { $_[0]->{samples} }
  sub getIsPairedEnd             { $_[0]->{isPairedEnd} }
+ sub getIsTimeSeries            { $_[0]->{isTimeSeries} }
 
 #-------------------------------------------------------------------------------
 sub new {
@@ -31,7 +32,6 @@ sub new {
                           'samples',
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
-
   if(scalar @{$args->{samples}} > 1 ) {
     my $isPairedEnd = $self->getIsPairedEnd();
     unless($isPairedEnd eq 'yes' || $isPairedEnd eq 'no') {
@@ -45,6 +45,7 @@ sub new {
 
 sub munge {
   my ($self) = @_;
+  my $isTimeSeries = $self->getIsTimeSeries();
   my $profileSetName = $self->getProfileSetName();
   my $samples = $self->getSamples();
 
@@ -54,7 +55,8 @@ sub munge {
          makePercentiles => 1,
          fileSuffix => $fileSuffixBase.$minSuffix,
          profileSetName => $profileSetName,
-         samples => $samples
+         samples => $samples,
+         isTimeSeries => $isTimeSeries
         });
   $minProfile->munge();
 
