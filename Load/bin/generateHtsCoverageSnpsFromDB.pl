@@ -25,11 +25,11 @@ my $verbose;
             "referenceStrain|s=s"=> \$referenceStrain,
             );
 
-if (!$referenceOrganism || !$referenceStrain){
+if (!$referenceOrganism){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
-  generateCoverageSnpsFromDB.pl --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --referenceStrain <strain of reference organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose!
+  generateCoverageSnpsFromDB.pl --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose!
 endOfUsage
 }
 
@@ -68,6 +68,7 @@ while(my($strain,$rel_id,$count) = $strainStmt->fetchrow_array()){
 
 print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
 
+die "ERROR: unable to identify any strains for referenceOrganism $referenceOrganism\n" unless scalar(keys%strains) > 0;
 
 my $snpSQL = <<EOSQL;
 select sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sv.allele,sv.external_database_release_id,sf.reference_strain
@@ -99,6 +100,8 @@ while(my $row = $stmt->fetchrow_hashref()){
   $ct++;
   print STDERR "Retrieved $ct rows\n" if ($verbose && $ct % 10000 == 0);
 }
+
+die "ERROR: unable to determine reference strain from the snpFeatures\n" unless $referenceStrain;
 
 ##need the ext_db_rel_id for reference strain as want to add to strains if not there.
 my $refSQL = <<EOSQL;
