@@ -68,10 +68,92 @@ CREATE TABLE ApiDB.PathwayRelationship (
   ROW_ALG_INVOCATION_ID   NUMBER(12),
   PRIMARY KEY (PATHWAY_RELATIONSHIP_ID),
   FOREIGN KEY (PATHWAY_ID) REFERENCES ApiDB.Pathway (PATHWAY_ID),
-  FOREIGN KEY (NODE_ID) REFERENCES ApiDB.PathwayNode (NODE_ID),
-  FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.PathwayNode (NODE_ID)
+  FOREIGN KEY (NODE_ID) REFERENCES ApiDB.PathwayNode (PATHWAY_NODE_ID),
+  FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.PathwayNode (PATHWAY_NODE_ID)
 );
 
 CREATE SEQUENCE ApiDB.Pathway_SEQ;
 CREATE SEQUENCE ApiDB.PathwayNode_SEQ;
 CREATE SEQUENCE ApiDB.PathwayRelationship_SEQ;
+
+
+
+
+
+GRANT SELECT ON ApiDB.Pathway TO gus_r;
+GRANT SELECT ON ApiDB.PathwayNode TO gus_r;
+GRANT SELECT ON ApiDB.PathwayRelationship TO gus_r;
+
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Pathway TO gus_w;
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayNode TO gus_w;
+GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayRelationship TO gus_w;
+
+GRANT SELECT ON ApiDB.Pathway_SEQ TO gus_w;
+GRANT SELECT ON ApiDB.PathwayNode_SEQ TO gus_w;
+GRANT SELECT ON ApiDB.PathwayRelationship_SEQ TO gus_w;
+
+
+
+
+
+CREATE INDEX apidb.pathway_idx ON ApiDB.Pathway (PATHWAY_ID,NAME);
+CREATE INDEX apidb.pathwayNode_idx ON ApiDB.PathwayNode (PATHWAY_NODE_ID,DISPLAY_LABEL);
+CREATE INDEX apidb.pathwayRelationship_idx ON ApiDB.PathwayRelationship (PATHWAY_RELATIONSHIP_ID,PATHWAY_ID);
+
+
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable,
+     modification_date, user_read, user_write, group_read, group_write,
+     other_read, other_write, row_user_id, row_group_id, row_project_id,
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'Pathway',
+       'Standard', 'PATHWAY_ID',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'Pathway' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable,
+     modification_date, user_read, user_write, group_read, group_write,
+     other_read, other_write, row_user_id, row_group_id, row_project_id,
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'PathwayNode',
+       'Standard', 'PATHWAY_NODE_ID',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'PathwayNode' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable,
+     modification_date, user_read, user_write, group_read, group_write,
+     other_read, other_write, row_user_id, row_group_id, row_project_id,
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'PathwayRelationship',
+       'Standard', 'PATHWAY_RELATIONSHIP_ID',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'PathwayRelationship' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+
+exit;
