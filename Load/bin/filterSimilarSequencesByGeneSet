@@ -10,15 +10,16 @@ use Getopt::Long;
 use GUS::Supported::GusConfig;
 use GUS::ObjRelP::DbiDatabase;
 
-my ($gusConfigFile, $suffix, $proteinsFile, $verbose);
+my ($gusConfigFile, $suffix, $proteinsFile, $undo, $verbose);
 &GetOptions("gusConfigFile=s" => \$gusConfigFile,
 	    "suffix=s" => \$suffix,
 	    "proteinsFile=s" => \$proteinsFile,
+	    "undo!" => \$undo,
 	    "verbose!" => \$verbose);
 
 &usage
-  if !$proteinsFile
-     || !$suffix;
+  if !$suffix
+     || (!$undo && !$proteinsFile);
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -30,32 +31,50 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
 
 my $dbh = $db->getQueryHandle(0);
 
-  open(F, $proteinsFile) || die "Can't open proteins file '$proteinsFile'\n";
+if ($undo) {
 
-  # make a table to hold proteins
+  print STDERR "dropping ProteinList${suffix} (or trying to) at " . `date` . "\n" if $verbose;
+  # this table is normally deleted at the end of a run, so not really necessary.
   $dbh->do(<<SQL);
+    drop table apidb.ProteinList${suffix}
+SQL
+
+  print STDERR "truncating SimilarSequences${suffix} at " . `date` . "\n" if $verbose;
+  # populating this table is this scripts main job, so the undo is to truncate it
+  $dbh->do(<<SQL) or die "trying to truncate apidb.SimilarSequences${suffix}";
+    truncate table apidb.SimilarSequences${suffix}
+SQL
+
+  print STDERR "finished undoing at " . `date` . "\n" if $verbose;
+  exit;
+}
+
+open(F, $proteinsFile) || die "Can't open proteins file '$proteinsFile' at " . `date` . "\n";
+
+  print STDERR "creating table apidb.ProteinList${suffix} at " . `date` . "\n" if $verbose;
+$dbh->do(<<SQL);
     create table apidb.ProteinList${suffix} nologging as
     select query_id as id from apidb.SimilarSequences\@orth500n where 1=0
 SQL
 
-  # prepare an insert statement
-  my $insert = $dbh->prepare(<<SQL) or die;
+  print STDERR "preparing protein-list insert statement at " . `date` . "\n" if $verbose;
+my $insert = $dbh->prepare(<<SQL) or die;
     insert into apidb.ProteinList${suffix} values (?)
 SQL
 
-  # insert protein IDs from file
-  while(<F>) {
-    next unless /\>\s*(\S+)/;
-    $insert->execute($1);
-  }
+  print STDERR "reading protein file into ProteinList${suffix} at " . `date` . "\n" if $verbose;
+while(<F>) {
+  next unless /\>\s*(\S+)/;
+  $insert->execute($1);
+}
 
-  # index protein table
-  $dbh->do(<<SQL);
+  print STDERR "indexing ProteinList${suffix} at " . `date` . "\n" if $verbose;
+$dbh->do(<<SQL);
     create index ProteinList_ix on apidb.ProteinList${suffix}(id)
 SQL
 
-  # extract the subset of SimilarSequences in which both genes are in the given set
-  $dbh->do(<<SQL) or die "trying";
+  print STDERR "extracting the subset of SimilarSequences in which both genes are in the given set at " . `date` . "\n" if $verbose;
+$dbh->do(<<SQL) or die "trying";
           insert into apidb.SimilarSequences$suffix
                       (query_id, subject_id, query_taxon_id, subject_taxon_id,
                        evalue_mant, evalue_exp, percent_identity, percent_match)
@@ -66,16 +85,20 @@ SQL
             and ss.subject_id = p2.id
 SQL
 
-  # drop protein table
-  $dbh->do(<<SQL);
+  print STDERR "dropping apidb.ProteinList${suffix} at " . `date` . "\n" if $verbose;
+$dbh->do(<<SQL);
     drop table apidb.ProteinList${suffix}
 SQL
+
+  print STDERR "finished at " . `date` . "\n" if $verbose;
 
 sub usage {
   print STDERR <<USAGE;
 
-filterSimilarSequencesByGeneSet -suffix <suffix> -proteinsFile <fasta-file>
+filterSimilarSequencesByGeneSet -suffix <suffix> [ -proteinsFile <fasta-file> | -undo ] [ -gusConfigFile <file> ] [ -verbose ]
 
 
 USAGE
+
+  die "penniless";
 }
