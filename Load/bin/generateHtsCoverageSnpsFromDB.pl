@@ -22,13 +22,14 @@ my $verbose;
             "outputFile|o=s"=> \$outputFile,
             "verbose|v!"=> \$verbose,
             "referenceOrganism|r=s"=> \$referenceOrganism,
+            "referenceStrain|s=s"=> \$referenceStrain,
             );
 
 if (!$referenceOrganism){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
-  generateCoverageSnpsFromDB.pl --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to> --referenceStrain <strain of reference organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose!
+  generateCoverageSnpsFromDB.pl --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --referenceStrain <strain of reference organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose!
 endOfUsage
 }
 
@@ -91,7 +92,7 @@ while(my $row = $stmt->fetchrow_hashref()){
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{id} = $row->{SNP_ID};
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{ref} = $row->{REFERENCE_NA};
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{strains}->{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ALLELE}; ##could be multiple alleles but doesn't matter as not adding any new ones if there is at least one
-  if($referenceStrain && $referenceStrain ne $row->{REFERENCE_STRAIN}){
+  if($referenceStrain &&  $row->{REFERENCE_STRAIN} && $referenceStrain ne $row->{REFERENCE_STRAIN}){
     die "ERROR: there are multiple references strains for this organism: $referenceStrain, $row->{REFERENCE_STRAIN}\n";
   }
   $referenceStrain = $row->{REFERENCE_STRAIN} unless $referenceStrain;
@@ -117,8 +118,11 @@ while(my($id) = $refStmt->fetchrow_array()){
   push(@tmpEx,$id);
 }
 die "ERROR getting reference external_database_release_id: query returned more than one row\n" if scalar(@tmpEx) > 1;
-$strains{$tmpEx[0]} = $referenceStrain unless $strains{$tmpEx[0]};
 my $referenceDbRelId = $tmpEx[0];
+if(! $strains{$tmpEx[0]}){
+  print STDERR "Also adding SeqVars for reference strain $referenceStrain\n";
+  $strains{$tmpEx[0]} = $referenceStrain; 
+}
 
 my $ntSQL = <<EOSQL;
 select dbms_lob.substr(sequence,1,?)
@@ -138,9 +142,10 @@ foreach my $seqid (keys%snps){
     my $snpid = $snps{$seqid}->{$loc}->{id};
     my $refna = $snps{$seqid}->{$loc}->{ref};
     foreach my $dbrelid (keys%strains){
+      my $stNa = &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
 #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
       next if $snps{$seqid}->{$loc}->{strains}->{$dbrelid}; ##already have this one
-      push(@alleles,$strains{$dbrelid}.":".$refna.":::::$dbrelid") if $refna eq &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
+      push(@alleles,$strains{$dbrelid}.":".$stNa.":::::$dbrelid") if $stNa =~ /[ACTG]/i; ## if $refna eq $stNa;
     }
     if(scalar(@alleles) >= 1){
       print O "$seqid\tNGS_SNP\tSNP\t$loc\t$loc\t.\t+\t.\tID $snpid; Allele \"".join("\" \"",@alleles)."\";\n";
