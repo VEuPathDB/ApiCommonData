@@ -25,7 +25,7 @@ my $verbose;
             "referenceStrain|s=s"=> \$referenceStrain,
             );
 
-if (!$referenceOrganism){
+if (!$referenceOrganism || !$referenceStrain){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
