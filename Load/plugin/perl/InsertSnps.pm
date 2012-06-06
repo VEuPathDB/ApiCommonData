@@ -584,10 +584,9 @@ sub createSnpFeature {
     my ($strain, $base, $coverage, $percent, $quality, $pvalue, $seqVarExtRelId) = split(':', $_);
 
     # Reverse Compliment if it is on the Reverse Strand
-    # no, shouldn't do this .. should always store on forward strand .. can reverse complement when displaying if necessary.
-#    if($strand == -1) {
-#      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
-#    }
+    if($strand == -1) {
+      $base = CBIL::Bio::SequenceUtils::reverseComplementSequence($base);
+    }
 
     if($strand == 0) {
       $self->userError("Unknown strand for sourceId $sourceId");
@@ -627,31 +626,32 @@ sub createSnpFeature {
 #    my $svLoc = $self->getNaLoc($start, $end);
 #    $seqVar->addChild($svLoc);
 
-    ## need to add a seqvar for the reference genome if that hasn't been added already.
-    my $haveRef = 0;
-    my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
-    foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
-      if($self->getArg('NGS_SNP')){
-        $haveRef = 1 if ($c->getExternalDatabaseReleaseId() == $naSeq->getExternalDatabaseReleaseId() && $c->getAllele() eq $referenceBase);
-      }else{
-        $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
-      }
+  ## need to add a seqvar for the reference genome if that hasn't been added already.
+  my $haveRef = 0;
+  my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
+  $snpFeature->setReferenceNa($referenceBase) unless ($snpFeature->getReferenceNa() && $snpFeature->getReferenceNa() eq $referenceBase);
+  foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
+    if($self->getArg('NGS_SNP')){
+      $haveRef = 1 if ($c->getExternalDatabaseReleaseId() == $naSeq->getExternalDatabaseReleaseId() && $c->getAllele() eq $referenceBase);
+    }else{
+      $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
     }
-    if(!$haveRef && (!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature'))){  ##create a reference seqvar here ...
-      ## but if NGS_SNP then only create the reference if NgsUpdateSnpFeature is true
-      my $seqVar =  GUS::Model::DoTS::SeqVariation->
-        new({'source_id' => $sourceId,
-             'external_database_release_id' => $self->getArg('') ? $naSeq->getExternalDatabaseReleaseId()  : $extDbRlsId,
-             'name' => $name,
-             'sequence_ontology_id' => $soId,
-             'strain' => $ref,
-             'allele' => $referenceBase,
-             'organism' => $organism
-            });
-      $seqVar->setParent($snpFeature);
-      $seqVar->setParent($naSeq);
-      $snpFeature->setReferenceNa($referenceBase);
-    }
+  }
+  if(!$haveRef && (!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature'))){  ##create a reference seqvar here ...
+    ## but if NGS_SNP then only create the reference if NgsUpdateSnpFeature is true
+    my $seqVar =  GUS::Model::DoTS::SeqVariation->
+      new({'source_id' => $sourceId,
+           'external_database_release_id' => $self->getArg('NGS_SNP') ? $naSeq->getExternalDatabaseReleaseId()  : $extDbRlsId,
+           'name' => $name,
+           'sequence_ontology_id' => $soId,
+           'strain' => $ref,
+           'allele' => $referenceBase,
+           'organism' => $organism
+          });
+    $seqVar->setParent($snpFeature);
+    $seqVar->setParent($naSeq);
+    $snpFeature->setReferenceNa($referenceBase) unless ($snpFeature->getReferenceNa() && $snpFeature->getReferenceNa() eq $referenceBase);
+  }
 
   return $snpFeature;
 }
