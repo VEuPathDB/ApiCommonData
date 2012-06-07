@@ -108,7 +108,7 @@ sub run {
   }
   close FILE;
 
- return("Processed $count rows of sample meta data.")
+ return("Processed $count rows of sample meta data.");
 }
 
 
@@ -257,8 +257,10 @@ sub parseRow {
 sub undoTables {
   my ($self) = @_;
 
-  return (
-          
+  return ( 'Study.BioMaterialCharacteristic',
+           'Study.OntologyEntry',
+           'RAD.StudyBioMaterial',
+           'Study.BioSource',
      );
 }
 
