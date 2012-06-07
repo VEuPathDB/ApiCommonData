@@ -6,7 +6,7 @@ use GUS::Model::Study::BioSource;
 use GUS::Model::Study::BioMaterialCharacteristic;
 use GUS::Model::Study::OntologyEntry;
 use GUS::Model::Study::Study;
-
+use GUS::Model::RAD::StudyBioMaterial;
 # ----------------------------------------------------------------------
 
 use strict;
