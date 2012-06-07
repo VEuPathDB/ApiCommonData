@@ -198,7 +198,7 @@ sub makeCharacteristic {
                                                   category => $category});
 
   $oe->setParent($categoryOE);
-
+  $oe->retrieveFromDB();
   my $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({});
 
   $characteristic->setParent($oe);
