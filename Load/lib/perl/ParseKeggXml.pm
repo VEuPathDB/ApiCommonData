@@ -4,7 +4,7 @@
 # Package ParseKeggXml
 # =================================================
 
-package ErythronDBData::Network::ParseKeggXml;
+package ApiCommonData::Load::ParseKeggXml;
 
 # =================================================
 # Documentation
