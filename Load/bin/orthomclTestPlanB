@@ -5,16 +5,18 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use DBI;
 
-# run ortholog-groups workflow on representatives
-system("workflow -h /eupath/data/EuPathDB/devWorkflows/OrthoMCL/planBReps -r");
+my $dbh;
+my $residualsFile = "/eupath/data/EuPathDB/devWorkflows/OrthoMCL/testdata/planBResiduals.fasta";
+
+print STDERR "Tier 1: running ortholog-groups workflow on representatives\n";
+# system("workflow -h /eupath/data/EuPathDB/devWorkflows/OrthoMCL/planBReps -r");
 
 # for each non-representative protein, find its best match among representative proteins
-
-# populate ortholog groups for representatives
-
-# for each non-representative organism, assign proteins to groups by best (over-threshold) similarity to a representative protein
+print STDERR "callingFindRepresentatives() to find a representative protein for each secondary protein\n";
+findRepresentatives();
 
 # create SimilarSequences_res table for "residual" proteins, which didn't find a group to join
+system("filterSimilarSequencesByGeneSet -suffix _res -verbose -proteinsFile $residualsFile");
 
 # run ortholog-groups workflow on residuals
 system("workflow -h /eupath/data/EuPathDB/devWorkflows/OrthoMCL/planBResiduals -r");
@@ -36,9 +38,9 @@ sub getDbHandle {
   return $dbh;
 }
 
-sub findRepresentation {
+sub findRepresentatives {
 
-  my $dbh = getDbHandle();
+  $dbh = getDbHandle();
 
   my $repsDir = "/eupath/data/EuPathDB/devWorkflows/OrthoMCL/testdata/representatives";
   chdir $repsDir;
@@ -46,8 +48,15 @@ sub findRepresentation {
 
   my $pvalueExponentCutoff = -5;
 
-  # prepare the query that, given a protein, finds its best match within a representative proteome
-  my $repStmt = $dbh->prepare(<<SQL);
+  # prepare query for secondary (that is, non-representative) protein IDs
+  my $secondaryQuery = $dbh->prepare(<<SQL);
+    select distinct query_id
+    from apidb.SimilarSequences\@orth500n
+    where query_taxon_id not in ($representativeTaxa)
+SQL
+
+  # prepare the query that, for a given non-representative protein, finds its best match among representatives
+  my $repQuery = $dbh->prepare(<<SQL);
     select subject_id
     from apidb.SimilarSequences\@orth500n
     where query_id = ?
@@ -61,23 +70,17 @@ SQL
     insert into apidb.OrthoRepresentation (constituent, representative) values (?, ?)
 SQL
 
-  # iterate through non-representative proteins
-  my $nonrepStmt = $dbh->prepare(<<SQL);
-    select distinct query_id
-    from apidb.SimilarSequences\@orth500n
-    where query_taxon_id not in ($representativeTaxa)
-SQL
 
-  $nonrepStmt->execute();
-  while (my($constituent) = $nonrepStmt->fetchrow_array()) {
+  $secondaryQuery->execute();
+  while (my($secondary) = $secondaryQuery->fetchrow_array()) {
 
     # find this protein's representative
-    $repStmt->execute($constituent);
-    my ($representative) = $repStmt->fetchrow_array();
-    $repStmt->finish();
+    $repQuery->execute($secondary);
+    my ($representative) = $repQuery->fetchrow_array();
+    $repQuery->finish();
 
-    $insertStmt->execute($constituent, $representative);
+    $insertStmt->execute($secondary, $representative);
   }
 
-  $nonrepStmt->finish();
+  $secondaryQuery->finish();
 }
