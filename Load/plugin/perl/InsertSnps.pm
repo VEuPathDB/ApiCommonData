@@ -201,6 +201,9 @@ sub run {
   ##set so doesn't update the algorithminvocation of updated objects
   $self->getDb()->setDoNotUpdateAlgoInvoId(1);
 
+  ##we aren't using the version tables anymore given the workflow so set so doesn't version .. .more efficient
+  $self->getDb()->setGlobalNoVersion(1);
+
   my $termName = $self->getArg('ontologyTerm');
   $self->{'soId'} = $self->getSoId($termName);
 
