@@ -247,6 +247,8 @@ sub getNgsSnpExtDbRlsId {
     $orgAbbrev = $abbrev;
     $count++;
   }
+
+  $sh->finish();
   unless($count == 1) {
     $self->error("Error getting the organism abbreviation for strain $reference");
   }
