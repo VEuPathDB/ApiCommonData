@@ -210,7 +210,7 @@ sub run {
   die "The term $termName was not found in the Sequence Ontology.\n" unless $self->{'soId'};
 
   if($self->getArg('NGS_SNP')) {
-    $self->{'ngsSnpExtDbRlsId'} = $self->getOrMakeNgsSnpExtDbRlsId();
+    $self->{'ngsSnpExtDbRlsId'} = $self->getNgsSnpExtDbRlsId();
   }
 
   $self->{'snpExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('snpExternalDatabaseName'),$self->getArg('snpExternalDatabaseVersion'));
@@ -232,13 +232,27 @@ sub run {
 
 # ----------------------------------------------------------------------
 
-sub getOrMakeNgsSnpExtDbRlsId {
+sub getNgsSnpExtDbRlsId {
   my ($self) = @_;
 
   my $reference = $self->getArg('reference');
 
+  my $sql = "select abbrev  from apidb.organism where abbrev_strain = ?";
+
+  my $sh = $self->getQueryHandle()->prepare($sql);
+  $sh->execute($reference);
+
+  my ($orgAbbrev, $count);
+  while(my ($abbrev) = $sh->fetchrow_array()) {
+    $orgAbbrev = $abbrev;
+    $count++;
+  }
+  unless($count == 1) {
+    $self->error("Error getting the organism abbreviation for strain $reference");
+  }
+
   my $NGS_SNP_DB_NAME = "InsertSnps.pm NGS SNPs INTERNAL";
-  my $NGS_SNP_DB_VERSION = "Ref:  $reference";
+  my $NGS_SNP_DB_VERSION = "Ref:  $orgAbbrev";
 
   my $extDb = GUS::Model::SRes::ExternalDatabase->new({name => $NGS_SNP_DB_NAME});
   my $extDbRls = GUS::Model::SRes::ExternalDatabaseRelease->new({version => $NGS_SNP_DB_VERSION});
@@ -257,7 +271,7 @@ sub getOrMakeNgsSnpExtDbRlsId {
 
   # submit if we didn't find the db or rls
   if(!$foundExtDb || !$foundExtDbRls) {
-    $extDb->submit();
+    $self->error("Error getting the NGS ExternalDatabaes name $NGS_SNP_DB_NAME with version $NGS_SNP_DB_VERSION");
   }
 
   return $extDbRls->getId();
