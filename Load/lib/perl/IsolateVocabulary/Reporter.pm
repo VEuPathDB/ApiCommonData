@@ -116,10 +116,10 @@ sub getXml {
   my $typeInTable = $type;
   $typeInTable = 'country' if ($type eq 'geographic_location');
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$type\">
+  <initial table=\"IsolateSource\" field=\"$typeInTable">
    <original>$value<\/original>
     <maps>
-      <row type=\"$typeInTable\" value=\"\" \/>
+      <row type=\"$type\" value=\"\" \/>
     <\/maps>
   <\/initial>
 END
