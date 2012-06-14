@@ -148,7 +148,7 @@ foreach my $seqid (keys%snps){
       my $stNa = &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$strains{$dbrelid},$dbrelid);
 #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
       next if $snps{$seqid}->{$loc}->{strains}->{$dbrelid}; ##already have this one
-      push(@alleles,$strains{$dbrelid}.":".$stNa.":::::$dbrelid") if $stNa =~ /[ACTG]/i; ## if $refna eq $stNa;
+      push(@alleles,$strains{$dbrelid}.":".$stNa.":::::$dbrelid") if $stNa eq $refna;
     }
     if(scalar(@alleles) >= 1){
       print O "$seqid\tNGS_SNP\tSNP\t$loc\t$loc\t.\t+\t.\tID $snpid; Allele \"".join("\" \"",@alleles)."\";\n";
