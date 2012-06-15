@@ -52,6 +52,7 @@ sub munge {
     new({mainDirectory => $self->getMainDirectory,
          outputFile => $outputFileBase.$minSuffix,
          makePercentiles => 1,
+         isLogged => 0,
          fileSuffix => $fileSuffixBase.$minSuffix,
          profileSetName => $profileSetName,
          samples => $samples,
@@ -63,6 +64,7 @@ sub munge {
     new({mainDirectory => $self->getMainDirectory,
          outputFile => $outputFileBase.$maxSuffix,
          makePercentiles => 0,
+         isLogged => 0,
          fileSuffix => $fileSuffixBase.$maxSuffix,
          profileSetName => $profileSetName,
          samples => $samples,
@@ -74,6 +76,7 @@ sub munge {
   my $diffProfile = CBIL::TranscriptExpression::DataMunger::ProfileDifferences->
     new({mainDirectory => $self->getMainDirectory,
          outputFile => $outputFileBase.$diffSuffix,
+         isLogged => 0,
          minuendFile => $outputFileBase.$maxSuffix,
          subtrahendFile => $outputFileBase.$minSuffix,
          profileSetName => $diffProfileSetName
