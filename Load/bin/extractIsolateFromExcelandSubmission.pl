@@ -146,7 +146,9 @@ while(my ($k, $v) = each %hash) {
   my $age          = $hash{$k}{$cn{age}};
   my $sex          = $hash{$k}{$cn{sex}};
   my $breed        = $hash{$k}{$cn{breed}};
-  my $gps          = $hash{$k}{$cn{gps}};
+  my $lat          = $hash{$k}{$cn{lat}};
+  my $lon          = $hash{$k}{$cn{lon}};
+  my $alt          = $hash{$k}{$cn{alt}};
   my $symptoms     = $hash{$k}{$cn{symptoms}};
   my $habitat      = $hash{$k}{$cn{habitat}};
   my $note         = $hash{$k}{$cn{note}};
@@ -184,15 +186,15 @@ while(my ($k, $v) = each %hash) {
   my $seq4_genbank         = $hash{$k}{$cn{seq4_genbank}};
   my $seq4_trace           = $hash{$k}{$cn{seq4_trace}};
 
-  my($seq1_fwd_primer_name, $seq1_rev_primer_name) = split /;/, $seq1_primer_names;
-  my($seq2_fwd_primer_name, $seq2_rev_primer_name) = split /;/, $seq2_primer_names;
-  my($seq3_fwd_primer_name, $seq3_rev_primer_name) = split /;/, $seq3_primer_names;
-  my($seq4_fwd_primer_name, $seq4_rev_primer_name) = split /;/, $seq4_primer_names;
+  my @seq1_primer_name = split /;/, $seq1_primer_names;
+  my @seq2_primer_name = split /;/, $seq2_primer_names;
+  my @seq3_primer_name = split /;/, $seq3_primer_names;
+  my @seq4_primer_name = split /;/, $seq4_primer_names;
 
-  my($seq1_fwd_primer_seq, $seq1_rev_primer_seq) = split /;/, $seq1_primer_seqs;
-  my($seq2_fwd_primer_seq, $seq2_rev_primer_seq) = split /;/, $seq2_primer_seqs;
-  my($seq3_fwd_primer_seq, $seq3_rev_primer_seq) = split /;/, $seq3_primer_seqs;
-  my($seq4_fwd_primer_seq, $seq4_rev_primer_seq) = split /;/, $seq4_primer_seqs;
+  my @seq1_primer_seq = split /;/, $seq1_primer_seqs;
+  my @seq2_primer_seq = split /;/, $seq2_primer_seqs;
+  my @seq3_primer_seq = split /;/, $seq3_primer_seqs;
+  my @seq4_primer_seq = split /;/, $seq4_primer_seqs;
 
   $country    .= ": $city" if $city;
   $country    .= ", $county" if $county;
@@ -203,6 +205,7 @@ while(my ($k, $v) = each %hash) {
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
   $note .= "; purpose of sample collection: $purpose" if $purpose;
+  $note .= "; Altitude: $alt" if $alt;
   $note =~ s/^; //;
 
   my @mon = qw/null Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
@@ -218,22 +221,20 @@ while(my ($k, $v) = each %hash) {
   $study =~ s/(\r|\n)/ /g;
 
   my @seqs = (
-         [$seq1, $seq1_fwd_primer_name, $seq1_fwd_primer_seq, $seq1_rev_primer_name, $seq1_rev_primer_seq, $seq1_product, $seq1_desc],
-         [$seq2, $seq2_fwd_primer_name, $seq2_fwd_primer_seq, $seq2_rev_primer_name, $seq2_rev_primer_seq, $seq2_product, $seq2_desc],
-         [$seq3, $seq3_fwd_primer_name, $seq3_fwd_primer_seq, $seq3_rev_primer_name, $seq3_rev_primer_seq, $seq3_product, $seq3_desc],
-         [$seq4, $seq4_fwd_primer_name, $seq4_fwd_primer_seq, $seq4_rev_primer_name, $seq4_rev_primer_seq, $seq4_product, $seq4_desc]
-             );
+         [$seq1, $seq1_product, $seq1_desc, \@seq1_primer_name, \@seq1_primer_seq],
+         [$seq2, $seq2_product, $seq2_desc, \@seq2_primer_name, \@seq2_primer_seq],
+         [$seq3, $seq3_product, $seq3_desc, \@seq3_primer_name, \@seq3_primer_seq],
+         [$seq4, $seq4_product, $seq4_desc, \@seq4_primer_name, \@seq4_primer_seq]);
 
   my $count = 1;
   foreach my $s (@seqs) {
 
     my $sequence        = $s->[0];
-    my $fwd_primer_name = $s->[1];
-    my $fwd_primer_seq  = $s->[2];
-    my $rev_primer_name = $s->[3];
-    my $rev_primer_seq  = $s->[4];
-    my $product         = $s->[5];
-    my $seq_description = $s->[6];
+    my $product         = $s->[1];
+    my $seq_description = $s->[2];
+    my @primer_names    = @{$s->[3]};
+    my @primer_seqs     = @{$s->[4]};
+
     my $file_name       = "$isolate_id.$count";
 
     next unless $sequence;
@@ -251,13 +252,16 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
     $modifier .= "[breed=$breed]" if $breed;
-    $modifier .= "[lat-lon=$gps]" if $gps;
+    $modifier .= "[lat-lon=$lat $lon]" if ($lat && $lon) ;
     $modifier .= "[note=$note; $seq_description]" if $note;
-    $modifier .= "[fwd-PCR-primer-name=$fwd_primer_name]" if $fwd_primer_name;
-    $modifier .= "[fwd-PCR-primer-seq=$fwd_primer_seq]" if $fwd_primer_seq;
-    $modifier .= "[rev-PCR-primer-name=$rev_primer_name]" if $rev_primer_name;
-    $modifier .= "[rev-PCR-primer-seq=$rev_primer_seq]" if $rev_primer_seq;
     $modifier .= "[protein=$product]" if $product;
+
+    for(my $i = 0; $i <= $#primer_names; $i=$i+2) {
+      $modifier .= "[fwd-PCR-primer-name=$primer_names[$i]]"; 
+      $modifier .= "[fwd-PCR-primer-seq=$primer_seqs[$i]]"; 
+      $modifier .= "[rev-PCR-primer-name=$primer_names[$i+1]]"; 
+      $modifier .= "[rev-PCR-primer-seq=$primer_seqs[$i+1]]"; 
+    }
 
     my $seq = Bio::Seq::RichSeq->new( -seq  => $sequence,
                                       -desc => "$study $modifier",
@@ -300,7 +304,7 @@ M,Region - State or Province,state
 N,County,county
 O,City/Village/Locality,city
 P,Latitude,lat
-Q,Longitude,lng
+Q,Longitude,lon
 R,Altitude,alt
 S,Environment Source,isolation_source
 T,Host Species,host
