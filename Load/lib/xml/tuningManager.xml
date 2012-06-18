@@ -2514,6 +2514,8 @@ FROM (
              WHEN lower(pinfo.name) like 'toxo%' THEN 'ToxoDB'
              WHEN lower(pinfo.name) like 'giard%' THEN 'GiardiaDB'
              WHEN lower(pinfo.name) like 'tritryp%' THEN 'TriTrypDB'
+             WHEN lower(pinfo.name) like 'micro%' THEN 'MicrosporidiaDB'
+             WHEN lower(pinfo.name) like 'piro%' THEN 'PiroplasmaDB'
         ELSE '' END as project_id
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo, 
