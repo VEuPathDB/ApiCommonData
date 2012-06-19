@@ -76,7 +76,9 @@ sub getTimestamp {
        select to_char(max(modification_date), 'yyyy-mm-dd hh24:mi:ss'), count(*)
        from $self->{name}$dblink
 SQL
-    my $stmt = $dbh->prepare($sql);
+    my $stmt = $dbh->prepare($sql)
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+
     ApiCommonData::Load::TuningConfig::Utils::sqlBugWorkaroundExecute($dbh, $stmt)
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     my ($max_mod_date, $row_count) = $stmt->fetchrow_array();
@@ -89,7 +91,8 @@ SQL
        from apidb.TuningMgrExternalDependency$dblink
        where name = upper('$self->{name}')
 SQL
-    my $stmt = $dbh->prepare($sql);
+    my $stmt = $dbh->prepare($sql)
+      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 
     $stmt->execute()
       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
