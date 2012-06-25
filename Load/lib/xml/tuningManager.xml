@@ -6743,7 +6743,7 @@ tablespace indx
         (select distinct project_id, organism from apidbtuning.sequenceattributes) s
         where p.project_id = s.project_id
         union 
-        select s.project_id as project_id, 
+        select distinct s.project_id as project_id, 
               Case when (s.organism like 'Aspergillus%' or
                      s.organism like 'Emericella%' or
                      s.organism like 'Candida%' or
@@ -6759,6 +6759,7 @@ tablespace indx
                      s.organism like 'Phytophthora%' or
                      s.organism like 'Pythium%' )
                then 'Heterokontophyta'
+               else 'Missing ProjectIdTaxonLevel'
                end as taxon_node,
                s.organism as organism
         from apidbtuning.sequenceattributes s
