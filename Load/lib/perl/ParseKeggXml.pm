@@ -132,7 +132,7 @@ sub parseKGML {
 	    $pathway->{RELATION}->{$rtype}->{$rid}->{ENTRY} = $e;
 	    $pathway->{RELATION}->{$rtype}->{$rid}->{ASSOCIATED_ENTRY} = $a;
 	    $pathway->{RELATION}->{$rtype}->{$rid}->{INTERACTION} = $st->getAttribute('name');
-	    $pathway->{RELATION}->{$rtype}->{$rid}->{INTERACTION_ENTRY} = $st->getAttribute('name');
+	    $pathway->{RELATION}->{$rtype}->{$rid}->{INTERACTION_ENTRY} = $st->getAttribute('value');
 	    $rid++;
 	  }
 	}
