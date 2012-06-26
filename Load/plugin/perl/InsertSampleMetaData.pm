@@ -97,11 +97,12 @@ sub run {
 
     my $rowAsHash = $self->parseRow($header, $_);
 
-    if($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId)) {
+    if(!$sampleId) {
       $self->processRow($rowAsHash, $study, $extDbRlsId);
       $count++;
     }
-    else {
+
+    if($sampleId && $self->isSampleIdRow($rowAsHash, $sampleId)) {
       $self->processRow($rowAsHash, $study, $extDbRlsId);
       $count++;
     }
