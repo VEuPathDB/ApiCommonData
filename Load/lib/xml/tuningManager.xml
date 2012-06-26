@@ -1762,21 +1762,8 @@ CREATE TABLE SnpAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
-       CASE WHEN ed.name in ('pfal3D7_SNP_XSu_gff_RSRC','X.Su SNPs') THEN 'NIH SNPs'
-       ELSE ed.name END AS dataset,
+       ed.name END AS dataset,
        decode(ed.name,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type,
-       CASE WHEN ed.name in ('pfal3D7_SNP_XSu_gff_RSRC','X.Su SNPs') THEN 'Su_SNPs'
-       WHEN ed.name = 'pfal3D7_SNP_Broad_gff_RSRC' THEN 'Broad_SNPs'
-       WHEN ed.name = 'Broad SNPs' THEN 'Broad_SNPs'
-       WHEN ed.name in ('pfal3D7_SNP_sanger_ItGhana_gff_RSRC','Sanger falciparum SNPs') THEN 'sangerItGhanaSnps'
-       WHEN ed.name in ('Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC') THEN 'sangerReichenowiSnps'
-       WHEN ed.name in ('pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','PlasmoDB combined SNPs') THEN 'plasmoDbCombinedSnps'
-       WHEN ed.name in ('Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC') THEN 'WinzelerGeneticVariationArray'
-       WHEN ed.name = 'Genomic Sequence SNPs' THEN 'AmitAlignmentSnps'
-       WHEN ed.name = 'Genetic Markers - David Sibley' THEN 'GeneticMarkers_Sibley'
-       WHEN ed.name = 'John Boothroyd lab at Stanford' THEN 'ME49_SNPs'
-       WHEN ed.name = 'Lindstrom 454 SNPs' THEN 'Lindstrom454Snps'
-       END AS dataset_hidden,
        sequence.na_sequence_id,
        sequence.source_id AS seq_source_id,
        snp_loc.start_min,
