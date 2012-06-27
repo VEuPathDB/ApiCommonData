@@ -1762,7 +1762,7 @@ CREATE TABLE SnpAttributes&1 NOLOGGING AS
 SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.source_id,
        snp.na_feature_id,
-       ed.name END AS dataset,
+       ed.name AS dataset,
        decode(ed.name,'InsertSnps.pm NGS SNPs INTERNAL','HTS','Other') as type,
        sequence.na_sequence_id,
        sequence.source_id AS seq_source_id,
