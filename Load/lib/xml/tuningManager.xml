@@ -6733,23 +6733,29 @@ tablespace indx
         select distinct s.project_id as project_id, 
               Case when (s.organism like 'Aspergillus%' or
                      s.organism like 'Emericella%' or
-                     s.organism like 'Candida%' or
-                     s.organism like 'Neurospora%' or 
+                     s.organism like 'Coccidioides%')
+               then 'Eurotiomycetes'
+               when ( s.organism like 'Tremella%' or
+                      s.organism like 'Cryptococcus%' )
+               then 'Basidiomycota'
+               when ( s.organism like 'Neurospora%' or 
                      s.organism like 'Magnaporthe%' or 
                      s.organism like 'Fusarium%' or 
                      s.organism like 'Gibberella%' or
-                     s.organism like 'Coccidioides%' or
-                     s.organism like 'Saccharomyces%' or
-                     s.organism like 'Schizosaccharomyces%' or
                      s.organism like 'Sordaria%')
-               then 'Ascomycota' 
+               then 'Sordariomycetes'
+               when ( s.organism like 'Saccharomyces%' or
+                     s.organism like 'Candida%')
+               then 'Saccharomycotina'
+               when ( s.organism like 'Schizosaccharomyces%')
+               then 'Taphrinomycotina' 
                when ( s.organism like 'Tremella%' or
                       s.organism like 'Cryptococcus%' )
                then 'Basidiomycota'
                when (s.organism like 'Hyaloperonospora%' or
                      s.organism like 'Phytophthora%' or
                      s.organism like 'Pythium%' )
-               then 'Heterokontophyta'
+               then 'Oomycetes'
                else 'Missing ProjectIdTaxonLevel'
                end as taxon_node,
                s.organism as organism
