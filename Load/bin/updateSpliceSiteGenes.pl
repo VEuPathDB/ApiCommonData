@@ -23,7 +23,6 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
                                         $gusconfig->getCoreSchemaName());
 my $dbh = $db->getQueryHandle();
 
-### BB from tM.xml END
 
 my $geneModelQuery = "SELECT source_id, na_sequence_id, decode(strand,'forward','+','reverse','-') as strand,
 CASE WHEN coding_start is not null THEN coding_start ELSE CASE WHEN strand = 'forward' THEN start_min ELSE end_max END END as coding_start,
@@ -34,7 +33,7 @@ ORDER BY na_sequence_id,strand,coding_start";
 
 my $geneStmt = $dbh->prepare($geneModelQuery);
 
-my $splicesitesQuery = "SELECT source_id,location, strand, dist_to_cds, within_cds, splice_site_feature_id
+my $splicesitesQuery = "SELECT source_id,location, strand, dist_to_cds, splice_site_feature_id
 FROM apidb.SpliceSiteGenes";
 
 my $ssStmt = $dbh->prepare($splicesitesQuery);
@@ -76,12 +75,11 @@ my $ct = 0;
 $ssStmt->execute();
 my @list;
 
-while(my ($source_id,$location,$strand,$dist_to_cds,$within_cds,$splice_site_feature_id)= $ssStmt->fetchrow_array()){
+while(my ($source_id,$location,$strand,$dist_to_cds,$splice_site_feature_id)= $ssStmt->fetchrow_array()){
     push(@list,{source_id=>$source_id,
 		location=>$location,
 		strand => $strand,
 		dist_to_cds => $dist_to_cds,
-		within_cds =>$within_cds,
 		splice_site_feature_id => $splice_site_feature_id});
   }
 $ssStmt->finish();
@@ -142,26 +140,6 @@ sub getAgtLocation {
 }
 
 
-sub getGeneAndDistance {
-  my ($site) = @_;
-  if ($site->{strand} eq '+'){
-    foreach my $gene (@{$genes{$site->{na_sequence_id}}->{'+'}}){
-      next if $gene->{coding_end} < $site->{location};
-      return ($gene->{source_id}, $gene->{coding_start} - $site->{location} - 2) if($gene->{protein_coding} eq 'no'); 
-      my($gene_id,$utr_len,$newCds) = $gene->{coding_start} < $site->{location} ? &findInternalATG($gene,$site) : &findUpstreamATG($gene,$site);
-      next if !$utr_len;
-      return ($gene_id,$utr_len,$newCds);
-    }
-  } else {
-    foreach my $gene (reverse(@{$genes{$site->{na_sequence_id}}->{'-'}})){
-      next if $gene->{coding_end} > $site->{location};
-      return ($gene->{source_id}, $site->{location} - $gene->{coding_start} - 2) if($gene->{protein_coding} eq 'no'); 
-      my($gene_id,$utr_len,$newCds) = $gene->{coding_start} > $site->{location} ? &findInternalATG($gene,$site) : &findUpstreamATG($gene,$site);
-      next if !$utr_len;  ##if doesn't find internal ATG
-      return ($gene_id,$utr_len,$newCds);
-    }
-  }
-}
 
 ##get sequence of cds and look for first ATG downstream of site;
 sub findInternalATG {
