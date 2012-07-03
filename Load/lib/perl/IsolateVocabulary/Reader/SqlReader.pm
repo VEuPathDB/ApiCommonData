@@ -39,11 +39,10 @@ sub new {
 sub extract {
   my ($self) = @_;
 
-#  my $dotsIsolateSourceTerms = $self->getDotsIsolateSourceTerms();
+  my $dotsIsolateSourceTerms = $self->getDotsIsolateSourceTerms();
   my $studyOntologyEntryTerms = $self->getStudyOntologyEntryTerms();
 
-#  my @rv = (@$dotsIsolateSourceTerms, @$studyOntologyEntryTerms);
-  my @rv = (@$studyOntologyEntryTerms);
+  my @rv = (@$dotsIsolateSourceTerms, @$studyOntologyEntryTerms);
 
   return \@rv;
 }
