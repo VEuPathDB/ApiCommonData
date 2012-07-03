@@ -90,6 +90,8 @@ sub run {
   my $header = <FILE>;
   chomp $header;
 
+  $self->validateHeader($header);
+
 
   my $count = 0;
   while(<FILE>) {
@@ -110,6 +112,27 @@ sub run {
   close FILE;
 
  return("Processed $count rows of sample meta data.");
+}
+
+
+sub validateHeader {
+  my ($self, $header) = @_;
+
+  my @columns = split(/\t/, $header);
+
+  my @requiredCharacteristics = ('Organism',
+                                 'StrainOrLine',
+                                 'BioSourceType', #IsolationSource
+                                 'Host',
+                                 'GeographicLocation',
+                                );
+
+  foreach my $r (@requiredCharacteristics) {
+    my @found =  map {/Characteristics\s?\[($r)\]/} @requiredCharacteristics;
+    unless(scalar @found > 0) {
+      $self->userError("Required Column [$r] not found in the meta data file");
+    }
+  }
 }
 
 
