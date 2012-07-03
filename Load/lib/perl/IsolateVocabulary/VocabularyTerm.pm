@@ -40,8 +40,8 @@ sub setAlreadyMaps {$_[0]->{_already_maps} = $_[1]}
 sub isValid {
   my ($self) = @_;
 
-  my @validTables = ('IsolateSource');
-  my @validFields = ('country', 'specific_host', 'isolation_source', 'source_id');
+  my @validTables = ('IsolateSource', 'OntologyEntry');
+  my @validFields = ('country', 'specific_host', 'isolation_source', 'source_id', 'GeographicLocation', 'Host', 'BioSourceType');
   my @validTypes = ('geographic_location', 'specific_host', 'isolation_source');
 
   my $term = $self->getTerm();
