@@ -73,7 +73,7 @@ die "ERROR: unable to identify any strains for referenceOrganism $referenceOrgan
 my $snpSQL = <<EOSQL;
 select sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sv.allele,sv.external_database_release_id,sf.reference_strain
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
-SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s
+SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s, sres.sequenceontology so
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
 and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
@@ -81,6 +81,8 @@ and sf.organism = '$referenceOrganism'
 and sv.parent_id = sf.na_feature_id
 and l.na_feature_id = sf.na_feature_id
 and s.na_sequence_id = sf.na_sequence_id
+and sf.sequence_ontology_id = so.sequence_ontology_id
+and so.term_name = 'SNP'
 EOSQL
 
 my %snps;
@@ -136,7 +138,6 @@ EOSQL
 
 my $ntStmt = $dbh->prepare($ntSQL);
 
-my %newSnps;
 my $ctSnps = 0;
 foreach my $seqid (keys%snps){
   foreach my $loc (keys%{$snps{$seqid}}){
