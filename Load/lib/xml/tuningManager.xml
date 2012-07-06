@@ -2437,6 +2437,12 @@ tablespace indx
   </tuningTable>
 
   <tuningTable name="IsolateAttributes">
+    <externalDependency name="study.study"/>
+    <externalDependency name="study.biosource"/>
+    <externalDependency name="study.biomaterialcharacteristic"/>
+    <externalDependency name="rad.studybiomaterial"/>
+    <externalDependency name="study.ontologyentry"/>
+    <externalDependency name="apidb.isolatevocabulary"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="sres.ExternalDatabase"/>
@@ -2444,58 +2450,123 @@ tablespace indx
     <sql>
       <![CDATA[
 CREATE TABLE IsolateAttributes&1 NOLOGGING AS
-select  na_sequence_id, taxon_id,
-       external_db_version,
-       external_db_name,
-       na_feature_id,
-       source_id,
-       decode(organism, null, 'Unknown', substr(organism, 1, 100)) as organism,
-       decode(strain, null, 'Unknown', substr(strain, 1, 100)) as strain,
-       decode(specific_host, null, 'Unknown', substr(specific_host, 1, 100)) as specific_host,
-       decode(isolation_source, null, 'Unknown', substr(isolation_source, 1, 200)) as isolation_source,
-       decode(country, null, 'Unknown', substr(country, 1, 200)) as country,
-       substr(note, 1, 400) as note,
-       substr(description, 1, 400) as description,
-       substr(pcr_primers, 1, 100) as pcr_primers,       
-       length,
-       is_reference,
-       collected_by,
-       decode(product, null, 'Unknown', substr(product, 1, 500)) as product,
-       decode(product_alias, null, 'Unknown', substr(product_alias, 1, 500)) as product_alias,
-       project_id,
-       data_type
+select null as na_sequence_id,
+       null as na_feature_id,
+       b.bio_material_id,
+       o.taxon_id,
+       edr.version as external_db_version,
+       ed.name as external_db_name,
+       b.source_id,
+       nvl(o.name, 'Unknown') as organism,
+       nvl(strain.value, 'Unknown') as strain,
+       nvl(host.value, 'Unknown') as specific_host,
+       nvl(isolation_source.value, 'Unknown') as isolation_source,
+       nvl(geographic_location.value, 'Unknown') as geographic_location,
+       null as note,
+       b.description,
+       null as is_reference,
+       project.project_id,
+       'HTS' as data_type,
+       'TODO' as annotated_isolation_source,
+       'TODO' as annotated_specific_host,
+       'TODO' as annotated_geographic_location 
+From study.biosource b, study.study s, 
+     rad.studybiomaterial sb, SRES.externaldatabase ed, SRES.externaldatabaserelease edr,
+     (select bc.bio_material_id, tn.name, tn.taxon_id
+      from study.ontologyentry oe, sres.taxonname tn, STUDY.biomaterialcharacteristic bc
+      where category = 'Organism'
+      and oe.value = tn.name
+      and bc.ontology_entry_id = oe.ontology_entry_id
+      ) o,
+     (select bc.bio_material_id, oe.value
+      from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc
+      where category = 'StrainOrLine'
+      and bc.ontology_entry_id = oe.ontology_entry_id
+      ) strain,
+     (select bc.bio_material_id, oe.value
+      from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc
+      where category = 'Host'
+      and bc.ontology_entry_id = oe.ontology_entry_id
+      ) host,
+     (select bc.bio_material_id, oe.value
+      from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc
+      where category = 'BioSourceType'
+      and bc.ontology_entry_id = oe.ontology_entry_id
+      ) isolation_source,
+     (select bc.bio_material_id, oe.value
+      from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc
+      where category = 'GeographicLocation'
+      and bc.ontology_entry_id = oe.ontology_entry_id
+      ) geographic_location,
+     (select distinct project_id from apidbtuning.sequenceattributes) project
+where s.name like '%HTS_Isolates'
+and s.study_id = sb.study_id
+and sb.bio_material_id = b.bio_material_id
+and b.external_database_release_id = edr.external_database_release_id
+and edr.external_database_id = ed.external_database_id
+and b.bio_material_id = o.bio_material_id (+)
+and b.bio_material_id = strain.bio_material_id (+)
+and b.bio_material_id = host.bio_material_id (+)
+and b.bio_material_id = isolation_source.bio_material_id (+)
+and b.bio_material_id = geographic_location.bio_material_id (+)
+UNION
+select i.na_sequence_id,
+       i.na_feature_id,
+       null as bio_material_id,
+       i.taxon_id,
+       i.external_db_version,
+       i.external_db_name,
+       i.source_id,
+       decode(i.organism, null, 'Unknown', substr(i.organism, 1, 100)) as organism,
+       decode(i.strain, null, 'Unknown', substr(i.strain, 1, 100)) as strain,
+       decode(i.specific_host, null, 'Unknown', substr(i.specific_host, 1, 100)) as specific_host,
+       decode(i.isolation_source, null, 'Unknown', substr(i.isolation_source, 1, 200)) as isolation_source,
+       decode(i.country, null, 'Unknown', substr(i.country, 1, 200)) as geographic_location,
+       substr(i.note, 1, 400) as note,
+       substr(i.description, 1, 400) as description,
+       i.is_reference,
+       i.project_id,
+       i.data_type,
+       i_s.annotated_isolation_source,
+       s_h.annotated_specific_host,
+       g_l.annotated_geographic_location
 FROM (
-   select  iso.*,
-       prod.product,
-       prod.product_alias
-   from (SELECT  etn.na_sequence_id, etn.taxon_id,etn.length,
-        edr.version as external_db_version, src.na_feature_id,
-        edb.name as external_db_name,
-        CASE WHEN etn.source_id is null THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
-        'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'CPHD.'||etn.na_sequence_id,
-        'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
-        'pfal3D7_SNP_Broad3KGenotyping_RSRC', 'CP3.'||etn.na_sequence_id,
-        'pfal3D7_SNP_BroadIsolateBarcode_RSRC','BC.'||etn.na_sequence_id,etn.source_id,
-        'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
-        ELSE etn.source_id END as source_id,
-        tn.name as organism,
-        CASE WHEN src.strain != src.isolate THEN src.strain || ' ' || src.isolate 
-             WHEN src.strain is  not null THEN src.strain ELSE src.isolate END as strain,
-        src.specific_host as specific_host,
-        src.isolation_source as isolation_source,
-        src.country as country,
-        src.note as note,
-        etn.description as description,
-        src.pcr_primers as pcr_primers,
-        src.is_reference,
-        src.collected_by,
-        decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
-        'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'HD_Array',
-        'Broad 3K genotyping chip', '3kChip',
-        'pfal3D7_SNP_Broad3KGenotyping_RSRC', '3kChip',
-        'Toxoplasma_RFLP_Su_RSRC', 'RFLP Typed',
-        'pfal3D7_SNP_BroadIsolateBarcode_RSRC','Barcode',
-        'Isolate barcode data from Broad','Barcode','Sequencing Typed') as data_type,
+       SELECT  etn.na_sequence_id,
+               etn.taxon_id,
+               edr.version as external_db_version, 
+               src.na_feature_id,
+               edb.name as external_db_name,
+               CASE 
+                 WHEN etn.source_id is null 
+                   THEN decode(edb.name, 'Broad 75K genotyping chip', 'CPHD.'||etn.na_sequence_id, 
+                                         'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'CPHD.'||etn.na_sequence_id,
+                                         'Broad 3K genotyping chip', 'CP3.'||etn.na_sequence_id,
+                                         'pfal3D7_SNP_Broad3KGenotyping_RSRC', 'CP3.'||etn.na_sequence_id,
+                                         'pfal3D7_SNP_BroadIsolateBarcode_RSRC','BC.'||etn.na_sequence_id,etn.source_id,
+                                        'Isolate barcode data from Broad','BC.'||etn.na_sequence_id,etn.source_id)
+                ELSE etn.source_id 
+              END as source_id,
+              tn.name as organism,
+              CASE 
+                WHEN src.strain != src.isolate 
+                  THEN src.strain || ' ' || src.isolate 
+                WHEN src.strain is  not null 
+                  THEN src.strain
+                ELSE src.isolate 
+              END as strain,
+              src.specific_host as specific_host,
+              src.isolation_source as isolation_source,
+              src.country as country,
+              src.note as note,
+              etn.description as description,
+              src.is_reference,
+              decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
+                               'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'HD_Array',
+                               'Broad 3K genotyping chip', '3kChip',
+                               'pfal3D7_SNP_Broad3KGenotyping_RSRC', '3kChip',
+                               'Toxoplasma_RFLP_Su_RSRC', 'RFLP Typed',
+                               'pfal3D7_SNP_BroadIsolateBarcode_RSRC','Barcode',
+                               'Isolate barcode data from Broad','Barcode','Sequencing Typed') as data_type,
         CASE WHEN lower(pinfo.name) like 'plas%' THEN 'PlasmoDB' 
              WHEN lower(pinfo.name) like 'cryp%' THEN 'CryptoDB'
              WHEN lower(pinfo.name) like 'toxo%' THEN 'ToxoDB'
@@ -2512,13 +2583,28 @@ FROM (
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND pinfo.project_id = etn.row_project_id
-      ) iso
-   left join (select na_sequence_id, 
-               apidb.tab_to_string(set(cast(COLLECT(product order by product) as apidb.varchartab)),'; ') as product, 
-               apidb.tab_to_string(set(cast(COLLECT(product_alias order by product_alias) as apidb.varchartab)),'; ') as product_alias 
-               from dots.isolatefeature group by na_sequence_id) prod
-           on prod.na_sequence_id = iso.na_sequence_id
-       )
+      ) i,
+      (select im.na_sequence_id, apidb.tab_to_string(set(cast(COLLECT(iv.term) as apidb.varchartab)),',') as annotated_isolation_source
+      from apidb.isolatevocabulary iv, apidb.isolatemapping im
+      where iv.isolate_vocabulary_id = im.isolate_vocabulary_id
+      and iv.type = 'isolation_source'
+      group by im.na_sequence_id
+      ) i_s,
+      (select im.na_sequence_id, apidb.tab_to_string(set(cast(COLLECT(iv.term) as apidb.varchartab)),',') as annotated_specific_host
+      from apidb.isolatevocabulary iv, apidb.isolatemapping im
+      where iv.isolate_vocabulary_id = im.isolate_vocabulary_id
+      and iv.type = 'specific_host'
+      group by im.na_sequence_id
+      ) s_h,
+      (select im.na_sequence_id, apidb.tab_to_string(set(cast(COLLECT(iv.term) as apidb.varchartab)),',') as annotated_geographic_location
+      from apidb.isolatevocabulary iv, apidb.isolatemapping im
+      where iv.isolate_vocabulary_id = im.isolate_vocabulary_id
+      and iv.type = 'geographic_location'
+      group by im.na_sequence_id
+      ) g_l
+WHERE i.na_sequence_id = i_s.na_sequence_id
+and i.na_sequence_id = s_h.na_sequence_id
+and i.na_sequence_id = g_l.na_sequence_id
       ]]>
     </sql>
     <sql>
