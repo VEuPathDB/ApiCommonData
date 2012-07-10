@@ -6660,36 +6660,12 @@ tablespace indx
   select 'Toxoplasma gondii RUB' as organism, 'TgondiiRUB' as abbreviation from dual union  
   select 'Gregarina niphandrodes' as organism, 'Gniphandrodes' as abbreviation from dual union  
   select 'Toxoplasma gondii TgCATBr9' as organism, 'TgondiiTgCATBr9' as abbreviation from dual union 
-  -- PiroplasmaDB Annotated Genomes
-  select 'Babesia bovis T2Bo' as organism, 'BbovisT2Bo' as abbreviation from dual union  
-  select 'Theileria annulata strain Ankara' as organism, 'TannulataAnkara' as abbreviation from dual union
-  select 'Theileria parva strain Muguga' as organism, 'TparvaMuguga' as abbreviation from dual union
-  -- CryptoDB Annotated Genomes
-  select 'Cryptosporidium parvum Iowa II' as organism, 'Cparvum' as abbreviation from dual union  
-  select 'Cryptosporidium parvum' as organism, 'CparvumChr6' as abbreviation from dual union  
-  select 'Cryptosporidium hominis' as organism, 'Chominis' as abbreviation from dual union  
-  select 'Cryptosporidium muris' as organism, 'Cmuris' as abbreviation from dual union  
   -- GiardiaDB Annotated Genomes
   select 'Giardia Assemblage A isolate WB' as organism, 'GintestinalisAssemblageA' as abbreviation from dual union  
   select 'Giardia Assemblage B isolate GS' as organism, 'GintestinalisAssemblageB' as abbreviation from dual union  
   select 'Giardia Assemblage E isolate P15' as organism, 'GintestinalisAssemblageE' as abbreviation from dual union  
   -- TrichDB Annotated Genomes
   select 'Trichomonas vaginalis G3' as organism, 'Tvaginalis' as abbreviation from dual union  
-  -- MicrosporidiaDB Annotated Genomes
-  select 'Encephalitozoon cuniculi GB-M1' as organism, 'Ecuniculi' as abbreviation from dual union  
-  select 'Encephalitozoon hellem ATCC 50504' as organism, 'EhellemATCC50504' as abbreviation from dual union  
-  select 'Encephalitozoon intestinalis' as organism, 'Eintestinalis' as abbreviation from dual union  
-  select 'Enterocytozoon bieneusi H348' as organism, 'Ebieneusi' as abbreviation from dual union  
-  select 'Nosema ceranae BRL01' as organism, 'NceranaeBRL01' as abbreviation from dual union  
-  -- MicrosporidiaDB Un-Annotated Genomes
-  select 'Encephalitozoon cuniculi EC1' as organism, 'EcuniculiEc1' as abbreviation from dual union  
-  select 'Encephalitozoon cuniculi EC2' as organism, 'EcuniculiEc2' as abbreviation from dual union  
-  select 'Encephalitozoon cuniculi EC3' as organism, 'EcuniculiEc3' as abbreviation from dual union  
-  select 'Nematocida parisii ERTm1' as organism, 'NparisiiERTm1' as abbreviation from dual union  
-  select 'Nematocida parisii ERTm2' as organism, 'NparisiiERTm2' as abbreviation from dual union  
-  select 'Nematocida parisii ERTm3' as organism, 'NparisiiERTm3' as abbreviation from dual union  
-  select 'Octosporea bayeri OER-3-3' as organism, 'Obayeri' as abbreviation from dual union  
-  select 'Vavraia culicis floridensis' as organism, 'Vculicisfloridensis' as abbreviation from dual union  
   -- AmoebaDB Un-Annotated Genomes
   select 'Entamoeba histolytica DS4' as organism, 'EhistolyticaDS4' as abbreviation from dual union  
   select 'Entamoeba histolytica HM-1:CA' as organism, 'EhistolyticaHM1_CA' as abbreviation from dual union  
@@ -6752,12 +6728,6 @@ tablespace indx
        select special.organism, special.parent,special.abbreviation, ot.project_id from OrganismTree ot,(
   -- ToxoDB Apicoplast
   select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union
-  -- PiroplasmaDB Plastid and Mitochondrial
-  select 'Babesia bovis T2Bo mitochondrial' as organism,'Babesia bovis' as parent, 'BbovisT2BoMito' as abbreviation from dual union
-  select 'Babesia bovis T2Bo plastid' as organism, 'Babesia bovis' as parent, 'BbovisT2BoPlastid' as abbreviation from dual union
-  select 'Theileria annulata strain Ankara mitochondrial' as organism, 'Theileria annulata' as parent, 'TannulataAnkaraMito' as abbreviation from dual union
-  select 'Theileria parva strain Muguga mitochondrial' as organism, 'Theileria parva' as parent, 'TparvaMugugaMito' as abbreviation from dual union
-  select 'Theileria parva strain Muguga plastid' as organism, 'Theileria parva' as parent, 'TparvaMugugaPlastid' as abbreviation from dual union
   -- Giardia Deprecated
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffold' as abbreviation from dual union
@@ -6969,8 +6939,7 @@ tablespace indx
   -- CryptoDB ESTs
   select 'Cryptosporidium muris RN66' as organism, 'Cryptosporidium muris' as parent, 'Cmuris' as abbreviation from dual union  
   -- CryptoDB Isolates
-  select 'Cryptosporidium Reference Isolates' as organism, 'Cryptosporidium' as parent, 'CryptoReference' as abbreviation from dual union  
-  select 'Cryptosporidium Isolates minus Reference' as organism, 'Cryptosporidium' as parent, 'Crypto' as abbreviation from dual union  
+  select 'Cryptosporidium Isolates' as organism, 'Cryptosporidium' as parent, 'Cryptosporidiidae' as abbreviation from dual union  
   -- GiardiaDB Isolates
   select 'All Giardia Isolates' as organism, 'Giardia' as parent, 'GiardiaGenbank' as abbreviation from dual union  
   -- TrichDB EST
