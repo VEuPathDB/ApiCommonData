@@ -3244,6 +3244,14 @@ from
     from dual
     UNION
 
+    -- PiorplasmaDB --
+
+    select 'Lau B.b. Virulent vs Attenuated' as profile_name,
+           '' as main_profile_name,
+          'PiroplasmaDB' as project_id
+    from dual
+    UNION
+
     -- PlasmoDB --
 
     select 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4' as profile_name,
@@ -4130,6 +4138,22 @@ select 'giar sage tag frequencies sense' as profile_name,
 
     UNION
 
+select 'Lau B.b. Virulent vs Attenuated' as profile_name,
+       'Lau::Bbovis' as module,
+       'Babesia bovis virulent v. attenuated expression' as display_name,
+       'In this study, ' as description,
+       'Attenuated vs. Virulent' as x_axis,
+       '(exprn_val) left - normalized expression value, right - expression fold change;<br> (percentile) Ranking percentile of intensity, relative to all other genes' as y_axis,
+       5 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'exprn_val,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+from dual
+
+UNION
 
 -- PlasmoDB --
 
