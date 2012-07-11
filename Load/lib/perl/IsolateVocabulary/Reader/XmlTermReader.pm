@@ -1,4 +1,4 @@
-package ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader;
+package ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader;
 use base qw(ApiCommonData::Load::IsolateVocabulary::Reader);
 
 use strict;
