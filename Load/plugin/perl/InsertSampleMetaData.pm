@@ -128,7 +128,7 @@ sub validateHeader {
                                 );
 
   foreach my $r (@requiredCharacteristics) {
-    my @found =  map {/Characteristics\s?\[($r)\]/} @requiredCharacteristics;
+    my @found =  map {/Characteristics\s?\[($r)\]/} @columns;
     unless(scalar @found > 0) {
       $self->userError("Required Column [$r] not found in the meta data file");
     }
