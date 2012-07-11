@@ -5,7 +5,10 @@ use strict;
 use Getopt::Long;
 
 use ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader;
-use ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader;
+
+use ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader;
+use ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader;
+
 use ApiCommonData::Load::IsolateVocabulary::Reporter;
 use ApiCommonData::Load::IsolateVocabulary::Utils;
 
@@ -28,23 +31,21 @@ if(!$gusConfigFile || !$type || !$xmlFile || !$vocabFile) {
 
 my $dbh = ApiCommonData::Load::IsolateVocabulary::Utils::createDbh($gusConfigFile);
 
-my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader->new($xmlFile);
+my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader->new($xmlFile);
 print STDERR "\nextracting terms from xml file\n";
 my $xmlTerms = $xmlReader->extract();
 
-my $vocabFileReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($dbh, $vocabFile, $type);
-print STDERR "\nextracting terms from vocab file\n";
-my $vocabTerms = $vocabFileReader->extract();
+my $vocabReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($vocabFile, $vocabFile);
+print STDERR  "\ncollecting terms from vocabulary file\n";
+my $vocabulary = $vocabReader->extract();
 
-print STDERR  "\ncollecting terms from vocab file\n";
-my $termsInVocab = $vocabFileReader->getTermsInVocab();
+my $sqlTermReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader->new($dbh, $type, $vocabulary);
+print STDERR "\nextracting isolate terms from the database\n";
+my $vocabTerms = $sqlTermReader->extract();
 
-
-my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $vocabTerms, $type, $termsInVocab);
-
+my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $vocabTerms, $type, $vocabulary);
 print STDERR "\nmaking report\n";
 $reporter->report();
-
 
 sub usage {
   my ($m) = @_;
