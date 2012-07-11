@@ -22,6 +22,7 @@ CREATE SEQUENCE ApiDB.IsolateMapping_sq;
 
 GRANT insert, select, update, delete ON ApiDB.IsolateMapping TO gus_w;
 GRANT select ON ApiDB.IsolateMapping TO gus_r;
+GRANT select ON ApiDB.IsolateMapping_sq TO gus_w;
 
 INSERT INTO core.TableInfo
     (table_id, name, table_type, primary_key_column, database_id, is_versioned,
