@@ -35,7 +35,7 @@ my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader->n
 print STDERR "\nextracting terms from xml file\n";
 my $xmlTerms = $xmlReader->extract();
 
-my $vocabReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($vocabFile, $vocabFile);
+my $vocabReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabFileReader->new($vocabFile);
 print STDERR  "\ncollecting terms from vocabulary file\n";
 my $vocabulary = $vocabReader->extract();
 
@@ -46,6 +46,8 @@ my $vocabTerms = $sqlTermReader->extract();
 my $reporter = ApiCommonData::Load::IsolateVocabulary::Reporter->new($gusConfigFile, $xmlTerms, $vocabTerms, $type, $vocabulary);
 print STDERR "\nmaking report\n";
 $reporter->report();
+
+$dbh->disconnect();
 
 sub usage {
   my ($m) = @_;
