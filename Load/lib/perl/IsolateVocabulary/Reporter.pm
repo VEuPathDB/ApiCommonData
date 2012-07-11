@@ -152,7 +152,7 @@ sub checkOntology {
     my $mapType = $term->getType();
     my $origterm = $term->getTerm();
 
-    unless($allOntology->{$mapTerm}->{$mapType}) {
+    unless($allOntology->{$mapType}->{$mapTerm}) {
       $fails++;
       print STDOUT "MISSING FROM VOCABULARY FILE: $mapTerm\t\t$mapType\n";
     }

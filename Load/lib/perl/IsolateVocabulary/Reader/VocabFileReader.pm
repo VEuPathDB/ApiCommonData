@@ -3,8 +3,6 @@ use base qw(ApiCommonData::Load::IsolateVocabulary::Reader);
 
 use strict;
 
-use Carp;
-
 sub new {
   my ($class, $vocabFile) = @_;
 
@@ -25,7 +23,7 @@ sub setVocabFile {
     $self->{vocabFile} = $vocabFile;
   }
   else {
-    croak "vocabFile $vocabFile Does not exist";
+    die "vocabFile [$vocabFile] Does not exist";
   }
 }
 

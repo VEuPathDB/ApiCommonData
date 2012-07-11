@@ -52,7 +52,7 @@ sub isValid {
   my $errors;
 
   unless($term) {
-    print STDERR "Error.  No Term Provided for Node:  ";
+    print Error "No.  STDERR Term Provided for Node:  ";
     print STDERR $self->toString();
     $errors = 1;
   }
