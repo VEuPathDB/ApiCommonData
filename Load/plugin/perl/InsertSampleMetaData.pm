@@ -282,7 +282,6 @@ sub undoTables {
   my ($self) = @_;
 
   return ( 'Study.BioMaterialCharacteristic',
-           'Study.OntologyEntry',
            'RAD.StudyBioMaterial',
            'Study.BioSource',
      );
