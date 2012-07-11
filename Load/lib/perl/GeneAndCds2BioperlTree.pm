@@ -261,7 +261,7 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
-				$CDSLength += (abs($codingEnd - $codingStart) +1);
+				$CDSLength += (abs($codingEnd - $codingStart) +1) if ($codingStart && $codingEnd);
 
 		    }else{
 			$exon->add_tag_value('CodingStart', '');
