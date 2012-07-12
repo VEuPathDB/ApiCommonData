@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+
+## July 11, 2012
+## Sufen Hu
+## usage: wgetFromGenbank --output pcynB_genome.gb --query 49901[BioProject]
+
+use lib "$ENV{GUS_HOME}/lib/perl";
+use LWP::Simple;
+use Getopt::Long;
+use strict;
+
+my ($output, $query, $id_list, $help);
+
+&GetOptions('output=s' => \$output,
+            'help|h' => \$help,
+            'query=s' => \$query,
+            'id_list=s' => \$id_list,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $output && ($query || $id_list) );
+
+die "Output file '$output' already exists\n" if -e $output;
+
+my $db      = "nuccore";
+my $utils = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+
+my $s_result;
+if ($query && !$id_list) {
+	my $esearch = "$utils/esearch.fcgi?db=$db&usehistory=y&term=$query";
+	$s_result = get($esearch);
+}
+
+my $web = $1 if ($s_result =~ /<WebEnv>(\S+)<\/WebEnv>/);
+my $key = $1 if ($s_result =~ /<QueryKey>(\d+)<\/QueryKey>/);
+my $count = $1 if ($s_result =~ /<Count>(\d+)<\/Count>/);
+
+open(FILE, ">$output") || die "Could not open output file '$output'\n";
+
+my $retmax = 500;
+for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
+
+	my $url = "$utils/efetch.fcgi?db=$db&WebEnv=$web";
+	$url .= "&query_key=$key&retstart=$retstart";
+	$url .= "&retmax=$retmax&rettype=gbwithparts&retmode=text";
+
+	print "\$url = $url\n";
+
+	my $gb_result = get($url);
+
+	if (!$gb_result) {
+		print STDERR "retrying ...\n";
+		$gb_result = get($url);  # retry one time
+		die "Failed getting gb result\n" unless $gb_result;
+	}
+
+	print FILE "$gb_result";
+}
+
+if ($id_list) {
+	my $url = "$utils/efetch.fcgi?db=$db&id=$id_list&rettype=gbwithparts&retmode=text";
+	my $gb_result = get($url);
+	print FILE "$gb_result";
+}
+
+close(FILE);
+
+
+sub usage {
+  die "
+Use NCBI eutil to batch download genbank records
+Retrieve Genbank (full) format for genome feature
+
+Usage:  wgetFromGenbank --output [--query | --id_list]
+
+where
+  --output:       output file
+  --query:        such as 49901[BioProject]+AND+chromosome, 
+                  or science[journal]+AND+breast+cancer+AND+2008[pdat]
+  --id_list:      comma delimited id list, such as DF157093,DF157094,DF157106
+                  or 389581967,389581810,389585944
+";
+}
+
+
