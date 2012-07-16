@@ -5,11 +5,13 @@ use strict;
 
 use FileHandle;
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::IsolateVocabulary::Reader::SqlReader;
-use ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader;
+
+use ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader;
+
+use ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader;
+use ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader;
+
 use ApiCommonData::Load::IsolateVocabulary::InsertMappedValues;
-
-
 
 $| = 1;
 
@@ -105,23 +107,25 @@ sub run {
     my $locationXmlFile = $self->getArg('geographicXmlFile');
     my $hostXmlFile = $self->getArg('hostXmlFile');
 
+    my $vocabulary = ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader->new($self->getDbHandle());
+
     my $count;
-    $count += $self->insert($sourceXmlFile, 'isolation_source') if $sourceXmlFile;
-    $count += $self->insert($locationXmlFile, 'geographic_location') if $locationXmlFile;
-    $count += $self->insert($hostXmlFile, 'specific_host') if $hostXmlFile;
+    $count += $self->insert($sourceXmlFile, 'isolation_source', $vocabulary) if $sourceXmlFile;
+    $count += $self->insert($locationXmlFile, 'geographic_location', $vocabulary) if $locationXmlFile;
+    $count += $self->insert($hostXmlFile, 'specific_host', $vocabulary) if $hostXmlFile;
     return "Inserted $count rows into IsolateMapping";
 }
 
 sub insert {
-    my ($self, $xmlFile, $type) = @_;
-    my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlReader->new($xmlFile);
+    my ($self, $xmlFile, $type, $vocabulary) = @_;
+
+    my $xmlReader = ApiCommonData::Load::IsolateVocabulary::Reader::XmlTermReader->new($xmlFile);
     my $xmlTerms = $xmlReader->extract();
 
-    my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlReader->new($self->getDbHandle(), $type);
+    my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader->new($self->getDbHandle(), $type, $vocabulary);
     my $sqlTerms = $sqlReader->extract();
 
-
-    my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $self->getDbHandle(), $type, $xmlTerms, $sqlTerms);
+    my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $type, $xmlTerms, $sqlTerms, $vocabulary);
     my ($count, $msg) = $inserter->insert();
     $self->log("$type: $msg");
     return $count;
