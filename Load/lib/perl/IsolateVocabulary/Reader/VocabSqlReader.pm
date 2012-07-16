@@ -22,15 +22,15 @@ sub extract {
 
   my $dbh = $self->getDbh();
 
-  my $sql = "select term, parent, type from apidb.isolatevocabulary";
+  my $sql = "select isolate_vocabulary_id, term, parent, type from apidb.isolatevocabulary";
   my $sh = $dbh->prepare($sql);
   $sh->execute();
 
   my $vocab;
 
-  while(my ($term, $parent, $type) = $sh->fetchrow_array()) {
+  while(my ($id, $term, $parent, $type) = $sh->fetchrow_array()) {
     die "duplicate ($type, $term) in vocab file line $.\n" if $vocab->{$type}->{$term};
-    $vocab->{$type}->{$term} = 1;
+    $vocab->{$type}->{$term} = $id;
   }
 
   $sh->finish();
