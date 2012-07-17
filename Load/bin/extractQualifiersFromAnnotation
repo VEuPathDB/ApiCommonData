@@ -293,8 +293,8 @@ sub getGoEvidenceCode {
 		return "ISO";
 	} elsif ($string =~ /NOT RECORDED/) {
 		return "NR";
-	#} elsif ($string =~ //) {
-	#	return "";
+	} elsif ($string =~ /INFERRED FROM DIRECT ASSAY/) {
+		return "IDA";
 	#} elsif ($string =~ //) {
 	#	return "";
 	} else {
@@ -340,6 +340,7 @@ sub trimIds($){
 	$string =~ s/:mRNA.*$//g;
 	$string =~ s/:pseudogenic_transcript.*$//g;
 	$string =~ s/;current=false*$//g;
+	$string =~ s/\.\d$//g;
 
 	return $string;
 }
