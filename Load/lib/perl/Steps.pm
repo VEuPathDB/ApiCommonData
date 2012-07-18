@@ -3795,6 +3795,32 @@ sub addIdsToGroupsFile {
   $mgr->endStep($signal);
 }
 
+sub addParalogGroups {
+   my ($mgr) = @_;
+
+   my $signal = "addParaloggroups";
+
+   return if $mgr->startStep("Adding group ids to paralog groups and paralog groups to orthologGroups file", $signal);
+
+   my $propertySet = $mgr->{propertySet};
+
+   my $grpPrefix = $propertySet->getProp('grpPrefix');
+
+   my $proteomeName = $propertySet->getProp('proteomeName');
+
+   my $orthoGroupsFile = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/orthologGroups_$proteomeName";
+
+   my $parlogGroupsFile = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/paralogGroups";
+
+   my $outputFile = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/orthomclGroups.txt";
+
+   my $cmd = "perl transformParalogGroupsToOrthologGroups.pl --prefix $grpPrefix --pFile $parlogGroupsFile --oFile $orthoGroupsFile --outFile $outputFile";
+
+   $mgr->runCmd($cmd);
+
+   $mgr->endStep($signal);
+}
+
 
 
 sub orthomclPairs {
