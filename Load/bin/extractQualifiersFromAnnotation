@@ -222,6 +222,10 @@ sub processGoAsso {
 			$goId = "GO:".$2;
 			$product = $1;
 		}
+		if ($value =~ /^GO:(\d+).*\;ev_code=(\w+)/) {
+			$goId = "GO:".$1;
+			$evidenceCode = $2 if ($2);
+		}
 		$aspect = &getAspectForGo ($qualifier);
 
 		push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
