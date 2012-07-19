@@ -7005,36 +7005,35 @@ tablespace indx
        union
        select special.organism, special.parent, special.abbreviation, ot.project_id from OrganismTree ot,
        (
+  -- All species and speciesAbbreviations from apidb.organism
+  select distinct sp.name as organism, 
+                  ot.parentTerm as parent,
+                  REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'') as abbreviation
+  from SRES.taxonname sp, apidbtuning.taxonspecies ts, apidb.organism org, apidbtuning.organismtree ot
+  where org.taxon_id = ts.taxon_id
+  and ts.species_taxon_id = sp.taxon_id
+  and sp.name_class = 'scientific name'
+  and ot.term = sp.name
+  and org.strain_abbrev is not null
+  and org.name_for_filenames is not null
+  union
+  -- All familes for isolates
+  select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, '' as parent, family_name_for_files as abbreviation
+  from apidb.organism 
+  where family_name_for_files is not null
+  union
   -- ToxoDB ESTs
   select 'Toxoplasma gondii' as organism, 'Toxoplasma' as parent, 'Tgondii' as abbreviation from dual union  
-  -- ToxoDB Isolates TODO !!
+  -- ToxoDB Isolates
   select 'All Toxoplasma Isolates' as organism, 'Toxoplasma' as parent, 'ToxoDB' as abbreviation from dual union  
-  -- CryptoDB ESTs
-  select 'Cryptosporidium muris RN66' as organism, 'Cryptosporidium muris' as parent, 'Cmuris' as abbreviation from dual union  
-  -- CryptoDB Isolates
-  select 'Cryptosporidium Isolates' as organism, 'Cryptosporidium' as parent, 'Cryptosporidiidae' as abbreviation from dual union  
   -- GiardiaDB Isolates
   select 'All Giardia Isolates' as organism, 'Giardia' as parent, 'GiardiaGenbank' as abbreviation from dual union  
   -- TrichDB EST
   select 'Trichomonas vaginalis' as organism, 'Trichomonas' as parent, 'Tvaginalis' as abbreviation from dual union  
-  -- MicrosporidiaDB Isolates
-  select 'Enterocytozoonidae Isolates' as organism, 'Enterocytozoon' as parent, 'Enterocytozoonidae' as abbreviation from dual union
-  select 'Nematocida Isolates' as organism, 'Nematocida' as parent, 'Nematocida' as abbreviation from dual union
-  select 'Nosematidae Isolates' as organism, 'Nosema' as parent, 'Nosematidae' as abbreviation from dual union
-  select 'Unikaryonidae Isolates' as organism, 'Unikaryonidae' as parent, 'Unikaryonidae' as abbreviation from dual union
-  -- MicrosporidiaDB EST  
-  select 'Encephalitozoon cuniculi' as organism, 'Encephalitozoon' as parent, 'Ecuniculi' as abbreviation from dual union  
-  -- MicrosporidiaDB Genome Survey Sequences
-  select 'Genome Survey Sequences' as organism, 'Microsporidia' as parent, 'Microsporidia' as abbreviation from dual union
   -- AmoebaDB EST
   select 'Entamoeba dispar' as organism, 'Entamoeba' as parent, 'Edispar' as abbreviation from dual union  
   select 'Entamoeba histolytica' as organism, 'Entamoeba' as parent, 'Ehistolytica' as abbreviation from dual union  
-  -- PlasmoDB ESTs where the name differs from above
-  select 'Plasmodium berghei' as organism, 'Plasmodium' as parent, 'Pberghei' as abbreviation from dual union
-  select 'Plasmodium falciparum' as organism, 'Plasmodium' as parent, 'Pfalciparum' as abbreviation from dual union
-  select 'Plasmodium vivax' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
-  select 'Plasmodium yoelii' as organism, 'Plasmodium', 'Pyoelii' as abbreviation from dual union
-  -- PlasmoDB Isolates
+  -- PlasmoDB Legacy Isolates
   select 'P. falciparum Barcode Isolates' as organism, 'Plasmodium' as parent, 'PfalciparumBarcode' as abbreviation from dual union
   select 'P. berghei Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pberghei' as abbreviation from dual union
   select 'P. chabaudi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pchabaudi' as abbreviation from dual union
@@ -7048,13 +7047,6 @@ tablespace indx
   select 'Trypanosoma cruzi' as organism, 'Trypanosoma' as parent, 'Tcruzi' as abbreviation from dual union
   select 'Leishmania major' as organism, 'Leishmania' as parent, 'LmajorFriedlin' as abbreviation from dual union
   select 'Leishmania mexicana mexicana' as organism, 'Leishmania mexicana' as parent, 'Lmexicana' as abbreviation from dual union
-  -- PiroplasmaDB Isolates
-  select 'Babesiidae Isolates' as organism, 'Babesia' as parent, 'Babesiidae' as abbreviation from dual union
-  select 'Theileriidae Isolates' as organism, 'Theileria' as parent, 'Theileriidae' as abbreviation from dual union
-  -- PiroplasmaDB ESTs
-  select 'Theileria annulata' as organism, 'Theileria' as parent, 'Tannulata' as abbreviation from dual union
-  select 'Theileria parva' as organism, 'Theileria' as parent, 'Tparva' as abbreviation from dual union
-  select 'Babesia bovis' as organism, 'Babesia' as parent, 'Bbovis' as abbreviation from dual union
   -- EuPathDB Other ESTs
   select 'Other Apicomplexan ESTs' as organism, 'Apicomplexa' as parent, 'Other' as abbreviation from dual) special
       where special.parent = ot.term
