@@ -107,7 +107,8 @@ sub run {
     my $locationXmlFile = $self->getArg('geographicXmlFile');
     my $hostXmlFile = $self->getArg('hostXmlFile');
 
-    my $vocabulary = ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader->new($self->getDbHandle());
+    my $vocabularyReader = ApiCommonData::Load::IsolateVocabulary::Reader::VocabSqlReader->new($self->getDbHandle());
+    my $vocabulary = $vocabularyReader->extract();
 
     my $count;
     $count += $self->insert($sourceXmlFile, 'isolation_source', $vocabulary) if $sourceXmlFile;
