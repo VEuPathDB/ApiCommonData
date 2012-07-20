@@ -40,9 +40,9 @@ sub setAlreadyMaps {$_[0]->{_already_maps} = $_[1]}
 sub isValid {
   my ($self) = @_;
 
-  my @validTables = ('IsolateFeature', 'IsolateSource', 'ExternalNaSequence');
-  my @validFields = ('product', 'country', 'specific_host', 'isolation_source', 'source_id');
-  my @validTypes = ('product', 'geographic_location', 'specific_host', 'isolation_source');
+  my @validTables = ('IsolateSource', 'OntologyEntry');
+  my @validFields = ('country', 'specific_host', 'isolation_source', 'source_id', 'GeographicLocation', 'Host', 'BioSourceType');
+  my @validTypes = ('geographic_location', 'specific_host', 'isolation_source');
 
   my $term = $self->getTerm();
   my $field = $self->getField();
@@ -52,7 +52,7 @@ sub isValid {
   my $errors;
 
   unless($term) {
-    print STDERR "Error.  No Term Provided for Node:  ";
+    print Error "No.  STDERR Term Provided for Node:  ";
     print STDERR $self->toString();
     $errors = 1;
   }

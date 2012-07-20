@@ -25,7 +25,6 @@ sub isValidType {
 
   my @allowed = ('geographic_location',
                  'specific_host',
-                 'product',
                  'isolation_source'
                 );
 
@@ -37,22 +36,6 @@ sub isValidType {
   return 0;
 }
 
-
-sub getAllOntologies {
-  my ($dbh)  = @_;
-
-  my $sql = "select term, type, isolate_vocabulary_id from apidb.isolatevocabulary";
-  my $sh = $dbh->prepare($sql);
-  $sh->execute();
-
-  my $res = {};
-  while(my ($term, $type, $id) = $sh->fetchrow_array()) {
-    $res->{$term}->{$type} = $id
-  }
-  $sh->finish();
-
-  return $res;
-}
 
 sub isIncluded {
   my ($self, $a, $v) = @_;

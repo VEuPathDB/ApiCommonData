@@ -7,6 +7,8 @@ use ApiCommonData::Load::IsolateVocabulary::Utils;
 
 sub getSqlTerms {$_[0]->{_sql_terms}}
 
+sub getVocabTerms {$_[0]->{_vocabTerms}}
+
 sub getXmlMapTerms {$_[0]->{_xml_map_terms}}
 sub setXmlMapTerms {$_[0]->{_xml_map_terms} = $_[1]}
 
@@ -19,7 +21,7 @@ sub getDbh {$_[0]->{dbh}}
 sub setDbh {$_[0]->{dbh} = $_[1]}
 
 sub new {
-  my ($class, $gusConfigFile, $xmlMapTerms, $sqlTerms, $type) = @_;
+  my ($class, $gusConfigFile, $xmlMapTerms, $sqlTerms, $type, $vocabTerms) = @_;
 
   unless(ApiCommonData::Load::IsolateVocabulary::Utils::isValidType($type)) {
     croak "Type $type is not supported";
@@ -27,7 +29,8 @@ sub new {
 
   my $args = {_sql_terms => $sqlTerms,
               _xml_map_terms => $xmlMapTerms,
-              _type => $type
+              _type => $type,
+	      _vocabTerms => $vocabTerms
              };
 
 
@@ -73,9 +76,6 @@ sub report {
   foreach my $vocabTerm (@{$sqlTerms}) {
     next if($vocabTerm->getAlreadyMaps());
 
-    # there is no good way to check this for products
-    next if($type eq 'product');
-    
     my $term = $vocabTerm->getTerm();
 
     unless($xmlTermsHash->{$term}) {
@@ -89,7 +89,7 @@ sub report {
     print STDERR "Please Correct Errors and rerun.  Terms can either be added to an ontology or add an xml map to link term to existing ontology\n";
   }
   else {
-    print STDERR "All New Ontology Terms either map to existing term or are handeled in the xml map!\n";
+    print STDERR "All New Ontology Terms either map to existing term or are handled in the xml map!\n";
   }
 
 }
@@ -116,10 +116,10 @@ sub getXml {
   my $typeInTable = $type;
   $typeInTable = 'country' if ($type eq 'geographic_location');
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$type\">
+  <initial table=\"IsolateSource\" field=\"$typeInTable">
    <original>$value<\/original>
     <maps>
-      <row type=\"$typeInTable\" value=\"\" \/>
+      <row type=\"$type\" value=\"\" \/>
     <\/maps>
   <\/initial>
 END
@@ -142,28 +142,23 @@ sub isIncluded {
 }
 
 sub checkOntology {
-  my ($self, $dbh) = @_;
+  my ($self) = @_;
 
-  my $allOntology = ApiCommonData::Load::IsolateVocabulary::Utils::getAllOntologies($dbh);
-  my @missing;
+  my $allOntology = $self->getVocabTerms();
+  my $fails = 0;
 
   foreach my $term (@{$self->getXmlMapTerms}) {
     my $mapTerm = $term->getMapTerm();
     my $mapType = $term->getType();
+    my $origterm = $term->getTerm();
 
-    unless($allOntology->{$mapTerm}->{$mapType}) {
-      push @missing, $mapTerm;
+    unless($allOntology->{$mapType}->{$mapTerm}) {
+      $fails++;
+      print STDOUT "MISSING FROM VOCABULARY FILE: $mapTerm\t\t$mapType\n";
     }
   }
-
-  if (scalar @missing > 0) {
-    print STDOUT "Add these $#missing+1 terms Isolate Vocabulary:\n";
-    foreach my $term (sort @missing) {
-      print STDOUT "$term\t\tproduct\n";
-    }
-  }
-
-  return scalar(@missing);
+  print STDOUT "\n\n";
+  return $fails;
 }
 
 1;
