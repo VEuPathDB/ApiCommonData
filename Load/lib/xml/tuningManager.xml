@@ -7009,7 +7009,7 @@ tablespace indx
   -- All species and speciesAbbreviations from apidb.organism
   select distinct sp.name as organism, 
                   ot.parentTerm as parent,
-                  REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'') as abbreviation
+                  REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'', 1, 1) as abbreviation
   from SRES.taxonname sp, apidbtuning.taxonspecies ts, apidb.organism org, apidbtuning.organismtree ot
   where org.taxon_id = ts.taxon_id
   and ts.species_taxon_id = sp.taxon_id
