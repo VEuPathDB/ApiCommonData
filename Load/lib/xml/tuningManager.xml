@@ -2444,6 +2444,7 @@ tablespace indx
     <externalDependency name="rad.studybiomaterial"/>
     <externalDependency name="study.ontologyentry"/>
     <externalDependency name="apidb.isolatevocabulary"/>
+    <externalDependency name="apidb.vocabularybiomaterial"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="sres.ExternalDatabase"/>
@@ -2510,7 +2511,7 @@ From study.biosource b, study.study s,
       and vb.isolate_vocabulary_id = iv.isolate_vocabulary_id
       ) geographic_location,
      (select distinct project_id from apidbtuning.sequenceattributes) project
-where s.name like '%HTS_Isolates'
+where s.name like '%_HTS%'
 and s.study_id = sb.study_id
 and sb.bio_material_id = b.bio_material_id
 and b.external_database_release_id = edr.external_database_release_id
