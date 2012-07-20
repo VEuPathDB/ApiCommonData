@@ -124,7 +124,7 @@ sub checkForNullBioMaterials {
 my $sql = "select bio_material_id
 from study.biomaterialcharacteristic bc, study.ontologyentry oe
 where oe.ontology_entry_id = bc.ontology_entry_id
-and oe.category in ('StrainOrLine', 'GeographicLocation', 'BioSourceType')
+and oe.category in ('Host', 'GeographicLocation', 'BioSourceType')
 group by bio_material_id
 having count(*) != 3";
 
