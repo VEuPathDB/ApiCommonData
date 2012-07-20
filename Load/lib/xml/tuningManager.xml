@@ -6999,6 +6999,7 @@ tablespace indx
   <tuningTable name="OrganismAbbreviationBlast">
     <internalDependency name="OrganismAbbreviationWS"/>
     <internalDependency name="OrganismTree"/>
+    <internalDependency name="EstAttributes"/>
     <sql>
       <![CDATA[
        create table OrganismAbbreviationBlast&1 nologging as
@@ -7006,17 +7007,21 @@ tablespace indx
        union
        select special.organism, special.parent, special.abbreviation, ot.project_id from OrganismTree ot,
        (
-  -- All species and speciesAbbreviations from apidb.organism
-  select distinct sp.name as organism, 
+  -- All species and speciesAbbreviations from apidb.organism where we have ests
+  select distinct sp.name as organism,
                   ot.parentTerm as parent,
-                  REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'', 1, 1) as abbreviation
-  from SRES.taxonname sp, apidbtuning.taxonspecies ts, apidb.organism org, apidbtuning.organismtree ot
+                  REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'', 1, 1) as abbreviation 
+  from SRES.taxonname sp, apidbtuning.taxonspecies ts, apidb.organism org, apidbtuning.organismtree ot,
+       Apidbtuning.estattributes ea, sres.taxonname etn, apidbtuning.taxonspecies ets
   where org.taxon_id = ts.taxon_id
   and ts.species_taxon_id = sp.taxon_id
   and sp.name_class = 'scientific name'
   and ot.term = sp.name
   and org.strain_abbrev is not null
   and org.name_for_filenames is not null
+  and ets.species_taxon_id = sp.taxon_id
+  and (ets.taxon_id = etn.taxon_id OR ets.species_taxon_id = etn.taxon_id)
+  and etn.name = ea.organism
   union
   -- All familes for isolates
   select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, '' as parent, family_name_for_files as abbreviation
