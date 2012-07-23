@@ -2510,7 +2510,7 @@ From study.biosource b, study.study s,
       and bc.bio_material_id = vb.bio_material_id
       and vb.isolate_vocabulary_id = iv.isolate_vocabulary_id
       ) geographic_location,
-     (select distinct project_id from apidbtuning.sequenceattributes) project
+     (select distinct project_id from sequenceattributes) project
 where s.name like '%_HTS%'
 and s.study_id = sb.study_id
 and sb.bio_material_id = b.bio_material_id
@@ -6857,7 +6857,7 @@ tablespace indx
 		           'Trichomonadida' AS taxon_node
 		FROM dual
         ) p,
-        (select distinct project_id, organism from apidbtuning.sequenceattributes) s
+        (select distinct project_id, organism from sequenceattributes) s
         where p.project_id = s.project_id
         union 
         select distinct s.project_id as project_id, 
@@ -6886,7 +6886,7 @@ tablespace indx
                else 'Missing ProjectIdTaxonLevel'
                end as taxon_node,
                s.organism as organism
-        from apidbtuning.sequenceattributes s
+        from sequenceattributes s
         where s.project_id = 'FungiDB'
 	]]>
     </sql>
@@ -7004,6 +7004,11 @@ tablespace indx
       <![CDATA[
        create table OrganismAbbreviationBlast&1 nologging as
        select organism, parent, abbreviation, project_id from OrganismAbbreviationWS
+         union
+      -- All familes for isolates
+      select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, '' as parent, family_name_for_files as abbreviation, project_name as project_id
+      from apidb.organism 
+       where family_name_for_files is not null
        union
        select special.organism, special.parent, special.abbreviation, ot.project_id from OrganismTree ot,
        (
@@ -7011,8 +7016,8 @@ tablespace indx
   select distinct sp.name as organism,
                   ot.parentTerm as parent,
                   REGEXP_REPLACE(org.name_for_filenames, org.strain_abbrev,'', 1, 1) as abbreviation 
-  from SRES.taxonname sp, apidbtuning.taxonspecies ts, apidb.organism org, apidbtuning.organismtree ot,
-       Apidbtuning.estattributes ea, sres.taxonname etn, apidbtuning.taxonspecies ets
+  from SRES.taxonname sp, taxonspecies ts, apidb.organism org, organismtree ot,
+       estattributes ea, sres.taxonname etn, taxonspecies ets
   where org.taxon_id = ts.taxon_id
   and ts.species_taxon_id = sp.taxon_id
   and sp.name_class = 'scientific name'
@@ -7022,11 +7027,6 @@ tablespace indx
   and ets.species_taxon_id = sp.taxon_id
   and (ets.taxon_id = etn.taxon_id OR ets.species_taxon_id = etn.taxon_id)
   and etn.name = ea.organism
-  union
-  -- All familes for isolates
-  select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, '' as parent, family_name_for_files as abbreviation
-  from apidb.organism 
-  where family_name_for_files is not null
   union
   -- ToxoDB ESTs Legacy
   select 'Toxoplasma gondii' as organism, 'Toxoplasma' as parent, 'Tgondii' as abbreviation from dual union  
