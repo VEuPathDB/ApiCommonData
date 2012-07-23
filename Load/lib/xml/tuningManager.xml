@@ -7009,6 +7009,7 @@ tablespace indx
       select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, '' as parent, family_name_for_files as abbreviation, project_name as project_id
       from apidb.organism 
        where family_name_for_files is not null
+       and family_name_for_files NOT IN ('Culicosporidae', 'Dubosqiidae', 'Pleistophoridae')
        union
        select special.organism, special.parent, special.abbreviation, ot.project_id from OrganismTree ot,
        (
