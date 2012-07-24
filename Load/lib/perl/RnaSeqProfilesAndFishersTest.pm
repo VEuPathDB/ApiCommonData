@@ -23,6 +23,7 @@ my $diffSuffix = ".diff";
  sub getSamples                 { $_[0]->{samples} }
  sub getIsPairedEnd             { $_[0]->{isPairedEnd} }
  sub getIsTimeSeries            { $_[0]->{isTimeSeries} }
+ sub getSkipFishers             { $_[0]->{skipFishers} }
 
 #-------------------------------------------------------------------------------
 sub new {
@@ -83,7 +84,9 @@ sub munge {
         });
   $diffProfile->munge();
 
-  if(scalar @$samples > 1) {
+  my $skipFishers = ($self->getSkipFishers()) ? 1 : undef;
+
+  unless($skipFishers || scalar @$samples < 2 ) {
     my $isPairedEnd = $self->getIsPairedEnd();
 
     my $fishers = CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers->
