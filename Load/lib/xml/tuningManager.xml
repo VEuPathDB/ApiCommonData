@@ -1383,6 +1383,8 @@ WHERE gf.source_id = gene.source_id
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.taxon_id = tn.taxon_id
   AND tn.name_class = 'scientific name'
+  AND tn.taxon_id NOT IN
+	 (SELECT o.taxon_id FROM apidb.organism o WHERE  o.is_annotated_genome=0)
   AND gf.source_id = protein.source_id(+)
   AND gf.source_id = go.source_id(+)
   AND gf.source_id = DerisiExpn.source_id(+)
