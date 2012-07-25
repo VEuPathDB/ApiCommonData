@@ -2451,8 +2451,11 @@ select null as na_sequence_id,
        'HTS' as data_type,
        host.annotated_value as annotated_isolation_source,
        isolation_source.annotated_value as annotated_specific_host,
-       geographic_location.annotated_value as annotated_geographic_location 
-From study.biosource b, study.study s, 
+       geographic_location.annotated_value as annotated_geographic_location,
+       null as length, 
+       null as pcr_primers, 
+       null as collected_by
+ From study.biosource b, study.study s, 
      rad.studybiomaterial sb, SRES.externaldatabase ed, SRES.externaldatabaserelease edr,
      (select bc.bio_material_id, tn.name, tn.taxon_id
       from study.ontologyentry oe, sres.taxonname tn, STUDY.biomaterialcharacteristic bc
@@ -2521,10 +2524,14 @@ select i.na_sequence_id,
        i.data_type,
        i_s.annotated_isolation_source,
        s_h.annotated_specific_host,
-       g_l.annotated_geographic_location
+       g_l.annotated_geographic_location,
+       i.length, 
+       i.pcr_primers, 
+       i.collected_by
 FROM (
        SELECT  etn.na_sequence_id,
                etn.taxon_id,
+               etn.length,
                edr.version as external_db_version, 
                src.na_feature_id,
                edb.name as external_db_name,
@@ -2551,6 +2558,8 @@ FROM (
               src.country as country,
               src.note as note,
               etn.description as description,
+              src.pcr_primers,
+              src.collected_by,
               src.is_reference,
               decode(edb.name, 'Broad 75K genotyping chip', 'HD_Array', 
                                'pfal3D7_SNP_Broad75KGenotyping_RSRC', 'HD_Array',
@@ -2607,7 +2616,7 @@ and i.na_sequence_id = prod.na_sequence_id (+)
     </sql>
     <sql>
       <![CDATA[
-create unique index IsolateAttr_sourceId_idx&1 ON IsolateAttributes&1 (source_id)
+create index IsolateAttr_sourceId_idx&1 ON IsolateAttributes&1 (source_id)
 tablespace indx
       ]]>
     </sql>
