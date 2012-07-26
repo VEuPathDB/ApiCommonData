@@ -8,6 +8,9 @@ use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
 use CBIL::TranscriptExpression::DataMunger::ProfileDifferences;
 use CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers;
 
+use CBIL::TranscriptExpression::DataMunger::RNASeqFishersTest qw($CONFIG_FILE);
+use CBIL::TranscriptExpression::DataMunger::RadAnalysis;
+
 use Data::Dumper;
 
 use strict;
@@ -89,6 +92,12 @@ sub munge {
            isPairedEnd => $isPairedEnd
           });
     $fishers->munge();
+  }
+  else {
+    my $dummy = CBIL::TranscriptExpression::DataMunger::RadAnalysis->
+      new({mainDirectory => $self->getMainDirectory });
+    $dummy->setConfigFile($CONFIG_FILE);
+    $dummy->createConfigFile(1);
   }
 }
 1;
