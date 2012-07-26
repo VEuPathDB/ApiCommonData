@@ -2324,12 +2324,11 @@ CREATE TABLE SnpStrains&1 NOLOGGING AS
   SELECT distinct sv.strain,
                   sa.organism,
                   sf.external_database_release_id,
-                  CASE WHEN d.name='pfal3D7_SNP_sanger_PReichenowi_gff_RSRC' THEN 0
+                  CASE WHEN d.name='pfal3D7_SNP_sanger_PReichenowi_gff_RSRC' THEN 1
                        WHEN d.name='pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC' THEN 0
                        WHEN d.name='pfal3D7_SNP_sanger_ItGhana_gff_RSRC' THEN 0
                        WHEN d.name='pfal3D7_SNP_Broad_gff_RSRC' THEN 0
                        WHEN d.name='pfal3D7_SNP_XSu_gff_RSRC' THEN 0
-                       WHEN sv.strain='Preich' THEN 1
                        ELSE 1 
                   END as is_queryable,
                   d.name as extdb_name
