@@ -8,13 +8,14 @@ use CBIL::TranscriptExpression::DataMunger::ProfileFromSeparateFiles;
 use CBIL::TranscriptExpression::DataMunger::ProfileDifferences;
 use CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers;
 
-use CBIL::TranscriptExpression::DataMunger::RNASeqFishersTest qw($CONFIG_FILE);
+#use CBIL::TranscriptExpression::DataMunger::RNASeqFishersTest qw($CONFIG_FILE);
 use CBIL::TranscriptExpression::DataMunger::RadAnalysis;
 
 use Data::Dumper;
 
 use strict;
 
+my $CONFIG_FILE = "analysis_result_config.txt";
 my $outputFileBase = "profiles";
 my $fileSuffixBase = "intensity";
 my $minSuffix = ".min";
