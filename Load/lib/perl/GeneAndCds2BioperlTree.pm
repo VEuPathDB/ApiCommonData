@@ -48,17 +48,19 @@ sub preprocess {
 	  
 
 	    if($type eq 'repeat_region'){
-		if($bioperlFeatureTree->has_tag("satellite")){
-		    $bioperlFeatureTree->primary_tag("microsatellite");
-		}
+		#if($bioperlFeatureTree->has_tag("satellite")){
+		#    $bioperlFeatureTree->primary_tag("microsatellite");
+		#}
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
+		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 	    if($type eq 'STS'){
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
+		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 	    if ($type eq 'gene') {
 
@@ -261,7 +263,7 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
-				$CDSLength += (abs($codingEnd - $codingStart) +1);
+				$CDSLength += (abs($codingEnd - $codingStart) +1) if ($codingStart && $codingEnd);
 
 		    }else{
 			$exon->add_tag_value('CodingStart', '');
