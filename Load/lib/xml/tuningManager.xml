@@ -187,9 +187,9 @@ tablespace indx
 
   <tuningTable name="FeatureLocation" prefixEnabled="true">
     <internalDependency name="SequencePieceClosure"/>
+    <internalDependency name="SequenceAttributes"/>
     <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.NaLocation"/>
-    <externalDependency name="dots.NaSequenceImp"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
     <sql>
@@ -212,7 +212,7 @@ select case
        cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
        nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
-from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence ns,
+from dots.NaFeature nf, dots.NaLocation nl, SequenceAttributes ns,
      dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
   and nf.na_sequence_id = ns.na_sequence_id
@@ -259,8 +259,8 @@ select -- virtual feature locations mapped through SequencePiece
          else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
-from dots.NaFeature nf, dots.NaLocation nl, dots.NaSequence contig,
-     &prefixSequencePieceClosure sp, dots.NaSequence scaffold, dots.ExonFeature ef,
+from dots.NaFeature nf, dots.NaLocation nl, SequenceAttributes contig,
+     &prefixSequencePieceClosure sp, SequenceAttributes scaffold, dots.ExonFeature ef,
      sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
   and nf.na_sequence_id = contig.na_sequence_id
@@ -6466,7 +6466,7 @@ tablespace indx
       <![CDATA[
 CREATE TABLE IsolateSequence&1 NOLOGGING AS
 SELECT ia.source_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
+       ia.project_id,
        ns.sequence
 FROM IsolateAttributes ia, dots.NaSequence ns, sres.TaxonName tn
 WHERE ia.na_sequence_id = ns.na_sequence_id
