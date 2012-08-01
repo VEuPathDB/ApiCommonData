@@ -2475,6 +2475,7 @@ select null as na_sequence_id,
       and bc.ontology_entry_id = oe.ontology_entry_id
       and bc.bio_material_id = vb.bio_material_id
       and vb.isolate_vocabulary_id = iv.isolate_vocabulary_id
+      and iv.type = 'specific_host'
       ) host,
      (select bc.bio_material_id, oe.value, iv.term as annotated_value
       from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc,
@@ -2483,6 +2484,7 @@ select null as na_sequence_id,
       and bc.ontology_entry_id = oe.ontology_entry_id
       and bc.bio_material_id = vb.bio_material_id
       and vb.isolate_vocabulary_id = iv.isolate_vocabulary_id
+      and iv.type = 'isolation_source'
       ) isolation_source,
      (select bc.bio_material_id, oe.value, iv.term as annotated_value
       from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc,
@@ -2491,6 +2493,7 @@ select null as na_sequence_id,
       and bc.ontology_entry_id = oe.ontology_entry_id
       and bc.bio_material_id = vb.bio_material_id
       and vb.isolate_vocabulary_id = iv.isolate_vocabulary_id
+      and iv.type = 'geographic_location'
       ) geographic_location,
      (select distinct project_id from sequenceattributes) project
 where s.name like '%_HTS%'
