@@ -13,6 +13,8 @@ use Bio::Seq::RichSeq;
 my (%hash, %cn);  # column name
 my $file = shift or die "cannot open the Isolate Submission Excel form\n";
 
+my %idhash = ();
+
 my $col = 0;
 while(<DATA>) {
   chomp;
@@ -132,6 +134,15 @@ while(my ($k, $v) = each %hash) {
   next unless (exists($hash{$k}{0}) && $hash{$k}{0} ne "") ;
 
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
+
+  # in case of duplicate isolate ids
+	if(exists $idhash{$isolate_id}) {
+	  $isolate_id .= '_1';
+	  $idhash{$isolate_id} = 1;
+	} else {
+	  $idhash{$isolate_id} = 1;
+	}
+
   my $species      = $hash{$k}{$cn{species}};
   my $country      = $hash{$k}{$cn{country}};
   my $state        = $hash{$k}{$cn{state}};
@@ -145,6 +156,7 @@ while(my ($k, $v) = each %hash) {
   my $subtype      = $hash{$k}{$cn{subtype}};
   my $age          = $hash{$k}{$cn{age}};
   my $sex          = $hash{$k}{$cn{sex}};
+  my $material     = $hash{$k}{$cn{material}};
   my $breed        = $hash{$k}{$cn{breed}};
   my $lat          = $hash{$k}{$cn{lat}};
   my $lon          = $hash{$k}{$cn{lon}};
@@ -263,6 +275,7 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[isolation-source=$source]" if $source;
     $modifier .= "[collection-date=$collection_date]" if $year;
     $modifier .= "[host=$host]" if $host;
+    $modifier .= "[isolation-source=$material]" if $material;
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
     $modifier .= "[breed=$breed]" if $breed;
