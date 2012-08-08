@@ -243,10 +243,10 @@ while(my ($k, $v) = each %hash) {
   $study =~ s/(\r|\n)/ /g;
 
   my @seqs = (
-         [$seq1, $seq1_product, $seq1_desc, \@seq1_primer_name, \@seq1_primer_seq, $seq1_trace],
-         [$seq2, $seq2_product, $seq2_desc, \@seq2_primer_name, \@seq2_primer_seq, $seq2_trace],
-         [$seq3, $seq3_product, $seq3_desc, \@seq3_primer_name, \@seq3_primer_seq, $seq3_trace],
-         [$seq4, $seq4_product, $seq4_desc, \@seq4_primer_name, \@seq4_primer_seq, $seq4_trace]);
+         [$seq1, $seq1_product, $seq1_desc, \@seq1_primer_name, \@seq1_primer_seq, $seq1_trace, $seq1_genbank],
+         [$seq2, $seq2_product, $seq2_desc, \@seq2_primer_name, \@seq2_primer_seq, $seq2_trace, $seq2_genbank],
+         [$seq3, $seq3_product, $seq3_desc, \@seq3_primer_name, \@seq3_primer_seq, $seq3_trace, $seq3_genbank],
+         [$seq4, $seq4_product, $seq4_desc, \@seq4_primer_name, \@seq4_primer_seq, $seq4_trace, $seq4_genbank]);
 
   my $count = 1;
   foreach my $s (@seqs) {
@@ -257,6 +257,7 @@ while(my ($k, $v) = each %hash) {
     my @primer_names    = @{$s->[3]};
     my @primer_seqs     = @{$s->[4]};
     my $trace           = $s->[5];
+    my $genbank_acc     = $s->[6];
 
     my $file_name       = "$isolate_id.$count";
 
@@ -266,6 +267,7 @@ while(my ($k, $v) = each %hash) {
     my $length   = length($sequence);
 
 		$note .= "; trace file: $trace" if $trace;
+		$note .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
 		$note .= "; seq description: $seq_description" if $seq_description;
 
     my $modifier = "";
@@ -278,6 +280,7 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[isolation-source=$material]" if $material;
     $modifier .= "[country=$country]" if $country;
     $modifier .= "[sex=$sex]" if $sex;
+    #$modifier .= "[gcode=4]"; 
     $modifier .= "[breed=$breed]" if $breed;
     $modifier .= "[lat-lon=$lat $lon]" if ($lat && $lon) ;
     $modifier .= "[note=$note]" if $note;
