@@ -35,6 +35,8 @@ sub preprocess {
     my $unflattener = Bio::SeqFeature::Tools::Unflattener->new;
 
     if(!($bioperlSeq->molecule =~ /rna/i)){
+	$unflattener->error_threshold(1);   
+	$unflattener->report_problems(\*STDERR);  
 	$unflattener->unflatten_seq(-seq=>$bioperlSeq,
                                  -use_magic=>1);
 	my @topSeqFeatures = $bioperlSeq->get_SeqFeatures;
@@ -46,17 +48,19 @@ sub preprocess {
 	  
 
 	    if($type eq 'repeat_region'){
-		if($bioperlFeatureTree->has_tag("satellite")){
-		    $bioperlFeatureTree->primary_tag("microsatellite");
-		}
+		#if($bioperlFeatureTree->has_tag("satellite")){
+		#    $bioperlFeatureTree->primary_tag("microsatellite");
+		#}
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
+		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 	    if($type eq 'STS'){
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
+		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 	    }
 	    if ($type eq 'gene') {
 
@@ -210,10 +214,8 @@ sub traverseSeqFeatures {
 	    $transcript = &copyQualifiers($RNA,$transcript);
 
 	    my @containedSubFeatures = $RNA->get_SeqFeatures;
-	    
-
-	 
 		
+			my $CDSLength = 0;
 	    foreach my $subFeature (@containedSubFeatures){
 		if ($subFeature->primary_tag eq 'CDS'){
 		    $gene = &copyQualifiers($subFeature, $gene);
@@ -224,10 +226,8 @@ sub traverseSeqFeatures {
 		    my $codingStart = $exon->location->start;
 		    my $codingEnd = $exon->location->end;
 
-
 		    if(defined $CDSLocation){
 			my $codonStart = 0;
-
 
 			for my $qualifier ($gene->get_all_tags()) {
 			    if($qualifier eq 'codon_start'){
@@ -239,7 +239,6 @@ sub traverseSeqFeatures {
 	 		       $gene->remove_tag('selenocysteine');
 			       $gene->add_tag_value('selenocysteine','selenocysteine');
 			    }
-			    
 			}
 			$codingStart = $CDSLocation->start() if ($codingStart < $CDSLocation->start());
 			$codingEnd = $CDSLocation->end() if ($codingEnd > $CDSLocation->end());
@@ -264,6 +263,8 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
+				$CDSLength += (abs($codingEnd - $codingStart) +1) if ($codingStart && $codingEnd);
+
 		    }else{
 			$exon->add_tag_value('CodingStart', '');
 			$exon->add_tag_value('CodingEnd', '');
@@ -272,6 +273,7 @@ sub traverseSeqFeatures {
 		}
 		
 	    }
+				$transcript->add_tag_value("CDSLength", $CDSLength);
 
 	    if(!($transcript->get_SeqFeatures())){
 		my @exonLocs = $RNA->location->each_Location();
