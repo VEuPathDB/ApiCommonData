@@ -147,15 +147,15 @@ alter table sres.Reference modify (author varchar2(2000));
 
 Alter table sres.dbref modify (secondary_identifier varchar2(200));
 
--- indexes for orthomcl keyword and pfam searches
-CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
-    indextype IS ctxsys.ctxcat;
+-- indexes for orthomcl keyword and pfam searches -- only needed in OrthoMCL instance
+-- CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
+--     indextype IS ctxsys.ctxcat;
     
-CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
-    indextype IS ctxsys.ctxcat;
+-- CREATE INDEX sres.dbref_ind_id2 ON sres.DbRef (secondary_identifier)
+--     indextype IS ctxsys.ctxcat;
 
-CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
-    indextype IS ctxsys.ctxcat;
+-- CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
+--     indextype IS ctxsys.ctxcat;
 
 
 -- add this to prevent race condition in which we write duplicate rows
