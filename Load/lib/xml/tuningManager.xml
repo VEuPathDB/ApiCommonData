@@ -3499,9 +3499,10 @@ from
     ) pm, GeneAttributes ga
     where ga.project_id = pm.project_id
   ) all_gg,
-  (select p.source_id, ps.name
+  (select p.source_id, ps.name, count(*) 
    from apidb.profile p, apidb.profileset ps
    where p.profile_set_id = ps.profile_set_id
+   group by p.source_id,ps.name having count(*) = 1 
    ) pr
   where  all_gg.source_id = pr.source_id (+)
   and all_gg.profile_name = pr.name (+)
