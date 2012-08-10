@@ -6,7 +6,7 @@ grant references on SRes.ExternalDatabaseRelease to ApiDB;
 create table ApiDB.ProfileSet (
  profile_set_id        NUMBER(10),
  external_database_release_id NUMBER(10),
- name                  VARCHAR2(100),
+ name                  VARCHAR2(150),
  description           VARCHAR2(2500),
  x_axis_descrip        varchar2(400),
  y_axis_descrip        varchar2(400),
