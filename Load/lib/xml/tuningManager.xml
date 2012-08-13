@@ -1671,7 +1671,9 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(tn.name, 1, 100) AS organism,
        taxon.ncbi_tax_id,
        taxon.taxon_id,                 
-       SUBSTR(sequence.description, 1, 400) AS sequence_description,
+       CASE WHEN sequence.description IS NULL  THEN SUBSTR(tn.name, 1, 100)
+            ELSE SUBSTR(sequence.description, 1, 400)
+            END AS sequence_description,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
