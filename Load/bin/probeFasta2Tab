@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-
 my $fastaFile = $ARGV[0];
 
 usage() unless $fastaFile;
@@ -7,22 +6,29 @@ usage() unless $fastaFile;
 open(F, $fastaFile) || die "Can't open fasta file '$fastaFile'\n";
 
 my $id;
+my $seq;
 while (<F>) {
-    chomp;
-    next if /^\s*$/;  # skip white space lines
-    if (/^>/) {
-	if (/^>\s*(.+)\s*$/) {
-	    die "Didn't find sequence for ID $id on line $.\n" if $id;
-	    $id = $1;
-	} else {
-	    die "Can't find ID on line $. of $fastaFile\n";
-	}
-    } else {
-	die "No ID found for sequence on line $.\n" unless $id;
-	print "$id\t$_\n";
-	$id = 0;
+  chomp;
+  next if /^\s*$/;  # skip white space lines
+  if (/^>/) {
+    if (/^>\s*(.+)\s*$/) {
+      if ($seq) {
+	print "$id\t$seq\n";
+	$seq = '';
+      }
+      $id = $1;
     }
+    else {
+      die "Can't find ID on line $. of $fastaFile\n";
+    }
+  }
+  else {
+    $seq .= $_;
+    die "No ID found for sequence on line $.\n" unless $id;
+  }
 }
+
+print "$id\t$seq\n";
 
 sub usage {
     print STDERR "
@@ -34,3 +40,4 @@ usage: probeFasta2Tab fasta_file
     exit(1);
 
 }
+
