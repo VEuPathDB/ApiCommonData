@@ -157,6 +157,9 @@ Alter table sres.dbref modify (secondary_identifier varchar2(200));
 -- CREATE INDEX sres.dbref_ind_rmk ON sres.DbRef (remark)
 --     indextype IS ctxsys.ctxcat;
 
+-- create index sres.DbRefLowerId on sres.DbRef (external_database_release_id, lower(primary_identifier), db_ref_id);
+-- create index sres.DbRefLowerId2 on sres.DbRef (external_database_release_id, lower(secondary_identifier), db_ref_id);
+
 
 -- add this to prevent race condition in which we write duplicate rows
 -- when plugins first run in a workflow on a brand new instance
