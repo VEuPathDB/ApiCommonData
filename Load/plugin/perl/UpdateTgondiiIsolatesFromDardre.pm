@@ -1,7 +1,7 @@
 package ApiCommonData::Load::Plugin::UpdateIsolates;
 
 use strict;
-use base qw(GUS::PluginMgr::Plugin);
+@ISA = qw(GUS::PluginMgr::Plugin);
 
 use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::IsolateSource;
@@ -72,12 +72,12 @@ my $documentation =
 sub new {
 
   my ($class) = @_;
-  $class = ref $class || $class;
 
-  my $self = bless({}, $class);
+  my $self = {};
+  bless($self, $class);
 
   $self->initialize({ requiredDbVersion => 3.6,
-		      cvsRevision       => '$Revision: 29209 $',
+		      cvsRevision       => '$Revision: 48978 $',
 		      name              => ref($self),
 		      argsDeclaration   => $argsDeclaration,
 		      documentation     => $documentation
