@@ -227,7 +227,7 @@ AND p.profile_set_id = ps.profile_set_id
     my $profileHash = $self->makeProfileHash($sourceId,\@profile, $header);
     my $percentHash = $self->makeProfileHash($sourceId,
 					     $percentsHash->{$sourceId},
-					     $header) if $self->getArg('percentProfileSet');
+					     $header);
 
 
     $statsById->{$sourceId} =
@@ -324,7 +324,7 @@ sub secondPass {
 sub calculateSummaryStats {
     my ($self, $profileHashRef, $percentileHashRef, $timePointMappingRef, $sourceId, $isLogged, $base) = @_;
     my %profileHash = %{$profileHashRef};
-    my %percentileHash = %{$percentileHashRef} if $self->getArg('percentProfileSet');
+    my %percentileHash = %{$percentileHashRef};
     my %timePointMapping = %{$timePointMappingRef} if $timePointMappingRef;
 
     my %resultHash;
