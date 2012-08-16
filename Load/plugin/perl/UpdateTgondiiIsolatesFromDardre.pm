@@ -1,7 +1,8 @@
 package ApiCommonData::Load::Plugin::UpdateIsolates;
+@ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
-@ISA = qw(GUS::PluginMgr::Plugin);
+use warnings;
 
 use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::IsolateSource;
