@@ -421,6 +421,10 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
         AND ed.name not in ('Pubmed DBRefs','Pb_Pubmed_DBRefs_RSRC','Pc_Pubmed_DBRefs_RSRC','Pf_Pubmed_DBRefs_RSRC','Pk_Pubmed_DBRefs_RSRC','Pv_Pubmed_DBRefs_RSRC','Py_Pubmed_DBRefs_RSRC')
         AND ed.name not in ('Entrez DBRefs','DBRefs_RSRC','Pk_Entrez_DBRefs_RSRC','Pv_Entrez_DBRefs_RSRC','Py_Entrez_DBRefs_RSRC', 'Pf_Entrez_DBRefs_RSRC')
         AND ed.name != 'PMID'
+        AND dr.primary_identifier not in (SELECT source_id 
+              FROM dots.GeneFeature gf, sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+              WHERE gf.external_database_release_id = edr.external_database_release_id
+              AND edr.external_database_id = ed.external_database_id)
      UNION
       SELECT dr.secondary_identifier AS id, 
              gf.source_id AS gene,
