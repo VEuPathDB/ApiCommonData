@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::UpdateIsolates;
+package ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
