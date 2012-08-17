@@ -137,6 +137,7 @@ sub undoTables {
   my ($self) = @_;
 
   return ('ApiDB.IsolateMapping',
+          'ApiDB.VocabularyBiomaterial',
          );
 }
 
