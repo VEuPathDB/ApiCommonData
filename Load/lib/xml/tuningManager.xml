@@ -2371,8 +2371,8 @@ CREATE TABLE Polymorphism&1 NOLOGGING AS
          snp.position_in_protein,
          sa.na_feature_id as na_feature_id_a,
          sb.na_feature_id as na_feature_id_b,
-         substr(sa.strain, 1, 12) AS strain_a,
-         substr(sb.strain, 1, 12) AS strain_b,
+         substr(sa.strain, 1, 100) AS strain_a,
+         substr(sb.strain, 1, 100) AS strain_b,
          substr(sa.allele, 1, 1) AS allele_a,
          substr(sb.allele, 1, 1) AS allele_b,
          substr(sa.product, 1, 1) AS product_a,
@@ -5775,8 +5775,8 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
               gf.na_feature_id, gf.source_id,
            --   edr.external_database_release_id,
-              SUBSTR(sva.strain, 1, 30) AS strain_a,
-              SUBSTR(svb.strain, 1, 30) AS strain_b,
+              SUBSTR(sva.strain, 1, 100) AS strain_a,
+              SUBSTR(svb.strain, 1, 100) AS strain_b,
               CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
               CASE WHEN sva.product = svb.product THEN 1 ELSE 0 END AS synonymous,
               CASE WHEN sva.product != svb.product THEN 1 ELSE 0 END AS non_synonymous,
@@ -6719,7 +6719,7 @@ tablespace indx
        nologging
        as
        select sa.na_sequence_id, sa.dataset, sa.start_min,
-              substr(var.strain, 1, 20) as strain, sa.na_feature_id,
+              substr(var.strain, 1, 100) as strain, sa.na_feature_id,
               substr(var.allele, 1, 40) as allele,
               substr(var.phenotype, 1, 20) as phenotype, nvl(substr(var.product, 1, 20), ' ') as product
        FROM SnpAttributes sa,
