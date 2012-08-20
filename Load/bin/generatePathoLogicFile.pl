@@ -7,11 +7,13 @@ use GUS::Supported::GusConfig;
 
 my $gusConfigFile;
 my $organism;
+my $path;
 
 &GetOptions( "gusConfigFile=s" => \$gusConfigFile,
-             "organism=s"      => \$organism );
+             "organism=s"      => \$organism,
+             "path=s"          => \$path );
 
-die "usage: getValueFromTable --gusConfigFile [\$GUS_CONFIG_FILE] --organism \"Plasmodium falciparum 3D7\"\n" unless $gusConfigFile && $organism;
+die "usage: getValueFromTable --gusConfigFile [\$GUS_CONFIG_FILE] --organism \"Plasmodium falciparum 3D7\" --path \"absolute path for outputs\" \n" unless $gusConfigFile && $organism && $path;
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 my @chrs;
@@ -28,20 +30,20 @@ my $dbh = $db->getQueryHandle();
 $dbh->{LongReadLen} = 512 * 512 * 1024;
 $dbh->{LongTruncOk} = 0;    ### We're happy to truncate any excess
 
-my @chrs = &printGeneticElement($dbh, $organism);
+my @chrs = &printGeneticElement($dbh, $organism, $path);
 
 foreach(@chrs) {
-  &printFasta($dbh, $_);
-  &printPF($dbh, $_);
+  &printFasta($dbh, $_, $path);
+  &printPF($dbh, $_, $path);
 }
 
 sub printFasta {
-  my ($dbh, $chr)  = @_;
+  my ($dbh, $chr, $path)  = @_;
   my $sql = "select sequence from ApidbTuning.NASequence where source_id = '$chr'"; 
   my $sth = $dbh->prepareAndExecute($sql);
   while(my ($seq) = $sth->fetchrow_array) {
     $seq =~ s/(.{1,60})/$1\n/g;
-    open (FSA, ">$chr.fsa");
+    open (FSA, ">$path/$chr.fsa");
     print FSA ">$chr\n";
     print FSA $seq;
     close FSA;
@@ -50,7 +52,7 @@ sub printFasta {
 }
 
 sub printGeneticElement {
-  my ($dbh, $organism) = @_;
+  my ($dbh, $organism, $path) = @_;
 
   my $sql = "select distinct ga.CHROMOSOME, ga.SEQUENCE_ID from ApidbTuning.GeneAttributes ga where ga.organism = '$organism' and ga.chromosome is not null order by ga.chromosome";
 
@@ -64,8 +66,8 @@ ID\t$name
 NAME\tChromosome $chr
 TYPE\t:CHRSM
 CIRCULAR?\tN
-ANNOT-FILE\t$name.pf
-SEQ-FILE\t$name.fsa
+ANNOT-FILE\t$path/$name.pf
+SEQ-FILE\t$path/$name.fsa
 //
 EOL
   }
@@ -75,8 +77,8 @@ EOL
 }
 
 sub printPF {
-  my ($dbh, $chr)  = @_;
-  open PF, ">$chr.pf";
+  my ($dbh, $chr, $path)  = @_;
+  open PF, ">$path/$chr.pf";
 
   my $sql =<<EOL;
 SELECT ga.source_id ,
@@ -121,17 +123,20 @@ EOL
 
      $product_type = 'PSEUDO' if $pseudo;
 
-     my $pf =<<EOL;
-ID:\t$id
-NAME:\t$name
-STARTBASE:\t$start
-ENDBASE:\t$end
-FUNCTION:\t$product
-PRODUCT-TYPE:\t$genetype
-EC:\t$ec_number
-GO:\t$so
-//
-EOL
+     $ec_number =~ s/\(.+\)//;
+     $ec_number =~ s/\s+$//g;
+
+     my $pf = "ID\t$id\n";
+
+$pf = "NAME\t$id\n"; 
+$pf .= "STARTBASE\t$start\n";
+$pf .= "ENDBASE\t$end\n";
+$pf .= "FUNCTION\t$product\n" if $product;
+$pf .= "PRODUCT-TYPE\t$product_type\n";
+$pf .= "EC\t$ec_number\n" if $ec_number;
+#$pf .= "GO:\t$so\n" if $so;
+$pf .= "//\n";
+
     print PF $pf;
   }
   close PF;
