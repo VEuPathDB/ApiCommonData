@@ -103,39 +103,48 @@ EOL
   my $sth = $dbh->prepareAndExecute($sql);
 
   while(my $arr = $sth->fetchrow_arrayref()){
-     my($id, $na_seq_id, $start, $end, $product, $so, $deprecated, $organism, $pseudo, $genetype, $ec_number, $name) = @$arr;
+    my($id, $na_seq_id, $start, $end, $product, $so, $deprecated, $organism, $pseudo, $genetype, $ec_number, $name) = @$arr;
      
-     my $product_type = 'P';
+    my $product_type = 'P';
 
-     if($genetype =~ /rRNA encoding/i) {
-       $product_type = 'RRNA';
-     } elsif($genetype =~ /tRNA encoding/i) {
-       $product_type = 'TRNA';
-     } elsif($genetype =~ /non protein coding/i) {
-       $product_type = 'P';
-     } elsif($genetype =~ /snRNA encoding/i) {
-       $product_type = 'MISC-RNA';
-     } elsif($genetype =~ /protein coding/i) {
-       $product_type = 'P';
-     } elsif($genetype =~ /snoRNA encoding/i) {
-       $product_type = 'MISC-RNA';
-     }
+    if($genetype =~ /rRNA encoding/i) {
+      $product_type = 'RRNA';
+    } elsif($genetype =~ /tRNA encoding/i) {
+      $product_type = 'TRNA';
+    } elsif($genetype =~ /non protein coding/i) {
+      $product_type = 'P';
+    } elsif($genetype =~ /snRNA encoding/i) {
+      $product_type = 'MISC-RNA';
+    } elsif($genetype =~ /protein coding/i) {
+      $product_type = 'P';
+    } elsif($genetype =~ /snoRNA encoding/i) {
+      $product_type = 'MISC-RNA';
+    }
 
-     $product_type = 'PSEUDO' if $pseudo;
+    $product_type = 'PSEUDO' if $pseudo;
 
-     $ec_number =~ s/\(.+\)//;
-     $ec_number =~ s/\s+$//g;
+    $ec_number =~ s/\(.+\)//;
+    $ec_number =~ s/\s+$//g;
 
-     my $pf = "ID\t$id\n";
+    my $pf = "ID\t$id\n";
 
-$pf = "NAME\t$id\n"; 
-$pf .= "STARTBASE\t$start\n";
-$pf .= "ENDBASE\t$end\n";
-$pf .= "FUNCTION\t$product\n" if $product;
-$pf .= "PRODUCT-TYPE\t$product_type\n";
-$pf .= "EC\t$ec_number\n" if $ec_number;
-#$pf .= "GO:\t$so\n" if $so;
-$pf .= "//\n";
+    $pf .= "NAME\t$id\n"; 
+    $pf .= "STARTBASE\t$start\n";
+    $pf .= "ENDBASE\t$end\n";
+    $pf .= "FUNCTION\t$product\n" if $product;
+    $pf .= "PRODUCT-TYPE\t$product_type\n";
+    $pf .= "EC\t$ec_number\n" if $ec_number;
+
+    my $sqlGO = "SELECT distinct gts.go_id, gts.go_term_name, gts.evidence_code FROM ApidbTuning.GoTermSummary gts where gts.source_id = '$id' ORDER BY gts.go_id";
+
+    my $sthGO = $dbh->prepareAndExecute($sqlGO);
+    while(my ($goid, $go_term, $evidence) = $sthGO->fetchrow_array){
+      $pf .= "GO\t$go_term [goid $goid] [evidence $evidence] [pmid ]\n";
+    }
+
+    $sthGO->finish;
+
+    $pf .= "//\n";
 
     print PF $pf;
   }
