@@ -22,6 +22,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="GC_signal" ignore="true"/>
   <feature name="CAAT_signal" ignore="true"/>
   <feature name="RBS" ignore="true"/>
+  <feature name="attenuator" ignore="true"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -33,7 +34,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="pseudo"         	  column="is_pseudo"/>
     <qualifier name="allele"/>
     <qualifier name="experiment" 	  column="evidence"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="EC_number"		ignore="true"/>
     <qualifier name="protein_id" 	  column="product_alias"/>
     <qualifier name="transl_except" 	  ignore="true"/>
@@ -63,18 +64,23 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="rRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            column="source_id"/>
-     <qualifier name="product"		ignore="true"/>
+    <qualifier name="pseudo"         	  column="is_pseudo"/>
+     <qualifier name="product"		handler="api" method="product"/>
      <qualifier name="citation"                 />
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
+    <qualifier name="inference"		ignore="true"/>
+    <qualifier name="function"		ignore="true"/>
+    <qualifier name="experiment"		column="evidence"/>
+    <qualifier name="standard_name"		ignore="true"/>
   </feature>
 
   <feature name="tRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="gene"/>
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="experiment" column="evidence"/>
     <qualifier name="pseudo"         column="is_pseudo"/>
@@ -85,7 +91,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="misc_RNA_gene" so="non_protein_coding" ignore="true">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
   </feature>
 
@@ -100,6 +106,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="source" table="DoTS::IsolateSource" so="">
+    <qualifier name="macronuclear" ignore="true"/>
     <qualifier name="serovar" ignore="true"/>
     <qualifier name="chromosome"/>
 	  <!-- check the collection_date later, not fit in dots.source table H.W. 9/20/2007 -->
@@ -158,14 +165,14 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="snoRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
   </feature>
 
@@ -190,7 +197,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="rpt_unit_range" ignore="true"/>
     <qualifier name="rpt_unit_seq" ignore="true"/>
     <qualifier name="satellite" ignore="true"/>
+    <qualifier name="allele" ignore="true"/>
     <qualifier name="standard_name"/>
+  </feature>
+
+  <feature name="mobile_element" table="DoTS::IsolateFeature" so="transposable_element">
+    <qualifier name="inference" ignore="true"/>
+    <qualifier name="mobile_element_type" column="label"/>
+    <qualifier name="note" handler="api" method="note"/>
   </feature>
 
   <!--  from ToxoDB -->
@@ -201,7 +215,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"/>
     <qualifier name="note" handler="api" method="note"/>
     <qualifier name="genotype_number" column="prediction_number" />
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier  name="GeneType" column="gene_type"/>
     <qualifier name="chromosome" column="map"/>
   </feature>
@@ -215,7 +229,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="pseudo"         	  column="is_pseudo"/>
     <qualifier name="allele"/>
     <qualifier name="experiment" 	  column="evidence"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="EC_number"		ignore="true"/>
     <qualifier name="protein_id" 	  column="product_alias"/>
     <qualifier name="transl_except" 	  ignore="true"/>
@@ -274,7 +288,7 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="ncRNA" so="gene_fragment" ignore="true">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="product"		ignore="true"/>
+    <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 ignore="true"/>
