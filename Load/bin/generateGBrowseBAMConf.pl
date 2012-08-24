@@ -11,12 +11,18 @@ my %hash;
 tie %hash, 'Tie::IxHash';
 my $gusConfigFile;
 
-open(BAM, '>bam.conf'); 
-open(BAMDB, '>bam_db.conf'); 
-
-my $usage = "generate_bam_conf.pl gus_config_file\n";
+my $usage = "generate_bam_conf.pl gus_config_file project_id\n";
 
 my $gusConfigFile = shift or die $usage;
+my $project_id = shift or die $usage;
+
+$project_id = lc $project_id;
+
+open(BAM,   '>'. $project_id . '_bam.conf'); 
+open(BAMDB, '>'. $project_id . '_bam_db.conf'); 
+open(BAMCT, '>'. $project_id . '_bam_category.conf'); 
+
+
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -48,23 +54,24 @@ while(my ($study,$strain) = $sth->fetchrow_array()) {
 
 my $count = 0;
 while(my($study, $strains) = each %hash) {
+	$study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
   if($count == 0) {
-    print BAMDB qq/category tables = 'Population Biology: $study' 'Coverage_Xyplot  Coverage_Density Alignment' '@$strains'\n/;
+    print BAMCT qq/category tables = 'Population Biology: HTS SNPs: $study' 'Coverage_Xyplot  Coverage_Density Alignment' '@$strains'\n/;
   } else {
-    print BAMDB qq/   'Population Biology: $study' 'Coverage_Xyplot  Coverage_Density Alignment' '@$strains'\n/;
+    print BAMCT qq/   'Population Biology: HTS SNPs: $study' 'Coverage_Xyplot  Coverage_Density Alignment' '@$strains'\n/;
   }
   $count++;
 }
 
-print "\n";
-
 while(my($study, $strains) = each %hash) {
 
+	$study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
   foreach my $strain(@$strains) {
+
     print BAMDB <<EOL;
 [$study\_$strain:database]
 db_adaptor   = Bio::DB::Sam
-db_args      = -bam '/var/www/Common/apiSiteFilesMirror/webServices/PlasmoDB/release-9.1/bam/Sanger_HTS_Isolates/$strain/result.bam'
+db_args      = -bam '/var/www/Common/apiSiteFilesMirror/webServices/PlasmoDB/release-9.1/bam/$2/$strain/result.bam'
 
 EOL
   }
@@ -72,7 +79,7 @@ EOL
 }
 
 while(my($study, $strains) = each %hash) {
-  my $category = "Population Biology: $study";
+  my $category = "Population Biology: HTS SNPs: $study";
 
   foreach my $strain(@$strains) {
     print BAM <<EOL;
@@ -86,7 +93,7 @@ bicolor_pivot  = 2
 pos_color      = blue 
 neg_color      = red
 label          = 0  
-key            = $strain Coverage Xyplot
+key            = $strain
 category       = $category
 
 EOL
@@ -105,7 +112,7 @@ bicolor_pivot  = 2
 pos_color      = blue
 neg_color      = red
 label          = 0
-key            = $strain Coverage Density
+key            = $strain
 category       = $category
 
 EOL
@@ -127,7 +134,7 @@ height         = 3
 label density  = 1
 bump           = fast
 connector      = dashed
-key            = $strain Alignment
+key            = $strain
 category       = $category
 
 [$study\_$strain\_Alignment:3000]
