@@ -10,11 +10,11 @@ use strict;
 my $pubmedId = $ARGV[0];
 
 my $ncbiEutilsUrl = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
-    . "db=pubmed&retmode=xml&rettype=abstract&id=";
+    . "db=pubmed&retmode=xml&rettype=abstract&id=" . $pubmedId;
 
-my $content = LWP::Simple::get ($ncbiEutilsUrl . $pubmedId);
+my $content = LWP::Simple::get ($ncbiEutilsUrl);
 
-die "NCBI did not return a valid '<PubmedArticle>' for pubmed id $pubmedId"
+die "NCBI did not return a valid '<PubmedArticle>' for pubmed id \"$pubmedId\". Request URL was \"$ncbiEutilsUrl\""
   unless $content =~ /\<PubmedArticle\>/;
 
 #print STDERR "$content\n";
