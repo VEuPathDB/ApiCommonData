@@ -3814,7 +3814,7 @@ sub addParalogGroups {
 
    my $outputFile = "$mgr->{dataDir}/similarity/Proteome-ProteinSeqs/orthomclGroups.txt";
 
-   my $cmd = "perl transformParalogGroupsToOrthologGroups.pl --prefix $grpPrefix --pFile $parlogGroupsFile --oFile $orthoGroupsFile --outFile $outputFile";
+   my $cmd = "transformParalogGroupsToOrthologGroups --prefix $grpPrefix --pFile $parlogGroupsFile --oFile $orthoGroupsFile --outFile $outputFile";
 
    $mgr->runCmd($cmd);
 
