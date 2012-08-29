@@ -1634,12 +1634,10 @@ from (select project_id, organism from ApidbTuning.GeneAttributes
         and ga.project_id = seq.project_id
         and seq.sequence is not null
       group by ga.project_id, ga.organism) proteins,
-     (select sa.project_id, sa.organism, count(*) sequence_count, sum(length(seq.sequence)) total_sequence_length
-      from ApidbTuning.SequenceAttributes sa, ApidbTuning.NaSequence seq
-      where sa.source_id = seq.source_id
-        and sa.project_id = seq.project_id
-        and seq.sequence is not null
-      group by sa.project_id, sa.organism) sequences,
+     (select project_id, organism, count(*) sequence_count, sum(length) total_sequence_length
+      from ApidbTuning.SequenceAttributes sa
+      where is_top_level = 1
+      group by project_id, organism) sequences,
      (select attrs.project_id, attrs.organism, count(*) orf_count
       from ApidbTuning.OrfAttributes attrs, ApidbTuning.OrfSequence seq
       where attrs.source_id = seq.source_id
