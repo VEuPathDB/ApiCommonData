@@ -26,6 +26,7 @@ GRANT REFERENCES ON dots.NaSequenceImp to ApiDB;
 GRANT REFERENCES ON sres.ExternalDatabaseRelease to ApiDB;
 GRANT REFERENCES ON sres.Taxon TO ApiDB;
 GRANT REFERENCES ON study.Biomaterial TO ApiDB;
+GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
 
 -- must be GRANTed directly (not just through GUS_R) for use in project_id() function
 GRANT SELECT ON core.ProjectInfo to ApiDB;
