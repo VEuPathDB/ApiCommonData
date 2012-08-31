@@ -7194,6 +7194,102 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+  <tuningTable name="BlastTypes">
+    <internalDependency name="GeneAttributes"/>
+    <internalDependency name="SequenceAttributes"/>
+    <internalDependency name="EstAttributes"/>
+    <internalDependency name="TaxonSpecies"/>
+    <externalDependency name="Sres.TaxonName"/>
+    <externalDependency name="ApiDB.Organism"/>
+    <sql>
+      <![CDATA[
+       create table BlastTypes&1 nologging as
+  -- Standard GENES (RH for toxo is included in the apicoplast)
+  select distinct organism, project_id, type 
+  from GeneAttributes,
+       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  where organism not in ('Toxoplasma gondii RH') and gene_type = 'protein coding' 
+  UNION
+  -- TrichDB Repeat Genes
+  select distinct organism || ' (Repeated Genes)', project_id, type 
+  from GeneAttributes,
+       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  where project_id = 'TrichDB'
+  UNION
+  -- GiardiaDB Deprecated Genes
+  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GiardiaDB' as project_id, type 
+  from dual, (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  UNION
+  -- GiardiaDB Scaffolds
+  select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GiardiaDB' as project_id, type 
+  from dual, (select 'Genomics' as type from dual)
+  UNION
+    -- ToxoDB Apicoplast for GENES and GENOMES
+  select 'Toxoplasma gondii apicoplast' as organism, 'ToxoDB' as project_id, type
+  from dual, (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  UNION  
+  -- Standard GENOME
+  select distinct organism, project_id, type 
+  from SequenceAttributes,
+       (select 'ORF' as type from dual union select 'Genomics' as type from dual)
+  UNION
+  -- Mitochondrial GENES and GENOME
+  select distinct organism || ' mitochondrial', project_id, type 
+  from SequenceAttributes,       
+  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  where so_id = 'SO:0000819'
+  and not project_id='PlasmoDB' 
+  UNION
+  -- Plastid GENES and GENOME
+  select distinct organism || ' plastid' as organism, project_id, type 
+  from SequenceAttributes,       
+  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  where so_id = 'SO:0001259'
+  and not project_id='PlasmoDB' 
+  UNION
+  -- Regular ESTs (all species from estattributes)
+  select distinct sp.name as organism, ea.project_id, 'EST' as type
+  from EstAttributes ea, SRES.taxonname tn, taxonspecies ts, SRES.taxonname sp
+  where ea.organism = tn.name
+  and (tn.taxon_id = ts.taxon_id or tn.taxon_id=ts.species_taxon_id)
+  and ts.species_taxon_id = sp.taxon_id
+  and sp.name_class = 'scientific name'
+  UNION
+  -- regular Isolates
+  select distinct family_name_for_files || ' Popset/Genbank Isolates' as organism, project_name as project_id, 'Isolates'
+  from apidb.organism 
+  where family_name_for_files is not null
+  UNION
+  -- apidb ests
+  select 'Other Apicomplexan ESTs' as organism, 'EuPathDB' as project_id, 'EST' as type from dual
+  UNION
+  -- isolates are hard coded
+  select 'P. falciparum Barcode Isolates' as organism, 'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. berghei Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. chabaudi Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. falciparum Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. knowlesi Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. reichenowi Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. vivax Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'P. yoelii Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'All Giardia Isolates' as organism, 'GiardiaDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'All Toxoplasma Isolates' as organism, 'ToxoDB' as project_id, 'Isolates' as type from dual
+
+      ]]>
+    </sql>
+  </tuningTable>
+
+
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
   </tuningTable>
