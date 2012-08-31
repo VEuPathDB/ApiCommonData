@@ -2143,6 +2143,138 @@ sub getReversedTstarts {
   </tuningTable>
 
 
+
+
+  <tuningTable name="BlatProtAlignLocation">
+    <externalDependency name="dots.NaSequenceImp"/>
+    <externalDependency name="apidb.blatproteinalignment"/>
+
+    <sql>
+      <![CDATA[ 
+      CREATE TABLE BlatProtAlignLocation&1 NOLOGGING AS
+      SELECT blat_protein_alignment_id, query_aa_sequence_id, target_na_sequence_id,
+             query_table_id, query_taxon_id, query_external_db_release_id,
+             target_table_id, target_taxon_id, target_external_db_release_id,
+             is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+             unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+             is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+             number_of_spans, query_start, query_end, target_start, target_end,
+             is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+             is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+             tstarts, cast('direct' as varchar2(7)) as location_mapping
+      FROM apidb.BlatProteinALignment
+      ]]> 
+    </sql>
+    <perl>
+      <![CDATA[ 
+      use strict;
+      use lib "$ENV{GUS_HOME}/lib/perl";
+
+      my $sql = <<SQL;
+        select blat_protein_alignment_id, query_aa_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, sp.virtual_na_sequence_id, sp.distance_from_left, sp.start_position, sp.end_position,
+               sp.strand_orientation, piece.length, vti.table_id as virtual_target_table_id
+        from apidb.blatproteinalignment ba, SequencePieceClosure sp, dots.NaSequence piece,
+             dots.NaSequence virtualseq, core.TableInfo vti
+        where ba.target_na_sequence_id = sp.piece_na_sequence_id(+)
+          and sp.start_position <= target_start
+          and sp.end_position >= target_end
+          and ba.target_na_sequence_id = piece.na_sequence_id
+          and sp.virtual_na_sequence_id = virtualseq.na_sequence_id
+          and virtualseq.subclass_view = vti.name
+SQL
+      
+      my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
+      $queryHandle->execute();
+
+      $sql = <<SQL;
+        insert into BlatProtAlignLocation&1(blat_protein_alignment_id,
+               query_aa_sequence_id, target_na_sequence_id,
+               query_table_id, query_taxon_id, query_external_db_release_id, 
+               target_table_id, target_taxon_id, target_external_db_release_id,
+               is_consistent, is_genomic_contaminant, unaligned_3p_bases,
+               unaligned_5p_bases, has_3p_polya, has_5p_polya, is_3p_complete,
+               is_5p_complete, percent_identity, max_query_gap, max_target_gap,
+               number_of_spans, query_start, query_end, target_start, target_end,
+               is_reversed, query_bases_aligned, repeat_bases_aligned, num_ns, score,
+               is_best_alignment, blat_alignment_quality_id, blocksizes, qstarts,
+               tstarts, location_mapping)
+         values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+SQL
+
+      my $insertHandle = $dbh->prepare($sql) or die $dbh->errstr;
+      my ($virtual_target_start, $virtual_target_end, $virtual_tstarts);
+
+      while (my ($blat_protein_alignment_id, $query_aa_sequence_id, $target_na_sequence_id,
+               $query_table_id, $query_taxon_id, $query_external_db_release_id,
+               $target_table_id, $target_taxon_id, $target_external_db_release_id,
+               $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+               $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+               $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+               $number_of_spans, $query_start, $query_end, $target_start, $target_end,
+               $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+               $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+               $tstarts, $virtual_na_sequence_id, $distance_from_left, $start_position, $end_position,
+               $strand_orientation, $length, $virtual_target_table_id)
+             = $queryHandle->fetchrow_array()) {
+
+        if ($virtual_na_sequence_id) {
+          if ($strand_orientation eq '-') {
+            $virtual_target_start = $distance_from_left + $end_position - $target_end + 1;
+            $virtual_target_end = $distance_from_left + $end_position - $target_start + 1;
+            $virtual_tstarts = &getReversedTstarts($distance_from_left,$end_position,$tstarts,$blocksizes);
+            $blocksizes = join(',', reverse split(',', $blocksizes));
+          } else {
+            $virtual_target_start = $target_start + $distance_from_left - $start_position + 1;
+            $virtual_target_end = $target_end + $distance_from_left - $start_position + 1;
+            $virtual_tstarts = join( ',', map{ $_ + $distance_from_left - $start_position + 1 } split( /,/, $tstarts));
+          }
+
+          # insert virtual locations
+          $insertHandle->execute($blat_protein_alignment_id,
+                 $query_aa_sequence_id, $virtual_na_sequence_id,
+                 $query_table_id, $query_taxon_id, $query_external_db_release_id,
+                 $virtual_target_table_id, $target_taxon_id, $target_external_db_release_id,
+                 $is_consistent, $is_genomic_contaminant, $unaligned_3p_bases,
+                 $unaligned_5p_bases, $has_3p_polya, $has_5p_polya, $is_3p_complete,
+                 $is_5p_complete, $percent_identity, $max_query_gap, $max_target_gap,
+                 $number_of_spans, $query_start, $query_end, $virtual_target_start,
+                 $virtual_target_end,
+                 $is_reversed, $query_bases_aligned, $repeat_bases_aligned, $num_ns, $score,
+                 $is_best_alignment, $blat_alignment_quality_id, $blocksizes, $qstarts,
+                 $virtual_tstarts, 'virtual');
+        }
+      }
+
+      $insertHandle->finish();
+      $queryHandle->finish();
+
+sub getReversedTstarts {
+  my($dfl,$len,$tstart,$blocksizes) = @_;
+  my @ts = split(',',$tstart);
+  my @bs = split(',',$blocksizes);
+  my @new;
+  for(my $a = scalar(@ts) - 1;$a >= 0;$a--){
+    push(@new,($dfl + $len - $ts[$a] - $bs[$a] + 2));
+  }
+  return join(',',@new);
+}
+      ]]> 
+    </perl>
+  </tuningTable>
+
+
+
+
   <tuningTable name="GeneNeighbors">
     <internalDependency name="GeneAttributes"/>
     <sql>
