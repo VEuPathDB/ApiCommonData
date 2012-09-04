@@ -131,7 +131,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 40219 $',
+                        cvsRevision => '$Revision: 49802 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -284,7 +284,8 @@ sub getSampleNameForFile {
   while (<CFG>){
     chomp;
     my @temp = split("\t",$_);
-    $self->{$temp[0]} = $temp[1];
+    $self->{$file} = $temp[1];
+    #$self->{$temp[0]} = $temp[1];
   }
   close (CFG);
   return $self->{$file};
