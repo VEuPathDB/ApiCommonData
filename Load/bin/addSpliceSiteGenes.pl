@@ -149,7 +149,7 @@ select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(g
 CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-from apidb.splicesitefeature ssf, SpliceSiteGeneCoordinates ga
+from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates ga
 where ga.na_sequence_id = ssf.na_sequence_id
 and ga.strand='forward'
 and ssf.strand ='+' and ssf.type='Splice Site'
@@ -159,7 +159,7 @@ select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(g
 CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
 ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
 ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-from apidb.splicesitefeature ssf, SpliceSiteGeneCoordinates ga
+from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates ga
 where ga.na_sequence_id = ssf.na_sequence_id
 and ga.strand='reverse'
 and ssf.strand ='-' and ssf.type='Splice Site'
