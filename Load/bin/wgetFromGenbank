@@ -2,23 +2,26 @@
 
 ## July 11, 2012
 ## Sufen Hu
-## usage: wgetFromGenbank --output pcynB_genome.gb --query 49901[BioProject]
+## usage: wgetFromGenbank --output pcynB_genome.gb --query 49901[BioProject] --outputFormat gbwithparts
 
 use lib "$ENV{GUS_HOME}/lib/perl";
 use LWP::Simple;
 use Getopt::Long;
 use strict;
 
-my ($output, $query, $id_list, $help);
+my ($output, $query, $id_list, $outputFormat, $help);
 
 &GetOptions('output=s' => \$output,
             'help|h' => \$help,
             'query=s' => \$query,
             'id_list=s' => \$id_list,
+            'outputFormat=s' => \$outputFormat,
            );
 
 &usage() if($help);
 &usage("Missing a Required Argument") unless(defined $output && ($query || $id_list) );
+
+$outputFormat = "gbwithparts" unless (defined $outputFormat);
 
 die "Output file '$output' already exists\n" if -e $output;
 
@@ -42,7 +45,7 @@ for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
 
 	my $url = "$utils/efetch.fcgi?db=$db&WebEnv=$web";
 	$url .= "&query_key=$key&retstart=$retstart";
-	$url .= "&retmax=$retmax&rettype=gbwithparts&retmode=text";
+	$url .= "&retmax=$retmax&rettype=$outputFormat&retmode=text";
 
 	print "\$url = $url\n";
 
@@ -58,7 +61,7 @@ for (my $retstart = 0; $retstart < $count; $retstart += $retmax) {
 }
 
 if ($id_list) {
-	my $url = "$utils/efetch.fcgi?db=$db&id=$id_list&rettype=gbwithparts&retmode=text";
+	my $url = "$utils/efetch.fcgi?db=$db&id=$id_list&rettype=$outputFormat&retmode=text";
 	my $gb_result = get($url);
 	print FILE "$gb_result";
 }
@@ -71,7 +74,7 @@ sub usage {
 Use NCBI eutil to batch download genbank records
 Retrieve Genbank (full) format for genome feature
 
-Usage:  wgetFromGenbank --output [--query | --id_list]
+Usage:  wgetFromGenbank --output [--query | --id_list ] [--outputFormat ]
 
 where
   --output:       output file
@@ -79,6 +82,8 @@ where
                   or science[journal]+AND+breast+cancer+AND+2008[pdat]
   --id_list:      comma delimited id list, such as DF157093,DF157094,DF157106
                   or 389581967,389581810,389585944
+  --outputFormat: default is gbwithparts ( genbank full)
+                  others can be fasta or gb
 ";
 }
 
