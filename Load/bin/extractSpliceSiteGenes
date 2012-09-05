@@ -136,7 +136,7 @@ $dbh->disconnect;
 sub getGeneListQuery {
   my ($rlvntSamples) = @_;
   return ("SELECT distinct source_id
-           FROM ApidbTuning.SpliceSiteGenes
+           FROM Apidb.SpliceSiteGenes
            WHERE sample_name IN ( $rlvntSamples )
            ORDER BY source_id");
 }
@@ -145,7 +145,7 @@ sub getGeneListQuery {
 sub getSpliceSitesQuery {
   my ($rlvntSamples,$is_unique) = @_;
   return ("SELECT source_id, sample_name, sum(count_per_million)
-           FROM ApidbTuning.SpliceSiteGenes
+           FROM Apidb.SpliceSiteGenes
            WHERE sample_name IN ( $rlvntSamples )
            AND is_unique = $is_unique
            GROUP BY source_id, sample_name ORDER BY sample_name");
