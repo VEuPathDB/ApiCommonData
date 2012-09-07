@@ -31,7 +31,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
-   <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/> 
@@ -125,6 +125,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="culture_collection" ignore="true"/>
     <qualifier name="anamorph" ignore="true"/>
     <qualifier name="mating_type" ignore="true"/>
+    <qualifier name="transgenic" ignore="true"/>
 
     <!-- from mRNA records -->
     <qualifier name="strain"/>
@@ -196,21 +197,21 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="transcript" so="transcript">
-  <!-- created by the reshaper -->
-  <qualifier name="locus_tag" ignore="true"/>
-  <qualifier name="product"		ignore="true"/>
-  <qualifier name="note" ignore="true"/>
-  <qualifier name="transcript_id" ignore="true"/>
-  <qualifier name="selenocysteine"       ignore="true"/>
-  <qualifier name="citation" ignore="true"/>
-  <qualifier name="db_xref" ignore="true"/>
-  <qualifier name="pseudo" ignore="true"/>
-  <qualifier name="codon_recognized" ignore="true"/>
-  <qualifier name="gene" ignore="true"/>
-  <qualifier name="artificial_location" ignore="true"/>
-  <qualifier name="old_locus_tag" ignore="true"/>
-  <qualifier name="gene_synonym" ignore="true"/>
-  <qualifier name="CDSLength" ignore="true"/>
+    <!-- created by the reshaper -->
+    <qualifier name="locus_tag" ignore="true"/>
+    <qualifier name="product"		ignore="true"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="transcript_id" ignore="true"/>
+    <qualifier name="selenocysteine"       ignore="true"/>
+    <qualifier name="citation" ignore="true"/>
+    <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="pseudo" ignore="true"/>
+    <qualifier name="codon_recognized" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
+    <qualifier name="artificial_location" ignore="true"/>
+    <qualifier name="old_locus_tag" ignore="true"/>
+    <qualifier name="gene_synonym" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
   </feature>
 
 
@@ -240,9 +241,9 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
   <feature name="pseudo_gene" so="pseudogene" table="DoTS::GeneFeature">
     <qualifier name="locus_tag" column="source_id"/>
-     <qualifier name="note" handler="api" method="note"/>
-     <qualifier name="is_pseudo" column="is_pseudo"/>
-     <qualifier name="pseudo" ignore="true"/>
+    <qualifier name="note" handler="api" method="note"/>
+    <qualifier name="is_pseudo" column="is_pseudo"/>
+    <qualifier name="pseudo" ignore="true"/>
   </feature>
 
 
