@@ -214,7 +214,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CDSLength" ignore="true"/>
   </feature>
 
-
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
     <qualifier name="reading_frame"  column="reading_frame"/>
     <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
@@ -223,7 +222,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="OrderNumber"    column="order_number"/>
     <qualifier name="type" ignore="true"/>
   </feature>
-
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
     <qualifier name="locus_tag" column="source_id"/>
@@ -239,6 +237,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
   </feature>
+
   <feature name="pseudo_gene" so="pseudogene" table="DoTS::GeneFeature">
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note" handler="api" method="note"/>
