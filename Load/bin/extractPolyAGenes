@@ -1,0 +1,152 @@
+#!/usr/bin/perl
+
+# This script is to make two files (one for unique and the other for non-unique alignments counts
+# for genes with splice sites.
+
+use strict;
+use DBI;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use CBIL::Util::PropertySet;
+use Getopt::Long;
+
+my ($verbose,$gusConfigFile,$cfgFile,$uniqFile,$nonuniqFile);
+
+&GetOptions("verbose!" => \$verbose,
+            "gusConfigFile=s" => \$gusConfigFile,
+            "configFile=s" => \$cfgFile,
+            "uniqFile=s" => \$uniqFile,
+            "nonuniqFile=s" => \$nonuniqFile,
+	    );
+
+$gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
+
+unless(-e $gusConfigFile) {
+  print STDERR "gus.config file not found! \n";
+  exit;
+}
+
+unless(-e $cfgFile) {
+  print STDERR "config file not found! \n";
+  exit;
+}
+
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+
+my $usr = $gusconfig->{props}->{databaseLogin};
+my $pwd = $gusconfig->{props}->{databasePassword};
+my $dsn = $gusconfig->{props}->{dbiDsn};
+
+my $dbh = DBI->connect($dsn, $usr, $pwd) ||  die "Couldn't connect to database: " . DBI->errstr;
+$dbh->{RaiseError} = 1;
+$dbh->{AutoCommit} = 0;
+
+my %sample;
+my @shortNames; # array of sample_name for output
+my @relevantSamples;
+
+open(CONF,"$cfgFile");
+while(<CONF>){
+  chomp;
+  my @temp = split("\t", $_);
+  push (@relevantSamples, "\'".$temp[1]."\'") if ($temp[2]); #long names to be used in sql
+  push (@shortNames, $temp[3]) if ($temp[2]); #short names to be used for output file
+
+  # hash with keys as long sample_names and values as short ones
+  $sample{"$temp[1]"} = $temp[3] if ($temp[2]);
+}
+close(CONF);
+
+my $rlvntSamples = join( ',', @relevantSamples ); 
+
+#------ get gene list ------
+my $sql = &getGeneListQuery($rlvntSamples);
+my $sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+$sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
+
+my @geneList;
+while (my ($source_id) = $sth->fetchrow_array()) {
+  chomp;
+  push (@geneList,$source_id);
+}
+
+#------ for UNIQUE (or minimum) alignments ------
+my $is_unique = 1;
+$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
+$sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+$sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
+
+my %geneSpliceSites;
+my $name;
+while (my ($source_id, $sample_name_full, $count) = $sth->fetchrow_array()) {
+  $name = $sample{$sample_name_full}; # brief sample name
+  $geneSpliceSites{"$source_id"}->{"$name"} = $count;
+}
+
+open(UNIQ,">$uniqFile");
+print UNIQ "id";
+for my $x (@shortNames){
+    print UNIQ "\t$x";
+}
+print UNIQ "\n";
+
+for my $gene ( @geneList ){
+  print UNIQ "$gene";
+  for my $name ( @shortNames) {
+    my $val = ($geneSpliceSites{$gene}{$name})? $geneSpliceSites{$gene}{$name} :0;
+    print UNIQ "\t$val";
+  }
+  print UNIQ "\n";
+}
+close(UNIQ);
+
+
+#------ for NON-UNIQUE (or diff) alignments ------
+$is_unique = 0;
+$sql = &getSpliceSitesQuery($rlvntSamples,$is_unique);
+$sth = $dbh->prepare($sql) || die "Couldn't prepare the SQL statement: " . $dbh->errstr;
+$sth->execute() ||  die "Couldn't execute statement: " . $sth->errstr;
+
+my %geneSpliceSites2;
+my $name2;
+while (my ($source_id, $sample_name_full, $count) = $sth->fetchrow_array()) {
+  $name2 = $sample{$sample_name_full};
+  $geneSpliceSites2{"$source_id"}->{"$name2"} = $count;
+}
+
+open(NONUNIQ,">$nonuniqFile");
+print NONUNIQ "id";
+for my $x (@shortNames){
+    print NONUNIQ "\t$x";
+}
+print NONUNIQ "\n";
+
+for my $gene ( @geneList ){
+  print NONUNIQ "$gene";
+  for my $name ( @shortNames) {
+    my $val = ($geneSpliceSites2{$gene}{$name})? $geneSpliceSites2{$gene}{$name} :0;
+    print NONUNIQ "\t$val";
+  }
+  print NONUNIQ "\n";
+}
+close(NONUNIQ);
+
+$dbh->disconnect;
+
+sub getGeneListQuery {
+  my ($rlvntSamples) = @_;
+  return ("SELECT distinct source_id
+           FROM Apidb.PolyAgenes
+           WHERE sample_name IN ( $rlvntSamples )
+           ORDER BY source_id");
+}
+
+
+sub getSpliceSitesQuery {
+  my ($rlvntSamples,$is_unique) = @_;
+  return ("SELECT source_id, sample_name, sum(count_per_million)
+           FROM Apidb.PolyAgenes
+           WHERE sample_name IN ( $rlvntSamples )
+           AND is_unique = $is_unique
+           GROUP BY source_id, sample_name ORDER BY sample_name");
+}
