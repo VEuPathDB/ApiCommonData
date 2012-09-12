@@ -5,7 +5,8 @@ use strict;
 use warnings;
 
 use GUS::PluginMgr::Plugin;
-use ApiCommonData::Load::ParseKeggXml
+use GUS::Supported::ParseKeggXml;
+use GUS::Supported::MetabolicPathway;
 
 
 # ----------------------------------------------------------
@@ -15,15 +16,23 @@ use ApiCommonData::Load::ParseKeggXml
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [   
-    fileArg({ name           => 'inputDir',
-              descr          => 'Directory in which input KGML files are placed.',
-              reqd           => 1,
-              mustExist      => 1,
-              format         => '',
-              constraintFunc => undef,
-              isList         => 0, 
-             }),
+     stringArg({ name => 'fileDir',
+                 descr => 'full path to xml files',
+                 constraintFunc=> undef,
+                 reqd  => 1,
+                 isList => 0,
+                 mustExist => 1,
+	       }),
+
+     enumArg({ name           => 'format',
+               descr          => 'The file format fpr pathways (Kegg, Biopax, Other)',
+               constraintFunc => undef,
+               reqd           => 1,
+               isList         => 0,
+               enum           => 'KEGG, Biopax, Other'
+	    }),
     ];
+
   return $argsDeclaration;
 }
 
@@ -36,7 +45,7 @@ sub getDocumentation {
 
   my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
 
-  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing']['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction']];
+  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing']['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship']];
 
   my $tablesDependedOn = [['Core.TableInfo',  'To store a reference to tables that have Node records (ex. EC Numbers, Coumpound IDs']];
 
@@ -82,7 +91,18 @@ sub new {
 sub run {
   my ($self) = shift;
 
+  my $inputFileDir = $self->getArg('fileDir');
+  die "$inputFileDir directory does not exist" if !(-d $inputFileDir); 
 
+  my @pathwayFiles = <$inputFileDir/*.xml>;
+  die "No Kegg xml files found in the directory $inputFileDir" if not @pathwayFiles;
+
+  my $kgmlParser = new GUS::Supported::ParseKeggXml;
+ 
+  foreach $kgml (@kgmlFiles) {
+    
+
+  }
 }
 
 1;
