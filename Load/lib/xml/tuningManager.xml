@@ -118,7 +118,7 @@ WHERE taf.aa_sequence_id = tas.aa_sequence_id
   AND eas.external_database_release_id
       = edr.external_database_release_id
   AND edr.external_database_id = ed.external_database_id
-  AND ed.name in ('PDBProteinSequences_RSRC','PDB protein sequences')
+  AND ed.name in ('PDBProteinSequences_RSRC_RSRC','PDB protein sequences')
   AND eas.taxon_id = tn.taxon_id
   AND t.na_feature_id = taf.na_feature_id
   AND gf.na_feature_id = t.parent_id
@@ -3935,7 +3935,7 @@ select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_
        'rma' as visible_parts,
         'ToxoStrainsMicroarrayPercentile' as dataTable,
       'expression' as type,
-        'Tg_3_Archetypal_Lineages_ExpressionData' as attribution
+        'tgonME49_microarrayExpression_Roos-Tz_RSRC' as attribution
     from dual
 
 -- 2
@@ -3953,7 +3953,7 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' 
        'rpkm,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'TgME49_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+        'tgonME49_Reid_tachy_rnaSeq_RSRC' as attribution
 from dual
 
 -- 3
@@ -3970,7 +3970,7 @@ UNION
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'T.gondii_MWhite_CellCycle_Array_Profiles' as attribution
+        'tgonME49_microarrayExpression_White_GSE19092_CellCycle_RSRC' as attribution
     from dual
 --4
 UNION
@@ -3989,7 +3989,7 @@ select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_n
         'rma,pct' as visible_parts,
         '' as dataTable,
         'expression' as type,
-        'Tg_Carruthers_GSE20480_RSRC' as attribution
+        'tgonME49_microarrayExpression_Carruthers_GSE20480_RSRC' as attribution
     from dual
 --5
 UNION
@@ -4005,7 +4005,7 @@ select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_na
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgME49Boothroyd_RSRC' as attribution
+        'tgonME49_microarrayExpression_Boothroyd_LifeCycle_RSRC' as attribution
 from dual
 
 --6
@@ -4022,7 +4022,7 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Brady_Time_Series' as attribution
+        'tgonME49_microarrayExpression_Roos-Tz-Bz_RSRC' as attribution
     from dual
 
 --7 
@@ -4039,7 +4039,7 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Matt_Tz-Bz_Time_Series' as attribution
+        'tgonME49_microarrayExpression_BoothroydAnderson_Tz-Bz_RSRC' as attribution
     from dual
 
 --8
@@ -4078,7 +4078,7 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Brady_Time_Series' as attribution
+        'tgonME49_microarrayExpression_Roos-Tz-Bz_RSRC' as attribution
     from dual
 
 --10
@@ -4095,7 +4095,7 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
        'rma,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Compound1_pH_avg_pct' as attribution
+        'tgonME49_microarrayExpression_White_GSE16037_Tz-Bz_RSRC' as attribution
     from dual
 
 --11
@@ -4118,7 +4118,7 @@ select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_
         'rma,pct' as visible_parts,
         '' as dataTable,
         'expression' as type,
-        'Tg_Sullivan_GSE22100_GCN5-A_RSRC' as attribution
+        'tgonME49_microarrayExpression_Sullivan_GSE22100_GCN5-A_RSRC' as attribution
 from dual
 
 --12
@@ -4191,7 +4191,7 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as 
        'rpkm,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'TgVEG_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+        'tgonVEG_Reid_tachy_rnaSeq_RSRC' as attribution
 from dual
 
 UNION
@@ -4208,7 +4208,7 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
        'rpkm,pct' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'Nc_RNASeq_Tachyzoite_Reid_RSRC' as attribution
+        'ncanLIV_Reid_tachy_rnaSeq_RSRC' as attribution
 from dual
 
    
@@ -5476,7 +5476,7 @@ from dual
 UNION
 select 'ToxoDB' as project_id,
        'Phosphoproteome of purified RH tachys' as display_term,
-       'Tg_Boothroyd_Elias_Moritz_Purified_Phosphoproteome_RSRC' as extDB_name
+       'tgonGT1_massSpec_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
@@ -5486,7 +5486,7 @@ from dual
 UNION
 select 'ToxoDB' as project_id,
        'Proteome of purified RH tachys' as display_term,
-       'Tg_Boothroyd_Elias_Moritz_Purified_Totalproteome_RSRC' as extDB_name
+       'tgonME49_massSpec_Boothroyd_Elias_Moritz_Phosphoproteome_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
@@ -5506,12 +5506,12 @@ from dual
 UNION
 select 'ToxoDB' as project_id,
        'Tg TiO2 Unbound Phosphoproteome' as display_term,
-       'Tg_Tonkin_TiO2_Unbound_Phosphoproteome_RSRC' as extDB_name
+       'tgonME49_massSpec_Tonkin_Phosphoproteome_RSRC' as extDB_name
 from dual 
 UNION
 select 'ToxoDB' as project_id,
        'M4 Oocyst Walls, bleach-treated' as display_term,
-       'TgonME49_BoothroydBowyerOocystMembrane_Proteome_RSRC' as extDB_name
+       'tgonME49_massSpec_Boothroyd_Bowyer_oocyst_sporozoite_RSRC' as extDB_name
 from dual
 UNION
 select 'ToxoDB' as project_id,
@@ -6954,7 +6954,7 @@ tablespace indx
        union
        select special.organism, special.parent,special.abbreviation, ot.project_id from OrganismTree ot,(
   -- ToxoDB Apicoplast
-  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'TgondiiApicoplast' as abbreviation from dual union
+  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'tgonRH_primary_genome_RSRC' as abbreviation from dual union
   -- Giardia Deprecated
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffold' as abbreviation from dual union
