@@ -214,6 +214,8 @@ sub run {
   my $sth = $self->prepareAndExecute($sql);
   my ($taxon_id, $ncbi_tax_id) = $sth->fetchrow_array();
   
+  $self->error("Could not find a row in sres.taxonname with scientific name '$fullName'") unless $ncbi_tax_id;
+
   $self->error("fullName '$fullName' and ncbiTaxonId '$ncbiTaxonId' do not match, according to SRes.TaxonName") unless $ncbi_tax_id eq $ncbiTaxonId;
   
   # validate species ncbi taxon id against ncbi taxon id
