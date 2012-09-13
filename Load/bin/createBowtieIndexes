@@ -5,19 +5,19 @@ use Getopt::Long;
 use Switch;
 use strict;
 
-my ($inputFile, $outputIndexDir,$colorspace);
+my ($inputFile, $outputIndexDir,$colorspace, $bowtieVersion);
 
 &GetOptions("inputFile=s" => \$inputFile,
 	    "outputIndexDir=s"=> \$outputIndexDir,
+	    "bowtieVersion=s"=> \$bowtieVersion,
 	    "colorspace!"=> \$colorspace,
 	   );
 
-if (!$inputFile || !$outputIndexDir) {
-  die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH>\n";
+if (!$inputFile || !$outputIndexDir || !$bowtieVersion) {
+  die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH> --bowtieVersion [1|2]\n";
 }
 
-my $cmd = "/eupath/software/bowtie/current/bowtie-build";
-
+my $cmd = $bowtieVersion == 2 ? "/eupath/eupath-tmp/software/bowtie/2.0.0b7/bowtie2-build" : "/eupath/software/bowtie/current/bowtie-build"; 
 $cmd .= " -C" if $colorspace;
 
 $cmd .= " $inputFile $outputIndexDir";
