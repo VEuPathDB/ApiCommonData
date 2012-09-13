@@ -1,6 +1,7 @@
 /* table for SpliceSite sites */
 
 CREATE TABLE apidb.SpliceSiteGenes (
+  splice_site_gene_id       NUMBER(10) not  null,
   splice_site_feature_id        NUMBER(10) not null,
   location                      NUMBER(10) not null,
   strand                        CHAR(1), 
@@ -19,8 +20,23 @@ CREATE TABLE apidb.SpliceSiteGenes (
   percent_fraction              NUMBER(3), 
   diff_to_next                  NUMBER(3), 
   first_atg_location            NUMBER(10),
-  dist_to_first_atg             NUMBER(10)
+  dist_to_first_atg             NUMBER(10),
+  MODIFICATION_DATE            DATE,
+  USER_READ                    NUMBER(1),
+  USER_WRITE                   NUMBER(1),
+  GROUP_READ                   NUMBER(1),
+  GROUP_WRITE                  NUMBER(1),
+  OTHER_READ                   NUMBER(1),
+  OTHER_WRITE                  NUMBER(1),
+  ROW_USER_ID                  NUMBER(12),
+  ROW_GROUP_ID                 NUMBER(3),
+  ROW_PROJECT_ID               NUMBER(4),
+  ROW_ALG_INVOCATION_ID        NUMBER(12),
+  FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
+  PRIMARY KEY (splice_site_gene_id)
 );
+
+CREATE SEQUENCE apidb.SpliceSiteGenes_sq;
 
 grant select on Apidb.SpliceSiteGenes to gus_r;
 grant insert, select, update, delete on Apidb.SpliceSiteGenes to gus_w;
@@ -42,7 +58,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'SpliceSiteGenes',
-       'Standard', 'splice_site_feature_id',
+       'Standard', 'splice_site_gene_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,

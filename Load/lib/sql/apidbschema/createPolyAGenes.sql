@@ -1,6 +1,7 @@
 /* table for PolyA sites */
 
 CREATE TABLE apidb.PolyAGenes (
+  poly_a_gene_id       NUMBER(10) not  null,
   splice_site_feature_id        NUMBER(10) not null,
   location                      NUMBER(10) not null,
   strand                        CHAR(1), 
@@ -17,7 +18,20 @@ CREATE TABLE apidb.PolyAGenes (
   external_database_release_id  NUMBER(10),
   is_dominant                   NUMBER(1), 
   percent_fraction              NUMBER(3), 
-  diff_to_next                  NUMBER(3)
+  diff_to_next                  NUMBER(3),
+  MODIFICATION_DATE            DATE,
+  USER_READ                    NUMBER(1),
+  USER_WRITE                   NUMBER(1),
+  GROUP_READ                   NUMBER(1),
+  GROUP_WRITE                  NUMBER(1),
+  OTHER_READ                   NUMBER(1),
+  OTHER_WRITE                  NUMBER(1),
+  ROW_USER_ID                  NUMBER(12),
+  ROW_GROUP_ID                 NUMBER(3),
+  ROW_PROJECT_ID               NUMBER(4),
+  ROW_ALG_INVOCATION_ID        NUMBER(12),
+  FOREIGN KEY (splice_site_feature_id) REFERENCES apidb.SpliceSiteFeature,
+  PRIMARY KEY (poly_a_gene_id)	
 );
 
 grant select on Apidb.PolyAGenes to gus_r;
@@ -40,7 +54,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'PolyAGenes',
-       'Standard', 'splice_site_feature_id',
+       'Standard', 'poly_a_gene_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
