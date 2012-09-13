@@ -7,6 +7,7 @@ use warnings;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::ParseKeggXml;
 use GUS::Supported::MetabolicPathway;
+use GUS::Supported::MetabolicPathways;
 
 
 # ----------------------------------------------------------
@@ -97,11 +98,47 @@ sub run {
   my @pathwayFiles = <$inputFileDir/*.xml>;
   die "No Kegg xml files found in the directory $inputFileDir" if not @pathwayFiles;
 
-  my $kgmlParser = new GUS::Supported::ParseKeggXml;
- 
-  foreach $kgml (@kgmlFiles) {
-    
+  &readKeggFiles(@pathwayFiles);
+}
 
+sub readKeggFiles {
+  my ($self,@kgmlFiles) = @_;
+
+  my $kgmlParser = new GUS::Supported::ParseKeggXml;
+  my $pathwaysObj = new GUS::Supported::MetabolicPathways;
+
+  foreach my $kgml (@kgmlFiles) {
+
+    my $pathwayElements = $kgmlParser->parseKGML($kgml);
+    my $pathwayObj = $pathwaysObj->getPathwayObj($pathwayElements->{NAME});
+  
+    foreach my $node  (keys %{$pathwayElements->{NODES}}) {
+      $pathwayObj->setPathwayNode($node, { NODE_NAME => $node,
+                                           NODE_TYPE => $pathwayElements->{NODES}->{$node}->{TYPE}
+                                         })
+
+      $pathwayObj->setNodeGraphics($node, { X => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{X},
+                                            Y => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{Y},
+                                            SHAPE => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{TYPE},
+                                            HEIGHT => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{HEIGHT},
+                                            WIDTH => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{WIDTH}
+                                           })                                          
+    }
+
+    foreach my $reaction (keys %{$pathwayElements->{REACTIONS}}) {
+    my $reactType = $pathwayElements->{REACTIONS}->$reaction->{TYPE};
+    my $direction = 1;
+    $direction = 0 unless ($reactType eq 'irreversible');
+ 
+    $pathwayObj->setPathwayNodeAssociation($reaction, { SOURCE_NODE => $pathwayElements->{REACTIONS}->$reaction->{SUBSTRATE}->{NAME}, 
+                                                        ASSOCIATED_NODE => $pathwayElements->{REACTIONS}->$reaction->{PRODUCT}->{NAME},
+                                                        ASSOC_TYPE => "Reaction ".$reactType,
+                                                        DIRECTION => $direction
+                                                       })
+ 
+    }
+
+ 
   }
 }
 
