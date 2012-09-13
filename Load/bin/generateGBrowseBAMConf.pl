@@ -87,6 +87,7 @@ while(my($study, $strains) = each %hash) {
 feature        = coverage
 database       = $study\_$strain
 glyph          = wiggle_xyplot
+scale          = both
 height         = 50 
 fgcolor        = blue 
 bicolor_pivot  = 2  
