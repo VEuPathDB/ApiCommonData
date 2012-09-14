@@ -7037,15 +7037,15 @@ tablespace indx
                      s.organism like 'Phytophthora%' or
                      s.organism like 'Pythium%' )
                then 'Oomycetes'
-               when (s.organism like 'Coprinopsis%' or
+               when (s.organism like 'Coprinopsis%')
                then 'Agaricomycetes'
-               when (s.organism like 'Rhizopus%' or
+               when (s.organism like 'Rhizopus%')
                then 'Rhizopus'
-               when (s.organism like 'Puccinia%' or
+               when (s.organism like 'Puccinia%')
                then 'Pucciniomycetes'
-               when (s.organism like 'Batrachochytrium%' or
+               when (s.organism like 'Batrachochytrium%') 
                then 'Chytridiomycetes'
-               when (s.organism like 'Ustilago%' or
+               when (s.organism like 'Ustilago%')
                then 'Ustilaginomycetes'
                else 'Missing ProjectIdTaxonLevel'
                end as taxon_node,
