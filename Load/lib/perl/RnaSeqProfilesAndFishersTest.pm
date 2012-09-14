@@ -32,13 +32,6 @@ sub new {
                           'samples',
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
-  if(scalar @{$args->{samples}} > 1 ) {
-    my $isPairedEnd = $self->getIsPairedEnd();
-    unless($isPairedEnd eq 'yes' || $isPairedEnd eq 'no') {
-      CBIL::TranscriptExpression::Error->new("isPairedEnd param must equal [yes] or [no]")->throw();
-    }
-  }
-
 
   return $self;
 }
