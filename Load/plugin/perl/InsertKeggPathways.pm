@@ -4,11 +4,12 @@ package ApiCommonData::Load::Plugin::InsertKeggPathways;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use GUS::PluginMgr::Plugin;
 use GUS::Supported::ParseKeggXml;
 use GUS::Supported::MetabolicPathway;
 use GUS::Supported::MetabolicPathways;
-
+use GUS::Model::ApiDB::NetworkContext;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -26,7 +27,7 @@ sub getArgsDeclaration {
 	       }),
 
      enumArg({ name           => 'format',
-               descr          => 'The file format fpr pathways (Kegg, Biopax, Other)',
+               descr          => 'The file format for pathways (Kegg, Biopax, Other)',
                constraintFunc => undef,
                reqd           => 1,
                isList         => 0,
@@ -46,7 +47,7 @@ sub getDocumentation {
 
   my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
 
-  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing']['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship']];
+  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship']];
 
   my $tablesDependedOn = [['Core.TableInfo',  'To store a reference to tables that have Node records (ex. EC Numbers, Coumpound IDs']];
 
@@ -96,50 +97,68 @@ sub run {
   die "$inputFileDir directory does not exist" if !(-d $inputFileDir); 
 
   my @pathwayFiles = <$inputFileDir/*.xml>;
-  die "No Kegg xml files found in the directory $inputFileDir" if not @pathwayFiles;
+  die "No files found in the directory $inputFileDir" if not @pathwayFiles;
 
-  &readKeggFiles(@pathwayFiles);
+  my $pathwaysObj = new GUS::Supported::MetabolicPathways;
+  $self->{"pathwaysCollection"} = $pathwaysObj;
+
+  $self->readKeggFiles(\@pathwayFiles);
 }
 
+
+
 sub readKeggFiles {
-  my ($self,@kgmlFiles) = @_;
+  my ($self, $kgmlFiles) = @_;
 
   my $kgmlParser = new GUS::Supported::ParseKeggXml;
-  my $pathwaysObj = new GUS::Supported::MetabolicPathways;
 
-  foreach my $kgml (@kgmlFiles) {
+  my $pathwaysObj = $self->{pathwaysCollection};
+
+  foreach my $kgml (@{$kgmlFiles}) {
 
     my $pathwayElements = $kgmlParser->parseKGML($kgml);
-    my $pathwayObj = $pathwaysObj->getPathwayObj($pathwayElements->{NAME});
+    my $pathwayObj = $pathwaysObj->getNewPathwayObj($pathwayElements->{NAME});
   
     foreach my $node  (keys %{$pathwayElements->{NODES}}) {
       $pathwayObj->setPathwayNode($node, { NODE_NAME => $node,
                                            NODE_TYPE => $pathwayElements->{NODES}->{$node}->{TYPE}
-                                         })
+                                         });
 
       $pathwayObj->setNodeGraphics($node, { X => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{X},
                                             Y => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{Y},
                                             SHAPE => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{TYPE},
                                             HEIGHT => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{HEIGHT},
                                             WIDTH => $pathwayElements->{NODES}->{$node}->{GRAPHICS}->{WIDTH}
-                                           })                                          
+                                           }); 
     }
 
     foreach my $reaction (keys %{$pathwayElements->{REACTIONS}}) {
-    my $reactType = $pathwayElements->{REACTIONS}->$reaction->{TYPE};
+    my $reactType = $pathwayElements->{REACTIONS}->{$reaction}->{TYPE};
     my $direction = 1;
     $direction = 0 unless ($reactType eq 'irreversible');
  
-    $pathwayObj->setPathwayNodeAssociation($reaction, { SOURCE_NODE => $pathwayElements->{REACTIONS}->$reaction->{SUBSTRATE}->{NAME}, 
-                                                        ASSOCIATED_NODE => $pathwayElements->{REACTIONS}->$reaction->{PRODUCT}->{NAME},
+    $pathwayObj->setPathwayNodeAssociation($reaction, { SOURCE_NODE => $pathwayElements->{REACTIONS}->{$reaction}->{SUBSTRATE}->{NAME}, 
+                                                        ASSOCIATED_NODE => $pathwayElements->{REACTIONS}->{$reaction}->{PRODUCT}->{NAME},
                                                         ASSOC_TYPE => "Reaction ".$reactType,
                                                         DIRECTION => $direction
-                                                       })
+                                                       });
  
+
     }
 
- 
+    $pathwaysObj->setPathwayObj($pathwayObj);
   }
+  $self->{"pathwaysCollection"} = $pathwaysObj;
 }
+
+
+
+
+
+sub undoTables {
+  my ($self) = @_;
+
+}
+
 
 1;
