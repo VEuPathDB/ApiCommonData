@@ -44,8 +44,8 @@ CREATE TABLE ApiDB.Network (
 CREATE TABLE ApiDB.NetworkNode (
   NETWORK_NODE_ID                NUMBER(10)  NOT NULL,	
   NODE_TYPE_ID                   NUMBER(10)  NOT NULL,
-  TABLE_ID                       NUMBER(5)   NOT NULL,
-  ROW_ID                         NUMBER(12)  NOT NULL,
+  TABLE_ID                       NUMBER(5),
+  ROW_ID                         NUMBER(12),
   DISPLAY_LABEL                  VARCHAR(25),
   MODIFICATION_DATE              DATE,
   USER_READ                      NUMBER(1),
