@@ -12,6 +12,7 @@
 
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="gene"    handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"                ignore="true"/>
     <qualifier name="id"    handler="api" method="sourceIdAndTranscriptSeq"/>
@@ -23,12 +24,12 @@
     <qualifier name="product"			ignore="true"/>
     <qualifier name="literature"       handler="plasmo" method="literature"/>
     <qualifier name="obsolete_product" ignore="true"/>
-    <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="cuartion"         handler="api" method="note"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="cuartion"         ignore="true"/>
     <qualifier name="controlled_curation" handler="plasmo" method="noteWithAuthor"/>
     <qualifier name="paralog"          ignore="true"/>
     <qualifier name="ortholog"         ignore="true"/>
-    <qualifier name="note"             handler="api" method="note"/>
+    <qualifier name="note"             ignore="true"/>
     <qualifier name="primary_name"     handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="Previous_systematic_id" handler="api" method="gene"/>
@@ -85,9 +86,9 @@
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="gene"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="product"			ignore="true"/>
-    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="note"                 ignore="true"/>
     <qualifier name="synonym"              handler="api" method="gene"/>
-    <qualifier name="curation"             handler="api" method="note"/>
+    <qualifier name="curation"             ignore="true"/>
     <qualifier name="db_xref"          	   ignore="true"/>
     <qualifier name="controlled_curation"  ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
@@ -109,8 +110,8 @@
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="gene"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="curation"             handler="api" method="note"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="curation"             ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="db_xref"          	   ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
@@ -124,8 +125,8 @@
     <qualifier name="gene"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="anticodon"           handler="api" method="anticodon"/>
-    <qualifier name="note"                handler="api" method="note"/>
-    <qualifier name="curation"            handler="api" method="note"/>
+    <qualifier name="note"                ignore="true"/>
+    <qualifier name="curation"            ignore="true"/>
     <qualifier name="obsolete_name"       handler="api" method="gene"/>
     <qualifier name="synonym"             handler="api" method="gene"/>
     <qualifier name="db_xref"             ignore="true"/>
@@ -138,6 +139,7 @@
   </feature>
 
   <feature name="transcript" so="transcript">
+    <qualifier name="CDSLength"             ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true"/>
@@ -147,7 +149,7 @@
 
   <feature name="alternative_exon" table="DoTS::Miscellaneous" so="exon">
     <qualifier name="systematic_id"        column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="note"                 ignore="true"/>
     <qualifier name="obsolete_name"        handler="api" method="gene"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="colour"               ignore="true"/>
@@ -156,12 +158,12 @@
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
-    <qualifier name="note" handler="api" method="note"/>
-    <qualifier name="curation" handler="api" method="note"/>
+    <qualifier name="note" ignore="true"/>
+    <qualifier name="curation" ignore="true"/>
     <qualifier name="rpt_family"/>
     <qualifier name="rpt_type"/>
     <qualifier name="rpt_unit" handler="plasmo" method="rptUnit"/>
-    <qualifier name="comment_Nterm" handler="plasmo" method="commentNterm"/>
+    <qualifier name="comment_Nterm"			ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
@@ -169,7 +171,7 @@
   </feature>
 
   <feature name="repeat_unit" table="DoTS::Repeats" so="repeat_unit">
-    <qualifier name="note"                   handler="api" method="note"/>
+    <qualifier name="note"                   ignore="true"/>
     <qualifier name="rpt_type"/>
     <qualifier name="rpt_unit"/>
     <qualifier name="blastx_file"            ignore="true"/>
@@ -177,7 +179,7 @@
 
   <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
     <qualifier name="systematic_id"     column="source_id"/>
-    <qualifier name="note"              handler="api" method="note"/>
+    <qualifier name="note"              ignore="true"/>
     <qualifier name="estimated_length"  handler="api" method="gapLength"/>
   </feature>
 
@@ -185,8 +187,8 @@
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="note"                   handler="api" method="note"/>
-    <qualifier name="domain"                 handler="api" method="note"/>
+    <qualifier name="note"                   ignore="true"/>
+    <qualifier name="domain"                 ignore="true"/>
     <qualifier name="controlled_curation"    ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
@@ -195,7 +197,7 @@
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="">
     <qualifier name="locus_tag"          column="source_id"/>
-    <qualifier name="note"         handler="api" method="note"/>
+    <qualifier name="note"         ignore="true"/>
     <qualifier name="FEATURE_DESC" handler="api" method="miscFeatureNote"/>
     <qualifier name="algorithm"    handler="api" method="ignoreFeature" />
     <qualifier name="controlled_curation"    ignore="true"/>
@@ -225,11 +227,11 @@
 
   <feature name="misc_signal" table="DoTS::Miscellaneous" so="">
     <qualifier name="note"       handler="api" method="miscSignalNote"/>
-    <qualifier name="curation"   handler="api" method="note"/>
+    <qualifier name="curation"   ignore="true"/>
   </feature>
 
   <feature name="variation" table="DoTS::Miscellaneous" so="">
-    <qualifier name="note"       handler="api" method="note"/>
+    <qualifier name="note"       ignore="true"/>
   </feature>
 
   <feature name="5'UTR" table="DoTS::UTRFeature" so="five_prime_UTR">

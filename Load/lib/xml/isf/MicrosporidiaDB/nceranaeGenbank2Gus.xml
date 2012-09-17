@@ -18,6 +18,7 @@ necessarily by what's defined in the input (eg. Genbank) file
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="locus_tag"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="citation" ignore="true"/>
@@ -70,13 +71,13 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
     <qualifier name="locus_tag" column="source_id"/>
-     <qualifier name="note" handler="api"/>
+     <qualifier name="note" 				ignore="true"/>
     <qualifier name="curation" ignore="true"/>
     <qualifier name="rpt_family"/>
     <qualifier name="rpt_type"/>
     <qualifier name="rpt_unit_seq" handler="api" method="rptUnit"/>
-    <qualifier name="satellite"  ignore="true"/>
-    <qualifier name="comment_Nterm" handler="api" method="commentNterm"/>
+    <qualifier name="satellite"  			ignore="true"/>
+    <qualifier name="comment_Nterm"			 ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
@@ -151,7 +152,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="citation" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
    <qualifier name="gene" ignore="true"/>
-
+    <qualifier name="CDSLength"             ignore="true"/>
   </feature>
 
 
