@@ -1,4 +1,4 @@
-package ApiCommonData::Load::GeneAndCds2BioperlTree;
+package ApiCommonData::Load::GeneAndCdsWithtRNAwoParent2BioperlTree;
 
 # Remove existing gene features, promote CDS, tRNA, etc to gene
 
@@ -44,129 +44,127 @@ sub preprocess {
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
-	    
-	  
-
+	   
 	    if($type eq 'repeat_region'){
-		#if($bioperlFeatureTree->has_tag("satellite")){
-		#    $bioperlFeatureTree->primary_tag("microsatellite");
-		#}
-		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
-		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
-		}
-		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-	    }
-	    if($type eq 'STS'){
-		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
-		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
-		}
-		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-	    }
-	    if ($type eq 'gene') {
-
-		$geneFeature = $bioperlFeatureTree; 
-
-#		print STDERR Dumper $geneFeature;   # this can cause huge log files
-		if(!($geneFeature->has_tag("locus_tag"))){
-		    $geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
-		}      
-		for my $tag ($geneFeature->get_all_tags) {    
-
-		    if($tag eq 'pseudo'){
-
-			if ($geneFeature->get_SeqFeatures){
-			    next;
-			}else{
-			    $geneFeature->primary_tag("coding_gene");
-			    my $geneLoc = $geneFeature->location();
-			    my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
-			    my @exonLocs = $geneLoc->each_Location();
-			    foreach my $exonLoc (@exonLocs){
-				my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-				$transcript->add_SeqFeature($exon);
-			    }
-			    $geneFeature->add_SeqFeature($transcript);
-			    $bioperlSeq->add_SeqFeature($geneFeature);
+			if($bioperlFeatureTree->has_tag("satellite")){
+		    	$bioperlFeatureTree->primary_tag("microsatellite");
 			}
-			
-		    }
-		}       
-		my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
-		if($gene){
+			if(!($bioperlFeatureTree->has_tag("locus_tag"))){
+		    	$bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
+			}
+	    }
 
-		    $bioperlSeq->add_SeqFeature($gene);
+	    if($type eq 'STS'){
+			if(!($bioperlFeatureTree->has_tag("locus_tag"))){
+		    	$bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
+			}
+	    }
+
+	    if ($type eq 'gene' ) {
+			$geneFeature = $bioperlFeatureTree; 
+
+#			print STDERR Dumper $geneFeature;   # this can cause huge log files
+			if(!($geneFeature->has_tag("locus_tag"))){
+		    	$geneFeature->add_tag_value("locus_tag",$bioperlSeq->accession());
+			}	   
+ 
+			for my $tag ($geneFeature->get_all_tags) {    
+
+		    	if($tag eq 'pseudo'){
+					if ($geneFeature->get_SeqFeatures){
+			    		next;
+					}else{
+			    		$geneFeature->primary_tag("coding_gene");
+			    		my $geneLoc = $geneFeature->location();
+			    		my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+			    		my @exonLocs = $geneLoc->each_Location();
+			    		foreach my $exonLoc (@exonLocs){
+							my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+							$transcript->add_SeqFeature($exon);
+			    		}
+			    		$geneFeature->add_SeqFeature($transcript);
+			    		$bioperlSeq->add_SeqFeature($geneFeature);
+					}
+				}
+			}       
+			my $gene = &traverseSeqFeatures($geneFeature, $bioperlSeq);
+			if($gene){
+		    	$bioperlSeq->add_SeqFeature($gene);
+			}
+	    }else{
+			if ($type eq 'source'){
+				$source = $bioperlFeatureTree;
+				if($source->has_tag('focus')){
+					$source->primary_tag('focus_source');
+				}
+				if($source->has_tag('PCR_primers')){
+					my $primerpair = '';
+					my (@primerPairs) = $source->get_tag_values('PCR_primers');
+					$primerpair .= join(",",@primerPairs);
+					$source->remove_tag('PCR_primers');
+					$source->add_tag_value('PCR_primers',$primerpair);
+				}
+				next;
+			}
+
+			if($type eq 'primer_bind') {
+				my ($primerSeq, $primerName);
+				if($bioperlFeatureTree->strand() == -1){
+					$primerSeq = 'rev_seq:';
+				}else{
+					$primerSeq = 'fwd_seq:';
+				}
+
+				if($bioperlFeatureTree->has_tag('note')){
+					($primerName) = $bioperlFeatureTree->get_tag_values('note');
+					if($primerSeq eq 'rev_seq:'){
+						$primerName = 'rev_name: '.$primerName;
+					}else{
+						$primerName = 'fwd_name: '.$primerName;
+					}
+				}
+				$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+			}
+
+			## deal with tRNA that does not have 'gene' parents (e.g. tRNA in GI:32456060)
+		    if($type eq 'tRNA') {
+				$geneFeature = $bioperlFeatureTree;
+
+				my $geneLoc = $geneFeature->location();
+				my $gene = &makeBioperlFeature("tRNA_gene", $geneLoc, $bioperlSeq);
+				$gene = &copyQualifiers($geneFeature, $gene);		
+	
+		        my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+
+				my @exonLocs = $geneLoc->each_Location();
+				foreach my $exonLoc (@exonLocs){
+					my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+					$exon->add_tag_value('CodingStart', '');
+					$exon->add_tag_value('CodingEnd', '');
+					$transcript->add_SeqFeature($exon);
+				}
+				$gene->add_SeqFeature($transcript);
+				$bioperlSeq->add_SeqFeature($gene); 
+			}  ## end for type eq tRNA
 		}
-		
-
-	    
-	    }else{
-    if ($type eq 'source'){
-	$source = $bioperlFeatureTree;
-	if($source->has_tag('focus')){
-	    $source->primary_tag('focus_source');
 	}
-	if($source->has_tag('PCR_primers')){
-	    my $primerpair = '';
-	    my (@primerPairs) = $source->get_tag_values('PCR_primers');
-	    $primerpair .= join(",",@primerPairs);
-	    $source->remove_tag('PCR_primers');
-	    $source->add_tag_value('PCR_primers',$primerpair);
-	}
-	next;
-    }
-
-    if($type eq 'primer_bind') {
-
-	my ($primerSeq, $primerName);
-	if($bioperlFeatureTree->strand() == -1){
-	    $primerSeq = 'rev_seq:';
-	}else{
-	    $primerSeq = 'fwd_seq:';
-	}
-
-
-	if($bioperlFeatureTree->has_tag('note')){
-	    ($primerName) = $bioperlFeatureTree->get_tag_values('note');
-	    if($primerSeq eq 'rev_seq:'){
-		$primerName = 'rev_name: '.$primerName;
-
-	    }else{
-		$primerName = 'fwd_name: '.$primerName;
-	    }
-
-	}
-
-
-		$bioperlSeq->add_SeqFeature($bioperlFeatureTree);
-		
-
-	    }
-	}
-
-    }
 
 	if($source){
-	if($source->has_tag('primer_bind')){
-	    $source->remove_tag('primer_bind');
-	}else{
-	    if($primerPair){
-		my $primerpair = '';
-		if($source->has_tag('PCR_primers')){
-		    # my ($primerpair) .= $source->get_tag_values('PCR_primers');
-		    # $primerpair .= ',';
-		    # $source->remove_tag('PCR_primers');	      
+		if($source->has_tag('primer_bind')){
+	    	$source->remove_tag('primer_bind');
+		}else{
+	    	if($primerPair){
+				my $primerpair = '';
+				if($source->has_tag('PCR_primers')){
+				}else{
+		    		$primerpair .= $primerPair;
+		    		$source->add_tag_value('PCR_primers',$primerpair);
+				}
+	    	}
 		}
-		else{
-		    $primerpair .= $primerPair;
-
-
-		    $source->add_tag_value('PCR_primers',$primerpair);
-		}
-	    }
-	}
   
-	$bioperlSeq->add_SeqFeature($source);
-	undef $source;
+		$bioperlSeq->add_SeqFeature($source);
+		undef $source;
     }
 	undef $primerPair;
     }
@@ -263,7 +261,7 @@ sub traverseSeqFeatures {
 
 			$exon->add_tag_value('CodingStart', $codingStart);
 			$exon->add_tag_value('CodingEnd', $codingEnd);
-				$CDSLength += (abs($codingEnd - $codingStart) +1) if ($codingStart && $codingEnd);
+				$CDSLength += (abs($codingEnd - $codingStart) +1);
 
 		    }else{
 			$exon->add_tag_value('CodingStart', '');

@@ -1261,7 +1261,7 @@ sub validateCodingSequenceLength {
 	
 	$proteinSourceId =~ s/\-\d+$//;
 	my $aaSeq = $translatedAAFeat->getParent('DoTS::TranslatedAASequence');
-	if($aaSeq){
+	if($aaSeq && $CDSLength){
 	    if($aaSeq->get('length') != (($CDSLength / 3) -1)){
 
 

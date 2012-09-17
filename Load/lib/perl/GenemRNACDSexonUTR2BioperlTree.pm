@@ -125,6 +125,31 @@ sub preprocess {
 		if($type eq 'gap' || $type eq 'direct_repeat' || $type eq 'three_prime_utr' || $type eq 'five_prime_utr' || $type eq 'splice_acceptor_site'){
 		    $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
 		}
+
+	    ## deal with tRNA that does not have 'gene' parents (e.g. tRNA in GI:32456060)
+            if($type eq 'tRNA') {
+                $geneFeature = $bioperlFeatureTree;
+
+                my $geneLoc = $geneFeature->location();
+                my $gene = &makeBioperlFeature("tRNA_gene", $geneLoc, $bioperlSeq);
+
+		my ($geneID) = $geneFeature->get_tag_values('ID');
+		$gene->add_tag_value("ID",$geneID);
+                $gene = &copyQualifiers($geneFeature, $gene);
+
+                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+
+                my @exonLocs = $geneLoc->each_Location();
+                foreach my $exonLoc (@exonLocs){
+                    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                    $exon->add_tag_value('CodingStart', '');
+                    $exon->add_tag_value('CodingEnd', '');
+                    $transcript->add_SeqFeature($exon);
+                }
+                $gene->add_SeqFeature($transcript);
+                $bioperlSeq->add_SeqFeature($gene);
+            }  ## end for type eq tRNA
+
 	    }
 
 	}
@@ -232,7 +257,7 @@ sub traverseSeqFeatures {
 			$codingEnd = $subFeature->location->end;
 
 			if($CDSctr ==0){
-			    $codingStart + $subFeature->frame();
+			    $codingStart += $subFeature->frame();
 			}
 		    }
 		    
