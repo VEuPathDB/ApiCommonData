@@ -1985,6 +1985,7 @@ SQL
             $virtual_target_end = $distance_from_left + $end_position - $target_start + 1;
             $virtual_tstarts = &getReversedTstarts($distance_from_left,$end_position,$tstarts,$blocksizes);
             $blocksizes = join(',', reverse split(',', $blocksizes));
+            $is_reversed = $is_reversed == 1 ? 0 : 1;
           } else {
             $virtual_target_start = $target_start + $distance_from_left - $start_position + 1;
             $virtual_target_end = $target_end + $distance_from_left - $start_position + 1;
@@ -2115,6 +2116,7 @@ SQL
             $virtual_target_end = $distance_from_left + $end_position - $target_start + 1;
             $virtual_tstarts = &getReversedTstarts($distance_from_left,$end_position,$tstarts,$blocksizes);
             $blocksizes = join(',', reverse split(',', $blocksizes));
+            $is_reversed = $is_reversed == 1 ? 0 : 1;
           } else {
             $virtual_target_start = $target_start + $distance_from_left - $start_position + 1;
             $virtual_target_end = $target_end + $distance_from_left - $start_position + 1;
