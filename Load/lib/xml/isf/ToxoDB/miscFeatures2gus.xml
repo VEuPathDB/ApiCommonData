@@ -1,0 +1,51 @@
+<!--
+The feature and qualifier names to use here follow those set by BioPerl's
+tree structure and any reshaping/renaming done by bioperlSeqPreprocessor, not
+necessarily by what's defined in the input (eg. Genbank) file
+-->
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::SangerGFF2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+
+  <feature name="coding_gene" so="protein_coding">
+    <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="protein_id"           handler="api" method="transcriptProteinId"/>
+    <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
+    <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
+    <qualifier name="transl_table" ignore="true"/> 
+    <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_process" ignore="true"/>
+    <qualifier name="GO_function" ignore="true"/>
+    <qualifier name="gO"          ignore="true"/>
+    <qualifier name="EC"          ignore="true"/>
+  </feature>
+
+  <feature name="mRNA" ignore="true">
+    <!-- mRNA qualifiers are also in CDS -->
+  </feature>
+
+  <feature name="transcript">
+  <!-- created by the reshaper -->
+    <qualifier name="CDSLength" ignore="true"/>
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
+    <qualifier name="GenePrediction" column="source_id"/>
+    <qualifier name="Note"         ignore="true"/>
+  </feature>
+
+  <feature name="centromere" table="DoTS::Miscellaneous" so="centromere">
+    <qualifier name="ID"                column="source_id"/>
+  </feature>
+
+</mapping>
