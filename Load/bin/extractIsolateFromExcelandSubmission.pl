@@ -198,10 +198,10 @@ while(my ($k, $v) = each %hash) {
   my $seq4_genbank         = $hash{$k}{$cn{seq4_genbank}};
   my $seq4_trace           = $hash{$k}{$cn{seq4_trace}};
 
-  $seq1_primer_names =~ s/\s+//g; 
-  $seq2_primer_names =~ s/\s+//g; 
-  $seq3_primer_names =~ s/\s+//g; 
-  $seq4_primer_names =~ s/\s+//g; 
+  #$seq1_primer_names =~ s/[^\s+|\s$]//g; 
+  #$seq2_primer_names =~ s/[^\s+|\s$]//g; 
+  #$seq3_primer_names =~ s/[^\s+|\s$]//g; 
+  #$seq4_primer_names =~ s/[^\s+|\s$]//g; 
 
   $seq1_primer_seqs =~ s/\s+//g;
   $seq2_primer_seqs =~ s/\s+//g;
@@ -315,6 +315,7 @@ while(my ($k, $v) = each %hash) {
 
 # under current directory run tbl2asn to generate asn files for genbank submission
 my $cmd = "linux.tbl2asn -t template.sbt -p . -k cm -V vb";
+#my $cmd = "linux.tbl2asn -t template.sbt -p . -V vb";
 system($cmd);
 
 __DATA__
