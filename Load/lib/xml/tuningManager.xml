@@ -949,9 +949,6 @@ tablespace indx
     <externalDependency name="sres.TaxonName"/>
     <intermediateTable name="GoTermList"/>
     <intermediateTable name="GeneGoAttributes"/>
-    <intermediateTable name="DerisiExpn"/>
-    <intermediateTable name="WinzelerExpn"/>
-    <intermediateTable name="ToxoExpn"/>
     <intermediateTable name="GeneProteinAttributes"/>
     <sql>
       <![CDATA[
@@ -1044,108 +1041,9 @@ create index GeneGoAttr_sourceId&1 ON &prefixGeneGoAttributes (source_id)
 tablespace indx
       ]]>
     </sql>
-    <sql>
-      <![CDATA[
-CREATE TABLE &prefixDerisiExpn NOLOGGING AS
-SELECT gene.source_id, expn.derisi_max_level, derisi_max_pct,
-       derisi_max_timing, derisi_min_timing, derisi_min_level,
-       max_fold_induction as derisi_max_fold_induction
-FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
-     (SELECT * FROM (SELECT p.source_id,
-                            p.max_expression AS derisi_max_level,
-                            p.equiv_max AS derisi_max_timing,
-                            p.equiv_min AS derisi_min_timing,
-                            p.min_expression AS derisi_min_level,
-                            p.ind_ratio as max_fold_induction,
-                            row_number() over (partition by p.source_id order by p.ind_ratio desc) row_number
-                     FROM apidb.Profile p, apidb.ProfileSet ps
-                     WHERE ps.name like 'DeRisi % Smoothed'
-                       AND p.profile_set_id = ps.profile_set_id)
-      WHERE row_number = 1) expn,
-     (SELECT p.source_id, max(p.max_percentile) as derisi_max_pct
-      FROM apidb.Profile p, apidb.ProfileSet ps
-      WHERE ps.name like 'DeRisi % Smoothed'
-        AND p.profile_set_id = ps.profile_set_id
-      GROUP BY p.source_id) percentile
-WHERE gene.source_id = expn.source_id(+)
-  AND gene.source_id = percentile.source_id(+)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index Derisi_sourceId&1 ON &prefixDerisiExpn (source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE TABLE &prefixWinzelerExpn NOLOGGING AS
-SELECT gene.source_id, expn.winzeler_max_level, winzeler_max_pct,
-       winzeler_max_timing, winzeler_min_timing, winzeler_min_level
-FROM (SELECT DISTINCT gene AS source_id from &prefixGeneId) gene,
-     (SELECT p.source_id,
-             p.max_expression AS winzeler_max_level,
-             p.max_percentile AS winzeler_max_pct,
-             p.time_of_max_expr AS winzeler_max_timing,
-             p.time_of_min_expr AS winzeler_min_timing,
-             p.min_expression AS winzeler_min_level
-      FROM apidb.Profile p, apidb.ProfileSet ps, core.TableInfo ti
-      WHERE ps.name = 'winzeler_cc_sorbExp'
-        AND ti.name = 'GeneFeature'
-        AND p.profile_set_id = ps.profile_set_id
-        AND ti.table_id = p.subject_table_id) expn
-WHERE gene.source_id = expn.source_id(+)
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index Winzeler_sourceId&1 ON &prefixWinzelerExpn (source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-CREATE TABLE &prefixToxoExpn NOLOGGING AS
-select g.source_id, 
-       type3_type1_fold_change,
-       type3_type2_fold_change,
-       type2_type1_fold_change
-From dots.genefeature g, 
-     (select gf.source_id, dr.fold_change as type3_type1_fold_change
-      from rad.analysis a, rad.differentialexpression dr, 
-           core.tableinfo t, dots.genefeature gf
-      where a.analysis_id = dr.analysis_id
-       and dr.table_id = t.table_id
-       and dr.row_id = gf.na_feature_id
-       and t.name = 'GeneFeature'
-       and a.name = 'Type3vsType1') type3vstype1,
- (select gf.source_id, dr.fold_change as type3_type2_fold_change
-      from rad.analysis a, rad.differentialexpression dr, 
-           core.tableinfo t, dots.genefeature gf
-      where a.analysis_id = dr.analysis_id
-       and dr.table_id = t.table_id
-       and dr.row_id = gf.na_feature_id
-       and t.name = 'GeneFeature'
-       and a.name = 'Type3vsType2') type3vstype2,
- (select gf.source_id, dr.fold_change as type2_type1_fold_change
-      from rad.analysis a, rad.differentialexpression dr, 
-           core.tableinfo t, dots.genefeature gf
-      where a.analysis_id = dr.analysis_id
-       and dr.table_id = t.table_id
-       and dr.row_id = gf.na_feature_id
-       and t.name = 'GeneFeature'
-       and a.name = 'Type2vsType1') type2vstype1
-where g.source_id = type3vstype1.source_id
- and g.source_id = type3vstype2.source_id
- and g.source_id = type2vstype1.source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index Toxo_sourceId&1 ON &prefixToxoExpn (source_id)
-tablespace indx
-      ]]>
-    </sql>
+
+
+
     <sql>
       <![CDATA[
 CREATE TABLE &prefixGeneProteinAttributes NOLOGGING AS
@@ -1273,20 +1171,6 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        go.predicted_go_component,
        go.predicted_go_function,
        go.predicted_go_process,
-       DerisiExpn.derisi_max_level,
-       DerisiExpn.derisi_max_pct,
-       DerisiExpn.derisi_max_timing,
-       DerisiExpn.derisi_min_timing,
-       DerisiExpn.derisi_min_level,
-       DerisiExpn.derisi_max_fold_induction,
-       WinzelerExpn.winzeler_max_level,
-       WinzelerExpn.winzeler_max_pct,
-       WinzelerExpn.winzeler_max_timing,
-       WinzelerExpn.winzeler_min_timing,
-       WinzelerExpn.winzeler_min_level,
-       ToxoExpn.type3_type1_fold_change,
-       ToxoExpn.type3_type2_fold_change,
-       ToxoExpn.type2_type1_fold_change,
        nvl(deprecated.is_deprecated, 0) as is_deprecated, gi.gene_id,
        substr(orthologs.name, 1, 60) as orthomcl_name,
        nvl(totsnps.total_snps,0) as total_snps, 
@@ -1301,8 +1185,7 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
      dots.Transcript t, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, dots.SplicedNaSequence sns,
      &prefixGeneProteinAttributes protein, &prefixGeneGoAttributes go,
-     &prefixDerisiExpn DerisiExpn, &prefixWinzelerExpn WinzelerExpn,
-     &prefixToxoExpn ToxoExpn, &prefixGenomicSequence sequence,
+     &prefixGenomicSequence sequence,
      dots.geneinstance gi, &prefixTaxonSpecies ts, sres.TaxonName species_name,
      (SELECT DISTINCT gene AS source_id FROM &prefixGeneId) gene,
      (SELECT parent_id, count(*) AS exon_count
@@ -1391,9 +1274,6 @@ WHERE gf.source_id = gene.source_id
 	 (SELECT o.taxon_id FROM apidb.organism o WHERE  o.is_annotated_genome=0)
   AND gf.source_id = protein.source_id(+)
   AND gf.source_id = go.source_id(+)
-  AND gf.source_id = DerisiExpn.source_id(+)
-  AND gf.source_id = WinzelerExpn.source_id(+)
-  AND gf.source_id = ToxoExpn.source_id(+)
   AND t.na_sequence_id = sns.na_sequence_id(+)
   AND gf.na_feature_id = t.parent_id(+)
   AND t.na_feature_id = rt1.parent_id(+)
@@ -3109,553 +2989,6 @@ SELECT * FROM AsmAlignmentGene
 
 
 
-  <tuningTable name="ToxoExpressionGraphs">
-    <internalDependency name="GeneAttributes"/>
-    <externalDependency name="apidb.Profile"/>
-    <externalDependency name="apidb.ProfileSet"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE ToxoExpressionGraphs&1 NOLOGGING AS
-SELECT ga.source_id,
-        COUNT(archetypal) AS graph_archetypal,
-        COUNT(bradyzoite) AS graph_bradyzoite
-FROM GeneAttributes ga,
-     (SELECT p.source_id, 1 AS archetypal
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Expression profiling of the 3 archetypal T. gondii lineages'
-        AND p.profile_set_id = ps.profile_set_id) archetypal,
-        (SELECT p.source_id, 1 AS bradyzoite
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'expression profile percentiles of T. gondii Matt_Tz-Bz time series'
-        AND p.profile_set_id = ps.profile_set_id) bradyzoite
-  WHERE ga.source_id = archetypal.source_id(+)
-  and ga.source_id = bradyzoite.source_id (+)
-GROUP BY ga.source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index ToxoExp_sourceId_idx&1 ON ToxoExpressionGraphs&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
-  <tuningTable name="GiardiaExpressionGraphs">
-    <internalDependency name="GeneAttributes"/>
-    <externalDependency name="apidb.Profile"/>
-    <externalDependency name="apidb.ProfileSet"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE GiardiaExpressionGraphs&1 NOLOGGING AS
-SELECT ga.source_id,
-       COUNT(stress) as graph_stress,
-       COUNT(stress_ts) as graph_stress_ts,
-       COUNT(sage_pct) as graph_sage_pct
-FROM GeneAttributes ga,
-     (SELECT p.source_id, 1 AS stress
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Stress Response in Giardia lamblia Trophozoites-Averaged'
-        AND p.profile_set_id = ps.profile_set_id) stress,
-     (SELECT p.source_id, 1 AS stress_ts
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'Stress response Dynamics in Trophozoites (time series)-Averaged'
-        AND p.profile_set_id = ps.profile_set_id) stress2,
-     (SELECT p.source_id, 1 AS sage_pct
-      FROM apidb.profile p, apidb.profileSet ps
-      WHERE ps.name = 'giar sage count'
-        AND p.profile_set_id = ps.profile_set_id) sage
-  WHERE ga.source_id = stress.source_id(+)
-  AND ga.source_id = stress2.source_id(+)
-  AND ga.source_id = sage.source_id(+)
-GROUP BY ga.source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index ExpGraphSum_sourceId_idx&1 ON GiardiaExpressionGraphs&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
-
-  <tuningTable name="ProfileGraphs">
-    <internalDependency name="GeneAttributes"/>
-    <externalDependency name="apidb.Profile"/>
-    <externalDependency name="apidb.ProfileSet"/>
-    <sql>
-      <![CDATA[
-CREATE TABLE ProfileGraphs&1 NOLOGGING AS
-select all_gg.source_id, 
-       all_gg.main_profile_name as profile_name, 
-       all_gg.project_id, 
-       max(case when pr.name is null then 0 ELSE 1 END) as has_profile
-from 
-  (
-    select ga.source_id, pm.profile_name, nvl(pm.main_profile_name, pm.profile_name) as main_profile_name, pm.project_id
-    from
-    (
-    -- CryptoDB --
-    select 'Cparvum_RT_PCR_Kissinger' as profile_name,
-          '' as main_profile_name,
-           'CryptoDB' as project_id
-    from dual
-    UNION
-    select 'CparIowaII Lippuner calf intestine oocyst infection' as profile_name,
-          '' as main_profile_name,
-           'CryptoDB' as project_id
-    from dual
-    UNION
-    -- FungiDB --
-    select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'C.albicans activity against antifungal' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'Toc1, Toc2, and Skn7 null mutants treated with Flucytosine' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-
-    select 'C.neoformans NRG1 Expression' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'C.neoformans- ada2-delta, nrg1-delta, cir1-delta and KN99-alpha analysis' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'N Crassa population genomics' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'C albicans Comprehensive Annotation' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-    select 'S Pombe Dicer Protein' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-
-    select 'H. arabidopsidis expression during infection' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-
-	select 'P. ramorum expression in Chlamydospora, P. ramorum expression in zoospores, P. ramorum expression is Tomato media, P. ramorum expression in V8 Liquid media' as profile_name,
-          '' as main_profile_name,
-           'FungiDB' as project_id
-    from dual
-    UNION
-
-
-    -- ToxoDB --
-    select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    Union
-    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    Union
-    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    Union
-    select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    Union
-    select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
-          '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION 
-    select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_name,
-          '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'M.White Cell Cycle Microarray profiles' as profile_name,
-          '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyzoite-inducing conditions' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
-           '' as main_profile_name,
-           'ToxoDB' as project_id
-    from dual
-    UNION
-
-    -- AmoebaDB --
-    select 'EhistolyticaAffyProfiles' as profile_name,
-           '' as main_profile_name,
-           'AmoebaDB' as project_id
-    from dual
-    UNION
-    select 'EhistolyticaNugenProfiles' as profile_name,
-           '' as main_profile_name,
-           'AmoebaDB' as project_id
-    from dual
-    UNION
-    select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
-           '' as main_profile_name,
-           'AmoebaDB' as project_id
-    from dual
-    UNION
-  
-    -- GiardiaDB --
-    select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_name,
-           '' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-    select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as profile_name,
-           '' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-    select 'Hehl encystation expression profile' as profile_name,
-           '' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
-           '' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-    select 'giar sage tag frequencies sense' as profile_name,
-           '' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-    select 'giar sage tag frequencies antisense' as profile_name,
-           'giar sage tag frequencies sense' as main_profile_name,
-           'GiardiaDB' as project_id
-    from dual
-    UNION
-
-    -- PiroplasmaDB --
-
-    select 'Lau B.b. Virulent vs Attenuated' as profile_name,
-           '' as main_profile_name,
-          'PiroplasmaDB' as project_id
-    from dual
-    UNION
-
-    -- PlasmoDB --
-
-    select 'Expression profile of 3D7 clones 3D7AH1S2 and 3D7S8.4' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'Profiles of Cowman Invasion KO-averaged' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'winzeler_cc_tempExp' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select ' winzeler_3D7_gametocyte' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'newbold gene profiles sorted mild-severe' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'Profiles of E-TABM-438 from Cowman' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'P. falciparum Newbold mRNA Seq data' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'P.falciparum duffy mRNA Seq data' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'DeRisi HB3 Smoothed' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'DeRisi 3D7 Smoothed' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'Profiles of Derisi HalfLife-half_life' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'E-GEOD-10022 array from Su' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'percentile - daily_patient-number' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'pfal3D7_Stunnenberg_pi_time_series' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'P. berghei DOZI array data' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'Waters HP' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'ZB Pvivax time series 1' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'westenberger vivax expression profile' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'kappe_all_comparisons_profiles' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'winzeler py mixed' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-
-    select 'Profiles of DD2-HB3 expression from Ferdig' as profile_name,
-           '' as main_profile_name,
-          'PlasmoDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of transcriptional variation in Plasmodium falciparum 3d7a' as profile_name,
-           '' as main_profile_name,
-           'PlasmoDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of transcriptional variation in Plasmodium falciparum all_strains' as profile_name,
-           '' as main_profile_name,
-           'PlasmoDB' as project_id
-    from dual
-    UNION
-    --TriTrypDB --
-    select 'T.brucei Horn RNAi Sequence minProfiles' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Linfantum promastigote time-course biorep01' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of T. brucei microarray data from Christine Clayton' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of T. brucei differentiation series' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of Tbrucei five life cycle stages' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of T.cruzi Tarleton Rick array data' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Expression profiling of Tbrucei Procyclic TbDRBD3 depletion' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'T.brucei Clayton RNA Sequence of transcriptome-wide mRNA degradation minProfiles' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'T.brucei Archer Stuart Cell Cycle RNA Sequence min-Profiles' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'T.brucei George Cross RNA Sequence min-Profiles' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of L.major Beverly Steve array data' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'Profiles of Linfantum axenic and intracellular amastigote array data' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
-    UNION
-    select 'T. brucei under heat shock array data' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
---    UNION
---   select 'T.brucei Tschudi RNA Seq data' as profile_name,
---           '' as main_profile_name,
---           'TriTrypDB' as project_id
---    from dual
-    UNION
-    select 'T. brucei DHH1 wild type array data' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
---    UNION
---    select 'Lmajor RNASeq Spliced Leader And Poly A Sites from Myler uniqProfile' as profile_name,
---           '' as main_profile_name,
---           'TriTrypDB' as project_id
---    from dual
-    UNION
-    select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
-           '' as main_profile_name,
-           'TriTrypDB' as project_id
-    from dual
---     UNION
---     select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
---            '' as main_profile_name,
---            'TriTrypDB' as project_id
---     from dual
-    ) pm, GeneAttributes ga
-    where ga.project_id = pm.project_id
-  ) all_gg,
-  (select p.source_id, ps.name, count(*) 
-   from apidb.profile p, apidb.profileset ps
-   where p.profile_set_id = ps.profile_set_id
-   group by p.source_id,ps.name having count(*) = 1 
-   ) pr
-  where  all_gg.source_id = pr.source_id (+)
-  and all_gg.profile_name = pr.name (+)
-group by all_gg.source_id, all_gg.main_profile_name, all_gg.project_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index ProfGraph_sourceId_idx&1 ON ProfileGraphs&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
-
   <tuningTable name="ProfileGraphDescrip">
     <internalDependency name="GeneAttributes"/>
     <externalDependency name="apidb.Profile"/>
@@ -3923,7 +3256,7 @@ from dual
 
 -- ToxoDB
 -- 1
-select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_name,
+select 'Expression profiling of T. gondii strains' as profile_name,
        'Roos::ToxoLineages::Ver1' as module,
        'Expression profiling of <i>Toxoplasma gondii</i> tachyzoites (str RH/GT1/Pru/ME49/CTG/Veg)' as display_name,
        'Determination of strain-specific differential expression by profiling wildtype tachyzoites from the RH, Pru, GT1, VEG, ME49 and CTG strains of <i>T. gondii</i>' as description,
@@ -3932,15 +3265,15 @@ select 'Expression profiling of the 3 archetypal T. gondii lineages' as profile_
         10 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma' as visible_parts,
-        'ToxoStrainsMicroarrayPercentile' as dataTable,
+       'rma,percentile' as visible_parts,
+        '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_Roos-Tz_RSRC' as attribution
+        '' as attribution
     from dual
 
 -- 2
 UNION
-select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' as profile_name,
+select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome' as profile_name,
        'Reid::TgME49RnaSeq' as module,
        'Expression profiling of <i>T. gondii</i> tachyzoites (str ME49, d3/4, RNA-seq)' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
@@ -3950,15 +3283,15 @@ select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome-profiles' 
         20 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rpkm,pct' as visible_parts,
+       'coverage,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_Reid_tachy_rnaSeq_RSRC' as attribution
+        '' as attribution
 from dual
 
 -- 3
 UNION 
-   select 'M.White Cell Cycle Microarray profiles' as profile_name,
+   select 'M.White Cell Cycle Microarray' as profile_name,
        'White::CellCycle' as module,
        'Transcriptomics across the intracellular tachyzoite cell cycle (str RH, synchronized, 1-hr sampling)' as display_name,
        'The RH<sup>TK+</sup> strain used in this analysis expresses a fusion protein of herpes simplex thymidine kinase and chloramphenicol acetyltransferase (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  Synchronization of RH<sup>TK+</sup> parasites with thymidine followed published protocols (<a href="http://www.ncbi.nlm.nih.gov/pubmed/10496908">Radke and White</a>).  <b>In this synchrony model parasites released from thymidine immediately progress through S, mitosis and then cytokinesis</b>.  The first G1 phase is the start of the next cycle.  All time points represent microarray hybridization results from duplicate, independent biological replicates.  <br><br><b>The R0-12 time course represents ~1-2/3 divisions</b> with tachyzoite cell cycle phase repeats R1,R2=R8,R9, R3=R10, R4=R11, and R5=R12 (<a href="http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0012354">Behnke et al., 2010</a>)' as description,
@@ -3967,10 +3300,10 @@ UNION
         30 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_White_GSE19092_CellCycle_RSRC' as attribution
+        '' as attribution
     from dual
 --4
 UNION
@@ -3986,10 +3319,10 @@ select 'Expression profiles of Tgondii ME49 Carruthers experiments' as profile_n
         40 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-        'rma,pct' as visible_parts,
+        'rma,percentile' as visible_parts,
         '' as dataTable,
         'expression' as type,
-        'tgonME49_microarrayExpression_Carruthers_GSE20480_RSRC' as attribution
+        '' as attribution
     from dual
 --5
 UNION
@@ -4002,10 +3335,10 @@ select 'Expression profiles of Tgondii ME49 Boothroyd experiments' as profile_na
         50 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_Boothroyd_LifeCycle_RSRC' as attribution
+        '' as attribution
 from dual
 
 --6
@@ -4019,10 +3352,10 @@ select 'expression profiles of RH delta-HXGPRT delta-UPRT strain Alkaline bradyz
         60 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_Roos-Tz-Bz_RSRC' as attribution
+        '' as attribution
     from dual
 
 --7 
@@ -4036,15 +3369,15 @@ select 'expression profiles of T. gondii Matt_Tz-Bz time series' as profile_name
         70 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_BoothroydAnderson_Tz-Bz_RSRC' as attribution
+        '' as attribution
     from dual
 
 --8
 UNION
-select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
+select 'TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_name,
        'Matrajt::BzTimeSeries' as module,
        'Bradyzoite differentiation (str RH, -CO2, 24-hr sampling 0-4d)' as display_name,
        'Expression profiles of the T. gondii RH extracelluar tachyzoite stage are compared to its bradyzoite stage at 4 time points (24, 36, 48, and 72 hours post invasion)' as description,
@@ -4058,15 +3391,15 @@ select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_Time_Series' as profile_
         80 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-        'rma,pct' as visible_parts,
+        'rma,percentile' as visible_parts,
         '' as dataTable,
         'expression' as type,
-        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+        '' as attribution
     from dual
 
 --9
 UNION
-select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions' as profile_name,
+select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing conditions : 2-6 days (by Florence Dzierszinski)' as profile_name,
        'Dzierszinski::TzBz' as module,
        'Bradyzoite differentiation (str Pru/Veg, -CO2, multiple samples 2-14d)' as display_name,
        'Two strains of T. gondii parasites were used in this analysis: type II Prugniaud lacking HXGPRT, and type III VEG. CO2 starvation (MEM with 10% FBS, 25mM HEPES, pH 7.2 grown without CO2) was used to induce in vitro bradyzoite differentiation. ' as description,
@@ -4075,15 +3408,15 @@ select 'expression profiles of VEG strain CO2-starvation bradyzoite inducing con
         90 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'tgonME49_microarrayExpression_Roos-Tz-Bz_RSRC' as attribution
+        '' as attribution
     from dual
 
 --10
 UNION
-select 'expression profiles of three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditoins' as profile_name,
+select 'three Tgondii strains under both normal-tachyzoite and induced-bradyzoite conditions' as profile_name,
        'White::TzBz' as module,
        'Bradyzoite differentiation (str GT1/ME49/CTG, Cmpd1/alkali, t=0/48 hr)' as display_name,
        'Bradyzoite genes were induced following a 48 hour treatment with compound 1 or alkaline condition. Strains used in this study: Type I-GT1, Type II-Me49B7 and Type III-CTG.' as description,
@@ -4094,13 +3427,13 @@ select 'expression profiles of three Tgondii strains under both normal-tachyzoit
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
         '' as dataTable,
-      'expression' as type,
-        'tgonME49_microarrayExpression_White_GSE16037_Tz-Bz_RSRC' as attribution
+      'rma,percentile' as type,
+        '' as attribution
     from dual
 
 --11
 UNION
-select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_name,
+select 'Toxoplasma gondii GCN5-A Knockout Array from Sullivan' as profile_name,
        'Sullivan::GCN5A' as module,
        'TgGCN5-A null mutants during bradyzoite differentiation (str RH, alkali treatment)' as display_name,
        'Disruption of the gene encoding for TgGCN5-A in type I RH strain did not produce a severe phenotype under normal culture conditions, but here we show that the TgGCN5-A null mutant is deficient in responding to alkaline pH,a common stress used to induce bradyzoite differentiation in vitro. We performed a genome- wide analysis of the Toxoplasma transcriptional response to alkaline pH stress, finding that parasites deleted for TgGCN5-A fail to up-regulate 74% of the stress response genes that are induced 2-fold or more in wild-type. Using chromatin immunoprecipitation, we verify an enrichment of TgGCN5-A at the upstream regions of genes activated by alkaline pH exposure. The TgGCN5-A knockout is also incapable of up-regulating key marker genes expressed during development of the latent cyst form, and is impaired in its ability to recover from alkaline stress. Complementation of the TgGCN5-A knockout restores the expression of these stress-induced genes and reverses the stress recovery defect.' as description,
@@ -4117,13 +3450,13 @@ select 'Profiles of GSE22100 GCN5-AE-GEOD-10022 array from Sullivan' as profile_
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'expression' as type,
-        'tgonME49_microarrayExpression_Sullivan_GSE22100_GCN5-A_RSRC' as attribution
+        'rma,percentile' as type,
+        '' as attribution
 from dual
 
 --12
 UNION 
-select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
+select 'TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
        'Matrajt::BzMutant' as module,
        'Bradyzoite differentiation mutants (str RH & mutants, -CO2)' as display_name,
        'Expression profiles of seven mutant strains (B7,P11,7K,11K,12K,13P, and 11P) at both the Extracellular tachyzoite and bradyzoite stages were examined, using the T. gondii RH strain as a control. In addition, the expression profile of the intracellular tachyzoite for the T. gondii RH control strain was also provided for comparison. 17 sample types are provided in total' as description,
@@ -4151,14 +3484,14 @@ select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as pr
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'expression' as type,
-        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+        'rma,percentile' as type,
+        '' as attribution
     from dual
 
 --13
 UNION
 
-select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
+select 'TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
        'Matrajt::BzEgress' as module,
        'Bradyzoite differentiation mutants after egress (str RH & mutants)' as display_name,
        'The expression profile of T. gondii RH 11 hours post egress was compared to that of the same strain in the extracellular tachyzoite stage, as well as 2 mutant strains (13P and B7) which were also collected 11 hours post egress' as description,
@@ -4173,29 +3506,29 @@ select 'expression profiles of TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'expression' as type,
-        'Tg_Matrajt_GSE23174_Bz_RSRC' as attribution
+        'rma,percentile' as type,
+        '' as attribution
     from dual
 
-UNION
-select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
-       'Reid::TgVEGRnaSeq' as module,
-       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
-       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
-       'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
-        250 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'rpkm,pct' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        'tgonVEG_Reid_tachy_rnaSeq_RSRC' as attribution
-from dual
+--UNION
+--select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
+--       'Reid::TgVEGRnaSeq' as module,
+--       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
+--       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
+--       'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
+--       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+--' as y_axis,
+--        250 as order_num,
+--        'TRUE' as mainOpen,
+--        'FALSE' as dataOpen,
+--       'rpkm,pct' as visible_parts,
+--        '' as dataTable,
+--      'expression' as type,
+--        'tgonVEG_Reid_tachy_rnaSeq_RSRC' as attribution
+--from dual
 
 UNION
-select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
+select 'N. caninum Day 3-4 Tachyzoite' as profile_name,
        'Reid::NcRnaSeq' as module,
        '<i>N. caninum </i> day 3-4 tachyzoite form RNA Sequence' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
@@ -4205,10 +3538,10 @@ select 'N. caninum Day 3-4 Tachyzoite-profiles' as profile_name,
         250 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'rpkm,pct' as visible_parts,
+       'coverage,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'ncanLIV_Reid_tachy_rnaSeq_RSRC' as attribution
+        '' as attribution
 from dual
 
    
