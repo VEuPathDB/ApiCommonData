@@ -3,9 +3,9 @@ DROP TABLE ApiDB.PathwayNode;
 DROP TABLE ApiDB.Pathway;
 
 
-DROP SEQUENCE ApiDB.Pathway_SEQ;
-DROP SEQUENCE ApiDB.PathwayNode_SEQ;
-DROP SEQUENCE ApiDB.PathwayRelationship_SEQ;
+DROP SEQUENCE ApiDB.Pathway_SQ;
+DROP SEQUENCE ApiDB.PathwayNode_SQ;
+DROP SEQUENCE ApiDB.PathwayRelationship_SQ;
 
 DELETE FROM core.TableInfo
 WHERE lower(name) in ('pathway', 'pathwaynode', 'pathwayrelationship')

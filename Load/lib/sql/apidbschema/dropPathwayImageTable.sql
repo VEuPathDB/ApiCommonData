@@ -5,5 +5,6 @@ WHERE lower(name) in ('pathwayimage')
   AND database_id = (SELECT database_id
                      FROM core.DatabaseInfo
                      WHERE lower(name) = 'apidb');
+DROP SEQUENCE ApiDB.PathwayImage_SQ;
 
 exit;

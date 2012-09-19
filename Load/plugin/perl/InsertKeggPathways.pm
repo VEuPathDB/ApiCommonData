@@ -210,7 +210,7 @@ sub loadPathway {
         my $imageFileDir = $self->getArg('imageFileDir');
         die "$imageFileDir directory does not exist" if !(-d $imageFileDir);
         my $imgFile = "$imageFileDir/".$pathwayObj->{image_file};
-        $self->loadPathwayImage($networkId, \$imgFile);
+        $self->loadPathwayImage($pathwayObj->{source_id},$networkId, \$imgFile);
       } 
 
       foreach my $reactionName (keys %{$pathwayObj->{ASSOCIATIONS}}) {
@@ -310,8 +310,7 @@ print "loaded pathway\n";
 
 
 sub loadPathwayImage{
-  my($self,$networkId,$imgFile) = @_;
-print "HERE\n$$imgFile";
+  my($self,$pathwaySourceId,$networkId,$imgFile) = @_;
   open(IMGFILE, $$imgFile)  or die "Cannot open file";
   binmode IMGFILE;
 
@@ -321,23 +320,25 @@ print "HERE\n$$imgFile";
         }
   close IMGFILE;
 
-   my $dbh = $self->getQueryHandle();
-#   my $nextvalVar = $self->getDb()->getDbPlatform()->nextVal("ApiDB.PathwayImage");
-   my $userId     = $self->getDb()->getDefaultUserId();
-   my $groupId    = $self->getDb()->getDefaultGroupId(); 
-   my $projectId  = $self->getDb()->getDefaultProjectId();
-   my $algInvId   = $self->getAlgInvocation()->getId();
-   #my $pathwayImage =  GUS::Model::ApiDB::PathwayImage->new({ #pathway_id => $networkId,
-   #                                                            image => $data });
-   #$pathwayImage->submit(); 
-   my $sql = "Insert into ApiDB.PathwayImage  (pathway_id, image) values (?,?)";
- 
-   my $sth = $dbh->prepare($sql);
-   $sth->bind_param(2,$data,{ora_type=>SQLT_BIN});
-   $sth->execute($networkId, $data);
-   $dbh->commit;
-   $sth->finish;
-   return 1;
+  my $sql = "Insert into ApiDB.PathwayImage  (pathway_id, pathway_source_id, image, row_user_id, row_group_id, row_project_id, row_alg_invocation_id) values (?,?,?,?,?,?,?)"; 
+  my $dbh        = $self->getQueryHandle();
+  my $userId     = $self->getDb()->getDefaultUserId();
+  my $groupId    = $self->getDb()->getDefaultGroupId(); 
+  my $projectId  = $self->getDb()->getDefaultProjectId();
+  my $algInvId   = $self->getAlgInvocation()->getId();
+
+  my $sth = $dbh->prepare($sql);
+  $sth->bind_param(3,$data,{ora_type=>SQLT_BIN});#BIND FOR BLOB DATA - IMAGE
+  $sth->execute($networkId, $pathwaySourceId, $data, $userId, $groupId, $projectId, $algInvId);
+
+  if ($self->getArg('commit')) {
+    $self->log("Committing");
+    $dbh->commit();
+  } else {
+    $dbh->rollback();
+    $self->log("Rolling back");
+  }
+  $sth->finish;
 }
 
 sub undoTables {
