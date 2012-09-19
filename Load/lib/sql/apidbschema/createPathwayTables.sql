@@ -72,9 +72,9 @@ CREATE TABLE ApiDB.PathwayRelationship (
   FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.PathwayNode (PATHWAY_NODE_ID)
 );
 
-CREATE SEQUENCE ApiDB.Pathway_SEQ;
-CREATE SEQUENCE ApiDB.PathwayNode_SEQ;
-CREATE SEQUENCE ApiDB.PathwayRelationship_SEQ;
+CREATE SEQUENCE ApiDB.Pathway_SQ;
+CREATE SEQUENCE ApiDB.PathwayNode_SQ;
+CREATE SEQUENCE ApiDB.PathwayRelationship_SQ;
 
 
 
@@ -88,9 +88,9 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Pathway TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayNode TO gus_w;
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.PathwayRelationship TO gus_w;
 
-GRANT SELECT ON ApiDB.Pathway_SEQ TO gus_w;
-GRANT SELECT ON ApiDB.PathwayNode_SEQ TO gus_w;
-GRANT SELECT ON ApiDB.PathwayRelationship_SEQ TO gus_w;
+GRANT SELECT ON ApiDB.Pathway_SQ TO gus_w;
+GRANT SELECT ON ApiDB.PathwayNode_SQ TO gus_w;
+GRANT SELECT ON ApiDB.PathwayRelationship_SQ TO gus_w;
 
 
 

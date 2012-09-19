@@ -15,6 +15,11 @@ use GUS::Model::ApiDB::NetworkNode;
 use GUS::Model::ApiDB::NetworkRelationship;
 use GUS::Model::ApiDB::NetworkRelationshipType;
 use GUS::Model::ApiDB::NetworkRelContext;
+use GUS::Model::ApiDB::Pathway;
+use GUS::Model::ApiDB::PathwayNode;
+use GUS::Model::ApiDB::PathwayImage;
+use DBD::Oracle qw(:ora_types);
+
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -23,7 +28,7 @@ use GUS::Model::ApiDB::NetworkRelContext;
 sub getArgsDeclaration {
   my $argsDeclaration  =
     [   
-     stringArg({ name => 'fileDir',
+     stringArg({ name => 'pathwaysFileDir',
                  descr => 'full path to xml files',
                  constraintFunc=> undef,
                  reqd  => 1,
@@ -38,6 +43,15 @@ sub getArgsDeclaration {
                isList         => 0,
                enum           => 'KEGG, Biopax, Other'
 	    }),
+
+     stringArg({ name => 'imageFileDir',
+                 descr => 'full path to image files',
+                 constraintFunc=> undef,
+                 reqd  => 0,
+                 isList => 0,
+                 mustExist => 0,
+	       }),
+
     ];
 
   return $argsDeclaration;
@@ -98,7 +112,7 @@ sub new {
 sub run {
   my ($self) = shift;
 
-  my $inputFileDir = $self->getArg('fileDir');
+  my $inputFileDir = $self->getArg('pathwaysFileDir');
   die "$inputFileDir directory does not exist" if !(-d $inputFileDir); 
 
   my @pathwayFiles = <$inputFileDir/*.xml>;
@@ -124,7 +138,10 @@ sub readKeggFiles {
 
     my $pathwayElements = $kgmlParser->parseKGML($kgml);
     my $pathwayObj = $pathwaysObj->getNewPathwayObj($pathwayElements->{NAME});
-  
+    $pathwayObj->{source_id} = $pathwayElements->{SOURCE_ID};
+    $pathwayObj->{url} = $pathwayElements->{URI};    
+    $pathwayObj->{image_file} = $pathwayElements->{IMAGE_FILE};    
+
     foreach my $node  (keys %{$pathwayElements->{NODES}}) {
       $pathwayObj->setPathwayNode($node, { NODE_NAME => $node,
                                            NODE_TYPE => $pathwayElements->{NODES}->{$node}->{TYPE}
@@ -163,23 +180,38 @@ sub loadPathway {
   my ($self) = @_;
 
   my $format = $self->getArg('format');
+                    
   my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => 'Metabolic Pathways - $format',
                                                                 description => 'Metabolic Pathways and Associations - $format'
                                                                 });
   $networkContext->submit();
   my $networkContextId = $networkContext->getNetworkContextId();
-  print "loaded Context\n";
 
   my $pathwaysObj = $self->{"pathwaysCollection"};
 
     foreach my $pathwayName (keys %{$pathwaysObj}) {
       my $pathwayObj = $pathwaysObj->{$pathwayName};
 
-      my $network = GUS::Model::ApiDB::Network->new({ name => $pathwayName,
-                                                      description => $pathwayObj->{DESCRIPTION} });
+
+ 
+      my $network = GUS::Model::ApiDB::Network->new({ name => $pathwayObj->{source_id},
+                                                      description => $pathwayName });
       $network->submit();
       my $networkId = $network->getNetworkId();
+
+      my $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
+                                                      external_database_release_id => 0000,
+                                                      source_id => $pathwayObj->{source_id},
+                                                      url => $pathwayObj->{url} });
+      $pathway->submit();
       print "loaded Network\n";
+      # REVISIT EXT DB NAME - IS IT NEEDED ? NETWORK SCHEMA HAS NO EXT DB REFS;
+      if ($pathwayObj->{image_file}) {
+        my $imageFileDir = $self->getArg('imageFileDir');
+        die "$imageFileDir directory does not exist" if !(-d $imageFileDir);
+        my $imgFile = "$imageFileDir/".$pathwayObj->{image_file};
+        $self->loadPathwayImage($networkId, \$imgFile);
+      } 
 
       foreach my $reactionName (keys %{$pathwayObj->{ASSOCIATIONS}}) {
         my $reaction = $pathwayObj->{ASSOCIATIONS}->{$reactionName};
@@ -192,6 +224,20 @@ sub loadPathway {
                                                                 node_type_id => $node_type });
         $networkNode->submit();
         my $srcNodeId = $networkNode->getNetworkNodeId();
+
+        my $nodeGraphics = $pathwayObj->{GRAPHICS}->{($reaction->{SOURCE_NODE})};
+        my $nodeShape = ($nodeGraphics->{SHAPE} eq 'round') ? 1 :
+                        ($nodeGraphics->{SHAPE} eq 'rectangle') ? 2 : 3;
+
+        my $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({display_label => $srcNode->{NODE_NAME},
+                                                                pathway_node_type_id => $node_type, 
+                                                                glyph_type_id => $nodeShape, 
+                                                                x => $nodeGraphics->{X},
+                                                                y => $nodeGraphics->{Y},
+                                                                height => $nodeGraphics->{HEIGHT},
+                                                                width  => $nodeGraphics->{WIDTH} });
+        $pathwayNode->submit();
+
         print "loaded Network Node \n";
 
 
@@ -202,6 +248,20 @@ sub loadPathway {
                                                              node_type_id => $node_type });
         $networkNode->submit();
         my $asscNodeId = $networkNode->getNetworkNodeId();
+
+
+        $nodeGraphics = $pathwayObj->{GRAPHICS}->{($reaction->{SOURCE_NODE})};
+        $nodeShape = ($nodeGraphics->{SHAPE} eq 'round') ? 1 :
+                        ($nodeGraphics->{SHAPE} eq 'rectangle') ? 2 : 3;
+
+        $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({ display_label => $asscNode->{NODE_NAME},
+                                                             pathway_node_type_id => $node_type, 
+                                                             glyph_type_id => $nodeShape, 
+                                                             x => $nodeGraphics->{X},
+                                                             y => $nodeGraphics->{Y},
+                                                             height => $nodeGraphics->{HEIGHT},
+                                                             width  => $nodeGraphics->{WIDTH} });
+        $pathwayNode->submit();
         print "loaded Network Node \n";
 
   
@@ -220,7 +280,7 @@ sub loadPathway {
         print "loaded Network Relationship Type\n";
 
 
-       my $direction = ($reaction->{ASSOC_TYPE} =~ /irreversible/) ? 1 : 0; 
+       my $direction = $reaction->{DIRECTION}; 
        my $relContext = GUS::Model::ApiDB::NetworkRelContext->new({ network_relationship_id => $relId, 
                                                                     network_relationship_type_id => $relTypeId,
                                                                     network_context_id => $networkContextId,
@@ -248,6 +308,38 @@ print "loaded all relationships\n";
 print "loaded pathway\n";
 }
 
+
+sub loadPathwayImage{
+  my($self,$networkId,$imgFile) = @_;
+print "HERE\n$$imgFile";
+  open(IMGFILE, $$imgFile)  or die "Cannot open file";
+  binmode IMGFILE;
+
+  my ($data, $buffer,$bytes);
+  while (($bytes = read IMGFILE, $buffer, 500*1024) != 0) {
+          $data .= $buffer;
+        }
+  close IMGFILE;
+
+   my $dbh = $self->getQueryHandle();
+#   my $nextvalVar = $self->getDb()->getDbPlatform()->nextVal("ApiDB.PathwayImage");
+   my $userId     = $self->getDb()->getDefaultUserId();
+   my $groupId    = $self->getDb()->getDefaultGroupId(); 
+   my $projectId  = $self->getDb()->getDefaultProjectId();
+   my $algInvId   = $self->getAlgInvocation()->getId();
+   #my $pathwayImage =  GUS::Model::ApiDB::PathwayImage->new({ #pathway_id => $networkId,
+   #                                                            image => $data });
+   #$pathwayImage->submit(); 
+   my $sql = "Insert into ApiDB.PathwayImage  (pathway_id, image) values (?,?)";
+ 
+   my $sth = $dbh->prepare($sql);
+   $sth->bind_param(2,$data,{ora_type=>SQLT_BIN});
+   $sth->execute($networkId, $data);
+   $dbh->commit;
+   $sth->finish;
+   return 1;
+}
+
 sub undoTables {
   my ($self) = @_;
 
@@ -257,6 +349,9 @@ sub undoTables {
 	  'ApiDB.NetworkRelationship',
 	  'ApiDB.NetworkRelationshipType',
 	  'ApiDB.NetworkRelContext',
+	  'ApiDB.Pathway',
+	  'ApiDB.PathwayNode',
+	  'ApiDB.PathwayImage',
 	 );
 }
 
