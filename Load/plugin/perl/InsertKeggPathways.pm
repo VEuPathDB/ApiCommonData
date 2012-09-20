@@ -20,6 +20,11 @@ use GUS::Model::ApiDB::PathwayNode;
 use GUS::Model::ApiDB::PathwayImage;
 use DBD::Oracle qw(:ora_types);
 
+#MAJOR TO DOs :
+#1.) Create OntologyTerm records called Reaction, Enzyme, Compound and EntityShapes (circle, rect.) etc for 
+#Pathway graphics. The row and table id of these will then need to be referenced here eventually.
+#
+#2.) Create an extDbXref table for enzymes and compound and reference them here as a row id and table id eventually.
 
 # ----------------------------------------------------------
 # Load Arguments
