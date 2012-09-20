@@ -34,7 +34,7 @@ sub getArgsDeclaration {
                  reqd  => 1,
                  isList => 0,
                  mustExist => 1,
-	       }),
+                }),
 
      enumArg({ name           => 'format',
                descr          => 'The file format for pathways (Kegg, Biopax, Other)',
@@ -42,7 +42,7 @@ sub getArgsDeclaration {
                reqd           => 1,
                isList         => 0,
                enum           => 'KEGG, Biopax, Other'
-	    }),
+             }),
 
      stringArg({ name => 'imageFileDir',
                  descr => 'full path to image files',
@@ -50,8 +50,7 @@ sub getArgsDeclaration {
                  reqd  => 0,
                  isList => 0,
                  mustExist => 0,
-	       }),
-
+             }),
     ];
 
   return $argsDeclaration;
@@ -66,7 +65,7 @@ sub getDocumentation {
 
   my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
 
-  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship']];
+  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']]];
 
   my $tablesDependedOn = [['Core.TableInfo',  'To store a reference to tables that have Node records (ex. EC Numbers, Coumpound IDs']];
 
@@ -113,16 +112,17 @@ sub run {
   my ($self) = shift;
 
   my $inputFileDir = $self->getArg('pathwaysFileDir');
-  die "$inputFileDir directory does not exist" if !(-d $inputFileDir); 
+  die "$inputFileDir directory does not exist\n" if !(-d $inputFileDir); 
 
   my @pathwayFiles = <$inputFileDir/*.xml>;
-  die "No files found in the directory $inputFileDir" if not @pathwayFiles;
+  die "No files found in the directory $inputFileDir\n" if not @pathwayFiles;
 
   my $pathwaysObj = new GUS::Supported::MetabolicPathways;
   $self->{"pathwaysCollection"} = $pathwaysObj;
 
   my $pathwayFormat = $self->getArg('format');
   $self->readKeggFiles(\@pathwayFiles) if $pathwayFormat eq 'KEGG';
+
   $self->loadPathway();
 }
 
@@ -134,6 +134,7 @@ sub readKeggFiles {
   my $kgmlParser = new GUS::Supported::ParseKeggXml;
 
   my $pathwaysObj = $self->{pathwaysCollection};
+  print "Reading KEGG files...\n";
 
   foreach my $kgml (@{$kgmlFiles}) {
 
@@ -156,28 +157,32 @@ sub readKeggFiles {
                                            }); 
     }
 
+
     foreach my $reaction (keys %{$pathwayElements->{REACTIONS}}) {
+    my $reactName = $pathwayElements->{REACTIONS}->{$reaction}->{NAME};
     my $reactType = $pathwayElements->{REACTIONS}->{$reaction}->{TYPE};
     my $direction = 1;
     $direction = 0 unless ($reactType eq 'irreversible');
  
     $pathwayObj->setPathwayNodeAssociation("$reaction Substrate", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{SUBSTRATE}->{NAME}, 
-                                                        associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME},
-                                                        assoc_type => "Reaction ".$reactType,
-                                                        direction => $direction
-                                                       });
+                                                                    associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME},
+                                                                    assoc_type => "Reaction ".$reactType,
+                                                                    direction => $direction,
+                                                                    reaction_name => $reactName
+                                                                  });
 
     $pathwayObj->setPathwayNodeAssociation("$reaction Product", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME}, 
-                                                        associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{PRODUCT}->{NAME},
-                                                        assoc_type => "Reaction ".$reactType,
-                                                        direction => $direction
-                                                       });
+                                                                  associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{PRODUCT}->{NAME},
+                                                                  assoc_type => "Reaction ".$reactType,
+                                                                  reaction_name => $reactName,
+                                                                  direction => $direction
+                                                                });
  
 
     }
 
     $pathwaysObj->setPathwayObj($pathwayObj);
-    print STDOUT Dumper $pathwaysObj;
+    #print STDOUT Dumper $pathwaysObj;
   }
   $self->{"pathwaysCollection"} = $pathwaysObj;
 }
@@ -188,34 +193,45 @@ sub loadPathway {
   my ($self, $format, $debug) = @_;
                     
 
-  print "Loading Network Context..." if $debug;
   my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => 'Metabolic Pathways - $format',
-                                                                description => 'Metabolic Pathways and Associations - $format'
-                                                                });
-  $networkContext->submit() unless $networkContext->retrieveFromDB();
+                                                                description => 'Metabolic Pathways and Associations - $format' });
+  if (! $networkContext->retrieveFromDB()) {
+    $networkContext->submit();
+    print  "Loaded Network context...\n"
+  };
   my $networkContextId = $networkContext->getNetworkContextId();
 
 
   my $pathwaysObj = $self->{"pathwaysCollection"};
-  die "No Pathways were read from the specified directory/files" if (!$pathwaysObj);
+  die "No Pathways were read from the specified directory/files\n" if (!$pathwaysObj);
 
     foreach my $pathwayName (keys %{$pathwaysObj}) {
       #get individual pathway
       my $pathwayObj = $pathwaysObj->{$pathwayName};
 
+
       #create a network and pathway record for the pathway
-      print "Loading Network Record...$pathwayName" if $debug; 
       my $network = GUS::Model::ApiDB::Network->new({ name => $pathwayObj->{source_id},
                                                       description => $pathwayName });
-      $network->submit() unless $network->retrieveFromDB();
+      if (! $network->retrieveFromDB()) {
+        $network->submit();
+        print "Loaded Network Record for..$pathwayName\n";
+      } else {
+        print "Network Record already exists for: $pathwayName\n";
+        next;
+      }
       my $networkId = $network->getNetworkId();
 
-      print "Loading Pathway Record...$pathwayName" if $debug; 
+
+
       my $pathway = GUS::Model::ApiDB::Pathway->new({ name => $pathwayName,
                                                       external_database_release_id => 0000,
                                                       source_id => $pathwayObj->{source_id},
                                                       url => $pathwayObj->{url} });
-      $pathway->submit() unless $pathway->retrieveFromDB();
+      if (! $pathway->retrieveFromDB()) {
+        $pathway->submit();
+        print "Loaded Pathway Record for..$pathwayName\n";
+      }
       # REVISIT EXT DB NAME ABOVE - IS IT NEEDED ? NETWORK SCHEMA HAS NO EXT DB REFS;
 
 
@@ -224,27 +240,28 @@ sub loadPathway {
       if ($pathwayObj->{image_file}) {
         my $imageFileDir = $self->getArg('imageFileDir');
         die "$imageFileDir directory does not exist" if !(-d $imageFileDir);
+
         my $imgFile = "$imageFileDir/".$pathwayObj->{image_file};
-        $self->loadPathwayImage($pathwayObj->{source_id},$networkId, \$imgFile);
+        if ($self->loadPathwayImage($pathwayObj->{source_id},$networkId, \$imgFile)) {
+          print "Loaded Image for: $pathwayName\n";
+        }
       } 
 
 
       #read and load nodes and associations
-      print "Loading Network Nodes and Associatons for... $pathwayName" if $debug;
-
-      foreach my $reactionName (keys %{$pathwayObj->{associations}}) {
-        my $reaction = $pathwayObj->{associations}->{$reactionName};
+      print "Loading Nodes and Associations for.. $pathwayName\n";
+      foreach my $reactionKey (keys %{$pathwayObj->{associations}}) {
+        my $reaction = $pathwayObj->{associations}->{$reactionKey};
         my $rel_type = ($reaction->{assoc_type} =~ /Reaction/) ? 1 : 2;
 
         #source node
         my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
-        print "$srcNode->{node_name}\n";
         my $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
         my $srcNodeId = $self->loadNetworkNode($srcNode, $nodeGraphics);
 
         #associated node
         my $asscNode = $pathwayObj->{nodes}->{($reaction->{associated_node})}; 
-        $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
+        $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
         my $asscNodeId = $self->loadNetworkNode($asscNode, $nodeGraphics);
 
           
@@ -256,17 +273,18 @@ sub loadPathway {
  
         #relationship type (ex reversible reaction etc).
         my $relType = GUS::Model::ApiDB::NetworkRelationshipType->new({ relationship_type_id => $rel_type,
-                                                                       display_name => $reactionName });
+                                                                        display_name => $reaction->{reaction_name} });
         $relType->submit() unless $relType->retrieveFromDB();
         my $relTypeId = $relType->getNetworkRelationshipTypeId();
 
         #relationship context and direction
         my $direction = $reaction->{direction}; 
         my $relContext = GUS::Model::ApiDB::NetworkRelContext->new({ network_relationship_id => $relId, 
-                                                                    network_relationship_type_id => $relTypeId,
-                                                                    network_context_id => $networkContextId,
-                                                                    source_node => $direction }); 
+                                                                     network_relationship_type_id => $relTypeId,
+                                                                     network_context_id => $networkContextId,
+                                                                     source_node => $direction }); 
         $relContext->submit() unless $relContext->retrieveFromDB();
+
       }# close relationships
 
         #---------------
@@ -282,7 +300,6 @@ sub loadPathway {
          # my ($row_id)  = $self->sqlAsArray( Sql => "select row_id from sres.enzymeclass where ec_number = $node->{NODE_NAME}" );
        # }
         #---------------
-      print "Loaded all Network relationships for... $pathwayName\n" if $debug;     
   }#close pathway
 
 }#subroutine
@@ -301,50 +318,84 @@ sub loadNetworkNode {
   my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
                   ($nodeGraphics->{shape} eq 'rectangle') ? 2 : 3;
 
-  my $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({ display_label => $node->{node_name},
-                                                          pathway_node_type_id => $node_type,
-                                                          glyph_type_id => $nodeShape,
-                                                          x => $nodeGraphics->{x},
-                                                          y => $nodeGraphics->{y},
-                                                          height => $nodeGraphics->{height},
-                                                          width  => $nodeGraphics->{width} });
-  $pathwayNode->submit() unless $pathwayNode->retrieveFromDB();
-  return $nodeId 
+
+  my $dbh        = $self->getQueryHandle();
+  my $userId     = $self->getDb()->getDefaultUserId();
+  my $groupId    = $self->getDb()->getDefaultGroupId();
+  my $projectId  = $self->getDb()->getDefaultProjectId();
+  my $algInvId   = $self->getAlgInvocation()->getId();
+ 
+  my $sqlCheck = "Select pathway_node_id from ApiDB.PathwayNode where pathway_node_id = $nodeId";
+  my $sth        = $dbh->prepare($sqlCheck);
+  $sth->execute();
+
+  #if not eixsts already then insert a new record.
+  if (! $sth->fetchrow_array()){
+    my $sql        = "Insert into ApiDB.PathwayNode 
+                    (pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
+                    row_user_id, row_group_id, row_project_id, row_alg_invocation_id ) values (?,?,?,?,?,?,?,?,?,?,?,?)";
+    my $sthInsrt        = $dbh->prepare($sql);
+
+    $sthInsrt->execute($nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
+                      $nodeGraphics->{height}, $nodeGraphics->{width}, $userId, $groupId, $projectId, $algInvId);
+
+    if ($self->getArg('commit')) {
+      $dbh->commit();
+    } else {
+      $dbh->rollback();
+    }
+    $sthInsrt->finish;
+  }
+  $sth->finish();
+  return $nodeId;
 }
 
 
 sub loadPathwayImage{
   my($self,$pathwaySourceId,$networkId,$imgFile) = @_;
 
-  open(IMGFILE, $$imgFile)  or die "Cannot open file";
+  open(IMGFILE, $$imgFile)  or die "Cannot open file $$imgFile\n";
   binmode IMGFILE;
 
   my ($data, $buffer,$bytes);
+
   #read upto 500KB img files
   while (($bytes = read IMGFILE, $buffer, 500*1024) != 0) {
           $data .= $buffer;
         }
   close IMGFILE;
 
-  my $sql = "Insert into ApiDB.PathwayImage  (pathway_id, pathway_source_id, image, row_user_id, row_group_id, row_project_id, row_alg_invocation_id) values (?,?,?,?,?,?,?)"; 
+  my $sqlCheck = "Select pathway_id from ApiDB.PathwayImage where pathway_id = $networkId";
   my $dbh        = $self->getQueryHandle();
-  my $userId     = $self->getDb()->getDefaultUserId();
-  my $groupId    = $self->getDb()->getDefaultGroupId(); 
-  my $projectId  = $self->getDb()->getDefaultProjectId();
-  my $algInvId   = $self->getAlgInvocation()->getId();
+  my $sth        = $dbh->prepare($sqlCheck);
+  $sth->execute();
 
-  my $sth = $dbh->prepare($sql);
-  $sth->bind_param(3,$data,{ora_type=>SQLT_BIN});#BIND FOR BLOB DATA - IMAGE
-  $sth->execute($networkId, $pathwaySourceId, $data, $userId, $groupId, $projectId, $algInvId);
+  #if not eixsts already then insert a new record.
+  if (! $sth->fetchrow_array()){ 
+    my $userId     = $self->getDb()->getDefaultUserId();
+    my $groupId    = $self->getDb()->getDefaultGroupId(); 
+    my $projectId  = $self->getDb()->getDefaultProjectId();
+    my $algInvId   = $self->getAlgInvocation()->getId();
+ 
+    my $sql = "Insert into ApiDB.PathwayImage
+             (pathway_id, pathway_source_id, image, row_user_id, row_group_id, row_project_id, row_alg_invocation_id)
+             values (?,?,?,?,?,?,?)"; 
 
-  if ($self->getArg('commit')) {
-    $self->log("Committing");
-    $dbh->commit();
+    my $sthInsert = $dbh->prepare($sql);
+    $sthInsert->bind_param(3,$data,{ora_type=>SQLT_BIN});#BIND FOR BLOB DATA - IMAGE
+    $sthInsert->execute($networkId, $pathwaySourceId, $data, $userId, $groupId, $projectId, $algInvId);
+
+    if ($self->getArg('commit')) {
+      $dbh->commit();
+    } else {
+      $dbh->rollback();
+    }
+    $sthInsert->finish;
+    $sth->finish;
+    return 1;
   } else {
-    $dbh->rollback();
-    $self->log("Rolling back");
+    return 0;
   }
-  $sth->finish;
 }
 
 sub undoTables {
