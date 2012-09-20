@@ -161,7 +161,13 @@ sub readKeggFiles {
     my $direction = 1;
     $direction = 0 unless ($reactType eq 'irreversible');
  
-    $pathwayObj->setPathwayNodeAssociation($reaction, { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{SUBSTRATE}->{NAME}, 
+    $pathwayObj->setPathwayNodeAssociation("$reaction Substrate", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{SUBSTRATE}->{NAME}, 
+                                                        associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME},
+                                                        assoc_type => "Reaction ".$reactType,
+                                                        direction => $direction
+                                                       });
+
+    $pathwayObj->setPathwayNodeAssociation("$reaction Product", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME}, 
                                                         associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{PRODUCT}->{NAME},
                                                         assoc_type => "Reaction ".$reactType,
                                                         direction => $direction
