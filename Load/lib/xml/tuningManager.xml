@@ -3431,7 +3431,7 @@ select 'three Tgondii strains under both normal-tachyzoite and induced-bradyzoit
         'FALSE' as dataOpen,
        'rma,pct' as visible_parts,
         '' as dataTable,
-      'rma,percentile' as type,
+        'expression' as type,
         '' as attribution
     from dual
 
@@ -3454,7 +3454,7 @@ select 'Toxoplasma gondii GCN5-A Knockout Array from Sullivan' as profile_name,
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'rma,percentile' as type,
+        'expression' as type,
         '' as attribution
 from dual
 
@@ -3488,7 +3488,7 @@ select 'TgRH_Matrajt_GSE23174_Bz_WildType_V_Mutant' as profile_name,
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'rma,percentile' as type,
+        'expression' as type,
         '' as attribution
     from dual
 
@@ -3510,9 +3510,51 @@ select 'TgRH_Matrajt_GSE23174_Bz_11hr_Egress' as profile_name,
         'FALSE' as dataOpen,
         'rma,pct' as visible_parts,
         '' as dataTable,
-        'rma,percentile' as type,
+        'expression' as type,
         '' as attribution
     from dual
+
+
+
+
+
+--14
+UNION
+
+select 'T. gondii ME49 time series mRNA Illumina sequences aligned to the ME49 Genome.' as profile_name,
+       'Gregory::TgME49VegRnaSeqTS' as module,
+       'T.g. ME49 and VEG RNA Seq Tachyzoite Time Series (Gregory)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+        140 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'coverage_ME49,percentile_VEG,coverage_VEG,percentile_ME49' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+
+--15
+UNION
+
+select 'T. gondii M4 oocyte time series mRNA Illumina sequences aligned to the ME49 Genome.' as profile_name,
+       'Boothroyd::TgM4RnaSeqOocystTS' as module,
+       'T.g. M4 RNA Seq Oocyst Time Series' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+        150 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        '' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
 
 --UNION
 --select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
