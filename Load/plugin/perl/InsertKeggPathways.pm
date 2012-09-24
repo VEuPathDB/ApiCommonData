@@ -14,6 +14,7 @@ use GUS::Model::ApiDB::Network;
 use GUS::Model::ApiDB::NetworkNode;
 use GUS::Model::ApiDB::NetworkRelationship;
 use GUS::Model::ApiDB::NetworkRelationshipType;
+use GUS::Model::ApiDB::NetworkRelContextLink;
 use GUS::Model::ApiDB::NetworkRelContext;
 use GUS::Model::ApiDB::Pathway;
 use GUS::Model::ApiDB::PathwayNode;
@@ -194,7 +195,7 @@ sub readKeggFiles {
       }
     }
     $pathwaysObj->setPathwayObj($pathwayObj);
-    #print STDOUT Dumper $pathwaysObj;
+    print STDOUT Dumper $pathwaysObj;
   }
   $self->{"pathwaysCollection"} = $pathwaysObj;
 }
@@ -279,7 +280,7 @@ sub loadPathway {
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
         my $asscNodeId = $self->loadNetworkNode($asscNode, $nodeGraphics);
 
-        next unless ($srcNodeId != 0 && $asscNodeId != 0);  
+        next unless ($srcNodeId  && $asscNodeId );  
         #node relationship
         my $relationship = GUS::Model::ApiDB::NetworkRelationship->new({ node_id => $srcNodeId,
                                                                          associated_node_id => $asscNodeId });
@@ -299,6 +300,11 @@ sub loadPathway {
                                                                      network_context_id => $networkContextId,
                                                                      source_node => $direction }); 
         $relContext->submit() unless $relContext->retrieveFromDB();
+        my $relContextId= $relContext->getNetworkRelContextId();
+      
+        #Link relationship to the Network 
+        my $relContextLink = GUS::Model::ApiDB::NetworkRelContextLink->new({ network_id => $networkId,
+                                                                            network_rel_context_id => $relContextId });
 
         $self->undefPointerCache();
       }# close relationships
@@ -365,13 +371,8 @@ sub loadNetworkNode {
       }
       $sthInsrt->finish;
       $sth->finish();
-      return $nodeId;
-    } else {
-       foreach my $id ($sth->fetchrow_array()) {
-         $sth->finish();
-         return $id;
-       } 
     }
+    return $nodeId; 
   }
 }
 
