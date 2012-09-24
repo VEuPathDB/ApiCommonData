@@ -70,7 +70,7 @@ sub getDocumentation {
 
   my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
 
-  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']]];
+  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']];
 
   my $tablesDependedOn = [['Core.TableInfo',  'To store a reference to tables that have Node records (ex. EC Numbers, Coumpound IDs']];
 
@@ -163,29 +163,36 @@ sub readKeggFiles {
     }
 
 
-    foreach my $reaction (keys %{$pathwayElements->{REACTIONS}}) {
-    my $reactName = $pathwayElements->{REACTIONS}->{$reaction}->{NAME};
-    my $reactType = $pathwayElements->{REACTIONS}->{$reaction}->{TYPE};
-    my $direction = 1;
-    $direction = 0 unless ($reactType eq 'irreversible');
- 
-    $pathwayObj->setPathwayNodeAssociation("$reaction Substrate", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{SUBSTRATE}->{NAME}, 
-                                                                    associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME},
-                                                                    assoc_type => "Reaction ".$reactType,
-                                                                    direction => $direction,
-                                                                    reaction_name => $reactName
-                                                                  });
+    foreach my $reactionKey (keys %{$pathwayElements->{REACTIONS}}) {
+      my $reaction = $pathwayElements->{REACTIONS}->{$reactionKey};
 
-    $pathwayObj->setPathwayNodeAssociation("$reaction Product", { source_node => $pathwayElements->{REACTIONS}->{$reaction}->{ENZYME}->{NAME}, 
-                                                                  associated_node => $pathwayElements->{REACTIONS}->{$reaction}->{PRODUCT}->{NAME},
-                                                                  assoc_type => "Reaction ".$reactType,
-                                                                  reaction_name => $reactName,
-                                                                  direction => $direction
-                                                                });
- 
+      my $reactName = $reaction->{NAME};
+      my $reactType = $reaction->{TYPE};
+      my $direction = 1;
+      $direction = 0 unless ($reactType eq 'irreversible');
 
+      foreach my $substrate (@{$reaction->{SUBSTRATES}}){
+        foreach my $enzyme (@{$reaction->{ENZYMES}}){
+          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$substrate->{NAME}", { source_node => $substrate->{NAME},
+                                                                                            associated_node => $enzyme,
+                                                                                            assoc_type => "Reaction ".$reactType,
+                                                                                            direction => $direction,
+                                                                                            reaction_name => $reactName
+                                                                                          });
+        }
+      } 
+
+      foreach my $enzyme (@{$reaction->{ENZYMES}}){
+        foreach my $product (@{$reaction->{PRODUCTS}}){
+          $pathwayObj->setPathwayNodeAssociation("$reactionKey"."_"."$product->{NAME}", { source_node => $enzyme, 
+                                                                                          associated_node => $product->{NAME},
+                                                                                          assoc_type => "Reaction ".$reactType,
+                                                                                          reaction_name => $reactName,
+                                                                                          direction => $direction
+                                                                                        });
+        }
+      }
     }
-
     $pathwaysObj->setPathwayObj($pathwayObj);
     #print STDOUT Dumper $pathwaysObj;
   }
@@ -259,6 +266,9 @@ sub loadPathway {
         my $reaction = $pathwayObj->{associations}->{$reactionKey};
         my $rel_type = ($reaction->{assoc_type} =~ /Reaction/) ? 1 : 2;
 
+        #establish relationship only if both nodes are present.
+        next if (!$reaction->{source_node} || !$reaction->{associated_node});
+
         #source node
         my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
         my $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
@@ -269,7 +279,7 @@ sub loadPathway {
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
         my $asscNodeId = $self->loadNetworkNode($asscNode, $nodeGraphics);
 
-          
+        next unless ($srcNodeId != 0 && $asscNodeId != 0);  
         #node relationship
         my $relationship = GUS::Model::ApiDB::NetworkRelationship->new({ node_id => $srcNodeId,
                                                                          associated_node_id => $asscNodeId });
@@ -290,6 +300,7 @@ sub loadPathway {
                                                                      source_node => $direction }); 
         $relContext->submit() unless $relContext->retrieveFromDB();
 
+        $self->undefPointerCache();
       }# close relationships
 
         #---------------
@@ -313,53 +324,62 @@ sub loadPathway {
 sub loadNetworkNode {
   my($self,$node,$nodeGraphics) = @_;
 
-  my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : 3;
-  my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
+  if ($node->{node_name}) {
+    my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : 3;
+
+    my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
                                                           node_type_id => $node_type });
 
-  $networkNode->submit() unless $networkNode->retrieveFromDB();
-  my $nodeId = $networkNode->getNetworkNodeId();
-
-  my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
-                  ($nodeGraphics->{shape} eq 'rectangle') ? 2 : 3;
-
-
-  my $dbh        = $self->getQueryHandle();
-  my $userId     = $self->getDb()->getDefaultUserId();
-  my $groupId    = $self->getDb()->getDefaultGroupId();
-  my $projectId  = $self->getDb()->getDefaultProjectId();
-  my $algInvId   = $self->getAlgInvocation()->getId();
+    $networkNode->submit() unless $networkNode->retrieveFromDB();
+    my $nodeId = $networkNode->getNetworkNodeId();
  
-  my $sqlCheck = "Select pathway_node_id from ApiDB.PathwayNode where pathway_node_id = $nodeId";
-  my $sth        = $dbh->prepare($sqlCheck);
-  $sth->execute();
+    my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
+                    ($nodeGraphics->{shape} eq 'rectangle') ? 2 : 3;
 
-  #if not eixsts already then insert a new record.
-  if (! $sth->fetchrow_array()){
-    my $sql        = "Insert into ApiDB.PathwayNode 
-                    (pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
-                    row_user_id, row_group_id, row_project_id, row_alg_invocation_id ) values (?,?,?,?,?,?,?,?,?,?,?,?)";
-    my $sthInsrt        = $dbh->prepare($sql);
 
-    $sthInsrt->execute($nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
-                      $nodeGraphics->{height}, $nodeGraphics->{width}, $userId, $groupId, $projectId, $algInvId);
+    my $dbh        = $self->getQueryHandle();
+    my $userId     = $self->getDb()->getDefaultUserId();
+    my $groupId    = $self->getDb()->getDefaultGroupId();
+    my $projectId  = $self->getDb()->getDefaultProjectId();
+    my $algInvId   = $self->getAlgInvocation()->getId();
+ 
+    my $sqlCheck = "Select pathway_node_id from ApiDB.PathwayNode where pathway_node_id = $nodeId";
+    my $sth        = $dbh->prepare($sqlCheck);
+    $sth->execute();
 
-    if ($self->getArg('commit')) {
-      $dbh->commit();
+    #if not eixsts already then insert a new record.
+    if (! $sth->fetchrow_array()){
+      my $sql        = "Insert into ApiDB.PathwayNode 
+                      (pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
+                      row_user_id, row_group_id, row_project_id, row_alg_invocation_id ) values (?,?,?,?,?,?,?,?,?,?,?,?)";
+
+      my $sthInsrt        = $dbh->prepare($sql);
+
+      $sthInsrt->execute($nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
+                         $nodeGraphics->{height}, $nodeGraphics->{width}, $userId, $groupId, $projectId, $algInvId);
+
+      if ($self->getArg('commit')) {
+        $dbh->commit();
+      } else {
+        $dbh->rollback();
+      }
+      $sthInsrt->finish;
+      $sth->finish();
+      return $nodeId;
     } else {
-      $dbh->rollback();
+       foreach my $id ($sth->fetchrow_array()) {
+         $sth->finish();
+         return $id;
+       } 
     }
-    $sthInsrt->finish;
   }
-  $sth->finish();
-  return $nodeId;
 }
 
 
 sub loadPathwayImage{
   my($self,$pathwaySourceId,$networkId,$imgFile) = @_;
 
-  open(IMGFILE, $$imgFile)  or die "Cannot open file $$imgFile\n";
+  open(IMGFILE, $$imgFile);#  or die "Cannot open file $$imgFile\n";
   binmode IMGFILE;
 
   my ($data, $buffer,$bytes);
