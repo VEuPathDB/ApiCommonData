@@ -3245,8 +3245,7 @@ select 'CparIowaII Lippuner calf intestine oocyst infection' as profile_name,
        'Transcriptome of intestinal stages of <i>C. parvum</i>' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
        '<i>C.parvum</i> transcriptome of intestinal stages - 1.2e09, 2.5e09 samples' as x_axis,
-       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
+       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
         382 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
@@ -3752,9 +3751,6 @@ from dual
 
 UNION
 
-
-
-
 select 'P. falciparum Newbold mRNA Seq data' as profile_name,
        'Newbold::IRBC' as module,
        '<i>P.falciparum</i> RNA Sequence Profiles - Intraerythrocytic Cycle' as display_name,
@@ -3770,8 +3766,42 @@ select 'P. falciparum Newbold mRNA Seq data' as profile_name,
         '' as attribution
 from dual
 
+UNION
+
+select 'P. falciparum Su Seven Stages RNA Seq data' as profile_name,
+       'Su::PfSevenStages' as module,
+       '<i>P.falciparum</i> RNA Sequence Profiles - Sevene Stages' as display_name,
+       '<i>P.falciparum</i> RNA seq sequences from seven stages (ring, early and late troph, schizont, gametocyte II and V, and ookenete). The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>P.falciparum</i> seven life cycle stages cycle' as x_axis,
+       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        101 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+from dual
 
 UNION
+
+select 'P. falciparum Su Strand Specific RNA Seq data' as profile_name,
+       'Su::PfStrandSpecific' as module,
+       '<i>P.falciparum</i> RNA Sequence Profiles - Strand Specific' as display_name,
+       '<i>P.falciparum</i> stand specific cDNA sequences from ring, late troph, gametocyte II and V. The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>P.falciparum</i> life cycle stages cycle' as x_axis,
+       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis
+        102 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        '' as attribution
+from dual
+
+UNION
+
 select 'pfal3D7_Stunnenberg_pi_time_series' as profile_name,
        'Stunnenberg::PfRBCRnaSeq' as module,
        '<i>P. falciparum</i> post infection (RBC) RNA Seq (time series)' as display_name,
