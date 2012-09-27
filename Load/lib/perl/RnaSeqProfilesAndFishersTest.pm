@@ -89,7 +89,7 @@ sub processProfiles {
         });
   $maxProfile->munge();
 
-  my $diffProfileSetName = $profileSetName.'$strand -diff';
+  my $diffProfileSetName = $profileSetName."$strand -diff";
   my $diffProfile = CBIL::TranscriptExpression::DataMunger::ProfileDifferences->
     new({mainDirectory => $self->getMainDirectory,
          outputFile => $outputFileBase.$diffSuffix.$strandSuffix,
