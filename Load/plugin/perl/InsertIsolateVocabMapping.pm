@@ -92,7 +92,7 @@ sub new {
     bless($self, $class);
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision =>  '$Revision: 48825 $',
+		       cvsRevision =>  '$Revision: 50410 $',
 		       name => ref($self),
 		       argsDeclaration   => $argsDeclaration,
 		       documentation     => $documentation
