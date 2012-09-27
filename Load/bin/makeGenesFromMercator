@@ -16,6 +16,8 @@ use ApiCommonData::Load::MultAlignMercatorMavid;
 use GUS::Supported::Util;
 #use GUS::Model::DoTS::TranslatedAASequence;
 
+use Data::Dumper;
+
 use CBIL::Util::V;
 
 my ($gusConfigFile,$mercatorOutputDir,@gffFiles,$gffVersion);
@@ -57,11 +59,13 @@ my $align = ApiCommonData::Load::MultAlignMercatorMavid->new();
 $align->initialize($dbh,$mercatorOutputDir,$cndSrcBin);
 
 my %seqGenes;
+my %tmpSeqGenes;
 
 my $gffLocations = {};
 foreach my $gffFile (@gffFiles) {
   GUS::Supported::Util::addGffFeatures($gffLocations, $gffFile, $gffVersion);
 }
+
 
 
 my $ct;
@@ -72,10 +76,15 @@ foreach my $seqId (keys %{$gffLocations}) {
       my $maxLoc = CBIL::Util::V::max(@{$gffLocations->{$seqId}->{$gene}->{$strand}});
 
       $ct++;
-      push(@{$seqGenes{$seqId}},[$gene,$minLoc,$maxLoc,$strand]);
+      push(@{$tmpSeqGenes{$seqId}},[$gene,$minLoc,$maxLoc,$strand]);
     }
   }
 }
+
+foreach my $seq_id (keys%tmpSeqGenes){
+  @{$seqGenes{$seq_id}} = sort { $a->[1] <=> $b->[1]} @{$tmpSeqGenes{$seq_id}};
+}
+
 
 print STDERR "Retrieved from GFF files a total of $ct gene instances to group into genes\n";
 
@@ -87,6 +96,7 @@ foreach my $seq_id (keys%seqGenes){
 #  last if $ct > 100;
   foreach my $loc (@{$seqGenes{$seq_id}}){
     $ct++;
+
     print STDERR "Processing $ct: $seq_id, $loc->[1]-$loc->[2]\n" if $ct % 100 == 0;
     my $l = $align->getAlignmentLocations($seq_id,$loc->[1],$loc->[2],$loc->[3]);
     my $selfStrand = &getSelfStrand($seq_id,$l);
@@ -95,7 +105,7 @@ foreach my $seq_id (keys%seqGenes){
       my @genes;
       foreach my $a (@$l){
         print "LOCATIONS: $loc->[0]: ".join("\t",@$a)."\n" if $verbose;
-        push(@genes, &getOverlapping($selfStrand,$loc->[3],$a->[0],$a->[1],$a->[2],$a->[3]));
+        push(@genes, &getOverlapping($selfStrand, $loc->[3], $a->[0], $a->[1], $a->[2], $a->[3]));
       }
       $res = @genes ? \@genes : [$loc->[0]];
     }else{
@@ -142,10 +152,14 @@ sub getGenes {
 
 sub getOverlapping {
   my($selfStrand,$geneStrand,$seqid,$start,$end,$strand) = @_;
+
   print STDERR "ERROR: $seqid not found\n" unless $seqGenes{$seqid};
   my @genes;
+
   foreach my $g (@{$seqGenes{$seqid}}){
-    last if $g->[1] >= $end;
+    next if($g->[2] < $start);
+    last if $g->[1] > $end;
+
     push(@genes,$g->[0]) if $g->[2] >= $start && 
       (($selfStrand eq $strand && $geneStrand eq $g->[3]) ||
        ($selfStrand ne $strand && $geneStrand ne $g->[3]));
