@@ -223,7 +223,6 @@ sub undoTables {
 
   return ('DoTS.GOAssocInstEvidCode',
 	  'DoTS.GOAssociationInstance',
-	  'DoTS.GOAssociationInstanceLOE',
 	  'DoTS.GOAssociation',
 	 );
 }
