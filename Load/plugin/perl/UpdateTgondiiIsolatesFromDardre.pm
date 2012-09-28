@@ -1,7 +1,8 @@
-package ApiCommonData::Load::Plugin::UpdateIsolates;
+package ApiCommonData::Load::Plugin::UpdateTgondiiIsolatesFromDardre;;
+@ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
-use base qw(GUS::PluginMgr::Plugin);
+use warnings;
 
 use GUS::PluginMgr::Plugin;
 use GUS::Model::DoTS::IsolateSource;
@@ -72,9 +73,9 @@ my $documentation =
 sub new {
 
   my ($class) = @_;
-  $class = ref $class || $class;
 
-  my $self = bless({}, $class);
+  my $self = {};
+  bless($self, $class);
 
   $self->initialize({ requiredDbVersion => 3.6,
 		      cvsRevision       => '$Revision: 29209 $',
