@@ -3005,6 +3005,24 @@ from (
 
 -- FungiDB
 
+select 'C immitis saprobic hyphae and parasitic spherules' as profile_name,
+       'CimmRS::RnaSeqCimmComTran' as module,
+       'RNA Seq' as display_name,
+       'TODO' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+       ' as y_axis,
+       10 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
 select 'C. posadasii saprobic hyphae and parasitic spherules' as profile_name,
        'CposC735::RnaSeqComTran' as module,
        'RNA Seq' as display_name,
