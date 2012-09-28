@@ -218,4 +218,14 @@ sub createNaLocation{
 
 }
 
+
+sub undoTables {
+   my ($self) = @_;
+
+   return ('DoTS.NALocation',
+           'DoTS.ScaffoldGapFeature'
+         );
+}
+
+
 1;
