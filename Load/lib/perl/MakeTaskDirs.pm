@@ -283,7 +283,6 @@ slotspernode=$slotsPerNode
 subtasksize=$taskSize
 taskclass=$taskClass
 nodeclass=$nodeClass
-restart=no
 ";
     close(F);
 }
