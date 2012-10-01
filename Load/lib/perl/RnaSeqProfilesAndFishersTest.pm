@@ -11,7 +11,10 @@ use CBIL::TranscriptExpression::DataMunger::AllPairwiseRNASeqFishers;
 use CBIL::TranscriptExpression::DataMunger::RNASeqFishersTest qw($CONFIG_FILE);
 use CBIL::TranscriptExpression::DataMunger::RadAnalysis;
 
-my $outputFileBase = ".profiles";
+# output files will all start with this
+my $outputFileBase = "profiles";
+
+# These are suffixes which will be appended
 my $fileSuffixBase = ".intensity";
 my $minSuffix = ".min";
 my $maxSuffix = ".max";
