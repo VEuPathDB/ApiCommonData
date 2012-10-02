@@ -488,8 +488,7 @@ sub getContactForUser {
 sub undoTables {
   my ($self) = @_;
 
-  return ('SRes.Contact',
-	  'RAD.LogicalGroupLink',
+  return ('RAD.LogicalGroupLink',
 	  'RAD.LogicalGroup',
 	  'RAD.ProtocolParam',
 	  'RAD.Protocol',
