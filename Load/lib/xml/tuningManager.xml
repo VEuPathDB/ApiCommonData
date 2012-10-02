@@ -3024,19 +3024,19 @@ select 'C immitis saprobic hyphae and parasitic spherules' as profile_name,
     UNION
 
 select 'C. posadasii saprobic hyphae and parasitic spherules' as profile_name,
-       'CposC735::RnaSeqComTran' as module,
+       'CposC735::CposComTranRnaSeq' as module,
        'RNA Seq' as display_name,
-       'TODO' as description,
+       'Comparative transcriptomics were used to identify gene expression differences between the saprobic and parasitic growth phases. The results highlighted a number of genes that may be crucial to dimorphic phase-switching and virulence in Coccidioides.' as description,
        'Sample Time point (hours)' as x_axis,
        'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
-        10 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
+       ' as y_axis,
+       10 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
        'coverage,percentile' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        '' as attribution
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
     from dual
 
     UNION
