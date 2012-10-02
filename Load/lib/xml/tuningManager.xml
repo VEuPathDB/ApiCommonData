@@ -3149,6 +3149,24 @@ The data is generated for C. albicans grown under a total of nine different in v
 
     UNION
 
+select 'R oryzae hyphal growth on solid media' as profile_name,
+       'Rory99880::RoryHyphalGrowthRnaSeq' as module,
+       'RNA Seq' as display_name,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>.' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+       ' as y_axis,
+       10 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
 select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
        'RhizopusOryzae::RnaSeqHyphalTip' as module,
        'RNA Seq' as display_name,
@@ -3166,6 +3184,7 @@ select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_n
     from dual
 
     UNION
+
 select 'Expression profiling of saccharomyces cerevisiae s288c cdc15 Experiments' as profile_name,
        'SaccharomycesCerevisiae::MicroArrCellCycleTS' as module,
        'Microarray Cell cycle Time Series - Single' as display_name,
