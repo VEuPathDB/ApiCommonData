@@ -489,7 +489,6 @@ sub undoTables {
   my ($self) = @_;
 
   return ('RAD.LogicalGroupLink',
-	  'RAD.LogicalGroup',
 	  'RAD.ProtocolParam',
 	  'RAD.Protocol',
 	  'Study.OntologyEntry',
