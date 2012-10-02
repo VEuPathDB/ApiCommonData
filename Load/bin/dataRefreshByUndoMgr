@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Data::Dumper;
+use Getopt::Long;
+
+my ($workflowHomeDir,$regexList);
+&GetOptions("workflowHomeDir=s" => \$workflowHomeDir,
+            "regexList=s" => \$regexList);
+
+usage() unless(-e $workflowHomeDir || $regexList ne '');
+
+my @regex=split(/,/,$regexList);
+die "\nNo regex list provided... nothing to undo!\n\n" unless scalar(@regex);
+foreach (@regex){
+   s/\s+$//g; # lose trailing spaces
+  /^\S+$/ || die "invalid regex: '$_'\n"; 
+   my $cmd="workflow -h $workflowHomeDir -s1 DONE| grep $_| workflowUndoMgr -h $workflowHomeDir -r";
+   print STDERR "$cmd\n";
+   system ($cmd);
+   my $status = $? >>8;
+   if ($status) {
+    die "Error.  Failed $cmd with status '$status': $!\n\n";
+   }else {
+    print STDERR "$cmd is Done\n\n";
+  }
+}
+
+sub usage {
+  print "
+Run a series of undos.  Takes a list of commar delimited regex of steps.  Each provided
+step name will be undone.
+
+Usage: workflow -workflowHomeDir workflow_home_dir 
+                -regexList <dbxref_gene2PubmedFromNcbi,dbxref_gene2Entrez,dbxref_gene2Uniprot,dbxref_gene2ApiLoc,referenceStrain-epitope_sequences_IEDB,referenceStrain-dbEST,familyRepresentative-isolatesGenbank>
+
+";
+
+  exit(1);
+}
