@@ -227,7 +227,9 @@ while(my ($k, $v) = each %hash) {
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
   $note .= "; purpose of sample collection: $purpose" if $purpose;
-  $note .= "; Altitude: $alt" if $alt;
+  $note .= "; altitude: $alt" if $alt;
+  $note .= "; internal id: $isolate_id";
+
   $note =~ s/^; //;
 
   my @mon = qw/null Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
