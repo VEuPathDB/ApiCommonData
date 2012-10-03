@@ -3005,6 +3005,42 @@ from (
 
 -- FungiDB
 
+select 'C cinereus hyphal growth expression' as profile_name,
+       'CcinOk7h130::CcinHyphalGrowthRnaSeq' as module,
+       'RNA Seq' as display_name,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing hyphal sections from 2 time points (9 days and 15 days) of hyphal growth on solid media for <i>Coprinopsis cinerea</i>. This experiment is intended to compare genes expressed on the hyphal edge and in the colony.' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+       ' as y_axis,
+       10 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
+select 'R oryzae hyphal growth on solid media' as profile_name,
+       'Rory99880::RoryHyphalGrowthRnaSeq' as module,
+       'RNA Seq' as display_name,
+       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hrs, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>. The 3 hrs is the youngest tissue and from the hyphal tip while the 5 and 20 represent more interior to the colony and more mature tissue.' as description,
+       'Sample Time point (hours)' as x_axis,
+       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
+       ' as y_axis,
+       10 as order_num,
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'coverage,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
+    from dual
+
+    UNION
+
 select 'C immitis saprobic hyphae and parasitic spherules' as profile_name,
        'CimmRS::CimmComTranRnaSeq' as module,
        'RNA Seq' as display_name,
@@ -3145,60 +3181,6 @@ The data is generated for C. albicans grown under a total of nine different in v
         '' as dataTable,
       'expression' as type,
        '' as attribution
-    from dual
-
-    UNION
-
-select 'C cinereus hyphal growth expression' as profile_name,
-       'CcinOk7h130::CcinHyphalGrowthRnaSeq' as module,
-       'RNA Seq' as display_name,
-       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing hyphal sections from 2 time points (9 days and 15 days) of hyphal growth on solid media for <i>Coprinopsis cinerea</i>. This experiment is intended to compare genes expressed on the hyphal edge and in the colony.' as description,
-       'Sample Time point (hours)' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-       ' as y_axis,
-       10 as order_num,
-       'TRUE' as mainOpen,
-       'FALSE' as dataOpen,
-       'coverage,percentile' as visible_parts,
-       '' as dataTable,
-       'expression' as type,
-       '' as attribution
-    from dual
-
-    UNION
-
-select 'R oryzae hyphal growth on solid media' as profile_name,
-       'Rory99880::RoryHyphalGrowthRnaSeq' as module,
-       'RNA Seq' as display_name,
-       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hrs, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>. The 3 hrs is the youngest tissue and from the hyphal tip while the 5 and 20 represent more interior to the colony and more mature tissue.' as description,
-       'Sample Time point (hours)' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-       ' as y_axis,
-       10 as order_num,
-       'TRUE' as mainOpen,
-       'FALSE' as dataOpen,
-       'coverage,percentile' as visible_parts,
-       '' as dataTable,
-       'expression' as type,
-       '' as attribution
-    from dual
-
-    UNION
-
-select 'rhizopus_oryzae_99880 hyphal_tip RNA Sequence min Profiles' as profile_name,
-       'RhizopusOryzae::RnaSeqHyphalTip' as module,
-       'RNA Seq' as display_name,
-       'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Rhizopus oryzae</i>.' as description,
-       'Sample Time point (hours)' as x_axis,
-       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
-' as y_axis,
-        10 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'coverage,percentile' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        '' as attribution
     from dual
 
     UNION
