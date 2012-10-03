@@ -87,8 +87,7 @@ sub run {
 sub undoTables {
   my ($self) = @_;
 
-  return ('Study.Study',
-          'SRes.Contact'
+  return ('Study.Study'
      );
 }
 
