@@ -17,7 +17,7 @@ my $content = LWP::Simple::get ($ncbiEutilsUrl);
 die "NCBI did not return a valid '<PubmedArticle>' for pubmed id \"$pubmedId\". Request URL was \"$ncbiEutilsUrl\""
   unless $content =~ /\<PubmedArticle\>/;
 
-#print STDERR "$content\n";
+#print STDOUT "$content\n";
 
 my $authorList = fetchAuthorList($content);
 my $title = fetchTitle($content);
@@ -82,7 +82,8 @@ sub fetchPublication {
 	    if ($pubDay =~ /^\d\d?$/) {
 		$pubDate = "$pubYear $pubMonth $pubDay";
 	    } else {
-		$pubDate = "$pubYear $pubMonth";
+		#$pubDate = "$pubYear $pubMonth";
+		$pubDate = "$pubYear"; #BUG in XMLUtils causes malformed XML for $pubMonth
 	    }
 	} else {
 	    $pubDate = "$pubYear "
