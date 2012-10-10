@@ -55,7 +55,7 @@ sub munge {
     my ($minAntiPlusOutFile, $maxAntiPlusOutFile) = $self->makeMinMaxDiffProfiles(undef, 'plus', 'antisense');
     my ($minAntiMinusOutFile, $maxAntiMinusOutFile) = $self->makeMinMaxDiffProfiles(undef, 'minus', 'antisense');
 
-    $self->makeStrandSpecificProfiles($minAntiPlusOutFile, $minAntiMinusOutFile, $maxAntiPlusOutFile, $maxAntiMinusOutFile, 'sense');
+    $self->makeStrandSpecificProfiles($minAntiPlusOutFile, $minAntiMinusOutFile, $maxAntiPlusOutFile, $maxAntiMinusOutFile, 'antisense');
   }
 
 }
