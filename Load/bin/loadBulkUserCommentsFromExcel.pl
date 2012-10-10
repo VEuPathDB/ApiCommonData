@@ -12,29 +12,32 @@ use Getopt::Long qw(GetOptions);
 use Spreadsheet::ParseExcel;
 use ApiCommonWebsite::Model::ModelConfig;
 
-use constant ROWNUM => 6;
-
 binmode(STDOUT, ":utf8"); # deal with special characters, such as β-ketoacyl-ACP reductase 2 (KAR2)
 
 my (%hash, @comments);
-my ($input, $commit);
+my ($input, $rownum, $project_id, $review_status_id, $commit);
 
-my $review_status_id = 'unknown'; # 'community' is for expert comments
 my $comment_target_id = 'gene';
 
-GetOptions( "inpute=s" => \$input,
-            "commit!"  => \$commit,);
+GetOptions( "inpute=s"           => \$input,
+            "rownum=i"           => \$rownum,
+            "project_id=s"       => \$project_id,
+            "review_status_id=s" => \$review_status_id,
+            "commit!"            => \$commit,);
 
 my $usage =<<EOL;
 Usage: insertBulkUserComments.pl --input bulkUserCommentExcelFile --commit
 Where: input  - bulk user comment file in Excel format (MUST in Excel 2000-2004 format .xls)
+       rownum - the first row number of the comments in Excel, for example 6
+       projet_id  - ToxoDB / PlasmoDB / TriTrypDB / ...
+       review_status_id - 'unknown' is the default and 'community' is for expert comments
        commit - do submission
 
 For example
-  insertBulkUserComments.pl --input BulkUserComment_Atashi.xls 
+  insertBulkUserComments.pl --input BulkUserComment_Atashi.xls --rownum 6 --project_id ToxoDB --review_status_id community 
 EOL
 
-die $usage unless ($input);
+die $usage unless ($input && $rownum && $project_id && $review_status_id);
 
 my $parser = Spreadsheet::ParseExcel->new( CellHandler => \&cell_handler,
                                            NotSetCell  => 1 );
@@ -56,10 +59,14 @@ sub cell_handler {
   #print "## row:$row col:$col => $value\n";
 } 
 
-my $projectId = $hash{0}{1};
-my $submitter_email = $hash{2}{1};
+my $submitter_email = $hash{2}{5};  # row 3 column F
 
-my $c = new ApiCommonWebsite::Model::ModelConfig($projectId);
+my @other_authors = ($hash{3}{0}, $hash{4}{0});
+
+print "## $submitter_email \n";
+print "## other authors @other_authors\n";
+
+my $c = new ApiCommonWebsite::Model::ModelConfig($project_id);
 
 my $dbh = DBI->connect($c->appDb->dbiDsn, $c->appDb->login, $c->appDb->password,
              { RaiseError => 1, AutoCommit => 0 }) || 
@@ -71,27 +78,33 @@ my $userDb = DBI->connect($c->userDb->dbiDsn, $c->userDb->login, $c->userDb->pas
 
 my ($submitter_id, $email) = &get_submitter_id($submitter_email);
 
-print "email: $email | $projectId | submitter_id $submitter_id\n";
+print "email: $email | $project_id | submitter_id $submitter_id\n";
 
 die "There is no user $submitter_email in the database.\n" unless $submitter_id;
+
 
 while(my ($k, $v) = each %hash) {
 
   #comments data starts from row 5, k is the row num. the first row is row 0
-  next if $k < ROWNUM - 1;   
+  next if $k < $rownum - 1;   
 
-  my $gene_id  = $hash{$k}{0};
-  my $headline = $hash{$k}{1};
-  my $content  = $hash{$k}{2};
-  my $category = $hash{$k}{3};
-  my $location = $hash{$k}{4};
-  my $pmid     = $hash{$k}{5};
-  my $doi      = $hash{$k}{6};
+  my $gene_id  = $hash{$k}{0};  # column 1 A
+  my $headline = $hash{$k}{1};  # Column 2 B
+  my $content  = $hash{$k}{2};  # Column 3 C
+	my $category = "function";
+  my $synonyms = $hash{$k}{3};  # Column 4 D
+  my $location = $hash{$k}{4};  # Column 5 E
+  my $seq      = $hash{$k}{5};  # Column 6 F
+  my $pmid     = $hash{$k}{6};  # Column 7 G
 
-  my $genbank_acc      = $hash{$k}{7};
+  my $genbank_acc      = $hash{$k}{7};  # Column 8 H
   my $associated_genes = $hash{$k}{8};
+  my $other_info = $hash{$k}{11}; # Column M
+  my $doi      = "";
 
-  $content .= "\nLocation: $location" if $location;
+  $content .= "\nSynonyms: $synonyms\n" if $synonyms;
+	$content .= "\nCellular Location: $location" if $location;
+	$content .= "\nNote: $other_info" if $other_info;
 
   $gene_id =~ s/\s+$//g;
   $pmid =~ s/\s+//g;
@@ -120,13 +133,14 @@ EOSQL
   print "cannot find $gene_id\n" and die unless @row;
 
   my $comment = {
-     gene_id => $gene_id,
-     pmid    => $pmid,
-     doi     => $doi,
-     headline => $headline,
-     content  => $content,
-     category => $category,
-     genbank_acc => $genbank_acc,
+     gene_id          => $gene_id,
+     pmid             => $pmid,
+     doi              => $doi,
+     headline         => $headline,
+     content          => $content,
+     seq              => $seq,
+     category         => $category,
+     genbank_acc      => $genbank_acc,
      associated_genes => $associated_genes,
     };
 
@@ -143,6 +157,7 @@ foreach(@comments) {
   my $doi = $comment->{doi};
   my $headline = $comment->{headline};
   my $content =  $comment->{content};
+	my $seq      = $comment->{seq};
   my $category = $comment->{category};
   my $associated_genes = $comment->{associated_genes};
 
@@ -159,7 +174,9 @@ foreach(@comments) {
     $target_category_id = 5;
   } elsif($category =~ /phenotype/i) {
     $target_category_id = 6;
-  }
+  } else {
+    $target_category_id = 3;
+	}
 
   my $location_string = "genome: $contig:$start-$end ($strand strand)";
 
@@ -261,13 +278,31 @@ EOL
     $userDb->do($sql) if $commit;
   }
 
+  if(@other_authors) {
+  
+	foreach(@other_authors) {
+  $sql =<<EOL;
+INSERT INTO comments2.CommentReference 
+        (comment_reference_id, source_id, database_name, comment_id)
+VALUES (comments2.commentReference_pkseq.nextval, '$_', 'author', $comment_id)
+EOL
+    $userDb->do($sql) if $commit;
+		}
+  }
+
+  if($seq) {
+  $sql =<<EOL;
+INSERT INTO comments2.CommentSequence (comment_sequence_id, sequence, comment_id)
+VALUES (comments2.commentSequence_pkseq.nextval, '$seq', $comment_id)
+EOL
+    $userDb->do($sql) if $commit;
+
+	}
 
 =c
 INSERT INTO comments2.CommentFile (file_id, name, notes, comment_id)
 VALUES (?, ?, ?, ?)");
 
-INSERT INTO comments2.CommentSequence (comment_sequence_id, sequence, comment_id)
-VALUES (?, ?, ?)
 =cut
 
 }
