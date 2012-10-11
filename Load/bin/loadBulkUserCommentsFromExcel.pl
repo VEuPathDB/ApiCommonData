@@ -8,6 +8,7 @@
 
 use strict;
 use DBI;
+use DBD::Oracle qw(:ora_types);
 use Getopt::Long qw(GetOptions);
 use Spreadsheet::ParseExcel;
 use ApiCommonWebsite::Model::ModelConfig;
@@ -76,6 +77,10 @@ my $userDb = DBI->connect($c->userDb->dbiDsn, $c->userDb->login, $c->userDb->pas
              { RaiseError => 1, AutoCommit => 0 }) || 
              die "Database connection note mode: $DBI::errstr";
 
+$userDb->{LongReadLen} = 512*1024;
+$userDb->{LongTruncOk} = 1;
+
+
 my ($submitter_id, $email) = &get_submitter_id($submitter_email);
 
 print "email: $email | $project_id | submitter_id $submitter_id\n";
@@ -88,23 +93,28 @@ while(my ($k, $v) = each %hash) {
   #comments data starts from row 5, k is the row num. the first row is row 0
   next if $k < $rownum - 1;   
 
-  my $gene_id  = $hash{$k}{0};  # column 1 A
-  my $headline = $hash{$k}{1};  # Column 2 B
-  my $content  = $hash{$k}{2};  # Column 3 C
-	my $category = "function";
-  my $synonyms = $hash{$k}{3};  # Column 4 D
-  my $location = $hash{$k}{4};  # Column 5 E
-  my $seq      = $hash{$k}{5};  # Column 6 F
-  my $pmid     = $hash{$k}{6};  # Column 7 G
+  my $gene_id   = $hash{$k}{0};  # column 1 A
+  my $gene_name  = $hash{$k}{1};  # Column 2 B
+  my $function  = $hash{$k}{2};  # Column 3 C
+	my $category  = "function";
+  my $synonyms  = $hash{$k}{3};  # Column 4 D
+  my $location  = $hash{$k}{4};  # Column 5 E
+  my $seq       = $hash{$k}{5};  # Column 6 F
+  my $pmid      = $hash{$k}{6};  # Column 7 G
 
   my $genbank_acc      = $hash{$k}{7};  # Column 8 H
   my $associated_genes = $hash{$k}{8};
   my $other_info = $hash{$k}{11}; # Column M
   my $doi      = "";
 
-  $content .= "\nSynonyms: $synonyms\n" if $synonyms;
-	$content .= "\nCellular Location: $location" if $location;
-	$content .= "\nNote: $other_info" if $other_info;
+  my $headline = $gene_name if $gene_name;
+
+	my $content = "";
+  $content .= "Gene Name: $gene_name; " if $gene_name;
+  $content .= "Function: $function; " if $function;
+  $content .= "Synonyms: $synonyms; " if $synonyms;
+	$content .= "Cellular Location: $location; " if $location;
+	$content .= "Note: $other_info; " if $other_info;
 
   $gene_id =~ s/\s+$//g;
   $pmid =~ s/\s+//g;
@@ -132,8 +142,9 @@ EOSQL
   $sth->finish;
   print "cannot find $gene_id\n" and die unless @row;
 
+	$content .= "Gene ID used in comment: $gene_id;" if ($gene_id ne $row[0]);
+
   my $comment = {
-     gene_id          => $gene_id,
      pmid             => $pmid,
      doi              => $doi,
      headline         => $headline,
@@ -150,7 +161,6 @@ EOSQL
 
 foreach(@comments) {
   my($source_id, $start, $end, $strand, $db_name, $db_version, $project_id, $organism, $contig, $comment) = @$_;
-  print "$source_id, $start, $end, $strand, $db_name, $db_version, $project_id, $organism, $contig\n ";
 
   my $is_reverse = $strand =~ /forward/ ? 0 : 1;
   my $pmid = $comment->{pmid};
@@ -160,6 +170,7 @@ foreach(@comments) {
 	my $seq      = $comment->{seq};
   my $category = $comment->{category};
   my $associated_genes = $comment->{associated_genes};
+  my $genbank_acc      = $comment->{genbank_acc};
 
   my $target_category_id = 1;
   if($category =~ /gene/i) {
@@ -179,6 +190,8 @@ foreach(@comments) {
 	}
 
   my $location_string = "genome: $contig:$start-$end ($strand strand)";
+
+  print "$source_id\nLocation: $location_string\nHeadline: $headline\nContent: $content\nCategory: $category\nAssociated genes:  $associated_genes\nPMID: $pmid\nGenBank: $genbank_acc\nOther authors: @other_authors\nSeq:$seq\n\n ";
 
   my $sql = "SELECT comments2.comments_pkseq.nextval as comment_id from dual";
   my $sth = $userDb->prepare($sql);
@@ -290,12 +303,35 @@ EOL
 		}
   }
 
+
+  if($genbank_acc) {
+  
+  $sql =<<EOL;
+INSERT INTO comments2.CommentReference 
+        (comment_reference_id, source_id, database_name, comment_id)
+VALUES (comments2.commentReference_pkseq.nextval, '$genbank_acc', 'genbank', $comment_id)
+EOL
+    $userDb->do($sql) if $commit;
+  }
+
+
+
+
   if($seq) {
   $sql =<<EOL;
 INSERT INTO comments2.CommentSequence (comment_sequence_id, sequence, comment_id)
-VALUES (comments2.commentSequence_pkseq.nextval, '$seq', $comment_id)
+VALUES (comments2.commentSequence_pkseq.nextval, ?, ?)
 EOL
-    $userDb->do($sql) if $commit;
+
+#VALUES (comments2.commentSequence_pkseq.nextval, '$seq', $comment_id)
+
+   my $sth = $userDb->prepare($sql);
+    $sth->bind_param(1, $seq,  {ora_type => ORA_CLOB});
+    $sth->bind_param(2, $comment_id);
+
+    #$userDb->do($sql) if $commit;
+    $sth->execute() if $commit;
+		$sth->finish;
 
 	}
 
