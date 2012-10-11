@@ -106,6 +106,27 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"           ignore="true"/>
   </feature>
 
+  <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+  </feature>
+
+  <feature name="RNase_MRP_RNA_gene" so="RNase_MRP_RNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+  </feature>
+
+  <feature name="RNase_P_RNA_gene" so="RNase_P_RNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+  </feature>
+
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"			ignore="true"/>
@@ -144,6 +165,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="organelle"/>
     <qualifier name="serotype"/>
     <qualifier name="strain"/>
+    <qualifier name="host"    ignore="true"/>
     <qualifier name="dev_stage"/>
     <qualifier name="country" ignore="true"/>
     <qualifier name="specific_host" ignore="true"/>
@@ -154,7 +176,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="clone_lib" ignore="true"/>
     <qualifier name="haplotype" ignore="true"/>
     <qualifier name="collection_date" ignore="true"/>
-    <qualifier name="host" ignore="true"/>
+    <qualifier name="culture_collection" ignore="true"/>
+  </feature>
+
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="locus_tag"     		column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
   </feature>
 
   <feature name="unsure" ignore="true">
@@ -184,5 +213,6 @@ necessarily by what's defined in the input (eg. Genbank) file
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
   </feature>
+
 
 </mapping>
