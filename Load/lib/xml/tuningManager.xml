@@ -3332,7 +3332,7 @@ select 'Expression profiling of T. gondii strains' as profile_name,
 -- 2
 UNION
 select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the TgME49 Genome' as profile_name,
-       'Reid::TgME49RnaSeq' as module,
+       'Reid::TgVEGRnaSeq' as module,
        'Expression profiling of <i>T. gondii</i> tachyzoites (str ME49, d3/4, RNA-seq)' as display_name,
        'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
        'T. gondii ME49 Day 3 and Day4 Tachyzoite Form' as x_axis,
@@ -3577,14 +3577,33 @@ UNION
 
 select 'T. gondii ME49 time series mRNA Illumina sequences aligned to the ME49 Genome.' as profile_name,
        'Gregory::TgME49VegRnaSeqTS' as module,
-       'T.g. ME49 and VEG RNA Seq Tachyzoite Time Series (Gregory)' as display_name,
+       'T.g. ME49 RNA Seq Tachyzoite Time Series (Gregory)' as display_name,
+       '' as description,
+       '' as x_axis,
+       '' as y_axis,
+        139 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'coverage_sense,percentile_sense,coverage_antisense,percentile_antisense' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+
+--14
+UNION
+
+select 'T. gondii VEG time series mRNA Illumina sequences aligned to the ME49 Genome.' as profile_name,
+       'Gregory::TgVegRnaSeqTS' as module,
+       'T.g. VEG RNA Seq Tachyzoite Time Series (Gregory)' as display_name,
        '' as description,
        '' as x_axis,
        '' as y_axis,
         140 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-        'coverage_ME49,percentile_VEG,coverage_VEG,percentile_ME49' as visible_parts,
+        'coverage_sense,percentile_sense,coverage_antisense,percentile_antisense' as visible_parts,
         '' as dataTable,
         'expression' as type,
         '' as attribution
@@ -3603,29 +3622,12 @@ select 'T. gondii M4 oocyte time series mRNA Illumina sequences aligned to the M
         150 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-        'coverage,percentile' as visible_parts,
+        'coverage_sense,percentile_sense,coverage_antisense,percentile_antisense' as visible_parts,
         '' as dataTable,
         'expression' as type,
         '' as attribution
     from dual
 
-
---UNION
---select 'T. gondii VEG Day 3-4 Tachyzoite aligned to the VEG Genome-profiles' as profile_name,
---       'Reid::TgVEGRnaSeq' as module,
---       '<i>T. gondii Veg</i> day 3-4 tachyzoite form RNA Sequence' as display_name,
---       'The values in the graph are displayed in log2 scale. Poly-adenylated RNA was sequenced as 76bp, paired-end reads using the Illumina GAII. Parasites were not synchronised; days 3 and 4 samples are considered to overlap and thus represent biological replicates of expression during the tachyzoite stage, rather than distinct timepoints.' as description,
---       'T. gondii VEG Day 3 and Day4 Tachyzoite Form' as x_axis,
---       'log2 of the transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.
---' as y_axis,
---        250 as order_num,
---        'TRUE' as mainOpen,
---        'FALSE' as dataOpen,
---       'rpkm,pct' as visible_parts,
---        '' as dataTable,
---      'expression' as type,
---        'tgonVEG_Reid_tachy_rnaSeq_RSRC' as attribution
---from dual
 
 UNION
 select 'N. caninum Day 3-4 Tachyzoite' as profile_name,
