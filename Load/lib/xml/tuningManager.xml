@@ -4469,21 +4469,21 @@ select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile
       'expression' as type,
         'Tbrucei_RNASeq_Spliced_Leader_And_Poly_A_Sites_Nilsson_RSRC' as attribution
 from dual
---UNION
---select 'T.brucei Tschudi RNA Seq data' as profile_name,
---       'Tschudi::TbSimpleRNASeq' as module,
---       'Transcriptome mapping of <i>T. brucei</i>' as display_name,
---       'The coverage values in the graph are displayed in log2 scale' as description,
---       '<i>T.brucei</i> transcriptome mapping 3prime-end-enriched oligo(dT) primed cDNA, 3prime-end-enriched random primed cDNA, 5prime-SL-end-enriched cDNA, 5prime-triphosphate-end-enriched cDNA' as x_axis,
---       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
---        380 as order_num,
---        'TRUE' as mainOpen,
---        'FALSE' as dataOpen,
---       'coverage,pct' as visible_parts,
---        '' as dataTable,
---      'expression' as type,
---        'tbrucei927_Tschudi_Transcriptome_rnaSeq_RSRC' as attribution
---from dual
+UNION
+select 'T.brucei Tschudi RNA Seq data' as profile_name,
+       'Tschudi::TbSimpleRNASeq' as module,
+       'Transcriptome mapping of <i>T. brucei</i>' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>T.brucei</i> transcriptome mapping 3prime-end-enriched oligo(dT) primed cDNA, 3prime-end-enriched random primed cDNA, 5prime-SL-end-enriched cDNA, 5prime-triphosphate-end-enriched cDNA' as x_axis,
+       'log2 of (number of aligned tags / million aligned tags). Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        380 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'coverage,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        'tbrucei927_Tschudi_Transcriptome_rnaSeq_RSRC' as attribution
+from dual
 -- UNION
 -- select 'Tcruzi RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
 --        'Nilsson::TcSpliceSites' as module, 
