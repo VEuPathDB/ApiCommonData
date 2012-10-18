@@ -188,7 +188,7 @@ sub insertManuallyMappedTerms {
 
     # Get na_sequence_id or bio_material_id for the orig, BUT isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $vocabularyIds->{$type}->{$mapTerm};
-    my $isolateIds = $allIsolateIds->{$idType}->{lc($type)}->{$term};
+    my $isolateIds = $allIsolateIds->{$idType}->{lc($field)}->{$term};
 
     next if (!$isolateIds);
     $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $isolateIds, $idType);
