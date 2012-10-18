@@ -1837,13 +1837,10 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        taxon.ncbi_tax_id,
        ed.name AS external_db_name,
        nvl(best.best_alignment_count, 0) AS best_alignment_count,
-       l.library_id, l.dbest_name as library_dbest_name,
-       aseq.assembly_na_sequence_id, asm.source_id as assembly_source_id,
-       asm.number_of_contained_sequences AS assembly_est_count
+       l.library_id, l.dbest_name as library_dbest_name
 FROM dots.Est e, dots.ExternalNaSequence ens, dots.Library l, sres.Taxon,
      sres.TaxonName tn, sres.ExternalDatabase ed,
      sres.ExternalDatabaseRelease edr, sres.SequenceOntology so,
-     dots.AssemblySequence aseq, dots.Assembly asm,
      (select query_na_sequence_id,max(ct) as best_alignment_count
       from (
             SELECT query_na_sequence_id, COUNT(*) AS ct
@@ -1861,20 +1858,11 @@ WHERE e.na_sequence_id = ens.na_sequence_id
   AND ens.sequence_ontology_id = so.sequence_ontology_id
   AND so.term_name = 'EST'
   AND best.query_na_sequence_id(+) = ens.na_sequence_id
-  AND ens.na_sequence_id = aseq.na_sequence_id(+)
-  AND aseq.assembly_na_sequence_id = asm.na_sequence_id(+)
-AND aseq.row_alg_invocation_id != 678
       ]]>
     </sql>
     <sql>
       <![CDATA[
 create unique index EstAttr_source_id&1 ON EstAttributes&1 (source_id)
-tablespace indx
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create index EstAttr_seqsrc_id&1 ON EstAttributes&1 (assembly_source_id, source_id)
 tablespace indx
       ]]>
     </sql>
