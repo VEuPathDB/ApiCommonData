@@ -84,17 +84,18 @@ sub insert {
   # insert mapping for manual terms (from xml mapping file)
   my $manualCounts = $self->insertManuallyMappedTerms($isolateTermIdentifiers, $isolateVocabularyIds);
 
-  # insert mapping for null/unknown terms
-  my $nullCounts = $self->insertNullMappedTerms($isolateTermIdentifiers, $isolateVocabularyIds);
+  my $mappingTotalCount = $automaticCounts + $manualCounts;
 
-  my $mappingTotalCount = $automaticCounts + $manualCounts + $nullCounts;
-
-  return ($mappingTotalCount, "Inserted $automaticCounts automatic counts, $manualCounts manual counts and $nullCounts null counts (total=$mappingTotalCount)");
+  return ($mappingTotalCount, "Inserted $automaticCounts automatic counts and $manualCounts manual counts (total=$mappingTotalCount)");
 }
 
 # for terms where original is null, map to the term "unkown"
 sub insertNullMappedTerms {
-  my ($self, $dotsIsolatesNaSequences, $isolateVocabularyIds) = @_;
+  my ($self) = @_;
+
+  my $isolateVocabularyIds =  $self->getVocabulary();
+  my $dotsIsolatesNaSequences = $self->queryLoadedIsolates();
+
 
   my $count;
 
