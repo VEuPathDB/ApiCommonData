@@ -189,6 +189,9 @@ sub insertManuallyMappedTerms {
 
     # Get na_sequence_id or bio_material_id for the orig, BUT isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $vocabularyIds->{$type}->{$mapTerm};
+
+    # fix value of field for location
+    $field = 'geographic_location' if ($field eq 'country');
     my $isolateIds = $allIsolateIds->{$idType}->{lc($field)}->{$term};
 
     next if (!$isolateIds);
