@@ -6387,8 +6387,6 @@ tablespace indx
        where ot.term = oa.organism
        union
        select special.organism, special.parent,special.abbreviation, ot.project_id from OrganismTree ot,(
-  -- ToxoDB Apicoplast
-  select 'Toxoplasma gondii apicoplast' as organism, 'Toxoplasma gondii' as parent, 'tgonRH_primary_genome_RSRC' as abbreviation from dual union
   -- Giardia Deprecated
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffold' as abbreviation from dual union
@@ -6649,7 +6647,7 @@ tablespace indx
     <sql>
       <![CDATA[
        create table BlastTypes&1 nologging as
-  -- Standard GENES (RH for toxo is included in the apicoplast)
+  -- Standard GENES
   select distinct organism, project_id, type 
   from GeneAttributes,
        (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
@@ -6668,10 +6666,6 @@ tablespace indx
   -- GiardiaDB Scaffolds
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GiardiaDB' as project_id, type 
   from dual, (select 'Genomics' as type from dual)
-  UNION
-    -- ToxoDB Apicoplast for GENES and GENOMES
-  select 'Toxoplasma gondii apicoplast' as organism, 'ToxoDB' as project_id, type
-  from dual, (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
   UNION  
   -- Standard GENOME
   select distinct organism, project_id, type 
