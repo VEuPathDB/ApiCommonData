@@ -16,7 +16,6 @@ use ApiCommonData::Load::IsolateVocabulary::InsertMappedValues;
 $| = 1;
 
 
-
 my $argsDeclaration =
 [
 
@@ -92,7 +91,7 @@ sub new {
     bless($self, $class);
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision =>  '$Revision: 50410 $',
+		       cvsRevision =>  '$Revision: 50976 $',
 		       name => ref($self),
 		       argsDeclaration   => $argsDeclaration,
 		       documentation     => $documentation
@@ -115,6 +114,9 @@ sub run {
     $count += $self->insert($sourceXmlFile, 'isolation_source', $vocabulary) if $sourceXmlFile;
     $count += $self->insert($locationXmlFile, 'geographic_location', $vocabulary) if $locationXmlFile;
     $count += $self->insert($hostXmlFile, 'specific_host', $vocabulary) if $hostXmlFile;
+
+    # insert mapping for null/unknown terms
+    $count += $self->insertNullMappings($vocabulary,'isolation_source','geographic_location','specific_host');
     return "Inserted $count rows into IsolateMapping";
 }
 
@@ -133,11 +135,27 @@ sub insert {
     return $count;
 }
 
+sub insertNullMappings {
+    my ($self, $vocabulary, @types) = @_;
+    my $ct;
+
+    foreach my $type  (@types) {
+      my $sqlReader = ApiCommonData::Load::IsolateVocabulary::Reader::SqlTermReader->new($self->getDbHandle(), $type, $vocabulary);
+      my $sqlTerms = $sqlReader->extract();
+
+      my $inserter = ApiCommonData::Load::IsolateVocabulary::InsertMappedValues->new($self, $type, '', $sqlTerms, $vocabulary);
+      my ($count, $msg) = $inserter->insertNullMappedTerms();
+      $ct += $count;
+      $self->log("$type: $msg");
+    }
+    return $ct;
+}
 
 sub undoTables {
   my ($self) = @_;
 
   return ('ApiDB.IsolateMapping',
+          'ApiDB.VocabularyBiomaterial',
          );
 }
 
