@@ -9,15 +9,13 @@
            class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
-    <qualifier name="GeneType"       column="name"/>
-    <qualifier name="TU"             ignore="true"/>
-    <qualifier name="Note"           handler="api" method="product"/>
-    <qualifier name="Pseudogene"     handler="api" method="setPseudo"/>
-    <qualifier name="Pseudo"         handler="api" method="setPseudo"/>
     <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
-    <qualifier name="ECNumber"       handler="api" method="ECNumber"/>
-    <qualifier name="Aliases"        handler="api" method="gene"/>
+    <qualifier name="Note"           ignore="true"/>
+    <qualifier name="Pseudogene"     ignore="true"/>
+    <qualifier name="Pseudo"         ignore="true"/>
+    <qualifier name="ECNumber"       ignore="true"/>
+    <qualifier name="Aliases"        ignore="true"/>
   </feature>
 
   <feature name="transcript" so="transcript">
