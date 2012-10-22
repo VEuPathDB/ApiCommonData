@@ -222,12 +222,14 @@ create unique index EstAttr_source_id&1 ON ApidbTuning.EstAttributes&1 (source_i
 tablespace indx
       ]]>
     </sql>
+<!-- the assembly_source_id column has been dropped from tuningManager.xml as of r50978, so it can't be indexed
     <sql>
       <![CDATA[
 create index EstAttr_seqsrc_id&1 ON ApidbTuning.EstAttributes&1 (assembly_source_id, source_id)
 tablespace indx
       ]]>
     </sql>
+ -->
 
   </tuningTable>
 
