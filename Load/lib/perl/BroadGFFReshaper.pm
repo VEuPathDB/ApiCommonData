@@ -216,6 +216,7 @@ sub traverseSeqFeatures {
 
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
+        $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
@@ -232,13 +233,13 @@ sub traverseSeqFeatures {
 			$codingStart = $subFeature->location->end;
 
 			$codingEnd = $subFeature->location->start;
-
+			$codingStart -= $codonStart if ($codonStart > 0);
 
 		    }else{
 			$codingStart = $subFeature->location->start;
 			
 			$codingEnd = $subFeature->location->end;
-
+			$codingStart += $codonStart if ($codonStart > 0);
 
 		    }
 		    
