@@ -6,6 +6,8 @@ eval 'exec /usr/bin/perl  -S $0 ${1+"$@"}'
 
 use strict;
 
+use lib "$ENV{GUS_HOME}/../cgi-lib";
+
 use Getopt::Long;
 use File::Spec;
 use Bio::DB::SeqFeature::Store::GFF3Loader;
