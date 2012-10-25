@@ -8,7 +8,7 @@ use Getopt::Long;
 my ($workflowHomeDir,$regexList);
 &GetOptions("workflowHomeDir=s" => \$workflowHomeDir,
             "regexList=s" => \$regexList);
-
+usage() unless ($workflowHomeDir);
 usage() unless(-e $workflowHomeDir || $regexList ne '');
 
 my @regex=split(/,/,$regexList);
