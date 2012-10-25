@@ -6513,10 +6513,12 @@ tablespace indx
     <internalDependency name="TaxonSpecies"/>
     <externalDependency name="SRES.TaxonName"/>
     <externalDependency name="SRES.Taxon"/>
+    <intermediateTable name="StrainTree"/>
     <sql>
       <![CDATA[
-        CREATE TABLE OrganismTree&1 NOLOGGING AS
-         SELECT organism,term,parentTerm, internal,project_id
+CREATE TABLE StrainTree NOLOGGING AS
+SELECT *
+FROM (         SELECT organism,term,parentTerm, internal,project_id
          FROM (
            -- all organisms from sequenceattributes as organism, organism as term, parentterm is species           
            SELECT DISTINCT sa.organism AS organism,
@@ -6581,7 +6583,28 @@ tablespace indx
                            sa.project_id AS project_id
            FROM SequenceAttributes sa, ProjectIdTaxonLevel ptl
            WHERE ptl.project_id = sa.project_id
-            AND ptl.organism = sa.organism
+            AND ptl.organism = sa.organism))
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        CREATE TABLE OrganismTree&1 NOLOGGING AS
+         SELECT organism,term,parentTerm, internal,project_id
+         FROM (
+               SELECT * from StrainTree
+               UNION
+               SELECT stn.name as organism,
+                      st.term as term,
+                      st.parentTerm as parentTerm,
+                      st.internal as internal,
+                      st.project_id as project_id
+               FROM StrainTree st, TaxonSpecies ts, SRES.taxonname tn, SRES.taxonname stn
+               WHERE tn.taxon_id = ts.taxon_id
+                 AND stn.taxon_id = ts.species_taxon_id
+                 AND st.organism = tn.name
+                 AND tn.name_class = 'scientific name'
+                 AND stn.name_class = 'scientific name'
+                 AND st.organism != st.term
           )
     	]]>
     </sql>
