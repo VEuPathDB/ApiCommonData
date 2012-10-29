@@ -14,7 +14,7 @@ CREATE TABLE ApiDB.VocabularyBiomaterial (
  ROW_PROJECT_ID        NUMBER(4),
  ROW_ALG_INVOCATION_ID NUMBER(12),
  PRIMARY KEY (vocabulary_biomaterial_id),
- --FOREIGN KEY (bio_material_id) REFERENCES Study.Biomaterial (bio_material_id),
+ FOREIGN KEY (bio_material_id) REFERENCES Study.BiomaterialIMP (bio_material_id),
  FOREIGN KEY (isolate_vocabulary_id) REFERENCES ApiDB.IsolateVocabulary (isolate_vocabulary_id)
 );
 
