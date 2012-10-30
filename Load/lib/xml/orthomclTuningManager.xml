@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tuningConfig>
+
+  <tuningTable name="TypeAheadCounts">
+    <!-- internalDependency name="GeneAttributes"/ -->
+    <externalDependency name="dots.DbRefAaFeature"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="dots.AaFeature"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.EnzymeClass"/>
+    <externalDependency name="dots.AaSequenceEnzymeClass"/>
+    <externalDependency name="dots.GoAssociation"/>
+    <externalDependency name="sres.GoTerm"/>
+    <externalDependency name="sres.GoRelationship"/>
+    <externalDependency name="sres.GoRelationshipType"/>
+    <externalDependency name="core.TableInfo"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE TypeAheadCounts&1 NOLOGGING AS
+   (SELECT DISTINCT dr.primary_identifier as option_id,
+                   count(distinct aaf.aa_sequence_id) AS protein_count
+   FROM dots.DbRefAaFeature draf, sres.DbRef dr, dots.aafeature aaf,
+        sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+   WHERE draf.db_ref_id = dr.db_ref_id
+   AND dr.external_database_release_id
+       = edr.external_database_release_id
+   AND edr.external_database_id = ed.external_database_id
+   AND aaf.aa_feature_id = draf.aa_feature_id
+   GROUP BY dr.primary_identifier
+   )
+   UNION
+   (SELECT DISTINCT ec.ec_number AS option_id,
+          COUNT(DISTINCT asec.aa_sequence_id) AS protein_count
+   FROM sres.enzymeClass ec,
+        dots.aaSequenceEnzymeClass asec
+   WHERE  asec.enzyme_class_id = ec.enzyme_class_id
+   GROUP BY ec.ec_number)
+   UNION                
+   (SELECT DISTINCT gp.go_id AS option_id,
+           COUNT(DISTINCT aaf.aa_sequence_id) AS protein_count
+    FROM dots.AaFeature aaf,
+         dots.GoAssociation ga, sres.GoTerm gp,
+         sres.GoRelationship gr, core.TableInfo ti,
+         sres.GoRelationshipType grt
+    WHERE aaf.aa_sequence_id = ga.row_id
+    AND ga.table_id = ti.table_id
+    AND ti.name = 'TranslatedAASequence'
+    AND ga.go_term_id = gr.child_term_id
+    AND gr.parent_term_id = gp.go_term_id
+    AND gr.go_relationship_type_id = grt.go_relationship_type_id
+    AND grt.name = 'closure'
+    GROUP BY gp.go_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX TypeAheadCounts_idx&1 ON TypeAheadCounts&1 (option_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+</tuningConfig>
