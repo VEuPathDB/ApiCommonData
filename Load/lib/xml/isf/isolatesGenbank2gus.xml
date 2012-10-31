@@ -118,7 +118,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="virion"/>
     <qualifier name="isolation_source"/> 
     <qualifier name="PCR_primers"/> 
-    <qualifier name="host" column="specific_host"/>
+    <qualifier name="host"  handler="api" method="host"/>
     <qualifier name="specific_host"/> 
     <qualifier name="clone"/> 
     <qualifier name="lab_host"/> 
@@ -160,6 +160,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="culture_collection" ignore="true"/>
     <qualifier name="mating_type"              ignore="true"/>
     <qualifier name="plasmid"              ignore="true"/>
+    <qualifier name="cultivar"              ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -167,6 +168,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
+    <qualifier name="gene"		ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
