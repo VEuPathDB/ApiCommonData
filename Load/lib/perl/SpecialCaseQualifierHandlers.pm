@@ -1465,4 +1465,24 @@ sub _undoRptUnit{
 
 }
 
+
+################ host #################
+
+## join host with | if there are more than one
+
+sub host {
+  my ($self, $tag, $bioperlFeature, $feature) = @_;
+
+  my @tagValues = $bioperlFeature->get_tag_values($tag);
+  $feature->setSpecificHost(join(' | ', @tagValues));
+
+  return [];
+}
+
+sub _undoHost{
+  my ($self) = @_;
+
+}
+
+
 1;
