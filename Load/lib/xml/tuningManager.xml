@@ -2447,7 +2447,6 @@ select null as na_sequence_id,
        null as na_feature_id,
        b.bio_material_id,
        o.taxon_id,
-       o.family_name,
        edr.version as external_db_version,
        ed.name as external_db_name,
        b.source_id,
@@ -2470,18 +2469,11 @@ select null as na_sequence_id,
        null as collected_by
  From study.biosource b, study.study s, 
      rad.studybiomaterial sb, SRES.externaldatabase ed, SRES.externaldatabaserelease edr,
-     (select bc.bio_material_id, tn.name, tn.taxon_id,famName.name as family_name
-      from study.ontologyentry oe, sres.taxonname tn, STUDY.biomaterialcharacteristic bc,
-      sres.Taxon fam, sres.TaxonName famName
+     (select bc.bio_material_id, tn.name, tn.taxon_id
+      from study.ontologyentry oe, sres.taxonname tn, STUDY.biomaterialcharacteristic bc
       where category = 'Organism'
       and oe.value = tn.name
       and bc.ontology_entry_id = oe.ontology_entry_id
-      and fam.taxon_id  = famName.taxon_id
-      and famName.name_class = 'scientific name'
-      and fam.taxon_id in (SELECT taxon_id FROM sres.taxon
-                           CONNECT BY taxon_id = PRIOR parent_id AND PRIOR rank != 'family'
-                           START WITH taxon_id = tn.taxon_id)
-      and fam.rank = 'family'
       ) o,
      (select bc.bio_material_id, oe.value
       from study.ontologyentry oe, STUDY.biomaterialcharacteristic bc
@@ -2531,7 +2523,6 @@ select i.na_sequence_id,
        i.na_feature_id,
        null as bio_material_id,
        i.taxon_id,
-       i.family_name,
        i.external_db_version,
        i.external_db_name,
        i.source_id,
@@ -2555,7 +2546,6 @@ select i.na_sequence_id,
 FROM (
        SELECT  etn.na_sequence_id,
                etn.taxon_id,
-               famName.name as family_name,
                etn.length,
                edr.version as external_db_version, 
                src.na_feature_id,
@@ -2603,19 +2593,12 @@ FROM (
         ELSE '' END as project_id
       FROM dots.ExternalNaSequence etn, dots.IsolateSource src,
            sres.ExternalDatabaseRelease edr, sres.ExternalDatabase edb, core.PROJECTINFO pinfo, 
-           sres.Taxon fam, sres.TaxonName famName,
            (select  distinct taxon_id,name from sres.taxonname where name_class = 'scientific name') tn
       WHERE etn.na_sequence_id = src.na_sequence_id
        AND  etn.taxon_id = tn.taxon_id(+)
        AND edr.external_database_id = edb.external_database_id
        AND edr.external_database_release_id = etn.external_database_release_id
        AND pinfo.project_id = etn.row_project_id
-       AND fam.taxon_id  = famName.taxon_id
-       AND famName.name_class = 'scientific name'
-       AND fam.taxon_id in (SELECT taxon_id FROM sres.taxon
-                           CONNECT BY taxon_id = PRIOR parent_id AND PRIOR rank != 'family'
-                           START WITH taxon_id = etn.taxon_id)
-       AND fam.rank = 'family'
       ) i,
       (select im.na_sequence_id, apidb.tab_to_string(set(cast(COLLECT(iv.term) as apidb.varchartab)),',') as annotated_isolation_source
       from apidb.isolatevocabulary iv, apidb.isolatemapping im
