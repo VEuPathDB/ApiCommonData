@@ -212,7 +212,7 @@ select case
        cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
        nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
-from dots.NaFeature nf, dots.NaLocation nl, SequenceAttributes ns,
+from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes ns,
      dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
   and nf.na_sequence_id = ns.na_sequence_id
