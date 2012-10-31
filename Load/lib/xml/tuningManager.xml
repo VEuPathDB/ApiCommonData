@@ -259,8 +259,8 @@ select -- virtual feature locations mapped through SequencePiece
          else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
        cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
-from dots.NaFeature nf, dots.NaLocation nl, SequenceAttributes contig,
-     &prefixSequencePieceClosure sp, SequenceAttributes scaffold, dots.ExonFeature ef,
+from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes contig,
+     &prefixSequencePieceClosure sp, &prefixSequenceAttributes scaffold, dots.ExonFeature ef,
      sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
   and nf.na_sequence_id = contig.na_sequence_id
