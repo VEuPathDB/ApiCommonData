@@ -5350,7 +5350,16 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               sa.type
        FROM dots.SeqVariation sva, dots.SeqVariation svb, SnpAttributes sa,
             dots.Transcript, dots.GeneFeature gf, dots.TranslatedAaFeature taf
-       WHERE sa.dataset not in ('pfal3D7_SNP_Broad_gff_RSRC','Broad SNPs','Sanger falciparum SNPs', 'pfal3D7_SNP_sanger_ItGhana_gff_RSRC', 'Winzeler Array - Plasmodium Genetic Variation','pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC','X.Su SNPs','Pf_XSuSnps_RSRC','Sanger reichenowi SNPs','pfal3D7_SNP_sanger_PReichenowi_gff_RSRC')
+       WHERE sa.dataset not in ('pfal3D7_SNP_Broad_gff_RSRC',
+                                'Broad SNPs',
+                                'Sanger falciparum SNPs', 
+                                'pfal3D7_SNP_sanger_ItGhana_gff_RSRC', 
+                                'Winzeler Array - Plasmodium Genetic Variation',
+                                'pfal3D7_SNP_Winzeler_Genetic_Variation_Array_gff_RSRC',
+                                'X.Su SNPs',
+                                'pfal3D7_SNP_XSu_gff_RSRC',
+                                'Sanger reichenowi SNPs',
+                                'pfal3D7_SNP_sanger_PReichenowi_gff_RSRC')
          AND sva.parent_id = sa.na_feature_id
          AND sva.parent_id = svb.parent_id
          AND sva.strain  < svb.strain
