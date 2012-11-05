@@ -86,6 +86,63 @@ GRANT insert, select, update, delete ON apidb.SequenceDetail TO gus_w;
 GRANT select ON apidb.SequenceDetail TO gus_r;
 
 ------------------------------------------------------------------------------
+
+-- for OrthoMCL
+create table apidb.GroupDetail (
+      SOURCE_ID VARCHAR2(50 BYTE),
+      PROJECT_ID VARCHAR2(50 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
+      ROW_COUNT NUMBER,
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
+);
+
+-- CREATE INDEX apidb.groupdtl_idx01 ON apidb.GroupDetail(source_id, project_id, field_name);
+
+CREATE TRIGGER apidb.GrpDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.GroupDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
+
+GRANT insert, select, update, delete ON apidb.GroupDetail TO gus_w;
+GRANT select ON apidb.GroupDetail TO gus_r;
+
+------------------------------------------------------------------------------
+-- WDK-record-type-agnostic text-searchable table
+create table apidb.WdkRecordTable (
+      RECORD_TYPE VARCHAR2(20),
+      SOURCE_ID VARCHAR2(100 BYTE),
+      PROJECT_ID VARCHAR2(50 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
+      ROW_COUNT NUMBER,
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
+);
+
+CREATE INDEX apidb.wdkrectab_idx01 ON apidb.WdkRecordTable(record_type, source_id, project_id, field_name) tablespace indx;
+CREATE INDEX apidb.wdkrectab_idx02 ON apidb.WdkRecordTable(record_type, field_name, source_id) tablespace indx;
+
+CREATE INDEX apidb.wrt_text_ix on apidb.WdkRecordTable(content)
+indextype is ctxsys.context
+parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
+
+CREATE TRIGGER apidb.WdkRecTab_md_tg
+BEFORE UPDATE OR INSERT ON apidb.WdkRecordTable
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
+
+GRANT insert, select, update, delete ON apidb.WdkRecordTable TO gus_w;
+GRANT select ON apidb.WdkRecordTable TO gus_r;
+
+------------------------------------------------------------------------------
 -- GeneGff (formerly GeneTable) holds data used for the GFF download
 
 CREATE TABLE apidb.GeneGff (
