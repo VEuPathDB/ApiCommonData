@@ -49,7 +49,20 @@ sub getArgsDeclaration {
      constraintFunc=> undef,
      reqd  => 1,
      isList => 0
-         })
+         }),
+     stringArg({name => 'seqExtDbName',
+       descr => 'External database where sequences can be found',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      }),
+     stringArg({name => 'seqExtDbRlsVer',
+       descr => 'Version of external database where sequences can be found',
+       constraintFunc=> undef,
+       reqd  => 1,
+       isList => 0
+      })
+
     ];
 
   return $argsDeclaration;
@@ -135,6 +148,8 @@ sub run {
   my $gff3ExtDbReleaseId = $self->getExtDbRlsId($self->getArg('gff3DbName'),
              $self->getArg('gff3DbVer')) || $self->error("Can't find external_database_release_id for gff3 data source");
 
+  my $genomeDbRlsId = $self->getExtDbRlsId($self->getArg('seqExtDbName'),$self->getArg('seqExtDbRlsVer')) || $self->error("Can't find external_database_release_id for genome sequence");
+ 
   my $processed;
 
   my $gffIO = Bio::Tools::GFF->new(-file => $self->getArg('file'),
@@ -142,7 +157,7 @@ sub run {
                                   );
 
   while (my $feature = $gffIO->next_feature()) {
-     $self->insertGFF3($feature, $gff3ExtDbReleaseId);
+     $self->insertGFF3($feature, $gff3ExtDbReleaseId, $genomeDbRlsId);
      $processed++;
      $self->undefPointerCache();
   }
@@ -153,12 +168,13 @@ sub run {
 
 
 sub getNaSequencefromSourceId {
-   my ($self, $seqid) = @_;
+   my ($self, $seqid, $genomeDbRlsId) = @_;
    if(my $found = $self->{nasequences}->{$seqid}) {
      return $found;
    }
    
-   my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid});
+   my $naSeq = GUS::Model::DoTS::NASequence->new({source_id => $seqid,
+                                                  external_database_release_id => $genomeDbRlsId});
    unless ($naSeq->retrieveFromDB) {
       $self->error("Can't find na_sequence_id for gff3 sequence $seqid");
    } 
@@ -224,10 +240,10 @@ sub createGff3AttrObj{
 }
 
 sub insertGFF3{
-  my ($self,$feature, $gff3ExtDbReleaseId) = @_;
+  my ($self,$feature, $gff3ExtDbReleaseId, $genomeDbRlsId) = @_;
 
   my $seqid = $feature->seq_id;
-  my $naSeq = $self->getNaSequencefromSourceId($seqid);
+  my $naSeq = $self->getNaSequencefromSourceId($seqid, $genomeDbRlsId);
   die "can't find na_sequence_id for '$seqid'" unless $naSeq;
   my $soterm = $feature->primary_tag;
   my $sotermObj = $self->getSOfromSoTerm($soterm);
