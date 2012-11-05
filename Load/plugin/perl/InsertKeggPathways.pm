@@ -273,12 +273,12 @@ sub loadPathway {
         #source node
         my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
         my $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
-        my $srcNodeId = $self->loadNetworkNode($srcNode, $nodeGraphics);
+        my $srcNodeId = $self->loadNetworkNode($pathwayName, $srcNode, $nodeGraphics);
 
         #associated node
         my $asscNode = $pathwayObj->{nodes}->{($reaction->{associated_node})}; 
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
-        my $asscNodeId = $self->loadNetworkNode($asscNode, $nodeGraphics);
+        my $asscNodeId = $self->loadNetworkNode($pathwayName, $asscNode, $nodeGraphics);
 
         next unless ($srcNodeId  && $asscNodeId );  
         #node relationship
@@ -328,7 +328,7 @@ sub loadPathway {
 
 
 sub loadNetworkNode {
-  my($self,$node,$nodeGraphics) = @_;
+  my($self,$pathway, $node,$nodeGraphics) = @_;
 
   if ($node->{node_name}) {
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : 3;
@@ -349,19 +349,19 @@ sub loadNetworkNode {
     my $projectId  = $self->getDb()->getDefaultProjectId();
     my $algInvId   = $self->getAlgInvocation()->getId();
  
-    my $sqlCheck = "Select pathway_node_id from ApiDB.PathwayNode where pathway_node_id = $nodeId";
-    my $sth        = $dbh->prepare($sqlCheck);
+    my $sqlParentId = "Select pathway_id from ApiDB.Pathway where name = $pathway";
+    my $sth        = $dbh->prepare($sqlParentId);
     $sth->execute();
 
     #if not eixsts already then insert a new record.
-    if (! $sth->fetchrow_array()){
+    if (my @parentId = $sth->fetchrow_array()){
       my $sql        = "Insert into ApiDB.PathwayNode 
-                      (pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
+                      (parent_id, pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
                       row_user_id, row_group_id, row_project_id, row_alg_invocation_id ) values (?,?,?,?,?,?,?,?,?,?,?,?)";
 
       my $sthInsrt        = $dbh->prepare($sql);
 
-      $sthInsrt->execute($nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
+      $sthInsrt->execute($parentId[0], $nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
                          $nodeGraphics->{height}, $nodeGraphics->{width}, $userId, $groupId, $projectId, $algInvId);
 
       if ($self->getArg('commit')) {
