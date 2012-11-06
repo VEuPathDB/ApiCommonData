@@ -195,7 +195,7 @@ sub readKeggFiles {
       }
     }
     $pathwaysObj->setPathwayObj($pathwayObj);
-    print STDOUT Dumper $pathwaysObj;
+    #print STDOUT Dumper $pathwaysObj;
   }
   $self->{"pathwaysCollection"} = $pathwaysObj;
 }
@@ -245,6 +245,7 @@ sub loadPathway {
         $pathway->submit();
         print "Loaded Pathway Record for..$pathwayName\n";
       }
+      my $pathwayId = $pathway->getPathwayId();
       # REVISIT EXT DB NAME ABOVE - IS IT NEEDED ? NETWORK SCHEMA HAS NO EXT DB REFS;
 
 
@@ -273,12 +274,12 @@ sub loadPathway {
         #source node
         my $srcNode = $pathwayObj->{nodes}->{($reaction->{source_node})};
         my $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{source_node})};
-        my $srcNodeId = $self->loadNetworkNode($pathwayName, $srcNode, $nodeGraphics);
+        my $srcNodeId = $self->loadNetworkNode($pathwayId, $srcNode, $nodeGraphics);
 
         #associated node
         my $asscNode = $pathwayObj->{nodes}->{($reaction->{associated_node})}; 
         $nodeGraphics = $pathwayObj->{graphics}->{($reaction->{associated_node})};
-        my $asscNodeId = $self->loadNetworkNode($pathwayName, $asscNode, $nodeGraphics);
+        my $asscNodeId = $self->loadNetworkNode($pathwayId, $asscNode, $nodeGraphics);
 
         next unless ($srcNodeId  && $asscNodeId );  
         #node relationship
@@ -328,13 +329,13 @@ sub loadPathway {
 
 
 sub loadNetworkNode {
-  my($self,$pathway, $node,$nodeGraphics) = @_;
+  my($self,$pathwayId, $node,$nodeGraphics) = @_;
 
   if ($node->{node_name}) {
     my $node_type = ($node->{node_type} eq 'enzyme') ? 1 : ($node->{node_type} eq 'compound') ? 2 : 3;
 
     my $networkNode = GUS::Model::ApiDB::NetworkNode->new({ display_label => $node->{node_name},
-                                                          node_type_id => $node_type });
+                                                            node_type_id => $node_type });
 
     $networkNode->submit() unless $networkNode->retrieveFromDB();
     my $nodeId = $networkNode->getNetworkNodeId();
@@ -342,37 +343,20 @@ sub loadNetworkNode {
     my $nodeShape = ($nodeGraphics->{shape} eq 'round') ? 1 :
                     ($nodeGraphics->{shape} eq 'rectangle') ? 2 : 3;
 
-
-    my $dbh        = $self->getQueryHandle();
-    my $userId     = $self->getDb()->getDefaultUserId();
-    my $groupId    = $self->getDb()->getDefaultGroupId();
-    my $projectId  = $self->getDb()->getDefaultProjectId();
-    my $algInvId   = $self->getAlgInvocation()->getId();
- 
-    my $sqlParentId = "Select pathway_id from ApiDB.Pathway where name = $pathway";
-    my $sth        = $dbh->prepare($sqlParentId);
-    $sth->execute();
-
-    #if not eixsts already then insert a new record.
-    if (my @parentId = $sth->fetchrow_array()){
-      my $sql        = "Insert into ApiDB.PathwayNode 
-                      (parent_id, pathway_node_id, display_label, pathway_node_type_id, glyph_type_id, x, y, height, width,
-                      row_user_id, row_group_id, row_project_id, row_alg_invocation_id ) values (?,?,?,?,?,?,?,?,?,?,?,?)";
-
-      my $sthInsrt        = $dbh->prepare($sql);
-
-      $sthInsrt->execute($parentId[0], $nodeId, $node->{node_name}, $node_type, $nodeShape, $nodeGraphics->{x}, $nodeGraphics->{y},
-                         $nodeGraphics->{height}, $nodeGraphics->{width}, $userId, $groupId, $projectId, $algInvId);
-
-      if ($self->getArg('commit')) {
-        $dbh->commit();
-      } else {
-        $dbh->rollback();
-      }
-      $sthInsrt->finish;
-      $sth->finish();
+    #if a parent Pathway Id is provided only then insert a new record.
+    if ($pathwayId){
+      my $pathwayNode = GUS::Model::ApiDB::PathwayNode->new({ parent_id => $pathwayId,
+                                                              display_label => $node->{node_name},
+                                                              pathway_node_type_id => $node_type,
+                                                              glyph_type_id => $nodeShape,
+                                                              x => $nodeGraphics->{x},
+                                                              y => $nodeGraphics->{y},
+                                                              height => $nodeGraphics->{height},
+                                                              width => $nodeGraphics->{width}
+                                                             });
+      $pathwayNode->submit();
     }
-    return $nodeId; 
+    return $nodeId;
   }
 }
 
