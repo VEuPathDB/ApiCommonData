@@ -27,6 +27,7 @@ use Data::Dumper;
 # (7) add to transcript
 
 #Need to check if codon_start qualifier (reading frame) in Genbank files for CDS is relative to the CDS positions. This code assumes that it is
+# Need extra work if the codonStart value gets from get_tag_values('codon_start') 
 
 sub preprocess {
     my ($bioperlSeq, $plugin) = @_;
@@ -216,19 +217,15 @@ sub traverseSeqFeatures {
 	    my $codonStart = 0;
 	    
 	    ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
+	    $codonStart -= 1 if $codonStart > 0;
+
 	    if($gene->has_tag('selenocysteine')){
 		$gene->remove_tag('selenocysteine');
 		$gene->add_tag_value('selenocysteine','selenocysteine');
 	    }
-	    $codonStart -= 1 if $codonStart > 0;
 
 	    my (@exons, @codingStart, @codingEnd);
 
-	    
-	    my $CDSctr =0;
-
-	    my $prevPhase =0;
-	    
 	    my($codingStart,$codingEnd);
 
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
@@ -243,38 +240,22 @@ sub traverseSeqFeatures {
 		}
 
 		if($subFeature->primary_tag eq 'CDS'){
-		    
-
 		    if($subFeature->location->strand == -1){
 			$codingStart = $subFeature->location->end;
 
 			$codingEnd = $subFeature->location->start;
-
-
+			
+			$codingStart -= $subFeature->frame() if ($subFeature->frame() > 0 );
 		    }else{
 			$codingStart = $subFeature->location->start;
 			
 			$codingEnd = $subFeature->location->end;
 
-			if($CDSctr ==0){
-			    $codingStart += $subFeature->frame();
-			}
+			$codingStart += $subFeature->frame() if ($subFeature->frame() > 0 );
 		    }
-		    
-
 		    
 		    push(@codingStart,$codingStart);
 		    push(@codingEnd,$codingEnd);
-
-
-		    if($subFeature->location->strand == -1){
-			$codingStart = $codingStart + $prevPhase - $subFeature->frame();
-
-			$prevPhase = $subFeature->frame();
-		    }
-
-		    $CDSctr++;
-
 		}
 
 		if ($subFeature->primary_tag eq 'five_prime_utr' || $subFeature->primary_tag eq 'three_prime_utr' || $subFeature->primary_tag eq 'splice_acceptor_site'){
@@ -287,18 +268,11 @@ sub traverseSeqFeatures {
 
 		}
 
-
 	    }
-
-
-	    
-	    
-	    $codingStart[$#codingStart] = $codingStart;
 	    
 	    $codingStart = shift(@codingStart);
 	    $codingEnd = shift(@codingEnd);
 	    foreach my $exon (@exons){
-
 
 		if($codingStart <= $exon->location->end && $codingStart >= $exon->location->start){
 
@@ -307,8 +281,6 @@ sub traverseSeqFeatures {
 
 		    $codingStart = shift(@codingStart);
 		    $codingEnd = shift(@codingEnd);
-
-
 		}
 
 		$transcript->add_SeqFeature($exon);
@@ -340,9 +312,7 @@ sub traverseSeqFeatures {
 		$gene->location->end($transcript->location->end);
 	    }
 
-	    
 	$gene->add_SeqFeature($transcript);
-
 
 	}
     }
