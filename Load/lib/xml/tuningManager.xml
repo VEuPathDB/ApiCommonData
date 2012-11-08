@@ -5370,6 +5370,10 @@ FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
          AND (sa.project_id in ('TriTrypDB','AmoebaDB')
               OR (NVL(sva.allele_percent,100) >= 80
                   AND NVL(svb.allele_percent,100) >= 80))
+         AND nvl(sva.pvalue, 1) < 0.01
+         AND nvl(svb.pvalue, 1) < 0.01
+         AND nvl(sva.coverage, 10) > 5
+         AND nvl(svb.coverage, 10) > 5
          AND gf.source_id = sa.gene_source_id
          AND gf.na_feature_id = transcript.parent_id
          AND transcript.na_feature_id = taf.na_feature_id
