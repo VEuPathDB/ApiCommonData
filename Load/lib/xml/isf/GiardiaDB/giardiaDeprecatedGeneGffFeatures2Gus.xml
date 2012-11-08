@@ -9,7 +9,7 @@
            class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
-    <qualifier name="GenePrediction" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="Note"           ignore="true"/>
     <qualifier name="Pseudogene"     ignore="true"/>
@@ -26,6 +26,8 @@
     <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
     <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
     <qualifier name="GenePrediction" ignore="true"/>
+    <qualifier name="ID" ignore="true"/>
+    <qualifier name="Parent" ignore="true"/>
     <qualifier name="OrderNumber"    column="order_number"/>
   </feature>
 
