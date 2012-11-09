@@ -1,0 +1,106 @@
+#!/usr/bin/perl5.8.0
+
+use strict;
+
+## a script to convert human genome annotation in gencode Gtf format to standard gff3 format
+## which use the tag gene_id in Gtf for the tag ID in gff3
+## usage: perl converter_Gtf2Gff3.pl testing.gtf > testing.gff3
+
+
+my $input = $ARGV[0];
+
+print "##gff-version 3\n";
+
+my ($lineCtr, @elems, @attrs, $preGeneId, $currentGeneId, $currentTransId);
+
+my %transCtr;  ## key is gene_id
+my %notTransCtr; ## key is transcript_id and notTrans feature
+my %gff3Id4Trans; ## key is transcript_id, value is ID for transcript in output GFF3 format
+
+
+# assign a hash to hold the feature abbreviation 
+# the key is feature, the value is the abbrev that will be shown as a part of ID in output GFF3 format
+my %featAbbrev = (
+        transcript => 'mRNA',
+        CDS => 'CDS',
+        UTR => 'UTR',
+        exon => 'exon',
+        start_codon => 'sttc',
+        stop_codon => 'stpc',
+        Selenocysteine => 'slcst'
+);
+
+
+open (IN, $input) || die "can not open input file to read.\n";
+while (<IN>) {
+    $lineCtr++;
+    chomp;
+
+    ## skip the comment line(s)
+    next if ($_ =~ /^\#/); 
+
+    ## grep the gene_id for current line
+    if($_ =~ /\tgene_id \"(\S+)\"\;.* transcript_id \"(\S+)\"\;/) {
+        $currentGeneId = $1;
+        $currentTransId = $2;
+    } else {
+        die "Can not find either gene_id or transcript_id at the line $lineCtr\n";
+    } 
+    #print "\$currentGeneId = $currentGeneId\n";
+
+    @elems = split (/\t/, $_);
+
+    ## print the line of gene if not the same gene
+    if ($currentGeneId ne $preGeneId ) {
+        if ($elems[2] eq 'transcript') {
+            print "$elems[0]\t$elems[1]\tgene\t$elems[3]\t$elems[4]\t$elems[5]\t$elems[6]\t";
+            print "$elems[7]\tID\=$currentGeneId\;\n";
+        } else {
+           die "at the line after $currentGeneId, double check the gene structure\n";
+        }
+    }
+
+    ## print the majority
+    foreach my $i (0..$#elems) {
+        if ($i == 8) {          
+            @attrs = split (/\;/, $elems[8]);
+            foreach my $j (0..$#attrs) {
+                $attrs[$j] =~ s/^\s+//;
+                $attrs[$j] =~ s/\s+$//;
+                if ($attrs[$j]) {
+                    my ($tag, $value) = split (/\s/, $attrs[$j]);
+                    if ($tag && $value) {
+                        $value =~ s/\"//g;
+                        if ($tag eq 'gene_id') {
+                            if ($elems[2] eq 'transcript') {
+                                $transCtr{$currentGeneId}++;
+                                $gff3Id4Trans{$currentTransId} = "$value\:$featAbbrev{$elems[2]}\:$transCtr{$currentGeneId}";
+                                print "ID\=$gff3Id4Trans{$currentTransId}\;";
+                                print "Parent\=$currentGeneId\;";
+                            } else {
+                                $notTransCtr{$currentTransId}{$elems[2]}++;
+                                print "ID\=$value\:$featAbbrev{$elems[2]}\:$notTransCtr{$currentTransId}{$elems[2]}\;";
+                                print "Parent\=$gff3Id4Trans{$currentTransId}\;";
+                            }
+                        }
+                        print "$tag\=$value\;";
+                    }
+                }
+            }
+        }else{
+            print "$elems[$i]\t";   
+        }
+    }
+    print "\n";
+    ## end of print the majority
+
+
+    ## reset values before go to next line
+    $preGeneId = $currentGeneId;
+    $currentGeneId = "";
+    $currentTransId = "";
+    @elems = ();
+    @attrs = ();
+}
+close IN;
+
