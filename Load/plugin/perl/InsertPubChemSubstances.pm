@@ -16,6 +16,7 @@ use GUS::Model::ApiDB::PubChemSubstance;
 
 my %subst;
 my $subst_id;
+my @compoundArr;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -33,6 +34,13 @@ sub getArgsDeclaration {
 	       }),
      stringArg({ name => 'fileName',
 		 descr => 'xml data file',
+		 constraintFunc=> undef,
+		 reqd  => 1,
+		 isList => 0,
+		 mustExist => 0,
+	       }),
+     stringArg({ name => 'compoundIdsFile',
+		 descr => 'file of compound IDs',
 		 constraintFunc=> undef,
 		 reqd  => 1,
 		 isList => 0,
@@ -129,58 +137,99 @@ sub run {
 			   TwigHandlers => $handlers);
 
 
-  my $fileDir = $self->getArg('fileDir');
+  my $fileDir  = $self->getArg('fileDir');
   my $fileName = $self->getArg('fileName');
+  my $cidFile  = $self->getArg('compoundIdsFile');
 
   my $file = $fileDir. "/" . $fileName;
   $twig->parsefile($file);
 
   $self->insertPubChemSubstance();
+  $self->makeCidFile($cidFile) if $cidFile;
+}
 
+# get SIDs of already_loaded PubChem structures
+sub getExistingSids {
+  my ($self) = @_;
+  my %sidHash;
+
+  my $sql = "SELECT distinct substance_id from ApiDB.PubChemSubstance";
+
+  my $dbh = $self->getQueryHandle();
+  my $sth = $dbh->prepareAndExecute($sql);
+
+  while(my $sid = $sth->fetchrow_array()){
+    $sidHash{$sid} = 1;
+  }
+  return \%sidHash;
 }
 
 sub insertPubChemSubstance {
   my $self = shift;
   my $count;
 
+  # get list (as hash) of substance (IDs) that are already in the database
+  my $hashRef=$self->getExistingSids();
+  my %loadedSids = %$hashRef;
+
+
   # process array of hashes (of hashes) for each substance
   my @data = keys(%subst);  # keys of outer hash are substance IDs
   foreach my $sid (@data) {
 
-    my %y = %{$subst{$sid}};
-    my @props = keys(%y);   # keys of inner hash are various properties for each substance
+    # load substance if SID is not in database
+    if ($loadedSids{$sid}) {
+    } else {
 
-    foreach my $p (@props) {
-      if ($p ne 'synonymns') {
+      my %y = %{$subst{$sid}};
+      my @props = keys(%y);   # keys of inner hash are various properties for each substance
 
-	my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-								      property     => $p,
-								      value        => $subst{$sid}{$p}
-								    });
-	# add entry unless it already exists in the table
-	$pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+      foreach my $p (@props) {
+	if ($p ne 'synonymns') {
 
-      } else {
-	my @syns = @{ $subst{$sid}{synonymns} };
-	foreach my $s (@syns) {
-	  # skip KEGG_ID, as it is repeated as a synonym in the XML file
-	  # print "$sid, synonymn, $s \n" if ($s ne $subst{$sid}{KEGG});
-	  if ($s ne $subst{$sid}{KEGG}) {
-	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
-									  property     => $p,
-									  value        => $s
-									});
-	    # add entry unless it already exists in the table
-	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
+									property     => $p,
+									value        => $subst{$sid}{$p}
+								      });
+	  # add entry unless it already exists in the table
+	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+
+	} else {
+	  my @syns = @{ $subst{$sid}{synonymns} };
+	  foreach my $s (@syns) {
+	    # skip KEGG_ID, as it is repeated as a synonym in the XML file
+	    # print "$sid, synonymn, $s \n" if ($s ne $subst{$sid}{KEGG});
+	    if ($s ne $subst{$sid}{KEGG}) {
+	      my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
+									    property     => $p,
+									    value        => $s
+									  });
+	      # add entry unless it already exists in the table
+	      $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+	    }
 	  }
 	}
       }
-    }
-    $count++;
-    $self->undefPointerCache() if $count % 100 == 0;
+      $count++;
+      $self->undefPointerCache() if $count % 100 == 0;
 
-    $self->log("Processed entries for $count PubChem Substance(s).");
+      $self->log("Processed entries for $count PubChem Substance(s).");
+    }
   }
+
+}
+
+
+# make file of PubChem compound IDs (CIDs)
+sub makeCidFile {
+  my ($self, $file) = @_;
+  my @cidArr;
+
+  open(FILE,$file);
+  foreach my $c (@compoundArr) {
+    print $STDERR "$c\n";
+  }
+  close(FILE);
 
 }
 
@@ -223,6 +272,8 @@ sub get_CID {
 
   foreach my $cid (@cidArr) {
   $subst{$subst_id}{CID} = $cid->text;
+
+  push (@compoundArr, $cid->text);
   }
 }
 
