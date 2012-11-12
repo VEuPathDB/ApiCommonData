@@ -179,6 +179,7 @@ sub insertPubChemSubstance {
 
     # load substance if SID is not in database
     if ($loadedSids{$sid}) {
+      $self->log("Ignoring SID $sid; it is already present in ApiDB.PubChemSubstance.");
     } else {
 
       my %y = %{$subst{$sid}};
@@ -225,9 +226,9 @@ sub makeCidFile {
   my ($self, $file) = @_;
   my @cidArr;
 
-  open(FILE,$file);
+  open(FILE, "> $file");
   foreach my $c (@compoundArr) {
-    print $STDERR "$c\n";
+    print FILE "$c\n";
   }
   close(FILE);
 
