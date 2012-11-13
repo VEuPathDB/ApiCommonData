@@ -136,34 +136,63 @@ sub run {
 }
 
 
+# get CIDs of already_loaded PubChem compounds
+sub getExistingCids {
+  my ($self) = @_;
+  my %cidHash;
+
+  my $sql = "SELECT distinct compound_id from ApiDB.PubChemCompound";
+
+  my $dbh = $self->getQueryHandle();
+  my $sth = $dbh->prepareAndExecute($sql);
+
+  while(my $cid = $sth->fetchrow_array()){
+    $cidHash{$cid} = 1;
+  }
+  return \%cidHash;
+}
+
+
+
 sub insertPubChemCompound {
   my $self = shift;
   my $count;
 
+  # get list (as hash) of compound (IDs) that are already in the database
+  my $hashRef=$self->getExistingCids();
+  my %loadedCids = %$hashRef;
+
+
   my @data = keys(%cmpd);  # keys of outer hash are compound IDs
   foreach my $cid (@data) {
 
-    my %y = %{$cmpd{$cid}};
-    my @props = keys(%y);   # keys are inner various properties for each compound
+    # load compound if CID is not in database
+    if ($loadedCids{$cid}) {
+      $self->log("Ignoring CID $cid; it is already present in ApiDB.PubChemCompound.");
+    } else {
 
-    foreach my $p (@props) {
-      my ($property, $type) = split(/\|type\=/, $p);
+      my %y = %{$cmpd{$cid}};
+      my @props = keys(%y);   # keys are inner various properties for each compound
 
-      # print "$cid, $p, " . $cmpd{$cid}{$p} . " \n";
+      foreach my $p (@props) {
+	my ($property, $type) = split(/\|type\=/, $p);
 
-      my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-								  property    => $property,
-								  type        => $type,
-								  value       => $cmpd{$cid}{$p}
-								});
+	# print "$cid, $p, " . $cmpd{$cid}{$p} . " \n";
+
+	my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
+								    property    => $property,
+								    type        => $type,
+								    value       => $cmpd{$cid}{$p}
+								  });
 	$pubChemCmpd->submit();
+      }
+
+      $count++;
+      $self->undefPointerCache() if $count % 100 == 0;
+
+      $self->log("Inserted entries for $count PubChem Compounds.");
+
     }
-
-    $count++;
-    $self->undefPointerCache() if $count % 100 == 0;
-
-    $self->log("Inserted entries for $count PubChem Compounds.");
-
   }
 
 }
