@@ -3,7 +3,7 @@ CREATE TABLE apidb.PubChemCompound (
  compound_id             NUMBER(10) NOT NULL,
  property                VARCHAR2(20) NOT NULL,
  type                    VARCHAR2(20),
- value                   VARCHAR2(100) NOT NULL,
+ value                   VARCHAR2(2000) NOT NULL,
  MODIFICATION_DATE       DATE,
  USER_READ               NUMBER(1),
  USER_WRITE              NUMBER(1),
