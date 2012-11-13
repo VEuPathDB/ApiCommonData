@@ -58,15 +58,15 @@ sub getArgsDeclaration {
 sub getDocumentation {
 
   my $description = <<DESCR;
-Plugin to load PubChem Substances out of a single XML file, into ApiDB.PubChemSubstance
+Plugin to load PubChem Substances out of a single XML file, into ApiDB.PubChemSubstance, and to create a file of PubChem compounds IDs (that were in the XML file)
 DESCR
 
   my $purpose = <<PURPOSE;
-Plugin to load PubChem Substances
+Plugin to load PubChem Substances, and make a PubChem compound ID file
 PURPOSE
 
   my $purposeBrief = <<PURPOSEBRIEF;
-Plugin to load PubChem Substances
+Plugin to load PubChem Substances, and make a PubChem compound ID file
 PURPOSEBRIEF
 
   my $notes = <<NOTES;
