@@ -61,8 +61,7 @@ GRANT select ON apidb.IsolateDetail TO gus_r;
 ------------------------------------------------------------------------------
 
 create table apidb.SequenceDetail (
-      SOURCE_ID VARCHAR2(50 BYTE),
-      PROJECT_ID VARCHAR2(50 BYTE),
+      FULL_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),
       ROW_COUNT NUMBER,
