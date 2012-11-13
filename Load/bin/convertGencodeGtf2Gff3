@@ -52,12 +52,9 @@ while (<IN>) {
 
     ## print the line of gene if not the same gene
     if ($currentGeneId ne $preGeneId ) {
-        if ($elems[2] eq 'transcript') {
-            print "$elems[0]\t$elems[1]\tgene\t$elems[3]\t$elems[4]\t$elems[5]\t$elems[6]\t";
-            print "$elems[7]\tID\=$currentGeneId\;\n";
-        } else {
-           die "at the line after $currentGeneId, double check the gene structure\n";
-        }
+        if ($elems[2] ne 'gene') {
+            print STDERR "### WARNING: double check the line $lineCtr, the gene has not been placed by order\n";
+        } 
     }
 
     ## print the majority
@@ -77,6 +74,10 @@ while (<IN>) {
                                 $gff3Id4Trans{$currentTransId} = "$value\:$featAbbrev{$elems[2]}\:$transCtr{$currentGeneId}";
                                 print "ID\=$gff3Id4Trans{$currentTransId}\;";
                                 print "Parent\=$currentGeneId\;";
+
+                            } elsif ($elems[2] eq 'gene') {
+                                print "ID\=$currentGeneId\;";
+
                             } else {
                                 $notTransCtr{$currentTransId}{$elems[2]}++;
                                 print "ID\=$value\:$featAbbrev{$elems[2]}\:$notTransCtr{$currentTransId}{$elems[2]}\;";
