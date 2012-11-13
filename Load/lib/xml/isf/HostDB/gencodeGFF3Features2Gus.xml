@@ -1,0 +1,215 @@
+<mapping>
+
+  <bioperlSeqPreprocessor class="ApiCommonData::Load::gencodeGFF2BioperlTree"/>
+
+  <gusSkeletonMaker class="ApiCommonData::Load::GusSkeletonMaker"
+                    method="makeGeneSkeleton"/>
+
+  <specialCaseQualifierHandler name="api" 
+           class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
+
+  <feature name="coding_gene" so="protein_coding">
+    <validator name="validateGene"      handler="api" method="validateGene"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="note"           ignore="true"/>
+    <qualifier name="ECNumber"       ignore="true"/>
+    <qualifier name="Aliases"        ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+    <qualifier name="pseudo"    handler="api" method="setPseudo"/>
+  </feature>
+
+  <feature name="transcript" so="transcript">
+  </feature>
+
+  <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
+    <qualifier name="reading_frame"  column="reading_frame"/>
+    <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
+    <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
+    <qualifier name="GenePrediction" ignore="true"/>
+    <qualifier name="ID" ignore="true"/>
+    <qualifier name="Parent" ignore="true"/>
+    <qualifier name="OrderNumber"    column="order_number"/>
+  </feature>
+
+  <feature name="stop_codon" ignore="true">
+  </feature>
+
+  <feature name="start_codon" ignore="true">
+  </feature>
+
+  <feature name="UTR" table="DoTS::UTRFeature" so="">
+    <qualifier name="ID" column="source_id"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+
+  <feature name="rRNA_gene" so="rRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+
+  <feature name="tRNA_gene" so="tRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+    <qualifier name="pseudo"       ignore="true"/>
+  </feature>
+ 
+  <feature name="miRNA_gene" so="miRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+ 
+  <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+ 
+  <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+ 
+  <feature name="ncRNA_gene" so="ncRNA_encoding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+ 
+  <feature name="misc_RNA_gene" so="non_protein_coding">
+    <qualifier name="ID"        handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="Parent"   ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+  </feature>
+ 
+</mapping>
