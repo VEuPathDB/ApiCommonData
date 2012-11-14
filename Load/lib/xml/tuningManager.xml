@@ -4111,48 +4111,48 @@ select 'DeRisi 3D7 Smoothed' as profile_name,
        'expression' as type,
        '' as attribution
 from dual
-UNION
-select 'Profiles of transcriptional variation in Plasmodium falciparum 3d7a' as profile_name,
-       'CortesTransVar::TimeSeries' as module,
-       'Transcriptional Variation of P. fal parasite lines' as display_name,
-       'To characterize transcriptional variation in P. falciparum, and to identify genes under clonally variant gene expression, the transcriptome of 21 P. falciparum lines was characterized over a 43 Hour time course, and estimated ages were computed for each timepoint using a statistical-likelihood method. The analysis was based on four independent comparisons, with all parasite lines within a comparison sharing a clonal origin. a fifth comparison including genetically-different parasite lines was also performed. 3D7-A was used as a refenerce for these comparisons.<br>
-            The P. falciparum strains used were: <br>
-            Reference   : 3D7-A<br>
-            3D7-derived : 10G; 1,2B; 3D7-A; 3D7-B;  W41<br>
-            7G8-derived : 7G8; KG7; LD10; WE5; ZF8<br>
-            D10-derived : D10; E3; F1; F2; G4<br>
-            HB3-derived : AB10; AB6; BB8; BC4; HB3A; HB3B<br>
-            Parental    : 7G8; D10; HB3A' as description,
-       'Hours Post-Infection' as x_axis,
-       '(exprn_val) Expression Values - log(ratio);<br> (percentile) Ranking percentile of intensity, relative to all other genes' as y_axis,
-       21 as order_num,
-       'TRUE' as mainOpen,
-       'FALSE' as dataOpen,
-       'exprn_val_3D7_derived,percentile_3D7_derived,exprn_val_7G8_derived,percentile_7G8_derived,exprn_val_D10_derived,percentile_D10_derived,exprn_val_HB3_derived,percentile_HB3_derived,exprn_val_Reference_3D7-A,percentile_Reference_3D7-A,exprn_val_Parental,percentile_Parental' as visible_parts,
-       '' as dataTable,
-       'expression' as type,
-       '' as attribution
-from dual
-UNION
-select 'Cortes CGH Profiles' as profile_name,
-       'CortesTransVar::CrossStrain' as module,
-       'Comparative Genome Hybridization (CGH) of P. fal parasite lines' as display_name,
-       'Comparative Genome Hybridization analysis based on gDNA from 20 P. falciparum lines were hybridized against a reference pool (gDNA from3D7-A parasite line)<br>
-        The 20 <i>P. falciparum strains, (grouped by clonal origin) were: <br>
-            3D7-derived : 10G; 1,2B; 3D7-B;  W41<br>
-            7G8 derived : 7G8; KG7; LD10; WE5; ZF8<br>
-            D10 derived : D10; E3; F1; F2; G4<br>
-            HB3 derived : AB10; AB6; BB8; BC4; HB3A; HB3B' as description,
-       'Hours Post-Infection' as x_axis,
-       '(exprn_val) Expression Values - log(ratio);<br> (percentile) Ranking percentile of intensity, relative to all other genes' as y_axis,
-       22 as order_num,
-       'TRUE' as mainOpen,
-       'FALSE' as dataOpen,
-       'exprn_val,percentile' as visible_parts,
-       '' as dataTable,
-       'expression' as type,
-       '' as attribution
-from dual
+--UNION
+--select 'Profiles of transcriptional variation in Plasmodium falciparum 3d7a' as profile_name,
+--       'CortesTransVar::TimeSeries' as module,
+--       'Transcriptional Variation of P. fal parasite lines' as display_name,
+--       'To characterize transcriptional variation in P. falciparum, and to identify genes under clonally variant gene expression, the transcriptome of 21 P. falciparum lines was characterized over a 43 Hour time course, and estimated ages were computed for each timepoint using a statistical-likelihood method. The analysis was based on four independent comparisons, with all parasite lines within a comparison sharing a clonal origin. a fifth comparison including genetically-different parasite lines was also performed. 3D7-A was used as a refenerce for these comparisons.<br>
+--            The P. falciparum strains used were: <br>
+--            Reference   : 3D7-A<br>
+--            3D7-derived : 10G; 1,2B; 3D7-A; 3D7-B;  W41<br>
+--            7G8-derived : 7G8; KG7; LD10; WE5; ZF8<br>
+--            D10-derived : D10; E3; F1; F2; G4<br>
+--            HB3-derived : AB10; AB6; BB8; BC4; HB3A; HB3B<br>
+--            Parental    : 7G8; D10; HB3A' as description,
+--       'Hours Post-Infection' as x_axis,
+--       '(exprn_val) Expression Values - log(ratio);<br> (percentile) Ranking percentile of intensity, relative to all other genes' as y_axis,
+--       21 as order_num,
+--       'TRUE' as mainOpen,
+--       'FALSE' as dataOpen,
+--       'exprn_val_3D7_derived,percentile_3D7_derived,exprn_val_7G8_derived,percentile_7G8_derived,exprn_val_D10_derived,percentile_D10_derived,exprn_val_HB3_derived,percentile_HB3_derived,exprn_val_Reference_3D7-A,percentile_Reference_3D7-A,exprn_val_Parental,percentile_Parental' as visible_parts,
+--       '' as dataTable,
+--       'expression' as type,
+--       '' as attribution
+--from dual
+--UNION
+--select 'Cortes CGH Profiles' as profile_name,
+--       'CortesTransVar::CrossStrain' as module,
+--       'Comparative Genome Hybridization (CGH) of P. fal parasite lines' as display_name,
+--       'Comparative Genome Hybridization analysis based on gDNA from 20 P. falciparum lines were hybridized against a reference pool (gDNA from3D7-A parasite line)<br>
+--        The 20 <i>P. falciparum strains, (grouped by clonal origin) were: <br>
+--            3D7-derived : 10G; 1,2B; 3D7-B;  W41<br>
+--            7G8 derived : 7G8; KG7; LD10; WE5; ZF8<br>
+--            D10 derived : D10; E3; F1; F2; G4<br>
+--            HB3 derived : AB10; AB6; BB8; BC4; HB3A; HB3B' as description,
+--       'Hours Post-Infection' as x_axis,
+--       '(exprn_val) Expression Values - log(ratio);<br> (percentile) Ranking percentile of intensity, relative to all other genes' as y_axis,
+--       22 as order_num,
+--       'TRUE' as mainOpen,
+--       'FALSE' as dataOpen,
+--       'exprn_val,percentile' as visible_parts,
+--       '' as dataTable,
+--       'expression' as type,
+--       '' as attribution
+--from dual
 UNION
 
 -- AmoebaDB --
