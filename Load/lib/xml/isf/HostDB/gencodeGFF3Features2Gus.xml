@@ -32,6 +32,30 @@
     <qualifier name="pseudo"    handler="api" method="setPseudo"/>
   </feature>
 
+  <feature name="pseudo_gene" so="pseudogene">
+    <validator name="validateGene"      handler="api" method="validateGene"/>
+    <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
+    <qualifier name="note"           ignore="true"/>
+    <qualifier name="ECNumber"       ignore="true"/>
+    <qualifier name="Aliases"        ignore="true"/>
+    <qualifier name="gene_id"       ignore="true"/>
+    <qualifier name="transcript_id"       ignore="true"/>
+    <qualifier name="gene_type"       ignore="true"/>
+    <qualifier name="gene_status"       ignore="true"/>
+    <qualifier name="gene_name"       ignore="true"/>
+    <qualifier name="transcript_type"       ignore="true"/>
+    <qualifier name="transcript_status"       ignore="true"/>
+    <qualifier name="transcript_name"       ignore="true"/>
+    <qualifier name="level"       ignore="true"/>
+    <qualifier name="ont"       ignore="true"/>
+    <qualifier name="havana_gene"       ignore="true"/>
+    <qualifier name="havana_transcript"       ignore="true"/>
+    <qualifier name="ccdsid"       ignore="true"/>
+    <qualifier name="tag"       ignore="true"/>
+    <qualifier name="pseudo"    handler="api" method="setPseudo"/>
+  </feature>
+
   <feature name="transcript" so="transcript">
   </feature>
 
@@ -109,7 +133,7 @@
     <qualifier name="havana_transcript"       ignore="true"/>
     <qualifier name="ccdsid"       ignore="true"/>
     <qualifier name="tag"       ignore="true"/>
-    <qualifier name="pseudo"       ignore="true"/>
+    <qualifier name="pseudo"       handler="api" method="setPseudo"/>
   </feature>
  
   <feature name="miRNA_gene" so="miRNA_encoding">
