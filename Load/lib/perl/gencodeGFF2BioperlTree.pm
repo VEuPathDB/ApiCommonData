@@ -42,9 +42,34 @@ sub preprocess {
         # print STDERR "Feature type is: $type\n";
         
         if($type eq 'pseudogene'){
-            $bioperlFeatureTree->primary_tag('gene');
+            $bioperlFeatureTree->primary_tag('pseudo_gene');
             $bioperlFeatureTree->add_tag_value("pseudo","");
-            $type = "gene";
+            if ( !($bioperlFeatureTree->get_SeqFeatures)) {
+                my $geneLoc = $bioperlFeatureTree->location();
+                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+                my @exonLocs = $geneLoc->each_Location();
+                foreach my $exonLoc (@exonLocs) {
+                    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                    $transcript->add_SeqFeature($exon);
+                }
+                $bioperlFeatureTree->add_SeqFeature($transcript);
+            }
+            $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+        }
+
+        if($type eq 'tRNA'){
+            $bioperlFeatureTree->primary_tag('tRNA_gene');
+            if ( !($bioperlFeatureTree->get_SeqFeatures )) {
+                my $geneLoc = $bioperlFeatureTree->location();
+                my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
+                my @exonLocs = $geneLoc->each_Location();
+                foreach my $exonLoc (@exonLocs) {
+                    my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
+                    $transcript->add_SeqFeature($exon);
+                }
+                $bioperlFeatureTree->add_SeqFeature($transcript);
+            }
+            $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
         }
 
         if($type eq 'repeat_region'){
