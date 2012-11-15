@@ -248,7 +248,18 @@ sub traverseSeqFeatures {
 
                 $UTR = &copyQualifiers($subFeature,$UTR);
 
+                my($utrID) = $subFeature->get_tag_values('ID') if $subFeature->has_tag('ID');
+                my($utrParent) = $subFeature->get_tag_values('Parent') if $subFeature->has_tag('Parent');
+                $UTR->add_tag_value('ID',$utrID) if $utrID;
+                $UTR->add_tag_value('Parent',$utrParent) if $utrParent;
+
                 push(@UTRs,$UTR);
+
+                ### also add to exon with CodingStart='' and CodingEnd=''
+                $UTR->add_tag_value('CodingStart', '');
+                $UTR->add_tag_value('CodingEnd', '');
+                $UTR->primary_tag('exon');
+                push (@exons,$UTR);
             }
         }
 
@@ -262,11 +273,7 @@ sub traverseSeqFeatures {
 
                 $codingStart = shift(@codingStart);
                 $codingEnd = shift(@codingEnd);
-            } else {
-                ## for the exon that is UTR
-                $exon->add_tag_value('CodingStart','');
-                $exon->add_tag_value('CodingEnd','');
-            }
+            } 
             $transcript->add_SeqFeature($exon);
         }           
         
