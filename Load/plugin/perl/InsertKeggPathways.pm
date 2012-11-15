@@ -71,7 +71,7 @@ sub getDocumentation {
 
   my $purpose =  "Inserts KEGG pathways from a set of KGML files into Network schema.";
 
-  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']];
+  my $tablesAffected = [['ApiDB.NetworkContext','One row for each new context. Added if not already existing'],['ApiDB.Network', 'One Row to identify each pathway'],['ApiDB.NetworkNode', 'one row per for each Coumpound or EC Number in the KGML files'],['ApiDB.NetworkRelationship', 'One row per association bewteen nodes (Compounds/EC Numbers)'], ['ApiDB.NetworkRelationshipType','One row per type of association (if not already existing)'], ['ApiDB.NetworkRelContext','One row per association bewteen nodes (Compounds/EC Numbers) indicating direction of relationship'], ['ApiDB.NetworkRelContextLink','One row per association between a relationship and a network'],['ApiDB.Pathway', 'One Row to identify each pathway'], ['ApiDB.PathwayImage', 'One Row to store a binary image of the pathway'], ['ApiDB.PathwayNode', 'One row to store network and graphical inforamtion about a network node']];
 
   my $tablesDependedOn = [['Core.TableInfo',  'To store a reference to tables that have Node records (ex. EC Numbers, Coumpound IDs']];
 
@@ -129,7 +129,7 @@ sub run {
   my $pathwayFormat = $self->getArg('format');
   $self->readKeggFiles(\@pathwayFiles) if $pathwayFormat eq 'KEGG';
 
-  $self->loadPathway();
+  $self->loadPathway($pathwayFormat);
 }
 
 
@@ -203,11 +203,11 @@ sub readKeggFiles {
 
 
 sub loadPathway {
-  my ($self, $format, $debug) = @_;
+  my ($self, $format) = @_;
                     
 
-  my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => 'Metabolic Pathways - $format',
-                                                                description => 'Metabolic Pathways and Associations - $format' });
+  my $networkContext = GUS::Model::ApiDB::NetworkContext->new({ name => "Metabolic Pathways - $format",
+                                                                description => "Metabolic Pathways and Associations - $format" });
   if (! $networkContext->retrieveFromDB()) {
     $networkContext->submit();
     print  "Loaded Network context...\n"
@@ -306,6 +306,7 @@ sub loadPathway {
         #Link relationship to the Network 
         my $relContextLink = GUS::Model::ApiDB::NetworkRelContextLink->new({ network_id => $networkId,
                                                                             network_rel_context_id => $relContextId });
+        $relContextLink->submit() unless $relContextLink->retrieveFromDB();
 
         $self->undefPointerCache();
       }# close relationships
@@ -417,6 +418,7 @@ sub undoTables {
 	  'ApiDB.NetworkRelationship',
 	  'ApiDB.NetworkRelationshipType',
 	  'ApiDB.NetworkRelContext',
+	  'ApiDB.NetworkRelContextLink',
 	  'ApiDB.Pathway',
 	  'ApiDB.PathwayNode',
 	  'ApiDB.PathwayImage',
