@@ -179,14 +179,16 @@ sub traverseSeqFeatures {
         my($geneID) = $geneFeature->get_tag_values('ID');
 
         if($transcriptCount > 1){
-            $geneID = $geneID."\.$ctr";
+            $geneID = $geneID."\_$ctr";
             $ctr++;
         }
 
         #print "ID:$geneID\n";
         $gene->add_tag_value("ID",$geneID);
-        $gene = &copyQualifiers($geneFeature, $gene);
+        #$gene = &copyQualifiers($geneFeature, $gene);
         $gene = &copyQualifiers($RNA,$gene);
+
+        $gene->add_tag_value("pseudo","") if ($type eq 'pseudo');
 
         my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
         #$transcript = &copyQualifiers($RNA,$transcript);
@@ -260,6 +262,10 @@ sub traverseSeqFeatures {
 
                 $codingStart = shift(@codingStart);
                 $codingEnd = shift(@codingEnd);
+            } else {
+                ## for the exon that is UTR
+                $exon->add_tag_value('CodingStart','');
+                $exon->add_tag_value('CodingEnd','');
             }
             $transcript->add_SeqFeature($exon);
         }           
@@ -368,7 +374,7 @@ sub getTypeOfGene {
             if ($transType eq 'protein_coding') {
                 $returnType = "coding";
             } else {
-                $returnType = "tRNA";
+                $returnType = "pseudo";
             }
         } elsif ($geneType =~ /3prime_overlapping_ncrna/ ) {
             $returnType = "ncRNA";
