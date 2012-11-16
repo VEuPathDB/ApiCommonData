@@ -1,5 +1,5 @@
 CREATE TABLE apidb.Dataset (
- data_set_id               NUMBER(12) NOT NULL,
+ dataset_id                   NUMBER(12) NOT NULL,
  name                         VARCHAR2(120) NOT NULL,
  version                      VARCHAR2(30) NOT NULL,
  is_species_scope             NUMBER(1),
@@ -20,14 +20,14 @@ CREATE TABLE apidb.Dataset (
 );
 
 ALTER TABLE apidb.Dataset
-ADD CONSTRAINT data_set_pk PRIMARY KEY (data_set_id);
+ADD CONSTRAINT dataset_pk PRIMARY KEY (dataset_id);
 
 ALTER TABLE apidb.Dataset
-ADD CONSTRAINT data_set_uniq
+ADD CONSTRAINT dataset_uniq
 UNIQUE (name, row_project_id);
 
 ALTER TABLE apidb.Dataset
-ADD CONSTRAINT data_set_fk1 FOREIGN KEY (taxon_id)
+ADD CONSTRAINT dataset_fk1 FOREIGN KEY (taxon_id)
 REFERENCES sres.taxon (taxon_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.Dataset TO gus_w;
@@ -42,7 +42,7 @@ INSERT INTO core.TableInfo
      other_read, other_write, row_user_id, row_group_id, row_project_id, 
      row_alg_invocation_id)
 SELECT core.tableinfo_sq.nextval, 'Dataset',
-       'Standard', 'data_set_id',
+       'Standard', 'dataset_id',
        d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
        p.project_id, 0
 FROM dual,
