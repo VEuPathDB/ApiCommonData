@@ -185,7 +185,7 @@ SQL
   while (my ($nickname, $svn, $family, $lastCheck, $lastUpdate) = $stmt->fetchrow_array()) {
     $instanceCount++;
 
-    print "\n---family--- ---instance_nickname----- ---subversion------------ -- last OK --------------------- -- out-of-date since ---------\n"
+    print "\n---------family--------- ---instance_nickname----- ---subversion------------ -- last OK --------------------- -- out-of-date since ---------\n"
       if !$printedSomething;
 
     $printedSomething = 1;
@@ -201,7 +201,7 @@ SQL
 #      $lastFamily = $family;
 #    }
 
-    printf "%-12s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
+    printf "%-24s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
   }
   $stmt->finish();
 

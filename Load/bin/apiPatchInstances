@@ -30,7 +30,7 @@ foreach my $blacklistedInstance (split(/,/, $skipInstances)) {
 $login = "apidb" if !$login;
 
 my $instanceCount = 0;
-foreach my $reportLine (`tuningMgrMgr list -password $tuningMgrMgrPwd |tail -n +3|cut -c14-65`) {
+foreach my $reportLine (`tuningMgrMgr list -password $tuningMgrMgrPwd |tail -n +3|cut -c26-77`) {
   if ($reportLine =~ /^(\S*)\s.*$svn/) {
     my $instance = $1;
     next if $blacklist{$instance};
