@@ -281,10 +281,10 @@ sub traverseSeqFeatures {
                 push(@UTRs,$UTR);
 
                 ### also add to exon with CodingStart='' and CodingEnd=''
-                $UTR->add_tag_value('CodingStart', '');
-                $UTR->add_tag_value('CodingEnd', '');
-                $UTR->primary_tag('exon');
-                push (@exons,$UTR);
+                #$UTR->add_tag_value('CodingStart', '');
+                #$UTR->add_tag_value('CodingEnd', '');
+                #$UTR->primary_tag('exon');
+                #push (@exons,$UTR);
             }
         }
 
