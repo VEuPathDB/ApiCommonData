@@ -6757,6 +6757,55 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   </tuningTable>
 
 
+  <tuningTable name="PathwayCompounds">
+    <internalDependency name="GeneAttributes"/>
+    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="dots.TranslatedAaFeature"/>
+    <externalDependency name="dots.aaSequenceEnzymeClass"/>
+    <externalDependency name="sres.enzymeClass"/>
+    <externalDependency name="ApiDB.Network"/>
+    <externalDependency name="ApiDB.NetworkNode"/>
+    <externalDependency name="ApiDB.NetworkRelationship"/>
+    <externalDependency name="ApiDB.NetworkRelationshipType"/>
+    <externalDependency name="ApiDB.NetworkContext"/>
+    <externalDependency name="ApiDB.NetworkRelContext"/>
+    <externalDependency name="ApiDB.NetworkRelContextLink"/>
+    <externalDependency name="ApiDB.PubChemSubstance"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE PathwayCompounds&1 NOLOGGING AS
+SELECT ga.source_id AS gene_id, s1.value  as pubchem_compound_id,
+       nn2.display_label as compound, nn1.display_label as enzyme,
+       nrt.display_name AS reaction,  
+       n.description AS pathway_name, n.name AS pathway_id,
+       nc.description AS source, '@PROJECT_ID@' AS project_id    
+ FROM  ApiDB.NetworkRelationship nr, ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc,
+       ApiDB.Network n, ApiDB.NetworkRelContextLink nrl,ApiDB.NetworkContext nc,
+       ApiDB.NetworkNode nn1 ,ApiDB.NetworkNode nn2,
+       dots.Transcript t, dots.TranslatedAaFeature taf, sres.enzymeClass ec,
+       dots.aaSequenceEnzymeClass asec, GeneAttributes ga,
+       ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2
+WHERE  nr.node_id = nn1.network_node_id
+  AND  nr.associated_node_id = nn2.network_node_id
+  AND  nrc.network_relationship_id = nr.network_relationship_id
+  AND  nrt.network_relationship_type_id = nrc.network_relationship_type_id
+  AND  nrl.network_rel_context_id = nrc.network_rel_context_id
+  AND  nrl.network_id = n.network_id
+  AND  nrc.network_context_id = nc.network_context_id
+  AND  ga.na_feature_id = t.parent_id
+  AND  t.na_feature_id = taf.na_feature_id
+  AND  taf.aa_sequence_id = asec.aa_sequence_id
+  AND  asec.enzyme_class_id = ec.enzyme_class_id
+  AND  nn1.display_label = ec.ec_number
+  AND  s1.property = 'CID'
+  AND  s1.substance_id = s2.substance_id
+  AND  s2.property ='KEGG' 
+  AND  s2.value = nn2.display_label
+      ]]>
+    </sql>
+  </tuningTable>
+
+
   <tuningTable name="Ssgcid" alwaysUpdate="true">
     <program commandLine="buildSsgcidTT"/>
   </tuningTable>
