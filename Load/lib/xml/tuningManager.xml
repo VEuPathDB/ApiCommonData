@@ -6774,16 +6774,18 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
     <sql>
       <![CDATA[
 CREATE TABLE PathwayCompounds&1 NOLOGGING AS
-SELECT ga.source_id AS gene_id, s1.value  as pubchem_compound_id,
-       nn2.display_label as compound, nn1.display_label as enzyme,
-       nrt.display_name AS reaction,  
-       n.description AS pathway_name, n.name AS pathway_id,
-       nc.description AS source, '@PROJECT_ID@' AS project_id    
+SELECT s1.value  as pubchem_compound_id, s1.substance_id as pubchem_substance_id,
+        case when nn1.node_type_id = 2 then nn1.display_label -- '111_' || 
+            when nn2.node_type_id = 2 then nn2.display_label -- '222_' || 
+            else 'None' end as compound,
+       case when nn1.node_type_id = 1 then nn1.display_label
+            when nn2.node_type_id = 1 then  nn2.display_label
+            else 'None' end as enzyme,
+       nrt.display_name as reaction,'@PROJECT_ID@' as project_id, nc.description as source,
+       n.description ||' ('||n.name||')' as pathway, n.name as name, n.network_id 
  FROM  ApiDB.NetworkRelationship nr, ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc,
-       ApiDB.Network n, ApiDB.NetworkRelContextLink nrl,ApiDB.NetworkContext nc,
+       ApiDB.Network n, ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
        ApiDB.NetworkNode nn1 ,ApiDB.NetworkNode nn2,
-       dots.Transcript t, dots.TranslatedAaFeature taf, sres.enzymeClass ec,
-       dots.aaSequenceEnzymeClass asec, GeneAttributes ga,
        ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2
 WHERE  nr.node_id = nn1.network_node_id
   AND  nr.associated_node_id = nn2.network_node_id
@@ -6792,15 +6794,10 @@ WHERE  nr.node_id = nn1.network_node_id
   AND  nrl.network_rel_context_id = nrc.network_rel_context_id
   AND  nrl.network_id = n.network_id
   AND  nrc.network_context_id = nc.network_context_id
-  AND  ga.na_feature_id = t.parent_id
-  AND  t.na_feature_id = taf.na_feature_id
-  AND  taf.aa_sequence_id = asec.aa_sequence_id
-  AND  asec.enzyme_class_id = ec.enzyme_class_id
-  AND  nn1.display_label = ec.ec_number
   AND  s1.property = 'CID'
   AND  s1.substance_id = s2.substance_id
-  AND  s2.property ='KEGG' 
-  AND  s2.value = nn2.display_label
+  AND  ((s2.property ='KEGG'   AND  s2.value = nn2.display_label) 
+     OR (s1.property ='KEGG'   AND  s1.value = nn2.display_label))
       ]]>
     </sql>
   </tuningTable>
