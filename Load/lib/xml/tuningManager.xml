@@ -6775,8 +6775,8 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
       <![CDATA[
 CREATE TABLE PathwayCompounds&1 NOLOGGING AS
 SELECT s1.value  as pubchem_compound_id, s1.substance_id as pubchem_substance_id,
-        case when nn1.node_type_id = 2 then nn1.display_label -- '111_' || 
-            when nn2.node_type_id = 2 then nn2.display_label -- '222_' || 
+        case when nn1.node_type_id = 2 then nn1.display_label
+            when nn2.node_type_id = 2 then nn2.display_label
             else 'None' end as compound,
        case when nn1.node_type_id = 1 then nn1.display_label
             when nn2.node_type_id = 1 then  nn2.display_label
