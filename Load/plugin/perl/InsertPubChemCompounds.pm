@@ -31,11 +31,11 @@ sub getArgsDeclaration {
 		 isList => 0,
 		 mustExist => 1,
 	       }),
-     stringArg({ name => 'fileName',
-		 descr => 'xml data file',
+     stringArg({ name => 'fileNames',
+		 descr => 'comma-separated xml data files',
 		 constraintFunc=> undef,
 		 reqd  => 1,
-		 isList => 0,
+		 isList => 1,
 		 mustExist => 0,
 	       })
     ];
@@ -125,14 +125,19 @@ sub run {
   my $twig = new XML::Twig(TwigRoots => $roots,
 			   TwigHandlers => $handlers);
 
+  my $fileCount = 0;
   my $fileDir = $self->getArg('fileDir');
-  my $fileName = $self->getArg('fileName');
+  my @fileArray = @{$self->getArg('fileNames')};
 
-  my $file = $fileDir. "/" . $fileName;
-  $twig->parsefile($file);
+  foreach my $file (@fileArray){
+    $fileCount++;
+    $file = $fileDir. "/" . $file;
+    $twig->parsefile($file);
+  }
 
   $self->insertPubChemCompound();
 
+  return "Processed $fileCount files.";
 }
 
 
