@@ -189,7 +189,8 @@ sub traverseSeqFeatures {
 #            $type = 'coding';
             my ($geneType) = $RNA->get_tag_values("gene_type") if ($RNA->has_tag("gene_type"));
             my ($transType) = $RNA->get_tag_values("transcript_type") if ($RNA->has_tag("transcript_type"));
-            $type = &getTypeOfGene($geneType, $transType) if ($geneType);
+            #$type = &getTypeOfGene($geneType, $transType) if ($geneType);
+            $type = &getTypeOfTranscript($geneType, $transType) if ($transType);
         }
 
         if($type eq 'ncRNA'){
@@ -416,5 +417,69 @@ sub getTypeOfGene {
     }
     return $returnType;
 }
+
+
+sub getTypeOfTranscript {
+    my ($geneType, $transType) = @_;
+
+    my $returnType = 'misc_RNA';
+
+    my %transTypes = (
+        protein_coding => 'coding',
+        IG_C_gene => 'coding',
+        IG_D_gene => 'coding',
+        IG_J_gene => 'coding',
+        IG_V_gene => 'coding',
+        TR_C_gene => 'coding',
+        TR_D_gene => 'coding',
+        TR_J_gene => 'coding',
+        TR_V_gene => 'coding',
+        IG_C_pseudogene => 'coding',
+        IG_J_pseudogene => 'coding',
+        IG_V_pseudogene => 'coding',
+        TR_J_pseudogene => 'coding',
+        TR_V_pseudogene => 'coding',
+        TEC => 'coding',
+        nonsense_mediated_decay => 'coding',
+        pseudogene => 'pseudo',
+        polymorphic_pseudogene => 'pseudo',
+        processed_pseudogene => 'pseudo',
+        retrotransposed => 'pseudo',
+        transcribed_processed_pseudogene => 'pseudo',
+        transcribed_unprocessed_pseudogene => 'pseudo',
+        unitary_pseudogene => 'pseudo',
+        unprocessed_pseudogene => 'pseudo',
+        Mt_rRNA => 'rRNA',
+        rRNA => 'rRNA',
+        Mt_tRNA => 'tRNA',
+        tRNA => 'tRNA',
+        snRNA => 'snRNA',
+        snoRNA => 'snoRNA',
+        miRNA => 'miRNA',
+        misc_RNA => 'misc_RNA',
+        lincRNA => 'ncRNA',
+#        3prime_overlapping_ncrna => 'ncRNA',
+        non_coding => 'ncRNA',
+        processed_transcript => 'ncRNA',
+        ambiguous_orf => 'ncRNA',
+        non_stop_decay => 'ncRNA',
+        retained_intron => 'ncRNA',
+        antisense => 'ncRNA',
+        sense_intronic => 'ncRNA',
+        sense_overlapping => 'ncRNA',
+    );
+
+    if ($transTypes{$transType} ) {
+        $returnType = $transTypes{$transType};
+    } else {
+        if ($transType =~ /3prime_overlapping_ncrna/ ) {
+            $returnType = "ncRNA";
+        } else {
+            $returnType = "misc_RNA";
+        }
+    }
+    return $returnType;
+}
+
 
 1;
