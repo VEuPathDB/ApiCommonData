@@ -232,7 +232,7 @@ while(my ($k, $v) = each %hash) {
 
   $note =~ s/^; //;
 
-  my @mon = qw/null Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
+  my @mon = qw/Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/;
   $month =~ s/^0// if $month;
 
   my $collection_date = "";
@@ -243,6 +243,7 @@ while(my ($k, $v) = each %hash) {
   die "Cannot find isolate species. Please check column E\n" unless $species;
 
   $study =~ s/(\r|\n)/ /g;
+  $study =~ s/\s+/ /g;
 
   my @seqs = (
          [$seq1, $seq1_product, $seq1_desc, \@seq1_primer_name, \@seq1_primer_seq, $seq1_trace, $seq1_genbank],
