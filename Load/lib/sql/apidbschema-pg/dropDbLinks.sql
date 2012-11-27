@@ -1,2 +1,2 @@
-DROP DATABASE LINK apidb.login_comment;
+DROP DATABASE LINK prodS.login_comment;
 

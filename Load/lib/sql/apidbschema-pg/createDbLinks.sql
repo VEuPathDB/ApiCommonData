@@ -3,7 +3,7 @@
 -- IDENTIFIED BY po34weep
 -- USING 'apicomm';
 -- 
--- CREATE PUBLIC DATABASE LINK apidb.login_comment
+-- CREATE PUBLIC DATABASE LINK prodS.login_comment
 -- CONNECT TO plasmodbwww
 -- IDENTIFIED BY po34weep
 -- USING 'apicomm';
