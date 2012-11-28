@@ -147,4 +147,38 @@ CREATE SEQUENCE apidb.geneGff_pkseq;
 GRANT SELECT ON apidb.geneGff_pkseq TO gus_w;
 
 ------------------------------------------------------------------------------
+
+create table apidb.CompoundDetail (
+      SOURCE_ID VARCHAR2(50 BYTE),
+      PROJECT_ID VARCHAR2(50 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
+      ROW_COUNT NUMBER,
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
+);
+
+CREATE INDEX apidb.compounddtl_idx01 ON apidb.CompoundDetail(source_id, project_id, field_name);
+CREATE INDEX apidb.compounddtl_idx02 ON apidb.CompoundDetail(field_name, source_id);
+CREATE INDEX apidb.compounddtl_idx03 ON apidb.CompoundDetail(row_count, source_id);
+
+CREATE INDEX apidb.compound_text_ix on apidb.CompoundDetail(content)
+indextype is ctxsys.context
+parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
+
+CREATE TRIGGER apidb.CompoundDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.CompoundDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
+
+GRANT insert, select, update, delete ON apidb.CompoundDetail TO gus_w;
+GRANT select ON apidb.CompoundDetail TO gus_r;
+
+------------------------------------------------------------------------------
+
+
+
 exit;
