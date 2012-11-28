@@ -6029,6 +6029,7 @@ CREATE TABLE Intron&1 NOLOGGING AS
    FROM   FeatureLocation exon_loc, GeneAttributes ga
    WHERE  exon_loc.feature_type = 'ExonFeature'
       AND ga.na_feature_id = exon_loc.parent_id
+      AND ga.gene_type = 'protein coding'
       AND ((exon_loc.is_reversed = 0 AND exon_loc.coding_start - exon_loc.start_min  != 0)
        OR (exon_loc.is_reversed = 1 AND exon_loc.coding_end - exon_loc.start_min  != 0)))
   UNION
@@ -6042,6 +6043,7 @@ CREATE TABLE Intron&1 NOLOGGING AS
    FROM   FeatureLocation exon_loc, GeneAttributes ga
    WHERE  exon_loc.feature_type = 'ExonFeature'
       AND ga.na_feature_id = exon_loc.parent_id
+      AND ga.gene_type = 'protein coding'
       AND ((exon_loc.is_reversed = 0 AND exon_loc.end_max - exon_loc.coding_end  != 0)
        OR (exon_loc.is_reversed = 1 AND exon_loc.end_max - exon_loc.coding_start  != 0))  )
    UNION
@@ -6055,6 +6057,7 @@ CREATE TABLE Intron&1 NOLOGGING AS
     FROM   FeatureLocation exon_loc, GeneAttributes ga
     WHERE  exon_loc.feature_type = 'ExonFeature'
        AND ga.na_feature_id = exon_loc.parent_id
+       AND ga.gene_type = 'protein coding'
        AND exon_loc.coding_start is null)
       ]]>
     </sql>
