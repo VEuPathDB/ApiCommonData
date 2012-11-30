@@ -5443,6 +5443,86 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+  <tuningTable name="TajimasStats">
+    <internalDependency name="IsolateAttributes"/>
+    <sql>
+      <![CDATA[ 
+create table TajimasStats&1 (
+   n  number(5),
+   a1 number(10,6),
+   a2 number(10,6),
+   b1 number(10,6),
+   b2 number(10,6),
+   c1 number(10,6),
+   c2 number(10,6), 
+   e1 number(10,6),
+   e2 number(10,6)
+ )
+      ]]> 
+    </sql>
+    <perl>
+      <![CDATA[ 
+      use strict;
+      use lib "$ENV{GUS_HOME}/lib/perl";
+
+      my $sql = "select count(*) as hts_isolates from apidbtuning.isolateattributes where data_type = 'HTS'";
+
+      
+      my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
+      $queryHandle->execute();
+
+      my ($hts_isolates_count) = $queryHandle->fetchrow_array();
+      $queryHandle->finish();
+
+      my $insert_sql = <<SQL;
+        insert into TajimasStats&1(n, a1, a2, b1, b2, c1, c2, e1, e2)
+         values (?, ?, ?, ?, ?, ?, ?, ?, ?)
+SQL
+
+      my $insertHandle = $dbh->prepare($insert_sql) or die $dbh->errstr;
+
+      foreach my $n (2..$hts_isolates_count) {
+  
+        my $a1 = &sum(map { 1/$_ } 1..$n-1);
+        my $a2 = &sum(map { 1 / $_**2 } 1..$n-1);
+        my $b1 =($n + 1) / (3 * ($n - 1));
+        my $b2 = (2 * ($n**2 + $n + 3)) / (9 * $n * ($n - 1));
+        my $c1 = $b1 - (1 / $a1);
+        my $c2 = $b2 - (($n + 2) / ($a1 * $n)) + $a2 / $a1**2;
+        my $e1 = $c1 / $a1;
+        my $e2 = $c2 / ($a1**2 + $a2);
+
+       $insertHandle->execute($n, 
+                              sprintf("%.6f", $a1),
+                              sprintf("%.6f", $a2),
+                              sprintf("%.6f", $b1),
+                              sprintf("%.6f", $b2),
+                              sprintf("%.6f", $c1),
+                              sprintf("%.6f", $c2),
+                              sprintf("%.6f", $e1),
+                              sprintf("%.6f", $e2)
+                             );
+      }
+
+      $insertHandle->finish();
+      1;
+      sub sum {
+         my $rv = 0;
+         foreach ( @_ ) {
+           $rv += $_;
+         }
+         $rv
+     }
+      ]]> 
+    </perl>
+  </tuningTable>
+
+
+
+
+
+
   <tuningTable name="SimilaritySpanLocation">
     <externalDependency name="dots.Similarity"/>
     <externalDependency name="dots.SimilaritySpan"/>
