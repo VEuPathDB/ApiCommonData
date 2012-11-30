@@ -365,9 +365,7 @@ sub undoTables {
 	  'DoTS.DbRefAAFeature',
 	  'DoTS.DbRefNASequence',
 	  'DoTS.AASequenceDbRef',
-          'SRes.DbRef',
-	  'SRes.ExternalDatabaseRelease',
-	  'SRes.ExternalDatabase',
+          'SRes.DbRef'
 	 );
 }
 
