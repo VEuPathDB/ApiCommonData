@@ -2351,16 +2351,21 @@ CREATE TABLE SnpStrains&1 NOLOGGING AS
                        WHEN d.name='InsertSnps.pm NGS SNPs INTERNAL' THEN 0
                        ELSE 1 
                   END as is_queryable,
-                  d.name as extdb_name
+                  d.name as extdb_name,
+                  vd.name as var_extdb_name
   FROM   DoTS.SnpFeature sf, 
          DoTS.SeqVariation sv, 
          SequenceAttributes sa,
          SRES.externaldatabase d, 
-         SRES.externaldatabaserelease rel
+         SRES.externaldatabaserelease rel,
+         SRES.externaldatabase vd, 
+         SRES.externaldatabaserelease vrel
   WHERE sa.na_sequence_id = sf.na_sequence_id
     AND sf.na_feature_id = sv.parent_id
     AND sf.external_database_release_id = rel.external_database_release_id
     AND rel.external_database_id = d.external_database_id
+    AND sv.external_database_release_id = vrel.external_database_release_id
+    AND vrel.external_database_id = vd.external_database_id
       ]]>
     </sql>
     <sql>
