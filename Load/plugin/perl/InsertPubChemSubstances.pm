@@ -17,6 +17,7 @@ use GUS::Model::ApiDB::PubChemSubstance;
 my %subst;
 my $subst_id;
 my @compoundArr;
+my @idAndTypeArr;
 
 # ----------------------------------------------------------
 # Load Arguments
@@ -122,10 +123,10 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $roots = { 'PC-Substance_sid' => 0,
-		'PC-Compound' =>1,
+  my $roots = { 'PC-Substance_sid' => 1,
+		'PC-Compound' => 1,
 		'PC-Substance_source/PC-Source/PC-Source_db/PC-DBTracking' => 1,
-		'PC-Substance_synonyms' => 0
+		'PC-Substance_synonyms' => 1
 	      };
 
   my $handlers = { 'PC-Substance_sid/PC-ID' => \&get_ID,
@@ -191,20 +192,30 @@ sub insertPubChemSubstance {
       my @props = keys(%y);   # keys of inner hash are various properties for each substance
 
       foreach my $p (@props) {
-	if ($p ne 'synonymns') {
-
+	if ($p eq 'KEGG') {
 	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									property     => $p,
 									value        => $subst{$sid}{$p}
 								      });
 	  # add entry unless it already exists in the table
 	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
-
+	} elsif ($p eq 'CID'){
+	  my @cpds =  @{ $subst{$sid}{CID} }; #BB
+	  foreach my $c (@cpds) {
+	    my ($id, $type) = split(/\|type\=/, $c);  	    # break $c into cid and type
+	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
+									  property     => $p,
+									  value        => $id ,
+									  type         => $type
+									});
+	  # add entry unless it already exists in the table
+	  $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
+	  }
 	} else {
-	  my @syns = @{ $subst{$sid}{synonymns} };
+	  my @syns = @{ $subst{$sid}{synonyms} };
 	  foreach my $s (@syns) {
 	    # skip KEGG_ID, as it is repeated as a synonym in the XML file
-	    # print "$sid, synonymn, $s \n" if ($s ne $subst{$sid}{KEGG});
+	    # print "$sid, synonym, $s \n" if ($s ne $subst{$sid}{KEGG});
 	    if ($s ne $subst{$sid}{KEGG}) {
 	      my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									    property     => $p,
@@ -245,20 +256,18 @@ sub get_ID {
   my $id = $ele->first_child('PC-ID_id')->text;
 
   $subst_id = $id;
-
 }
 
-# get the synonymn list
+# get the synonym list
 sub get_Syns {
   my ($twig, $ele) = @_;
 
   my @desc = $ele->find_by_tag_name('PC-Substance_synonyms_E');
   my @synonyms;
   foreach my $des (@desc) {
-
     push (@synonyms, $des->text);
   }
-  $subst{$subst_id}{synonymns} = \@synonyms;
+  $subst{$subst_id}{synonyms} = \@synonyms;
 }
 
 #get the KEGG ID
@@ -274,12 +283,23 @@ sub get_KEGG {
 #get the compound ID (CID)
 sub get_CID {
   my ($twig, $ele) = @_;
-  my @cidArr = $ele->find_by_tag_name('PC-CompoundType_id_cid');
+  my @cArr = $ele->find_by_tag_name('PC-CompoundType');
 
-  foreach my $cid (@cidArr) {
-  $subst{$subst_id}{CID} = $cid->text;
+  foreach my $c (@cArr) {
+    # get the compound_id
+    my @cidArr = $c->find_by_tag_name('PC-CompoundType_id_cid');
 
-  push (@compoundArr, $cid->text);
+    foreach my $cid (@cidArr) {
+      my $compound_id = $cid->text;
+      my $compound_type;
+      # for each compound_id found, capture it's type
+      my @type = $c->find_by_tag_name('PC-CompoundType_type');
+      $compound_type = $type[0]->att( 'value' );
+
+      push (@compoundArr, $compound_id);
+      push (@idAndTypeArr, ($compound_id  . "|type="  . $compound_type) );
+    }
+    $subst{$subst_id}{CID} = \@idAndTypeArr if ($#idAndTypeArr + 1);
   }
 }
 
