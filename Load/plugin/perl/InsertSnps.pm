@@ -237,7 +237,7 @@ sub getNgsSnpExtDbRlsId {
 
   my $reference = $self->getArg('reference');
 
-  my $sql = "select abbrev  from apidb.organism where abbrev_strain = ?";
+  my $sql = "select abbrev  from apidb.organism where strain_abbrev = ?";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
   $sh->execute($reference);
