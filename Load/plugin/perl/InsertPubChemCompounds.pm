@@ -114,8 +114,8 @@ sub new {
 sub run {
   my $self = shift;
 
-  my $roots = { 'PC-Compound_id' => 0,
-		'PC-Compound_props' => 0,
+  my $roots = { 'PC-Compound_id' => 1,
+		'PC-Compound_props' => 1,
 	      };
 
   my $handlers = { 'PC-Compound_id/PC-CompoundType/PC-CompoundType_id' => \&get_ID,
