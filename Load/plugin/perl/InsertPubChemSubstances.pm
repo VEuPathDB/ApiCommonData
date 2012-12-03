@@ -151,13 +151,16 @@ sub parseFile {
     # KEGG
     my $dbName = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_name'}->[0];
     my $dbValue = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_source-id'}->[0]->{'Object-id'}->[0]->{'Object-id_str'}->[0];
-   $subst{$subst_id}{$dbName} = $dbValue;
+    if ($dbValue){
+      $subst{$subst_id}{$dbName} = $dbValue;
+    }
 
     # synonms
     my $syns =  $_->{'PC-Substance_synonyms'}->[0]->{'PC-Substance_synonyms_E'} ;
-    my @sArray = @{$syns};
-    $subst{$subst_id}{synonyms} = \@sArray;
-
+    if ($syns){
+      my @sArray = @{$syns};
+      $subst{$subst_id}{synonyms} = \@sArray;
+    }
 
     # CIDs (compound IDs)
     my $cArrayRef =  $_->{'PC-Substance_compound'}->[0]->{'PC-Compounds'}->[0]->{'PC-Compound'};
