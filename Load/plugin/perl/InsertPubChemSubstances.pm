@@ -147,6 +147,7 @@ sub parseFile {
   foreach (@substArray){
     # SID
     my $subst_id = $_->{'PC-Substance_sid'}->[0]->{'PC-ID'}->[0]->{'PC-ID_id'}->[0];
+print "SUBST_ID = $subst_id\n";
 
     # KEGG
     my $dbName = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_name'}->[0];
@@ -161,19 +162,20 @@ sub parseFile {
 
     # CIDs (compound IDs)
     my $cArrayRef =  $_->{'PC-Substance_compound'}->[0]->{'PC-Compounds'}->[0]->{'PC-Compound'};
-    my @cArray = @{$cArrayRef};
-    my @idAndTypeArr;
+    if ($cArrayRef) {
+      my @cArray = @{$cArrayRef};
+      my @idAndTypeArr;
 
-    foreach (@cArray){
-      my $type = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_type'}->[0]->{'value'};
-      my $id = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_id'}->[0]->{'PC-CompoundType_id_cid'}->[0];
-      if ($id) {
-	push (@idAndTypeArr, ($id  . "|type="  . $type) );
-	$compoundH{$id} = 1; # to capture CIDs for output file
+      foreach (@cArray){
+	my $type = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_type'}->[0]->{'value'};
+	my $id = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_id'}->[0]->{'PC-CompoundType_id_cid'}->[0];
+	if ($id) {
+	  push (@idAndTypeArr, ($id  . "|type="  . $type) );
+	  $compoundH{$id} = 1; # to capture CIDs for output file
+	}
       }
+      $subst{$subst_id}{CID} = \@idAndTypeArr;
     }
-    $subst{$subst_id}{CID} = \@idAndTypeArr;
-
   }
 }
 
