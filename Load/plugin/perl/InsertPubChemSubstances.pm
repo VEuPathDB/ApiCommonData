@@ -147,7 +147,6 @@ sub parseFile {
   foreach (@substArray){
     # SID
     my $subst_id = $_->{'PC-Substance_sid'}->[0]->{'PC-ID'}->[0]->{'PC-ID_id'}->[0];
-print "SUBST_ID = $subst_id\n";
 
     # KEGG
     my $dbName = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_name'}->[0];
