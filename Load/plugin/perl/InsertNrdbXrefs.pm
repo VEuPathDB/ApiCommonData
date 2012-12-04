@@ -322,7 +322,7 @@ sub makeDbXRef {
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
-  $newDbRef->submit() unless $newDbRef->retrieveFromDB();
+  $newDbRef->submit();
 
   my $dbRefId = $newDbRef->getId();
 
@@ -334,7 +334,7 @@ sub makeDbXRef {
 				db_ref_id => $dbRefId,
 			       });
 
-  $dbXref->submit() unless $dbXref->retrieveFromDB();
+  $dbXref->submit();
 
 }
 
