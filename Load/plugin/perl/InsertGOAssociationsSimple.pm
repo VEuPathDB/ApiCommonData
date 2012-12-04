@@ -221,7 +221,8 @@ sub run {
 sub undoTables {
   my ($self) = @_;
 
-  return ('DoTS.GOAssociationInstance',
+  return ('DoTS.GOAssocInstEvidCode',
+          'DoTS.GOAssociationInstance',
 	  'DoTS.GOAssociationInstanceLOE',
 	 );
 }
