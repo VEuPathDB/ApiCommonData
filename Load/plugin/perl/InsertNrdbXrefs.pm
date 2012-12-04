@@ -322,7 +322,7 @@ sub makeDbXRef {
 
   my $newDbRef = GUS::Model::SRes::DbRef->new($dbRef);
 
-  $newDbRef->submit() unless $newDbRef->retrieveFromDB();
+  $newDbRef->submit(); #unless $newDbRef->retrieveFromDB();
 
   my $dbRefId = $newDbRef->getId();
 
@@ -365,7 +365,7 @@ sub undoTables {
 	  'DoTS.DbRefAAFeature',
 	  'DoTS.DbRefNASequence',
 	  'DoTS.AASequenceDbRef',
-          'SRes.DbRef'
+#          'SRes.DbRef'
 	 );
 }
 
