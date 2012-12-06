@@ -6845,8 +6845,32 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   </tuningTable>
 
 
+  <tuningTable name="CompoundAttributes">
+    <externalDependency name="ApiDB.PubChemSubstance"/>
+    <externalDependency name="ApiDB.PubChemCompound"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE CompoundAttributes&1 NOLOGGING AS
+SELECT comp.compound_id,  'compound:' || comp.compound_id AS source_id, 
+              apidb.tab_to_string(set(cast(COLLECT(to_char(subst.substance_id)) AS apidb.varchartab)), ', ') AS substance_id,
+              wtTable.mol_wt, REGEXP_REPLACE(formTable.formula,'(\d)','<sub>\1</sub>') AS formula
+        FROM ApiDB.PubChemSubstance subst, ApiDB.PubChemCompound comp,
+                  (SELECT compound_id , value as mol_wt FROM ApiDB.PubChemCompound where property='Molecular Weight') wtTable,
+                  (SELECT compound_id , value as formula FROM ApiDB.PubChemCompound where property='Molecular Formula') formTable
+       WHERE subst.property='CID' 
+          and subst.type='standardized' 
+         AND subst.value = comp.compound_id
+         AND comp.compound_id = wtTable.compound_id
+         AND comp.compound_id = formTable.compound_id
+      GROUP BY comp.compound_id,wtTable.mol_wt,formTable.formula
+      ]]>
+    </sql>
+  </tuningTable>
+
+
+
   <tuningTable name="PathwayCompounds">
-    <internalDependency name="GeneAttributes"/>
+    <internalDependency name="CompoundAttributes"/>
     <externalDependency name="dots.Transcript"/>
     <externalDependency name="dots.TranslatedAaFeature"/>
     <externalDependency name="dots.aaSequenceEnzymeClass"/>
@@ -6862,7 +6886,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
     <sql>
       <![CDATA[
 CREATE TABLE PathwayCompounds&1 NOLOGGING AS
-SELECT s1.value  as pubchem_compound_id,
+SELECT ca.compound_id, ca.source_id as compound_source_id,
         case when nn1.node_type_id = 2 then nn1.display_label
             when nn2.node_type_id = 2 then nn2.display_label
             else 'None' end as compound,
@@ -6874,7 +6898,7 @@ SELECT s1.value  as pubchem_compound_id,
  FROM  ApiDB.NetworkRelationship nr, ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc,
        ApiDB.Network n, ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
        ApiDB.NetworkNode nn1 ,ApiDB.NetworkNode nn2,
-       ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2
+       ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes ca
 WHERE  nr.node_id = nn1.network_node_id
   AND  nr.associated_node_id = nn2.network_node_id
   AND  nrc.network_relationship_id = nr.network_relationship_id
@@ -6883,6 +6907,7 @@ WHERE  nr.node_id = nn1.network_node_id
   AND  nrl.network_id = n.network_id
   AND  nrc.network_context_id = nc.network_context_id
   AND  s1.property = 'CID'
+  AND  s1.value = ca.compound_id 
   AND  s1.substance_id = s2.substance_id
   AND  ((s2.property ='KEGG'   AND  s2.value = nn2.display_label) 
      OR (s1.property ='KEGG'   AND  s1.value = nn2.display_label))
