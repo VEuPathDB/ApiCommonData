@@ -59,15 +59,22 @@ sub merge_normalized_bedgraph {
     }
 
     if($strandSpecific) {  # strand specific Unique (forward +, reverse -) | NonUnique (forward +, reverse -)
-      &runCmd("cat $k/normalized/RUM_NU_plus.bedgraph $k/normalized/RUM_NU_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_NU.bedgraph");
-      &runCmd("cat $k/normalized/RUM_Unique_plus.bedgraph $k/normalized/RUM_Unique_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_Unique.bedgraph");
+      #&runCmd("cat $k/normalized/RUM_NU_plus.bedgraph $k/normalized/RUM_NU_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_NU.bedgraph");
+      #&runCmd("cat $k/normalized/RUM_Unique_plus.bedgraph $k/normalized/RUM_Unique_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_Unique.bedgraph");
 
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
 
     } else {  # regular Unique +, Nonunique -
-      &runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
+      #&runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
     }
   }
 }
