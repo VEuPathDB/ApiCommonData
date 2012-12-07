@@ -23,6 +23,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="partial"         ignore="true"/>
     <qualifier name="ID"         ignore="true"/>
     <qualifier name="Alias" ignore="true"/>
+    <qualifier name="pseudo"      handler="api"    method="setPseudo"/>
   </feature>
 
 
@@ -34,7 +35,6 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="reading_frame"  column="reading_frame"/>
     <qualifier name="CodingStart"    handler="api" method="setCodingAndTranslationStart"/>
     <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
-    <qualifier name="GenePrediction" column="source_id"/>
     <qualifier name="OrderNumber"    column="order_number"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
