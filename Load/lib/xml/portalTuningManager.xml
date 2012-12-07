@@ -314,11 +314,12 @@ tablespace indx
       <source dblink="toxo.tuning"/>
       <source dblink="tritryp.tuning"/>
       <source dblink="piro.tuning"/>
+      <source dblink="micro.tuning"/>
 
       <source>
         <query>
           <![CDATA[
-            select gi.id,gi.gene
+            select gi.id,gi.gene, gi.database_name
             from ApidbTuning.GeneId@trich.tuning gi,
                  ApidbTuning.GeneAttributes@trich.tuning ga
             where gi.gene = ga.source_id
@@ -326,10 +327,11 @@ tablespace indx
           ]]>
         </query>
       </source>
+
       <source>
         <query>
           <![CDATA[
-            select gi.id,gi.gene
+            select gi.id,gi.gene, gi.database_name
             from ApidbTuning.GeneId@amoeba.tuning gi,
                  ApidbTuning.GeneAttributes@amoeba.tuning ga
             where gi.gene = ga.source_id
@@ -338,17 +340,6 @@ tablespace indx
         </query>
       </source>
 
-      <source>
-        <query>
-          <![CDATA[
-            select gi.id,gi.gene
-            from ApidbTuning.GeneId@micro.tuning gi,
-                 ApidbTuning.GeneAttributes@micro.tuning ga
-            where gi.gene = ga.source_id
-              and ga.project_id = 'MicrosporidiaDB'
-          ]]>
-        </query>
-      </source>
     </unionization>
     <sql>
       <![CDATA[
