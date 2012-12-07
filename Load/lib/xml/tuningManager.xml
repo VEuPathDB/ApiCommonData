@@ -1578,8 +1578,9 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
        sequence.chromosome_order_num, so.so_id,
        nvl(virtualization.is_top_level, 1) as is_top_level,
-       sequence.na_sequence_id
-FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so,
+       sequence.na_sequence_id,
+       organism.genome_source, organism.name_for_filenames
+FROM sres.TaxonName tn, sres.Taxon, sres.SequenceOntology so, apidb.organism,
      &prefixGenomicSequence sequence,
      (SELECT drns.na_sequence_id, max(dr.primary_identifier) AS genbank_accession
       FROM dots.dbrefNaSequence drns, sres.DbRef dr,
@@ -1605,6 +1606,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
   AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+)
+  AND taxon.taxon_id = organism.taxon_id (+)
       ]]>
     </sql>
     <sql>
