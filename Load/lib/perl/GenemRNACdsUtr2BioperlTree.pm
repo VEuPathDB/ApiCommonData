@@ -36,8 +36,8 @@ sub preprocess {
         my $type = $bioperlFeatureTree->primary_tag();
         
         if($type eq 'pseudogene'){
-            $bioperlFeatureTree->primary_tag('pseudo_gene');
             $bioperlFeatureTree->add_tag_value("pseudo","");
+            $type = 'gene';
             if ( !($bioperlFeatureTree->get_SeqFeatures)) {
                 my $geneLoc = $bioperlFeatureTree->location();
                 my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
@@ -90,14 +90,6 @@ sub preprocess {
             if(!($geneFeature->has_tag("ID"))){
                 $geneFeature->add_tag_value("ID",$bioperlSeq->accession());
             }      
-
-            if($geneFeature->has_tag("gene_type")){
-                my($geneType) = $geneFeature->get_tag_values("gene_type");
-
-                if($geneType =~ /pseudogene/i){
-                    $geneFeature->add_tag_value("pseudo","");
-                }
-            }
 
             for my $tag ($geneFeature->get_all_tags) {    
                 if($tag eq 'pseudo'){
@@ -193,7 +185,6 @@ sub traverseSeqFeatures {
         $gene->add_tag_value("ID",$geneID);
         $gene = &copyQualifiers($geneFeature,$gene);   ## get the value of the tag Name
 
-        $gene->add_tag_value("pseudo","") if ($type eq 'pseudo');
 
         my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
 
@@ -201,8 +192,8 @@ sub traverseSeqFeatures {
         
         my $codonStart = 0;
         
-        ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
-        $codonStart -= 1 if $codonStart > 0;
+#        ($codonStart) = $gene->get_tag_values('codon_start') if $gene->has_tag('codon_start');
+#        $codonStart -= 1 if $codonStart > 0;   ## those 2 lines only for genbank format
 
         if($gene->has_tag('selenocysteine')){
             $gene->remove_tag('selenocysteine');
@@ -242,7 +233,9 @@ sub traverseSeqFeatures {
 
                 $exon->add_tag_value('CodingStart',$codingStart);
                 $exon->add_tag_value('CodingEnd',$codingEnd);
-                
+               
+                $exon = &copyQualifiers($subFeature,$exon);
+                 
                 $transcript->add_SeqFeature($exon);
                 $CDSctr++;
             }
@@ -268,11 +261,11 @@ sub traverseSeqFeatures {
             my @exonLocs = $RNA->location->each_Location();
             foreach my $exonLoc (@exonLocs){
                 my $exon = &makeBioperlFeature("exon",$exonLoc,$bioperlSeq);
-                $transcript->add_SeqFeature($exon);
                 if($gene->primary_tag ne 'coding_gene' && $gene->primary_tag ne 'pseudo_gene' ){
                     $exon->add_tag_value('CodingStart', '');
                     $exon->add_tag_value('CodingEnd', '');  
                 }
+                $transcript->add_SeqFeature($exon);
             }
         }
 
