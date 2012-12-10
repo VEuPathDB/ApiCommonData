@@ -41,6 +41,7 @@ foreach my $d (@ds) {
   next unless $d =~ /^analyze_/;
   $inputDir =~ s/\/$//;
   my $exp_dir = "$inputDir/$d/master/mainresult";
+
   my $sum_coverage = get_sum_coverage($exp_dir);
   $hash{$exp_dir} = $sum_coverage;
 }
@@ -58,21 +59,28 @@ sub merge_normalized_coverage {
     }
 
     if($strandSpecific) {  # strand specific Unique (forward +, reverse -) | NonUnique (forward +, reverse -)
-      &runCmd("cat $k/normalized/RUM_NU_plus.cov $k/normalized/RUM_NU_minus.cov | sort -k1,1 -k2,2n > $k/normalized/final/RUM_NU.cov");
-      &runCmd("cat $k/normalized/RUM_Unique_plus.cov $k/normalized/RUM_Unique_minus.cov | sort -k1,1 -k2,2n > $k/normalized/final/RUM_Unique.cov");
+      #&runCmd("cat $k/normalized/RUM_NU_plus.bedgraph $k/normalized/RUM_NU_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_NU.bedgraph");
+      #&runCmd("cat $k/normalized/RUM_Unique_plus.bedgraph $k/normalized/RUM_Unique_minus.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM_Unique.bedgraph");
 
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM_Unique.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM_NU.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
 
     } else {  # regular Unique +, Nonunique -
-      &runCmd("cat $k/normalized/RUM_Unique.cov $k/normalized/RUM_NU.cov | sort -k1,1 -k2,2n > $k/normalized/final/RUM.cov");
-      &runCmd("bedGraphToBigWig $k/normalized/final/RUM.cov $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
+      #&runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
+      #&runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
     }
   }
 }
 
-# updates bedgraph file - score * normalization_ratio
-# save updated bedgraph file to the new 'normalized' directory
+# updates coverage file - score * normalization_ratio
+# save updated coverage file to the new 'normalized' directory
 sub update_coverage {
   my $hash = shift;
 
