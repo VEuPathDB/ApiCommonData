@@ -6,7 +6,7 @@ use CBIL::Util::Utils;
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
-# Use sum_score / max_sum_core as normalization ratio and update bedgraph file 
+# Use sum_score / max_sum_core as normalization ratio and update coverage file 
 #
 #  ... Su_strand_specific/analyze_lateTroph/master/mainresult
 #  ... Su_strand_specific/analyze_schizont/master/mainresult
@@ -24,7 +24,7 @@ my ($inputDir, $strandSpecific, $topLevelSeqSizeFile);
 
 my $usage =<<endOfUsage;
 Usage:
-  normalizeBedGraph.pl --inputDir input_diretory --topLevelSeqSizeFile chrosome_size_file --strandSpecific 
+  normalizeCoverage.pl --inputDir input_diretory --topLevelSeqSizeFile chrosome_size_file --strandSpecific 
 
     intpuDir: top level directory, e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/Su_strand_specific
     topLevelSeqSizeFile: chromosome size text file e.g. /eupath/data/EuPathDB/workflows/PlasmoDB/bigwig/data/pfal3D7/organismSpecificTopLevel/topLevelSeqSizes.txt
@@ -46,11 +46,11 @@ foreach my $d (@ds) {
   $hash{$exp_dir} = $sum_coverage;
 }
 
-update_bedgraph(\%hash);
+update_coverage(\%hash);
 
-merge_normalized_bedgraph(\%hash);
+merge_normalized_coverage(\%hash);
 
-sub merge_normalized_bedgraph {
+sub merge_normalized_coverage {
   my $hash = shift;
   while(my ($k, $v) = each %$hash) {  # $k is exp directory; $v is sum_coverage
     my $dir = "$k/normalized";
@@ -65,23 +65,23 @@ sub merge_normalized_bedgraph {
       #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
       #&runCmd("bedGraphToBigWig $k/normalized/final/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU_minus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_plus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_plus.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique_minus.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique_minus.bw"); 
 
     } else {  # regular Unique +, Nonunique -
       #&runCmd("cat $k/normalized/RUM_Unique.bedgraph $k/normalized/RUM_NU.bedgraph | sort -k1,1 -k2,2n > $k/normalized/final/RUM.bedgraph");
       #&runCmd("bedGraphToBigWig $k/normalized/final/RUM.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
-      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.bedgraph $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_Unique.cov $topLevelSeqSizeFile $k/normalized/final/RUM_Unique.bw"); 
+      &runCmd("bedGraphToBigWig $k/normalized/RUM_NU.cov $topLevelSeqSizeFile $k/normalized/final/RUM_NU.bw"); 
     }
   }
 }
 
-# updates bedgraph file - score * normalization_ratio
-# save updated bedgraph file to the new 'normalized' directory
-sub update_bedgraph {
+# updates coverage file - score * normalization_ratio
+# save updated coverage file to the new 'normalized' directory
+sub update_coverage {
   my $hash = shift;
 
   my $max_sum_coverage = get_max_sum_coverage($hash);
@@ -98,7 +98,7 @@ sub update_bedgraph {
     my $out_dir = "$k/normalized";
 
     foreach my $f (@fs) {
-      next if $f !~ /\.bedgraph/i;
+      next if $f !~ /\.cov/i;
       open(F, "$k/$f");
 
       my $indicator = 1;
@@ -109,6 +109,7 @@ sub update_bedgraph {
       }
 
       open OUT, ">$out_dir/$f";
+      <F>;
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
@@ -131,8 +132,9 @@ sub get_sum_coverage {
   my @fs = readdir(D);
 
   foreach my $f (@fs) {
-    next unless $f =~ /\.bedgraph/;
+    next unless $f =~ /\.cov/;
     open(F, "$d/$f");
+    <F>;
     while(<F>) {
       chomp;
       my($chr, $start, $stop, $score) = split /\t/, $_;
