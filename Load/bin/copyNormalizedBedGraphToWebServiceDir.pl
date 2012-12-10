@@ -36,11 +36,11 @@ foreach my $d (@ds) {
   next unless $d =~ /^analyze_(\S+)/;
   $inputDir =~ s/\/$//;
   my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
-  $outputDir = $outputDir."/$1"; 
-  system ("mkdir $outputDir");
+  my $output = $outputDir."/$1"; 
+  system ("mkdir $output");
   my $status = $? >>8;
   die "Error.  Failed making $outputDir with status '$status': $!\n\n" if ($status);
-  my $cmd = "cp $exp_dir/*.bw $outputDir";
+  my $cmd = "cp $exp_dir/*.bw $output";
   system ($cmd); 
   $status = $? >>8;
   die "Error.  Failed $cmd with status '$status': $!\n\n" if ($status);
