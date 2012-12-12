@@ -5337,6 +5337,8 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+
   <tuningTable name="SnpSummary">
     <internalDependency name="SnpAttributes"/>
     <externalDependency name="dots.TranslatedAAFeature"/>
@@ -6931,16 +6933,16 @@ WHERE  nr.node_id = nn1.network_node_id
   </tuningTable>
 
 
-<!--
-  <tuningTable name="DataSourceAttribution" alwaysUpdate="true">
-    <ancillaryTable name="DataSourceContact"/>
-    <ancillaryTable name="DataSourceAttributionURL"/>
-    <ancillaryTable name="DataSourceAttrPublication"/>
-    <ancillaryTable name="DataSourceWdkReference"/>
-    <ancillaryTable name="WdkReferenceText"/>
-    <program commandLine="buildDataSourceAttributionsTT"/>
+  <tuningTable name="DatasetPresenter" alwaysUpdate="true">
+    <ancillaryTable name="DatasetContact"/>
+    <ancillaryTable name="DatasetHyperLink"/>
+    <ancillaryTable name="DatasetPublication"/>
+    <ancillaryTable name="DatasetModelRef"/>
+    <ancillaryTable name="DatasetTaxon"/>
+    <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
--->
+
+
 
   <tuningTable name="TrackOldAnnotation" alwaysUpdate="true">
     <program commandLine="buildTrackOldAnnotationTT"/>
