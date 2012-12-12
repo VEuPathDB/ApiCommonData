@@ -105,7 +105,7 @@ if ($propFile) {
 }
 
   $password = $props->{password} if !$password;
-  $username = $props->{username} if !$username;
+  $username = $props->{schema} if !$username;
   $username = 'ApidbTuning' if !$username;
 
   return ($instance, $username, $password);
