@@ -17,7 +17,7 @@ if (!$inputFile || !$outputIndexDir || !$bowtieVersion) {
   die "usage: createBowtieIndexes --inputFile <DIRPATH> --outputIndexDir <DIRPATH> --bowtieVersion [1|2]\n";
 }
 
-my $cmd = $bowtieVersion == 2 ? "/eupath/eupath-tmp/software/bowtie/2.0.0b7/bowtie2-build" : "/eupath/software/bowtie/current/bowtie-build"; 
+my $cmd = $bowtieVersion == 2 ? "bowtie2-build" : "bowtie-build"; 
 $cmd .= " -C" if $colorspace;
 
 $cmd .= " $inputFile $outputIndexDir";
