@@ -24,7 +24,6 @@ use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 use Data::Dumper;
 
-
 my $purposeBrief = <<PURPOSEBRIEF;
 Creates new entries in tables SRes.DbRef and DoTS.DbRefNAFeature,Sres.externaldatabase and Sres.externaldatabaserelease to represent new DBxRef associations with NAFeature.This is a dedicated plugin for InsertNrdbXrefs, several things are hard coded.
 PURPOSEBRIEF
@@ -95,7 +94,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision => '$Revision: 45295 $', # cvs fills this in!
+		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
