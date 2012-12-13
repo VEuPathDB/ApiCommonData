@@ -94,7 +94,7 @@ sub new {
 
 
     $self->initialize({requiredDbVersion => 3.6,
-		       cvsRevision => '$Revision: 45295 $', # cvs fills this in!
+		       cvsRevision => '$Revision$', # cvs fills this in!
 		       name => ref($self),
 		       argsDeclaration => $argsDeclaration,
 		       documentation => $documentation
@@ -367,5 +367,4 @@ sub undoTables {
 #          'SRes.DbRef'
 	 );
 }
-
 1;
