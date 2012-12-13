@@ -13,7 +13,7 @@ die "usage:trfWrap --trfPath --inputFile --args \n"
 
 my $seqCount = `grep -c '>' $inputFile`;
 
-system("$trfPath/trf400 $inputFile $args -d");
+system("$trfPath/trf $inputFile $args -d");
 
 my $status = $? >> 8;
 
