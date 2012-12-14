@@ -1209,7 +1209,7 @@ FROM dots.GeneFeature gf, &prefixFeatureLocation nl, sres.SequenceOntology so,
         and drnf.db_ref_id = dr.db_ref_id
         and dr.external_database_release_id = edr.external_database_release_id
         and edr.external_database_id = ed.external_database_id
-        and ed.name = 'deprecated genes') deprecated,
+        and ed.name = 'gassAWB_dbxref_gene2Deprecated_RSRC') deprecated,
      (select sf.parent_id,count(*) as total_hts_snps
       from dots.snpfeature sf, sres.externaldatabaserelease rel, sres.EXTERNALDATABASE d
       where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
