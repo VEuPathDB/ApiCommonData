@@ -6409,37 +6409,8 @@ tablespace indx
        CREATE TABLE OrganismAbbreviation&1 NOLOGGING AS
        select organism, abbreviation
        From (
-  -- ToxoDB Annotated Genomes
-  select 'Neospora caninum' as organism, 'NeosporaCaninum' as abbreviation from dual union  
-  select 'Toxoplasma gondii GT1' as organism, 'TgondiiGT1' as abbreviation from dual union  
-  select 'Toxoplasma gondii ME49' as organism, 'TgondiiME49' as abbreviation from dual union  
-  select 'Toxoplasma gondii VEG' as organism, 'TgondiiVEG' as abbreviation from dual union  
-  select 'Eimeria tenella str. Houghton' as organism, 'EtenellaHoughton' as abbreviation from dual union  
-  -- ToxoDB Un-Annotated Genomes
-  select 'Toxoplasma gondii RH' as organism, 'TgondiiRH' as abbreviation from dual union  
-  select 'Toxoplasma gondii MAS' as organism, 'TgondiiMAS' as abbreviation from dual union  
-  select 'Toxoplasma gondii TgCkUg2' as organism, 'TgondiiTgCkUg2' as abbreviation from dual union  
-  select 'Toxoplasma gondii VAND' as organism, 'TgondiiVAND' as abbreviation from dual union  
-  select 'Toxoplasma gondii p89' as organism, 'Tgondiip89' as abbreviation from dual union  
-  select 'Toxoplasma gondii FOU' as organism, 'TgondiiFOU' as abbreviation from dual union  
-  select 'Toxoplasma gondii RUB' as organism, 'TgondiiRUB' as abbreviation from dual union  
-  select 'Gregarina niphandrodes' as organism, 'Gniphandrodes' as abbreviation from dual union  
-  select 'Toxoplasma gondii TgCATBr9' as organism, 'TgondiiTgCATBr9' as abbreviation from dual union 
   -- TrichDB Annotated Genomes
   select 'Trichomonas vaginalis G3' as organism, 'Tvaginalis' as abbreviation from dual union  
-  -- AmoebaDB Un-Annotated Genomes
-  select 'Entamoeba histolytica DS4' as organism, 'EhistolyticaDS4' as abbreviation from dual union  
-  select 'Entamoeba histolytica HM-1:CA' as organism, 'EhistolyticaHM1_CA' as abbreviation from dual union  
-  select 'Entamoeba histolytica KU27' as organism, 'EhistolyticaKU27' as abbreviation from dual union  
-  select 'Entamoeba histolytica KU48' as organism, 'EhistolyticaKU48' as abbreviation from dual union  
-  select 'Entamoeba histolytica KU50' as organism, 'EhistolyticaKU50' as abbreviation from dual union  
-  select 'Entamoeba histolytica MS96' as organism, 'EhistolyticaMS96' as abbreviation from dual union  
-  select 'Entamoeba moshkovskii' as organism, 'Emoshkovskii' as abbreviation from dual union  
-  select 'Entamoeba histolytica Rahman' as organism, 'EhistolyticaRahman' as abbreviation from dual union  
-  -- AmoebaDB Annotated Genomes
-  select 'Entamoeba invadens IP1' as organism, 'EinvadensIP1' as abbreviation from dual union  
-  select 'Entamoeba histolytica HM-1:IMSS' as organism, 'EhistolyticaHM-1:IMSS' as abbreviation from dual union  
-  select 'Entamoeba dispar SAW760' as organism, 'EdisparSAW760' as abbreviation from dual union  
      -- TriTrypDD UN-Annotated Genomes
   select 'Endotrypanum monterogeii strain LV88' as organism, 'EmonteLV88' as abbreviation from dual union
   select 'Leishmania major strain LV39c5' as organism, 'LmajorLV39c5' as abbreviation from dual union
@@ -6727,17 +6698,8 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   and (ets.taxon_id = etn.taxon_id OR ets.species_taxon_id = etn.taxon_id)
   and etn.name = ea.organism
   union
-  -- ToxoDB ESTs Legacy
-  select 'Toxoplasma gondii' as organism, 'Toxoplasma' as parent, 'Tgondii' as abbreviation from dual union  
-  -- GiardiaDB ESTs Legacy
-  select 'Giardia Assemblage A' as organism, 'Giardia' as parent, 'GintestinalisAssemblageA' as abbreviation from dual union  
-  -- GiardiaDB Isolates Legacy
-  select 'All Giardia Isolates' as organism, 'Giardia' as parent, 'GiardiaGenbank' as abbreviation from dual union  
   -- TrichDB EST Legacy
   select 'Trichomonas vaginalis' as organism, 'Trichomonas' as parent, 'Tvaginalis' as abbreviation from dual union  
-  -- AmoebaDB EST Legacy
-  select 'Entamoeba dispar' as organism, 'Entamoeba' as parent, 'Edispar' as abbreviation from dual union  
-  select 'Entamoeba histolytica' as organism, 'Entamoeba' as parent, 'Ehistolytica' as abbreviation from dual union  
   -- PlasmoDB Legacy Isolates
   select 'P. falciparum Barcode Isolates' as organism, 'Plasmodium' as parent, 'PfalciparumBarcode' as abbreviation from dual union
   select 'P. berghei Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pberghei' as abbreviation from dual union
