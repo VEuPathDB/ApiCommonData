@@ -11,11 +11,16 @@ $| = 1;
 
 my $PRINT_URLS = 0;
 
-my ($parentNcbiTaxonIds, $outputFile) = @ARGV;
+my ($outputFile, $organismAbbrev) = @ARGV;
 
-my $organismAbbrev;
+my $parentNcbiTaxonIds;
+if (!$organismAbbrev) {
+  my @taxonIdsFromStdIn = <STDIN>;
+  $parentNcbiTaxonIds = $taxonIdsFromStdIn[0];
+  chomp($parentNcbiTaxonIds);
+}
 
-die "Must provide parent taxon IDs\n" unless $parentNcbiTaxonIds;
+die "Must provide either an organismAbbrev on command line or parent taxon IDs on stdin\n" unless $organismAbbrev || $parentNcbiTaxonIds;
 
 die "Output file '$outputFile' already exists\n" if -e $outputFile;
 
@@ -138,7 +143,7 @@ SQL
   my $stmt = $dbh->prepare($sql);
   $stmt->execute();
 
-  # run the query and the taxon ids,  break them into batches of 100
+  # run the query and the taxon ids,  break them into batches of 50
   # so we don't form URLs that are too long
   my %ncbiTaxIdsHash;
   my $ncbiTaxIdsBatches;
@@ -149,7 +154,7 @@ SQL
       if (!$ncbiTaxIdsHash{$currentTaxon}) {
 	  $ncbiTaxIdsHash{$currentTaxon} = 1;
 	  push(@{$ncbiTaxIdsBatches->[$batchIndex]}, $currentTaxon);
-	  if ($count++ == 100) {
+	  if ($count++ == 50) {
 	      $batchIndex++;
 	      $count = 0;
 	  }
@@ -158,17 +163,10 @@ SQL
 
   my @queryStrings;
   foreach my $batch (@$ncbiTaxIdsBatches) {
-      my @queries = map {"(((txid${_}[Organism:exp]) AND (isolate)) NOT (genome))"} @$batch;
-      my $queryString = join("OR", @queries);
+      my @queries = map {"txid${_}[Organism:exp] AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes)))"} @$batch;
+      my $queryString = join("OR ", @queries);
       push(@queryStrings,$queryString);
   }
-
-  foreach my $batch (@$ncbiTaxIdsBatches) {
-      my @queries = map {"(((txid${_}[Organism:exp]) AND (strain)) NOT (genome))"} @$batch;
-      my $queryString = join("OR", @queries);
-      push(@queryStrings,$queryString);
-  }
-
   return @queryStrings;
 }
 
