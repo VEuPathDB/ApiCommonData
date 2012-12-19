@@ -131,7 +131,11 @@ sub run {
 
     # add alias in SRes.DbRef
     $dbRef{'external_database_release_id'} = $dbRls;
-    $dbRef{'primary_identifier'} = $alias;
+
+    #  $dbRef{'primary_identifier'} = $alias;
+    #   Since the alias is not unique to the source_id, hence concatenating
+    #   both, with '|', to make a unique primary_identifier, for SRes.DbRef
+    $dbRef{'primary_identifier'} = $alias . '|' . $compound_id;
 
     my $newDbRef = GUS::Model::SRes::DbRef->new(\%dbRef);
     $newDbRef->submit() unless $newDbRef->retrieveFromDB();
