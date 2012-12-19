@@ -3650,10 +3650,10 @@ select 'Stress Response in Giardia lamblia Trophozoites-Averaged' as profile_nam
         60 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'expr_val,pct' as visible_parts,
+        'exprn_val,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'GL_Spycher_metaData' as attribution
+        '' as attribution
     from dual
 
     UNION
@@ -3667,10 +3667,10 @@ select 'Stress response Dynamics in Trophozoites (time series)-Averaged' as prof
         70 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'expr_val,pct' as visible_parts,
+       'exprn_val,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'GL_Spycher_metaData_2' as attribution
+        '' as attribution
     from dual
 
     UNION
@@ -3684,10 +3684,10 @@ select 'Hehl encystation expression profile' as profile_name,
         80 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'expr_val,pct' as visible_parts,
+       'exprn_val,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'G.lamblia_Hehl_encystation_Array_Profiles' as attribution
+        '' as attribution
     from dual
 
     UNION
@@ -3701,10 +3701,10 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
         90 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'expr_val,pct' as visible_parts,
+       'exprn_val,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
-        'G.intestinalis_Troell_Svard_Array_Profiles' as attribution
+        '' as attribution
     from dual
 
     UNION
@@ -4171,34 +4171,34 @@ from dual
 UNION
 
 -- AmoebaDB --
-select 'EhistolyticaAffyProfiles' as profile_name,
+select 'E. histolytica Gene expression in cysts and trophozoites' as profile_name,
        'Singh::SinghEhTimeSeries' as module,
        '<i>E. histolytica</i> Microarray Profiles (Gene expression in <i>E. histolytica</i> cysts and trophozoites)' as display_name,
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Gene expression in Entamoeba histolytica cysts and trophozoites:</b><br>RNA was isolated from <i>E. histolytica</i> parasites recently derived from human patients and grown in xenic culture (Robinson''s media) for 1-8 weeks. These cultures contained a mixture of trophozoites and cysts (as assayed by staining with calcofluor). Two different strains, isolated from different patients, were used. Gene expression in these strains was compared to gene expression in multiple <i>E. histolytica</i> strains (HMI:IMSS, Rahman and 200:NIH)  of pure trophozoites, which had been grown in axenic culture (TYI-S-33)for > 10 years, using a full genome Affymetrix-platform microarray. Multiple lines of evidence suggest that many genes differentially expressed between these two conditions (recent isolates vs. long term lab growth) are developmentally regulated.<br><br>All samples were isolated using Trizol and all except the clinical/cyst samples were cleaned up with the Qiagen RNAeasy kit (those samples had very low RNA levels). Samples GSM154008 (HM1-rep 3) and GSM154011 (Rahman Rep 3) were amplified using the SPIA protocol (these were also hybed and scanned at VBI- other samples were processed entirely by Stanford PAN facility). Samples GSM154022, GSM154023, and GSM154024 (the clinical/cyst samples) were amplified 2 rounds using the standard affy T7 procedure. All others had sufficient RNA and only underwent the standard affy in vitro transcription labeling protocol.' as description,
        'Strain and lifecycle stage' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
         160 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
 from dual
 UNION
-select 'EhistolyticaNugenProfiles' as profile_name,
+select 'E. histolytica Impact of intestinal colonization and invasion on transcriptome' as profile_name,
        'Gilchrist::GilchristEhTimeSeries' as module,
        '<i>E. histolytica</i> Microarray Profiles (Impact of intestinal colonization and invasion on the <i>E. histolytica</i>  transcriptome)' as display_name, 
        '<br><u>RMA normalized</u> (log base 2) values are plotted for each stage/strain in the top graph.<br><br>The <u>Percentile graph</u> (bottom graph) shows the level of expression of each gene relative to other genes in the same strain/stage/media.<br><br><b>Impact of intestinal colonization and invasion on the Entamoeba histolytica  transcriptome:</b><br>An Affymetrix platform gene expression array was designed for this analysis that included probe sets for 9435 open reading frames (ORFs) and 9066 5'' and 3'' flanking regions. Transcripts were detected for > 80% of all ORFs. A total of 523 transcripts (5.2% of all <i>E. histolytica</i> genes) were significantly changed in amebae isolated from the intestine on Days 1 and 29 after infection: 326 and 109 solely on Days 1 and 29, and 88 on both days. Quantitative real-time reverse transcriptase PCR confirmed these changes in 11/12 genes tested using mRNA isolated from an additional six mice.<br><br>HM-1:IMSS and Rahman were not part of this study but have been inlcuded here for comparison' as description,
        'Strain and lifecycle stage' as x_axis,
        'RMA Normalized Values (log base 2) or expression percentile value.' as y_axis,
         170 as order_num,
-        'TRUE' as mainOpen,
-        'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
-        '' as dataTable,
-      'expression' as type,
-        'E.histolytica_Intestinal-Colonization_Stage-Conversion_Array_Profiles' as attribution
+       'TRUE' as mainOpen,
+       'FALSE' as dataOpen,
+       'rma,percentile' as visible_parts,
+       '' as dataTable,
+       'expression' as type,
+       '' as attribution
 from dual
 UNION
 select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
@@ -4212,10 +4212,10 @@ select 'Ehist_Gilchrist_G3_V_HM1:IMSS' as profile_name,
        180 as order_num,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
-       'rma,pct' as visible_parts,
+       'rma,percentile' as visible_parts,
        '' as dataTable,
        'expression' as type,
-       'Ehistolytica_Gilchrist_GSE28883_RSRC' as attribution
+       '' as attribution
 from dual
 UNION
 
