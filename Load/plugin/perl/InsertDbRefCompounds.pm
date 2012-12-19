@@ -127,6 +127,7 @@ sub run {
 
   while(<FILE>) {
     my ($compound_id, $alias) = split(/\t/, $_);
+    chomp $alias;
     my %dbRef;
 
     # add alias in SRes.DbRef
@@ -135,7 +136,7 @@ sub run {
     #  $dbRef{'primary_identifier'} = $alias;
     #   Since the alias is not unique to the source_id, hence concatenating
     #   both, with '|', to make a unique primary_identifier, for SRes.DbRef
-    $dbRef{'primary_identifier'} = $alias . '|' . $compound_id;
+    $dbRef{'primary_identifier'} = $compound_id  . '|' . $alias;
 
     my $newDbRef = GUS::Model::SRes::DbRef->new(\%dbRef);
     $newDbRef->submit() unless $newDbRef->retrieveFromDB();
