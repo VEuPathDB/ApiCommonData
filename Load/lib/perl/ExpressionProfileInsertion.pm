@@ -137,6 +137,10 @@ sub makeProfile {
   } elsif ($sourceIdType eq 'oligo') {
     $subjectTableId = $plugin->className2TableId('DoTS::ExternalNaSequence');
     $subjectRowId = &_getExternalNaSequenceId($plugin, $sourceId);
+  } elsif ($sourceIdType eq 'compound') {
+    $subjectTableId = $plugin->className2TableId('ApiDB::PubChemCompound');
+
+    $subjectRowId = &_getCompoundId($plugin, $sourceId);
   }
 
   if ($subjectTableId && !$subjectRowId) {
@@ -223,8 +227,28 @@ AND extSeq.sequence_ontology_id = so.sequence_ontology_id
     }
     
   }
-
   my $naSeqId = $plugin->{naSequenceIds}->{$sourceId};
 
   return $naSeqId;
 }
+
+sub _getCompoundId {
+  my ($plugin, $sourceId) = @_;
+
+  my $sql = "
+SELECT pubchem_compound_id 
+FROM ApiDB.pubchemcompound 
+WHERE TO_CHAR(compound_id)  = '$sourceId'
+AND property='Mass'
+UNION
+SELECT c.pubchem_compound_id
+FROM SRes.dbref r, ApiDB.dbrefcompound l, ApiDB.pubchemcompound c
+WHERE r.primary_identifier ='$sourceId'
+AND r.db_ref_id = l.db_ref_id
+AND l.compound_id = c.compound_id
+AND c.property='Mass'";
+  my $stmt = $plugin->prepareAndExecute($sql);
+  my $comp_id = $stmt->fetchrow_array();
+  return $comp_id;
+}
+
