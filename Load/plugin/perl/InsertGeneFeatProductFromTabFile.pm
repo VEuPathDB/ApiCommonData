@@ -137,8 +137,9 @@ sub run {
       $self->error("Either sourceId or product is null on line of $. of input file '$tabFile'") unless $sourceId && $product;
 
       my $preferred = 0;
-	       
-      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, is_predicted => 'null', row_project_id => $projectId});
+      my $ispredicted = '';
+     
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, is_predicted => $ispredicted, row_project_id => $projectId});
       
 
       if($geneFeature->retrieveFromDB()){
