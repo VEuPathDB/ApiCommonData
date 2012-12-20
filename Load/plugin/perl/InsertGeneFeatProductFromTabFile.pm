@@ -138,7 +138,7 @@ sub run {
 
       my $preferred = 0;
 	       
-      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, row_project_id => $projectId});
+      my $geneFeature = GUS::Model::DoTS::GeneFeature->new({source_id => $sourceId, is_predicted => 'null', row_project_id => $projectId});
       
 
       if($geneFeature->retrieveFromDB()){
