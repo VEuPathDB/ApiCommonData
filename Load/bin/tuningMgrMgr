@@ -214,7 +214,7 @@ sub addInstance {
   # find out whether this family exists
   my $stmt = $dbh->prepare(<<SQL);
       select replace(replace(subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', '')
-      from apidb_r.TuningFamily\@apidb.login_comment
+      from apidb_r.TuningFamily\@prodS.login_comment
       where family_name = '$family'
 SQL
 
@@ -228,7 +228,7 @@ SQL
     print "Changing svn configuration from \"$existingSvn\" to \"$svn\" for family \"$family\"\n";
     my $url = svnUrl($svn);
     $dbh->do(<<SQL) or die $dbh->errstr;
-      update apidb_r.TuningFamily\@apidb.login_comment
+      update apidb_r.TuningFamily\@prodS.login_comment
       set subversion_url = '$url'
       where family_name = '$family'
 SQL
@@ -236,7 +236,7 @@ SQL
     # insert new family
       my $url = svnUrl($svn);
       $dbh->do(<<SQL) or die $dbh->errstr;
-        insert into apidb_r.TuningFamily\@apidb.login_comment (family_name, subversion_url, notify_emails, is_live)
+        insert into apidb_r.TuningFamily\@prodS.login_comment (family_name, subversion_url, notify_emails, is_live)
         values ('$family', '$url',
                 'TuningMgr\@pcbi.upenn.edu', 1)
 SQL
@@ -255,7 +255,7 @@ SQL
 
   # insert new TuningInstance
   $dbh->do(<<SQL) or die $dbh->errstr;
-      insert into apidb_r.TuningInstance\@apidb.login_comment
+      insert into apidb_r.TuningInstance\@prodS.login_comment
           (instance_nickname, family_name)
       values ('$instanceNickname', '$family')
 SQL
