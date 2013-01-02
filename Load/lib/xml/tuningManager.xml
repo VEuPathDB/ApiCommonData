@@ -4511,11 +4511,11 @@ where d.profile_name = psorg.name
 
 -- for profiles on Compounds -- -- just for PlasmoDB, in build 17 --
 UNION
-select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, '' as species, '' as organism
+select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, 'N/A' as species, 'N/A' as organism
 from (
 select 'Profiles of Metabolites from Llinas' as profile_name,
        'Llinas::pHMetabolite' as module,
-       'Mass Profile' as display_name,
+       'Mass Profile for Compound ' as display_name,
        'Metabolite levels in infected red blood cells, saponin-purified parasites, and uninfected cells incubated for 4 hours in media titrated to pH 6.4, 7.4, and 8.4.' as description,
        'pH' as x_axis,
        'metabolite level' as y_axis,
