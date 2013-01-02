@@ -270,7 +270,7 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 	    
 	    
-	    $codingStart[$#codingStart] = $codingStart;
+	    #$codingStart[$#codingStart] = $codingStart;
 	    
 	    $codingStart = shift(@codingStart);
 	    $codingEnd = shift(@codingEnd);
