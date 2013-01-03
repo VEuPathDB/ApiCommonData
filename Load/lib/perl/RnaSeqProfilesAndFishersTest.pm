@@ -36,6 +36,10 @@ sub new {
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
 
+  if(my $outputPrefix = $self->getOutputFile()) {
+    $outputFileBase = $outputPrefix . $outputFileBase;
+  }
+
   return $self;
 }
 
