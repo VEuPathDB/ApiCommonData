@@ -101,19 +101,12 @@ sub update_coverage {
       next if $f !~ /\.cov/i;
       open(F, "$k/$f");
 
-      my $indicator = 1;
-      if($strandSpecific) {  # strand specific Unique (forward +, reverse -) | NonUnique (forward +, reverse -)
-        $indicator = -1 if ($f =~ /minus/i);
-      } else {               # regular Unique +, Nonunique -
-        $indicator = -1 if ($f =~ /_NU/);
-      }
-
       open OUT, ">$out_dir/$f";
       <F>;
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
-        my $normalized_score = sprintf ("%.2f", $indicator * ( log($score * $max_sum_coverage / $v )/log(2) ) );
+        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", log($score * $max_sum_coverage / $v )/log(2) );
 
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
       }
