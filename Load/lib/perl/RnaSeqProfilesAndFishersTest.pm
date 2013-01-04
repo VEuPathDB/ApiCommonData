@@ -32,6 +32,10 @@ sub new {
                          ];
   my $self = $class->SUPER::new($args, $requiredParams);
 
+  if(my $outputPrefix = $self->getOutputFile()) {
+    $outputFileBase = $outputPrefix . $outputFileBase;
+  }
+
   if(scalar @{$args->{samples}} > 1 ) {
     my $isPairedEnd = $self->getIsPairedEnd();
     unless($isPairedEnd eq 'yes' || $isPairedEnd eq 'no') {
