@@ -35,6 +35,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="gene_synonym"			ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="standard_name" ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/>
@@ -83,6 +84,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="inference"			ignore="true"/>
     <qualifier name="note"			ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
@@ -90,6 +92,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"			ignore="true"/>
     <qualifier name="product"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
@@ -97,6 +100,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"          ignore="true"/>
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA">
@@ -104,6 +108,15 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"          ignore="true"/>
     <qualifier name="product"           ignore="true"/>
     <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
+  </feature>
+
+  <feature name="scRNA_gene" so="scRNA_encoding">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"          ignore="true"/>
+    <qualifier name="product"           ignore="true"/>
+    <qualifier name="db_xref"           ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
   </feature>
 
   <feature name="SRP_RNA_gene" so="SRP_RNA_encoding">
@@ -131,6 +144,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
+    <qualifier name="gene"			ignore="true"/>
   </feature>
 
   <feature name="exon" table="DoTS::ExonFeature" so="coding_exon">
@@ -160,7 +174,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="chromosome"/>
     <qualifier name="db_xref"			ignore="true"/>
     <qualifier name="isolate"/>
-    <qualifier name="mol_type" ignore="true"/>
+    <qualifier name="mol_type"          ignore="true"/>
     <qualifier name="organism"/>
     <qualifier name="organelle"/>
     <qualifier name="serotype"/>
