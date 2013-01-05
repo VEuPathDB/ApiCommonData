@@ -6872,31 +6872,52 @@ SELECT comp.compound_id,  'compound:' || comp.compound_id AS source_id,
     <sql>
       <![CDATA[
 CREATE TABLE PathwayCompounds&1 NOLOGGING AS
-SELECT ca.compound_id, ca.source_id as compound_source_id,
-        case when nn1.node_type_id = 2 then nn1.display_label
-            when nn2.node_type_id = 2 then nn2.display_label
-            else 'None' end as compound,
-       case when nn1.node_type_id = 1 then nn1.display_label
-            when nn2.node_type_id = 1 then  nn2.display_label
-            else 'None' end as enzyme,
-       nrt.display_name as reaction,'@PROJECT_ID@' as project_id, nc.description as source,
-       n.description ||' ('||n.name||')' as pathway, n.name as name, n.network_id 
- FROM  ApiDB.NetworkRelationship nr, ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc,
-       ApiDB.Network n, ApiDB.NetworkRelContextLink nrl, ApiDB.NetworkContext nc,
-       ApiDB.NetworkNode nn1 ,ApiDB.NetworkNode nn2,
-       ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes ca
-WHERE  nr.node_id = nn1.network_node_id
-  AND  nr.associated_node_id = nn2.network_node_id
-  AND  nrc.network_relationship_id = nr.network_relationship_id
-  AND  nrt.network_relationship_type_id = nrc.network_relationship_type_id
-  AND  nrl.network_rel_context_id = nrc.network_rel_context_id
-  AND  nrl.network_id = n.network_id
-  AND  nrc.network_context_id = nc.network_context_id
-  AND  s1.property = 'CID'
-  AND  s1.value = ca.compound_id 
-  AND  s1.substance_id = s2.substance_id
-  AND  ((s2.property ='KEGG'   AND  s2.value = nn2.display_label) 
-     OR (s1.property ='KEGG'   AND  s1.value = nn2.display_label))
+SELECT  '@PROJECT_ID@' AS project_id, ca.compound_id, ca.source_id AS compound_source_id, x.*
+FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes ca,
+    (  -- CASE  A :  NOT reversible
+      SELECT  CASE WHEN nn1.node_type_id = 2 THEN nn1.display_label
+                 WHEN nn2.node_type_id = 2 THEN nn2.display_label
+                 ELSE 'None' END AS compound,
+            CASE WHEN nn1.node_type_id = 1 THEN nn1.display_label
+                 WHEN nn2.node_type_id = 1 THEN  nn2.display_label
+                 ELSE 'None' END AS enzyme,
+             CASE  WHEN (nrc.source_node = 0 and nn1.node_type_id = 1) THEN  'product' -- reaction from enzyme to compound
+                      ELSE 'substrate' END AS compound_type,
+              nrt.display_name AS reaction,
+              n.description ||' ('||n.name||')' AS pathway, n.name AS name, n.network_id
+     FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
+              ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
+              ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
+     WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
+      	   AND nrc.source_node = 0 
+     	    AND nrc.network_relationship_id = nr.network_relationship_id
+	    AND nr.node_id = nn1.network_node_id
+      	    AND nr.associated_node_id = nn2.network_node_id
+      	    AND  nrl.network_rel_context_id = nrc.network_rel_context_id
+      	    AND  nrl.network_id = n.network_id
+     UNION
+      -- CASE  B :   reversible
+     SELECT  nn2.display_label as compound, nn1.display_label AS enzyme, 
+                  'both' AS compound_type,
+                  nrt.display_name AS reaction, 
+                  n.description ||' ('||n.name||')' as pathway, n.name AS name, n.network_id
+       FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
+              ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
+              ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
+     WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
+      	   AND nrc.source_node = 1 
+      	   AND nrc.network_relationship_id = nr.network_relationship_id
+      	   AND nr.node_id = nn1.network_node_id
+      	   AND nr.associated_node_id = nn2.network_node_id
+      	   AND  nrl.network_rel_context_id = nrc.network_rel_context_id
+      	   AND  nrl.network_id = n.network_id
+      	   AND nn1.node_type_id = 1
+     	   ) x
+WHERE s1.property = 'CID'
+      AND  s1.value = ca.compound_id 
+      AND  s1.substance_id = s2.substance_id
+       AND  s2.property ='KEGG'   
+       AND  (s2.value = x.compound)
       ]]>
     </sql>
   </tuningTable>
