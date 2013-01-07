@@ -1,0 +1,130 @@
+#!/usr/bin/perl
+
+## This script is a copy of addPloyAGenes.pl
+## to update 'is_dominant','percent_fraction' and 'diff_to_next' columns in apidb.polyAGenes table
+## to update 'first_atg_location' and 'dist_to_first_atg' columns in apidb.polyAGenes table
+## is a complement of the plugin ApiCommonData::Load::Plugin::InsertPolyAGenes
+## running updates based on sampleName
+
+use strict;
+use Getopt::Long;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use GUS::ObjRelP::DbiDatabase;
+use GUS::Supported::GusConfig;
+
+my ($sampleName,$verbose,$gusConfigFile,$commit);
+&GetOptions("verbose|v!"=> \$verbose,
+            "gusConfigFile|c=s" => \$gusConfigFile,
+            "sampleName=s" => \$sampleName,
+            "commit!" => \$commit,
+           );
+
+my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
+my $db = GUS::ObjRelP::DbiDatabase->new($gusconfig->getDbiDsn(),
+                                        $gusconfig->getDatabaseLogin(),
+                                        $gusconfig->getDatabasePassword(),
+                                        $verbose,0,1,
+                                        $gusconfig->getCoreSchemaName());
+my $dbh = $db->getQueryHandle();
+
+#
+my $updateH = $dbh->prepare(<<SQL);
+UPDATE apidb.PolyAGenes SET is_dominant=1, percent_fraction=100, diff_to_next=100
+WHERE splice_site_feature_id in
+ (SELECT splice_site_feature_id
+  FROM apidb.PolyAGenes ssg,
+      (SELECT max(count_per_million) as max_max, sample_name, source_id
+       FROM apidb.PolyAGenes
+       WHERE sample_name='$sampleName'
+       GROUP BY source_id, sample_name) x
+  WHERE ssg.count_per_million=x.max_max
+  AND ssg.sample_name = x.sample_name
+  AND ssg.source_id =x.source_id
+  AND ssg.sample_name ='$sampleName'
+  GROUP BY ssg.source_id, ssg.sample_name,x.max_max,splice_site_feature_id
+ )
+SQL
+
+print STDERR "First update for is_dominant, etc \n" if $verbose;
+$updateH->execute() or die $dbh->errstr();
+if($commit){
+  $dbh->do("commit");
+}else{
+  $dbh->do("rollback");
+}
+
+
+#
+$updateH = $dbh->prepare(<<SQL);
+UPDATE apidb.PolyAGenes SET is_dominant=null, percent_fraction=null, diff_to_next=null
+WHERE splice_site_feature_id in
+ (SELECT x.splice_site_feature_id
+  from apidb.PolyAGenes x, apidb.PolyAGenes y
+  where x.sample_name = y.sample_name
+  and x.sample_name = '$sampleName'
+  and x.source_id = y.source_id
+  and not x.location = y.location
+  and x.is_dominant=1 and y.is_dominant =1)
+SQL
+
+print STDERR "Second update for is_dominant, etc \n" if $verbose;
+$updateH->execute() or die $dbh->errstr();
+if($commit){
+  $dbh->do("commit");
+}else{
+  $dbh->do("rollback");
+}
+$updateH->finish();
+
+
+# fix  percent_diff_to_next_next for cases when there is another (lower count) splice site
+my $sql = <<SQL;
+SELECT y.splice_site_feature_id,
+round( ( (x.max_max) /z.mySum *100), 2) as percent_fraction,
+round( ( (x.max_max - max(ssg.count_per_million)) /z.mySum *100), 2) as diff_to_next
+FROM apidb.PolyAGenes ssg, apidb.PolyAGenes y,
+ (SELECT max(count_per_million) as max_max, sample_name, source_id
+  FROM apidb.PolyAGenes
+  WHERE is_dominant=1 
+  AND sample_name='$sampleName'
+  GROUP BY source_id, sample_name) x,
+ (SELECT sum(count_per_million) as mySum, sample_name, source_id from apidb.PolyAGenes x
+  WHERE sample_name='$sampleName'
+  GROUP BY x.sample_name,x.source_id) z
+WHERE ssg.count_per_million < x.max_max
+AND ssg.sample_name = x.sample_name
+AND ssg.source_id = x.source_id
+AND ssg.sample_name = z.sample_name
+AND ssg.source_id = z.source_id
+AND y.sample_name = ssg.sample_name
+AND y.sample_name = '$sampleName'
+AND y.source_id = ssg.source_id
+AND y.count_per_million = x.max_max
+GROUP BY ssg.source_id, ssg.sample_name,x.max_max,y.splice_site_feature_id,y.sample_name, z.mySum
+SQL
+
+my $queryHandle = $dbh->prepare($sql) or die $dbh->errstr;
+$queryHandle->execute() or die $dbh->errstr;
+
+$sql = <<SQL;
+UPDATE apidb.PolyAGenes
+   SET percent_fraction=?, diff_to_next = ?
+ WHERE splice_site_feature_id = ?
+SQL
+print STDERR "Update percent_fraction and diff_to_next columns\n" if $verbose;
+
+my $updateHandle = $dbh->prepare($sql);
+while (my ($splice_site_na_feat_id, $frac, $diff) = $queryHandle->fetchrow_array()) {
+
+  if ($splice_site_na_feat_id) {
+    $updateHandle->execute($frac, $diff, $splice_site_na_feat_id) or die $dbh->errstr;
+
+    if($commit){
+      $dbh->do("commit");
+    }else{
+      $dbh->do("rollback");
+    }
+  }
+}
+$updateHandle->finish();
+$queryHandle->finish();
