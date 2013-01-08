@@ -1118,7 +1118,6 @@ sub undoTables {
 
   return ('DoTS.NALocation',
 	  'DoTS.SeqVariation',
-          'DoTS.SnpFeature',
 	 );
 }
 
