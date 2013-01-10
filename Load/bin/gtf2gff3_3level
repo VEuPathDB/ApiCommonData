@@ -5,10 +5,12 @@ my $debug = 0;
 use Getopt::Long;
 my ($transprefix,$prefix) = ( '','');
 my $skipexons;
-GetOptions('fix!' => \$fix, # get point name
-	   's|skipexons:s' => \$skipexons,
-	   'p|prefix:s' => \$prefix,
+my $stops_outside_CDS = 0;
+GetOptions('fix!'             => \$fix, # get point name
+	   's|skipexons:s'    => \$skipexons,
+	   'p|prefix:s'       => \$prefix,
 	   'tp|transprefix:s' => \$transprefix,
+	   'so|stopoutside!'  => \$stops_outside_CDS, # when doing Broad data set to 1 
 	   'v|debug!' => \$debug);
 $transprefix = $prefix if defined $prefix && ! defined $transprefix;
 my %genes;
@@ -141,7 +143,14 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   $b->[3] * ($b->[6] eq '-' ? -1 : 1) } @$exonsref;
 
 #	my $mrna_id = sprintf("%smRNA%06d",$prefix,$counts{'mRNA'}++);
-	my $mrna_id = sprintf("%sT%d",$transcript,$counts{'mRNA'}->{$transcript}++);
+	my $mrna_id;
+	if( $transcript =~ /T\d+$/ ) {
+	    $mrna_id = $transcript;
+	    $counts{'mRNA'}->{$transcript}++;
+	} else {
+	    $mrna_id = sprintf("%sT%d",$transcript,$counts{'mRNA'}->{$transcript}++);
+	}
+
 	my @exons = grep { $_->[2] eq 'exon' } @$exonsref;
 	my @cds   = grep { $_->[2] eq 'CDS'  } @$exonsref;	
 	if( ! @cds ) {
@@ -150,14 +159,14 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	}
 	my ($start_codon)   = grep { $_->[2] eq 'start_codon'  } @$exonsref;
 	my ($stop_codon)    = grep { $_->[2] eq 'stop_codon'  } @$exonsref;
-
+	
 	if( ! @exons ) {
 	  for my $e ( @cds ) {
 	    push @exons, [@$e];
 	    $exons[-1]->[2] = 'exon';
 	  }
 	}
-
+	
 	my $proteinid = $transcript2protein{$transcript};
 	my ($chrom,$src,$strand,$min,$max);
 	for my $exon ( @exons ) {
@@ -190,68 +199,86 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			 '.',
 			 $mrna_ninth,
 			 )),"\n";
-
+	
 	my ($translation_start, $translation_stop);
-
-	# sanity check the CDS - apparently the JGI has CDS which are not CDS as they come before or after the stop/start 
+	
+	# sanity check the CDS - apparently the JGI has CDS which are not 
+	# CDS as they come before or after the stop/start 
 	# codon inappropriately
 	warn("CDS order is [strand=$strand_val]:\n") if $debug;
 	# order 5' -> 3' by multiplying start by strand
 	my @keepcds;
 	for my $cds ( sort { $a->[3] * $strand_val <=>
-			       $b->[3] * $strand_val } @cds ) {
+			     $b->[3] * $strand_val      } @cds ) {
 
-	  warn(join("\t", @$cds), "\n") if ( $debug) ;
-	  if ( !defined $stop_codon && ! defined $start_codon) {
-	    push @keepcds, $cds;
-	  } elsif ( $strand_val > 0 ) {  # plus strand
-	    if ( defined $stop_codon && 
-		 $stop_codon->[4] < $cds->[3] ) { # stop codon comes before this CDS, drop the CDS (codon stop is < CDS start)
-	      warn("dropping CDS after the stop [plus]\n") if $debug;
-	    } elsif ( defined $start_codon && $cds->[4] < $start_codon->[3]  ) { #  CDS ends before the start codon began
-	      warn("dropping CDS before the start [plus]\n") if $debug;
+	    warn("CDS: ",join("\t", @$cds), "\n") if ( $debug );
+
+	    if ( ! defined $stop_codon && ! defined $start_codon) {
+		push @keepcds, $cds;
+	    } elsif ( $strand_val > 0 ) { # plus strand
+		if ( defined $stop_codon && 
+		     $stop_codon->[4] < $cds->[3] ) { # stop codon comes before this CDS, 
+		    # drop the CDS (codon stop is < CDS start)
+		    warn("dropping CDS after the stop [plus]\n") if $debug;
+		} elsif ( defined $start_codon && $cds->[4] < $start_codon->[3]  ) { #  CDS ends before the start codon began
+		    warn("dropping CDS before the start [plus]\n") if $debug;
+		} else {
+	  	    warn("keeping CDS [plus]\n") if $debug;
+		    push @keepcds, $cds;
+		}
+	    } elsif ( $strand_val < 0) { # minus strand
+		if (  defined $stop_codon && $stop_codon->[3] > $cds->[4] ) { # start codon comes after the CDS (codon start > CDS stop)
+		    warn("dropping CDS that comes after the stop [minus]\n") if $debug;
+		} elsif ( defined $start_codon && $cds->[3] > $start_codon->[4] ) { # CDS starts after start codon ends
+		    warn("dropping CDS that comes before the start [minus]\n") if $debug;
+		} else {
+	  	    warn("keeping CDS [minus]\n") if $debug;
+		    push @keepcds, $cds;
+		}
 	    } else {
-	      push @keepcds, $cds;
+		die "unknown state\n";
 	    }
-	  } elsif ( $strand_val < 0) { # minus strand
-	    if (  defined $stop_codon && $stop_codon->[3] > $cds->[4] ) { # start codon comes after the CDS (codon start > CDS stop)
-	      warn("dropping CDS that comes after the stop [minus]\n") if $debug;
-	    } elsif ( defined $start_codon && $cds->[3] > $start_codon->[4] ) { # CDS starts after start codon ends
-	      warn("dropping CDS after the start [minus]\n") if $debug;
-	    } else {
-	      push @keepcds, $cds;
-	    }
-	  } else {
-	    die "unknown state\n";
-	  }
 	}
 	@cds = @keepcds;
 
 	if( $stop_codon ) {
 	    if( $strand_val > 0 ) {		
-		warn("stop codon is ", join("\t", @{$stop_codon}), " cds was ",$cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
+		warn("stop codon is ", join("\t", @{$stop_codon}),
+		     " cds was ",$cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
 		$cds[-1]->[4] = $stop_codon->[4];
-		warn("cds updated to ", $cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
+		warn("cds (stop) updated to ", $cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
 		$translation_stop = $stop_codon->[4];
 	    } else {
-		warn("stop codon is ", join("\t", @{$stop_codon}), "\n") if $debug;
-		$cds[0]->[3] = $stop_codon->[3];
-		warn("cds updated to ", $cds[-1]->[3], "..",$cds[-1]->[4],"\n") if $debug;
-		$translation_stop = $stop_codon->[3];
+		if( @cds ) {
+			warn("stop codon is ", join("\t", @{$stop_codon}), "\n") if $debug;
+			warn("cds[-] (stop) before to ", $cds[0]->[3], "..",$cds[0]->[4],"\n") if $debug;
+			$cds[-1]->[3] = $stop_codon->[3];
+			warn("cds[-] $mrna_id (stop) updated to ", $cds[0]->[3], "..",$cds[0]->[4],"\n") if $debug;
+			$translation_stop = $stop_codon->[3];
+		} else {
+			warn("no CDS to update stop codon for $mrna_id $gene_id\n");
+		}
 	    }
-	  } else {
+	} else {
 	    $translation_stop = ($strand_val > 0) ? $cds[-1]->[4] : $cds[-1]->[3];
-	  }
+	}
 
 	if( $start_codon ) {
 	    if( $strand_val > 0 ) {	
 		warn("start codon is ", join("\t", @{$start_codon}), "\n") if $debug;
 		$cds[0]->[3] = $start_codon->[3];
+		warn("cds (start) updated to ", $cds[0]->[3], "..",$cds[0]->[4],"\n") if $debug;
 		$translation_start = $start_codon->[3];
 	    } else {
-		warn("start codon is ", join("\t", @{$start_codon}), "\n") if $debug;
-		$cds[-1]->[4] = $start_codon->[4];
-		$translation_start = $start_codon->[4];
+		if( @cds ) {
+			warn("start codon is ", join("\t", @{$start_codon}), "\n") if $debug;
+			warn("cds[-] (start) before to ", $cds[-1]->[3],"..",$cds[-1]->[4],"\n") if $debug;
+			$cds[0]->[4] = $start_codon->[4];		
+			warn("cds[-] (start) updated to ", $cds[-1]->[3],"..",$cds[-1]->[4],"\n") if $debug;
+			$translation_start = $start_codon->[4];
+		} else {
+			warn("no CDS to update start codon for $mrna_id $gene_id\n");
+                }
 	      }
 	  } else {
 	    $translation_start = ($strand_val > 0) ? $cds[0]->[3] : $cds[0]->[4];
@@ -432,8 +459,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			     '.',
 			     $strand,
 			     '.',
-			     sprintf("ID=%s_utr3%06d;Parent=%s",
-				     $prefix,
+			     sprintf("ID=utr3%06d;Parent=%s",
 				     $counts{'3utr'}++,
 				     $mrna_id)))];
 		}
@@ -456,7 +482,7 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 			   @{$utrs{'3utr'}}), "\n";
 	    }
 	}
-
+	
 	print join("\n", ( map { $_->[1] } sort { $a->[0] <=> $b->[0] }
 			   (@exons, @cds))), "\n";
 	if( $strand_val > 0 ) {
@@ -472,4 +498,3 @@ for my $gid ( sort { $genes{$a}->{chrom} cmp $genes{$b}->{chrom} ||
 	}
     }
 }
-
