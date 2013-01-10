@@ -73,14 +73,26 @@ sub report {
   my $sqlTerms = $self->getSqlTerms();
 
   # Check all Sql terms are handled
-  foreach my $vocabTerm (@{$sqlTerms}) {
+  foreach my $vocabTerm (@{$sqlTerms->{dotsIsolateSourceTerms}}) {
     next if($vocabTerm->getAlreadyMaps());
 
     my $term = $vocabTerm->getTerm();
 
     unless($xmlTermsHash->{$term}) {
       print STDERR "No Mapping Info for Vocab Term:  $term\n";
-      $self->getXml($term, $type);
+      $self->getXml($term, $type, 'IsolateSource');
+      $hadErrors = 1;
+    }
+  }
+
+  foreach my $vocabTerm (@{$sqlTerms->{studyOntologyEntryTerms}}) {
+    next if($vocabTerm->getAlreadyMaps());
+
+    my $term = $vocabTerm->getTerm();
+
+    unless($xmlTermsHash->{$term}) {
+      print STDERR "No Mapping Info for Vocab Term:  $term\n";
+      $self->getXml($term, $type, 'OntologyEntry');
       $hadErrors = 1;
     }
   }
@@ -112,11 +124,19 @@ sub makeHashFromTerms {
 
 
 sub getXml {
-  my ($self, $value, $type) = @_;
+  my ($self, $value, $type, $table) = @_;
   my $typeInTable = $type;
-  $typeInTable = 'country' if ($type eq 'geographic_location');
+
+  # change typeInTable appropriately
+  if ($table eq 'OntologyEntry') {
+    $typeInTable = 'GeographicLocation' if ($type eq 'geographic_location');
+    $typeInTable = 'BioSourceType' if ($type eq 'isolation_source');
+    $typeInTable = 'Host' if ($type eq 'specific_host');
+  } else {
+    $typeInTable = 'country' if ($type eq 'geographic_location');
+  }
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$typeInTable">
+  <initial table=\"$table\" field=\"$typeInTable">
    <original>$value<\/original>
     <maps>
       <row type=\"$type\" value=\"\" \/>
