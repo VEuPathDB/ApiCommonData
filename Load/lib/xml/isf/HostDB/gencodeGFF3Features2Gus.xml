@@ -9,6 +9,7 @@
            class="ApiCommonData::Load::SpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="note"           ignore="true"/>
@@ -32,6 +33,7 @@
   </feature>
 
   <feature name="pseudo_gene" so="pseudogene">
+    <validator name="validateGene"     handler="api" method="validateGene"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="protein"        handler="api" method="setProvidedTranslation"/>
     <qualifier name="note"           ignore="true"/>
