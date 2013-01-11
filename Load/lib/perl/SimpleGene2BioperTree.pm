@@ -26,74 +26,65 @@ use Data::Dumper;
 
 sub preprocess 
 {
-	my ($bioperlSeq, $plugin) = @_;
+  my ($bioperlSeq, $plugin) = @_;
 
-	my @seqFeatures = $bioperlSeq->get_SeqFeatures;
+  my @seqFeatures = $bioperlSeq->get_SeqFeatures;
+  $bioperlSeq->remove_SeqFeatures;
 
-	foreach my $bioperlFeatureTree (@seqFeatures) {
-		my $type = $bioperlFeatureTree->primary_tag();
-		
-		if ($type eq 'gene') {
-			$type = "coding";
+  foreach my $bioperlFeatureTree (@seqFeatures) {
+    my $type = $bioperlFeatureTree->primary_tag();
 
-			$bioperlFeatureTree->primary_tag("${type}_gene");
+    if ($type eq 'gene') {
+      $type = "coding";
+      $bioperlFeatureTree->primary_tag("${type}_gene");
 
-			my $gene = $bioperlFeatureTree;
-			my $geneLoc = $gene->location();
-		
-			#$bioperlSeq->add_SeqFeature($gene) if ($gene);
-			#every gene has been load twice, maybe problem is here.
+      my $gene = $bioperlFeatureTree;
+      my $geneLoc = $gene->location();
 
-			my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
-			$gene->add_SeqFeature($transcript);
 
-			my $codonStart = 0;
-			$codonStart = $bioperlFeatureTree->get_tag_values("codon_start") 
-				if ( $bioperlFeatureTree->has_tag("codon_start") );
-			
-			my @exonLocs = $geneLoc->each_Location();
-			my $CDSLength = 0;
-			# my $CDSLoc = $geneLoc;
+      my $transcript = &makeBioperlFeature("transcript", $geneLoc, $bioperlSeq);
 
-			my (@exons, @sortedExons);
-			foreach my $exonLoc (@exonLocs) {
-				my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
-				
-				my ($codingStart, $codingEnd);
-				#if ($type eq 'coding') {
-                                if ($exon->location->strand == -1) {
-					$codingStart = $exon->location->end;
-					$codingEnd = $exon->location->start;
-					#$codingStart -= $codonStart if ($codonStart > 0);
-                                } else {
-					$codingStart = $exon->location->start;
-					$codingEnd = $exon->location->end;
-					#$codingStart += $codonStart if ($codonStart > 0);
-				}
-				$exon->add_tag_value('CodingStart', $codingStart);
-				$exon->add_tag_value('CodingEnd', $codingEnd);
-				$exon->add_tag_value('type', 'coding');
-				# } else {
-				#	$exon->add_tag_value ('CodingStart', '');
-				#	$exon->add_tag_value ('CodingEnd', '');
-				#	$exon->add_tag_value ('type', 'non_coding');
-				#}
-			
-				$CDSLength += (abs($codingStart - $codingEnd) + 1);
-				push (@exons, $exon);
-			}
+      my $codonStart = 0;
+      $codonStart = $bioperlFeatureTree->get_tag_values("codon_start") - 1
+		if ( $bioperlFeatureTree->has_tag("codon_start") );
+      $codonStart = $bioperlFeatureTree->frame() if ($bioperlFeatureTree->frame());
 
-			$transcript->add_tag_value('CDSLength', $CDSLength);
+      my @exonLocs = $geneLoc->each_Location();
+      my $CDSLength = 0;
 
-			my $naReminder = $CDSLength%3;
-			my $exonCount = 0;
-	
-			foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @exons) {
-				$transcript->add_SeqFeature($exon);
-				$exonCount++;
-			}
-		}
-	}
+      my (@exons, @sortedExons);
+      foreach my $exonLoc (@exonLocs) {
+        my $exon = &makeBioperlFeature("exon", $exonLoc, $bioperlSeq);
+        my ($codingStart, $codingEnd);
+        if ($exon->location->strand == -1) {
+          $codingStart = $exon->location->end;
+          $codingEnd = $exon->location->start;
+          $codingStart -= $codonStart if ($codonStart > 0);
+        } else {
+          $codingStart = $exon->location->start;
+          $codingEnd = $exon->location->end;
+          $codingStart += $codonStart if ($codonStart > 0);
+        }
+        $exon->add_tag_value('CodingStart', $codingStart);
+        $exon->add_tag_value('CodingEnd', $codingEnd);
+
+        $CDSLength += (abs($codingStart - $codingEnd) + 1);
+        push (@exons, $exon);
+      }
+      $transcript->add_tag_value('CDSLength', $CDSLength);
+
+      foreach my $exon (sort {$a->location->start() <=> $b->location->start()} @exons) {
+        $transcript->add_SeqFeature($exon);
+      }
+
+      $gene->add_SeqFeature($transcript);
+      $bioperlSeq->add_SeqFeature($gene);
+
+    }
+    else {
+      $bioperlSeq->add_SeqFeature($bioperlFeatureTree);
+    }
+  }
 }
 
 
