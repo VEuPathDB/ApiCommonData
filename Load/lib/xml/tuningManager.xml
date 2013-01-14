@@ -3709,6 +3709,23 @@ select 'Profiles of G.lamblia Ringqvist array data' as profile_name,
 
     UNION
 
+select 'Troell Cell Cycle' as profile_name,
+       'Troell::CellCycle' as module,
+       'Cell cycle analysis in Giardia intestinalis' as display_name,
+       'In this project the full transcriptome of Giardia intestinalis during the complete cell cycle was studied. The main aim was to identify cell cycle stage-specific genes that are important for the regulation of different processes during the cell cycle. We identified several genes with stage specific expression, both known and hypothetical proteins. We also found several markers with high expression that has not been assigned status of a gene. Possibly this could be used for further help in annotating this genome' as description,
+       'Time point in hours' as x_axis,
+       'Fold Change in upper graph or expression percentile value in lower graph.' as y_axis,
+        91 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'exprn_val,percentile' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+
 select 'giar sage tag frequencies sense' as profile_name,
        'Sage::McArthur' as module,
        'Curated SAGE Data (Sense and Antisense Tags)' as display_name,
@@ -4139,7 +4156,7 @@ select 'Profiles of transcriptional variation in Plasmodium falciparum 3d7a' as 
             HB3-derived : AB10; AB6; BB8; BC4; HB3A; HB3B<br>
             Parental    : 7G8; D10; HB3A' as description,
        'Hours Post-Infection' as x_axis,
-       '(exprn_val) <u>left axis</u> : Expression Value (log-ratio) -  The expression value plotted is the log-ratio of the comparator / common reference. A value > 1 indicates &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp higher relative expression in the comparator. A value < 1 indicates lower relative expression in the comparator.<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <u>right axis</u> : Fold Change - A value of "2" means the relative expression of the comparator is double the expression of the reference. A value of "-2" &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp means the relative expression of the comparator is half the expression of the reference. <br> (percentile) Ranking percentile of relative expression, relative to all other genes',
+       '(exprn_val) <u>left axis</u> : Expression Value (log-ratio) -  The expression value plotted is the log-ratio of the comparator / common reference. A value > 1 indicates <br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp higher relative expression in the comparator. A value < 1 indicates lower relative expression in the comparator.<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <u>right axis</u> : Fold Change - A value of "2" means the relative expression of the comparator is double the expression of the reference. A value of "-2" <br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp means the relative expression of the comparator is half the expression of the reference. <br> (percentile) Ranking percentile of relative expression, relative to all other genes',
        21 as order_num,
        'TRUE' as mainOpen,
        'FALSE' as dataOpen,
