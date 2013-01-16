@@ -344,7 +344,7 @@ sub traverseSeqFeatures {
 		    $exonType = 'non_coding';
 
 		}
-		if($subFeature->primary_tag eq 'pseudogenic_exon'){
+		if($subFeature->primary_tag eq 'pseudogenic_exon' || $subFeature->primary_tag eq 'CDS'){
 		    $subFeature->primary_tag('exon');
 		   
 		}
