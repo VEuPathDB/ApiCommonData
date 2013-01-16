@@ -32,11 +32,12 @@ die $usage unless -e $outputDir;
 opendir(DIR, $inputDir);
 my @ds = readdir(DIR);
 
-foreach my $d (@ds) {
+foreach my $d (sort @ds) {
   next unless $d =~ /^analyze_(\S+)/;
   $inputDir =~ s/\/$//;
   my $exp_dir = "$inputDir/$d/master/mainresult/normalized/final";
-  my $output = $outputDir."/$1"; 
+  my $sample = $1;
+  my $output = $outputDir."/$sample"; 
   system ("mkdir $output");
   my $status = $? >>8;
   die "Error.  Failed making $outputDir with status '$status': $!\n\n" if ($status);
@@ -45,4 +46,33 @@ foreach my $d (@ds) {
   $status = $? >>8;
   die "Error.  Failed $cmd with status '$status': $!\n\n" if ($status);
 
+  # create a metadata text file for better organizing gbrowse subtracks
+  open(META, ">>$outputDir/metadata");
+  my $expt = "unique";
+  my $strand = "forward";
+
+  opendir(D, $exp_dir);
+  my @fs = readdir(D);
+  foreach my $f(sort @fs) {
+    next if $f !~ /\.bw$/;
+    $expt = 'non-unique' if $f =~ /NU/;
+    $expt = 'unique' if $f =~ /Unique/;
+    $strand = 'reverse' if $f =~ /minus/;
+    $strand = 'forward' if $f =~ /plus/;
+
+    my $meta =<<EOL;
+[$sample/$f]
+display_name = $sample non-unique forward
+type         = RUM:GUS
+expt         = $expt
+strand       = $strand
+sample       = $sample
+
+EOL
+   print META $meta;
+
+  }
+
+  closedir(D);
+  close(META);
 }
