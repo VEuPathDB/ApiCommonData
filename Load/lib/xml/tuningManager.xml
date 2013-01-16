@@ -6500,9 +6500,6 @@ tablespace indx
        where ot.term = oa.organism
        union
        select special.organism, special.parent,special.abbreviation, ot.project_id from OrganismTree ot,(
-  -- Giardia Deprecated
-  select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageADeprecated' as abbreviation from dual union
-  select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'Giardia Assemblage A' as parent, 'GintestinalisAssemblageAScaffold' as abbreviation from dual union
   -- TrichDB Repeat Genes
   select 'Trichomonas vaginalis G3 (Repeated Genes)' as organism, 'Trichomonas vaginalis' as parent, 'TvaginalisRG' as abbreviation from dual
 ) special
