@@ -6903,7 +6903,8 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
               ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
               ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
-      	   AND nrc.source_node = 0 
+           -- source_node = 1 means irreversible (this is an adjustment as network schema cant store reversibility)
+            AND nrc.source_node = 1 
      	    AND nrc.network_relationship_id = nr.network_relationship_id
 	    AND nr.node_id = nn1.network_node_id
       	    AND nr.associated_node_id = nn2.network_node_id
@@ -6919,7 +6920,8 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
               ApiDB.NetworkRelContextLink nrl, ApiDB.Network n,
               ApiDB.NetworkNode nn1, ApiDB.NetworkNode nn2
      WHERE nrc.network_relationship_type_id = nrt.network_relationship_type_id
-      	   AND nrc.source_node = 1 
+           -- source_node = 0 means reversible (this is an adjustment as network schema cant store reversibility)
+      	   AND nrc.source_node = 0 
       	   AND nrc.network_relationship_id = nr.network_relationship_id
       	   AND nr.node_id = nn1.network_node_id
       	   AND nr.associated_node_id = nn2.network_node_id
