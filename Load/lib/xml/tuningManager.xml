@@ -6373,6 +6373,39 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="OrthologousPair">
+    <!-- each record contains a pair of genes that are orthologous to each other -->
+    <internalDependency name="GeneAttributes"/>
+    <sql>
+      <![CDATA[
+       create table OrthologousPair&1 nologging as
+       select /*+ ordered_predicates */
+              ga2.source_id AS ortho_source_id, ga2.na_sequence_id as ortho_na_sequence_id, ga2.start_min as ortho_start_min,
+              case when ga1.project_id = 'GiardiaDB' then ga2.species
+              else ga2.organism end as organism, 
+              ga2.product, ga1.source_id, ga1.project_id, ga1.na_sequence_id, ga1.start_min,
+              nvl(comments.comment_count, 'no') as comment_count
+             from GeneAttributes ga1, GeneAttributes ga2,
+                  (select distinct 'yes' as comment_count, stable_id as source_id, project_name
+                   from comments2.comments@prodn.login_comment
+                   where comment_target_id = 'gene'
+                     and review_status_id != 'rejected'
+                     and is_visible = 1) comments
+             where ga2.source_id = comments.source_id(+)
+               and ga2.project_id = ga1.project_id
+               and ga1.orthomcl_name = ga2.orthomcl_name
+               and ga2.source_id != ga1.source_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+      create index orth_ix&1
+      on OrthologousPair&1 (source_id, project_id)
+      tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="OrthologGeneTable">
     <!-- each record contains a record from OrthologousPair, augmented by the IS_SYNTENIC column -->
     <internalDependency name="OrthologousPair"/>
