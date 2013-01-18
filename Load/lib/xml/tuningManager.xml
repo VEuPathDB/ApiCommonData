@@ -3726,6 +3726,31 @@ select 'Troell Cell Cycle' as profile_name,
 
     UNION
 
+
+
+    UNION
+
+select 'Strand-specific RNA-Seq from trophozoites of isolate WB and P15 and GS' as profile_name,
+       'Svard::RNASeqThreeStrains' as module,
+       'Giardia intestinalis RNA-Seq - WB/P15/GS' as display_name,
+       'RNA-Seq of Three Giardia Strains WB/P15/GS' as description,
+       'Strain' as x_axis,
+       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        92 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rpkm,percentile' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+
+
+
+
+
 select 'giar sage tag frequencies sense' as profile_name,
        'Sage::McArthur' as module,
        'Curated SAGE Data (Sense and Antisense Tags)' as display_name,
@@ -3742,6 +3767,30 @@ select 'giar sage tag frequencies sense' as profile_name,
     from dual
 
     UNION
+
+
+-- MICROSPORIDIA
+
+select 'C. elegans Time Series - Infected' as profile_name,
+       'Troemel::CelegansInfectionTimeSeries' as module,
+       'C.elegans Infection Time Series (and Spores)' as display_name,
+       'RNA-Seq of N.par infected w/ C.elegans.  Spores samples also sequenced' as description,
+       'time in hours' as x_axis,
+       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        1 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rpkm,percentile' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+    UNION
+
+
+--PIROPLASMA
+
 
 select 'Lau B.b. Virulent vs Attenuated' as profile_name,
        'Lau::Bbovis' as module,
@@ -6319,39 +6368,6 @@ tablespace indx
       <![CDATA[
       create index ee_track_ix&1
       on ExpressionElement&1 (na_sequence_id, analysis_id, start_min, end_max, na_feature_id, score)
-      tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
-
-  <tuningTable name="OrthologousPair">
-    <!-- each record contains a pair of genes that are orthologous to each other -->
-    <internalDependency name="GeneAttributes"/>
-    <sql>
-      <![CDATA[
-       create table OrthologousPair&1 nologging as
-       select /*+ ordered_predicates */
-              ga2.source_id AS ortho_source_id, ga2.na_sequence_id as ortho_na_sequence_id, ga2.start_min as ortho_start_min,
-              case when ga1.project_id = 'GiardiaDB' then ga2.species
-              else ga2.organism end as organism, 
-              ga2.product, ga1.source_id, ga1.project_id, ga1.na_sequence_id, ga1.start_min,
-              nvl(comments.comment_count, 'no') as comment_count
-             from GeneAttributes ga1, GeneAttributes ga2,
-                  (select distinct 'yes' as comment_count, stable_id as source_id, project_name
-                   from comments2.comments@prodn.login_comment
-                   where comment_target_id = 'gene'
-                     and review_status_id != 'rejected'
-                     and is_visible = 1) comments
-             where ga2.source_id = comments.source_id(+)
-               and ga2.project_id = ga1.project_id
-               and ga1.orthomcl_name = ga2.orthomcl_name
-               and ga2.source_id != ga1.source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-      create index orth_ix&1
-      on OrthologousPair&1 (source_id, project_id)
       tablespace indx
       ]]>
     </sql>
