@@ -2377,7 +2377,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+<!--
   <tuningTable name="Polymorphism">
     <internalDependency name="FeatureLocation"/>
     <externalDependency name="dots.SnpFeature"/>
@@ -2442,7 +2442,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+-->
   <tuningTable name="IsolateAttributes">
     <externalDependency name="study.study"/>
     <externalDependency name="study.biosource"/>
@@ -5378,7 +5378,7 @@ tablespace indx
     </sql>
   </tuningTable>
 
-
+<!--
 
   <tuningTable name="SnpSummary">
     <internalDependency name="SnpAttributes"/>
@@ -5399,7 +5399,6 @@ SELECT type,cds_length, na_feature_id, source_id,
 FROM  (SELECT greatest(taf.translation_start, taf.translation_stop)
               - least(taf.translation_start, taf.translation_stop) + 1 AS cds_length,
               gf.na_feature_id, gf.source_id,
-           --   edr.external_database_release_id,
               SUBSTR(sva.strain, 1, 100) AS strain_a,
               SUBSTR(svb.strain, 1, 100) AS strain_b,
               CASE WHEN sva.product IS NULL THEN 1 ELSE 0 END AS non_coding,
@@ -5461,7 +5460,7 @@ tablespace indx
       ]]>
     </sql>
   </tuningTable>
-
+-->
 
   <tuningTable name="DistinctLowerProduct">
     <internalDependency name="GeneAttributes"/>
