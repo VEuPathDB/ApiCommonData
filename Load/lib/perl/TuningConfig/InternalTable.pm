@@ -14,7 +14,8 @@ sub new {
     my ($class, $name, $internalDependencyNames, $externalDependencyNames,
         $externalTuningTableDependencyNames, $intermediateTables, $ancillaryTables, $sqls,
         $perls, $unionizations, $programs, $dbh, $debug, $dblinkSuffix,
-        $alwaysUpdate, $prefixEnabled, $maxRebuildMinutesParam, $instance, $propfile, $schema, $password, $subversionDir)
+        $alwaysUpdate, $prefixEnabled, $maxRebuildMinutesParam, $instance, $propfile, $schema,
+        $password, $subversionDir, $dblink)
 	= @_;
 
     my $self = {};
@@ -33,6 +34,7 @@ sub new {
     $self->{unionizations} = $unionizations;
     $self->{programs} = $programs;
     $self->{debug} = $debug;
+    $self->{dblink} = $dblink;
     $self->{dblinkSuffix} = $dblinkSuffix;
     $self->{internalDependencies} = [];
     $self->{externalDependencies} = [];
@@ -288,6 +290,10 @@ sub update {
 
     # substitute filterValue macro
     $sqlCopy =~ s/&filterValue/$filterValue/g;
+
+    # substitute dblink macro
+    my $dblink = $self->{dblink};
+    $sqlCopy =~ s/&dblink/$dblink/g;
 
     ApiCommonData::Load::TuningConfig::Log::addLog("vvvvvv sql string changed: vvvvvv\nbefore: \"$sql\"\nafter: \"$sqlCopy\"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
 	if $self->{debug} && $sqlCopy ne $sql;
