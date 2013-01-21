@@ -152,6 +152,7 @@ sub processFeature {
 	if ($$featureHash{$type}) {
 		if ($bioperlFeature->has_tag("$sourceIdQualifier")) {
 			($sourceId) = $bioperlFeature->get_tag_values("$sourceIdQualifier");
+			($sourceId) = $bioperlFeature->get_tag_values("Parent") if ($bioperlFeature->has_tag("Parent") );
 		}else {
 			my $eStart = $bioperlFeature->location->start();
 			my $eEnd = $bioperlFeature->location->end();
@@ -169,7 +170,7 @@ sub processFeature {
 					my @values = $bioperlFeature->get_tag_values($qualifier);
 					foreach my $value (@values) {
 						$sourceId = &trimIds($sourceId);
-						$value = &trim($value);
+						$value = &trimValue($value);
 						if ($outputHash{$qualifier} =~ /dbxref/) {
 							my ($dbxrefType, $dbxrefId) = split (/:/, $value);
 							$dbxrefType =~ s/\//\_/;
@@ -186,6 +187,13 @@ sub processFeature {
 										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
 							}
 							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
+						} elsif ($outputHash{$qualifier} =~ /aliases/) {
+							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
+							foreach my $alias (@aliases) {
+								$alias = &trimValue($alias);
+								$funcFhHash{$qualifier}->print("$sourceId\t$alias\n") if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias});
+								$done{$sourceId}{$alias} = "done";
+							}
 						} else {
 							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value});
 							$done{$sourceId}{$value} = "done";
@@ -336,6 +344,14 @@ sub trim($){
 	return $string;
 }
 
+sub trimValue($){
+	my $string = shift;
+	$string =~ s/^\s+//;
+	$string =~ s/\s+$//;
+	$string =~ s/;.+$//;
+	return $string;
+}
+
 sub trimIds($){
 	my $string = shift;
 	$string =~ s/^\s+//;
@@ -344,7 +360,8 @@ sub trimIds($){
 	$string =~ s/:mRNA.*$//g;
 	$string =~ s/:pseudogenic_transcript.*$//g;
 	$string =~ s/;current=false*$//g;
-	$string =~ s/\.\d$//g;
+	$string =~ s/\.\d$//;
+	#$string =~ s/\.\d$// if ($string =~ /TcCLB\.\d+\.\d+\.\d+/);  ## temp fix for T.cruzi annotation;
 
 	return $string;
 }
