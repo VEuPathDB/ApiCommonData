@@ -214,7 +214,7 @@ sub processGoAsso {
 	my ($aspect, $goId, $dbrefs, $evidenceCode, $withOrFrom, $product, $synonym, $sourceIdType, $assignedBy);
 	$evidenceCode = "IEA" if (!$evidenceCode);
 	$sourceIdType = 'gene';
-	($product) = $bioperlFeature->get_tag_values("product");
+	($product) = $bioperlFeature->get_tag_values("product") if ($bioperlFeature->has_tag("product"));
 	$synonym = $sourceId;
 	$assignedBy = $db;
 
