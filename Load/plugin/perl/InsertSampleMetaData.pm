@@ -111,6 +111,11 @@ sub run {
   }
   close FILE;
 
+
+  if($count < 1) {
+    $self->userError("No rows processed. Please check your input file.");
+  }
+
  return("Processed $count rows of sample meta data.");
 }
 
