@@ -2524,7 +2524,7 @@ select null as na_sequence_id,
       and iv.type = 'geographic_location'
       ) geographic_location,
      (select distinct project_id from sequenceattributes) project
-where s.name like '%_HTS%'
+where lower(s.name) like '%_hts%'
 and s.study_id = sb.study_id
 and sb.bio_material_id = b.bio_material_id
 and b.external_database_release_id = edr.external_database_release_id
