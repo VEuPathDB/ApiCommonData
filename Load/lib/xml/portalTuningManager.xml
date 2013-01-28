@@ -1872,4 +1872,19 @@ tablespace indx
 
   </tuningTable>
 
+
+  <tuningTable name="ApidbTuning.CompoundAttributes">
+    <externalTuningTableDependency name="ApidbTuning.CompoundAttributes" dblink="plasmo.tuning"/>
+    <sql>
+      <![CDATA[
+        create table CompoundAttributes&1 nologging as
+        (
+        select t.*, 'PlasmoDB' as project_id from ApidbTuning.CompoundAttributes@plasmo.tuning t
+        )
+      ]]>
+    </sql>
+
+  </tuningTable>
+
+
 </tuningConfig>
