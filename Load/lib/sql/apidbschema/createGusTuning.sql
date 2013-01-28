@@ -145,7 +145,22 @@ alter table sres.ExternalDatabase modify (name varchar2(150));
 
 alter table sres.Reference modify (author varchar2(2000));
 
-Alter table sres.dbref modify (secondary_identifier varchar2(200));
+alter table sres.dbref modify (secondary_identifier varchar2(200));
+
+-- indexes to help queries against SnpFeature
+-- (and some ALTER TABLE statements to make the indexes possible;
+--  Oracle wants index keys no bigger than about 6K bytes)
+alter table dots.NaFeatureImp
+      modify (string8 varchar(1500), 
+              string9 varchar(1500), 
+              string12 varchar(1500), 
+              string18 varchar(1500));
+
+create index SnpStrain_ix on dots.NaFeatureImp
+   (subclass_view, string9, string8, number3, float2, float3, parent_id, string12, string18, na_feature_id);
+
+create index SnpDiff_ix on dots.NaFeatureImp
+  (subclass_view, parent_id, string18, string9, number3, float2, float3, string12, na_feature_id);
 
 -- indexes for orthomcl keyword and pfam searches -- only needed in OrthoMCL instance
 -- CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
