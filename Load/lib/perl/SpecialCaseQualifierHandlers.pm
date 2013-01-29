@@ -1274,6 +1274,15 @@ sub validateCodingSequenceLength {
 			$warning .= "Pseudogene ";
 		    }
 		    $warning .= "$proteinSourceId does not have a stop codon\n";
+
+		    ## set is_partial=1 if gene does not have a stop codon
+		    if ($bioperlFeature->primary_tag() =~ /gene/) {
+		      $feature->setIsPartial(1);
+		      $transcript->setIsPartial(1);
+		    } else {
+		      $feature->setIsPartial(1);
+		    }
+
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
 		    }else{
