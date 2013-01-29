@@ -157,10 +157,12 @@ alter table dots.NaFeatureImp
               string18 varchar(1500));
 
 create index SnpStrain_ix on dots.NaFeatureImp
-   (subclass_view, string9, string8, number3, float2, float3, parent_id, string12, string18, na_feature_id);
+   (subclass_view, string9, string8, number3, float2, float3, parent_id, string12, string18, na_feature_id)
+   tablespace INDX;
 
 create index SnpDiff_ix on dots.NaFeatureImp
-  (subclass_view, parent_id, string18, string9, number3, float2, float3, string12, na_feature_id);
+  (subclass_view, parent_id, string18, string9, number3, float2, float3, string12, na_feature_id)
+  tablespace INDX;
 
 -- indexes for orthomcl keyword and pfam searches -- only needed in OrthoMCL instance
 -- CREATE INDEX dots.aasequenceimp_ind_desc ON dots.AaSequenceImp (description)
