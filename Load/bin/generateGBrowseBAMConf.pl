@@ -54,7 +54,7 @@ while(my ($study,$strain) = $sth->fetchrow_array()) {
 
 my $count = 0;
 while(my($study, $strains) = each %hash) {
-	$study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
+  $study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
   if($count == 0) {
     print BAMCT qq/category tables = 'Population Biology: HTS SNPs: $study' 'Coverage_Xyplot  Coverage_Density Alignment' '@$strains'\n/;
   } else {
@@ -65,13 +65,13 @@ while(my($study, $strains) = each %hash) {
 
 while(my($study, $strains) = each %hash) {
 
-	$study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
+  $study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
   foreach my $strain(@$strains) {
 
     print BAMDB <<EOL;
 [$study\_$strain:database]
 db_adaptor   = Bio::DB::Sam
-db_args      = -bam '/var/www/Common/apiSiteFilesMirror/webServices/PlasmoDB/release-9.1/bam/$2/$strain/result.bam'
+db_args      = sub { { -bam => \$CFG->bam_file_path. '/$study/$strain/result.bam' } }
 
 EOL
   }
@@ -120,6 +120,8 @@ EOL
   }
 
   # print alignment conf
+  my ($aligned_genome) = $study =~ /^([^_]+)_/;
+
   foreach my $strain(@$strains) {
     print BAM <<EOL;
 [$study\_$strain\_Alignment]
@@ -135,7 +137,7 @@ height         = 3
 label density  = 1
 bump           = fast
 connector      = dashed
-key            = $strain
+key            = $strain ($aligned_genome aligned) [viewable under 3k]
 category       = $category
 
 [$study\_$strain\_Alignment:3000]
