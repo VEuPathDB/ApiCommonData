@@ -19,9 +19,7 @@ my $project_id = shift or die $usage;
 $project_id = lc $project_id;
 
 open(BAM,   '>'. $project_id . '_bam.conf'); 
-open(BAMDB, '>'. $project_id . '_bam_db.conf'); 
 open(BAMCT, '>'. $project_id . '_bam_category.conf'); 
-
 
 
 my $gusconfig = GUS::Supported::GusConfig->new($gusConfigFile);
@@ -68,10 +66,10 @@ while(my($study, $strains) = each %hash) {
   $study =~ /^([^_]+)_(.*)$/;  # study: pfal3D7_Sanger_HTS_Isolates
   foreach my $strain(@$strains) {
 
-    print BAMDB <<EOL;
+    print BAM <<EOL;
 [$study\_$strain:database]
 db_adaptor   = Bio::DB::Sam
-db_args      = sub { { -bam => \$CFG->bam_file_path. '/$study/$strain/result.bam' } }
+db_args      = sub { { -bam => \$CFG->bam_file_path. '/$2/$strain/result.bam' } }
 
 EOL
   }
