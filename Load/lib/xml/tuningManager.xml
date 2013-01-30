@@ -6898,7 +6898,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
     <sql>
       <![CDATA[
 CREATE TABLE CompoundAttributes&1 NOLOGGING AS
-SELECT comp.compound_id,  'compound:' || comp.compound_id AS source_id, 
+SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id, 
               apidb.tab_to_string(set(cast(COLLECT(to_char(subst.substance_id)) AS apidb.varchartab)), ', ') AS substance_id,
               wtTable.mol_wt, REGEXP_REPLACE(formTable.formula,'(\d)','<sub>\1</sub>') AS formula
         FROM ApiDB.PubChemSubstance subst, ApiDB.PubChemCompound comp,
