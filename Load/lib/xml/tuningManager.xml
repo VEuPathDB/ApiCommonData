@@ -285,7 +285,7 @@ set is_top_level = 1
 update &prefixFeatureLocation&1 fl
 set is_top_level = 0 
 where na_sequence_id in (select distinct piece_na_sequence_id 
-                         from &prefixSequencePieceClosure spc
+                         from &prefixSequencePieceClosure&1 spc
                          where fl.start_min >= spc.start_position
                          and fl.end_max <= spc.end_position)
       ]]>
