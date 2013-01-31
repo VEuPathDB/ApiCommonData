@@ -414,8 +414,9 @@ begin
       select distinct o.project_name
       into project
       from sres.TaxonName tn, apidb.Organism o
-      where SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism||' ',' ',1,1)-1))
-      and o.taxon_id = tn.taxon_id;
+      where ( SUBSTR(tn.name,1,(INSTR(tn.name,' ',1,1)-1)) = SUBSTR(organism,1,(INSTR(organism||' ',' ',1,1)-1))
+                 and o.taxon_id = tn.taxon_id )
+       or   o.family_ncbi_taxon_ids = tn.taxon_id;
 
     exception
 
