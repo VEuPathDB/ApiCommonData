@@ -6607,6 +6607,9 @@ tablespace indx
                      s.organism like 'Emericella%' or
                      s.organism like 'Coccidioides%' or
                      s.organism like 'Histoplasma%' or
+                     s.organism like 'Talaromyces%' or
+                     s.organism like 'Penicillium%' or
+                     s.organism like 'Neosartorya%' or
                      s.organism like 'Ajellomyces%')
                then 'Eurotiomycetes'
                when ( s.organism like 'Tremella%' or
@@ -6616,6 +6619,7 @@ tablespace indx
                      s.organism like 'Magnaporthe%' or 
                      s.organism like 'Fusarium%' or 
                      s.organism like 'Gibberella%' or
+                     s.organism like 'Trichoderma%' or
                      s.organism like 'Sordaria%')
                then 'Sordariomycetes'
                when ( s.organism like 'Saccharomyces%' or
@@ -6635,8 +6639,14 @@ tablespace indx
                then 'Pucciniomycetes'
                when (s.organism like 'Batrachochytrium%') 
                then 'Chytridiomycetes'
-               when (s.organism like 'Ustilago%')
-               then 'Ustilaginomycetes'
+               when (s.organism like 'Ustilago%' or
+                     s.organism like 'Malassezia%' or 
+                     s.organism like 'Sporisorium%') 
+               then 'Ustilaginomycotina'
+               when (s.organism like 'Sclerotinia%' or
+                     s.organism like 'Botrytis%' or 
+               when s.organism like 'Botryotinia%' )
+               then 'Leotiomycetes'
                else 'Missing ProjectIdTaxonLevel'
                end as taxon_node,
                s.organism as organism
