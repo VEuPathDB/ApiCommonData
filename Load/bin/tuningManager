@@ -307,6 +307,8 @@ eval {
   ApiCommonData::Load::TuningConfig::Log::addLogBanner("Cleanup");
   cleanup($dbh, $cleanupAge, $cleanupWarnOnly, $prefix);
 
+  &checkForUnusableIndexes;
+
   # summary
   if (!$tableCount) {
     ApiCommonData::Load::TuningConfig::Log::addLog("No tuningTable entities were defined in the config file");
@@ -728,4 +730,27 @@ SQL
     }
   }
 
+}
+
+sub checkForUnusableIndexes {
+  my $stmt = $dbh->prepare(<<SQL);
+                    select index_name
+                    from all_indexes
+                    where owner not in ('SYS', 'SYSTEM')
+                      and status != 'VALID'
+                      and (status != 'N/A'
+                           or index_name in (select index_name
+                                             from all_ind_partitions
+                                             where status != 'USABLE'
+                                               and (status != 'N/A'
+                                                    or index_name in (select index_name
+                                                                      from all_ind_subpartitions
+                                                                      where status != 'USABLE'))))
+SQL
+
+  $stmt->execute();
+  while (my ($index) = $stmt->fetchrow_array()) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("index \"$index\" is unusable");
+  }
+  $stmt->finish();
 }
