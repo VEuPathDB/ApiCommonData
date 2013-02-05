@@ -1748,6 +1748,12 @@ create index SnpAttr_ds_org_ix&1 on snpattributes&1 (dataset,organism,na_feature
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+create index SnpVariantIx&1 on SnpAttributes&1 (type, dataset, na_feature_id, source_id, gene_source_id, start_min, position_in_protein)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="OrfAttributes">
