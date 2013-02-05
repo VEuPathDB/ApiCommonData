@@ -78,7 +78,7 @@ sub preprocess {
 	    }
 
 
-	    if($type eq 'repeat_region'){
+	    if($type eq 'repeat_region' || $type eq 'repeat_unit'){
 		if($bioperlFeatureTree->has_tag("satellite")){
 		    $bioperlFeatureTree->primary_tag("microsatellite");
 		}
