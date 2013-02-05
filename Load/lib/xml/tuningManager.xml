@@ -6953,7 +6953,7 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
                  WHEN nn2.node_type_id = 1 THEN  nn2.display_label
                  ELSE 'None' END AS enzyme,
              CASE  WHEN (nrc.source_node = 0 and nn1.node_type_id = 1) THEN  'product' -- reaction from enzyme to compound
-                      ELSE 'substrate' END AS compound_type,
+                      ELSE 'substrate' END AS type,
               nrt.display_name AS reaction,
               n.description ||' ('||n.name||')' AS pathway, n.name AS name, n.network_id
      FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
@@ -6970,7 +6970,7 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
      UNION
       -- CASE  B :   reversible
      SELECT  nn2.display_label as compound, nn1.display_label AS enzyme, 
-                  'both' AS compound_type,
+                  'substrate/product' AS type,
                   nrt.display_name AS reaction, 
                   n.description ||' ('||n.name||')' as pathway, n.name AS name, n.network_id
        FROM ApiDB.NetworkRelationshipType nrt, ApiDB.NetworkRelContext nrc, ApiDB.NetworkRelationship nr,
