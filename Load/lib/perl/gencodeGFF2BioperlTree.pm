@@ -280,12 +280,6 @@ sub traverseSeqFeatures {
                 $UTR->add_tag_value('Parent',$utrParent) if $utrParent;
 
                 push(@UTRs,$UTR);
-
-                ### also add to exon with CodingStart='' and CodingEnd=''
-                #$UTR->add_tag_value('CodingStart', '');
-                #$UTR->add_tag_value('CodingEnd', '');
-                #$UTR->primary_tag('exon');
-                #push (@exons,$UTR);
             }
         }
 
@@ -299,7 +293,12 @@ sub traverseSeqFeatures {
 
                 $codingStart = shift(@codingStart);
                 $codingEnd = shift(@codingEnd);
-            } 
+            } elsif (($codingStart <= $exon->location->start && $codingEnd <= $exon->location->start) 
+		     || ($codingStart >= $exon->location->end && $codingEnd >= $exon->location->end) ) {
+	      $exon->add_tag_value('CodingStart',"");
+	      $exon->add_tag_value('CodingEnd',"");
+	    }
+
             $transcript->add_SeqFeature($exon);
         }           
         
