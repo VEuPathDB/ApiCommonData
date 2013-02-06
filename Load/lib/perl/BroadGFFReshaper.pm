@@ -216,6 +216,7 @@ sub traverseSeqFeatures {
 
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
+        $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
@@ -232,13 +233,13 @@ sub traverseSeqFeatures {
 			$codingStart = $subFeature->location->end;
 
 			$codingEnd = $subFeature->location->start;
-
+			$codingStart -= $codonStart if ($codonStart > 0);
 
 		    }else{
 			$codingStart = $subFeature->location->start;
 			
 			$codingEnd = $subFeature->location->end;
-
+			$codingStart += $codonStart if ($codonStart > 0);
 
 		    }
 		    
@@ -269,7 +270,7 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 	    
 	    
-	    $codingStart[$#codingStart] = $codingStart;
+	    #$codingStart[$#codingStart] = $codingStart;
 	    
 	    $codingStart = shift(@codingStart);
 	    $codingEnd = shift(@codingEnd);
@@ -285,7 +286,12 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 		    $codingEnd = shift(@codingEnd);
 
 
+		} elsif (($codingEnd <= $exon->location->end && $codingEnd <= $exon->location->start) 
+			 || ($codingStart >= $exon->location->end && $codingStart >= $exon->location->start) ) {
+		  $exon->add_tag_value('CodingStart',"");
+		  $exon->add_tag_value('CodingEnd',"");
 		}
+
 
 		$transcript->add_SeqFeature($exon);
 		
