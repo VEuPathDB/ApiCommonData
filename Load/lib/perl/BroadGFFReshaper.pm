@@ -42,7 +42,7 @@ sub preprocess {
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
-	    print STDERR "Feature type is: $type\n";
+	    # print STDERR "Feature type is: $type\n";
 	    
 	    if($type eq 'pseudogene'){
 		$bioperlFeatureTree->primary_tag('gene');
@@ -102,10 +102,12 @@ sub preprocess {
 			
 		    }
 		}       
-		my ($gene,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq);
+		my ($geneArrayRef,$UTRArrayRef) = &traverseSeqFeatures($geneFeature, $bioperlSeq);
 
+		my @genes = @{$geneArrayRef};
 		my @UTRs = @{$UTRArrayRef};
-		if($gene){
+
+		foreach my $gene (@genes) {
 
 		    $bioperlSeq->add_SeqFeature($gene);
 		}
@@ -132,16 +134,19 @@ sub preprocess {
 sub traverseSeqFeatures {
     my ($geneFeature, $bioperlSeq) = @_;
     
-    my ($gene,@UTRs);
+    my (@genes, $gene, @UTRs);
 
     my @RNAs = $geneFeature->get_SeqFeatures;
+
+    my $transcriptCount = scalar @RNAs;
+    my $ctr = 1;
 
     # This will accept genes of type misc_feature (e.g. cgd4_1050 of GI:46229367)
     # because it will have a geneFeature but not standalone misc_feature 
     # as found in GI:32456060.
     # And will accept transcripts that do not have 'gene' parents (e.g. tRNA
     # in GI:32456060)
-    foreach my $RNA (@RNAs){ 
+    foreach my $RNA ( sort {$a->location->start <=> $b->location->start || $a->location->end <=> $b->location->end} @RNAs){ 
 	my $type = $RNA->primary_tag;
         if (grep {$type eq $_} (
              'mRNA',
@@ -157,10 +162,8 @@ sub traverseSeqFeatures {
              )
         ) {
 
-
-
 	    
-	   print STDERR "-----------------$type----------------------\n";
+	   #print STDERR "-----------------$type----------------------\n";
 
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){
@@ -177,6 +180,12 @@ sub traverseSeqFeatures {
 	    }
 	    $gene = &makeBioperlFeature("${type}_gene", $geneFeature->location, $bioperlSeq);
 	    my($geneID) = $geneFeature->get_tag_values('ID');
+
+	    if($transcriptCount > 1){
+            #$geneID =~ s/\.\d+$//g;		
+            $geneID = $geneID."\.$ctr";
+            $ctr++;
+	    }
 
 	    #print "ID:$geneID\n";
 	    $gene->add_tag_value("ID",$geneID);
@@ -207,6 +216,7 @@ sub traverseSeqFeatures {
 
 	    foreach my $subFeature (sort {$a->location->start <=> $b->location->start} @containedSubFeatures){
 
+        $codonStart = $subFeature->frame();
 		if($subFeature->primary_tag eq 'exon'){
 
 		    my $exon = &makeBioperlFeature($subFeature->primary_tag,$subFeature->location,$bioperlSeq);
@@ -223,13 +233,13 @@ sub traverseSeqFeatures {
 			$codingStart = $subFeature->location->end;
 
 			$codingEnd = $subFeature->location->start;
-
+			$codingStart -= $codonStart if ($codonStart > 0);
 
 		    }else{
 			$codingStart = $subFeature->location->start;
 			
 			$codingEnd = $subFeature->location->end;
-
+			$codingStart += $codonStart if ($codonStart > 0);
 
 		    }
 		    
@@ -260,7 +270,7 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 	    
 	    
-	    $codingStart[$#codingStart] = $codingStart;
+	    #$codingStart[$#codingStart] = $codingStart;
 	    
 	    $codingStart = shift(@codingStart);
 	    $codingEnd = shift(@codingEnd);
@@ -276,7 +286,12 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 		    $codingEnd = shift(@codingEnd);
 
 
+		} elsif (($codingEnd <= $exon->location->end && $codingEnd <= $exon->location->start) 
+			 || ($codingStart >= $exon->location->end && $codingStart >= $exon->location->start) ) {
+		  $exon->add_tag_value('CodingStart',"");
+		  $exon->add_tag_value('CodingEnd',"");
 		}
+
 
 		$transcript->add_SeqFeature($exon);
 		
@@ -309,11 +324,11 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 
 	    
 	$gene->add_SeqFeature($transcript);
-
+        push(@genes, $gene);
 
 	}
     }
-    return ($gene,\@UTRs);
+    return (\@genes ,\@UTRs);
 }
 
 
