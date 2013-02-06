@@ -286,7 +286,12 @@ $subFeature->primary_tag eq 'splice_acceptor_site'){
 		    $codingEnd = shift(@codingEnd);
 
 
+		} elsif (($codingEnd <= $exon->location->end && $codingEnd <= $exon->location->start) 
+			 || ($codingStart >= $exon->location->end && $codingStart >= $exon->location->start) ) {
+		  $exon->add_tag_value('CodingStart',"");
+		  $exon->add_tag_value('CodingEnd',"");
 		}
+
 
 		$transcript->add_SeqFeature($exon);
 		
