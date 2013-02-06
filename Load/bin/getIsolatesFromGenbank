@@ -205,6 +205,9 @@ are concatenated into a single genbank file.  Gets isolates for all NCBI
 taxon IDs that are *children* of the provided parent ncbiTaxonIds (including
 those provided).  Reads the GUS database to get taxon tree info.
 
+We use this query to find records in genbank:
+txid12345 [Organism:exp] AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes)))
+
 usage: 
   getIsolatesFromGenbank outputfile organismAbbrev
 or:
