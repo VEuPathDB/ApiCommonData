@@ -19,8 +19,8 @@ Modifier: Sucheta
   <feature name="coding_gene" so="protein_coding">
   <validator name="validateGene"     handler="api" method="validateGene"/>
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="synonym"         handler="api" method="gene"/>
-    <qualifier name="Alias"         handler="api" method="gene"/>
+    <qualifier name="synonym"         ignore="true"/>
+    <qualifier name="Alias"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -30,19 +30,17 @@ Modifier: Sucheta
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
-    <!--qualifier name="db_xref"              handler="api" method="dbXRef"/-->
     <qualifier name="db_xref"      ignore="true"/>
-    <!--qualifier name="Dbxref"              handler="api" method="dbXRef"/-->
     <qualifier name="Dbxref"       ignore="true"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="Note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="controlled_curation"         handler="api" method="note"/>
-    <qualifier name="comment"          handler="api" method="note"/>
-    <qualifier name="eC_number"            handler="api" method="ECNumber"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-    <qualifier name="protein_id"           handler="api" method="transcriptProteinId"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="Note"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="controlled_curation"         ignore="true"/>
+    <qualifier name="comment"          ignore="true"/>
+    <qualifier name="eC_number"            ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="protein_id"           ignore="true"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
@@ -82,12 +80,12 @@ Modifier: Sucheta
   <feature name="pseudo_gene" so="protein_coding">
     <qualifier name="ID"           handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="codon_start" ignore="true"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="curation"         handler="api" method="note"/>
-    <qualifier name="EC_number"            handler="api" method="ECNumber"/>
-    <qualifier name="protein_id"           handler="api" method="transcriptProteinId"/>
+    <qualifier name="db_xref"              ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="curation"         ignore="true"/>
+    <qualifier name="EC_number"            ignore="true"/>
+    <qualifier name="protein_id"           ignore="true"/>
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
@@ -113,15 +111,15 @@ Modifier: Sucheta
 
   <feature name="rRNA_gene" so="rRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="Alias"              handler="api" method="gene"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
-   <qualifier name="comment"                 handler="api" method="note"/>
-  <qualifier name="Note"                 handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="product"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="Alias"              ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/> 
+   <qualifier name="comment"                 ignore="true"/>
+  <qualifier name="Note"                 ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -137,13 +135,13 @@ Modifier: Sucheta
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/>
+    <qualifier name="note"                 ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
@@ -272,13 +270,13 @@ Modifier: Sucheta
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
-  <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/> 
+  <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -293,13 +291,13 @@ Modifier: Sucheta
 
   <feature name="snRNA_gene" so="snRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -314,13 +312,13 @@ Modifier: Sucheta
 
   <feature name="scRNA_gene" so="scRNA_encoding">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
     <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -335,15 +333,15 @@ Modifier: Sucheta
 
   <feature name="ncRNA_gene" so="ncRNA">
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="embl_qualifier"                 handler="api" method="note"/>
-    <qualifier name="eMBL_qualifier"                 handler="api" method="note"/>
-    <qualifier name="product"              handler="api" method="product"/>
-   <qualifier name="Name"         handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-    <qualifier name="Dbxref"              handler="api" method="dbXRef"/>  
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="embl_qualifier"                 ignore="true"/>
+    <qualifier name="eMBL_qualifier"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+    <qualifier name="Dbxref"              ignore="true"/>  
  <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="feature_relationship_rank"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
@@ -382,16 +380,16 @@ Modifier: Sucheta
   <feature name="tRNA_gene" so="tRNA_encoding">
  
     <qualifier name="ID"            handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="comment"                 handler="api" method="note"/>
-    <qualifier name="Note"              handler="api" method="product"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="selenocysteine"       handler="api" method="note"/>
-   <qualifier name="Name"         handler="api" method="product"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-    <qualifier name="Alias" handler="api" method="gene"/>
-   <qualifier name="synonym"         handler="api" method="gene"/>
-    <qualifier name="db_xref"              handler="api" method="dbXRef"/>
-   <qualifier name="Dbxref"              handler="api" method="dbXRef"/> 
+    <qualifier name="comment"                 ignore="true"/>
+    <qualifier name="Note"              ignore="true"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="selenocysteine"       ignore="true"/>
+   <qualifier name="Name"         ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="Alias" ignore="true"/>
+   <qualifier name="synonym"         ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+   <qualifier name="Dbxref"              ignore="true"/> 
    <qualifier name="feature_id"    ignore="true"/>
     <qualifier name="phase" ignore="true"/>
     <qualifier name="score" ignore="true"/>
@@ -456,7 +454,7 @@ Modifier: Sucheta
   <feature name="three_prime_UTR" table="DoTS::UTRFeature" so="three_prime_UTR">
     <qualifier name="ID" column="source_id"/>
    <qualifier name="controlled_curation" ignore="true"/>
-   <qualifier name="note"       handler="api" method="note"/>
+   <qualifier name="note"       ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="Parent"   ignore="true"/>
@@ -465,7 +463,7 @@ Modifier: Sucheta
   <feature name="splice_acceptor_site" table="DoTS::UTRFeature" so="three_prime_UTR">
     <qualifier name="ID" column="source_id"/>
    <qualifier name="controlled_curation" ignore="true"/>
-   <qualifier name="note"       handler="api" method="note"/>
+   <qualifier name="note"       ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="Parent"   ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
@@ -476,7 +474,7 @@ Modifier: Sucheta
   <feature name="five_prime_UTR" table="DoTS::UTRFeature" so="five_prime_UTR">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       handler="api" method="note"/>
+    <qualifier name="note"       ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="Parent"   ignore="true"/>
@@ -488,7 +486,7 @@ Modifier: Sucheta
   <feature name="five_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       handler="api" method="note"/>
+    <qualifier name="note"       ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="Parent"   ignore="true"/>
@@ -497,7 +495,7 @@ Modifier: Sucheta
   <feature name="three_prime_utr" table="DoTS::UTRFeature" so="five_prime_UTR">
     <qualifier name="ID" column="source_id"/>
     <qualifier name="controlled_curation" ignore="true"/>
-    <qualifier name="note"       handler="api" method="note"/>
+    <qualifier name="note"       ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
    <qualifier name="feature_id" ignore="true"/>
    <qualifier name="Parent"   ignore="true"/>
