@@ -12,14 +12,14 @@
            class="ApiCommonData::Load::PlasmoSpecialCaseQualifierHandlers"/>
 
   <feature name="coding_gene" so="protein_coding">
-  <validator name="validateGene"     handler="api" method="validateGene"/>
-  <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
+    <validator name="validateGene"     handler="api" method="validateGene"/>
+    <validator name="validateCodingSequenceLength"     handler="api" method="validateCodingSequenceLength"/>
     <qualifier name="systematic_id"    handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="locus_tag"    handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="translation"      handler="api" method="setProvidedTranslation"/>
     <qualifier name="pseudo"           handler="api" method="setPseudo"/>
-    <qualifier name="partial"           handler="api" method="setPseudo"/>
+    <qualifier name="partial"           handler="api" method="setPartial"/>
     <qualifier name="EC_number"        ignore="true"/>
     <qualifier name="product"          ignore="true"/>
     <qualifier name="literature"       ignore="true"/>
@@ -36,9 +36,9 @@
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="Previous_systematic_id" ignore="true"/>
     <qualifier name="synonym" ignore="true"/>
-    <qualifier name="obsolete_name"    handler="api" method="gene"/>
-    <qualifier name="obselete_name"    handler="api" method="gene"/>
-    <qualifier name="gene"             handler="api" method="gene"/>
+    <qualifier name="obsolete_name"    ignore="true"/>
+    <qualifier name="obselete_name"    ignore="true"/>
+    <qualifier name="gene"             ignore="true"/>
     <qualifier name="protein_id"       ignore="true"/>
     <qualifier name="codon_start"            ignore="true"/>
     <qualifier name="codon"                  ignore="true"/>
@@ -98,8 +98,8 @@
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"              ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
-    <qualifier name="synonym"              handler="api" method="gene"/>
-    <qualifier name="curation"             handler="api" method="note"/>
+    <qualifier name="synonym"              ignore="true"/>
+    <qualifier name="curation"             ignore="true"/>
     <qualifier name="controlled_curation"  ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
     <qualifier name="percent_id"           ignore="true"/>
@@ -150,8 +150,8 @@
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"              ignore="true"/>
     <qualifier name="note"                 ignore="true"/>
-    <qualifier name="synonym"              handler="api" method="gene"/>
-    <qualifier name="curation"             handler="api" method="note"/>
+    <qualifier name="synonym"              ignore="true"/>
+    <qualifier name="curation"             ignore="true"/>
     <qualifier name="controlled_curation"  ignore="true"/>
     <qualifier name="blastn_file"          ignore="true"/>
     <qualifier name="percent_id"           ignore="true"/>
@@ -201,10 +201,10 @@
     <qualifier name="systematic_id"        handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="parentID"  ignore="true"/>
     <qualifier name="product"             ignore="true"/>
-    <qualifier name="anticodon"           handler="api" method="anticodon"/>
+    <qualifier name="anticodon"           ignore="true"/>
     <qualifier name="note"                ignore="true"/>
     <qualifier name="curation"            ignore="true"/>
-    <qualifier name="obsolete_name"       handler="api" method="gene"/>
+    <qualifier name="obsolete_name"       ignore="true"/>
     <qualifier name="synonym"             ignore="true"/>
     <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="gene"                ignore="true"/>
@@ -219,29 +219,29 @@
   <feature name="misc_RNA_gene" so="non_protein_coding">
     <qualifier name="systematic_id"   handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="parentID"  ignore="true"/>
-    <qualifier name="gene"   handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="note"                   handler="api" method="note"/>
-    <qualifier name="domain"                 handler="api" method="note"/>
+    <qualifier name="gene"   ignore="true"/>
+    <qualifier name="note"                   ignore="true"/>
+    <qualifier name="domain"                 ignore="true"/>
     <qualifier name="controlled_curation"    ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
     <qualifier name="ortholog"               ignore="true"/>
-    <qualifier name="product"             handler="api" method="product"/>
+    <qualifier name="product"             ignore="true"/>
     <qualifier name="isObsolete"             ignore="true"/>
   </feature>
 
 
   <feature name="transcript" so="transcript">
-  <qualifier name="CDSLength" ignore="true"/>
+    <qualifier name="CDSLength" ignore="true"/>
   </feature>
 
 
 
   <feature name="alternative_exon" table="DoTS::Miscellaneous" so="exon">
     <qualifier name="systematic_id"        column="source_id"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="obsolete_name"        handler="api" method="gene"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="obsolete_name"        ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
     <qualifier name="colour"               ignore="true"/>
     <qualifier name="fasta_file"           ignore="true"/>
     <qualifier name="similarity"           ignore="true"/>
