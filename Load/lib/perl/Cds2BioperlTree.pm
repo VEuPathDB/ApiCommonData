@@ -27,9 +27,10 @@ sub preprocess {
 
       if($type eq 'ncRNA'){
 	  if($bioperlFeatureTree->has_tag('ncRNA_class')){
-	      ($type) = $bioperlFeatureTree->get_tag_values('ncRNA_class');
-	      $bioperlFeatureTree->remove_tag('ncRNA_class');
-
+	    my $ncRNA_class;
+	    ($ncRNA_class) = $bioperlFeatureTree->get_tag_values('ncRNA_class');
+	    $type = $ncRNA_class if ($ncRNA_class =~ /RNA/i);
+	    $bioperlFeatureTree->remove_tag('ncRNA_class');
 	  }
       }
 
