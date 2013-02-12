@@ -378,8 +378,10 @@ sub update {
   }
 
   # store definition
-  ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to store table definition")
-      if $self->storeDefinition($dbh);
+  if (!$prefix) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("unable to store table definition")
+	if $self->storeDefinition($dbh);
+  }
 
   my $buildDuration = time - $startTime;
   my $recordCount = getRecordCount($dbh, $self->{name}, $prefix);
