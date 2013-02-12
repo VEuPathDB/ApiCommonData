@@ -195,6 +195,9 @@ sub processFeature {
 								$done{$sourceId}{$alias} = "done";
 							}
 						} else {
+							## get rid of some funny character after ; for product
+							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /products/);
+
 							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value});
 							$done{$sourceId}{$value} = "done";
 						}	
@@ -348,7 +351,6 @@ sub trimValue($){
 	my $string = shift;
 	$string =~ s/^\s+//;
 	$string =~ s/\s+$//;
-	$string =~ s/;.+$//;
 	return $string;
 }
 
@@ -360,7 +362,8 @@ sub trimIds($){
 	$string =~ s/:mRNA.*$//g;
 	$string =~ s/:pseudogenic_transcript.*$//g;
 	$string =~ s/;current=false*$//g;
-	$string =~ s/\.\d$//;
+	$string =~ s/\.\d$//;  
+	#$string =~ s/(\S+\.\d)\.\d$/$1/;  ## comment previous line out to temp. fix for ldonBPK282A1 in TriTryp
 	#$string =~ s/\.\d$// if ($string =~ /TcCLB\.\d+\.\d+\.\d+/);  ## temp fix for T.cruzi annotation;
 
 	return $string;
