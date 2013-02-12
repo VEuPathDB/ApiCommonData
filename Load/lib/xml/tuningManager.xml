@@ -429,7 +429,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
      UNION
      SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
-             'DbRef.primary_identifier' as union_member, ed.name as database_name
+             'synonym' as union_member, ed.name as database_name
       FROM dots.GeneFeature gf, dots.DbRefNaFeature drnf,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
            sres.ExternalDatabase ed
