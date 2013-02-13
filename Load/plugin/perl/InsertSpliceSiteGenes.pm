@@ -252,9 +252,9 @@ sub run {
       $self->undefPointerCache();
     }
   }
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SpliceSiteGeneCoordinates_$sampleName");
-  $tempTableDropH->execute() or die $dbh->errstr;
-  $tempTableDropH->finish();
+  #my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SpliceSiteGeneCoordinates_$sampleName");
+  #$tempTableDropH->execute() or die $dbh->errstr;
+  #$tempTableDropH->finish();
 }
 
 
