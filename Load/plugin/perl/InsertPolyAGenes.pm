@@ -63,7 +63,8 @@ FAIL
 			tablesAffected   => $tablesAffected,
 			tablesDependedOn => $tablesDependedOn,
 			howToRestart     => $howToRestart,
-		notes            => $notes
+			failureCases     => $failureCases,
+		        notes            => $notes
 		      };
 
 
@@ -87,7 +88,11 @@ sub run {
 
   my $sampleName = $self->getArg('sampleName');
 
-  my $tempTableCreateHSql = "  CREATE TABLE apidb.PAGCoor_$sampleName AS
+  my $database = $self->getDb();
+
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+
+  my $tempTableCreateHSql = "  CREATE TABLE apidb.PolyAGeneCoordinates_$algInvocationId AS
   SELECT na_sequence_id, source_id, alpha, beta, gamma, delta, strand FROM (
   --CASE A:  1st gene on forward strand
    SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
@@ -208,21 +213,21 @@ ORDER BY na_sequence_id, alpha";
               CASE WHEN (ssf.location<ga.gamma) THEN 1 ELSE 0 END as within_cds,
               ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
               ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-              from apidb.splicesitefeature ssf, apidb.PAGCoor_$sampleName ga
+              from apidb.splicesitefeature ssf, apidb.PolyAGeneCoordinates_$algInvocationId ga
               where ga.na_sequence_id = ssf.na_sequence_id
               and ga.strand='forward'
               and ssf.strand ='-' and ssf.type = 'Poly A'
               and ssf.location<= ga.delta and ssf.location>= ga.beta
-              and ssf.sample_name='$sampleName
+              and ssf.sample_name='$sampleName'
               UNION
               select ssf.splice_site_feature_id, ssf.location, ssf.strand, ga.source_id, abs(ga.alpha-ssf.location) as dist_to_cds,
               CASE WHEN (ssf.location>ga.alpha) THEN 1 ELSE 0 END as within_cds,
               ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
               ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-              from apidb.splicesitefeature ssf, apidb.PAGCoor_$sampleName ga
+              from apidb.splicesitefeature ssf, apidb.PolyAGeneCoordinates_$algInvocationId ga
               where ga.na_sequence_id = ssf.na_sequence_id
               and ga.strand='reverse'
-              and ssf.sample_name='$sampleName
+              and ssf.sample_name='$sampleName'
               and ssf.strand ='+' and ssf.type = 'Poly A'
               and ssf.location>= ga.delta and ssf.location<= ga.beta";
 
@@ -245,7 +250,7 @@ ORDER BY na_sequence_id, alpha";
 						    'na_sequence_id' => $row[12],
 						    'external_database_release_id' => $row[13],
 						   });
-   $polyAGenes->submit() unless $spolyAGenes->retrieveFromDB();
+   $polyAGenes->submit() unless $polyAGenes->retrieveFromDB();
    $numRow++;
     if ($numRow % 100 == 0){
       $self->log("$numRow rows added to apidb.PolyAGenes.");
@@ -253,7 +258,7 @@ ORDER BY na_sequence_id, alpha";
     }
   }
 
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SSGCoor_$sampleName");
+  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.PolyAGeneCoordinates_$algInvocationId");
   $tempTableDropH->execute() or die $dbh->errstr;
   $tempTableDropH->finish();
 }

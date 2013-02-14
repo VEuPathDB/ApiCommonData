@@ -88,7 +88,11 @@ sub run {
 
   my $sampleName = $self->getArg('sampleName');
 
-  my $tempTableCreateHSql = "CREATE TABLE apidb.SSGCoor_$sampleName AS
+  my $database = $self->getDb();
+
+  my $algInvocationId = $database->getDefaultAlgoInvoId();
+
+  my $tempTableCreateHSql = "CREATE TABLE apidb.SpliceSiteGeneCoordinates_$database AS
   SELECT na_sequence_id, source_id, alpha, beta, gamma, delta, strand FROM (
   --CASE A:  1st gene on forward strand
    SELECT ga.na_sequence_id , ga.source_id, 0 as alpha, ga.coding_start as beta, ga.end_max as gamma,
@@ -209,7 +213,7 @@ sub run {
   CASE WHEN (ssf.location>ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SSGCoor_$sampleName ga
+  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$database ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='forward'
   and ssf.strand ='+' and ssf.type='Splice Site'
@@ -220,7 +224,7 @@ sub run {
   CASE WHEN (ssf.location<ga.beta) THEN 1 ELSE 0 END as within_cds,
   ssf.sample_name, ssf.count, ssf.count_per_million, ssf.avg_mismatches, ssf.is_unique,
   ssf.type, ssf.na_sequence_id, ssf.external_database_release_id
-  from apidb.splicesitefeature ssf, apidb.SSGCoor_$sampleName ga
+  from apidb.splicesitefeature ssf, apidb.SpliceSiteGeneCoordinates_$database ga
   where ga.na_sequence_id = ssf.na_sequence_id
   and ga.strand='reverse'
   and ssf.sample_name='$sampleName'
@@ -252,7 +256,7 @@ sub run {
       $self->undefPointerCache();
     }
   }
-  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SSGCoor_$sampleName");
+  my $tempTableDropH = $dbh->prepare("DROP TABLE apidb.SpliceSiteGeneCoordinates_$databased");
   $tempTableDropH->execute() or die $dbh->errstr;
   $tempTableDropH->finish();
 }
