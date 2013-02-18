@@ -375,22 +375,22 @@ sub traverseSeqFeatures {
 		}
 
 		if($prevExon){
-		    
+
 		    if($prevExon->location->end >= $subFeature->location->start - 1){
 
-			pop(@fixedExons);
+		      if ($prevExonType ne $exonType ) {
+			  pop(@fixedExons);
+			  $subFeature->location->start($prevExon->location->start);
 
-			$subFeature->location->start($prevExon->location->start);
-
-			if($prevExonType eq 'coding'){
+			if( $prevExonType eq 'coding' ){
 			    $subFeature->remove_tag('type') if $subFeature->has_tag('type');
 			    $subFeature->add_tag_value('type','coding');
 
 			    $exonType = 'coding';
 			    ($codingEnd) = $prevExon->get_tag_values('CodingEnd');
 			    ($codingStart) = $prevExon->get_tag_values('CodingStart');
+
 			    if($subFeature->location->strand == -1){
-				
 				if ($subFeature->has_tag('CodingEnd')){
 				    $subFeature->remove_tag('CodingEnd') ;
 				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
@@ -401,7 +401,7 @@ sub traverseSeqFeatures {
 					$subFeature->add_tag_value('ID',$prevExonId);
 				    }
 				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
-				    $subFeature->add_tag_value('CodingStart',$codingStart);				    
+				    $subFeature->add_tag_value('CodingStart',$codingStart);
 				}
 			    }else{
 
@@ -417,22 +417,17 @@ sub traverseSeqFeatures {
 				    $subFeature->add_tag_value('CodingEnd',$codingEnd);
 				    $subFeature->add_tag_value('CodingStart',$codingStart);
 				}
-			    }	    
-			    
-			}
-		       
-
+			      }
+			  }
 		    }
-
-
+		  }
 		}
 
 		$prevExon = $subFeature;
 		$prevExonType = $exonType;
 		push @fixedExons , $subFeature;
 	    }
-	
-		
+
 
 	    my $CDSLength = 0;
 	    my $first = 0;
