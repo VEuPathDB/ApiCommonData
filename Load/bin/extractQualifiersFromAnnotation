@@ -304,12 +304,14 @@ sub getGoEvidenceCode {
 	
 	if ($string =~ /INFERRED FROM ELECTRONIC ANNOTATION/i) {
 		return "IEA";
-	} elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/) {
+	} elsif ($string =~ /INFERRED FROM SEQUENCE ORTHOLOGY/i) {
 		return "ISO";
-	} elsif ($string =~ /NOT RECORDED/) {
+	} elsif ($string =~ /NOT RECORDED/i) {
 		return "NR";
-	} elsif ($string =~ /INFERRED FROM DIRECT ASSAY/) {
+	} elsif ($string =~ /INFERRED FROM DIRECT ASSAY/i) {
 		return "IDA";
+	} elsif ($string =~ /No biological Data available/i) {
+		return "ND";
 	#} elsif ($string =~ //) {
 	#	return "";
 	} else {
