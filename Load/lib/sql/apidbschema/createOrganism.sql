@@ -8,7 +8,7 @@ CREATE TABLE apidb.Organism (
  genome_source                VARCHAR2(50) NOT NULL,
  orthomcl_abbrev              VARCHAR2(20) NOT NULL,
  strain_abbrev                VARCHAR2(20) NOT NULL,
- ref_strain_abbrev            VARCHAR2(20) NOT NULL,
+ ref_strain_abbrev            VARCHAR2(30) NOT NULL,
  is_reference_strain          NUMBER(1) NOT NULL,
  is_annotated_genome          NUMBER(1) NOT NULL,
  is_family_representative     NUMBER(1) NOT NULL,
