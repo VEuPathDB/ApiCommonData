@@ -411,8 +411,8 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
         AND dr.external_database_release_id
               = edr.external_database_release_id
         AND edr.external_database_id = ed.external_database_id
-        AND  NOT (database_name in ('NRDB_gb_dbXRefBySeqIdentity','NRDB_ref_dbXRefBySeqIdentity')  
-                                  AND NOT  REGEXP_LIKE (gi.id, '\D') )
+        AND  NOT (ed.name in ('NRDB_gb_dbXRefBySeqIdentity','NRDB_ref_dbXRefBySeqIdentity')  
+                                  AND NOT  REGEXP_LIKE (dr.primary_identifier, '\D') )
         AND  NOT edr.id_type = 'synonym'
      UNION
      SELECT dr.primary_identifier AS id, 
