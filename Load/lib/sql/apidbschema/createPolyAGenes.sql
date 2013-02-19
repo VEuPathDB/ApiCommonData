@@ -37,6 +37,8 @@ CREATE TABLE apidb.PolyAGenes (
 grant select on Apidb.PolyAGenes to gus_r;
 grant insert, select, update, delete on Apidb.PolyAGenes to gus_w;
 
+CREATE SEQUENCE apidb.PolyAGenes_sq;
+
 create index apidb.polyagenes_loc_idx
 ON Apidb.PolyAGenes (source_id, na_sequence_id, location, type)
 tablespace indx
