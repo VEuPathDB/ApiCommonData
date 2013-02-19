@@ -30,6 +30,7 @@ use GUS::Model::ApiDB::PolyAGenes;
 		 constraintFunc=> undef,
 		 reqd  => 0,
 		 isList => 0,
+               }),
     ];
 
 
