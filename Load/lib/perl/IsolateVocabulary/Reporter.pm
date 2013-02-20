@@ -79,7 +79,7 @@ sub report {
     my $term = $vocabTerm->getTerm();
     my $table = $vocabTerm->getTable();
 
-    unless($xmlTermsHash->{$term}) {
+    unless($xmlTermsHash->{$term}->{$table}) {
       print STDERR "No Mapping Info for Vocab Term:  $term\n";
       $self->getXml($term, $type, $table);
       $hadErrors = 1;
@@ -106,7 +106,9 @@ sub makeHashFromTerms {
   foreach my $vocabTerm (@{$xmlTerms}) {
 
     my $term = $vocabTerm->getTerm();
-    $hash{$term} = 1;
+    my $table = $vocabTerm->getTable();
+
+    $hash{$term}->{$table} = 1;
   }
 
   return \%hash;
