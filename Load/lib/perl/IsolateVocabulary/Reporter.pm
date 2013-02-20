@@ -73,29 +73,19 @@ sub report {
   my $sqlTerms = $self->getSqlTerms();
 
   # Check all Sql terms are handled
-  foreach my $vocabTerm (@{$sqlTerms->{dotsIsolateSourceTerms}}) {
+  foreach my $vocabTerm (@{$sqlTerms}) {
     next if($vocabTerm->getAlreadyMaps());
 
     my $term = $vocabTerm->getTerm();
+    my $table = $vocabTerm->getTable();
 
     unless($xmlTermsHash->{$term}) {
       print STDERR "No Mapping Info for Vocab Term:  $term\n";
-      $self->getXml($term, $type, 'IsolateSource');
+      $self->getXml($term, $type, $table);
       $hadErrors = 1;
     }
   }
 
-  foreach my $vocabTerm (@{$sqlTerms->{studyOntologyEntryTerms}}) {
-    next if($vocabTerm->getAlreadyMaps());
-
-    my $term = $vocabTerm->getTerm();
-
-    unless($xmlTermsHash->{$term}) {
-      print STDERR "No Mapping Info for Vocab Term:  $term\n";
-      $self->getXml($term, $type, 'OntologyEntry');
-      $hadErrors = 1;
-    }
-  }
 
   if($hadErrors || $check) {
     print STDERR "Please Correct Errors and rerun.  Terms can either be added to an ontology or add an xml map to link term to existing ontology\n";

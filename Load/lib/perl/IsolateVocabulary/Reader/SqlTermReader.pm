@@ -27,11 +27,12 @@ sub new {
 sub extract {
   my ($self) = @_;
 
-  my %rv;
-  $rv{dotsIsolateSourceTerms} = $self->getDotsIsolateSourceTerms();
-  $rv{studyOntologyEntryTerms} = $self->getStudyOntologyEntryTerms();
+  my $dotsIsolateSourceTerms = $self->getDotsIsolateSourceTerms();
+  my $studyOntologyEntryTerms = $self->getStudyOntologyEntryTerms();
+ 
+  my @rv = (@$dotsIsolateSourceTerms, @$studyOntologyEntryTerms);
 
-  return \%rv;
+  return \@rv;
 }
 
 sub getStudyOntologyEntryTerms {
