@@ -177,7 +177,7 @@ WHERE 'ProfileElement' NOT IN (SELECT name FROM core.TableInfo
 create table ApiDB.ProfileElementName (
  profile_element_name_id NUMBER(10),
  profile_set_id          NUMBER(10),
- name                    VARCHAR2(40),
+ name                    VARCHAR2(100),
  element_order           NUMBER(2),
  modification_date       DATE,
  user_read               NUMBER(1),
