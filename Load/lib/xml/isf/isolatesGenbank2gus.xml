@@ -40,7 +40,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                handler="api" method="note"/>
     <qualifier name="pseudo"         	  column="is_pseudo"/>
     <qualifier name="allele"/>
-    <qualifier name="experiment" 	  column="evidence"/>
+    <qualifier name="experiment" 	  ignore="true"/>
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="EC_number"		ignore="true"/>
     <qualifier name="protein_id" 	  column="product_alias"/>
@@ -74,7 +74,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="pseudo"         	  column="is_pseudo"/>
      <qualifier name="product"		handler="api" method="product"/>
-     <qualifier name="citation"                 />
+     <qualifier name="citation"           handler="api" method="function"/>
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
@@ -181,6 +181,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
+    <qualifier name="gene" 		ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
