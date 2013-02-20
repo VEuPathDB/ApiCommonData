@@ -90,6 +90,7 @@ sub insert {
 }
 
 # for terms where original is null, map to the term "unkown"
+# This method is only called by the plugin because we want to run it after everything else has been loaded
 sub insertNullMappedTerms {
   my ($self) = @_;
 
@@ -104,7 +105,7 @@ sub insertNullMappedTerms {
 
   my $vocabTerm = ApiCommonData::Load::IsolateVocabulary::VocabularyTerm->new($term, '', '', $type, $type, 1);
 
-  my $isolateVocabularyId = $isolateVocabularyIds->{$type}->{$term};
+  my $isolateVocabularyId = $isolateVocabularyIds->{lc($type)}->{$term};
 
   my $naSequenceIds = $self->queryForNullNaSequences($type);
 
@@ -178,8 +179,9 @@ sub insertManuallyMappedTerms {
   my $count;
 
   foreach my $xmlTerm (@{$self->getXmlMapTerms()}) {
-
     my $term = $xmlTerm->getTerm();
+
+
     my $mapTerm = $xmlTerm->getMapTerm();
     my $table = $xmlTerm->getTable();
     my $field = $xmlTerm->getField();
@@ -190,9 +192,9 @@ sub insertManuallyMappedTerms {
     # Get na_sequence_id or bio_material_id for the orig, BUT isolate vocabulary id for the mapTerm
     my $isolateVocabularyId = $vocabularyIds->{$type}->{$mapTerm};
 
-    # fix value of field for location
-    $field = 'geographic_location' if ($field eq 'country');
-    my $isolateIds = $allIsolateIds->{$idType}->{lc($field)}->{$term};
+    my $isolateIds = $allIsolateIds->{$idType}->{lc($type)}->{$term};
+
+
 
     next if (!$isolateIds);
     $count = $count + $self->doMappingInsert($xmlTerm, $isolateVocabularyId, $isolateIds, $idType);
@@ -205,7 +207,6 @@ sub insertAutomaticTerms {
 
   my $count;
 
-# idType type term
 
   foreach my $sqlTerm (@{$self->getSqlTerms()}) {
     next unless($sqlTerm->getAlreadyMaps());
@@ -304,7 +305,7 @@ Sql
     my $term = $row->{TERM};
     my $type = $row->{TYPE};
 
-    push @{$data->{$idType}->{$type}->{$term}}, $id;
+    push @{$data->{$idType}->{lc($type)}->{$term}}, $id;
   }
   $sh->finish();
 

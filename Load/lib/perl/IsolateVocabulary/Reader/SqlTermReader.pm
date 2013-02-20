@@ -29,7 +29,7 @@ sub extract {
 
   my $dotsIsolateSourceTerms = $self->getDotsIsolateSourceTerms();
   my $studyOntologyEntryTerms = $self->getStudyOntologyEntryTerms();
-
+ 
   my @rv = (@$dotsIsolateSourceTerms, @$studyOntologyEntryTerms);
 
   return \@rv;
