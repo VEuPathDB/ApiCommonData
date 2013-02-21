@@ -77,13 +77,15 @@ sub report {
     next if($vocabTerm->getAlreadyMaps());
 
     my $term = $vocabTerm->getTerm();
+    my $table = $vocabTerm->getTable();
 
-    unless($xmlTermsHash->{$term}) {
+    unless($xmlTermsHash->{$term}->{$table}) {
       print STDERR "No Mapping Info for Vocab Term:  $term\n";
-      $self->getXml($term, $type);
+      $self->getXml($term, $type, $table);
       $hadErrors = 1;
     }
   }
+
 
   if($hadErrors || $check) {
     print STDERR "Please Correct Errors and rerun.  Terms can either be added to an ontology or add an xml map to link term to existing ontology\n";
@@ -104,7 +106,9 @@ sub makeHashFromTerms {
   foreach my $vocabTerm (@{$xmlTerms}) {
 
     my $term = $vocabTerm->getTerm();
-    $hash{$term} = 1;
+    my $table = $vocabTerm->getTable();
+
+    $hash{$term}->{$table} = 1;
   }
 
   return \%hash;
@@ -112,11 +116,19 @@ sub makeHashFromTerms {
 
 
 sub getXml {
-  my ($self, $value, $type) = @_;
+  my ($self, $value, $type, $table) = @_;
   my $typeInTable = $type;
-  $typeInTable = 'country' if ($type eq 'geographic_location');
+
+  # change typeInTable appropriately
+  if ($table eq 'OntologyEntry') {
+    $typeInTable = 'GeographicLocation' if ($type eq 'geographic_location');
+    $typeInTable = 'BioSourceType' if ($type eq 'isolation_source');
+    $typeInTable = 'Host' if ($type eq 'specific_host');
+  } else {
+    $typeInTable = 'country' if ($type eq 'geographic_location');
+  }
   my $str = <<END;
-  <initial table=\"IsolateSource\" field=\"$typeInTable">
+  <initial table=\"$table\" field=\"$typeInTable">
    <original>$value<\/original>
     <maps>
       <row type=\"$type\" value=\"\" \/>
