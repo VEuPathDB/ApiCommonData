@@ -51,7 +51,7 @@ sub processInputProfileSet {
 
 
   my %eoToPen;
-  foreach(@{$profileSet->getChildren()}) {
+  foreach(@{$profileSet->getChildren('ProfileElementName')}) {
     my $elementOrder = $_->getElementOrder();
     $eoToPen{$elementOrder} = $_;
   }
