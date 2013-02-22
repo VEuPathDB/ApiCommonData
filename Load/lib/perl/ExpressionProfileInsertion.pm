@@ -51,7 +51,7 @@ sub processInputProfileSet {
 
 
   my %eoToPen;
-  foreach(@{$profileSet->getChildren('ProfileElementName')}) {
+  foreach($profileSet->getChildren('ApiDB::ProfileElementName', 1)) {
     my $elementOrder = $_->getElementOrder();
     $eoToPen{$elementOrder} = $_;
   }
