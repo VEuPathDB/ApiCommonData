@@ -17,7 +17,7 @@
         create table SequenceAttributes&1 nologging as
         select eas.secondary_identifier AS full_id, eas.source_id,
                eas.length, substr(eas.description, 1, 120) AS product,
-               eas.molecular_weight, ot.taxon_id,
+               eas.molecular_weight, ot.taxon_id, ot.orthomcl_taxon_id,
                ot.three_letter_abbrev AS taxon_abbreviation, ot.name AS taxon_name,
                OrthologGroup.group_name, OrthologGroup.group_size, EcNumbers.ec_numbers, OldGroups.old_groups
         from dots.ExternalAaSequence eas, apidb.OrthomclTaxon ot,
