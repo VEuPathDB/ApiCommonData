@@ -126,8 +126,8 @@ WHERE 'Profile' NOT IN (SELECT name FROM core.TableInfo
 create table ApiDB.ProfileElement (
  profile_element_id    NUMBER(10),
  profile_id            NUMBER(10),
+ profile_element_name_id NUMBER(10),
  value                 FLOAT(126),
- element_order         NUMBER(3),
  modification_date     DATE,
  user_read             NUMBER(1),
  user_write            NUMBER(1),
@@ -140,14 +140,15 @@ create table ApiDB.ProfileElement (
  row_project_id        NUMBER(4),
  row_alg_invocation_id NUMBER(12),
  FOREIGN KEY (profile_id) REFERENCES ApiDB.Profile,
+ FOREIGN KEY (profile_element_name_id) REFERENCES ApiDB.ProfileElementName,
  PRIMARY KEY (profile_element_id)
 );
 
-CREATE INDEX apiDB.pe_element_order_ind
-ON apiDB.ProfileElement(element_order, profile_id, value);
+CREATE INDEX apiDB.pe_profile_element_name_ind
+ON apiDB.ProfileElement(profile_element_name_id, profile_id, value);
 
 CREATE INDEX apiDB.pe_profid_ind
-ON apiDB.ProfileElement(profile_id, element_order, value);
+ON apiDB.ProfileElement(profile_id, profile_element_name_id, value);
 
 CREATE SEQUENCE apiDB.ProfileElement_sq;
 
