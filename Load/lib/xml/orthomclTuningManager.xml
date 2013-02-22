@@ -1,67 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tuningConfig>
 
-  <tuningTable name="TypeAheadCounts">
-    <!-- internalDependency name="GeneAttributes"/ -->
-    <externalDependency name="dots.DbRefAaFeature"/>
+  <tuningTable name="SequenceAttributes">
+    <externalDependency name="apidb.OrthologGroup"/>
+    <externalDependency name="apidb.OrthologGroupAaSequence"/>
+    <externalDependency name="apidb.OrthomclTaxon"/>
+    <externalDependency name="dots.AaSequenceDbRef"/>
+    <externalDependency name="dots.AaSequenceEnzymeClass"/>
+    <externalDependency name="dots.ExternalAaSequence"/>
     <externalDependency name="sres.DbRef"/>
-    <externalDependency name="dots.AaFeature"/>
-    <externalDependency name="dots.TranslatedAaFeature"/>
-    <externalDependency name="dots.Transcript"/>
+    <externalDependency name="sres.EnzymeClass"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <externalDependency name="sres.EnzymeClass"/>
-    <externalDependency name="dots.AaSequenceEnzymeClass"/>
-    <externalDependency name="dots.GoAssociation"/>
-    <externalDependency name="sres.GoTerm"/>
-    <externalDependency name="sres.GoRelationship"/>
-    <externalDependency name="sres.GoRelationshipType"/>
-    <externalDependency name="core.TableInfo"/>
     <sql>
       <![CDATA[
-CREATE TABLE TypeAheadCounts&1 NOLOGGING AS
-   (SELECT DISTINCT dr.primary_identifier as option_id,
-                   count(distinct aaf.aa_sequence_id) AS protein_count
-   FROM dots.DbRefAaFeature draf, sres.DbRef dr, dots.aafeature aaf,
-        sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
-   WHERE draf.db_ref_id = dr.db_ref_id
-   AND dr.external_database_release_id
-       = edr.external_database_release_id
-   AND edr.external_database_id = ed.external_database_id
-   AND aaf.aa_feature_id = draf.aa_feature_id
-   GROUP BY dr.primary_identifier
-   )
-   UNION
-   (SELECT DISTINCT ec.ec_number AS option_id,
-          COUNT(DISTINCT asec.aa_sequence_id) AS protein_count
-   FROM sres.enzymeClass ec,
-        dots.aaSequenceEnzymeClass asec
-   WHERE  asec.enzyme_class_id = ec.enzyme_class_id
-   GROUP BY ec.ec_number)
-   UNION                
-   (SELECT DISTINCT gp.go_id AS option_id,
-           COUNT(DISTINCT aaf.aa_sequence_id) AS protein_count
-    FROM dots.AaFeature aaf,
-         dots.GoAssociation ga, sres.GoTerm gp,
-         sres.GoRelationship gr, core.TableInfo ti,
-         sres.GoRelationshipType grt
-    WHERE aaf.aa_sequence_id = ga.row_id
-    AND ga.table_id = ti.table_id
-    AND ti.name = 'TranslatedAASequence'
-    AND ga.go_term_id = gr.child_term_id
-    AND gr.parent_term_id = gp.go_term_id
-    AND gr.go_relationship_type_id = grt.go_relationship_type_id
-    AND grt.name = 'closure'
-    GROUP BY gp.go_id)
+        create table SequenceAttributes&1 nologging as
+        select eas.secondary_identifier AS full_id, eas.source_id,
+               eas.length, substr(eas.description, 1, 120) AS product,
+               eas.molecular_weight, ot.taxon_id,
+               ot.three_letter_abbrev AS taxon_abbreviation, ot.name AS taxon_name,
+               OrthologGroup.group_name, OrthologGroup.group_size, EcNumbers.ec_numbers, OldGroups.old_groups
+        from dots.ExternalAaSequence eas, apidb.OrthomclTaxon ot,
+             (select ogs.aa_sequence_id, og.name as group_name, og.number_of_members as group_size
+              from apidb.OrthologGroupAaSequence ogs, apidb.OrthologGroup og
+              where ogs.ortholog_group_id = og.ortholog_group_id) OrthologGroup,
+             (select asec.aa_sequence_id,
+                     substr(listagg(ec.ec_number, ', ') within group (order by ec.ec_number), 1, 200) as ec_numbers
+               from dots.AaSequenceEnzymeClass asec,
+               sres.EnzymeClass ec
+             where asec.enzyme_class_id = ec.enzyme_class_id
+             group by asec.aa_sequence_id
+             ) EcNumbers,
+             (select sdbr.aa_sequence_id,
+              listagg(ref.primary_identifier, ', ') within group (order by ref.primary_identifier) as old_groups
+              from sres.DbRef ref, sres.ExternalDatabase db, sres.ExternalDatabaseRelease dbr,
+                   dots.AaSequenceDbRef sdbr
+              where db.name = 'OrthoMCL Old Groups'
+                and dbr.external_database_id = db.external_database_id
+                and ref.external_database_release_id = dbr.external_database_release_id
+                and sdbr.db_ref_id = ref.db_ref_id
+              group by sdbr.aa_sequence_id
+             ) OldGroups
+        where eas.taxon_id = ot.taxon_id
+          and eas.aa_sequence_id = OrthologGroup.aa_sequence_id(+)
+          and eas.aa_sequence_id = EcNumbers.aa_sequence_id(+)
+          and eas.aa_sequence_id = OldGroups.aa_sequence_id(+)
       ]]>
     </sql>
-    <sql>
-      <![CDATA[
-CREATE INDEX TypeAheadCounts_idx&1 ON TypeAheadCounts&1 (option_id)
-tablespace indx
-      ]]>
-    </sql>
-  </tuningTable>
 
+    <sql>
+      <![CDATA[
+        create index SeqAttrss_idx&1 ON SequenceAttributes&1 (full_id, group_name, taxon_id)
+        tablespace indx
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index SeqAttrss_idx2&1 ON SequenceAttributes&1 (group_name, full_id, taxon_id)
+        tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
 
 </tuningConfig>
