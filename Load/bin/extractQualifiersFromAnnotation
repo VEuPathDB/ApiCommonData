@@ -187,10 +187,12 @@ sub processFeature {
 										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
 							}
 							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
-						} elsif ($outputHash{$qualifier} =~ /aliases/) {
+						} elsif ($outputHash{$qualifier} =~ /aliases/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
 							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
+																	## and synonyms by "," in Tbrucei927
 							foreach my $alias (@aliases) {
 								$alias = &trimValue($alias);
+								$alias =~ s/;current=false$//;
 								$funcFhHash{$qualifier}->print("$sourceId\t$alias\n") if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias});
 								$done{$sourceId}{$alias} = "done";
 							}
@@ -312,6 +314,40 @@ sub getGoEvidenceCode {
 		return "IDA";
 	} elsif ($string =~ /No biological Data available/i) {
 		return "ND";
+	} elsif ($string =~ /INFERRED FROM SEQUENCE OR STRUCTURAL SIMILARITY/i) {
+		return "ISS";
+	} elsif ($string =~ /Inferred from Sequence Alignment/i) {
+		return "ISA";
+	} elsif ($string =~ /Inferred from Sequence Model/i) {
+		return "ISM";
+	} elsif ($string =~ /Inferred from Genomic Context/i) {
+		return "IGC";
+	} elsif ($string =~ /Inferred from Biological aspect of Ancestor/i) {
+		return "IBA";
+	} elsif ($string =~ /Inferred from Biological aspect of Descendant/i) {
+		return "IBD";
+	} elsif ($string =~ /Inferred from Key Residues/i) {
+		return "IKR";
+	} elsif ($string =~ /Inferred from Rapid Divergence /i) {
+		return "IRD";
+	} elsif ($string =~ /inferred from Reviewed Computational Analysis/i) {
+		return "RCA";
+	} elsif ($string =~ /Inferred from Experiment/i) {
+		return "EXP";
+	} elsif ($string =~ /Inferred from Physical Interaction/i) {
+		return "IPI";
+	} elsif ($string =~ /Inferred from Mutant Phenotype/i) {
+		return "IMP";
+	} elsif ($string =~ /Inferred from Genetic Interaction/i) {
+		return "IGI";
+	} elsif ($string =~ /Inferred from Expression Pattern/i) {
+		return "IEP";
+	} elsif ($string =~ /Traceable Author Statement/i) {
+		return "TAS";
+	} elsif ($string =~ /Non-traceable Author Statement/i) {
+		return "NAS";
+	} elsif ($string =~ /Inferred by Curator/i) {
+		return "IC";
 	#} elsif ($string =~ //) {
 	#	return "";
 	} else {
