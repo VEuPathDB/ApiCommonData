@@ -23,6 +23,8 @@ necessarily by what's defined in the input (eg. Genbank) file
   <feature name="CAAT_signal" ignore="true"/>
   <feature name="RBS" ignore="true"/>
   <feature name="attenuator" ignore="true"/>
+  <feature name="rep_origin" ignore="true"/>
+  <feature name="LTR" ignore="true"/>
 
   <!-- genbank feature CDS reshaped to coding_gene -->
   <feature name="coding_gene" table="DoTS::IsolateFeature" so="gene_fragment">
@@ -42,13 +44,14 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_table" 	  ignore="true"/>
     <qualifier name="standard_name"/>
     <qualifier name="label"/>
-    <qualifier name="inference" 	  column="evidence"/>
+    <qualifier name="inference" 	  ignore="true"/>
     <!-- from mRNA records -->
     <qualifier name="gene"/>
     <qualifier name="gene_synonym" 	  ignore="true"/>
     <qualifier name="function"     handler="api" method="function"/>
     <!-- from ToxoDB -->
     <qualifier name="number" 		  ignore="true"/>
+    <qualifier name="exception" 		  ignore="true"/>
   </feature>
 
   <!-- genebank gene feature qualifiers reshaped into new coding_gene created
@@ -66,7 +69,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag"            column="source_id"/>
     <qualifier name="pseudo"         	  column="is_pseudo"/>
      <qualifier name="product"		handler="api" method="product"/>
-     <qualifier name="citation"                 />
+     <qualifier name="citation"     ignore="true" />
     <qualifier name="db_xref"		ignore="true"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="gene"                 />
@@ -174,9 +177,19 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="snRNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            column="source_id"/>
+	<qualifier name="gene"/>
     <qualifier name="note"                 handler="api" method="note"/>
     <qualifier name="product"		handler="api" method="product"/>
     <qualifier name="db_xref"		ignore="true"/>
+    <qualifier name="experiment"		ignore="true"/>
+  </feature>
+
+  <feature name="guide_RNA_gene" table="DoTS::IsolateFeature" so="gene_fragment">
+    <qualifier name="locus_tag"            column="source_id"/>
+    <qualifier name="gene"/>
+    <qualifier name="note"                 handler="api" method="note"/>
+    <qualifier name="product"       handler="api" method="product"/>
+    <qualifier name="db_xref"       ignore="true"/>
   </feature>
 
   <feature name="STS" table="DoTS::IsolateFeature" so="STS">
@@ -289,7 +302,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="gene"                 ignore="true"/>
   </feature>
 
-  <feature name="ncRNA" so="gene_fragment" ignore="true">
+  <feature name="ncRNA" table="DoTS::IsolateFeature" so="gene_fragment">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="product"		ignore="true"/>
     <qualifier name="db_xref"		ignore="true"/>
