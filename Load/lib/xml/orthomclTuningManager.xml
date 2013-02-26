@@ -15,13 +15,14 @@
     <sql>
       <![CDATA[
         create table SequenceAttributes&1 nologging as
-        select eas.secondary_identifier AS full_id, eas.source_id,
+        select eas.secondary_identifier AS full_id, eas.source_id, eas.aa_sequence_id,
                eas.length, substr(eas.description, 1, 120) AS product,
                eas.molecular_weight, ot.taxon_id, ot.orthomcl_taxon_id,
                ot.three_letter_abbrev AS taxon_abbreviation, ot.name AS taxon_name,
-               OrthologGroup.group_name, OrthologGroup.group_size, EcNumbers.ec_numbers, OldGroups.old_groups
+               OrthologGroup.group_name, OrthologGroup.ortholog_group_id,
+               OrthologGroup.group_size, EcNumbers.ec_numbers, OldGroups.old_groups
         from dots.ExternalAaSequence eas, apidb.OrthomclTaxon ot,
-             (select ogs.aa_sequence_id, og.name as group_name, og.number_of_members as group_size
+             (select ogs.aa_sequence_id, og.name as group_name, og.ortholog_group_id, og.number_of_members as group_size
               from apidb.OrthologGroupAaSequence ogs, apidb.OrthologGroup og
               where ogs.ortholog_group_id = og.ortholog_group_id) OrthologGroup,
              (select asec.aa_sequence_id,
@@ -50,14 +51,28 @@
 
     <sql>
       <![CDATA[
-        create index SeqAttrss_idx&1 ON SequenceAttributes&1 (full_id, group_name, taxon_id)
+        alter table SequenceAttributes&1
+          add constraint SeqAttrs_pk&1 primary key (full_id)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index SeqAttrs_idx&1 ON SequenceAttributes&1 (full_id, group_name, taxon_id)
         tablespace indx
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create index SeqAttrss_idx2&1 ON SequenceAttributes&1 (group_name, full_id, taxon_id)
+        create index SeqAttrs_gusIdx&1 ON SequenceAttributes&1 (ortholog_group_id, aa_sequence_id)
+        tablespace indx
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index SeqAttrs_idx2&1 ON SequenceAttributes&1 (group_name, length desc, full_id, taxon_id)
         tablespace indx
       ]]>
     </sql>
