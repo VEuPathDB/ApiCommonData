@@ -6206,7 +6206,7 @@ tablespace indx
               nvl(comments.comment_count, 'no') as comment_count
              from GeneAttributes ga1, GeneAttributes ga2,
                   (select distinct 'yes' as comment_count, stable_id as source_id, project_name
-                   from comments2.comments@apidb.login_comment
+                   from comments2.comments@&dblink
                    where comment_target_id = 'gene'
                      and review_status_id != 'rejected'
                      and is_visible = 1) comments
