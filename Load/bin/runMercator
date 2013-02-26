@@ -138,6 +138,12 @@ echo $TREE >treefile
 
 $MAKEALIGNMENTINPUT $MERCATOR_OUTPUT $ALIGN_DIR
 
+if [ `find $ALIGN_DIR/* -maxdepth 0 -type d | wc -l` -eq 0 ]; then
+  echo "ERROR: no alignment directories. Check that both genomes are not labeled as draft genomes when they should be non-draft."
+  exit 1
+fi
+
+# Checks in alignments directories for: treefile, seqs.fasta, seqs.fasta.masked
 $MAVIDALIGNDIRS --init-dir $ALIGN_DIR --mavidpath $MAVID_EXE
 
 $OMAP2COORDINATES --map-dir $ALIGN_DIR < $ALIGN_DIR/map > $ALIGN_DIR/coordinates
