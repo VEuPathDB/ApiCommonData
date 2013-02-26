@@ -65,7 +65,7 @@ sub preprocess {
         my $systematicId;
         if($bioperlFeatureTree->has_tag('gene') || $bioperlFeatureTree->has_tag('locus_tag')){
 
-            ($systematicId) = 
+            ($systematicId) = ($bioperlFeatureTree->has_tag('gene')?$bioperlFeatureTree->get_tag_values('gene'):$bioperlFeatureTree->get_tag_values('locus_tag'));
             $systematicId =~ s/\:3UTR*$//;
 
 
@@ -356,7 +356,7 @@ sub preprocess {
 	  $bioperlFeatureTree->remove_tag('locus_tag');
 
       }
-      $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$sourceNumber");
+      $bioperlFeatureTree->add_tag_value('locus_tag',$bioperlSeq->accession_number()."-$featureNumber");
       $featureNumber++;
   }
     if ($type eq 'source'){
