@@ -58,21 +58,36 @@
 
     <sql>
       <![CDATA[
-        create index SeqAttrs_idx&1 ON SequenceAttributes&1 (full_id, group_name, taxon_id)
+        create unique index SeqAttrs_idx&1 ON SequenceAttributes&1 (full_id, group_name, taxon_id, source_id)
         tablespace indx
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create index SeqAttrs_gusIdx&1 ON SequenceAttributes&1 (ortholog_group_id, aa_sequence_id)
+        create unique index SeqAttrs_gusIdx&1 ON SequenceAttributes&1 (ortholog_group_id, aa_sequence_id)
         tablespace indx
       ]]>
     </sql>
 
     <sql>
       <![CDATA[
-        create index SeqAttrs_idx2&1 ON SequenceAttributes&1 (group_name, length desc, full_id, taxon_id)
+        create unique index SeqAttrs_idx2&1 ON SequenceAttributes&1 (group_name, length desc, full_id, taxon_id)
+        tablespace indx
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create unique index SeqAttrs_idx3&1
+          on SequenceAttributes&1 (aa_sequence_id, group_name, ortholog_group_id, orthomcl_taxon_id, taxon_id)
+        tablespace indx
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create unique index SeqAttrs_idx4&1 ON SequenceAttributes&1 (source_id, full_id, group_name, taxon_id)
         tablespace indx
       ]]>
     </sql>
