@@ -27,6 +27,10 @@ create index dots.SeqvarStrain_ix
   on dots.NaFeatureImp (subclass_view, external_database_release_id, string9, na_feature_id)
   tablespace INDX; 
 
+create index sres.RefIx
+  on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
+  tablespace indx;
+
 -- constrain NaSequence source_ids to be unique
 alter table dots.NaSequenceImp
 add constraint source_id_uniq
