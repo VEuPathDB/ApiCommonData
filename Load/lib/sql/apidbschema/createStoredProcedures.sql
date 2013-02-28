@@ -499,6 +499,8 @@ begin
                  then project := 'FungiDB';
                when 'tremella'
                  then project := 'FungiDB';
+               when 'hypocrea'
+                 then project := 'FungiDB';
                else raise_application_error(-20101,
                                             'project_id("'
                                             || organism || '"): unknown project assignment' );
