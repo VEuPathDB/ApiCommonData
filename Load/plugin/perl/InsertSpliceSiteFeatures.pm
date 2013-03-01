@@ -131,7 +131,7 @@ sub new {
   my $args = &getArgsDeclaration();
 
   my $configuration = { requiredDbVersion => 3.6,
-                        cvsRevision => '$Revision: 40219 $',
+                        cvsRevision => '$Revision: 53770 $',
                         name => ref($self),
                         argsDeclaration => $args,
                         documentation => $documentation
@@ -228,6 +228,7 @@ sub processFile {
       my @misCount = split("\,",$temp[7]); # last field of bowtie output gives comma-separated mis-matches
       $self->{mismatches}->{$key} += $#misCount + 1;  # increment number of total mis-matches for the same alignment
     }
+    $self->undefPointerCache();
   }
   close (FILE);
 
