@@ -50,6 +50,7 @@ foreach my $d (sort @ds) {
   open(META, ">>$outputDir/metadata");
   my $expt = "unique";
   my $strand = "forward";
+  my $selected = 1;
 
   opendir(D, $exp_dir);
   my @fs = readdir(D);
@@ -59,14 +60,17 @@ foreach my $d (sort @ds) {
     $expt = 'unique' if $f =~ /Unique/;
     $strand = 'reverse' if $f =~ /minus/;
     $strand = 'forward' if $f =~ /plus/;
+    $selected = 1 if $f =~ /Unique/;
+    $selected = 0 if $f =~ /NU/;
 
     my $meta =<<EOL;
 [$sample/$f]
-display_name = $sample non-unique forward
-type         = RUM:GUS
-expt         = $expt
-strand       = $strand
+:selected    = $selected
+display_name = $sample ($expt $strand)
 sample       = $sample
+alignment    = $expt
+strand       = $strand
+type         = Coverage
 
 EOL
    print META $meta;
