@@ -6656,10 +6656,12 @@ tablespace indx
                      s.organism like 'Phytophthora%' or
                      s.organism like 'Pythium%' )
                then 'Oomycetes'
-               when (s.organism like 'Coprinopsis%')
+               when (s.organism like 'Coprinopsis%' or
+                     s.organism like 'Phanerochaete%')
                then 'Agaricomycetes'
-               when (s.organism like 'Rhizopus%')
-               then 'Rhizopus'
+               when (s.organism like 'Rhizopus%' or
+                     s.organism like 'Mucor%')
+               then 'Mucoromycotina'
                when (s.organism like 'Puccinia%')
                then 'Pucciniomycetes'
                when (s.organism like 'Batrachochytrium%') 
