@@ -6627,56 +6627,57 @@ tablespace indx
         (select distinct project_id, organism from sequenceattributes) s
         where p.project_id = s.project_id
         union 
-        select distinct s.project_id as project_id, 
-              Case when (s.organism like 'Aspergillus%' or
-                     s.organism like 'Emericella%' or
-                     s.organism like 'Coccidioides%' or
-                     s.organism like 'Histoplasma%' or
-                     s.organism like 'Talaromyces%' or
-                     s.organism like 'Penicillium%' or
-                     s.organism like 'Neosartorya%' or
-                     s.organism like 'Ajellomyces%')
-               then 'Eurotiomycetes'
-               when ( s.organism like 'Tremella%' or
-                      s.organism like 'Cryptococcus%' )
-               then 'Tremellomycetes'
-               when ( s.organism like 'Neurospora%' or 
-                     s.organism like 'Magnaporthe%' or 
-                     s.organism like 'Fusarium%' or 
-                     s.organism like 'Gibberella%' or
-                     s.organism like 'Trichoderma%' or
-                     s.organism like 'Sordaria%')
-               then 'Sordariomycetes'
-               when ( s.organism like 'Saccharomyces%' or
-                     s.organism like 'Candida%')
-               then 'Saccharomycotina'
-               when ( s.organism like 'Schizosaccharomyces%')
-               then 'Taphrinomycotina' 
-               when (s.organism like 'Hyaloperonospora%' or
-                     s.organism like 'Phytophthora%' or
-                     s.organism like 'Pythium%' )
-               then 'Oomycetes'
-               when (s.organism like 'Coprinopsis%' or
-                     s.organism like 'Phanerochaete%')
-               then 'Agaricomycetes'
-               when (s.organism like 'Rhizopus%' or
-                     s.organism like 'Mucor%')
-               then 'Mucoromycotina'
-               when (s.organism like 'Puccinia%')
-               then 'Pucciniomycetes'
-               when (s.organism like 'Batrachochytrium%') 
-               then 'Chytridiomycetes'
-               when (s.organism like 'Ustilago%' or
-                     s.organism like 'Malassezia%' or 
-                     s.organism like 'Sporisorium%') 
-               then 'Ustilaginomycotina'
-               when (s.organism like 'Sclerotinia%' or
-                     s.organism like 'Botrytis%' or 
-                     s.organism like 'Botryotinia%' )
-               then 'Leotiomycetes'
-               else 'Missing ProjectIdTaxonLevel'
-               end as taxon_node,
-               s.organism as organism
+        SELECT distinct s.project_id as project_id, 
+          CASE
+            when (s.organism like 'Coprinopsis%' or
+                  s.organism like 'Phanerochaete%')
+            then 'Agaricomycetes'
+            when (s.organism like 'Batrachochytrium%') 
+            then 'Chytridiomycetes'
+            when (s.organism like 'Aspergillus%' or
+                  s.organism like 'Emericella%' or
+                  s.organism like 'Coccidioides%' or
+                  s.organism like 'Histoplasma%' or
+                  s.organism like 'Talaromyces%' or
+                  s.organism like 'Penicillium%' or
+                  s.organism like 'Neosartorya%' or
+                  s.organism like 'Ajellomyces%')
+            then 'Eurotiomycetes'
+            when (s.organism like 'Sclerotinia%' or
+                  s.organism like 'Botrytis%' or 
+                  s.organism like 'Botryotinia%' )
+            then 'Leotiomycetes'
+            when (s.organism like 'Hyaloperonospora%' or
+                  s.organism like 'Phytophthora%' or
+                  s.organism like 'Pythium%' )
+            then 'Oomycetes'
+            when (s.organism like 'Puccinia%')
+            then 'Pucciniomycetes'
+            when (s.organism like 'Saccharomyces%' or
+                  s.organism like 'Candida%')
+            then 'Saccharomycetes'
+            when (s.organism like 'Schizosaccharomyces%')
+            then 'Schizosaccharomycetes' 
+            when (s.organism like 'Neurospora%' or 
+                  s.organism like 'Magnaporthe%' or 
+                  s.organism like 'Fusarium%' or 
+                  s.organism like 'Gibberella%' or
+                  s.organism like 'Trichoderma%' or
+                  s.organism like 'Sordaria%')
+            then 'Sordariomycetes'
+            when (s.organism like 'Tremella%' or
+                  s.organism like 'Cryptococcus%' )
+            then 'Tremellomycetes'
+            when (s.organism like 'Ustilago%' or
+                  s.organism like 'Malassezia%' or 
+                  s.organism like 'Sporisorium%') 
+            then 'Ustilaginomycetes'
+            when (s.organism like 'Rhizopus%' or
+                  s.organism like 'Mucor%')
+            then 'Zygomycetes'
+            else 'Missing ProjectIdTaxonLevel'
+          end as taxon_node,
+          s.organism as organism
         from sequenceattributes s
         where s.project_id = 'FungiDB'
 	]]>
