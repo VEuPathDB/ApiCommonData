@@ -31,6 +31,32 @@ create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;
 
+create index sres.DbRls_ix
+  on sres.ExternalDatabaseRelease (external_database_id, external_database_release_id)
+  tablespace indx;
+
+create index sres.DbRlsDb_ix
+  on sres.ExternalDatabaseRelease (external_database_release_id, external_database_id)
+  tablespace indx;
+
+-- for OrthoMCL:
+-- string1 = secondary_identifier = full_id
+create index lwrFullId_ix
+on dots.AaSequenceImp(lower(string1), aa_sequence_id, string1)
+tablespace indx;
+
+create index lwrSrcId_ix
+on dots.AaSequenceImp(lower(source_id), aa_sequence_id, string1)
+tablespace indx;
+
+create index lwrRefPrim_ix
+on sres.DbRef(lower(primary_identifier), db_ref_id, external_database_release_id)
+tablespace indx;
+
+create index lwrRefSec_ix
+on sres.DbRef(lower(secondary_identifier), db_ref_id, external_database_release_id)
+tablespace indx;
+
 -- constrain NaSequence source_ids to be unique
 alter table dots.NaSequenceImp
 add constraint source_id_uniq
