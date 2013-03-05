@@ -4605,7 +4605,11 @@ from dual
     ) psorg
 where d.profile_name = psorg.name
 
--- for profiles on Compounds -- -- just for PlasmoDB, in build 17 --
+
+
+/*  
+  TODO:  Metabolite ADD THIS BACK IN FOR BUILD 18
+
 UNION
 select d.mainOpen, d.dataOpen, d.order_num, d.profile_name, d.module, d.display_name, d.description, d.x_axis, d.y_axis, d.visible_parts, d.attribution, d.type, d.dataTable, 'N/A' as species, 'N/A' as organism
 from (
@@ -4623,12 +4627,17 @@ select 'Profiles of Metabolites from Llinas' as profile_name,
        'compound' as type,
        '' as attribution
 from dual
+
+
+
 ) d,   (select distinct ps.name
     from apidb.profile p, apidb.profileset ps, apidb.pubchemCompound pcc
     where p.profile_set_id = ps.profile_set_id 
     and  p.subject_row_id = pcc.pubchem_compound_id 
     ) psorg
 where d.profile_name = psorg.name
+*/
+
       ]]>
     </sql>
   </tuningTable>
