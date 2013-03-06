@@ -48,6 +48,7 @@ foreach my $d (sort @ds) {
 
   # create a metadata text file for better organizing gbrowse subtracks
   open(META, ">>$outputDir/metadata");
+  my $meta = "";
   my $expt = "unique";
   my $strand = "forward";
   my $selected = 1;
@@ -58,12 +59,13 @@ foreach my $d (sort @ds) {
     next if $f !~ /\.bw$/;
     $expt = 'non-unique' if $f =~ /NU/;
     $expt = 'unique' if $f =~ /Unique/;
-    $strand = 'reverse' if $f =~ /minus/;
-    $strand = 'forward' if $f =~ /plus/;
     $selected = 1 if $f =~ /Unique/;
     $selected = 0 if $f =~ /NU/;
+    $strand = 'reverse' if $f =~ /minus/;
+    $strand = 'forward' if $f =~ /plus/;
 
-    my $meta =<<EOL;
+    if($f =~ /minus/ || $f =~ /plus/) {
+      $meta =<<EOL;
 [$sample/$f]
 :selected    = $selected
 display_name = $sample ($expt $strand)
@@ -73,8 +75,18 @@ strand       = $strand
 type         = Coverage
 
 EOL
-   print META $meta;
+   } else {
+     $meta =<<EOL;
+[$sample/$f]
+:selected    = $selected
+display_name = $sample ($expt)
+sample       = $sample
+alignment    = $expt
+type         = Coverage
 
+EOL
+   }
+   print META $meta;
   }
 
   closedir(D);
