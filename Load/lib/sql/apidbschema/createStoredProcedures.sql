@@ -499,6 +499,8 @@ begin
                  then project := 'FungiDB';
                when 'tremella'
                  then project := 'FungiDB';
+               when 'hypocrea'
+                 then project := 'FungiDB';
                else raise_application_error(-20101,
                                             'project_id("'
                                             || organism || '"): unknown project assignment' );
@@ -671,4 +673,37 @@ GRANT execute ON apidb.compute_end TO gus_r;
 GRANT execute ON apidb.compute_end TO gus_w;
 
 -------------------------------------------------------------------------------
-exit;
+create or replace procedure apidb.deletifySeqVarExtDbRls (extDbRlsId in number)
+as
+  cursor c1 is
+      select rowid from dots.SeqVariation where external_database_release_id = extDbRlsId;
+
+  my_rowid urowid;
+  recordCount number;
+begin
+  open c1;
+  recordCount := 0;
+  loop
+    fetch c1 into my_rowid;
+    exit when c1%notfound;
+
+    update dots.SeqVariation
+    set subclass_view = 'deleteSeqVariation'
+    where rowid = my_rowid;
+
+    recordCount := recordCount + 1;
+    if mod(recordCount, 1000) = 0 then
+        commit;
+        -- dbms_output.put_line( recordCount || ' SeqVariations deletified for external_database_release_id ' || extDbRlsId);
+    end if;
+  end loop;
+end;
+/
+
+show errors
+
+grant execute on apidb.deletifySeqVarExtDbRls to gus_r;
+grant execute on apidb.deletifySeqVarExtDbRls to gus_w;
+-------------------------------------------------------------------------------
+
+exit

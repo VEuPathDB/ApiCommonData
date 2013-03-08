@@ -10,6 +10,7 @@ CREATE TABLE apidb.OrthologGroup (
  avg_evalue_exp               NUMBER,
  avg_connectivity             FLOAT(126),
  number_of_match_pairs        NUMBER,
+ percent_match_pairs          NUMBER,
  aa_seq_group_experiment_id   NUMBER(12),
  external_database_release_id NUMBER(10) NOT NULL,
  multiple_sequence_alignment  CLOB,
@@ -42,7 +43,12 @@ GRANT INSERT, SELECT, UPDATE, DELETE ON apidb.OrthologGroup TO gus_w;
 GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 
 CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id);
-CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id);
+CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name);
+
+CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name);
+CREATE INDEX apidb.og_match_ix ON apidb.OrthologGroup (avg_percent_match, ortholog_group_id, name);
+CREATE INDEX apidb.og_pct_ix ON apidb.OrthologGroup (percent_match_pairs, ortholog_group_id, name);
+CREATE INDEX apidb.og_id_ix ON apidb.OrthologGroup (avg_percent_identity, ortholog_group_id, name);
 
 ------------------------------------------------------------------------------
 

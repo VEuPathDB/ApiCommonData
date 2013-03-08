@@ -28,9 +28,10 @@ GRANT REFERENCES ON sres.Taxon TO ApiDB;
 GRANT REFERENCES ON study.Biomaterial TO ApiDB;
 GRANT REFERENCES ON study.BiomaterialImp TO ApiDB;
 
--- must be GRANTed directly (not just through GUS_R) for use in project_id() function
+-- must be GRANTed directly (not just through a role such as GUS_R) for use in PL/SQL functions
 GRANT SELECT ON core.ProjectInfo to ApiDB;
 GRANT SELECT ON sres.TaxonName to ApiDB;
+GRANT SELECT, UPDATE ON dots.SeqVariation to ApiDB;
 
 INSERT INTO core.DatabaseInfo
    (database_id, name, description, modification_date, user_read, user_write,

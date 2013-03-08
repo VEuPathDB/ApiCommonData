@@ -10,17 +10,15 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 
 use CBIL::Util::PropertySet;
 
-my ($help, $fn, $gusConfig, $extDbName, $extDbVer);
+my ($help, $fn, $gusConfig);
 
 &GetOptions('help|h' => \$help,
             'file=s' => \$fn,
             'gus_config=s' => \$gusConfig,
-            'extDbName=s' => \$extDbName,
-            'extDbVer=s' => \$extDbVer,
             );
 
-unless(-e $fn && $extDbName && $extDbVer) {
-  print STDERR "usage:  perl addProductAliasToIsolateFeature.pl --file <ACCESSINOS> --extDbName --extDbVer  [--gus_config <FILE>]\n";
+unless(-e $fn) {
+  print STDERR "usage:  perl addProductAliasToIsolateFeature.pl --file <ACCESSINOS> [--gus_config <FILE>]\n";
   exit;
 }
 
@@ -41,13 +39,8 @@ my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
 my $accessions = &readFile($fn);
 
 my $sql = "select e.source_id, s.na_feature_id
-from dots.ISOLATESOURCE s, Dots.EXTERNALNASEQUENCE e,
-Sres.EXTERNALDATABASE d, SRes.EXTERNALDATABASERELEASE r 
+from dots.ISOLATESOURCE s, Dots.EXTERNALNASEQUENCE e
 where e.na_sequence_id = s.na_sequence_id
-and s.external_database_release_id = r.external_database_release_id
-and r.external_database_id = d.external_database_id
-and r.version = '$extDbVer'
-and d.name = '$extDbName'
 ";
 my $sh = $dbh->prepare($sql);
 $sh->execute();

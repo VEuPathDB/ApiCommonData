@@ -48,8 +48,14 @@ sub processInputProfileSet {
 				    $descrip, $sourceIdType, $isLogged, $base);
 
   $profileSet->submit();
-  my $profileSetId = $profileSet->getId();
-  my $elementCount = $profileSet->getElementCount();
+
+
+  my %eoToPen;
+  foreach($profileSet->getChildren('ApiDB::ProfileElementName', 1)) {
+    my $elementOrder = $_->getElementOrder();
+    $eoToPen{$elementOrder} = $_;
+  }
+
 
   my $count = 0;
   my $notFound = 0;
@@ -59,8 +65,8 @@ sub processInputProfileSet {
     $profileRows = \@profileRowsNoReps;
   }
   foreach my $profileRow (@$profileRows) {
-    my $profile = &makeProfile($plugin, $profileRow, $profileSetId,
-				$elementCount,
+    my $profile = &makeProfile($plugin, $profileRow, $profileSet,
+				\%eoToPen,
 				$sourceIdType,
 				$tolerateMissingIds,
 				$loadProfileElement,
@@ -109,10 +115,12 @@ sub makeProfileSet {
 }
 
 sub makeProfile {
-  my ($plugin, $profileRow, $profileSetId, $elementCount, $sourceIdType, $tolerateMissingIds, $loadProfileElement, $optionalOrganismAbbrev) = @_;
+  my ($plugin, $profileRow, $profileSet, $eoToPen, $sourceIdType, $tolerateMissingIds, $loadProfileElement, $optionalOrganismAbbrev) = @_;
 
   my $subject_id;
   my $sourceId = shift(@$profileRow);
+
+  my $elementCount = $profileSet->getElementCount();
 
   scalar(@$profileRow) == $elementCount || $plugin->error("Expected $elementCount elements, but found " . scalar(@$profileRow) . " in line: " . join ("\t", @$profileRow));
 
@@ -154,22 +162,27 @@ sub makeProfile {
 
   my $profile = GUS::Model::ApiDB::Profile->
       new({source_id => $sourceId,
-	   profile_set_id => $profileSetId,
 	   subject_table_id => $subjectTableId,
 	   subject_row_id => $subjectRowId,
 	   no_evidence_of_expr => $plugin->{duds}->{$sourceId}? 1 : 0,
 	   profile_as_string => join("\t", @$profileRow),
 	  });
 
+  $profile->setParent($profileSet);
+
+
   if($loadProfileElement){
     my $count = 1;
     foreach my $value (@$profileRow) {
       $value = undef if($value eq 'NA');
       my $profileElement = GUS::Model::ApiDB::ProfileElement->
-	new({value => $value,
-	     element_order => $count++,
-	    });
+	new({value => $value });
+
+      my $profileElementName = $eoToPen->{$count};
+
+      $profileElement->setParent($profileElementName);
       $profile->addChild($profileElement);
+      $count++;
     }
   }
 

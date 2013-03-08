@@ -61,6 +61,33 @@ GRANT select ON apidb.IsolateDetail TO gus_r;
 ------------------------------------------------------------------------------
 
 create table apidb.SequenceDetail (
+      SOURCE_ID VARCHAR2(50 BYTE),
+      PROJECT_ID VARCHAR2(50 BYTE),
+      FIELD_NAME VARCHAR(50 BYTE),
+      FIELD_TITLE VARCHAR(1000 BYTE),
+      ROW_COUNT NUMBER,
+      CONTENT CLOB,
+      MODIFICATION_DATE DATE
+);
+
+CREATE INDEX apidb.sequencedtl_idx01 ON apidb.SequenceDetail(source_id, project_id, field_name);
+CREATE INDEX apidb.sequencedtl_idx02 ON apidb.SequenceDetail(field_name, source_id);
+CREATE INDEX apidb.sequencedtl_idx03 ON apidb.SequenceDetail(row_count, source_id);
+
+CREATE TRIGGER apidb.SeqDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.SequenceDetail
+FOR EACH ROW
+BEGIN
+  :new.modification_date := sysdate;
+END;
+/
+
+GRANT insert, select, update, delete ON apidb.SequenceDetail TO gus_w;
+GRANT select ON apidb.SequenceDetail TO gus_r;
+
+------------------------------------------------------------------------------
+
+create table apidb.OrthomclSequenceDetail (
       FULL_ID VARCHAR2(50 BYTE),
       FIELD_NAME VARCHAR(50 BYTE),
       FIELD_TITLE VARCHAR(1000 BYTE),

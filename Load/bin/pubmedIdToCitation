@@ -37,7 +37,9 @@ sub fetchAuthorList {
 	my $attrValue = getAttrValue ($author, "Author", "ValidYN");
 	#Some of them don't have this attribute.
 	if (!$attrValue || $attrValue eq "Y") {
-	    my $lastname = extractTagContent ($author, "LastName");
+
+	    my $lastname = extractTagContent ($author, "(Collective|Last)Name");
+
 	    return "$lastname et al.";
 	}
     }
