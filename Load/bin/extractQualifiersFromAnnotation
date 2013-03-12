@@ -401,8 +401,8 @@ sub trimIds($){
 	$string =~ s/:pseudogenic_transcript.*$//g;
 	$string =~ s/;current=false*$//g;
 	$string =~ s/\.\d$//;  
-	#$string =~ s/(\S+\.\d)\.\d$/$1/;  ## comment previous line out to temp. fix for ldonBPK282A1 in TriTryp
-	#$string =~ s/\.\d$// if ($string =~ /TcCLB\.\d+\.\d+\.\d+/);  ## temp fix for T.cruzi annotation;
+	#$string =~ s/(\S+\.\d)\.\d$/$1/;  ## temp fix for ldonBPK282A1 in TriTryp, comment out the previous line and add this line to deal with the IDs
+	#$string =~ s/\.\d$// if ($string =~ /TcCLB\.\d+\.\d+\.\d+/);  ## temp fix for all T.cruzi genomes in TriTryp, comment out the previous line and add this line to deal with some IDs
 
 	return $string;
 }
