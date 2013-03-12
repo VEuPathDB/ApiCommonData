@@ -2,13 +2,13 @@
 
 #########################################################################################
 ##
-##  extract all function data from annotation as well as alias, dbxref, and comments    
-##  function data includes product, go association, ec_number, and gene name
-##          
+##  extract all function data from annotation, such as product, go association, ec_number,
+##  gene name, synonym, as well as alias, dbxref, and comments
+##
+##  The sourceId can get from database with "%.1", "%.2" using --extDbRelId parameter
+##  in case there are alternative splicing genes
 ##
 #########################################################################################
-
-
 
 use strict;
 use lib "$ENV{GUS_HOME}/lib/perl";
@@ -24,16 +24,18 @@ use Data::Dumper;
 use FileHandle;
 use HTTP::Date;
 
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
 my ($date, ) = split(" ", HTTP::Date::time2iso());
 $date = join("",split(/-/,$date));
 
-#my $count = 0;
-#my $subCount = 0;
 my %done;
 my %doneGO;
 
 my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
-	$db, $taxonId, 
+	$db, $taxonId, $extDbRelId,
 	$outputDir, $config);
 
 &GetOptions('verbose' => \$verbose,
@@ -44,6 +46,7 @@ my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
 	    'db=s' => \$db,
 	    'taxonId=i' => \$taxonId,
 	    'outputDir=s' => \$outputDir,
+	    'extDbRelId=s' => \$extDbRelId,
             'unflatten' => \$unflatten,
             'gff2GroupTag=s' => \$gff2GroupTag
            );
@@ -53,6 +56,35 @@ my ($format,$fileOrDir, $unflatten, $gff2GroupTag, $verbose, $help,
 &usage("gff2 files require gff2GroupTag argument") if ($format eq 'gff2' && !($gff2GroupTag));
 
 die "File or directory '$fileOrDir' does not exist\n" unless -e $fileOrDir;
+
+my %idsInDb;
+if ($extDbRelId) {
+  my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+  my @properties = ();
+  my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+  my $u = $gusconfig->{props}->{databaseLogin}; 
+  my $pw = $gusconfig->{props}->{databasePassword}; 
+  my $dsn = $gusconfig->{props}->{dbiDsn}; 
+  my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+  $dbh->{RaiseError} = 1;
+
+  my $sql = <<SQL;
+                select source_id from dots.genefeature 
+                where external_database_release_id=$extDbRelId
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+
+  while (my ($currentId) = $stmt->fetchrow_array() ) {
+        my $key = $currentId;
+        $key =~ s/\.\d//;
+        push (@{$idsInDb{$key}}, $currentId);
+      }
+  $stmt->finish();
+}
+
+
 
 my @files;
 if (-d $fileOrDir) {
@@ -186,21 +218,44 @@ sub processFeature {
 								$dbxrefFhHash{lc($dbxrefType)}->open(">$dbxrefOutput{lc($dbxrefType)}") 
 										|| die "Can not open file $dbxrefOutput{lc($dbxrefType)} to write.\n";
 							}
-							$dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
+							if ($sourceId && $dbxrefId) {
+							  if (! $idsInDb{$sourceId} ) {
+							    $dbxrefFhHash{lc($dbxrefType)}->print("$sourceId\t$dbxrefId\n") if ($sourceId && $dbxrefId);
+							  } else {
+							    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+							      $dbxrefFhHash{lc($dbxrefType)}->print("$idsInDb{$sourceId}[$i]\t$dbxrefId\n");
+							    }
+							  }
+							}
 						} elsif ($outputHash{$qualifier} =~ /aliases/ || $outputHash{$qualifier} =~ /synonym/ && $outputHash{$qualifier} !~ /product/) {
 							my @aliases = split (/\,/, $value);   ## to seperate aliases by "," in T.cruzi 
 																	## and synonyms by "," in Tbrucei927
 							foreach my $alias (@aliases) {
 								$alias = &trimValue($alias);
 								$alias =~ s/;current=false$//;
-								$funcFhHash{$qualifier}->print("$sourceId\t$alias\n") if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias});
+								if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias}) {
+								  if (!$idsInDb{$sourceId}) {
+								    $funcFhHash{$qualifier}->print("$sourceId\t$alias\n") if ($funcFhHash{$qualifier} && $sourceId && $alias && !$done{$sourceId}{$alias});
+								  } else {
+								    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+								      $funcFhHash{$qualifier}->print("$idsInDb{$sourceId}[$i]\t$alias\n");
+								    }
+								  }
+								}
 								$done{$sourceId}{$alias} = "done";
 							}
 						} else {
 							## get rid of some funny character after ; for product
 							$value =~ s/;.*$// if ($outputHash{$qualifier} =~ /products/);
-
-							$funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value});
+							if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value}) {
+							  if (!$idsInDb{$sourceId} ) {
+							    $funcFhHash{$qualifier}->print("$sourceId\t$value\n") if ($funcFhHash{$qualifier} && $sourceId && $value && !$done{$sourceId}{$value});
+							  } else {
+							    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+							      $funcFhHash{$qualifier}->print("$idsInDb{$sourceId}[$i]\t$value\n")
+							    }
+							  }
+							}
 							$done{$sourceId}{$value} = "done";
 						}	
 					}
@@ -240,9 +295,14 @@ sub processGoAsso {
 			$evidenceCode = $2 if ($2);
 		}
 		$aspect = &getAspectForGo ($qualifier);
-
-		push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
-	    }
+		if (!$idsInDb{$sourceId}) {
+		  push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+		} else {
+		  foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+		    push (@retLines, "$db\t$idsInDb{$sourceId}[$i]\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+		  }
+		}
+	      }
 	} elsif (lc($qualifier) eq 'go') {
 		foreach my $value ($bioperlFeature->get_tag_values($qualifier)) {
 		    my @goFields = split(/,/, $value);
@@ -273,7 +333,13 @@ sub processGoAsso {
 					}	
 				}
 				if ($sourceId && $goId) {
-					push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+				  if (!$idsInDb{$sourceId} ) {
+				    push (@retLines, "$db\t$sourceId\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+				  } else {
+				    foreach my $i (0..$#{$idsInDb{$sourceId}}) {
+				      push (@retLines, "$db\t$idsInDb{$sourceId}[$i]\t$sourceId\t\t$goId\t$dbrefs\t$evidenceCode\t$withOrFrom\t$aspect\t$product\t$synonym\t$sourceIdType\ttaxon:$taxonId\t$date\t$assignedBy");
+				    }
+				  }
 				}
 		    }
 		}
@@ -425,6 +491,9 @@ where
   --db:		required if extract GO association.
 		refers to the database from which annotation comes, such as GenBank, GeneDB, or JCVI. 
 		must be one of the values from http://www.geneontology.org/cgi-bin/xrefs.cgi
+  --extDbRelId: the external database release id that the annotation have been loaded
+                Attention: the GUS_HOME should point to the instance that has annotation loaded 
+                if use this parameter
   --unflatten  if present, use bioperl's unflattener (only applicable
                 to genbank and embl)
   --gff2Group  if present, specify gff2 group tag (only applicable
