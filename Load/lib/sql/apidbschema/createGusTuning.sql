@@ -31,13 +31,6 @@ create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;
 
-create index sres.DbRls_ix
-  on sres.ExternalDatabaseRelease (external_database_id, external_database_release_id)
-  tablespace indx;
-
-create index sres.DbRlsDb_ix
-  on sres.ExternalDatabaseRelease (external_database_release_id, external_database_id)
-  tablespace indx;
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
