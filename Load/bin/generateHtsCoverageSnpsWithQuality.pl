@@ -17,13 +17,11 @@ my $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
 my $referenceOrganism;
 my $referenceStrain;
 my $verbose;
-my $sqlLoader;  ##if true then will make a sqlloader compatable file.
 
 &GetOptions("gusConfigFile|gc=s"=> \$gusConfigFile,
             "varscanDir|vd=s"=> \$varscanDir,
             "outputFile|o=s"=> \$outputFile,
             "verbose|v!"=> \$verbose,
-            "makeSqlLoader|l!"=> \$sqlLoader,
             "referenceOrganism|r=s"=> \$referenceOrganism,
             "referenceStrain|s=s"=> \$referenceStrain,
             );
@@ -32,7 +30,7 @@ if (!$referenceOrganism){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
-  generateCoverageSnpsFromVarscan.pl --varscanDir|vd <directory containing the varscan consensus files> --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose|v! --makeSqlLoader|l! <if true output sqlLoader file rather than GFF>
+  generateCoverageSnpsWithQuality.pl --varscanDir|vd <directory containing the varscan consensus files> --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose|v!\n
 endOfUsage
 }
 
@@ -51,14 +49,14 @@ open(O,">$outputFile") || die "unable to open $outputFile for output\n";
 
 ##need to get the list of strains,  external_db_ids and row_algorithm_invocation_ids
 my $strainSQL = <<SQL;
-select sv.strain,sv.external_database_release_id, sv.row_algorithm_invocation_id,sv.sequence_ontology_id,count(*)
+select sv.strain,sv.external_database_release_id, sv.row_algorithm_invocation_id,sv.sequence_ontology_id,row_user_id,row_group_id,row_project_id,count(*)
 from dots.snpfeature sf, DOTS.seqvariation sv,SRES.externaldatabase d, SRES.externaldatabaserelease rel
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
 and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sv.parent_id = sf.na_feature_id
-group by sv.strain,sv.external_database_release_id,sv.row_algorithm_invocation_id,sv.sequence_ontology_id
+group by sv.strain,sv.external_database_release_id,sv.row_algorithm_invocation_id,sv.sequence_ontology_id,row_user_id,row_group_id,row_project_id
 SQL
 
 my $strainStmt = $dbh->prepare($strainSQL);
@@ -66,13 +64,28 @@ $strainStmt->execute();
 my %strains;
 my %algIds;
 my $sequence_ontology_id;
-while(my($strain,$rel_id,$alg_id,$seq_ont_id,$count) = $strainStmt->fetchrow_array()){
+my $row_user_id;
+my $row_group_id;
+my $row_project_id;
+while(my($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count) = $strainStmt->fetchrow_array()){
   print STDERR "Strain: ($strain,$rel_id,$alg_id,$alg_id,$seq_ont_id,$count)\n" if $verbose;
   $strains{$rel_id} = $strain;
   $algIds{$rel_id} = $alg_id;
   if($sequence_ontology_id != $seq_ont_id){
     print STDERR "WARNING: sequence_ontology_id differs ($sequence_ontology_id ne $seq_ont_id)\n" if $sequence_ontology_id;
     $sequence_ontology_id = $seq_ont_id;
+  }
+  if($row_user_id != $user_id){
+    print STDERR "WARNING: row_user_id differs ($row_user_id ne $user_id)\n" if $row_user_id;
+    $row_user_id = $user_id;
+  }
+  if($row_group_id != $group_id){
+    print STDERR "WARNING: row_group_id differs ($row_group_id ne $group_id)\n" if $row_group_id;
+    $row_group_id = $group_id;
+  }
+  if($row_project_id != $project_id){
+    print STDERR "WARNING: row_project_id differs ($row_project_id ne $project_id)\n" if $row_project_id;
+    $row_project_id = $project_id;
   }
   
 }
@@ -169,7 +182,7 @@ foreach my $relid (keys%strains){
     }else{
       open(F, "zcat $varscanDir/$f.gz |");
     }
-    my $strain = $strains}{$relid};
+    my $strain = $strains{$relid};
     print STDERR "Processing file $f for strain $strain\n";
     my $ctLines = 0;
     while(<F>){
@@ -188,7 +201,7 @@ foreach my $relid (keys%strains){
       ##here we just want to print out the sqlLoader row ....
       my $coverage = &getCoverage(\@tmp);
       my $allelePerc = &getPercent(\@tmp);
-      &printLine($naseq{$tmp[0]},$snps{$tmp[0]}->{$tmp[1]}->{id},$snps{$tmp[0]}->{$tmp[1]}->{na_feature_id},$reference,$snps{$tmp[0]}->{$tmp[1]}->{product},$relid,$snps{$tmp[0]}->{$tmp[1]}->{strains}->{$relid},$coverage,$allelePerc);
+      &printLine($naseq{$tmp[0]},$snps{$tmp[0]}->{$tmp[1]}->{id},$snps{$tmp[0]}->{$tmp[1]}->{na_feature_id},$reference,$snps{$tmp[0]}->{$tmp[1]}->{product},$relid,$coverage,$allelePerc);
     }
     close F;
   }
@@ -207,7 +220,7 @@ if(scalar(keys%missingVS) >= 1){
         #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
         if($stNa eq $refna){
           ##print here
-          &printLine();
+          &printLine($naseq{$seqid},$snpid,$snps{$seqid}->{$loc}->{na_feature_id},$refna,$snps{$seqid}->{$loc}->{product},$dbrelid,$coverage,$allelePerc);
         }
       }
     }
@@ -219,10 +232,10 @@ close O;
 
 ##(na_feature_id,na_sequence_id,subclass_view,name,sequence_ontology_id,parent_id,external_database_release_id,source_id,organism,strain,phenotype,product,allele,matches_reference,coverage,allele_percent,modification_date,user_read,user_write,group_read,group_write,other_read,other_write,row_user_id,row_group_id,row_project_id,row_alg_invocation_id)
 sub printLine {
-  my($na_sequence_id,$snp_source_id,$parent_id,$reference_na,$reference_aa,$ext_rel_id,$strain,$coverage,$allele_percent) = @_;
-  print O "getIdHere\t$na_sequence_id\t$SeqVariation\tSNP\t$sequence_ontology_id\t$parent_id\t";
-  print O "$ext_rel_id\t$snp_source_id\t$referenceOrganism\t$strain\twild_type\t$reference_aa,$reference_na\t";
-  print O "1\t$coverage\t$allele_percent\tgetDate()\t1\t1\t1\t1\t1\t0\t$user_id\t$group_id\t$$project_id\t$algIds{$ext_rel_id}\n";
+  my($na_sequence_id,$snp_source_id,$parent_id,$reference_na,$reference_aa,$ext_rel_id,$coverage,$allele_percent) = @_;
+  print O "getIdHere\t$na_sequence_id\tSeqVariation\tSNP\t$sequence_ontology_id\t$parent_id\t";
+  print O "$ext_rel_id\t$snp_source_id\t$referenceOrganism\t$strains{$ext_rel_id}\twild_type\t$reference_aa,$reference_na\t";
+  print O "1\t$coverage\t$allele_percent\tgetDate()\t1\t1\t1\t1\t1\t0\t$row_user_id\t$row_group_id\t$row_project_id\t$algIds{$ext_rel_id}\n";
 }
 
 sub getNt {
