@@ -17,6 +17,7 @@ my $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
 my $referenceOrganism;
 my $referenceStrain;
 my $verbose;
+my $noCommit;
 
 &GetOptions("gusConfigFile|gc=s"=> \$gusConfigFile,
             "varscanDir|vd=s"=> \$varscanDir,
@@ -24,6 +25,7 @@ my $verbose;
             "verbose|v!"=> \$verbose,
             "referenceOrganism|r=s"=> \$referenceOrganism,
             "referenceStrain|s=s"=> \$referenceStrain,
+            "noCommit|nc!"=> \$noCommit,
             );
 
 if (!$referenceOrganism){
@@ -63,6 +65,8 @@ my $strainStmt = $dbh->prepare($strainSQL);
 $strainStmt->execute();
 my %strains;
 my %algIds;
+my %del;  ##keep track of numbers of deleted rows
+my $ctSv = 0;  ##count seqvars printed
 my $sequence_ontology_id;
 my $row_user_id;
 my $row_group_id;
@@ -95,7 +99,7 @@ print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
 die "ERROR: unable to identify any strains for referenceOrganism $referenceOrganism\n" unless scalar(keys%strains) > 0;
 
 my $snpSQL = <<EOSQL;
-select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain
+select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.allele
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
 SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s, sres.sequenceontology so
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
@@ -122,6 +126,8 @@ while(my $row = $stmt->fetchrow_hashref()){
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{ref} = $row->{REFERENCE_NA};
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{product} = $row->{REFERENCE_AA};
   $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{strains}->{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ALLELE}; ##could be multiple alleles but doesn't matter as not adding any new ones if there is at least one
+  $snps{$row->{SEQ_ID}}->{$row->{START_MIN}}->{alleles}->{$row->{ALLELE}}++;
+
   $naseq{$row->{SEQ_ID}} = $row->{NA_SEQUENCE_ID};
   if($referenceStrain &&  $row->{REFERENCE_STRAIN} && $referenceStrain ne $row->{REFERENCE_STRAIN}){
     die "ERROR: there are multiple references strains for this organism: $referenceStrain, $row->{REFERENCE_STRAIN}\n";
@@ -166,6 +172,16 @@ and external_database_release_id = ?
 EOSQL
 
 my $ntStmt = $dbh->prepare($ntSQL);
+
+##first go through and remove any SNPFeatures without any variation.  Due to undoing the only strain with avariation at this position
+foreach my $seqid (keys%snps){
+  foreach my $loc (keys%{$snps{$seqid}}){
+    if(scalar(keys%{$snps{$seqid}->{$loc}->{alleles}}) <= 1){  ##there is no variability here ...only 1 allele
+      &deleteSnp($snps{$seqid}->{$loc}->{na_feature_id});
+      delete $snps{$seqid}->{$loc};
+    }
+  }
+}
 
 my $ctSnps = 0;
 ###we need to do this a strain at a time rather then a SNP at a time. We will be printing sqlLoader lines for each strain/snp so can print as we find them.
@@ -230,12 +246,15 @@ if(scalar(keys%missingVS) >= 1){
 $db->logout();
 close O;
 
+print "$ctSV SeqVars exported, $del{snpFeat} SNPs deleted due to no variability: commit is ".($noCommit ? "off" : "on")."\n";
+
 ##(na_feature_id,na_sequence_id,subclass_view,name,sequence_ontology_id,parent_id,external_database_release_id,source_id,organism,strain,phenotype,product,allele,matches_reference,coverage,allele_percent,modification_date,user_read,user_write,group_read,group_write,other_read,other_write,row_user_id,row_group_id,row_project_id,row_alg_invocation_id)
 sub printLine {
   my($na_sequence_id,$snp_source_id,$parent_id,$reference_na,$reference_aa,$ext_rel_id,$coverage,$allele_percent) = @_;
-  print O "getIdHere\t$na_sequence_id\tSeqVariation\tSNP\t$sequence_ontology_id\t$parent_id\t";
+  print O "dots.NaFeatureImp_sq.nextval\t$na_sequence_id\tSeqVariation\tSNP\t$sequence_ontology_id\t$parent_id\t";
   print O "$ext_rel_id\t$snp_source_id\t$referenceOrganism\t$strains{$ext_rel_id}\twild_type\t$reference_aa,$reference_na\t";
-  print O "1\t$coverage\t$allele_percent\tgetDate()\t1\t1\t1\t1\t1\t0\t$row_user_id\t$row_group_id\t$row_project_id\t$algIds{$ext_rel_id}\n";
+  print O "1\t$coverage\t$allele_percent\t1\t1\t1\t1\t1\t0\t$row_user_id\t$row_group_id\t$row_project_id\t$algIds{$ext_rel_id}\n";
+  my $ctSv++;
 }
 
 sub getNt {
@@ -249,55 +268,20 @@ sub getNt {
   return $tmp[0];
 }
 
+sub deleteSnp {
+  my($na_feature_id) = @_;
+  print "Deleting SNPFeature $na_feature_id\n" if $verbose;
+  ##first the seqVars
+  $del{seqvar} += $dbh->do("delete from DoTS.SeqVariation where parent_id = $na_feature_id") or die $dbh->errstr;
+  ##then the nalocations
+  $del{naloc} += $dbh->do("delete from DoTS.NaLocation where na_feature_id = $na_feature_id") or die $dbh->errstr;
+  ##then the snp features
+  $del{snpfeat} += $dbh->do("delete from DoTS.SnpFeature where na_feature_id = $na_feature_id") or die $dbh->errstr;
 
+  if($noCommit){
+    $dbh->rollback();
+  }else{
+    $dbh->commit();
+  }
+}
 
-# desc dots.seqvariation
-# Name                         Null     Type           
-# ---------------------------- -------- -------------- 
-# NA_FEATURE_ID                NOT NULL NUMBER(10)     
-# NA_SEQUENCE_ID                        NUMBER(10)     
-# SUBCLASS_VIEW                         VARCHAR2(30)   
-# NAME                         NOT NULL VARCHAR2(80)   
-# SEQUENCE_ONTOLOGY_ID                  NUMBER(10)     
-# PARENT_ID                             NUMBER(10)     
-# EXTERNAL_DATABASE_RELEASE_ID          NUMBER(10)     
-# SOURCE_ID                             VARCHAR2(80)   
-# PREDICTION_ALGORITHM_ID               NUMBER(5)      
-# IS_PREDICTED                          NUMBER(1)      
-# REVIEW_STATUS_ID                      NUMBER(10)     
-# CITATION                              VARCHAR2(4000) 
-# CLONE                                 VARCHAR2(4000) 
-# EVIDENCE                              VARCHAR2(4000) 
-# FUNCTION                              VARCHAR2(4000) 
-# GENE                                  VARCHAR2(4000) 
-# LABEL                                 VARCHAR2(4000) 
-# MAP                                   VARCHAR2(4000) 
-# ORGANISM                              VARCHAR2(1500) 
-# STRAIN                                VARCHAR2(1500) 
-# PARTIAL                               VARCHAR2(4000) 
-# PHENOTYPE                             VARCHAR2(4000) 
-# PRODUCT                               VARCHAR2(1500) 
-# STANDARD_NAME                         VARCHAR2(4000) 
-# SUBSTITUTE                            VARCHAR2(4000) 
-# NUM                                   VARCHAR2(4000) 
-# USEDIN                                VARCHAR2(4000) 
-# MOD_BASE                              VARCHAR2(4000) 
-# IS_PARTIAL                            NUMBER(12)     
-# FREQUENCY                             FLOAT(126)     
-# ALLELE                                VARCHAR2(1500) 
-# MATCHES_REFERENCE                     NUMBER(12)     
-# COVERAGE                              NUMBER(12)     
-# ALLELE_PERCENT                        FLOAT(126)     
-# PVALUE                                FLOAT(126)     
-# QUALITY                               NUMBER(12)     
-# MODIFICATION_DATE            NOT NULL DATE           
-# USER_READ                    NOT NULL NUMBER(1)      
-# USER_WRITE                   NOT NULL NUMBER(1)      
-# GROUP_READ                   NOT NULL NUMBER(1)      
-# GROUP_WRITE                  NOT NULL NUMBER(1)      
-# OTHER_READ                   NOT NULL NUMBER(1)      
-# OTHER_WRITE                  NOT NULL NUMBER(1)      
-# ROW_USER_ID                  NOT NULL NUMBER(12)     
-# ROW_GROUP_ID                 NOT NULL NUMBER(4)      
-# ROW_PROJECT_ID               NOT NULL NUMBER(4)      
-# ROW_ALG_INVOCATION_ID        NOT NULL NUMBER(12)     

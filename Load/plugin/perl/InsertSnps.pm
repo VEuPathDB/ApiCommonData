@@ -1115,17 +1115,10 @@ sub createMockSequence {
 sub undoTables {
   my ($self) = @_;
 
-  if ($self->getArg('NGS_SNP')) {
-    return ('DoTS.NALocation',
-            'DoTS.SeqVariation'
-           );
-  }else{
-
-    return ('DoTS.NALocation',
-            'DoTS.SeqVariation',
-            'DoTS.SnpFeature',
-           );
-  }
+  return ('DoTS.NALocation',
+          'DoTS.SeqVariation',
+          'DoTS.SnpFeature',
+         );
 }
 
 1;
