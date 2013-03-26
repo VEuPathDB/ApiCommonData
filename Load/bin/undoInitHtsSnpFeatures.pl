@@ -12,6 +12,7 @@ use GUS::Supported::GusConfig;
 my $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
 my $referenceOrganism;
 my $noCommit;
+my $verbose;
 
 &GetOptions("gusConfigFile|gc=s"=> \$gusConfigFile,
             "verbose|v!"=> \$verbose,
@@ -93,7 +94,7 @@ $dbh->rollback() if $noCommit;
 
 print "  Deleted $sr rows from DoTS.SnpFeature\n\n";
 
-print "undoInitHtsSnpFeatures.pl:  removed $nr SeqVariations, $lr NaLocations and $sr SnpFeatures\n";
+print "undoInitHtsSnpFeatures.pl:  removed $vr SeqVariations, $lr NaLocations and $sr SnpFeatures\n";
 
 $db->logout();
 

@@ -49,57 +49,57 @@ my $dbh = $db->getQueryHandle();
 
 open(O,">$outputFile") || die "unable to open $outputFile for output\n";
 
+print "Identifying strains ... will get later with snp search\n";
 ##need to get the list of strains,  external_db_ids and row_algorithm_invocation_ids
 my $strainSQL = <<SQL;
-select sv.strain,sv.external_database_release_id, sv.row_algorithm_invocation_id,sv.sequence_ontology_id,row_user_id,row_group_id,row_project_id,count(*)
+select sv.strain,sv.external_database_release_id, sv.row_alg_invocation_id,sv.sequence_ontology_id,sv.row_user_id,sv.row_group_id,sv.row_project_id,count(*)
 from dots.snpfeature sf, DOTS.seqvariation sv,SRES.externaldatabase d, SRES.externaldatabaserelease rel
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
 and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sv.parent_id = sf.na_feature_id
-group by sv.strain,sv.external_database_release_id,sv.row_algorithm_invocation_id,sv.sequence_ontology_id,row_user_id,row_group_id,row_project_id
+group by sv.strain,sv.external_database_release_id,sv.row_alg_invocation_id,sv.sequence_ontology_id,sv.row_user_id,sv.row_group_id,sv.row_project_id
 SQL
 
-my $strainStmt = $dbh->prepare($strainSQL);
-$strainStmt->execute();
+#my $strainStmt = $dbh->prepare($strainSQL);
+#$strainStmt->execute();
 my %strains;
 my %algIds;
-my %del;  ##keep track of numbers of deleted rows
+my $ctDelSnp = 0;  ##keep track of numbers of deleted rows
+my $ctDelNaLoc = 0;  ##keep track of numbers of deleted rows
+my $ctDelSeqVar = 0;  ##keep track of numbers of deleted rows
 my $ctSv = 0;  ##count seqvars printed
 my $sequence_ontology_id;
 my $row_user_id;
 my $row_group_id;
 my $row_project_id;
-while(my($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count) = $strainStmt->fetchrow_array()){
-  print STDERR "Strain: ($strain,$rel_id,$alg_id,$alg_id,$seq_ont_id,$count)\n" if $verbose;
-  $strains{$rel_id} = $strain;
-  $algIds{$rel_id} = $alg_id;
-  if($sequence_ontology_id != $seq_ont_id){
-    print STDERR "WARNING: sequence_ontology_id differs ($sequence_ontology_id ne $seq_ont_id)\n" if $sequence_ontology_id;
-    $sequence_ontology_id = $seq_ont_id;
-  }
-  if($row_user_id != $user_id){
-    print STDERR "WARNING: row_user_id differs ($row_user_id ne $user_id)\n" if $row_user_id;
-    $row_user_id = $user_id;
-  }
-  if($row_group_id != $group_id){
-    print STDERR "WARNING: row_group_id differs ($row_group_id ne $group_id)\n" if $row_group_id;
-    $row_group_id = $group_id;
-  }
-  if($row_project_id != $project_id){
-    print STDERR "WARNING: row_project_id differs ($row_project_id ne $project_id)\n" if $row_project_id;
-    $row_project_id = $project_id;
-  }
-  
-}
+#while(my($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count) = $strainStmt->fetchrow_array()){
+#  print STDERR "Strain: ($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count)\n" if $verbose;
+#  $strains{$rel_id} = $strain;
+#  $algIds{$rel_id} = $alg_id;
+#  if($sequence_ontology_id != $seq_ont_id){
+#    print STDERR "WARNING: sequence_ontology_id differs ($sequence_ontology_id ne $seq_ont_id)\n" if $sequence_ontology_id;
+#    $sequence_ontology_id = $seq_ont_id;
+#  }
+#  if($row_user_id != $user_id){
+#    print STDERR "WARNING: row_user_id differs ($row_user_id ne $user_id)\n" if $row_user_id;
+#    $row_user_id = $user_id;
+#  }
+#  if($row_group_id != $group_id){
+#    print STDERR "WARNING: row_group_id differs ($row_group_id ne $group_id)\n" if $row_group_id;
+#    $row_group_id = $group_id;
+#  }
+#  if($row_project_id != $project_id){
+#    print STDERR "WARNING: row_project_id differs ($row_project_id ne $project_id)\n" if $row_project_id;
+#    $row_project_id = $project_id;
+#  }
+#  
+#}
 
-print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
-
-die "ERROR: unable to identify any strains for referenceOrganism $referenceOrganism\n" unless scalar(keys%strains) > 0;
 
 my $snpSQL = <<EOSQL;
-select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.allele
+select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.strain,sv.row_alg_invocation_id,sv.row_group_id,sv.row_project_id,sv.row_user_id,so.sequence_ontology_id
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
 SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s, sres.sequenceontology so
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
@@ -133,14 +133,38 @@ while(my $row = $stmt->fetchrow_hashref()){
     die "ERROR: there are multiple references strains for this organism: $referenceStrain, $row->{REFERENCE_STRAIN}\n";
   }
   $referenceStrain = $row->{REFERENCE_STRAIN} unless $referenceStrain;
+  $strains{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{STRAIN};
+  $algIds{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ROW_ALG_INVOCATION_ID};
+  if(!$row_user_id){
+    $row_user_id = $row->{ROW_USER_ID};
+    $row_project_id = $row->{ROW_PROJECT_ID};
+    $row_group_id = $row->{ROW_GROUP_ID};
+    $sequence_ontology_id = $row->{SEQUENCE_ONTOLOGY_ID};
+  }
+    
   $ct++;
   print STDERR "Retrieved $ct rows\n" if ($verbose && $ct % 10000 == 0);
+  last if $ct > 100000;
 }
+$stmt->finish();
 
+print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
+die "ERROR: unable to identify any strains for referenceOrganism $referenceOrganism\n" unless scalar(keys%strains) > 0;
 die "ERROR: unable to determine reference strain from the snpFeatures\n" unless $referenceStrain;
 
-##need the ext_db_rel_id for reference strain as want to add to strains if not there.
-my $refSQL = <<EOSQL;
+##check to see if have reference strain and if not, determine extDbRelId.
+my $referenceDbRelId;
+foreach my $s (keys%strains){
+  if($strains{$s} eq $referenceStrain){
+    $referenceDbRelId = $s;
+    last;
+  }
+}
+
+if(!$referenceDbRelId){
+  ##need the ext_db_rel_id for reference strain as want to add to strains if not there.
+  print STDERR "Don't have an external_db_release for reference strain .. retrieving from db\n";
+  my $refSQL = <<EOSQL;
 select distinct s.external_database_release_id
 from dots.nasequence s,dots.snpfeature sf,SRES.externaldatabase d, SRES.externaldatabaserelease rel
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
@@ -150,18 +174,19 @@ and sf.organism = '$referenceOrganism'
 and s.na_sequence_id = sf.na_sequence_id
 EOSQL
 
-my $refStmt = $dbh->prepare($refSQL);
-$refStmt->execute();
-my @tmpEx;
-while(my($id) = $refStmt->fetchrow_array()){
-  push(@tmpEx,$id);
-}
-die "ERROR getting reference external_database_release_id: query returned more than one row\n" if scalar(@tmpEx) > 1;
-my $referenceDbRelId = $tmpEx[0];
-if(! $strains{$tmpEx[0]}){
-  print STDERR "Also adding SeqVars for reference strain $referenceStrain\n";
-  $strains{$tmpEx[0]} = $referenceStrain; 
-  $algIds{$tmpEx[0]} = 1; ##this will be a problem for the undo process but there should always already be a reference strain ... and if there isn't we'll undo this when we do a root undo for hts snps for this organism.
+  my $refStmt = $dbh->prepare($refSQL);
+  $refStmt->execute();
+  my @tmpEx;
+  while(my($id) = $refStmt->fetchrow_array()){
+    push(@tmpEx,$id);
+  }
+  die "ERROR getting reference external_database_release_id: query returned more than one row\n" if scalar(@tmpEx) > 1;
+  $referenceDbRelId = $tmpEx[0];
+  if(! $strains{$tmpEx[0]}){
+    print STDERR "Also adding SeqVars for reference strain $referenceStrain\n";
+    $strains{$tmpEx[0]} = $referenceStrain; 
+    $algIds{$tmpEx[0]} = 1; ##this will be a problem for the undo process but there should always already be a reference strain ... and if there isn't we'll undo this when we do a root undo for hts snps for this organism.
+  }
 }
 
 my $ntSQL = <<EOSQL;
@@ -174,6 +199,7 @@ EOSQL
 my $ntStmt = $dbh->prepare($ntSQL);
 
 ##first go through and remove any SNPFeatures without any variation.  Due to undoing the only strain with avariation at this position
+print STDERR "Checking SNPs for sequence variation and deleting those with none\n";
 foreach my $seqid (keys%snps){
   foreach my $loc (keys%{$snps{$seqid}}){
     if(scalar(keys%{$snps{$seqid}->{$loc}->{alleles}}) <= 1){  ##there is no variability here ...only 1 allele
@@ -183,20 +209,20 @@ foreach my $seqid (keys%snps){
   }
 }
 
+print STDERR "  Deleted $ctDelSnp SNPs with no sequence variation\n";
+
 my $ctSnps = 0;
 ###we need to do this a strain at a time rather then a SNP at a time. We will be printing sqlLoader lines for each strain/snp so can print as we find them.
 ##If the varscan file isn't found then track strains and generate SNP based on DB consensus.
 my %missingVS;
 foreach my $relid (keys%strains){
-  my $f = "";
-  if(!-e "$varscanDir/$f" && "!$varscanDir/$f.gz"){
-    print STDERR "Unable to find file for strain $strains{$relid} ($f) so getting consensus from DB\n";
-    $missingVS{$relid} = $strains{$relid};
-  }else{
+  print STDERR "Processing strain $strains{$relid}\n";
+  my $f = "$strains{$relid}.varscan.cons";
+  if(-e "$varscanDir/$f" || -e "$varscanDir/$f.gz"){
     if(-e "$varscanDir/$f"){
-      open(F, "$varscanDir/$f"); 
+      open(F, "$varscanDir/$f") || die "unable to open file $varscanDir/$f\n"; 
     }else{
-      open(F, "zcat $varscanDir/$f.gz |");
+      open(F, "zcat $varscanDir/$f.gz |") || die "unable to open file $varscanDir/$f.gz\n";
     }
     my $strain = $strains{$relid};
     print STDERR "Processing file $f for strain $strain\n";
@@ -220,10 +246,14 @@ foreach my $relid (keys%strains){
       &printLine($naseq{$tmp[0]},$snps{$tmp[0]}->{$tmp[1]}->{id},$snps{$tmp[0]}->{$tmp[1]}->{na_feature_id},$reference,$snps{$tmp[0]}->{$tmp[1]}->{product},$relid,$coverage,$allelePerc);
     }
     close F;
+  }else{
+    print STDERR "Unable to find file for strain $strains{$relid} ($f) in $varscanDir so getting consensus from DB\n";
+    $missingVS{$relid} = $strains{$relid};
   }
 }
 
 ##now if there are missing strains from the db, loop through and generate sqlLoader lines.
+print STDERR "Processing the ".scalar(keys%missingVS)." strains for which we had no varscan file\n";
 if(scalar(keys%missingVS) >= 1){
   foreach my $seqid (keys%snps){
     foreach my $loc (keys%{$snps{$seqid}}){
@@ -236,7 +266,7 @@ if(scalar(keys%missingVS) >= 1){
         #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
         if($stNa eq $refna){
           ##print here
-          &printLine($naseq{$seqid},$snpid,$snps{$seqid}->{$loc}->{na_feature_id},$refna,$snps{$seqid}->{$loc}->{product},$dbrelid,$coverage,$allelePerc);
+          &printLine($naseq{$seqid},$snpid,$snps{$seqid}->{$loc}->{na_feature_id},$refna,$snps{$seqid}->{$loc}->{product},$dbrelid,undef,undef);
         }
       }
     }
@@ -246,7 +276,7 @@ if(scalar(keys%missingVS) >= 1){
 $db->logout();
 close O;
 
-print "$ctSV SeqVars exported, $del{snpFeat} SNPs deleted due to no variability: commit is ".($noCommit ? "off" : "on")."\n";
+print "$ctSv SeqVars exported, $ctDelSnp SNPs deleted due to no variability: commit is ".($noCommit ? "off" : "on")."\n";
 
 ##(na_feature_id,na_sequence_id,subclass_view,name,sequence_ontology_id,parent_id,external_database_release_id,source_id,organism,strain,phenotype,product,allele,matches_reference,coverage,allele_percent,modification_date,user_read,user_write,group_read,group_write,other_read,other_write,row_user_id,row_group_id,row_project_id,row_alg_invocation_id)
 sub printLine {
@@ -272,11 +302,11 @@ sub deleteSnp {
   my($na_feature_id) = @_;
   print "Deleting SNPFeature $na_feature_id\n" if $verbose;
   ##first the seqVars
-  $del{seqvar} += $dbh->do("delete from DoTS.SeqVariation where parent_id = $na_feature_id") or die $dbh->errstr;
+  $ctDelSeqVar += $dbh->do("delete from DoTS.SeqVariation where parent_id = $na_feature_id") or die $dbh->errstr;
   ##then the nalocations
-  $del{naloc} += $dbh->do("delete from DoTS.NaLocation where na_feature_id = $na_feature_id") or die $dbh->errstr;
+  $ctDelNaLoc += $dbh->do("delete from DoTS.NaLocation where na_feature_id = $na_feature_id") or die $dbh->errstr;
   ##then the snp features
-  $del{snpfeat} += $dbh->do("delete from DoTS.SnpFeature where na_feature_id = $na_feature_id") or die $dbh->errstr;
+  $ctDelSnp += $dbh->do("delete from DoTS.SnpFeature where na_feature_id = $na_feature_id") or die $dbh->errstr;
 
   if($noCommit){
     $dbh->rollback();
