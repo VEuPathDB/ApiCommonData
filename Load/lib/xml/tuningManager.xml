@@ -3839,6 +3839,25 @@ from dual
 
 UNION
 
+--HostDB
+
+select 'T. gondii ME49 infection - time series mRNA Illumina sequences aligned to the human genome.' as profile_name,
+       'Gregory::TgME49RnaSeqHuman' as module,
+       'T.g. ME49 RNA Seq aligned to the Human Genome(Gregory)' as display_name,
+       '' as description,
+       'Time point in hours' as x_axis,
+       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM). Stacked bars indicate unique and non-uniquely mapped sequences. Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        149 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+        'rpkm_sense,percentile_sense,rpkm_antisense,percentile_antisense' as visible_parts,
+        '' as dataTable,
+        'expression' as type,
+        '' as attribution
+    from dual
+
+UNION 
+
 -- PlasmoDB --
 
 
@@ -5761,7 +5780,7 @@ where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
 and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
-and sa.dataset in ('pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','PlasmoDB combined SNPs','Broad SNPs','pfal3D7_SNP_Broad_gff_RSRC')
+and sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
       ]]>
     </sql>
     <sql>

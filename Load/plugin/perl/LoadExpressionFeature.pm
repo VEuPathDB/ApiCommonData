@@ -172,7 +172,7 @@ sub getNaSequenceMapping {
   my $sql = "select s.source_id, s.na_sequence_id
 from dots.nasequence s, sres.sequenceontology so
 where s.sequence_ontology_id = so.sequence_ontology_id
-and so.term_name in ('supercontig','contig','chromosome','mitochondrial_chromosome','plastid_sequence','apicoplast_chromosome')";
+and so.term_name in ('supercontig','contig','chromosome','mitochondrial_chromosome','plastid_sequence','apicoplast_chromosome','random_sequence')";
 
   my $dbh = $self->getQueryHandle();
   my $sh = $dbh->prepare($sql);
