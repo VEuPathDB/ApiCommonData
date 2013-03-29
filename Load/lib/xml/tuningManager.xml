@@ -6555,17 +6555,6 @@ tablespace indx
        From (
   -- TrichDB Annotated Genomes
   select 'Trichomonas vaginalis G3' as organism, 'Tvaginalis' as abbreviation from dual union  
-     -- TriTrypDD UN-Annotated Genomes
-  select 'Endotrypanum monterogeii strain LV88' as organism, 'EmonteLV88' as abbreviation from dual union
-  select 'Leishmania major strain LV39c5' as organism, 'LmajorLV39c5' as abbreviation from dual union
-  select 'Leishmania panamensis strain L13' as organism, 'LpanamL13' as abbreviation from dual union
-  select 'Crithidia fasciculata' as organism, 'Cfasciculata' as abbreviation from dual union
-  select 'Leishmania braziliensis M2903' as organism, 'LbraziliensisM2903' as abbreviation from dual union
-  select 'Leishmania major strain SD 75.1' as organism, 'LmajorSD75.1' as abbreviation from dual union
-  select 'Leishmania tarentolae Parrot-TarII' as organism, 'LtarParrotTarII' as abbreviation from dual union
-  select 'Trypanosoma cruzi JR cl. 4' as organism, 'TcruziJRcl4' as abbreviation from dual union
-  select 'Trypanosoma cruzi Sylvio X10/1' as organism, 'TcruziSylvioX10-1' as abbreviation from dual union
-  select 'Trypanosoma cruzi strain esmeraldo' as organism, 'TcruziEsmeraldo' as abbreviation from dual union
    -- All projects which use the Workflow can get this directly from the organism table
   select tn.name as organism, o.name_for_filenames as abbreviation
   from apidb.organism o, sres.taxonname tn
