@@ -6566,19 +6566,6 @@ tablespace indx
   select 'Trypanosoma cruzi JR cl. 4' as organism, 'TcruziJRcl4' as abbreviation from dual union
   select 'Trypanosoma cruzi Sylvio X10/1' as organism, 'TcruziSylvioX10-1' as abbreviation from dual union
   select 'Trypanosoma cruzi strain esmeraldo' as organism, 'TcruziEsmeraldo' as abbreviation from dual union
-   -- TriTrypDD Annotated Genomes
-  select 'Leishmania braziliensis' as organism, 'Lbraziliensis' as abbreviation from dual union
-  select 'Leishmania infantum' as organism, 'Linfantum' as abbreviation from dual union
-  select 'Leishmania major strain Friedlin' as organism, 'LmajorFriedlin' as abbreviation from dual union
-  select 'Leishmania mexicana' as organism, 'Lmexicana' as abbreviation from dual union
-  select 'Trypanosoma brucei Lister strain 427' as organism, 'Tbrucei427' as abbreviation from dual union
-  select 'Trypanosoma brucei TREU927' as organism, 'TbruceiTreu927' as abbreviation from dual union
-  select 'Trypanosoma brucei gambiense' as organism, 'TbruceiGambiense' as abbreviation from dual union
-  select 'Trypanosoma congolense' as organism, 'Tcongolense' as abbreviation from dual union
-  select 'Trypanosoma cruzi CL Brener Esmeraldo-like' as organism, 'TcruziEsmeraldo-Like' as abbreviation from dual union
-  select 'Trypanosoma cruzi CL Brener Non-Esmeraldo-like' as organism, 'TcruziNonEsmeraldo-Like' as abbreviation from dual union
-  select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
-  select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual union
    -- All projects which use the Workflow can get this directly from the organism table
   select tn.name as organism, o.name_for_filenames as abbreviation
   from apidb.organism o, sres.taxonname tn
@@ -6862,12 +6849,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   select 'P. knowlesi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pknowlesi' as abbreviation from dual union
   select 'P. reichenowi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Preichenowi' as abbreviation from dual union
   select 'P. vivax Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
-  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual union
-   -- TriTrypDD ESTs Legacy
-  select 'Trypanosoma brucei' as organism, 'Trypanosoma' as parent, 'Tbrucei' as abbreviation from dual union
-  select 'Trypanosoma cruzi' as organism, 'Trypanosoma' as parent, 'Tcruzi' as abbreviation from dual union
-  select 'Leishmania major' as organism, 'Leishmania' as parent, 'LmajorFriedlin' as abbreviation from dual union
-  select 'Leishmania mexicana mexicana' as organism, 'Leishmania mexicana' as parent, 'Lmexicana' as abbreviation from dual 
+  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual 
 ) special
       where special.parent = ot.term
       ]]>
