@@ -80,57 +80,57 @@ unique (source_id);
 
 --------------------------------------------------------------------------------
 -- constrain GeneFeature source_ids to be unique
-
-create or replace package dots.GeneId_trggr_pkg
-as
-    type geneIdList is table of varchar2(120) index by binary_integer;
-         stale    geneIdList;
-         empty    geneIdList;
-     end;
-/
-
--- once per statement, initialize the list of GeneFeature source IDs potentially added to NaFeatureImp
-create or replace trigger dots.geneId_setup
-before insert or update on dots.NaFeatureImp
-begin
-    GeneId_trggr_pkg.stale := GeneId_trggr_pkg.empty;
-end;
-/
-
--- once per row, if it's a GeneFeature, note the new source_id
-create or replace trigger dots.geneId_markId
-before insert or update on dots.NaFeatureImp
-for each row
-declare
-    i    number default GeneId_trggr_pkg.stale.count+1;
-begin
-  if :new.subclass_view = 'GeneFeature' and :new.source_id is not null then
-    GeneId_trggr_pkg.stale(i) := :new.source_id;
-  end if;
-end;
-/
-
--- after the statement, check that none of the new source_ids are duplicated
-create or replace trigger dots.geneId_checkDups
-   after insert or update on dots.NaFeatureImp
-declare
-  record_count number;
-begin
-    for i in 1 .. GeneId_trggr_pkg.stale.count loop
-
-        begin
-          select count(*)
-          into record_count
-          from dots.GeneFeature
-          where source_id = GeneId_trggr_pkg.stale(i);
-        end;
-
-        if record_count > 1 then
-          raise_application_error(-20103, 'Error:  trying to write source_id "' || GeneId_trggr_pkg.stale(i) || '" to DoTS.GeneFeature but that source_id already exists');
-        end if;
-    end loop;
-end;
-/
+-- commented out April 2013 -- we can have duplicate source_ids as long as all but one have IS_PREDICTED set
+-- create or replace package dots.GeneId_trggr_pkg
+-- as
+--     type geneIdList is table of varchar2(120) index by binary_integer;
+--          stale    geneIdList;
+--          empty    geneIdList;
+--      end;
+-- /
+-- 
+-- -- once per statement, initialize the list of GeneFeature source IDs potentially added to NaFeatureImp
+-- create or replace trigger dots.geneId_setup
+-- before insert or update on dots.NaFeatureImp
+-- begin
+--     GeneId_trggr_pkg.stale := GeneId_trggr_pkg.empty;
+-- end;
+-- /
+-- 
+-- -- once per row, if it's a GeneFeature, note the new source_id
+-- create or replace trigger dots.geneId_markId
+-- before insert or update on dots.NaFeatureImp
+-- for each row
+-- declare
+--     i    number default GeneId_trggr_pkg.stale.count+1;
+-- begin
+--   if :new.subclass_view = 'GeneFeature' and :new.source_id is not null then
+--     GeneId_trggr_pkg.stale(i) := :new.source_id;
+--   end if;
+-- end;
+-- /
+-- 
+-- -- after the statement, check that none of the new source_ids are duplicated
+-- create or replace trigger dots.geneId_checkDups
+--    after insert or update on dots.NaFeatureImp
+-- declare
+--   record_count number;
+-- begin
+--     for i in 1 .. GeneId_trggr_pkg.stale.count loop
+-- 
+--         begin
+--           select count(*)
+--           into record_count
+--           from dots.GeneFeature
+--           where source_id = GeneId_trggr_pkg.stale(i);
+--         end;
+-- 
+--         if record_count > 1 then
+--           raise_application_error(-20103, 'Error:  trying to write source_id "' || GeneId_trggr_pkg.stale(i) || '" to DoTS.GeneFeature but that source_id already exists');
+--         end if;
+--     end loop;
+-- end;
+-- /
 
 --------------------------------------------------------------------------------
 
