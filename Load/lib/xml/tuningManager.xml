@@ -6896,7 +6896,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   and not project_id='PlasmoDB' 
   UNION
   -- Regular ESTs (all species from estattributes)
-  select distinct sp.name as organism, ea.project_id, 'EST' as type
+  select distinct sp.name as organism, ea.project_id, 'ESTs' as type
   from EstAttributes ea, SRES.taxonname tn, taxonspecies ts, SRES.taxonname sp
   where ea.organism = tn.name
   and (tn.taxon_id = ts.taxon_id or tn.taxon_id=ts.species_taxon_id)
