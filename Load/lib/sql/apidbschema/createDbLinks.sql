@@ -1,11 +1,11 @@
 CREATE PUBLIC DATABASE LINK prodS.login_comment
-CONNECT TO uga_prod
-IDENTIFIED BY vcltum33r
+CONNECT TO plasmodbwww
+IDENTIFIED BY po34weep
 USING 'apicommS';
 
 CREATE PUBLIC DATABASE LINK prodN.login_comment
-CONNECT TO uga_prod
-IDENTIFIED BY vcltum33r
+CONNECT TO plasmodbwww
+IDENTIFIED BY po34weep
 USING 'apicommN';
 
 CREATE PUBLIC DATABASE LINK devS.login_comment

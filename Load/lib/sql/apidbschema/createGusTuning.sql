@@ -1,3 +1,26 @@
+-- schema changes for GUS tables
+
+alter table dots.NaFeatureImp modify (source_id varchar2(80));
+
+alter table sres.EnzymeClass modify (description varchar2(200));
+
+alter table sres.GoEvidenceCode modify (name varchar2(20));
+
+alter table sres.DbRef modify (secondary_identifier varchar2(150));
+alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
+
+alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
+
+alter table dots.NaFeatureImp modify (name varchar2(80));
+
+alter table dots.Est modify (accession varchar2(50));
+
+alter table sres.ExternalDatabase modify (name varchar2(150));
+
+alter table sres.Reference modify (author varchar2(2000));
+
+alter table sres.dbref modify (secondary_identifier varchar2(200));
+
 -- indexes on GUS tables
 
 create index dots.AaSeq_source_ix
@@ -31,13 +54,6 @@ create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;
 
-create index sres.DbRls_ix
-  on sres.ExternalDatabaseRelease (external_database_id, external_database_release_id)
-  tablespace indx;
-
-create index sres.DbRlsDb_ix
-  on sres.ExternalDatabaseRelease (external_database_release_id, external_database_id)
-  tablespace indx;
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id
@@ -64,57 +80,57 @@ unique (source_id);
 
 --------------------------------------------------------------------------------
 -- constrain GeneFeature source_ids to be unique
-
-create or replace package dots.GeneId_trggr_pkg
-as
-    type geneIdList is table of varchar2(120) index by binary_integer;
-         stale    geneIdList;
-         empty    geneIdList;
-     end;
-/
-
--- once per statement, initialize the list of GeneFeature source IDs potentially added to NaFeatureImp
-create or replace trigger dots.geneId_setup
-before insert or update on dots.NaFeatureImp
-begin
-    GeneId_trggr_pkg.stale := GeneId_trggr_pkg.empty;
-end;
-/
-
--- once per row, if it's a GeneFeature, note the new source_id
-create or replace trigger dots.geneId_markId
-before insert or update on dots.NaFeatureImp
-for each row
-declare
-    i    number default GeneId_trggr_pkg.stale.count+1;
-begin
-  if :new.subclass_view = 'GeneFeature' and :new.source_id is not null then
-    GeneId_trggr_pkg.stale(i) := :new.source_id;
-  end if;
-end;
-/
-
--- after the statement, check that none of the new source_ids are duplicated
-create or replace trigger dots.geneId_checkDups
-   after insert or update on dots.NaFeatureImp
-declare
-  record_count number;
-begin
-    for i in 1 .. GeneId_trggr_pkg.stale.count loop
-
-        begin
-          select count(*)
-          into record_count
-          from dots.GeneFeature
-          where source_id = GeneId_trggr_pkg.stale(i);
-        end;
-
-        if record_count > 1 then
-          raise_application_error(-20103, 'Error:  trying to write source_id "' || GeneId_trggr_pkg.stale(i) || '" to DoTS.GeneFeature but that source_id already exists');
-        end if;
-    end loop;
-end;
-/
+-- commented out April 2013 -- we can have duplicate source_ids as long as all but one have IS_PREDICTED set
+-- create or replace package dots.GeneId_trggr_pkg
+-- as
+--     type geneIdList is table of varchar2(120) index by binary_integer;
+--          stale    geneIdList;
+--          empty    geneIdList;
+--      end;
+-- /
+-- 
+-- -- once per statement, initialize the list of GeneFeature source IDs potentially added to NaFeatureImp
+-- create or replace trigger dots.geneId_setup
+-- before insert or update on dots.NaFeatureImp
+-- begin
+--     GeneId_trggr_pkg.stale := GeneId_trggr_pkg.empty;
+-- end;
+-- /
+-- 
+-- -- once per row, if it's a GeneFeature, note the new source_id
+-- create or replace trigger dots.geneId_markId
+-- before insert or update on dots.NaFeatureImp
+-- for each row
+-- declare
+--     i    number default GeneId_trggr_pkg.stale.count+1;
+-- begin
+--   if :new.subclass_view = 'GeneFeature' and :new.source_id is not null then
+--     GeneId_trggr_pkg.stale(i) := :new.source_id;
+--   end if;
+-- end;
+-- /
+-- 
+-- -- after the statement, check that none of the new source_ids are duplicated
+-- create or replace trigger dots.geneId_checkDups
+--    after insert or update on dots.NaFeatureImp
+-- declare
+--   record_count number;
+-- begin
+--     for i in 1 .. GeneId_trggr_pkg.stale.count loop
+-- 
+--         begin
+--           select count(*)
+--           into record_count
+--           from dots.GeneFeature
+--           where source_id = GeneId_trggr_pkg.stale(i);
+--         end;
+-- 
+--         if record_count > 1 then
+--           raise_application_error(-20103, 'Error:  trying to write source_id "' || GeneId_trggr_pkg.stale(i) || '" to DoTS.GeneFeature but that source_id already exists');
+--         end if;
+--     end loop;
+-- end;
+-- /
 
 --------------------------------------------------------------------------------
 
@@ -152,30 +168,6 @@ GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to study;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to sres;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to tess;
 GRANT CONNECT, RESOURCE, CTXAPP, GUS_W to prot;
-
-
--- schema changes for GUS tables
-
-alter table dots.NaFeatureImp modify (source_id varchar2(80));
-
-alter table sres.EnzymeClass modify (description varchar2(200));
-
-alter table sres.GoEvidenceCode modify (name varchar2(20));
-
-alter table sres.DbRef modify (secondary_identifier varchar2(150));
-alter table sres.DbRef modify (lowercase_secondary_identifier varchar2(150));
-
-alter table dots.SequencePiece add (start_position number(12), end_position number(12) );
-
-alter table dots.NaFeatureImp modify (name varchar2(80));
-
-alter table dots.Est modify (accession varchar2(50));
-
-alter table sres.ExternalDatabase modify (name varchar2(150));
-
-alter table sres.Reference modify (author varchar2(2000));
-
-alter table sres.dbref modify (secondary_identifier varchar2(200));
 
 -- indexes to help queries against SnpFeature
 -- (and some ALTER TABLE statements to make the indexes possible;

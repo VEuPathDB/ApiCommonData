@@ -96,20 +96,20 @@ create table apidb.OrthomclSequenceDetail (
       MODIFICATION_DATE DATE
 );
 
-CREATE INDEX apidb.sequence_text_ix on apidb.SequenceDetail(content)
+CREATE INDEX apidb.sequence_text_ix on apidb.OrthomclSequenceDetail(content)
 indextype is ctxsys.context
 parameters('DATASTORE CTXSYS.DEFAULT_DATASTORE SYNC (ON COMMIT)');
 
-CREATE TRIGGER apidb.SeqDtl_md_tg
-BEFORE UPDATE OR INSERT ON apidb.SequenceDetail
+CREATE TRIGGER apidb.OrtSeqDtl_md_tg
+BEFORE UPDATE OR INSERT ON apidb.OrthomclSequenceDetail
 FOR EACH ROW
 BEGIN
   :new.modification_date := sysdate;
 END;
 /
 
-GRANT insert, select, update, delete ON apidb.SequenceDetail TO gus_w;
-GRANT select ON apidb.SequenceDetail TO gus_r;
+GRANT insert, select, update, delete ON apidb.OrthomclSequenceDetail TO gus_w;
+GRANT select ON apidb.OrthomclSequenceDetail TO gus_r;
 
 ------------------------------------------------------------------------------
 

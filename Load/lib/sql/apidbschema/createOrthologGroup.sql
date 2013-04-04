@@ -45,7 +45,6 @@ GRANT SELECT ON apidb.OrthologGroup TO gus_r;
 CREATE INDEX apidb.og_name_ix ON apidb.OrthologGroup (name, ortholog_group_id);
 CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name);
 
-CREATE INDEX apidb.og_mem_ix ON apidb.OrthologGroup (number_of_members, ortholog_group_id, name);
 CREATE INDEX apidb.og_match_ix ON apidb.OrthologGroup (avg_percent_match, ortholog_group_id, name);
 CREATE INDEX apidb.og_pct_ix ON apidb.OrthologGroup (percent_match_pairs, ortholog_group_id, name);
 CREATE INDEX apidb.og_id_ix ON apidb.OrthologGroup (avg_percent_identity, ortholog_group_id, name);

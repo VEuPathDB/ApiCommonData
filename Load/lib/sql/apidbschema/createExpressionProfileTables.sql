@@ -122,6 +122,53 @@ WHERE 'Profile' NOT IN (SELECT name FROM core.TableInfo
 
 ----------------------------------------------------------------------------
 
+create table ApiDB.ProfileElementName (
+ profile_element_name_id NUMBER(10),
+ profile_set_id          NUMBER(10),
+ name                    VARCHAR2(100),
+ element_order           NUMBER(2),
+ modification_date       DATE,
+ user_read               NUMBER(1),
+ user_write              NUMBER(1),
+ group_read              NUMBER(1),
+ group_write             NUMBER(1),
+ other_read              NUMBER(1),
+ other_write             NUMBER(1),
+ row_user_id             NUMBER(12),
+ row_group_id            NUMBER(3),
+ row_project_id          NUMBER(4),
+ row_alg_invocation_id   NUMBER(12),
+ FOREIGN KEY (profile_set_id) REFERENCES ApiDB.ProfileSet,
+ PRIMARY KEY (profile_element_name_id)
+);
+
+create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name, profile_set_id, element_order);
+create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id);
+
+create sequence ApiDB.ProfileElementName_sq;
+
+GRANT insert, select, update, delete ON ApiDB.ProfileElementName TO gus_w;
+GRANT select ON ApiDB.ProfileElementName TO gus_r;
+GRANT select ON ApiDB.ProfileElementName_sq TO gus_w;
+
+INSERT INTO core.TableInfo
+    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
+     is_view, view_on_table_id, superclass_table_id, is_updatable, 
+     modification_date, user_read, user_write, group_read, group_write, 
+     other_read, other_write, row_user_id, row_group_id, row_project_id, 
+     row_alg_invocation_id)
+SELECT core.tableinfo_sq.nextval, 'ProfileElementName',
+       'Standard', 'profile_element_name_id',
+       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
+       p.project_id, 0
+FROM dual,
+     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
+     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
+WHERE 'ProfileElementName' NOT IN (SELECT name FROM core.TableInfo
+                                    WHERE database_id = d.database_id);
+
+----------------------------------------------------------------------------
+
 
 create table ApiDB.ProfileElement (
  profile_element_id    NUMBER(10),
@@ -170,54 +217,6 @@ FROM dual,
      (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
      (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
 WHERE 'ProfileElement' NOT IN (SELECT name FROM core.TableInfo
-                                    WHERE database_id = d.database_id);
-
-----------------------------------------------------------------------------
-
-
-create table ApiDB.ProfileElementName (
- profile_element_name_id NUMBER(10),
- profile_set_id          NUMBER(10),
- name                    VARCHAR2(100),
- element_order           NUMBER(2),
- modification_date       DATE,
- user_read               NUMBER(1),
- user_write              NUMBER(1),
- group_read              NUMBER(1),
- group_write             NUMBER(1),
- other_read              NUMBER(1),
- other_write             NUMBER(1),
- row_user_id             NUMBER(12),
- row_group_id            NUMBER(3),
- row_project_id          NUMBER(4),
- row_alg_invocation_id   NUMBER(12),
- FOREIGN KEY (profile_set_id) REFERENCES ApiDB.ProfileSet,
- PRIMARY KEY (profile_element_name_id)
-);
-
-create index ApiDB.PROFELENAME_NAME_IND on ApiDB.ProfileElementName(name, profile_set_id, element_order);
-create index ApiDB.PROFILEELEMENTNAME_revix0 on APIDB.ProfileElementName (profile_set_id, profile_element_name_id);
-
-create sequence ApiDB.ProfileElementName_sq;
-
-GRANT insert, select, update, delete ON ApiDB.ProfileElementName TO gus_w;
-GRANT select ON ApiDB.ProfileElementName TO gus_r;
-GRANT select ON ApiDB.ProfileElementName_sq TO gus_w;
-
-INSERT INTO core.TableInfo
-    (table_id, name, table_type, primary_key_column, database_id, is_versioned,
-     is_view, view_on_table_id, superclass_table_id, is_updatable, 
-     modification_date, user_read, user_write, group_read, group_write, 
-     other_read, other_write, row_user_id, row_group_id, row_project_id, 
-     row_alg_invocation_id)
-SELECT core.tableinfo_sq.nextval, 'ProfileElementName',
-       'Standard', 'profile_element_name_id',
-       d.database_id, 0, 0, '', '', 1,sysdate, 1, 1, 1, 1, 1, 1, 1, 1,
-       p.project_id, 0
-FROM dual,
-     (SELECT MAX(project_id) AS project_id FROM core.ProjectInfo) p,
-     (SELECT database_id FROM core.DatabaseInfo WHERE name = 'ApiDB') d
-WHERE 'ProfileElementName' NOT IN (SELECT name FROM core.TableInfo
                                     WHERE database_id = d.database_id);
 
 ----------------------------------------------------------------------------
