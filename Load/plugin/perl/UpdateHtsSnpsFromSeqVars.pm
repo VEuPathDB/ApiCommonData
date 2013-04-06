@@ -155,6 +155,7 @@ and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sf.sequence_ontology_id = so.sequence_ontology_id
+and sf.na_feature_id in (26536566,26538528,26539923) 
 and so.term_name = 'SNP'
 EOSQL
 
@@ -165,7 +166,7 @@ EOSQL
   $self->getDb()->manageTransaction(0,'begin');
   while(my $row = $snpStmt->fetchrow_hashref('name_lc')){
     $ctSnps++;
-    $self->manageTransAndCache() if $ct % 1000 == 0;
+    $self->manageTransAndCache() if $ctSnps % 1000 == 0;
     $self->updateSnp($sumStmt,$row);
   }
   $self->getDb()->manageTransaction(0,'commit');
@@ -205,8 +206,8 @@ sub getRemainingMinorAlleles {
   while(my $row = $stmt->fetchrow_hashref('name_lc')){
     $tot += $row->{total};
     $ns = 1 if $row->{phenotype} eq 'non-synonymous';
-    push(@trains,$row->{strains});
-    push(@trainsRC,$row->{strains_revcomp});
+    push(@strains,$row->{strains});
+    push(@strainsRC,$row->{strains_revcomp});
   }
   return ($tot,$ns,join(" ",@strains),join(" ",@strainsRC));
 }
