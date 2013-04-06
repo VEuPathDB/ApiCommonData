@@ -40,7 +40,7 @@ my $db = GUS::ObjRelP::DbiDatabase->new($gusConfig->getDbiDsn(),
 my $dbh = $db->getQueryHandle();
 
 my $seqvarSQL = <<SQL;
-delete from DoTS.SeqVariation where
+delete from DoTS.NaFeature where
 parent_id in (
 select sf.na_feature_id
 from dots.snpfeature sf, SRES.externaldatabase d, SRES.externaldatabaserelease rel

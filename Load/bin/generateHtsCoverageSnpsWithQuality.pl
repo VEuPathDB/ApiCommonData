@@ -12,12 +12,14 @@ use GUS::ObjRelP::DbiDatabase;
 use GUS::Supported::GusConfig;
 
 my $varscanDir;
-my $outputFile = 'coverageSnps.gff';
+my $outputFile = 'coverageSnps.tab';
 my $gusConfigFile = $ENV{GUS_HOME} ."/config/gus.config";
 my $referenceOrganism;
 my $referenceStrain;
 my $verbose;
 my $noCommit;
+my $testRowCount = 0;
+my $minAllelePercent = 60;
 
 &GetOptions("gusConfigFile|gc=s"=> \$gusConfigFile,
             "varscanDir|vd=s"=> \$varscanDir,
@@ -26,15 +28,19 @@ my $noCommit;
             "referenceOrganism|r=s"=> \$referenceOrganism,
             "referenceStrain|s=s"=> \$referenceStrain,
             "noCommit|nc!"=> \$noCommit,
+            "testRowCount|tc=i"=> \$testRowCount, ##use for testing ... only retrieves this many rows.
+            "minAllelePercent|ap=i"=> \$minAllelePercent, ##use for testing ... only retrieves this many rows.
             );
 
 if (!$referenceOrganism){
 die <<endOfUsage;
 generateCoverageSnps.pl usage:
 
-  generateCoverageSnpsWithQuality.pl --varscanDir|vd <directory containing the varscan consensus files> --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose|v!\n
+  generateCoverageSnpsWithQuality.pl --varscanDir|vd <directory containing the varscan consensus files> --gusConfigFile|gc <gusConfigFile [\$GUS_HOME/config/gus.config] --referenceOrganism <organism on which SNPs are predicted .. ie aligned to .. in dots.snpfeature.organism> --outputFile|o <outputFile [coverageSnps.gff]> --verbose|v! --testRowCount|tc <number of seqvariation rows to retrieve for testing script>\n
 endOfUsage
 }
+
+print STDERR "\nTesting with $testRowCount SeqVariation rows\n\n" if $testRowCount;
 
 my $gusConfig = GUS::Supported::GusConfig->new($gusConfigFile);
 
@@ -49,21 +55,8 @@ my $dbh = $db->getQueryHandle();
 
 open(O,">$outputFile") || die "unable to open $outputFile for output\n";
 
-print "Identifying strains ... will get later with snp search\n";
-##need to get the list of strains,  external_db_ids and row_algorithm_invocation_ids
-my $strainSQL = <<SQL;
-select sv.strain,sv.external_database_release_id, sv.row_alg_invocation_id,sv.sequence_ontology_id,sv.row_user_id,sv.row_group_id,sv.row_project_id,count(*)
-from dots.snpfeature sf, DOTS.seqvariation sv,SRES.externaldatabase d, SRES.externaldatabaserelease rel
-where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
-and rel.external_database_id = d.external_database_id
-and sf.external_database_release_id = rel.external_database_release_id
-and sf.organism = '$referenceOrganism'
-and sv.parent_id = sf.na_feature_id
-group by sv.strain,sv.external_database_release_id,sv.row_alg_invocation_id,sv.sequence_ontology_id,sv.row_user_id,sv.row_group_id,sv.row_project_id
-SQL
+## print "Identifying strains ... will get later with snp search\n";
 
-#my $strainStmt = $dbh->prepare($strainSQL);
-#$strainStmt->execute();
 my %strains;
 my %algIds;
 my $ctDelSnp = 0;  ##keep track of numbers of deleted rows
@@ -74,32 +67,9 @@ my $sequence_ontology_id;
 my $row_user_id;
 my $row_group_id;
 my $row_project_id;
-#while(my($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count) = $strainStmt->fetchrow_array()){
-#  print STDERR "Strain: ($strain,$rel_id,$alg_id,$seq_ont_id,$user_id,$group_id,$project_id,$count)\n" if $verbose;
-#  $strains{$rel_id} = $strain;
-#  $algIds{$rel_id} = $alg_id;
-#  if($sequence_ontology_id != $seq_ont_id){
-#    print STDERR "WARNING: sequence_ontology_id differs ($sequence_ontology_id ne $seq_ont_id)\n" if $sequence_ontology_id;
-#    $sequence_ontology_id = $seq_ont_id;
-#  }
-#  if($row_user_id != $user_id){
-#    print STDERR "WARNING: row_user_id differs ($row_user_id ne $user_id)\n" if $row_user_id;
-#    $row_user_id = $user_id;
-#  }
-#  if($row_group_id != $group_id){
-#    print STDERR "WARNING: row_group_id differs ($row_group_id ne $group_id)\n" if $row_group_id;
-#    $row_group_id = $group_id;
-#  }
-#  if($row_project_id != $project_id){
-#    print STDERR "WARNING: row_project_id differs ($row_project_id ne $project_id)\n" if $row_project_id;
-#    $row_project_id = $project_id;
-#  }
-#  
-#}
-
 
 my $snpSQL = <<EOSQL;
-select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.strain,sv.row_alg_invocation_id,sv.row_group_id,sv.row_project_id,sv.row_user_id,so.sequence_ontology_id
+select sf.na_sequence_id,sf.na_feature_id, sf.source_id as snp_id,s.source_id as seq_id,l.start_min,sf.reference_na,sf.reference_aa, sv.allele,sv.external_database_release_id,sf.reference_strain,sv.strain,sv.row_alg_invocation_id,sv.row_group_id,sv.row_project_id,sv.row_user_id,sv.sequence_ontology_id,sv.matches_reference
 from dots.snpfeature sf, DOTS.seqvariation sv, dots.nalocation l,
 SRES.externaldatabase d, SRES.externaldatabaserelease rel,dots.nasequence s, sres.sequenceontology so
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
@@ -134,7 +104,7 @@ while(my $row = $stmt->fetchrow_hashref()){
   }
   $referenceStrain = $row->{REFERENCE_STRAIN} unless $referenceStrain;
   $strains{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{STRAIN};
-  $algIds{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ROW_ALG_INVOCATION_ID};
+  $algIds{$row->{EXTERNAL_DATABASE_RELEASE_ID}} = $row->{ROW_ALG_INVOCATION_ID} unless $row->{MATCHES_REFERENCE} == 1;
   if(!$row_user_id){
     $row_user_id = $row->{ROW_USER_ID};
     $row_project_id = $row->{ROW_PROJECT_ID};
@@ -144,11 +114,11 @@ while(my $row = $stmt->fetchrow_hashref()){
     
   $ct++;
   print STDERR "Retrieved $ct rows\n" if ($verbose && $ct % 10000 == 0);
-  last if $ct > 100000;
+  last if ($testRowCount && $ct > $testRowCount);
 }
 $stmt->finish();
 
-print STDERR "Found ".scalar(keys%strains)." strains in the database\n";
+print STDERR "Retrieved $ct rows -- Found ".scalar(keys%strains)." strains in the database\n";
 die "ERROR: unable to identify any strains for referenceOrganism $referenceOrganism\n" unless scalar(keys%strains) > 0;
 die "ERROR: unable to determine reference strain from the snpFeatures\n" unless $referenceStrain;
 
@@ -165,13 +135,14 @@ if(!$referenceDbRelId){
   ##need the ext_db_rel_id for reference strain as want to add to strains if not there.
   print STDERR "Don't have an external_db_release for reference strain .. retrieving from db\n";
   my $refSQL = <<EOSQL;
-select distinct s.external_database_release_id
+select s.external_database_release_id
 from dots.nasequence s,dots.snpfeature sf,SRES.externaldatabase d, SRES.externaldatabaserelease rel
 where d.name = 'InsertSnps.pm NGS SNPs INTERNAL'
 and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and s.na_sequence_id = sf.na_sequence_id
+group by s.external_database_release_id
 EOSQL
 
   my $refStmt = $dbh->prepare($refSQL);
@@ -230,10 +201,10 @@ foreach my $relid (keys%strains){
     while(<F>){
       next if /^Chrom\s+Position/;
       $ctLines++;
-      print STDERR "$f: Processed $ctLines\n" if ($verbose && $ctLines % 100000 == 0);
+      print STDERR "$f: Processed $ctLines\n" if ($verbose && $ctLines % 1000000 == 0);
       chomp;
       my @tmp = split("\t",$_);
-      next if (!$snps{$tmp[0]}->{$tmp[1]} || $snps{$tmp[0]}->{$tmp[1]}->{strains}->{$strain});
+      next if (!$snps{$tmp[0]}->{$tmp[1]} || $snps{$tmp[0]}->{$tmp[1]}->{strains}->{$relid});
       ##snp here and not present in this strain .... only add if like reference as already processed for snps 
       my $reference = $snps{$tmp[0]}->{$tmp[1]}->{ref};
       print STDERR "WARNING: $tmp[0]:$tmp[1] - reference alleles not same ($tmp[2] - $reference)\n" unless $tmp[2] eq $reference;
@@ -243,6 +214,7 @@ foreach my $relid (keys%strains){
       ##here we just want to print out the sqlLoader row ....
       my $coverage = &getCoverage(\@tmp);
       my $allelePerc = &getPercent(\@tmp);
+      next if $allelePerc < $minAllelePercent;
       &printLine($naseq{$tmp[0]},$snps{$tmp[0]}->{$tmp[1]}->{id},$snps{$tmp[0]}->{$tmp[1]}->{na_feature_id},$reference,$snps{$tmp[0]}->{$tmp[1]}->{product},$relid,$coverage,$allelePerc);
     }
     close F;
@@ -263,7 +235,6 @@ if(scalar(keys%missingVS) >= 1){
       foreach my $dbrelid (keys%missingVS){
         next if $snps{$seqid}->{$loc}->{strains}->{$dbrelid}; ##already have this one
         my $stNa = &getNt($loc,$dbrelid == $referenceDbRelId ? $seqid : $seqid . ".".$missingVS{$dbrelid},$dbrelid);
-        #      print STDERR "'$dbrelid' -> db: '$snps{$seqid}->{$loc}->{strains}->{$dbrelid}'\n";
         if($stNa eq $refna){
           ##print here
           &printLine($naseq{$seqid},$snpid,$snps{$seqid}->{$loc}->{na_feature_id},$refna,$snps{$seqid}->{$loc}->{product},$dbrelid,undef,undef);
@@ -278,13 +249,15 @@ close O;
 
 print "$ctSv SeqVars exported, $ctDelSnp SNPs deleted due to no variability: commit is ".($noCommit ? "off" : "on")."\n";
 
-##(na_feature_id,na_sequence_id,subclass_view,name,sequence_ontology_id,parent_id,external_database_release_id,source_id,organism,strain,phenotype,product,allele,matches_reference,coverage,allele_percent,modification_date,user_read,user_write,group_read,group_write,other_read,other_write,row_user_id,row_group_id,row_project_id,row_alg_invocation_id)
+##(na_sequence_id,subclass_view,name,sequence_ontology_id,parent_id,external_database_release_id,source_id,organism,strain,phenotype,product,allele,matches_reference,coverage,allele_percent,modification_date,user_read,user_write,group_read,group_write,other_read,other_write,row_user_id,row_group_id,row_project_id,row_alg_invocation_id)
 sub printLine {
   my($na_sequence_id,$snp_source_id,$parent_id,$reference_na,$reference_aa,$ext_rel_id,$coverage,$allele_percent) = @_;
-  print O "dots.NaFeatureImp_sq.nextval\t$na_sequence_id\tSeqVariation\tSNP\t$sequence_ontology_id\t$parent_id\t";
-  print O "$ext_rel_id\t$snp_source_id\t$referenceOrganism\t$strains{$ext_rel_id}\twild_type\t$reference_aa,$reference_na\t";
-  print O "1\t$coverage\t$allele_percent\t1\t1\t1\t1\t1\t0\t$row_user_id\t$row_group_id\t$row_project_id\t$algIds{$ext_rel_id}\n";
-  my $ctSv++;
+  print O "$na_sequence_id 'SeqVariation' 'SNP' $sequence_ontology_id $parent_id ";
+  print O "$ext_rel_id '$snp_source_id' '$referenceOrganism' '$strains{$ext_rel_id}' 'wild_type' '$reference_aa' '$reference_na' ";
+  print O "1 '$coverage' '$allele_percent' 1 1 1 1 1 0 $row_user_id $row_group_id $row_project_id ".($algIds{$ext_rel_id} ? $algIds{$ext_rel_id} : 1)."\n";
+  $ctSv++;
+  print STDERR "$ctSv rows written\n" if $ctSv % 10000 == 0;
+
 }
 
 sub getNt {
@@ -302,7 +275,7 @@ sub deleteSnp {
   my($na_feature_id) = @_;
   print "Deleting SNPFeature $na_feature_id\n" if $verbose;
   ##first the seqVars
-  $ctDelSeqVar += $dbh->do("delete from DoTS.SeqVariation where parent_id = $na_feature_id") or die $dbh->errstr;
+  $ctDelSeqVar += $dbh->do("delete from DoTS.NaFeature where parent_id = $na_feature_id") or die $dbh->errstr;
   ##then the nalocations
   $ctDelNaLoc += $dbh->do("delete from DoTS.NaLocation where na_feature_id = $na_feature_id") or die $dbh->errstr;
   ##then the snp features
@@ -315,3 +288,14 @@ sub deleteSnp {
   }
 }
 
+
+sub getCoverage {
+  my($line) = @_;
+  return $line->[4] + $line->[5];
+}
+
+sub getPercent {
+  my($line) = @_;
+  chop $line->[6];
+  return $line->[2] eq $line->[3] ? 100 - $line->[6] : $line->[6];
+}
