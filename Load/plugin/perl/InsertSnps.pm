@@ -271,7 +271,6 @@ sub getNgsSnpExtDbRlsId {
     $self->error("Found multiple rows in the database for SRes.ExternalDatabase name:  $NGS_SNP_DB_NAME");
   }
 
-  # submit if we didn't find the db or rls
   if(!$foundExtDb || !$foundExtDbRls) {
     $self->error("Error getting the NGS ExternalDatabaes name $NGS_SNP_DB_NAME with version $NGS_SNP_DB_VERSION");
   }
@@ -1117,9 +1116,9 @@ sub undoTables {
   my ($self) = @_;
 
   return ('DoTS.NALocation',
-	  'DoTS.SeqVariation',
+          'DoTS.SeqVariation',
           'DoTS.SnpFeature',
-	 );
+         );
 }
 
 1;
