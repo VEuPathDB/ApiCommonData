@@ -54,7 +54,12 @@ sub getArgumentsDeclaration{
 	        reqd => 0,
 	        isList => 0
 	    }),
-
+     integerArg({name => 'testNum',
+		descr => 'for testing plugin will stop after this number',
+	        constraintFunc => undef,
+	        reqd => 0,
+	        isList => 0
+	    }),
     ];
   return $argsDeclaration;
 }
@@ -155,19 +160,24 @@ and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sf.sequence_ontology_id = so.sequence_ontology_id
-and sf.na_feature_id in (26536566,26538528,26539923) 
+--and sf.na_feature_id in (26536566,26538528,26539923,31288837,47089577) 
 and so.term_name = 'SNP'
+order by sf.na_feature_id
 EOSQL
 
   my $snpStmt = $self->getQueryHandle()->prepare($snpSQL);
-
+  $snpStmt->execute();
   my $ctSnps = 0;
+  my $restarting = $self->getArg('restart');
+  my $testNumber = $self->getArg('testNum');
   
   $self->getDb()->manageTransaction(0,'begin');
-  while(my $row = $snpStmt->fetchrow_hashref('name_lc')){
+  while(my $row = $snpStmt->fetchrow_hashref('NAME_lc')){
     $ctSnps++;
-    $self->manageTransAndCache() if $ctSnps % 1000 == 0;
+    next if $restarting && $restarting > $ctSnps;
     $self->updateSnp($sumStmt,$row);
+    $self->manageTransAndCache() if $ctSnps % 1000 == 0;
+    last if $testNumber && $ctSnps >= $testNumber;
   }
   $self->getDb()->manageTransaction(0,'commit');
   $self->log("Updated $ctSnps SnpFeatures");
@@ -177,18 +187,21 @@ sub updateSnp {
   my($self,$stmt,$row) = @_;
   my $snp = GUS::Model::DoTS::SnpFeature->new($row);
   $stmt->execute($snp->getId());
-  my $majorRow = $stmt->fetchrow_hashref('name_lc');
-  my $minorRow = $stmt->fetchrow_hashref('name_lc');
+  my $majorRow = $stmt->fetchrow_hashref('NAME_lc');
+  my $minorRow = $stmt->fetchrow_hashref('NAME_lc');
   my ($otherCt,$otherIsNS,$otherStr,$otherStrRC) = $self->getRemainingMinorAlleles($stmt);
-  $snp->updateHasNonsynonymousAllele($otherIsNS || $self->getHasSyn($majorRow,$minorRow) ? 1 : 0);
-  $snp->updateMinorAlleleCount($minorRow->{total} + $otherCt);
-  $snp->updateMajorAlleleCount($majorRow->{total});
-  $snp->updateMinorAllele($minorRow->{allele});
-  $snp->updateMinorProduct($minorRow->{product});
-  $snp->updateMajorAllele($majorRow->{allele});
-  $snp->updateMajorProduct($majorRow->{product});
-  $snp->updateStrains("$majorRow->{strains} $minorRow->{strains}".$otherCt ? " $otherStr" : "");
-  $snp->updateStrainsRevcomp("$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".$otherCt ? " $otherStrRC" : "");
+  my $hasNonSyn = ($otherIsNS || $self->getHasSyn($majorRow,$minorRow)) ? 1 : 0;
+  $snp->setHasNonsynonymousAllele($hasNonSyn) unless $snp->getHasNonsynonymousAllele() == $hasNonSyn;
+  $snp->setMinorAlleleCount($minorRow->{total} + $otherCt) unless $snp->getMinorAlleleCount() == $minorRow->{total};
+  $snp->setMajorAlleleCount($majorRow->{total}) unless $snp->getMajorAlleleCount() == $majorRow->{total};
+  $snp->setMinorAllele($minorRow->{allele}) unless $snp->getMinorAllele() eq $minorRow->{allele};
+  $snp->setMinorProduct($minorRow->{product}) unless $snp->getMinorProduct() eq $minorRow->{product};
+  $snp->setMajorAllele($majorRow->{allele}) unless $snp->getMajorAllele() eq $majorRow->{allele};
+  $snp->setMajorProduct($majorRow->{product}) unless $snp->getMajorProduct eq $majorRow->{product};
+  my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
+  $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
+  my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
+  $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
   $snp->submit(undef,1);
 }
 
@@ -203,7 +216,7 @@ sub getRemainingMinorAlleles {
   my $ns = 0;
   my @strains;
   my @strainsRC;
-  while(my $row = $stmt->fetchrow_hashref('name_lc')){
+  while(my $row = $stmt->fetchrow_hashref('NAME_lc')){
     $tot += $row->{total};
     $ns = 1 if $row->{phenotype} eq 'non-synonymous';
     push(@strains,$row->{strains});
