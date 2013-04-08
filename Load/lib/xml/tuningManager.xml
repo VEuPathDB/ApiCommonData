@@ -6859,44 +6859,44 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   -- Standard GENES
   select distinct organism, project_id, type 
   from GeneAttributes,
-       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+       (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where organism not in ('Toxoplasma gondii RH') and gene_type = 'protein coding' 
   UNION
   -- TrichDB Repeat Genes
   select distinct organism || ' (Repeated Genes)', project_id, type 
   from GeneAttributes,
-       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+       (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where project_id = 'TrichDB'
   UNION
   -- GiardiaDB Deprecated Genes
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GiardiaDB' as project_id, type 
-  from dual, (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  from dual, (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   UNION
   -- GiardiaDB Scaffolds
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GiardiaDB' as project_id, type 
-  from dual, (select 'Genomics' as type from dual)
+  from dual, (select 'Genome' as type from dual)
   UNION  
   -- Standard GENOME
   select distinct organism, project_id, type 
   from SequenceAttributes,
-       (select 'ORF' as type from dual union select 'Genomics' as type from dual)
+       (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual)
   UNION
   -- Mitochondrial GENES and GENOME
   select distinct organism || ' mitochondrial', project_id, type 
   from SequenceAttributes,       
-  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual union select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where so_id = 'SO:0000819'
   and not project_id='PlasmoDB' 
   UNION
   -- Plastid GENES and GENOME
   select distinct organism || ' plastid' as organism, project_id, type 
   from SequenceAttributes,       
-  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual union select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where so_id = 'SO:0001259'
   and not project_id='PlasmoDB' 
   UNION
   -- Regular ESTs (all species from estattributes)
-  select distinct sp.name as organism, ea.project_id, 'EST' as type
+  select distinct sp.name as organism, ea.project_id, 'ESTs' as type
   from EstAttributes ea, SRES.taxonname tn, taxonspecies ts, SRES.taxonname sp
   where ea.organism = tn.name
   and (tn.taxon_id = ts.taxon_id or tn.taxon_id=ts.species_taxon_id)
