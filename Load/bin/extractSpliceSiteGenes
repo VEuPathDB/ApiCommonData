@@ -9,13 +9,14 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 
-my ($verbose,$gusConfigFile,$cfgFile,$uniqFile,$nonuniqFile);
+my ($verbose,$gusConfigFile,$cfgFile,$uniqFile,$nonuniqFile,$extDbName);
 
 &GetOptions("verbose!" => \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "configFile=s" => \$cfgFile,
             "uniqFile=s" => \$uniqFile,
             "nonuniqFile=s" => \$nonuniqFile,
+            "extDbName=s" => \$extDbName,
 	    );
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -143,7 +144,7 @@ sub getGeneListQuery {
           WHERE sample_name IN ( $rlvntSamples )
           AND  ssg.external_database_release_id = edr.external_database_release_id
           AND  edr.external_database_id = ed.external_database_id
-	  AND  ed.name = $extDbName
+	  AND  ed.name = '$extDbName'
           ORDER BY source_id");
 }
 
@@ -156,6 +157,6 @@ sub getSpliceSitesQuery {
            AND is_unique = $is_unique
            AND  ssg.external_database_release_id = edr.external_database_release_id
            AND  edr.external_database_id = ed.external_database_id
-  	   AND  ed.name = $extDbName
+  	   AND  ed.name = '$extDbName'
            GROUP BY source_id, sample_name ORDER BY sample_name");
 }

@@ -9,13 +9,14 @@ use lib "$ENV{GUS_HOME}/lib/perl";
 use CBIL::Util::PropertySet;
 use Getopt::Long;
 
-my ($verbose,$gusConfigFile,$cfgFile,$uniqFile,$nonuniqFile);
+my ($verbose,$gusConfigFile,$cfgFile,$uniqFile,$nonuniqFile,$extDbName);
 
 &GetOptions("verbose!" => \$verbose,
             "gusConfigFile=s" => \$gusConfigFile,
             "configFile=s" => \$cfgFile,
             "uniqFile=s" => \$uniqFile,
             "nonuniqFile=s" => \$nonuniqFile,
+            "extDbName=s" => \$extDbName,
 	    );
 
 $gusConfigFile = $ENV{GUS_HOME} . "/config/gus.config" unless($gusConfigFile);
@@ -133,11 +134,16 @@ close(NONUNIQ);
 
 $dbh->disconnect;
 
+# fix queries - add extDbName - as samples name in an experiment, for different strains (organisms), will be identical
+
 sub getGeneListQuery {
   my ($rlvntSamples) = @_;
   return ("SELECT distinct source_id
-           FROM Apidb.PolyAGenes
+           FROM Apidb.PolyAGenes pag, SRes.externaldatabase ed, SRes.externaldatabaserelease edr
            WHERE sample_name IN ( $rlvntSamples )
+           AND  pag.external_database_release_id = edr.external_database_release_id
+           AND  edr.external_database_id = ed.external_database_id
+	   AND  ed.name = '$extDbName'
            ORDER BY source_id");
 }
 
@@ -145,8 +151,11 @@ sub getGeneListQuery {
 sub getSpliceSitesQuery {
   my ($rlvntSamples,$is_unique) = @_;
   return ("SELECT source_id, sample_name, sum(count_per_million)
-           FROM Apidb.PolyAGenes
+           FROM Apidb.PolyAGenes pag, SRes.externaldatabase ed, SRes.externaldatabaserelease edr
            WHERE sample_name IN ( $rlvntSamples )
            AND is_unique = $is_unique
+           AND  pag.external_database_release_id = edr.external_database_release_id
+           AND  edr.external_database_id = ed.external_database_id
+  	   AND  ed.name = '$extDbName'
            GROUP BY source_id, sample_name ORDER BY sample_name");
 }
