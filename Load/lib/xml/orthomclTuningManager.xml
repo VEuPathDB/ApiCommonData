@@ -171,15 +171,18 @@ tablespace indx
         select ed.name as domain_db_name, sa.full_id, sa.group_name,
                db.db_ref_id, db.primary_identifier as accession,
                db.secondary_identifier as symbol, db.remark as description,
-               cast (null as NUMBER) as domain_index
+               cast (null as NUMBER) as domain_index, sa.aa_sequence_id, al.start_min, al.end_max
         from ApidbTuning.SequenceAttributes sa, dots.DomainFeature df,
              dots.DbRefAaFeature dbaf, sres.DbRef db,
-             sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed
+             sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+             dots.AaLocation al
         where sa.aa_sequence_id = df.aa_sequence_id
           and df.aa_feature_id = dbaf.aa_feature_id
           and dbaf.db_ref_id = db.db_ref_id
           and db.external_database_release_id = edr.external_database_release_id
           and edr.external_database_id = ed.external_database_id
+          and df.aa_feature_id = al.aa_feature_id(+)
+          and ed.name = 'PFAM'
       ]]>
     </sql>
 
