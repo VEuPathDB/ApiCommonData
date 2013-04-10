@@ -160,23 +160,23 @@ and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sf.sequence_ontology_id = so.sequence_ontology_id
---and sf.na_feature_id in (26536566,26538528,26539923,31288837,47089577) 
 and so.term_name = 'SNP'
-order by sf.na_feature_id
 EOSQL
 
   my $snpStmt = $self->getQueryHandle()->prepare($snpSQL);
+  $self->log("executing query to get SNP features to update");
   $snpStmt->execute();
   my $ctSnps = 0;
   my $restarting = $self->getArg('restart');
   my $testNumber = $self->getArg('testNum');
   
   $self->getDb()->manageTransaction(0,'begin');
+  $self->log("Starting to update SNP features");
   while(my $row = $snpStmt->fetchrow_hashref('NAME_lc')){
     $ctSnps++;
     next if $restarting && $restarting > $ctSnps;
     $self->updateSnp($sumStmt,$row);
-    $self->manageTransAndCache() if $ctSnps % 1000 == 0;
+    $self->manageTransAndCache($ctSnps) if $ctSnps % 100 == 0;
     last if $testNumber && $ctSnps >= $testNumber;
   }
   $self->getDb()->manageTransaction(0,'commit');
@@ -231,7 +231,7 @@ sub manageTransAndCache {
   $self->getDb()->manageTransaction(0,'commit');
   $self->getDb()->manageTransaction(0,'begin');
   $self->undefPointerCache();
-  $self->log("Updated $ct SnpFeatures");
+  $self->log("Updated $ct SnpFeatures") if $ct % 1000 == 0;
 }
 
 
