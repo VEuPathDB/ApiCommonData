@@ -4558,23 +4558,23 @@ select 'T. brucei DHH1 wild type array data' as profile_name,
       'expression' as type,
         'T.brucei_Carrington_DHH1_induction_wildType_Array_PaGE_Analysis,T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis' as attribution
 from dual
---UNION
---select 'Lmajor RNASeq Spliced Leader And Poly A Sites from Myler uniqProfile' as profile_name,
---       'Myler::LmSpliceSites' as module,
---       'Splice Leader mapping of <i>L. major</i> Friedlin promastigotes by RNASeq' as display_name,
---       'The coverage values in the graph are displayed in log2 scale' as description,
---       '<i>L. major</i> Random and Not so random (NSR)' as x_axis,
---       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
---        280 as order_num,
---        'TRUE' as mainOpen,
---        'FALSE' as dataOpen,
---       'rpkm,pct' as visible_parts,
---        '' as dataTable,
---      'expression' as type,
---        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
---from dual
 UNION
-select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+select 'RNASeq Spliced Leader Sites from Myler uniqProfile - lmajFriedlin' as profile_name,
+       'Myler::LmSpliceSites' as module,
+       'Splice Leader mapping of <i>L. major</i> Friedlin promastigotes by RNASeq' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>L. major</i> Random and Not so random (NSR)' as x_axis,
+       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        280 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
+-from dual
+UNION
+select 'RNASeq Spliced Leader Sites from Nilsson uniqProfile - tbruTREU927' as profile_name,
        'Nilsson::TbSpliceSites' as module,
        'Splice Leader mapping of <i>T. brucei</i>' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
