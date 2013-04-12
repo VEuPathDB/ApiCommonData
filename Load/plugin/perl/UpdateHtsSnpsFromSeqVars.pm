@@ -174,7 +174,7 @@ EOSQL
   my $ctRows = 0;
   while(my $row = $snpStmt->fetchrow_hashref('NAME_lc')){
     $ctRows++;
-    next if $restarting && $restarting > $ctSnps;
+    next if $restarting && $restarting > $ctRows;
     push(@snpIds,$row->{na_feature_id});
     last if $testNumber && $ctRows >= $testNumber;
   }
