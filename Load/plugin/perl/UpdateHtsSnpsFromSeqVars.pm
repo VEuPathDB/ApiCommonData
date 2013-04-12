@@ -184,7 +184,7 @@ EOSQL
   foreach my $snpId (@snpIds){
     $ctSnps++;
 #    $self->updateSnp(undef,$snpId);  ##will use seqvariation objects
-    $self->updateSnp($sumStmt,$snpId); ##will use sumQuery ...
+    $self->updateSnp($sumStmt,$snpId); ##will use sumQuery ... seems more efficient as expected.
     $self->manageTransAndCache($ctSnps) if $ctSnps % 100 == 0;
   }
   $self->getDb()->manageTransaction(0,'commit');
@@ -195,29 +195,30 @@ sub updateSnp {
   my($self,$stmt,$row) = @_;
   my $snp = GUS::Model::DoTS::SnpFeature->new({'na_feature_id' => $row});
   $snp->retrieveFromDB();
-  if($stmt){
-    $stmt->execute($snp->getId());
-    my $majorRow = $stmt->fetchrow_hashref('NAME_lc');
-    my $minorRow = $stmt->fetchrow_hashref('NAME_lc');
-    my ($otherCt,$otherIsNS,$otherStr,$otherStrRC) = $self->getRemainingMinorAlleles($stmt);
-    my $hasNonSyn = ($otherIsNS || $self->getHasSyn($majorRow,$minorRow)) ? 1 : 0;
-    $snp->setHasNonsynonymousAllele($hasNonSyn) unless $snp->getHasNonsynonymousAllele() == $hasNonSyn;
-    $snp->setMinorAlleleCount($minorRow->{total} + $otherCt) unless $snp->getMinorAlleleCount() == $minorRow->{total};
-    $snp->setMajorAlleleCount($majorRow->{total}) unless $snp->getMajorAlleleCount() == $majorRow->{total};
-    $snp->setMinorAllele($minorRow->{allele}) unless $snp->getMinorAllele() eq $minorRow->{allele};
-    $snp->setMinorProduct($minorRow->{product}) unless $snp->getMinorProduct() eq $minorRow->{product};
-    $snp->setMajorAllele($majorRow->{allele}) unless $snp->getMajorAllele() eq $majorRow->{allele};
-    $snp->setMajorProduct($majorRow->{product}) unless $snp->getMajorProduct eq $majorRow->{product};
-    my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
-    $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
-    my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
-    $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
-  }else{
 
-    $snp->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation');
-    $self->_makeSnpFeatureDescriptionFromSeqVars($snp);
-    $self->_addMajorMinorInfo($snp);
-  }
+## use following block for generating from the summary query
+  $stmt->execute($snp->getId());
+  my $majorRow = $stmt->fetchrow_hashref('NAME_lc');
+  my $minorRow = $stmt->fetchrow_hashref('NAME_lc');
+  my ($otherCt,$otherIsNS,$otherStr,$otherStrRC) = $self->getRemainingMinorAlleles($stmt);
+  my $hasNonSyn = ($otherIsNS || $self->getHasSyn($majorRow,$minorRow)) ? 1 : 0;
+  $snp->setHasNonsynonymousAllele($hasNonSyn) unless $snp->getHasNonsynonymousAllele() == $hasNonSyn;
+  $snp->setMinorAlleleCount($minorRow->{total} + $otherCt) unless $snp->getMinorAlleleCount() == $minorRow->{total};
+  $snp->setMajorAlleleCount($majorRow->{total}) unless $snp->getMajorAlleleCount() == $majorRow->{total};
+  $snp->setMinorAllele($minorRow->{allele}) unless $snp->getMinorAllele() eq $minorRow->{allele};
+  $snp->setMinorProduct($minorRow->{product}) unless $snp->getMinorProduct() eq $minorRow->{product};
+  $snp->setMajorAllele($majorRow->{allele}) unless $snp->getMajorAllele() eq $majorRow->{allele};
+  $snp->setMajorProduct($majorRow->{product}) unless $snp->getMajorProduct eq $majorRow->{product};
+  my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
+  $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
+  my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
+  $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
+
+## use following if want to update from objects but less efficient
+#    $snp->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation');
+#    $self->_makeSnpFeatureDescriptionFromSeqVars($snp);
+#    $self->_addMajorMinorInfo($snp);
+  
   $snp->submit(1,1);
 }
 
