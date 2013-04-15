@@ -3237,7 +3237,8 @@ select 'C.albicans activity against antifungal' as profile_name,
        'exprn_val,percentile' as visible_parts,
         '' as dataTable,
        'expression' as type,
-       '' as attribution    from dual
+       '' as attribution    
+    from dual
     UNION
 
 
@@ -3252,10 +3253,10 @@ select 'H. arabidopsidis expression during infection' as profile_name,
         'FALSE' as dataOpen,
        'rpkm,percentile' as visible_parts,
         '' as dataTable,
-      'expression' as type,
+        'expression' as type,
         '' as attribution
     from dual
-  UNION
+    UNION
 
 select 'P. ramorum expression in Chlamydospora, P. ramorum expression in zoospores, P. ramorum expression is Tomato media, P. ramorum expression in V8 Liquid media' as profile_name,
        'PhyraPr102::RnaSeqCondition' as module,
@@ -4572,7 +4573,7 @@ select 'RNASeq Spliced Leader Sites from Myler uniqProfile - lmajFriedlin' as pr
         '' as dataTable,
       'expression' as type,
         'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
--from dual
+from dual
 UNION
 select 'RNASeq Spliced Leader Sites from Nilsson uniqProfile - tbruTREU927' as profile_name,
        'Nilsson::TbSpliceSites' as module,
