@@ -4,6 +4,9 @@ package ApiCommonData::Load::Plugin::InsertHtsSnps;
 
 @ISA = qw(ApiCommonData::Load::Plugin::InsertSnps);
 
+use strict;
+use ApiCommonData::Load::Plugin::InsertSnps;
+
 sub undoTables {
   my ($self) = @_;
   
