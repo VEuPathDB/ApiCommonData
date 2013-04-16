@@ -17,13 +17,7 @@ grant insert, update, delete on apidb_r.TuningFamily to gus_w;
 
 create table apidb_r.TuningInstance (
    family_name       character varying(32) not null references apidb_r.TuningFamily,
-   last_update       timestamp,
-   last_updater      character varying(50),
-   last_check        timestamp,
-   last_checker      character varying(50),
    instance_nickname character varying(50) not null,
-   last_ok           timestamp,
-   outdated_since    timestamp,
    archived          NUMERIC(1));
 
 grant select on apidb_r.TuningInstance to gus_r;
