@@ -168,7 +168,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create table DomainAssignment&1 nologging as
-        select ed.name as domain_db_name, sa.full_id, sa.group_name,
+        select sa.full_id, sa.group_name,
                db.db_ref_id, db.primary_identifier as accession,
                db.secondary_identifier as symbol, db.remark as description,
                cast (null as NUMBER) as domain_index, sa.aa_sequence_id, al.start_min, al.end_max
@@ -189,7 +189,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create index domain_accession_ix&1
-               on DomainAssignment&1 (accession, full_id, group_name, domain_db_name)
+               on DomainAssignment&1 (accession, full_id, group_name)
       ]]>
     </sql>
 
@@ -228,7 +228,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create index domain_group_ix&1
-               on DomainAssignment&1 (domain_db_name, group_name, accession, full_id)
+               on DomainAssignment&1 (group_name, accession, full_id)
       ]]>
     </sql>
 
