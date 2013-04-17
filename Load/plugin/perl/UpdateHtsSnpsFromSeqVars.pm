@@ -54,7 +54,12 @@ sub getArgumentsDeclaration{
 	        reqd => 0,
 	        isList => 0
 	    }),
-
+     integerArg({name => 'testNum',
+		descr => 'for testing plugin will stop after this number',
+	        constraintFunc => undef,
+	        reqd => 0,
+	        isList => 0
+	    }),
     ];
   return $argsDeclaration;
 }
@@ -98,7 +103,7 @@ sub new {
 
 
   $self->initialize({requiredDbVersion => 3.6,
-		     cvsRevision => '$Revision: 54164 $',
+		     cvsRevision => '$Revision$',
                      name => ref($self),
                      revisionNotes => '',
                      argsDeclaration => $argumentDeclaration,
@@ -148,26 +153,39 @@ my $sumStmt = $dbh->prepare($sumSQL);
   my $dbName = $self->getArg('snpExternalDatabaseName') ? $self->getArg('snpExternalDatabaseName') : "InsertSnps.pm NGS SNPs INTERNAL";
   my $referenceOrganism = $self->getArg('organism');
   my $snpSQL = <<EOSQL;
-select sf.*
+select sf.na_feature_id
 from dots.snpfeature sf, SRES.externaldatabase d, SRES.externaldatabaserelease rel, sres.sequenceontology so
 where d.name = '$dbName'
 and rel.external_database_id = d.external_database_id
 and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism'
 and sf.sequence_ontology_id = so.sequence_ontology_id
-and sf.na_feature_id in (26536566,26538528,26539923) 
 and so.term_name = 'SNP'
 EOSQL
 
   my $snpStmt = $self->getQueryHandle()->prepare($snpSQL);
-
+  $self->log("executing query to get SNP features to update");
+  $snpStmt->execute();
   my $ctSnps = 0;
-  
+  my $restarting = $self->getArg('restart');
+  my $testNumber = $self->getArg('testNum');
+
+  my @snpIds;
+  my $ctRows = 0;
+  while(my $row = $snpStmt->fetchrow_hashref('NAME_lc')){
+    $ctRows++;
+    next if $restarting && $restarting > $ctRows;
+    push(@snpIds,$row->{na_feature_id});
+    last if $testNumber && $ctRows >= $testNumber;
+  }
+  $self->log("returned ".scalar(@snpIds)." SNPs to update");
   $self->getDb()->manageTransaction(0,'begin');
-  while(my $row = $snpStmt->fetchrow_hashref('name_lc')){
+  $self->log("Starting to update SNP features");
+  foreach my $snpId (@snpIds){
     $ctSnps++;
-    $self->manageTransAndCache() if $ctSnps % 1000 == 0;
-    $self->updateSnp($sumStmt,$row);
+#    $self->updateSnp(undef,$snpId);  ##will use seqvariation objects
+    $self->updateSnp($sumStmt,$snpId); ##will use sumQuery ... seems more efficient as expected.
+    $self->manageTransAndCache($ctSnps) if $ctSnps % 100 == 0;
   }
   $self->getDb()->manageTransaction(0,'commit');
   $self->log("Updated $ctSnps SnpFeatures");
@@ -175,21 +193,33 @@ EOSQL
 
 sub updateSnp {
   my($self,$stmt,$row) = @_;
-  my $snp = GUS::Model::DoTS::SnpFeature->new($row);
+  my $snp = GUS::Model::DoTS::SnpFeature->new({'na_feature_id' => $row});
+  $snp->retrieveFromDB();
+
+## use following block for generating from the summary query
   $stmt->execute($snp->getId());
-  my $majorRow = $stmt->fetchrow_hashref('name_lc');
-  my $minorRow = $stmt->fetchrow_hashref('name_lc');
+  my $majorRow = $stmt->fetchrow_hashref('NAME_lc');
+  my $minorRow = $stmt->fetchrow_hashref('NAME_lc');
   my ($otherCt,$otherIsNS,$otherStr,$otherStrRC) = $self->getRemainingMinorAlleles($stmt);
-  $snp->updateHasNonsynonymousAllele($otherIsNS || $self->getHasSyn($majorRow,$minorRow) ? 1 : 0);
-  $snp->updateMinorAlleleCount($minorRow->{total} + $otherCt);
-  $snp->updateMajorAlleleCount($majorRow->{total});
-  $snp->updateMinorAllele($minorRow->{allele});
-  $snp->updateMinorProduct($minorRow->{product});
-  $snp->updateMajorAllele($majorRow->{allele});
-  $snp->updateMajorProduct($majorRow->{product});
-  $snp->updateStrains("$majorRow->{strains} $minorRow->{strains}".$otherCt ? " $otherStr" : "");
-  $snp->updateStrainsRevcomp("$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".$otherCt ? " $otherStrRC" : "");
-  $snp->submit(undef,1);
+  my $hasNonSyn = ($otherIsNS || $self->getHasSyn($majorRow,$minorRow)) ? 1 : 0;
+  $snp->setHasNonsynonymousAllele($hasNonSyn) unless $snp->getHasNonsynonymousAllele() == $hasNonSyn;
+  $snp->setMinorAlleleCount($minorRow->{total} + $otherCt) unless $snp->getMinorAlleleCount() == $minorRow->{total};
+  $snp->setMajorAlleleCount($majorRow->{total}) unless $snp->getMajorAlleleCount() == $majorRow->{total};
+  $snp->setMinorAllele($minorRow->{allele}) unless $snp->getMinorAllele() eq $minorRow->{allele};
+  $snp->setMinorProduct($minorRow->{product}) unless $snp->getMinorProduct() eq $minorRow->{product};
+  $snp->setMajorAllele($majorRow->{allele}) unless $snp->getMajorAllele() eq $majorRow->{allele};
+  $snp->setMajorProduct($majorRow->{product}) unless $snp->getMajorProduct eq $majorRow->{product};
+  my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
+  $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
+  my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
+  $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
+
+## use following if want to update from objects but less efficient
+#    $snp->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation');
+#    $self->_makeSnpFeatureDescriptionFromSeqVars($snp);
+#    $self->_addMajorMinorInfo($snp);
+  
+  $snp->submit(1,1);
 }
 
 sub getHasSyn {
@@ -203,7 +233,7 @@ sub getRemainingMinorAlleles {
   my $ns = 0;
   my @strains;
   my @strainsRC;
-  while(my $row = $stmt->fetchrow_hashref('name_lc')){
+  while(my $row = $stmt->fetchrow_hashref('NAME_lc')){
     $tot += $row->{total};
     $ns = 1 if $row->{phenotype} eq 'non-synonymous';
     push(@strains,$row->{strains});
@@ -218,7 +248,116 @@ sub manageTransAndCache {
   $self->getDb()->manageTransaction(0,'commit');
   $self->getDb()->manageTransaction(0,'begin');
   $self->undefPointerCache();
-  $self->log("Updated $ct SnpFeatures");
+  $self->log("Updated $ct SnpFeatures") if $ct % 1000 == 0;
+}
+
+
+sub _addMajorMinorInfo {
+  my ($self, $snpFeature) = @_;
+
+  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+  my $sourceId = $snpFeature->getSourceId();
+
+  my $referenceAllele = $snpFeature->getReferenceNa();
+  my $referenceProduct = $snpFeature->getReferenceAa();
+
+  my (%alleles, %products);
+
+  foreach my $seqVar (@seqVars) {
+    my $allele = $seqVar->getAllele();
+    my $product = $seqVar->getProduct();
+
+    $alleles{$allele}++;
+    $products{$allele} = $product if($product);
+  }
+
+  my %counts;
+  foreach(keys %alleles) {
+    my $count = $alleles{$_};
+    $counts{$count} = 1;
+  }
+
+  my (@sortedAlleleKeys, $nullAllele);
+  foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
+    if($allele eq "") {
+      $nullAllele = 1;
+    }
+    else {
+      push(@sortedAlleleKeys, $allele) ;
+    }
+  }
+
+  my $numbers = scalar(keys %counts);
+
+  if(scalar(@sortedAlleleKeys) == 1 && !$nullAllele) {
+    $self->log("WARNING","No Variation for source_id [$sourceId]");
+  }
+
+  my $majorAllele = @sortedAlleleKeys[0];
+  my $minorAllele = @sortedAlleleKeys[1];
+
+  if($numbers == 1) {
+    if($minorAllele eq $referenceAllele) {
+      $minorAllele = $majorAllele;
+      $majorAllele = $referenceAllele;
+    }
+    else {   
+      $majorAllele = $referenceAllele;
+    }
+  }
+  if($numbers == 2) {
+    $minorAllele = $referenceAllele
+      unless($majorAllele eq $referenceAllele || $minorAllele eq $referenceAllele);
+  } 
+
+  my $majorAlleleCount = $alleles{$majorAllele};
+  my $minorAlleleCount = $alleles{$minorAllele};
+
+  my $majorProduct = $products{$majorAllele};
+  my $minorProduct = $products{$minorAllele};
+
+  $snpFeature->setMajorAllele($majorAllele);
+  $snpFeature->setMajorAlleleCount($majorAlleleCount);
+  $snpFeature->setMajorProduct($majorProduct);
+  $snpFeature->setMinorAllele($minorAllele);
+  $snpFeature->setMinorAlleleCount($minorAlleleCount);
+  $snpFeature->setMinorProduct($minorProduct);
+
+  return($snpFeature);
+}
+
+
+# ----------------------------------------------------------------------
+
+sub _makeSnpFeatureDescriptionFromSeqVars {
+  my ($self, $snpFeature) = @_;
+
+  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+
+  my (@strains, @strainsRevComp);
+
+  foreach my $seqVar (@seqVars) {
+    my $strain = $seqVar->getStrain();
+    my $allele = $seqVar->getAllele();
+    my $product = $seqVar->getProduct();
+
+    $strain =~ s/\s//g;
+    $allele =~ s/\s//g;
+    $product =~ s/\s//g;
+
+    my $revCompAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+
+    push(@strains, "\"$strain\:$allele".($product ? "\:$product\"" : '"'));
+    push(@strainsRevComp, "\"$strain\:$revCompAllele".($product ? "\:$product\"" : '"'));
+  }
+
+  my $strains = join(' ', @strains);
+  my $strainsRevComp = join(' ', @strainsRevComp);
+
+  $snpFeature->setStrains(join(' ', @strains));
+  $snpFeature->setStrainsRevcomp(join(' ', @strainsRevComp));
+
+  return($snpFeature);
 }
 
 

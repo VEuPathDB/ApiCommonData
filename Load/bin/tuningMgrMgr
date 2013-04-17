@@ -155,21 +155,7 @@ sub list {
   my $stmt = $dbh->prepare(<<SQL);
       select ti.instance_nickname,
              replace(replace(tf.subversion_url, 'https://www.cbil.upenn.edu/svn/apidb/ApiCommonData/', ''), '/Load/lib/xml', ''),
-             ti.family_name,
-             case
-               when last_ok is null
-                 then '(null)'
-               when sysdate - last_ok < 1
-                 then to_char(last_ok, 'yy-mon-dd hh24:mi') || ' (' || round( (sysdate - last_ok) * 24) || ' hours ago)'
-                 else to_char(last_ok, 'yy-mon-dd hh24:mi') || ' (' || round(sysdate - last_ok) || ' days ago)'
-             end as last_ok,
-             case
-               when outdated_since is null
-                 then '(null)'
-               when sysdate - outdated_since < 1
-                 then to_char(outdated_since, 'yy-mon-dd hh24:mi') || ' (' || round( (sysdate - outdated_since) * 24) || ' hours ago)'
-                 else to_char(outdated_since, 'yy-mon-dd hh24:mi') || ' (' || round(sysdate - outdated_since) || ' days ago)'
-             end as outdated_since
+             ti.family_name
       from apidb_r.TuningInstance$dblink ti, apidb_r.TuningFamily$dblink tf
       where (ti.archived is null or ti.archived = 0) and
             ti.family_name = tf.family_name(+)
@@ -182,10 +168,12 @@ SQL
   my $printedSomething;
   my $lastFamily = 'gambino';
   my $instanceCount;
-  while (my ($nickname, $svn, $family, $lastCheck, $lastUpdate) = $stmt->fetchrow_array()) {
+  while (my ($nickname, $svn, $family) = $stmt->fetchrow_array()) {
     $instanceCount++;
 
-    print "\n---------family--------- ---instance_nickname----- ---subversion------------ -- last OK --------------------- -- out-of-date since ---------\n"
+    # print "\n---------family--------- ---instance_nickname----- ---subversion------------ -- last OK --------------------- -- out-of-date since ---------\n"
+
+    print "\n---------family--------- ---instance_nickname----- ---subversion------------\n"
       if !$printedSomething;
 
     $printedSomething = 1;
@@ -201,7 +189,7 @@ SQL
 #      $lastFamily = $family;
 #    }
 
-    printf "%-24s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn, $lastCheck, $lastUpdate;
+    printf "%-24s %-25s %-25s %-32s %-32s\n", $family, $nickname, $svn;
   }
   $stmt->finish();
 
