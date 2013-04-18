@@ -136,12 +136,12 @@ while(my ($k, $v) = each %hash) {
   my $isolate_id   = $hash{$k}{$cn{isolate_id}};
 
   # in case of duplicate isolate ids
-	if(exists $idhash{$isolate_id}) {
-	  $isolate_id .= '_1';
-	  $idhash{$isolate_id} = 1;
-	} else {
-	  $idhash{$isolate_id} = 1;
-	}
+  if(exists $idhash{$isolate_id}) {
+    $isolate_id .= '_1';
+    $idhash{$isolate_id} = 1;
+  } else {
+    $idhash{$isolate_id} = 1;
+  }
 
   my $species      = $hash{$k}{$cn{species}};
   my $country      = $hash{$k}{$cn{country}};
@@ -223,6 +223,8 @@ while(my ($k, $v) = each %hash) {
   $country    .= ", $state" if $state;
   $isolate_id  =~ s/\s//g;
 
+  $symptoms = chomp($symptoms);
+
   $note .= "; age: $age" if $age;
   $note .= "; symptoms: $symptoms" if $symptoms;
   $note .= "; habitat: $habitat" if $habitat;
@@ -237,7 +239,7 @@ while(my ($k, $v) = each %hash) {
 
   my $collection_date = "";
   $collection_date  = sprintf("%02d", $day);
-  $collection_date .= "-". $mon[$month]; 
+  $collection_date .= "-". $mon[$month-1]; 
   $collection_date .= "-$year" if $year;
 
   die "Cannot find isolate species. Please check column E\n" unless $species;
@@ -269,9 +271,9 @@ while(my ($k, $v) = each %hash) {
     $sequence =~ s/\W+//g;
     my $length   = length($sequence);
 
-		$note .= "; trace file: $trace" if $trace;
-		$note .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
-		$note .= "; seq description: $seq_description" if $seq_description;
+    $note .= "; trace file: $trace" if $trace;
+    $note .= "; genbank accession identical to  this sequence: $genbank_acc" if $genbank_acc;
+    $note .= "; seq description: $seq_description" if $seq_description;
 
     my $modifier = "";
     $modifier .= "[organism=$species]" if $species;
@@ -289,11 +291,19 @@ while(my ($k, $v) = each %hash) {
     $modifier .= "[note=$note]" if $note;
     $modifier .= "[protein=$product]" if $product;
 
-    for(my $i = 0; $i <= $#primer_names; $i=$i+2) {
-      $modifier .= "[fwd-PCR-primer-name=$primer_names[$i]]"; 
-      $modifier .= "[fwd-PCR-primer-seq=$primer_seqs[$i]]"; 
-      $modifier .= "[rev-PCR-primer-name=$primer_names[$i+1]]"; 
-      $modifier .= "[rev-PCR-primer-seq=$primer_seqs[$i+1]]"; 
+    if ($#primer_names > 0) {
+      for(my $i = 0; $i <= $#primer_names; $i=$i+2) {
+        $modifier .= "[fwd-PCR-primer-name=$primer_names[$i]]"; 
+        $modifier .= "[fwd-PCR-primer-seq=$primer_seqs[$i]]"; 
+        $modifier .= "[rev-PCR-primer-name=$primer_names[$i+1]]"; 
+        $modifier .= "[rev-PCR-primer-seq=$primer_seqs[$i+1]]"; 
+      }
+    }
+    else {
+      for(my $i = 0; $i <= $#primer_seqs; $i=$i+2) {
+        $modifier .= "[fwd-PCR-primer-seq=$primer_seqs[$i]]"; 
+        $modifier .= "[rev-PCR-primer-seq=$primer_seqs[$i+1]]"; 
+      }
     }
 
     my $seq = Bio::Seq::RichSeq->new( -seq  => $sequence,

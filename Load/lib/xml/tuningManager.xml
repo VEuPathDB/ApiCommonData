@@ -3103,11 +3103,11 @@ select 'NcraOR74A Hyphal Growth RNASeq' as profile_name,
        'RNA Seq' as display_name,
        'Unpublished data from <a href="http://lab.stajich.org">Stajich lab</a> at UC Riverside representing 3 time points (3hrs, 5hr, and 20hrs) of hyphal growth on solid media for <i>Neurospora crassa</i>.' as description,
        'Sample Time point (hours)' as x_axis,
-       'Transcript levels of fragments per kilobase of exon model per million mapped reads (FPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+       'Transcript levels of fragments per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
         10 as order_num,
         'TRUE' as mainOpen,
         'FALSE' as dataOpen,
-       'fpkm,percentile' as visible_parts,
+       'rpkm,percentile' as visible_parts,
         '' as dataTable,
       'expression' as type,
         '' as attribution
@@ -3151,7 +3151,7 @@ select 'C.neoformans- ada2-delta, nrg1-delta, cir1-delta and KN99-alpha analysis
 select 'N Crassa population genomics' as profile_name,
        'NeurosporaCrassaOR74A::RnaSeqPopGen' as module,
        'N crassa population genomics' as display_name,
-       'Neurospora crasss data from Christopher Ellison et al from <a href="http://nature.berkeley.edu/taylorlab/">Taylor Lab</a> at at UC Berkeley on whole-transcriptome sequencing of 48 individuals to identify SNPs'  as description,
+       'Neurospora crassa data from Christopher Ellison et al from <a href="http://nature.berkeley.edu/taylorlab/">Taylor Lab</a> at at UC Berkeley on whole-transcriptome sequencing of 48 individuals to identify SNPs'  as description,
        'FGSC_1131, FGSC_1132, FGSC_1133, FGSC_1165, FGSC_2229b, FGSC_2229, FGSC_3199, FGSC_3200, FGSC_3211, FGSC_3223, FGSC_3943, FGSC_3968, FGSC_3975, FGSC_4708, FGSC_4712, FGSC_4713, FGSC_4715, FGSC_4716, FGSC_4730, FGSC_4824, FGSC_5910, FGSC_5914, FGSC_6203, FGSC_851, FGSC_8783, FGSC_8784, FGSC_8787, FGSC_8789, FGSC_8790, FGSC_8816, FGSC_8819, FGSC_8829, FGSC_8845, FGSC_8848, FGSC_8850, FGSC_8851, FGSC_8870, FGSC_8871, FGSC_8872, FGSC_8874, FGSC_8876, FGSC_8878, Perkins_4450, Perkins_4452, Perkins_4455, Perkins_4465, Perkins_4476, Perkins_4496' as x_axis,
        'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
         11 as order_num,
@@ -3237,7 +3237,8 @@ select 'C.albicans activity against antifungal' as profile_name,
        'exprn_val,percentile' as visible_parts,
         '' as dataTable,
        'expression' as type,
-       '' as attribution    from dual
+       '' as attribution    
+    from dual
     UNION
 
 
@@ -3252,10 +3253,10 @@ select 'H. arabidopsidis expression during infection' as profile_name,
         'FALSE' as dataOpen,
        'rpkm,percentile' as visible_parts,
         '' as dataTable,
-      'expression' as type,
+        'expression' as type,
         '' as attribution
     from dual
-  UNION
+    UNION
 
 select 'P. ramorum expression in Chlamydospora, P. ramorum expression in zoospores, P. ramorum expression is Tomato media, P. ramorum expression in V8 Liquid media' as profile_name,
        'PhyraPr102::RnaSeqCondition' as module,
@@ -4558,23 +4559,23 @@ select 'T. brucei DHH1 wild type array data' as profile_name,
       'expression' as type,
         'T.brucei_Carrington_DHH1_induction_wildType_Array_PaGE_Analysis,T.brucei_Carrington_DHH1_induction_Mutant_Array_PaGE_Analysis' as attribution
 from dual
---UNION
---select 'Lmajor RNASeq Spliced Leader And Poly A Sites from Myler uniqProfile' as profile_name,
---       'Myler::LmSpliceSites' as module,
---       'Splice Leader mapping of <i>L. major</i> Friedlin promastigotes by RNASeq' as display_name,
---       'The coverage values in the graph are displayed in log2 scale' as description,
---       '<i>L. major</i> Random and Not so random (NSR)' as x_axis,
---       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
---        280 as order_num,
---        'TRUE' as mainOpen,
---        'FALSE' as dataOpen,
---       'rpkm,pct' as visible_parts,
---        '' as dataTable,
---      'expression' as type,
---        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
---from dual
 UNION
-select 'T.brucei RNASeq Spliced Leader And Poly A Sites from Nilsson uniqProfile' as profile_name,
+select 'RNASeq Spliced Leader Sites from Myler uniqProfile - lmajFriedlin' as profile_name,
+       'Myler::LmSpliceSites' as module,
+       'Splice Leader mapping of <i>L. major</i> Friedlin promastigotes by RNASeq' as display_name,
+       'The coverage values in the graph are displayed in log2 scale' as description,
+       '<i>L. major</i> Random and Not so random (NSR)' as x_axis,
+       'Transcript levels of reads per kilobase of exon model per million mapped reads (RPKM).  Stacked bars indicate unique and non-uniquely mapped sequences.  Non-Unique sequences are plotted to indicate the maximum expression potential of this gene.' as y_axis,
+        280 as order_num,
+        'TRUE' as mainOpen,
+        'FALSE' as dataOpen,
+       'rpkm,pct' as visible_parts,
+        '' as dataTable,
+      'expression' as type,
+        'Lmajor_RNASeq_Spliced_Leader_And_Poly_A_Sites_Myler_RSRC' as attribution
+from dual
+UNION
+select 'RNASeq Spliced Leader Sites from Nilsson uniqProfile - tbruTREU927' as profile_name,
        'Nilsson::TbSpliceSites' as module,
        'Splice Leader mapping of <i>T. brucei</i>' as display_name,
        'The coverage values in the graph are displayed in log2 scale' as description,
@@ -6555,30 +6556,6 @@ tablespace indx
        From (
   -- TrichDB Annotated Genomes
   select 'Trichomonas vaginalis G3' as organism, 'Tvaginalis' as abbreviation from dual union  
-     -- TriTrypDD UN-Annotated Genomes
-  select 'Endotrypanum monterogeii strain LV88' as organism, 'EmonteLV88' as abbreviation from dual union
-  select 'Leishmania major strain LV39c5' as organism, 'LmajorLV39c5' as abbreviation from dual union
-  select 'Leishmania panamensis strain L13' as organism, 'LpanamL13' as abbreviation from dual union
-  select 'Crithidia fasciculata' as organism, 'Cfasciculata' as abbreviation from dual union
-  select 'Leishmania braziliensis M2903' as organism, 'LbraziliensisM2903' as abbreviation from dual union
-  select 'Leishmania major strain SD 75.1' as organism, 'LmajorSD75.1' as abbreviation from dual union
-  select 'Leishmania tarentolae Parrot-TarII' as organism, 'LtarParrotTarII' as abbreviation from dual union
-  select 'Trypanosoma cruzi JR cl. 4' as organism, 'TcruziJRcl4' as abbreviation from dual union
-  select 'Trypanosoma cruzi Sylvio X10/1' as organism, 'TcruziSylvioX10-1' as abbreviation from dual union
-  select 'Trypanosoma cruzi strain esmeraldo' as organism, 'TcruziEsmeraldo' as abbreviation from dual union
-   -- TriTrypDD Annotated Genomes
-  select 'Leishmania braziliensis' as organism, 'Lbraziliensis' as abbreviation from dual union
-  select 'Leishmania infantum' as organism, 'Linfantum' as abbreviation from dual union
-  select 'Leishmania major strain Friedlin' as organism, 'LmajorFriedlin' as abbreviation from dual union
-  select 'Leishmania mexicana' as organism, 'Lmexicana' as abbreviation from dual union
-  select 'Trypanosoma brucei Lister strain 427' as organism, 'Tbrucei427' as abbreviation from dual union
-  select 'Trypanosoma brucei TREU927' as organism, 'TbruceiTreu927' as abbreviation from dual union
-  select 'Trypanosoma brucei gambiense' as organism, 'TbruceiGambiense' as abbreviation from dual union
-  select 'Trypanosoma congolense' as organism, 'Tcongolense' as abbreviation from dual union
-  select 'Trypanosoma cruzi CL Brener Esmeraldo-like' as organism, 'TcruziEsmeraldo-Like' as abbreviation from dual union
-  select 'Trypanosoma cruzi CL Brener Non-Esmeraldo-like' as organism, 'TcruziNonEsmeraldo-Like' as abbreviation from dual union
-  select 'Trypanosoma cruzi strain CL Brener' as organism, 'TcruziUnassignedContigs' as abbreviation from dual union
-  select 'Trypanosoma vivax' as organism, 'Tvivax' as abbreviation from dual union
    -- All projects which use the Workflow can get this directly from the organism table
   select tn.name as organism, o.name_for_filenames as abbreviation
   from apidb.organism o, sres.taxonname tn
@@ -6862,12 +6839,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   select 'P. knowlesi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pknowlesi' as abbreviation from dual union
   select 'P. reichenowi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Preichenowi' as abbreviation from dual union
   select 'P. vivax Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
-  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual union
-   -- TriTrypDD ESTs Legacy
-  select 'Trypanosoma brucei' as organism, 'Trypanosoma' as parent, 'Tbrucei' as abbreviation from dual union
-  select 'Trypanosoma cruzi' as organism, 'Trypanosoma' as parent, 'Tcruzi' as abbreviation from dual union
-  select 'Leishmania major' as organism, 'Leishmania' as parent, 'LmajorFriedlin' as abbreviation from dual union
-  select 'Leishmania mexicana mexicana' as organism, 'Leishmania mexicana' as parent, 'Lmexicana' as abbreviation from dual 
+  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual 
 ) special
       where special.parent = ot.term
       ]]>
@@ -6888,44 +6860,44 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   -- Standard GENES
   select distinct organism, project_id, type 
   from GeneAttributes,
-       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+       (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where organism not in ('Toxoplasma gondii RH') and gene_type = 'protein coding' 
   UNION
   -- TrichDB Repeat Genes
   select distinct organism || ' (Repeated Genes)', project_id, type 
   from GeneAttributes,
-       (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+       (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where project_id = 'TrichDB'
   UNION
   -- GiardiaDB Deprecated Genes
   select 'Giardia Assemblage A isolate WB (deprecated)' as organism, 'GiardiaDB' as project_id, type 
-  from dual, (select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  from dual, (select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   UNION
   -- GiardiaDB Scaffolds
   select 'Giardia Assemblage A isolate WB (scaffolds)' as organism, 'GiardiaDB' as project_id, type 
-  from dual, (select 'Genomics' as type from dual)
+  from dual, (select 'Genome' as type from dual)
   UNION  
   -- Standard GENOME
   select distinct organism, project_id, type 
   from SequenceAttributes,
-       (select 'ORF' as type from dual union select 'Genomics' as type from dual)
+       (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual)
   UNION
   -- Mitochondrial GENES and GENOME
   select distinct organism || ' mitochondrial', project_id, type 
   from SequenceAttributes,       
-  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual union select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where so_id = 'SO:0000819'
   and not project_id='PlasmoDB' 
   UNION
   -- Plastid GENES and GENOME
   select distinct organism || ' plastid' as organism, project_id, type 
   from SequenceAttributes,       
-  (select 'ORF' as type from dual union select 'Genomics' as type from dual union select 'Transcripts' as type from dual union select 'Proteins' as type from dual)
+  (select 'ORFs_AA' as type from dual union select 'Genome' as type from dual union select 'AnnotatedTranscripts' as type from dual union select 'AnnotatedProteins' as type from dual)
   where so_id = 'SO:0001259'
   and not project_id='PlasmoDB' 
   UNION
   -- Regular ESTs (all species from estattributes)
-  select distinct sp.name as organism, ea.project_id, 'EST' as type
+  select distinct sp.name as organism, ea.project_id, 'ESTs' as type
   from EstAttributes ea, SRES.taxonname tn, taxonspecies ts, SRES.taxonname sp
   where ea.organism = tn.name
   and (tn.taxon_id = ts.taxon_id or tn.taxon_id=ts.species_taxon_id)

@@ -15,7 +15,8 @@ while (<STDIN>) {
   chomp;  #only remove newlines from valid data, otherwise we have problems
   my @fields = split('\t',$_);
   if($fields[0] =~ /\S+/){
-    $fields[2] =~ /(\w+)\.html/; # extract pathway id from URL
-    print "$fields[0]\t$1\t$fields[3]\t$fields[4]\n";
+    $fields[2] =~ /(.+\/)(.+)\.html/; # extract pathway id from URL
+    print "$fields[0]\t$2\t$fields[3]\t$fields[4]\n";
   }
 }
+

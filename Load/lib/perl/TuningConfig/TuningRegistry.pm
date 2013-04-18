@@ -138,8 +138,8 @@ sub setLastUpdater {
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
-    $dbh->do($sql)
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+#    $dbh->do($sql)
+#      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
 sub setLastChecker {
@@ -155,8 +155,8 @@ sub setLastChecker {
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
-    $dbh->do($sql)
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+#    $dbh->do($sql)
+#      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
 sub setOk {
@@ -172,8 +172,9 @@ sub setOk {
       where instance_nickname = (select instance_nickname from apidb.InstanceMetaInfo)
 SQL
 
-    $dbh->do($sql)
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+# no, don't
+#    $dbh->do($sql)
+#      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
 sub setOutdated {
@@ -190,8 +191,8 @@ sub setOutdated {
          and outdated_since is null
 SQL
 
-  $dbh->do($sql)
-      or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+#   $dbh->do($sql)
+#       or ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
 }
 
 sub getDblinkSuffix {
