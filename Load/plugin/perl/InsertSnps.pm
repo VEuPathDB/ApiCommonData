@@ -295,29 +295,29 @@ sub processSnpFile{
 
     my $snpFeature = $self->createSnpFeature($feature);
 
-    ##have snpFeature with all seqvars here .. only want to update if !NGS_SNP || NgsUpdateSnpFeature
-    if(!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature')){
-      my $snpStart = $feature->location()->start();
-      my $snpEnd = $feature->location()->end();
+    my $snpStart = $feature->location()->start();
+    my $snpEnd = $feature->location()->end();
+    
+    my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequence')->getId();
+    
+    my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+    my $transcriptId;
+    
+    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+    
+    my $isCoding = $codingSequence ne $mockCodingSequence;
+    
+    my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
+    
+    if($transcript) {
+      $transcriptId = $transcript->getId();
       
-      # MAL??
-      my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequenceImp')->getId();
-      
-      my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
-      my $transcriptId;
-      
-      my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
-      
-      my $isCoding = $codingSequence ne $mockCodingSequence;
-      
-      my ($codingSnpStart, $codingSnpEnd) = $self->getCodingSubstitutionPositions($codingSequence, $mockCodingSequence);
-      
-      if($transcript) {
-        $transcriptId = $transcript->getId();
-
-        my $geneFeatureId = $transcript->get('parent_id');
-        $snpFeature->set('parent_id', $geneFeatureId);
-      }
+      my $geneFeatureId = $transcript->getParentId();
+      $snpFeature->setParentId($geneFeatureId);
+    }
+    $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
+    ##have snpFeature with all seqvars here .. only want to update if new snpfeature || !NGS_SNP || NgsUpdateSnpFeature
+    if(!snpFeature->getModificationDate() || !$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature')){
 
       if($isCoding) {
         $snpFeature->setIsCoding(1);
@@ -335,7 +335,6 @@ sub processSnpFile{
         $snpFeature->setIsCoding(0);
       }
 
-      $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
       $self->_makeSnpFeatureDescriptionFromSeqVars($snpFeature, $isCoding);
 
       $self->_addMajorMinorInfo($snpFeature);
@@ -544,10 +543,13 @@ sub createSnpFeature {
   my ($self,$feature) = @_;
 
   my $name = $feature->primary_tag();
+  my $sfName = $name =~ /(insertion|deletion)/ ? 'indel' : $name;
 
   my $ngsExtDbRlsId = $self->{'ngsSnpExtDbRlsId'};
   my $extDbRlsId = $self->{'snpExtDbRlsId'};
-  my $soId = $self->{'soId'};
+  my $soId = $self->getSoId($name);
+  my $sfSoId = $self->getSoId($sfName);
+
 
   my ($sourceId) = $feature->get_tag_values('ID');
   my $organism = $self->getArg('organism');
@@ -563,8 +565,8 @@ sub createSnpFeature {
   my $ref = $self->getArg('reference');
 
   my $snpFeature = GUS::Model::DoTS::SnpFeature->
-    new({name => $name,
-         sequence_ontology_id => $soId,
+    new({name => $sfName,
+         sequence_ontology_id => $sfSoId,
          source_id => $sourceId,
          reference_strain => $ref,
          organism => $organism,
@@ -612,12 +614,11 @@ sub createSnpFeature {
 
     if(lc($ref) eq lc($strain)) {
       $snpFeature->setReferenceNa($base);
-
       $self->_isSnpPositionOk($naSeq, $base, $naLoc, $sourceId);
     }
 
     my $seqVarSoTerm = $self->getSeqVarSoTerm($start, $end, $base);
-    $soId = $self->getSoId($seqVarSoTerm);
+    $soId = $self->getSoId($seqVarSoTerm) unless $self->getArg('NGS_SNP');
 
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
@@ -658,8 +659,7 @@ sub createSnpFeature {
       $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
     }
   }
-  if(!$haveRef && (!$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature'))){  ##create a reference seqvar here ...
-    ## but if NGS_SNP then only create the reference if NgsUpdateSnpFeature is true
+  if(!$haveRef){  ##create a reference seqvar here ...
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
            'external_database_release_id' => $self->getArg('NGS_SNP') ? $naSeq->getExternalDatabaseReleaseId()  : $extDbRlsId,
@@ -682,15 +682,19 @@ sub createSnpFeature {
 sub getSoId {
   my ($self, $termName) = @_;
 
+  if($self->{soIdList}->{$termName}){
+    return $self->{soIdList}->{$termName};
+  }
+
   my $so = GUS::Model::SRes::SequenceOntology->new({'term_name'=>$termName});
 
   if (!$so->retrieveFromDB()) {
     $self->error("No row has been added for term_name = $termName in the sres.sequenceontology table\n");
   }
 
-  my $soId = $so->getId();
+  $self->{soIdList}->{$termName} = $so->getId();
 
-  return $soId;
+  return $so->getId();
 
 }
 
