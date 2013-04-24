@@ -311,13 +311,13 @@ sub processSnpFile{
     
     if($transcript) {
       $transcriptId = $transcript->getId();
-      
-      my $geneFeatureId = $transcript->getParentId();
-      $snpFeature->setParentId($geneFeatureId);
+    
+      my $geneFeatureId = $transcript->get('parent_id');
+      $snpFeature->set('parent_id', $geneFeatureId);
     }
     $self->_updateSequenceVars($snpFeature, $codingSequence, $codingSnpStart, $codingSnpEnd, $isCoding, $transcriptId);
     ##have snpFeature with all seqvars here .. only want to update if new snpfeature || !NGS_SNP || NgsUpdateSnpFeature
-    if(!snpFeature->getModificationDate() || !$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature')){
+    if(!$snpFeature->getModificationDate() || !$self->getArg('NGS_SNP') || $self->getArg('NgsUpdateSnpFeature')){
 
       if($isCoding) {
         $snpFeature->setIsCoding(1);
