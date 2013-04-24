@@ -50,7 +50,7 @@ and sf.external_database_release_id = rel.external_database_release_id
 and sf.organism = '$referenceOrganism')
 SQL
 
-print "Deleting from DoTS.SeqVariation\n";
+print "Deleting from DoTS.SeqVariation for '$referenceOrganism'\n";
 my $vr = $dbh->do($seqvarSQL) or die $dbh->errstr;
 $dbh->commit() unless $noCommit;
 
