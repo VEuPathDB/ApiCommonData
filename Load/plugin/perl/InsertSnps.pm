@@ -298,7 +298,7 @@ sub processSnpFile{
     my $snpStart = $feature->location()->start();
     my $snpEnd = $feature->location()->end();
     
-    my $naSeqId = $snpFeature->getParent('GUS::Model::DoTS::NASequence')->getId();
+    my $naSeqId = $snpFeature->getNaSequenceId();
     
     my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
     my $transcriptId;

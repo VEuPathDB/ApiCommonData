@@ -358,24 +358,6 @@ eval {
 
   releaseLockForUpdate() if !$prefix;
 
-  # set last updater in registry if we did a successful full update (and made changes)
-  $tuningRegistry->setLastUpdater()
-    if $doUpdate && $neededUpdateCount && !$tables && !$brokenCount && !$prefix;
-
-  # set last checker
-  $tuningRegistry->setLastChecker()
-    if !$tables && !$doUpdate && !$prefix;
-  $tuningRegistry->setLastUpdater()
-    if !$tables && !$doUpdate && !$prefix;
-
-  # set OK if: we looked at everything, nothing was broken, and if updates were needed, we did them.
-  $tuningRegistry->setOk()
-    if !$tables && !$brokenCount && (!$neededUpdateCount || $doUpdate) && !$prefix;
-
-  # set outdated if: something was broken, or needed an update but didn't get it
-  $tuningRegistry->setOutdated()
-    if ( ($neededUpdateCount && !$doUpdate) || $brokenCount) && !$prefix;
-
   # if a temporary config-file dir was checked out from svn, delete it now
   if ($subversionDir && !$prefix) {
     my @cmdLine = ("rm", "-rf", $subversionDir);

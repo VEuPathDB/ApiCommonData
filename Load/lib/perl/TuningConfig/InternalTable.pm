@@ -146,6 +146,7 @@ sub getState {
 
   my $needUpdate;
   my $broken;
+  my $tableStatus; # to store in apidb.TuningTable
 
   # check if the definition is different (or none is stored)
   if (!$self->{dbDef}) {
@@ -213,13 +214,22 @@ SQL
     ApiCommonData::Load::TuningConfig::Log::addLog("    " . $self->{name} . " has alwaysUpdate attribute.");
   }
 
+  $tableStatus = "up-to-date";
+  $tableStatus = "needs update"
+    if $needUpdate;
+
   if ( ($doUpdate and $needUpdate) or $self->{alwaysUpdate} or ($doUpdate and $prefix)) {
     if ($prefix && !$self->{prefixEnabled}) {
       ApiCommonData::Load::TuningConfig::Log::addErrorLog("attempt to update tuning table " . $self->{name} . ", which does not have the prefixEnabled attribute");
       $broken = 1;
     } else {
       my $updateResult = $self->update($dbh, $purgeObsoletes, $registry, $prefix, $filterValue);
-      $broken = 1 if $updateResult eq "broken";
+      if ($updateResult eq "broken") {
+	$broken = 1;
+	$tableStatus = "update failed";
+      } else {
+	$tableStatus = "up-to-date";
+      }
     }
   }
 
@@ -237,6 +247,7 @@ SQL
 
   ApiCommonData::Load::TuningConfig::Log::addLog("    $self->{name} found to be \"$self->{state}\"");
 
+  $self->setStatus($dbh, $tableStatus);
   return $self->{state};
 }
 
@@ -429,7 +440,8 @@ SQL
 
   my $sql = <<SQL;
        insert into apidb.TuningTable
-          (name, timestamp, definition) values (?, sysdate, ?)
+          (name, timestamp, definition, status, last_check)
+          values (?, sysdate, ?, 'up-to-date', sysdate)
 SQL
 
   my $stmt = $dbh->prepare($sql);
@@ -765,6 +777,32 @@ sub runSql {
   my $stmt = $dbh->prepare($sql);
   $stmt->execute() or die "failed executing SQL statement \"$sql\"\n";
   $stmt->finish();
+}
+
+sub setStatus {
+  my ($self, $dbh, $status) = @_;
+
+  my $sql = <<SQL;
+       update apidb.TuningTable
+       set status = ?,
+           last_check = sysdate
+       where lower(name) = lower(?)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+
+  ApiCommonData::Load::TuningConfig::Log::addLog("setting status of tuning table \""
+						 . $self->{qualifiedName} . "\" to \""
+						 . $status . "\"");
+
+  if (!$stmt->execute($status, $self->{qualifiedName})) {
+    ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
+    return "fail";
+  }
+
+  $stmt->finish();
+
+  return;
 }
 
 1;
