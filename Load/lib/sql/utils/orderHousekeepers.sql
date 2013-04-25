@@ -4,17 +4,17 @@
 
 ALTER TABLE &1
 ADD (
- new_modification_date            DATE NOT NULL,
- new_user_read                    NUMBER(1) NOT NULL,
- new_user_write                   NUMBER(1) NOT NULL,
- new_group_read                   NUMBER(1) NOT NULL,
- new_group_write                  NUMBER(1) NOT NULL,
- new_other_read                   NUMBER(1) NOT NULL,
- new_other_write                  NUMBER(1) NOT NULL,
- new_row_user_id                  NUMBER(12) NOT NULL,
- new_row_group_id                 NUMBER(3) NOT NULL,
- new_row_project_id               NUMBER(4) NOT NULL,
- new_row_alg_invocation_id        NUMBER(12) NOT NULL
+ new_modification_date            DATE,
+ new_user_read                    NUMBER(1),
+ new_user_write                   NUMBER(1),
+ new_group_read                   NUMBER(1),
+ new_group_write                  NUMBER(1),
+ new_other_read                   NUMBER(1),
+ new_other_write                  NUMBER(1),
+ new_row_user_id                  NUMBER(12),
+ new_row_group_id                 NUMBER(3),
+ new_row_project_id               NUMBER(4),
+ new_row_alg_invocation_id        NUMBER(12)
 );
 
 update &1 set
@@ -47,17 +47,17 @@ row_alg_invocation_id
 
 ALTER TABLE &1
 ADD (
- modification_date            DATE NOT NULL,
- user_read                    NUMBER(1) NOT NULL,
- user_write                   NUMBER(1) NOT NULL,
- group_read                   NUMBER(1) NOT NULL,
- group_write                  NUMBER(1) NOT NULL,
- other_read                   NUMBER(1) NOT NULL,
- other_write                  NUMBER(1) NOT NULL,
- row_user_id                  NUMBER(12) NOT NULL,
- row_group_id                 NUMBER(3) NOT NULL,
- row_project_id               NUMBER(4) NOT NULL,
- row_alg_invocation_id        NUMBER(12) NOT NULL
+ modification_date            DATE,
+ user_read                    NUMBER(1),
+ user_write                   NUMBER(1),
+ group_read                   NUMBER(1),
+ group_write                  NUMBER(1),
+ other_read                   NUMBER(1),
+ other_write                  NUMBER(1),
+ row_user_id                  NUMBER(12),
+ row_group_id                 NUMBER(3),
+ row_project_id               NUMBER(4),
+ row_alg_invocation_id        NUMBER(12)
 );
 
 update &1 set
