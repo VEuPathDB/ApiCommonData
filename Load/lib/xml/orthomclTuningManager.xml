@@ -156,4 +156,82 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="DomainAssignment">
+    <internalDependency name="SequenceAttributes"/>
+    <externalDependency name="dots.DomainFeature"/>
+    <externalDependency name="dots.DbRefAaFeature"/>
+    <externalDependency name="sres.DbRef"/>
+    <externalDependency name="sres.ExternalDatabaseRelease"/>
+    <externalDependency name="sres.ExternalDatabase"/>
+    <intermediateTable name="DomainIndex"/>
+
+    <sql>
+      <![CDATA[
+        create table DomainAssignment&1 nologging as
+        select sa.full_id, sa.group_name,
+               db.db_ref_id, db.primary_identifier as accession,
+               db.secondary_identifier as symbol, db.remark as description,
+               cast (null as NUMBER) as domain_index, sa.aa_sequence_id, al.start_min, al.end_max
+        from ApidbTuning.SequenceAttributes sa, dots.DomainFeature df,
+             dots.DbRefAaFeature dbaf, sres.DbRef db,
+             sres.ExternalDatabaseRelease edr, sres.ExternalDatabase ed,
+             dots.AaLocation al
+        where sa.aa_sequence_id = df.aa_sequence_id
+          and df.aa_feature_id = dbaf.aa_feature_id
+          and dbaf.db_ref_id = db.db_ref_id
+          and db.external_database_release_id = edr.external_database_release_id
+          and edr.external_database_id = ed.external_database_id
+          and df.aa_feature_id = al.aa_feature_id(+)
+          and ed.name = 'PFAM'
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index domain_accession_ix&1
+               on DomainAssignment&1 (accession, full_id, group_name)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create table domainIndex nologging as
+        select rownum as domain_index, accession
+        from (select distinct accession
+              from DomainAssignment&1
+              order by accession)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index domainIdxIdx on DomainIndex(accession, domain_index)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        update DomainAssignment&1 da
+        set domain_index = (select domain_index
+                            from DomainIndex
+                            where accession = da.accession)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index domain_ix_ix&1
+               on DomainAssignment&1 (domain_index, accession, full_id)
+      ]]>
+    </sql>
+
+    <sql>
+      <![CDATA[
+        create index domain_group_ix&1
+               on DomainAssignment&1 (group_name, accession, full_id)
+      ]]>
+    </sql>
+
+  </tuningTable>
+
 </tuningConfig>

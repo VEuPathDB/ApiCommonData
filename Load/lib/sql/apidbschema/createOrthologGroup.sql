@@ -825,7 +825,7 @@ CREATE TABLE ApiDB.OrthomclGroupKeyword (
  orthomcl_keyword_id           NUMBER(10) NOT NULL,
  ortholog_group_id             NUMBER(10) NOT NULL,
  keyword                       VARCHAR(255) NOT NULL,
- frequency                     VARCHAR(255) NOT NULL,
+ frequency                     VARCHAR(20) NOT NULL,
  modification_date             DATE NOT NULL,
  user_read                     NUMBER(1) NOT NULL,
  user_write                    NUMBER(1) NOT NULL,
@@ -844,7 +844,7 @@ CREATE TABLE ApiDB.OrthomclGroupKeyword (
 GRANT insert, select, update, delete ON ApiDB.OrthomclGroupKeyword TO gus_w;
 GRANT select ON ApiDB.OrthomclGroupKeyword TO gus_r;
 
-CREATE INDEX apidb.ogk_group_ix ON apidb.OrthomclGroupKeyword(ortholog_group_id);
+CREATE INDEX apidb.ogk_group_ix ON apidb.OrthomclGroupKeyword(ortholog_group_id, keyword, frequency);
 
 ------------------------------------------------------------------------------
 
@@ -896,7 +896,7 @@ CREATE TABLE ApiDB.OrthomclGroupDomain (
 GRANT insert, select, update, delete ON ApiDB.OrthomclGroupDomain TO gus_w;
 GRANT select ON ApiDB.OrthomclGroupDomain TO gus_r;
 
-CREATE INDEX apidb.ogd_group_ix ON apidb.OrthomclGroupDomain(ortholog_group_id);
+CREATE INDEX apidb.ogd_group_ix ON apidb.OrthomclGroupDomain(ortholog_group_id, frequency, description);
 
 ------------------------------------------------------------------------------
 

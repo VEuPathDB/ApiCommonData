@@ -6,6 +6,7 @@ CREATE TABLE apidb.Dataset (
  taxon_id                     NUMBER(12),
  type                         VARCHAR2(100),
  subtype                      VARCHAR2(100),
+ external_database_name       VARCHAR2(120),
  modification_date            DATE NOT NULL,
  user_read                    NUMBER(1) NOT NULL,
  user_write                   NUMBER(1) NOT NULL,

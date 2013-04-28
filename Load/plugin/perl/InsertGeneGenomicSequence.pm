@@ -90,7 +90,8 @@ sub run {
                then apidb.reverse_complement_clob(substr(s.sequence, gm.start_min, (gm.end_max - gm.start_min) + 1))
               when type = 'intron' and gl.is_reversed = 0
                then lower(substr(s.sequence, gm.start_min, (gm.end_max - gm.start_min) + 1))
-              else lower(apidb.reverse_complement_clob(substr(s.sequence, gm.start_min, (gm.end_max - gm.start_min) + 1)))
+              when type = 'intron' and gl.is_reversed = 1 and gm.end_max >= gm.start_min
+               then lower(apidb.reverse_complement_clob(substr(s.sequence, gm.start_min, (gm.end_max - gm.start_min) + 1)))
              end as sequence,
              case 
 	      when gl.is_reversed = 1 then -1 * gm.start_min 

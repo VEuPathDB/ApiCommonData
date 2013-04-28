@@ -126,10 +126,12 @@ sub display {
   print OUT "CODON\tAA\tFREQ\tABUNDANCE\n";
   foreach my $aa (sort @fields) {
     foreach my $codon (@{$reverseCode{$aa}}){
-      my $freq = $usage{$codon}*1000/$totalCount;
-      my $abundance =  ($usage{$codon})/($codonCount{$aa});
-      $codon =~ s/T/U/g; # change 'T' to 'U' in the codon, as in the RNA seq
-      print OUT "$codon\t$aa\t" . sprintf("%.2f", $freq) . " \t" . sprintf("%.2f",  $abundance) . "\n";
+      if ($codonCount{$aa} != 0 && $totalCount != 0) {
+        my $freq = $usage{$codon}*1000/$totalCount;
+        my $abundance =  ($usage{$codon})/($codonCount{$aa});
+        $codon =~ s/T/U/g; # change 'T' to 'U' in the codon, as in the RNA seq
+        print OUT "$codon\t$aa\t" . sprintf("%.2f", $freq) . " \t" . sprintf("%.2f",  $abundance) . "\n";
+      }
     }
   }
 }

@@ -1,7 +1,10 @@
 create table apidb.TuningTable (
    name       varchar2(65) primary key,
    timestamp  date not null,
-   definition clob not null);
+   definition clob not null,
+   status     varchar2(20),
+   last_check date
+  );
 
 grant select on apidb.TuningTable to gus_r;
 grant insert, update, delete on apidb.TuningTable to gus_w;

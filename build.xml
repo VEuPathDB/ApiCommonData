@@ -86,8 +86,7 @@
   <target name="ApiCommonData-Installation" depends="FgpUtil-Installation,
                                             GUS-Installation,
                                             DoTS-Installation,
-                                            ApiCommonData/Load-Installation,
-                                            ApiCommonData/Dump-Installation">
+                                            ApiCommonData/Load-Installation">
 
     <ant target="defaultProjectInstall"/>
   </target>  
@@ -115,15 +114,6 @@
       <property name="component" value="Load"/>
     </ant>
   </target>  
-
-
-  <target name="ApiCommonData/Dump-Installation" depends="ProjectTree">
-    <ant target="defaultComponentInstall">
-      <property name="project" value="ApiCommonData"/>
-      <property name="component" value="Dump"/>
-    </ant>
-  </target>  
-
 
   <target name="ApiCommonData/Datasources-Installation" depends="ProjectTree">
     <property name="loadresources" value="${targetDir}/lib/xml/loadresources"/>
