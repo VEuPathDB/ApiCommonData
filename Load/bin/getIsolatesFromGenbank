@@ -13,6 +13,8 @@ my $PRINT_URLS = 0;
 
 my ($outputFile, $organismAbbrev) = @ARGV;
 
+usage() unless $outputFile;
+
 my $parentNcbiTaxonIds;
 if (!$organismAbbrev) {
   my @taxonIdsFromStdIn = <STDIN>;
