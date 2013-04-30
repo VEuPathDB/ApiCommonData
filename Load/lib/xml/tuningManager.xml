@@ -563,7 +563,7 @@ FROM (
   SELECT lower(source_id) as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+    AND so.term_name in ('random_sequence', 'contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
 UNION
   SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
   FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
@@ -1615,7 +1615,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+  AND so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
   AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+)
