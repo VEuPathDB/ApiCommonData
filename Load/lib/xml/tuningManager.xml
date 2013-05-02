@@ -365,20 +365,29 @@ tablespace indx
        mapping.
     -->
     <internalDependency name="FeatureLocation"/>
+    <externalDependency name="apidb.GeneFeatureName"/>
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
-    <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.GeneFeature"/>
+    <externalDependency name="dots.NaFeatureNaGene"/>
+    <externalDependency name="dots.NaGene"/>
+    <externalDependency name="dots.NaSequence"/>
+    <externalDependency name="dots.Transcript"/>
     <externalDependency name="sres.DbRef"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <externalDependency name="apidb.GeneFeatureName"/>
+    <externalDependency name="sres.TaxonName"/>
+    <intermediateTable name="CommentAssignment"/>
+    <intermediateTable name="NewCsi"/>
     <sql>
       <![CDATA[
 CREATE TABLE &prefixGeneId&1 NOLOGGING AS
-SELECT mapping.id, mapping.gene, cast (null as NUMBER) as unique_mapping,
-       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab)),'; '), 1, 80) as union_member, 
-       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab)),'; '), 1, 80) as database_name
+SELECT substr(mapping.id, 1, 100) as id, mapping.gene, cast (null as NUMBER) as unique_mapping,
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab)),'; '), 1, 100) as union_member, 
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab)),'; '), 1, 200) as database_name
+--   we would use listagg() as follows, but it repeats duplicate values, and doesn't provide a way to aggregate DISTINCT values. (lame!)
+--       substr(listagg(union_member, '; ') within group (order by union_member), 1, 100) as union_member,
+--       substr(listagg(database_name, '; ') within group (order by database_name), 1, 200) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
              gf.source_id AS gene,
              'Transcript.protein_id before dot' as union_member, ed.name as database_name -- dots.Transcript.protein_id, trimmed at period
@@ -450,7 +459,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
              'genbank DbRef.primary_identifier' as union_member, ed.name as database_name -- sres.DbRef.primary_identifier for Genbank records
-      FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
+      FROM dots.GeneFeature gf, dots.Transcript t, dots.DbRefNaSequence drns,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
             sres.ExternalDatabase ed
       WHERE gf.na_feature_id = t.parent_id
@@ -546,6 +555,46 @@ CREATE INDEX GeneId_uniqlowid_idx&1 ON &prefixGeneId&1 (unique_mapping, lower(id
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE &prefixCommentAssignment NOLOGGING AS
+WITH projects AS
+       (SELECT DISTINCT project_id FROM &prefixFeatureLocation), 
+     project_comments AS
+       (SELECT stable_id, comment_id
+        FROM comments2.comments@&dblink
+        WHERE project_name in (select project_id FROM projects)
+          AND comment_target_id = 'gene')
+  SELECT stable_id, comment_id
+  FROM project_comments
+UNION
+  SELECT csi.stable_id, csi.comment_id
+  FROM project_comments pc, comments2.commentStableId@&dblink csi
+  WHERE csi.comment_id = pc.comment_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE &prefixNewCsi nologging as
+SELECT stable_id, comment_id, comments2.CommentStableId_pkseq.nextval@&dblink as comment_stable_id
+FROM (  SELECT gi.gene AS stable_id, ca.comment_id
+        FROM ApidbTuning.GeneId gi, &prefixCommentAssignment ca
+        WHERE gi.id = ca.stable_id
+          AND gi.id != gi.gene
+      MINUS
+        SELECT stable_id, comment_id
+        FROM &prefixCommentAssignment ca)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+INSERT INTO comments2.CommentStableId@&dblink
+           (stable_id, comment_id, comment_stable_id)
+SELECT stable_id, comment_id, comment_stable_id
+FROM &prefixNewCsi
+      ]]>
+    </sql>
+    <program commandLine="showNewCommentLinks"/>
   </tuningTable>
 
   <tuningTable name="SequenceId">
