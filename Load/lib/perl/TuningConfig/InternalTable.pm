@@ -353,6 +353,8 @@ sub update {
                       . " -branch '" . $registry->getSubversionBranch() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
+                      . " -prefix '" . $prefix . "'"
+                      . " -dblink '" . $self->{dblink} . "'"
                       . $debug
                       . " 2>&1 ";
 
