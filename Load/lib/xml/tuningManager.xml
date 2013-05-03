@@ -195,6 +195,15 @@ tablespace indx
     <sql>
       <![CDATA[
 create table &prefixFeatureLocation&1 NOLOGGING as
+with taxa as
+       (select distinct taxon_id
+        from dots.NaSequence ns, dots.NaFeature nf
+        where ns.na_sequence_id = nf.na_sequence_id),
+     project_mapping AS
+       (select name AS organism, cast(apidb.project_id(name) as varchar2(20)) as project
+        from sres.TaxonName
+        where name_class = 'scientific name'
+          and taxon_id in (select taxon_id from taxa))
 select case
          when nf.subclass_view = 'GeneFeature'
               and nf.is_predicted = 1
@@ -211,7 +220,7 @@ select case
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
        cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
        nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes ns,
      dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
@@ -258,7 +267,7 @@ select -- virtual feature locations mapped through SequencePiece
            then sp.distance_from_left + sp.end_position - coding_end + 1
          else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes contig,
      &prefixSequencePieceClosure sp, &prefixSequenceAttributes scaffold, dots.ExonFeature ef,
      sres.TaxonName tn
