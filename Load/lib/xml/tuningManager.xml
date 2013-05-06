@@ -5470,6 +5470,56 @@ WHERE s1.property = 'CID'
     <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
 
+  <tuningTable name="DatasetDetail">
+    <internalDependency name="DatasetPresenter"/>
+    <sql>
+      <![CDATA[
+      CREATE TABLE DATASETDETAIL&1
+      as
+      select dataset_presenter_id, 
+      name||' '||category||' '||usage||' '|| 
+      caveat||' '||acknowledgement||' '||type||' '||subtype
+      ||' '||summary||' '||description as search_string
+      from (
+      select
+      sub.dataset_presenter_id as dataset_presenter_id, 
+      sub.name as name, 
+      sub.category as category,
+      sub.usage as usage, 
+      sub.caveat as caveat,
+      sub.acknowledgement as acknowledgement, 
+      sub.type as type, 
+      sub.subtype as subtype,
+      dp.summary,
+      dp.description
+      from APIDBTUNING.datasetpresenter dp,
+      (
+      select distinct
+      dp.dataset_presenter_id as dataset_presenter_id, 
+      dp.display_name as name, 
+      dp.display_category as category,
+      dp.usage as usage, 
+      dp.caveat as caveat,
+      dp.acknowledgement as acknowledgement, 
+      dp.type as type, 
+      dp.subtype as subtype 
+      from apidbtuning.datasetpresenter dp, APIDBTUNING.datasetcontact dc, 
+      APIDBTUNING.datasetpublication dpub  
+      where dp.dataset_presenter_id = dc.dataset_presenter_id
+      and   dp.dataset_presenter_id = dpub.dataset_presenter_id
+      ) sub
+      
+      where dp.dataset_presenter_id = sub.dataset_presenter_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+          CREATE INDEX DATASET_DETAIL_IDX&1 ON DATASETDETAIL&1 (search_string)
+          INDEXTYPE IS CTXSYS.CONTEXT
+      ]]>
+    </sql>
+
+  </tuningTable>
 
 
   <tuningTable name="TrackOldAnnotation" alwaysUpdate="true">
