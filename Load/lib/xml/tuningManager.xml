@@ -195,15 +195,18 @@ tablespace indx
     <sql>
       <![CDATA[
 create table &prefixFeatureLocation&1 NOLOGGING as
-with taxa as
+          with taxa as
        (select distinct taxon_id
         from dots.NaSequence ns, dots.NaFeature nf
         where ns.na_sequence_id = nf.na_sequence_id),
      project_mapping AS
-       (select name AS organism, cast(apidb.project_id(name) as varchar2(20)) as project
-        from sres.TaxonName
-        where name_class = 'scientific name'
-          and taxon_id in (select taxon_id from taxa))
+       (select distinct tn.name AS organism,  pi.name as project
+        from sres.TaxonName tn, dots.NASequence na, 
+        core.ProjectInfo pi
+        where tn.name_class = 'scientific name'
+          and tn.taxon_id = na.taxon_id
+          and na.row_project_id = pi.project_id
+          )
 select case
          when nf.subclass_view = 'GeneFeature'
               and nf.is_predicted = 1
@@ -5476,10 +5479,11 @@ WHERE s1.property = 'CID'
       <![CDATA[
       CREATE TABLE DATASETDETAIL&1
       as
-      select dataset_presenter_id, 
+            select dataset_presenter_id, 
       name||' '||category||' '||usage||' '|| 
       caveat||' '||acknowledgement||' '||type||' '||subtype
-      ||' '||summary||' '||description as search_string
+      ||' '| |summary||' '||description||' '||contact||' '||
+      institution||' '||pubmed_id||' '||citation as search_string
       from (
       select
       sub.dataset_presenter_id as dataset_presenter_id, 
@@ -5490,6 +5494,10 @@ WHERE s1.property = 'CID'
       sub.acknowledgement as acknowledgement, 
       sub.type as type, 
       sub.subtype as subtype,
+      sub.contact,
+      sub.institution,
+      sub.pubmed_id,
+      sub.citation,
       dp.summary,
       dp.description
       from APIDBTUNING.datasetpresenter dp,
@@ -5502,11 +5510,19 @@ WHERE s1.property = 'CID'
       dp.caveat as caveat,
       dp.acknowledgement as acknowledgement, 
       dp.type as type, 
-      dp.subtype as subtype 
+      dp.subtype as subtype, 
+      dc.name as contact,
+      dc.affiliation as institution,
+      LISTAGG(dpub.pmid, ' ') WITHIN GROUP (ORDER BY dpub.pmid) as pubmed_id,
+      LISTAGG(dpub.citation, '  ') WITHIN GROUP (ORDER BY dpub.citation) as citation
       from apidbtuning.datasetpresenter dp, APIDBTUNING.datasetcontact dc, 
       APIDBTUNING.datasetpublication dpub  
       where dp.dataset_presenter_id = dc.dataset_presenter_id
       and   dp.dataset_presenter_id = dpub.dataset_presenter_id
+      and   dc.is_primary_contact = 1
+      group by dp.dataset_presenter_id, dp.display_name,dp.display_category,
+               dp.usage,dp.caveat,dp.acknowledgement,dp.type,dp.subtype,dc.name,
+               dc.affiliation
       ) sub
       
       where dp.dataset_presenter_id = sub.dataset_presenter_id)
