@@ -353,6 +353,8 @@ sub update {
                       . " -branch '" . $registry->getSubversionBranch() . "'"
                       . " -subversionDir '" . $self->{subversionDir} . "'"
                       . " -suffix '" . $suffix . "'"
+                      . " -prefix '" . $prefix . "'"
+                      . " -dblink '" . $self->{dblink} . "'"
                       . $debug
                       . " 2>&1 ";
 
@@ -785,6 +787,7 @@ sub setStatus {
   my $sql = <<SQL;
        update apidb.TuningTable
        set status = ?,
+           check_os_user = ?,
            last_check = sysdate
        where lower(name) = lower(?)
 SQL
@@ -795,7 +798,10 @@ SQL
 						 . $self->{qualifiedName} . "\" to \""
 						 . $status . "\"");
 
-  if (!$stmt->execute($status, $self->{qualifiedName})) {
+  my $osUser = `whoami`;
+  chomp($osUser);
+
+  if (!$stmt->execute($status, $osUser, $self->{qualifiedName})) {
     ApiCommonData::Load::TuningConfig::Log::addErrorLog("\n" . $dbh->errstr . "\n");
     return "fail";
   }

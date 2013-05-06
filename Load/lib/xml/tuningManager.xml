@@ -195,6 +195,15 @@ tablespace indx
     <sql>
       <![CDATA[
 create table &prefixFeatureLocation&1 NOLOGGING as
+with taxa as
+       (select distinct taxon_id
+        from dots.NaSequence ns, dots.NaFeature nf
+        where ns.na_sequence_id = nf.na_sequence_id),
+     project_mapping AS
+       (select name AS organism, cast(apidb.project_id(name) as varchar2(20)) as project
+        from sres.TaxonName
+        where name_class = 'scientific name'
+          and taxon_id in (select taxon_id from taxa))
 select case
          when nf.subclass_view = 'GeneFeature'
               and nf.is_predicted = 1
@@ -211,7 +220,7 @@ select case
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
        cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
        nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes ns,
      dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
@@ -258,7 +267,7 @@ select -- virtual feature locations mapped through SequencePiece
            then sp.distance_from_left + sp.end_position - coding_end + 1
          else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes contig,
      &prefixSequencePieceClosure sp, &prefixSequenceAttributes scaffold, dots.ExonFeature ef,
      sres.TaxonName tn
@@ -365,20 +374,29 @@ tablespace indx
        mapping.
     -->
     <internalDependency name="FeatureLocation"/>
+    <externalDependency name="apidb.GeneFeatureName"/>
     <externalDependency name="dots.DbRefNaFeature"/>
     <externalDependency name="dots.DbRefNaSequence"/>
-    <externalDependency name="dots.NaFeatureImp"/>
     <externalDependency name="dots.GeneFeature"/>
+    <externalDependency name="dots.NaFeatureNaGene"/>
+    <externalDependency name="dots.NaGene"/>
+    <externalDependency name="dots.NaSequence"/>
+    <externalDependency name="dots.Transcript"/>
     <externalDependency name="sres.DbRef"/>
     <externalDependency name="sres.ExternalDatabase"/>
     <externalDependency name="sres.ExternalDatabaseRelease"/>
-    <externalDependency name="apidb.GeneFeatureName"/>
+    <externalDependency name="sres.TaxonName"/>
+    <intermediateTable name="CommentAssignment"/>
+    <intermediateTable name="NewCsi"/>
     <sql>
       <![CDATA[
 CREATE TABLE &prefixGeneId&1 NOLOGGING AS
-SELECT mapping.id, mapping.gene, cast (null as NUMBER) as unique_mapping,
-       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab)),'; '), 1, 80) as union_member, 
-       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab)),'; '), 1, 80) as database_name
+SELECT substr(mapping.id, 1, 100) as id, mapping.gene, cast (null as NUMBER) as unique_mapping,
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(union_member order by union_member) AS apidb.varchartab)),'; '), 1, 100) as union_member, 
+       SUBSTR(apidb.tab_to_string(set(CAST(COLLECT(database_name order by database_name) AS apidb.varchartab)),'; '), 1, 200) as database_name
+--   we would use listagg() as follows, but it repeats duplicate values, and doesn't provide a way to aggregate DISTINCT values. (lame!)
+--       substr(listagg(union_member, '; ') within group (order by union_member), 1, 100) as union_member,
+--       substr(listagg(database_name, '; ') within group (order by database_name), 1, 200) as database_name
 FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
              gf.source_id AS gene,
              'Transcript.protein_id before dot' as union_member, ed.name as database_name -- dots.Transcript.protein_id, trimmed at period
@@ -450,7 +468,7 @@ FROM (SELECT substr(t.protein_id, 1, instr(t.protein_id, '.') - 1) AS id,
       SELECT dr.primary_identifier AS id, 
              gf.source_id AS gene,
              'genbank DbRef.primary_identifier' as union_member, ed.name as database_name -- sres.DbRef.primary_identifier for Genbank records
-      FROM dots.GeneFeature gf, dots.Transcript t, dots.dbrefNaSequence drns,
+      FROM dots.GeneFeature gf, dots.Transcript t, dots.DbRefNaSequence drns,
            sres.DbRef dr, sres.ExternalDatabaseRelease edr,
             sres.ExternalDatabase ed
       WHERE gf.na_feature_id = t.parent_id
@@ -546,6 +564,46 @@ CREATE INDEX GeneId_uniqlowid_idx&1 ON &prefixGeneId&1 (unique_mapping, lower(id
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE &prefixCommentAssignment NOLOGGING AS
+WITH projects AS
+       (SELECT DISTINCT project_id FROM &prefixFeatureLocation), 
+     project_comments AS
+       (SELECT stable_id, comment_id
+        FROM comments2.comments@&dblink
+        WHERE project_name in (select project_id FROM projects)
+          AND comment_target_id = 'gene')
+  SELECT stable_id, comment_id
+  FROM project_comments
+UNION
+  SELECT csi.stable_id, csi.comment_id
+  FROM project_comments pc, comments2.commentStableId@&dblink csi
+  WHERE csi.comment_id = pc.comment_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+CREATE TABLE &prefixNewCsi nologging as
+SELECT stable_id, comment_id, comments2.CommentStableId_pkseq.nextval@&dblink as comment_stable_id
+FROM (  SELECT gi.gene AS stable_id, ca.comment_id
+        FROM ApidbTuning.GeneId gi, &prefixCommentAssignment ca
+        WHERE gi.id = ca.stable_id
+          AND gi.id != gi.gene
+      MINUS
+        SELECT stable_id, comment_id
+        FROM &prefixCommentAssignment ca)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+INSERT INTO comments2.CommentStableId@&dblink
+           (stable_id, comment_id, comment_stable_id)
+SELECT stable_id, comment_id, comment_stable_id
+FROM &prefixNewCsi
+      ]]>
+    </sql>
+    <program commandLine="showNewCommentLinks"/>
   </tuningTable>
 
   <tuningTable name="SequenceId">
@@ -563,7 +621,7 @@ FROM (
   SELECT lower(source_id) as id, source_id as sequence
   FROM dots.NaSequence ns, sres.SequenceOntology so
   WHERE ns.sequence_ontology_id = so.sequence_ontology_id
-    AND so.term_name in ('contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+    AND so.term_name in ('random_sequence', 'contig', 'supercontig', 'chromosome','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
 UNION
   SELECT LOWER(dr.primary_identifier) AS id, ns.source_id AS sequence
   FROM dots.NaSequence ns, dots.DbRefNaSequence drnf,
@@ -1615,7 +1673,7 @@ WHERE sequence.taxon_id = tn.taxon_id(+)
   AND tn.name_class = 'scientific name'
   AND sequence.taxon_id = taxon.taxon_id
   AND sequence.sequence_ontology_id = so.sequence_ontology_id
-  AND so.term_name IN ('chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
+  AND so.term_name IN ('random_sequence', 'chromosome', 'contig', 'supercontig','mitochondrial_chromosome','plastid_sequence','cloned_genomic','apicoplast_chromosome')
   AND sequence.na_sequence_id = genbank.na_sequence_id(+)
   AND sequence.external_database_release_id = db.external_database_release_id(+)
   AND sequence.na_sequence_id = virtualization.piece_na_sequence_id(+)
@@ -5412,6 +5470,57 @@ WHERE s1.property = 'CID'
     <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
 
+  <tuningTable name="DatasetDetails">
+    <internalDependency name="DatasetPresenter"/>
+    <sql>
+      <![CDATA[
+      CREATE TABLE DATASETDETAILS 
+      as
+      select dataset_presenter_id, 
+      name||' '||category||' '||usage||' '|| 
+      caveat||' '||acknowledgement||' '||type||' '||subtype
+      ||' '||summary||' '||description as search_string
+      from (
+      select
+      sub.dataset_presenter_id as dataset_presenter_id, 
+      sub.name as name, 
+      sub.category as category,
+      sub.usage as usage, 
+      sub.caveat as caveat,
+      sub.acknowledgement as acknowledgement, 
+      sub.type as type, 
+      sub.subtype as subtype,
+      dp.summary,
+      dp.description
+      from APIDBTUNING.datasetpresenter dp,
+      (
+      select distinct
+      dp.dataset_presenter_id as dataset_presenter_id, 
+      dp.display_name as name, 
+      dp.display_category as category,
+      dp.usage as usage, 
+      dp.caveat as caveat,
+      dp.acknowledgement as acknowledgement, 
+      dp.type as type, 
+      dp.subtype as subtype 
+      from apidbtuning.datasetpresenter dp, APIDBTUNING.datasetcontact dc, 
+      APIDBTUNING.datasetpublication dpub  
+      where dp.dataset_presenter_id = dc.dataset_presenter_id
+      and   dp.dataset_presenter_id = dpub.dataset_presenter_id
+      ) sub
+      
+      where dp.dataset_presenter_id = sub.dataset_presenter_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+          CREATE INDEX DATASET_DETAILS_IDX ON DATASETDETAILS (search_string)
+          INDEXTYPE IS CTXSYS.CONTEXT
+          tablespace indx
+      ]]>
+    </sql>
+
+  </tuningTable>
 
 
   <tuningTable name="TrackOldAnnotation" alwaysUpdate="true">
