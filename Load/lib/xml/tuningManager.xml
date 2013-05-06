@@ -195,6 +195,18 @@ tablespace indx
     <sql>
       <![CDATA[
 create table &prefixFeatureLocation&1 NOLOGGING as
+          with taxa as
+       (select distinct taxon_id
+        from dots.NaSequence ns, dots.NaFeature nf
+        where ns.na_sequence_id = nf.na_sequence_id),
+     project_mapping AS
+       (select distinct tn.name AS organism,  pi.name as project
+        from sres.TaxonName tn, dots.NASequence na, 
+        core.ProjectInfo pi
+        where tn.name_class = 'scientific name'
+          and tn.taxon_id = na.taxon_id
+          and na.row_project_id = pi.project_id
+          )
 select case
          when nf.subclass_view = 'GeneFeature'
               and nf.is_predicted = 1
@@ -211,7 +223,7 @@ select case
        nl.is_reversed, nf.parent_id, nf.sequence_ontology_id,
        cast (null as number) as is_top_level, ef.coding_start, ef.coding_end,
        nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes ns,
      dots.ExonFeature ef, sres.TaxonName tn
 where nf.na_feature_id = nl.na_feature_id
@@ -258,7 +270,7 @@ select -- virtual feature locations mapped through SequencePiece
            then sp.distance_from_left + sp.end_position - coding_end + 1
          else sp.distance_from_left + coding_end - sp.start_position + 1
        end as coding_end, nf.external_database_release_id,
-       cast(apidb.project_id(tn.name) as varchar2(20)) as project_id
+       (select project from project_mapping where organism = tn.name) as project_id
 from dots.NaFeature nf, dots.NaLocation nl, &prefixSequenceAttributes contig,
      &prefixSequencePieceClosure sp, &prefixSequenceAttributes scaffold, dots.ExonFeature ef,
      sres.TaxonName tn
@@ -5461,6 +5473,69 @@ WHERE s1.property = 'CID'
     <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
 
+  <tuningTable name="DatasetDetail">
+    <internalDependency name="DatasetPresenter"/>
+    <sql>
+      <![CDATA[
+      CREATE TABLE DATASETDETAIL&1
+      as
+            select dataset_presenter_id, 
+      name||' '||category||' '||usage||' '|| 
+      caveat||' '||acknowledgement||' '||type||' '||subtype
+      ||' '| |summary||' '||description||' '||contact||' '||
+      institution||' '||pubmed_id||' '||citation as search_string
+      from (
+      select
+      sub.dataset_presenter_id as dataset_presenter_id, 
+      sub.name as name, 
+      sub.category as category,
+      sub.usage as usage, 
+      sub.caveat as caveat,
+      sub.acknowledgement as acknowledgement, 
+      sub.type as type, 
+      sub.subtype as subtype,
+      sub.contact,
+      sub.institution,
+      sub.pubmed_id,
+      sub.citation,
+      dp.summary,
+      dp.description
+      from APIDBTUNING.datasetpresenter dp,
+      (
+      select distinct
+      dp.dataset_presenter_id as dataset_presenter_id, 
+      dp.display_name as name, 
+      dp.display_category as category,
+      dp.usage as usage, 
+      dp.caveat as caveat,
+      dp.acknowledgement as acknowledgement, 
+      dp.type as type, 
+      dp.subtype as subtype, 
+      dc.name as contact,
+      dc.affiliation as institution,
+      LISTAGG(dpub.pmid, ' ') WITHIN GROUP (ORDER BY dpub.pmid) as pubmed_id,
+      LISTAGG(dpub.citation, '  ') WITHIN GROUP (ORDER BY dpub.citation) as citation
+      from apidbtuning.datasetpresenter dp, APIDBTUNING.datasetcontact dc, 
+      APIDBTUNING.datasetpublication dpub  
+      where dp.dataset_presenter_id = dc.dataset_presenter_id
+      and   dp.dataset_presenter_id = dpub.dataset_presenter_id
+      and   dc.is_primary_contact = 1
+      group by dp.dataset_presenter_id, dp.display_name,dp.display_category,
+               dp.usage,dp.caveat,dp.acknowledgement,dp.type,dp.subtype,dc.name,
+               dc.affiliation
+      ) sub
+      
+      where dp.dataset_presenter_id = sub.dataset_presenter_id)
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+          CREATE INDEX DATASET_DETAIL_IDX&1 ON DATASETDETAIL&1 (search_string)
+          INDEXTYPE IS CTXSYS.CONTEXT
+      ]]>
+    </sql>
+
+  </tuningTable>
 
 
   <tuningTable name="TrackOldAnnotation" alwaysUpdate="true">
