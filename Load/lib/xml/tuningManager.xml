@@ -5470,11 +5470,11 @@ WHERE s1.property = 'CID'
     <program commandLine="buildDatasetPresentersTT"/>
   </tuningTable>
 
-  <tuningTable name="DatasetDetails">
+  <tuningTable name="DatasetDetail">
     <internalDependency name="DatasetPresenter"/>
     <sql>
       <![CDATA[
-      CREATE TABLE DATASETDETAILS 
+      CREATE TABLE DATASETDETAIL&1
       as
       select dataset_presenter_id, 
       name||' '||category||' '||usage||' '|| 
@@ -5514,9 +5514,8 @@ WHERE s1.property = 'CID'
     </sql>
     <sql>
       <![CDATA[
-          CREATE INDEX DATASET_DETAILS_IDX ON DATASETDETAILS (search_string)
+          CREATE INDEX DATASET_DETAIL_IDX&1 ON DATASETDETAIL&1 (search_string)
           INDEXTYPE IS CTXSYS.CONTEXT
-          tablespace indx
       ]]>
     </sql>
 
