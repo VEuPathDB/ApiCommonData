@@ -48,8 +48,14 @@ sub processInputProfileSet {
 				    $descrip, $sourceIdType, $isLogged, $base);
 
   $profileSet->submit();
-  my $profileSetId = $profileSet->getId();
-  my $elementCount = $profileSet->getElementCount();
+
+
+  my %eoToPen;
+  foreach($profileSet->getChildren('ApiDB::ProfileElementName', 1)) {
+    my $elementOrder = $_->getElementOrder();
+    $eoToPen{$elementOrder} = $_;
+  }
+
 
   my $count = 0;
   my $notFound = 0;
@@ -59,8 +65,8 @@ sub processInputProfileSet {
     $profileRows = \@profileRowsNoReps;
   }
   foreach my $profileRow (@$profileRows) {
-    my $profile = &makeProfile($plugin, $profileRow, $profileSetId,
-				$elementCount,
+    my $profile = &makeProfile($plugin, $profileRow, $profileSet,
+				\%eoToPen,
 				$sourceIdType,
 				$tolerateMissingIds,
 				$loadProfileElement,
@@ -109,10 +115,12 @@ sub makeProfileSet {
 }
 
 sub makeProfile {
-  my ($plugin, $profileRow, $profileSetId, $elementCount, $sourceIdType, $tolerateMissingIds, $loadProfileElement, $optionalOrganismAbbrev) = @_;
+  my ($plugin, $profileRow, $profileSet, $eoToPen, $sourceIdType, $tolerateMissingIds, $loadProfileElement, $optionalOrganismAbbrev) = @_;
 
   my $subject_id;
   my $sourceId = shift(@$profileRow);
+
+  my $elementCount = $profileSet->getElementCount();
 
   scalar(@$profileRow) == $elementCount || $plugin->error("Expected $elementCount elements, but found " . scalar(@$profileRow) . " in line: " . join ("\t", @$profileRow));
 
@@ -137,6 +145,10 @@ sub makeProfile {
   } elsif ($sourceIdType eq 'oligo') {
     $subjectTableId = $plugin->className2TableId('DoTS::ExternalNaSequence');
     $subjectRowId = &_getExternalNaSequenceId($plugin, $sourceId);
+  } elsif ($sourceIdType eq 'compound') {
+    $subjectTableId = $plugin->className2TableId('ApiDB::PubChemCompound');
+
+    $subjectRowId = &_getCompoundId($plugin, $sourceId);
   }
 
   if ($subjectTableId && !$subjectRowId) {
@@ -150,22 +162,27 @@ sub makeProfile {
 
   my $profile = GUS::Model::ApiDB::Profile->
       new({source_id => $sourceId,
-	   profile_set_id => $profileSetId,
 	   subject_table_id => $subjectTableId,
 	   subject_row_id => $subjectRowId,
 	   no_evidence_of_expr => $plugin->{duds}->{$sourceId}? 1 : 0,
 	   profile_as_string => join("\t", @$profileRow),
 	  });
 
+  $profile->setParent($profileSet);
+
+
   if($loadProfileElement){
     my $count = 1;
     foreach my $value (@$profileRow) {
       $value = undef if($value eq 'NA');
       my $profileElement = GUS::Model::ApiDB::ProfileElement->
-	new({value => $value,
-	     element_order => $count++,
-	    });
+	new({value => $value });
+
+      my $profileElementName = $eoToPen->{$count};
+
+      $profileElement->setParent($profileElementName);
       $profile->addChild($profileElement);
+      $count++;
     }
   }
 
@@ -223,8 +240,28 @@ AND extSeq.sequence_ontology_id = so.sequence_ontology_id
     }
     
   }
-
   my $naSeqId = $plugin->{naSequenceIds}->{$sourceId};
 
   return $naSeqId;
 }
+
+sub _getCompoundId {
+  my ($plugin, $sourceId) = @_;
+
+  my $sql = "
+SELECT pubchem_compound_id 
+FROM ApiDB.pubchemcompound 
+WHERE TO_CHAR(compound_id)  = '$sourceId'
+AND property='Mass'
+UNION
+SELECT c.pubchem_compound_id
+FROM SRes.dbref r, ApiDB.dbrefcompound l, ApiDB.pubchemcompound c
+WHERE r.primary_identifier ='$sourceId'
+AND r.db_ref_id = l.db_ref_id
+AND l.compound_id = c.compound_id
+AND c.property='Mass'";
+  my $stmt = $plugin->prepareAndExecute($sql);
+  my $comp_id = $stmt->fetchrow_array();
+  return $comp_id;
+}
+
