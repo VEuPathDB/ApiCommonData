@@ -300,7 +300,7 @@ sub getNaSequenceId {
 
   my $sql = "SELECT s.na_sequence_id FROM dots.nasequence s, sres.sequenceontology so
              WHERE  so.sequence_ontology_id = s.sequence_ontology_id and s.source_id = ? 
-              and so.term_name in ( 'supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')";
+              and so.term_name in ( 'random_sequence','supercontig','chromosome','contig','mitochondrial_chromosome','apicoplast_chromosome')";
 
   my $sh = $dbh->prepare($sql);
 
