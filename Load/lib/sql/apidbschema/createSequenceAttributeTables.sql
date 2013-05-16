@@ -59,6 +59,9 @@ ON apidb.AaSequenceAttribute (min_molecular_weight, aa_sequence_attribute_id);
 CREATE INDEX apidb.AaSeqAttr_maxmolwt_idx
 ON apidb.AaSequenceAttribute (max_molecular_weight, aa_sequence_attribute_id);
 
+CREATE INDEX apidb.asa_mod_ix
+ON apidb.AaSequenceAttribute (modification_date, aa_sequence_attribute_id);
+
 ------------------------------------------------------------------------------
 
 CREATE TABLE Apidb.NaSequenceAttribute (

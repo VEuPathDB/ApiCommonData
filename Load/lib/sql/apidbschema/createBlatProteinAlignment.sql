@@ -69,6 +69,7 @@ create index apidb.bpa_ix6 on apidb.BlatProteinAlignment (target_external_db_rel
 create index apidb.bpa_ix7 on apidb.BlatProteinAlignment (blat_alignment_quality_id, blat_protein_alignment_id);
 create index apidb.bpa_ix8 on apidb.BlatProteinAlignment (target_na_sequence_id, target_start, target_end, blat_protein_alignment_id);
 create index apidb.bpa_ix9 on apidb.BlatProteinAlignment (query_aa_sequence_id, query_start, query_end, blat_protein_alignment_id);
+create index apidb.bpa_ix0 on apidb.BlatProteinAlignment (modification_date, blat_protein_alignment_id);
 
 grant select on apidb.BlatProteinAlignment to gus_r;
 grant insert, update, delete on apidb.BlatProteinAlignment to gus_w;

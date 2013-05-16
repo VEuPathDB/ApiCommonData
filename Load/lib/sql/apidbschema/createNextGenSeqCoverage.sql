@@ -22,6 +22,8 @@ ROW_ALG_INVOCATION_ID NUMBER(12) NOT NULL,
  PRIMARY KEY (next_gen_seq_coverage_id)
 );
 
+CREATE INDEX ApiDB.ngsc_mod_ix ON ApiDB.NextGenSeqCoverage (modification_date, next_gen_seq_coverage_id);
+
 
 CREATE SEQUENCE ApiDB.NextGenSeqCoverage_sq;
 

@@ -29,6 +29,7 @@ ADD CONSTRAINT gene_prod_fk2 FOREIGN KEY (external_database_release_id)
 REFERENCES sres.ExternalDatabaseRelease (external_database_release_id);
 
 CREATE INDEX gene_prod_idx ON apiDB.GeneFeatureProduct(na_feature_id, is_preferred, product);
+CREATE INDEX apidb.gfp_mod_idx ON apidb.GeneFeatureProduct (modification_date, gene_feature_product_id);
 
 ------------------------------------------------------------------------------
 

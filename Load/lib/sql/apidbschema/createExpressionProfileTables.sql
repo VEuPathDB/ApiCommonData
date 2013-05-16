@@ -96,6 +96,7 @@ create table ApiDB.Profile (
 
 CREATE INDEX apiDB.profile_sourceid_ind ON apiDB.Profile(source_id);
 CREATE INDEX apiDB.profile_psi_ind ON apiDB.Profile(profile_set_id, profile_id);
+CREATE INDEX apiDB.p_mod_ix ON apiDB.Profile (modification_date, profile_id);
 
 GRANT INSERT, SELECT, UPDATE, DELETE ON ApiDB.Profile TO gus_w;
 GRANT SELECT ON ApiDB.Profile TO gus_r;
@@ -196,6 +197,9 @@ ON apiDB.ProfileElement(profile_element_name_id, profile_id, value);
 
 CREATE INDEX apiDB.pe_profid_ind
 ON apiDB.ProfileElement(profile_id, profile_element_name_id, value);
+
+CREATE INDEX apiDB.pe_mod_ix
+ON apiDB.profileelement (modification_date, profile_element_id);
 
 CREATE SEQUENCE apiDB.ProfileElement_sq;
 

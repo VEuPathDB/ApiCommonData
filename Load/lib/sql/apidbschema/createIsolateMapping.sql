@@ -18,6 +18,9 @@ CREATE TABLE ApiDB.IsolateMapping (
  FOREIGN KEY (isolate_vocabulary_id) REFERENCES ApiDB.IsolateVocabulary (isolate_vocabulary_id)
 );
 
+CREATE INDEX apidb.im_mod_ix
+       ON ApiDB.IsolateMapping (modification_date, isolate_mapping_id);
+
 CREATE SEQUENCE ApiDB.IsolateMapping_sq;
 
 GRANT insert, select, update, delete ON ApiDB.IsolateMapping TO gus_w;
