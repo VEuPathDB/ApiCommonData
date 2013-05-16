@@ -18,6 +18,8 @@ CREATE TABLE apidb.PubChemCompound (
  PRIMARY KEY (pubchem_compound_id)
 );
 
+CREATE INDEX apidb.pcc_mod_ix ON apidb.PubChemCompound (modification_date, pubchem_compound_id);
+
 CREATE SEQUENCE apidb.PubChemCompound_sq;
 
 GRANT insert, select, update, delete ON apidb.PubChemCompound TO gus_w;

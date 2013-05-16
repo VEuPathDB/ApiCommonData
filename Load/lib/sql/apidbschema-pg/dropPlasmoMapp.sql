@@ -1,3 +1,0 @@
-DROP TABLE ApiDB.PlasmoMapp;
-
-

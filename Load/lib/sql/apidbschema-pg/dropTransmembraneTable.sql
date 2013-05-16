@@ -1,2 +1,0 @@
-DROP TABLE apidb.transmembrane;
-

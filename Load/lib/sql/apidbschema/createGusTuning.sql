@@ -54,6 +54,53 @@ create index sres.RefIx
   on sres.DbRef(external_database_release_id, db_ref_id, primary_identifier)
   tablespace indx;
 
+-- for the tuning manager, which decides whether an input table has changed
+-- by finding its record count and max(modification_date)
+create index dots.nf_submod_ix
+  on dots.NaFeatureImp (subclass_view, modification_date, na_feature_id);
+
+create index dots.af_submod_ix
+  on dots.AaFeatureImp (subclass_view, modification_date, aa_feature_id);
+
+create index dots.ns_submod_ix
+  on dots.NaSequenceImp (subclass_view, modification_date, na_sequence_id);
+
+create index dots.as_submod_ix
+  on dots.AaSequenceImp (subclass_view, modification_date, aa_sequence_id);
+
+create index rad.ar_submod_ix
+  on rad.AnalysisResultImp (subclass_view, modification_date, analysis_result_id);
+
+create index rad.ce_submod_ix
+  on rad.CompositeElementImp (subclass_view, modification_date, composite_element_id);
+
+create index rad.cer_submod_ix
+  on rad.CompositeElementResultImp (subclass_view, modification_date, composite_element_result_id);
+
+create index dots.aal_mod_ix on dots.aalocation (modification_date, aa_location_id);
+create index dots.asmseq_mod_ix on dots.assemblysequence (modification_date, assembly_sequence_id);
+create index dots.ba_mod_ix on dots.blatalignment (modification_date, blat_alignment_id);
+create index dots.drnf_mod_ix on dots.dbrefaafeature (modification_date, db_ref_aa_feature_id);
+create index dots.draf_mod_ix on dots.dbrefnafeature (modification_date, db_ref_na_feature_id);
+create index dots.est_mod_ix on dots.est (modification_date, est_id);
+create index dots.gi_mod_ix on dots.geneinstance (modification_date, gene_instance_id);
+create index dots.ga_mod_ix on dots.goassociation (modification_date, go_association_id);
+create index dots.gai_mod_ix on dots.goassociationinstance (modification_date, go_association_instance_id);
+create index dots.gaec_mod_ix on dots.goassocinstevidcode (modification_date, go_assoc_inst_evid_code_id);
+create index dots.nfc_mod_ix on dots.nafeaturecomment (modification_date, na_feature_comment_id);
+create index dots.nfng_mod_ix on dots.nafeaturenagene (modification_date, na_feature_na_gene_id);
+create index dots.ng_mod_ix on dots.nagene (modification_date, na_gene_id);
+create index dots.nal_mod_ix on dots.nalocation (modification_date, na_location_id);
+create index dots.sp_mod_ix on dots.sequencepiece (modification_date, sequence_piece_id);
+create index dots.ssg_mod_ix on dots.sequencesequencegroup (modification_date, sequence_sequence_group_id);
+create index dots.sim_mod_ix on dots.similarity (modification_date, similarity_id);
+create index dots.simspan_mod_ix on dots.similarityspan (modification_date, similarity_span_id);
+
+create index sres.dbref_mod_ix on sres.dbref (modification_date, db_ref_id);
+create index sres.gr_mod_ix on sres.gorelationship (modification_date, go_relationship_id);
+create index sres.gt_mod_ix on sres.goterm (modification_date, go_term_id);
+create index sres.tx_mod_ix on sres.taxon (modification_date, taxon_id);
+create index sres.txname_mod_ix on sres.taxonname (modification_date, taxon_name_id);
 
 -- for OrthoMCL:
 -- string1 = secondary_identifier = full_id

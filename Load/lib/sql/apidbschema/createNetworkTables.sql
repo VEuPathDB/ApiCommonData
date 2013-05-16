@@ -84,6 +84,8 @@ CREATE TABLE ApiDB.NetworkRelationship (
   FOREIGN KEY (ASSOCIATED_NODE_ID) REFERENCES ApiDB.NetworkNode (NETWORK_NODE_ID)
 );
 
+CREATE INDEX ApiDB.nr_mod_ix ON ApiDB.NetworkRelationship (modification_date, network_relationship_id);
+
 
 CREATE TABLE ApiDB.NetworkRelationshipType(
   NETWORK_RELATIONSHIP_TYPE_ID   NUMBER(11)   NOT NULL,
@@ -128,6 +130,8 @@ CREATE TABLE ApiDB.NetworkRelContext(
   PRIMARY KEY (NETWORK_REL_CONTEXT_ID)
 );
 
+CREATE INDEX ApiDB.nrc_mod_ix ON ApiDB.NetworkRelContext (modification_date, network_rel_context_id);
+
 
 CREATE TABLE ApiDB.NetworkRelContextLink(
   NETWORK_RC_LINK_ID             NUMBER(12)  NOT NULL,
@@ -146,6 +150,8 @@ CREATE TABLE ApiDB.NetworkRelContextLink(
   ROW_ALG_INVOCATION_ID          NUMBER(12),
   PRIMARY KEY (NETWORK_RC_LINK_ID)
 );
+
+CREATE INDEX ApiDB.nrcl_mod_ix ON ApiDB.NetworkRelContextLink (modification_date, network_rc_link_id);
 
 
 CREATE SEQUENCE ApiDB.NetworkContext_sq;
