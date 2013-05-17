@@ -1788,7 +1788,7 @@ FROM dots.SnpFeature snp, FeatureLocation snp_loc,
       FROM dots.NaSequence
       WHERE subclass_view not in ('ExternalNASequence', 'VirtualSequence')
      ) chromosome_info,
-     (select sf.na_feature_id, 
+     (select distinct sf.na_feature_id, 
              apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.allele END order by sv.allele) as apidb.varchartab)), ', ') as minor_allele,                
              apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.product END order by sv.product) as apidb.varchartab)), ', ') as minor_product,
              apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele != sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as minor_strains,
