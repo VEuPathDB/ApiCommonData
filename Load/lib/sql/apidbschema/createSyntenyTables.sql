@@ -36,6 +36,9 @@ ON apidb.Synteny (b_na_sequence_id, synteny_id);
 CREATE INDEX apidb.synteny_revix2
 ON apidb.Synteny (external_database_release_id, synteny_id);
 
+CREATE INDEX apidb.syn_mod_ix
+ON apidb.Synteny (modification_date, synteny_id);
+
 CREATE SEQUENCE ApiDB.Synteny_sq;
 
 GRANT insert, select, update, delete ON ApiDB.Synteny TO gus_w;
