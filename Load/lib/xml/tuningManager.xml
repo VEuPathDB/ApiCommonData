@@ -1756,7 +1756,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        round(snp.major_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as major_allele_frequency,
        snp.minor_allele_count,
        round(snp.minor_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as minor_allele_frequency,
-       snp.major_allele_count + snp.minor_allele_count as strain_count,
+       strain_info.distinct_strain_count as strain_count,
        SUBSTR(snp.strains, 1, 1000) AS strains,
        SUBSTR(snp.strains_revcomp, 1, 1000) AS strains_revcomp,
        gene_info.source_id AS gene_source_id,
@@ -1792,7 +1792,8 @@ FROM dots.SnpFeature snp, FeatureLocation snp_loc,
              apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.allele END order by sv.allele) as apidb.varchartab)), ', ') as minor_allele,                
              apidb.tab_to_string(set(cast(COLLECT(distinct CASE WHEN sv.allele != sf.major_allele THEN sv.product END order by sv.product) as apidb.varchartab)), ', ') as minor_product,
              apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele != sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as minor_strains,
-             apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele = sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as major_strains
+             apidb.tab_to_string(set(cast(COLLECT(CASE WHEN sv.allele = sf.major_allele THEN sv.strain END order by sv.strain) as apidb.varchartab)), ', ') as major_strains,
+             count(distinct sv.strain) as distinct_strain_count
       from dots.SnpFeature sf, dots.SeqVariation sv
       where sv.parent_id = sf.na_feature_id
       group by sf.na_feature_id) strain_info
