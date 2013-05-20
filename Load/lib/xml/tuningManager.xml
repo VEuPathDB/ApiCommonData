@@ -1667,7 +1667,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num, so.so_id,
+       sequence.chromosome_order_num, so.so_id, so.term_name as sequence_type,
        nvl(virtualization.is_top_level, 1) as is_top_level,
        sequence.na_sequence_id,
        organism.genome_source, organism.name_for_filenames
