@@ -615,7 +615,15 @@ sub getGeneFromNaFeatureId {
 
 sub checkThatAllPeptidesMatch {
   my($self,$record,$protSeq) = @_;
+  my $replaced = 0;
+	  print STDERR "$protSeq\n";
   foreach my $pep (@{$record->{peptides}}) {
+      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
+	  my $substitutions=$1;
+	  $protSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
+	  $replaced = 1;
+	  print STDERR "$protSeq\n";
+      }
     return 0 unless $protSeq =~ /$pep->{sequence}/i;
   }
   return 1;
@@ -626,8 +634,14 @@ sub checkThatPeptidesMatch {
   my $num = scalar(@{$record->{peptides}});
   return 0 unless $num;  ##avoid erroneous div by 0
   my $ct = 0;
+  my $replaced = 0;
   foreach my $pep (@{$record->{peptides}}) {
-    $ct++ if $protSeq =~ /$pep->{sequence}/i;
+      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
+	  my $substitutions=$1;
+	  $protSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
+	  $replaced = 1;
+      }
+      $ct++ if $protSeq =~ /$pep->{sequence}/i;
   }
   return int(0.5 + ($ct / $num * 100));
 }
