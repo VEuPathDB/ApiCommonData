@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 46018 $',
+                     cvsRevision       => '$Revision: 55928 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -616,13 +616,11 @@ sub getGeneFromNaFeatureId {
 sub checkThatAllPeptidesMatch {
   my($self,$record,$protSeq) = @_;
   my $replaced = 0;
-	  print STDERR "$protSeq\n";
   foreach my $pep (@{$record->{peptides}}) {
       if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
 	  my $substitutions=$1;
 	  $protSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
 	  $replaced = 1;
-	  print STDERR "$protSeq\n";
       }
     return 0 unless $protSeq =~ /$pep->{sequence}/i;
   }
