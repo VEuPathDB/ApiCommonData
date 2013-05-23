@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 55928 $',
+                     cvsRevision       => '$Revision: 55939 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -354,7 +354,13 @@ sub mapPeptidesAndSetIdentifiers {
    $record->{aaSequenceId}, $record->{aaFeatParentId}) =
      $self->getRecordIdentifiers($gf);
   my $pSeq = $self->getAASequenceForGene($gf);
+  my $replaced = 0;
   foreach my $pep (@{$record->{peptides}}) {
+      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
+	  my $substitutions=$1;
+	  $pSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
+	  $replaced = 1;
+      }
     if ($self->setPepStartEnd($pep,$pSeq) == 0) {
       warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
       $pep->{failed} = 1;
