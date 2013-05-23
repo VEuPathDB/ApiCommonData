@@ -1667,7 +1667,7 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        SUBSTR(genbank.genbank_accession, 1, 20) AS genbank_accession,
        SUBSTR(db.database_version, 1, 30) AS database_version, db.database_name,
        SUBSTR(sequence.chromosome, 1, 20) AS chromosome,
-       sequence.chromosome_order_num, so.so_id,
+       sequence.chromosome_order_num, so.so_id, so.term_name as sequence_type,
        nvl(virtualization.is_top_level, 1) as is_top_level,
        sequence.na_sequence_id,
        organism.genome_source, organism.name_for_filenames
@@ -5313,7 +5313,9 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   select 'P. knowlesi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pknowlesi' as abbreviation from dual union
   select 'P. reichenowi Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Preichenowi' as abbreviation from dual union
   select 'P. vivax Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
-  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual 
+  select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual union
+  --
+  select 'Cryptosporidiidae Reference Isolates' as organism, '' as parent, 'CryptosporidiidaeReference' as abbreviation from dual
 ) special
       where special.parent = ot.term
       ]]>
@@ -5401,6 +5403,8 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   select 'P. yoelii Popset/Genbank Isolates' as organism,'PlasmoDB' as project_id, 'Isolates' as type from dual
   UNION
   select 'All Giardia Isolates' as organism, 'GiardiaDB' as project_id, 'Isolates' as type from dual
+  UNION
+  select 'Cryptosporidiidae Reference Isolates' as organism, 'CryptoDB' as project_id, 'Isolates' as type from dual
       ]]>
     </sql>
   </tuningTable>
