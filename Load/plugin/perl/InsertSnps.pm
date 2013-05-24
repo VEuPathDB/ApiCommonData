@@ -589,7 +589,7 @@ sub createSnpFeature {
   ##note that if NGS_SNP then want to retrievefromdb and also retrieve all existing seqvars from db
   ## so can generate complete picture of snp.
   my $fromDB = 0;
-  $fromDB = $snpFeature->retrieveFromDB() if $self->getArg('NGS_SNP') || $self->getArg('restart');
+  $fromDB = $snpFeature->retrieveFromDB(undef,1) if $self->getArg('NGS_SNP') || $self->getArg('restart');
   $snpFeature->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation') if $self->getArg('NGS_SNP') && $self->getArg('NgsUpdateSnpFeature');
 
   my $naLoc;
