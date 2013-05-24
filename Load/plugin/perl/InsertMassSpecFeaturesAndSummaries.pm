@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 55939 $',
+                     cvsRevision       => '$Revision: 55960 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -354,13 +354,7 @@ sub mapPeptidesAndSetIdentifiers {
    $record->{aaSequenceId}, $record->{aaFeatParentId}) =
      $self->getRecordIdentifiers($gf);
   my $pSeq = $self->getAASequenceForGene($gf);
-  my $replaced = 0;
   foreach my $pep (@{$record->{peptides}}) {
-      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
-	  my $substitutions=$1;
-	  $pSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
-	  $replaced = 1;
-      }
     if ($self->setPepStartEnd($pep,$pSeq) == 0) {
       warn "$pep->{sequence} not found on $record->{sourceId}. Discarding this peptide...\n";
       $pep->{failed} = 1;
@@ -621,13 +615,7 @@ sub getGeneFromNaFeatureId {
 
 sub checkThatAllPeptidesMatch {
   my($self,$record,$protSeq) = @_;
-  my $replaced = 0;
   foreach my $pep (@{$record->{peptides}}) {
-      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
-	  my $substitutions=$1;
-	  $protSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
-	  $replaced = 1;
-      }
     return 0 unless $protSeq =~ /$pep->{sequence}/i;
   }
   return 1;
@@ -638,14 +626,8 @@ sub checkThatPeptidesMatch {
   my $num = scalar(@{$record->{peptides}});
   return 0 unless $num;  ##avoid erroneous div by 0
   my $ct = 0;
-  my $replaced = 0;
   foreach my $pep (@{$record->{peptides}}) {
-      if ($pep->{sequence}=~/\[(\w+)\]/gi && !$replaced){
-	  my $substitutions=$1;
-	  $protSeq =~ s/[$substitutions]/\[$substitutions\]/gi;
-	  $replaced = 1;
-      }
-      $ct++ if $protSeq =~ /$pep->{sequence}/i;
+    $ct++ if $protSeq =~ /$pep->{sequence}/i;
   }
   return int(0.5 + ($ct / $num * 100));
 }
@@ -719,8 +701,9 @@ sub setPepDescription {
 
 sub setPepStartEnd {
   my ($self, $pep, $proteinSeq) = @_;
-  $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
-  $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
+  $proteinSeq =~ /$pep->{sequence}/i;
+  $pep->{start} = $-[0]+1;
+  $pep->{end} = $+[0];
   return $pep->{start};         ##will be 0 if failed ...
 }
 
