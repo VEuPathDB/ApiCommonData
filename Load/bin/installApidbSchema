@@ -77,13 +77,11 @@ my @create = qw(
                removeNullConstraintsFromSimilarityTables.sql
                createGusTuning.sql
                modifySeqVariation.sql
-
                createApidbTuningSchema.sql
-
                createApidbSchema.sql
 	       createAnalysisMethodInvocation.sql
 	       createChromosome6Orthology.sql
-	       createDataSource.sql
+	       createDatasource.sql
 	       createDbLinks.sql
 	       createExpressionProfileTables.sql
 	       createGeneInteractionTables.sql
@@ -147,6 +145,9 @@ my @delete = qw( deleteGusVersion.sql
 
 if ($create) {
   for my $sql (@create) {
+     print STDOUT "\n==============================================================\n";
+     print STDOUT "$sql\n";     
+     print STDOUT "==============================================================\n";
     &runSql($login, $password, $db, $sql);
   }
 
