@@ -40,7 +40,7 @@ sub new {
 
   $self->initialize({
                      requiredDbVersion => 3.6,
-                     cvsRevision       => '$Revision: 46018 $',
+                     cvsRevision       => '$Revision: 55963 $',
                      name              => ref($self),
                      argsDeclaration   => declareArgs(),
                      documentation     => getDocumentation(),
@@ -701,8 +701,9 @@ sub setPepDescription {
 
 sub setPepStartEnd {
   my ($self, $pep, $proteinSeq) = @_;
-  $pep->{start} = index($proteinSeq, $pep->{sequence}) +1;
-  $pep->{end} = length($pep->{sequence}) + $pep->{start} -1;
+  $proteinSeq =~ /$pep->{sequence}/i;
+  $pep->{start} = $-[0]+1;
+  $pep->{end} = $+[0];
   return $pep->{start};         ##will be 0 if failed ...
 }
 
