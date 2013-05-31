@@ -153,4 +153,4 @@ end SHARED_USER;
 
 show errors
 
-GRANT execute ON iodice.SHARED_USER TO public;
+GRANT execute ON SHARED_USER TO public;
