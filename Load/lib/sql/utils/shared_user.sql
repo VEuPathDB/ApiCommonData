@@ -153,4 +153,4 @@ end SHARED_USER;
 
 show errors
 
-GRANT execute ON SHARED_USER gus_w;
+GRANT execute ON SHARED_USER TO gus_w;
