@@ -1,4 +1,4 @@
-create or replace package SHARED_USER as
+create or replace package SYS_SHARED.SHARED_USER as
 procedure get_session_info;
 procedure get_all_session_info;
 procedure get_all_session_info_full;
@@ -9,7 +9,7 @@ end SHARED_USER;
 
 show errors
 
-create or replace package body SHARED_USER as
+create or replace package body SYS_SHARED.SHARED_USER as
 procedure get_session_info
 is
 begin
