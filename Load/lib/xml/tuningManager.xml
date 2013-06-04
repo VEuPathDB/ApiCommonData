@@ -4233,7 +4233,7 @@ where atr.na_feature_id = isof.parent_id
 and isof.na_feature_id = isol.na_feature_id
 and sa.na_sequence_id = isol.na_sequence_id
 and sa.start_min = isol.start_min
-and sa.dataset = 'InsertSnps.pm NGS SNPs INTERNAL'
+and sa.dataset in ('pfal3D7_SNP_combined_Su_Broad_Sanger_gff_RSRC','PlasmoDB combined SNPs','Broad SNPs','pfal3D7_SNP_Broad_gff_RSRC')
       ]]>
     </sql>
     <sql>
@@ -5315,7 +5315,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
   select 'P. vivax Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pvivax' as abbreviation from dual union
   select 'P. yoelii Popset/Genbank Isolates' as organism, 'Plasmodium' as parent, 'Pyoelii' as abbreviation from dual union
   --
-  select 'Cryptosporidiidae Reference Isolates' as organism, '' as parent, 'CryptosporidiidaeReference' as abbreviation from dual
+  select 'Cryptosporidiidae Reference Isolates' as organism, 'Cryptosporidium' as parent, 'CryptosporidiidaeReference' as abbreviation from dual
 ) special
       where special.parent = ot.term
       ]]>
