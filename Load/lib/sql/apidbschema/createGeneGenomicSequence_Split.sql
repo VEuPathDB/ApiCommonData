@@ -3,6 +3,7 @@ create table apidb.GeneGenomicSequence_Split (
  source_id VARCHAR2(255) NOT NULL,
  gene_genomic_sequence CLOB,
  start_min NUMBER(12) NOT NULL,
+ feature_type VARCHAR2(25) NOT NULL,
  MODIFICATION_DATE     DATE,
  USER_READ             NUMBER(1),
  USER_WRITE            NUMBER(1),
