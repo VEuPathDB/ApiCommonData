@@ -170,6 +170,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="note"			ignore="true"/>
     <qualifier name="db_xref"			ignore="true"/>
   </feature>
+
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="locus_tag"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
+  </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
   </feature>

@@ -41,7 +41,14 @@ sub loopDir {
      }else{
 	   my $oldname= $f;
 	   $f =~ s/CURRENT/$releaseNumber/;
-	   rename $oldname, $f or die "Can't rename $oldname to $f: $!"; ;
+           my $fileSize =  (stat($oldname))[7];
+	   if($fileSize<1){
+	       unlink($oldname) or die "Can't remove empty file $oldname\n";
+	       print STDERR "Delete empty file $f\n";
+	   }else{
+	        rename $oldname, $f or die "Can't rename $oldname to $f: $!"; ;
+	   }
+
      }
    }
    closedir(DIR);
