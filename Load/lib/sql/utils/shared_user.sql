@@ -1,3 +1,9 @@
+-- this code is checked in here for developers' convenience, but
+-- THIS IS NOT THE CANONICAL COPY OF THIS CODE.
+-- The script that is actually run is checked in to the System Architecture
+-- repository at
+-- https://mango.ctegd.uga.edu/svn/ApiCommonSystem/trunk/Oracle/sql/SHARED_USER_v3.sql
+
 create or replace package SYS_SHARED.SHARED_USER as
 procedure get_session_info;
 procedure get_all_session_info;
