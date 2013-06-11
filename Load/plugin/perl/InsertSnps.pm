@@ -652,14 +652,14 @@ sub createSnpFeature {
   my $haveRef = 0;
   my $referenceBase = $naSeq->getSubstrFromClob('sequence', $start, $lengthOfSnp);
   $snpFeature->setReferenceNa($referenceBase) unless ($snpFeature->getReferenceNa() && $snpFeature->getReferenceNa() eq $referenceBase);
+
   foreach my $c ($snpFeature->getChildren('GUS::Model::DoTS::SeqVariation')){
-    if($self->getArg('NGS_SNP')){
-      $haveRef = 1 if ($c->getExternalDatabaseReleaseId() == $naSeq->getExternalDatabaseReleaseId() && $c->getAllele() eq $referenceBase);
-    }else{
+    unless($self->getArg('NGS_SNP')){
       $haveRef = 1 if (lc($c->getStrain()) eq lc($ref) && $c->getAllele() eq $referenceBase);
     }
   }
-  if(!$haveRef){  ##create a reference seqvar here ...
+
+  if(($self->getArg('NGS_SNP') && !$fromDB) || $haveRef == 0){  ##create a reference seqvar here ...
     my $seqVar =  GUS::Model::DoTS::SeqVariation->
       new({'source_id' => $sourceId,
            'external_database_release_id' => $self->getArg('NGS_SNP') ? $naSeq->getExternalDatabaseReleaseId()  : $extDbRlsId,
