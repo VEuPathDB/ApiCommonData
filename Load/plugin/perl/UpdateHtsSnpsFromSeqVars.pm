@@ -134,16 +134,12 @@ sub run {
 
   ##prepare statement to get info for each SNPfeature
   my $sumSQL = <<SQL;
-select sv.allele,sv.phenotype,
-        CASE WHEN sf.is_coding = 1 THEN listagg('"'||sv.strain||':'||sv.allele||':'||sv.product||'"', ' ') within group (order by sv.strain)
-        ELSE listagg('"'||sv.strain||':'||sv.allele||'"', ' ') within group (order by sv.strain) END as strains,
-        CASE WHEN sf.is_coding = 1 THEN listagg('"'||sv.strain||':'||apidb.reverse_complement(sv.allele)||':'||sv.product||'"', ' ') within group (order by sv.strain)
-        ELSE listagg('"'||sv.strain||':'||apidb.reverse_complement(sv.allele)||'"', ' ') within group (order by sv.strain) END as strains_revcomp,
+select sv.allele,sv.product,
         count(*) as total
 from DoTS.SnpFeature sf, DoTS.SeqVariation sv
 where sf.na_feature_id = ?
 and sv.parent_id = sf.na_feature_id
-group by sv.allele,sf.is_coding,sv.phenotype
+group by sv.allele,sf.is_coding,sv.product
 order by count(*) desc
 SQL
 
@@ -206,13 +202,17 @@ sub updateSnp {
   $snp->setMinorAlleleCount($minorRow->{total} + $otherCt) unless $snp->getMinorAlleleCount() == $minorRow->{total};
   $snp->setMajorAlleleCount($majorRow->{total}) unless $snp->getMajorAlleleCount() == $majorRow->{total};
   $snp->setMinorAllele($minorRow->{allele}) unless $snp->getMinorAllele() eq $minorRow->{allele};
+
+
   $snp->setMinorProduct($minorRow->{product}) unless $snp->getMinorProduct() eq $minorRow->{product};
   $snp->setMajorAllele($majorRow->{allele}) unless $snp->getMajorAllele() eq $majorRow->{allele};
   $snp->setMajorProduct($majorRow->{product}) unless $snp->getMajorProduct eq $majorRow->{product};
-  my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
-  $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
-  my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
-  $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
+
+
+#  my $strains = "$majorRow->{strains} $minorRow->{strains}".($otherCt ? " $otherStr" : "");
+#  $snp->setStrains($strains) unless $snp->getStrains() eq $strains;
+#  my $revStrains = "$majorRow->{strains_revcomp} $minorRow->{strains_revcomp}".($otherCt ? " $otherStrRC" : "");
+#  $snp->setStrainsRevcomp() unless $snp->getStrainsRevcomp() eq $revStrains;
 
 ## use following if want to update from objects but less efficient
 #    $snp->retrieveChildrenFromDB('GUS::Model::DoTS::SeqVariation');
@@ -252,113 +252,113 @@ sub manageTransAndCache {
 }
 
 
-sub _addMajorMinorInfo {
-  my ($self, $snpFeature) = @_;
+# sub _addMajorMinorInfo {
+#   my ($self, $snpFeature) = @_;
 
-  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
-  my $sourceId = $snpFeature->getSourceId();
+#   my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+#   my $sourceId = $snpFeature->getSourceId();
 
-  my $referenceAllele = $snpFeature->getReferenceNa();
-  my $referenceProduct = $snpFeature->getReferenceAa();
+#   my $referenceAllele = $snpFeature->getReferenceNa();
+#   my $referenceProduct = $snpFeature->getReferenceAa();
 
-  my (%alleles, %products);
+#   my (%alleles, %products);
 
-  foreach my $seqVar (@seqVars) {
-    my $allele = $seqVar->getAllele();
-    my $product = $seqVar->getProduct();
+#   foreach my $seqVar (@seqVars) {
+#     my $allele = $seqVar->getAllele();
+#     my $product = $seqVar->getProduct();
 
-    $alleles{$allele}++;
-    $products{$allele} = $product if($product);
-  }
+#     $alleles{$allele}++;
+#     $products{$allele} = $product if($product);
+#   }
 
-  my %counts;
-  foreach(keys %alleles) {
-    my $count = $alleles{$_};
-    $counts{$count} = 1;
-  }
+#   my %counts;
+#   foreach(keys %alleles) {
+#     my $count = $alleles{$_};
+#     $counts{$count} = 1;
+#   }
 
-  my (@sortedAlleleKeys, $nullAllele);
-  foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
-    if($allele eq "") {
-      $nullAllele = 1;
-    }
-    else {
-      push(@sortedAlleleKeys, $allele) ;
-    }
-  }
+#   my (@sortedAlleleKeys, $nullAllele);
+#   foreach my $allele (sort {$alleles{$b} <=> $alleles{$a}} keys %alleles){
+#     if($allele eq "") {
+#       $nullAllele = 1;
+#     }
+#     else {
+#       push(@sortedAlleleKeys, $allele) ;
+#     }
+#   }
 
-  my $numbers = scalar(keys %counts);
+#   my $numbers = scalar(keys %counts);
 
-  if(scalar(@sortedAlleleKeys) == 1 && !$nullAllele) {
-    $self->log("WARNING","No Variation for source_id [$sourceId]");
-  }
+#   if(scalar(@sortedAlleleKeys) == 1 && !$nullAllele) {
+#     $self->log("WARNING","No Variation for source_id [$sourceId]");
+#   }
 
-  my $majorAllele = @sortedAlleleKeys[0];
-  my $minorAllele = @sortedAlleleKeys[1];
+#   my $majorAllele = @sortedAlleleKeys[0];
+#   my $minorAllele = @sortedAlleleKeys[1];
 
-  if($numbers == 1) {
-    if($minorAllele eq $referenceAllele) {
-      $minorAllele = $majorAllele;
-      $majorAllele = $referenceAllele;
-    }
-    else {   
-      $majorAllele = $referenceAllele;
-    }
-  }
-  if($numbers == 2) {
-    $minorAllele = $referenceAllele
-      unless($majorAllele eq $referenceAllele || $minorAllele eq $referenceAllele);
-  } 
+#   if($numbers == 1) {
+#     if($minorAllele eq $referenceAllele) {
+#       $minorAllele = $majorAllele;
+#       $majorAllele = $referenceAllele;
+#     }
+#     else {   
+#       $majorAllele = $referenceAllele;
+#     }
+#   }
+#   if($numbers == 2) {
+#     $minorAllele = $referenceAllele
+#       unless($majorAllele eq $referenceAllele || $minorAllele eq $referenceAllele);
+#   } 
 
-  my $majorAlleleCount = $alleles{$majorAllele};
-  my $minorAlleleCount = $alleles{$minorAllele};
+#   my $majorAlleleCount = $alleles{$majorAllele};
+#   my $minorAlleleCount = $alleles{$minorAllele};
 
-  my $majorProduct = $products{$majorAllele};
-  my $minorProduct = $products{$minorAllele};
+#   my $majorProduct = $products{$majorAllele};
+#   my $minorProduct = $products{$minorAllele};
 
-  $snpFeature->setMajorAllele($majorAllele);
-  $snpFeature->setMajorAlleleCount($majorAlleleCount);
-  $snpFeature->setMajorProduct($majorProduct);
-  $snpFeature->setMinorAllele($minorAllele);
-  $snpFeature->setMinorAlleleCount($minorAlleleCount);
-  $snpFeature->setMinorProduct($minorProduct);
+#   $snpFeature->setMajorAllele($majorAllele);
+#   $snpFeature->setMajorAlleleCount($majorAlleleCount);
+#   $snpFeature->setMajorProduct($majorProduct);
+#   $snpFeature->setMinorAllele($minorAllele);
+#   $snpFeature->setMinorAlleleCount($minorAlleleCount);
+#   $snpFeature->setMinorProduct($minorProduct);
 
-  return($snpFeature);
-}
+#   return($snpFeature);
+# }
 
 
 # ----------------------------------------------------------------------
 
-sub _makeSnpFeatureDescriptionFromSeqVars {
-  my ($self, $snpFeature) = @_;
-
-  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
-
-  my (@strains, @strainsRevComp);
-
-  foreach my $seqVar (@seqVars) {
-    my $strain = $seqVar->getStrain();
-    my $allele = $seqVar->getAllele();
-    my $product = $seqVar->getProduct();
-
-    $strain =~ s/\s//g;
-    $allele =~ s/\s//g;
-    $product =~ s/\s//g;
-
-    my $revCompAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
-
-    push(@strains, "\"$strain\:$allele".($product ? "\:$product\"" : '"'));
-    push(@strainsRevComp, "\"$strain\:$revCompAllele".($product ? "\:$product\"" : '"'));
-  }
-
-  my $strains = join(' ', @strains);
-  my $strainsRevComp = join(' ', @strainsRevComp);
-
-  $snpFeature->setStrains(join(' ', @strains));
-  $snpFeature->setStrainsRevcomp(join(' ', @strainsRevComp));
-
-  return($snpFeature);
-}
+#sub _makeSnpFeatureDescriptionFromSeqVars {
+#  my ($self, $snpFeature) = @_;
+#
+#  my @seqVars = $snpFeature->getChildren('GUS::Model::DoTS::SeqVariation');
+#
+#  my (@strains, @strainsRevComp);
+#
+#  foreach my $seqVar (@seqVars) {
+#    my $strain = $seqVar->getStrain();
+#    my $allele = $seqVar->getAllele();
+#    my $product = $seqVar->getProduct();
+#
+#    $strain =~ s/\s//g;
+#    $allele =~ s/\s//g;
+#    $product =~ s/\s//g;
+#
+#    my $revCompAllele = CBIL::Bio::SequenceUtils::reverseComplementSequence($allele);
+#
+#    push(@strains, "\"$strain\:$allele".($product ? "\:$product\"" : '"'));
+#    push(@strainsRevComp, "\"$strain\:$revCompAllele".($product ? "\:$product\"" : '"'));
+#  }
+#
+#  my $strains = join(' ', @strains);
+#  my $strainsRevComp = join(' ', @strainsRevComp);
+#
+#  $snpFeature->setStrains(join(' ', @strains));
+#  $snpFeature->setStrainsRevcomp(join(' ', @strainsRevComp));
+#
+#  return($snpFeature);
+#}
 
 
 # ----------------------------------------------------------------------
