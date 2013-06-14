@@ -104,7 +104,9 @@ SELECT o.project_name,
        nvl(hasSNP.ct, 0) as hasIsolate,
        nvl(hasSNP.ct, 0) as hasHTSIsolate,
        nvl(hasProteomics.ct, 0) as hasProteomics,
-       nvl(hasEpitope.ct, 0) as hasEpitope
+       nvl(hasEpitope.ct, 0) as hasEpitope,
+       nvl(genomestat.megabps, 0) as megabps,
+       nvl(genomestat.ncbi_tax_id, 0) as ncbi_tax_id
 FROM   Apidb.Organism o, 
        SRES.TaxonName tn, 
        (SELECT ds.taxon_id,
@@ -197,7 +199,12 @@ FROM   Apidb.Organism o,
                count(*) as ct  
         from GeneAttributes 
         group by taxon_id 
-       ) geneCount
+       ) geneCount,
+       ( SELECT taxon_id, ncbi_tax_id, to_char(sum(length)/1000000,'9999.99') as megabps 
+         FROM   ApidbTuning.SequenceAttributes 
+         WHERE  is_top_level = 1
+         GROUP BY taxon_id, ncbi_tax_id
+       ) genomestat 
 WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = geneArrayCount.taxon_id (+)
   AND o.taxon_id = geneCount.taxon_id (+)
@@ -211,6 +218,7 @@ WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = hasHTSIsolate.taxon_id (+)
   AND o.taxon_id = hasProteomics.taxon_id (+)
   AND o.taxon_id = hasEpitope.taxon_id (+)
+  AND o.taxon_id = genomestat.taxon_id (+)
   AND tn.taxon_id = o.taxon_id
   AND tn.name_class = 'scientific name'
       ]]>
