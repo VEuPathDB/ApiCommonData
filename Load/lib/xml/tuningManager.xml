@@ -200,7 +200,11 @@ FROM   Apidb.Organism o,
         from GeneAttributes 
         group by taxon_id 
        ) geneCount,
-       ( SELECT taxon_id, ncbi_tax_id, to_char(sum(length)/1000000,'9999.99') as megabps 
+       ( SELECT taxon_id, 
+                CASE WHEN ncbi_tax_id > 9000000000 THEN NULL
+                     ELSE ncbi_tax_id
+                END ncbi_tax_id, 
+                to_char(sum(length)/1000000,'9999.99') as megabps 
          FROM   ApidbTuning.SequenceAttributes 
          WHERE  is_top_level = 1
          GROUP BY taxon_id, ncbi_tax_id
