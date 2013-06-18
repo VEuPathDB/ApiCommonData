@@ -746,7 +746,7 @@ UNION
 CREATE TABLE &prefixNewCsi nologging as
 SELECT stable_id, comment_id, comments2.CommentStableId_pkseq.nextval@&dblink as comment_stable_id
 FROM (  SELECT gi.gene AS stable_id, ca.comment_id
-        FROM ApidbTuning.GeneId gi, &prefixCommentAssignment ca
+        FROM &prefixGeneId&1 gi, &prefixCommentAssignment ca
         WHERE gi.id = ca.stable_id
           AND gi.id != gi.gene
       MINUS
