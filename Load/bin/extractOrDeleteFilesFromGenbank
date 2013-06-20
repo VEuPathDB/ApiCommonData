@@ -1,6 +1,6 @@
-#!/usr/bin/perl5.8.0
+#!/usr/bin/perl
 
-## usage 1: perl extractOrDeleteFilesFromGenbank.pl --ifExtract --genbankFile genome.gbf --listFile possibleApicoplast.txt > test.gbf
+## usage: extractOrDeleteFilesFromGenbank --genbankFile tequWA_genome.gbf --listFile chrList.txt --ifExtract > ../final/genome.gbf
 
 use Getopt::Long;
 use strict;
@@ -59,7 +59,7 @@ close GB;
 sub usage {
   die
 "
-Usage: perl extractOrDeleteFilesFromGenbank.pl --ifExtract[--ifDelete] --genbankFile --listFile 
+Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile 
 
 where
   --genbankFile:  the genbank file that for input
