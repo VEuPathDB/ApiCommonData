@@ -1274,25 +1274,34 @@ sub validateCodingSequenceLength {
 			$warning .= "Pseudogene ";
 		    }
 		    $warning .= "$proteinSourceId does not have a stop codon\n";
+
+		    ## set is_partial=1 if gene does not have a stop codon
+		    if ($bioperlFeature->primary_tag() =~ /gene/) {
+		      $feature->setIsPartial(1);
+		      $transcript->setIsPartial(1);
+		    } else {
+		      $feature->setIsPartial(1);
+		    }
+
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
 		    }else{
 			$self->{plugin}->log("$warning\n");
 		    }
 		}else{
-		if($feature->getIsPseudo()){
-
-
+		  if($feature->getIsPseudo()){
 		    $warning = "***WARNING********* Coding sequence for pseudogene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";
-			
-		    if($self->{plugin}->{vlFh}){
-			$self->{plugin}->{vlFh}->print("$warning\n");
-		    }else{
-			$self->{plugin}->log("$warning\n");
-		    }
-		}else{
+		  }else{
 		    $warning = "***WARNING********* Coding sequence for gene $proteinSourceId with length: $CDSLength has trailing NAs. CDS length truncated to ".($aaSeq->get('length')*3)."\n";		    
-		    
+		  }
+
+		    ## set is_partial=1 if gene does not have a stop codon
+		    if ($bioperlFeature->primary_tag() =~ /gene/) {
+		      $feature->setIsPartial(1);
+		      $transcript->setIsPartial(1);
+		    } else {
+		      $feature->setIsPartial(1);
+		    }
 
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$warning\n");
@@ -1300,7 +1309,6 @@ sub validateCodingSequenceLength {
 			$self->{plugin}->log("$warning\n");
 		    }			
 #		    push(@{$self->{plugin}->{validationErrors}},$msg);
-		}
 	    }
 
 	    }

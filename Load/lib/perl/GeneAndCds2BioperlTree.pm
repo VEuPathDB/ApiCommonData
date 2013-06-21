@@ -44,13 +44,14 @@ sub preprocess {
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
-	    
-	  
 
-	    if($type eq 'repeat_region'){
+	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
 		#if($bioperlFeatureTree->has_tag("satellite")){
 		#    $bioperlFeatureTree->primary_tag("microsatellite");
 		#}
+	        if ($type eq 'assembly_gap'){
+		  $bioperlFeatureTree->primary_tag("gap");
+	        }
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
@@ -199,7 +200,9 @@ sub traverseSeqFeatures {
 	    my $CDSLocation;
 	    if($type eq 'ncRNA'){
 		if($RNA->has_tag('ncRNA_class')){
-		    ($type) = $RNA->get_tag_values('ncRNA_class');
+                    my $ncRNA_class;
+		    ($ncRNA_class) = $RNA->get_tag_values('ncRNA_class');
+                    $type = $ncRNA_class if ($ncRNA_class =~ /RNA/i);
 		    $RNA->remove_tag('ncRNA_class');
 
 		}
