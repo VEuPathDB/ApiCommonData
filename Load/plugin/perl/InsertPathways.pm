@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertKeggPathways;
+package ApiCommonData::Load::Plugin::InsertPathways;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;

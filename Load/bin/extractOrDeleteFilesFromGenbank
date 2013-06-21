@@ -1,0 +1,70 @@
+#!/usr/bin/perl
+
+## usage: extractOrDeleteFilesFromGenbank --genbankFile tequWA_genome.gbf --listFile chrList.txt --ifExtract > ../final/genome.gbf
+
+use Getopt::Long;
+use strict;
+
+my ($ifExtract, $ifDelete, $genbankFile, $listFile, $help);
+
+&GetOptions('ifExtract' => \$ifExtract,
+	    'ifDelete' => \$ifDelete,
+            'help|h' => \$help,
+            'genbankFile=s' => \$genbankFile,
+	    'listFile=s' => \$listFile,
+           );
+
+&usage() if($help);
+&usage("Missing a Required Argument") unless(defined $genbankFile && $listFile && ($ifExtract || $ifDelete) );
+
+my %skipIds;
+print STDERR "\$listFile = $listFile\n";
+open (LIST, $listFile) || die "can not open list file to read.\n";
+while (<LIST>) {
+  chomp;
+  my $curr = $_;
+  $curr =~ s/\s+//g;
+  $skipIds{$curr} = $curr;
+}
+close LIST;
+
+foreach my $k (sort keys %skipIds) {
+  print STDERR "$k\t$skipIds{$k}\n";
+}
+my $ifSkip = 0;
+open (GB, $genbankFile) || die "can not open genbank file to read.\n";
+while (<GB>) {
+  my $curr = $_;
+  if ($curr =~ /^(LOCUS\s+?)(\S+?)(\s+)/){
+    my $seqId = $2;
+    #print STDERR "..$seqId..";
+    if ($skipIds{$seqId}) {
+      $ifSkip = 1;
+      print STDERR "process $seqId..\n";
+    } else {
+      $ifSkip = 0;
+    }
+  }
+
+#  print $curr if ($ifSkip == 0 && $ifDelete);
+  if ($ifDelete) {
+    print $curr if ($ifSkip == 0);
+  } elsif ($ifExtract) {
+    print $curr if ($ifSkip == 1);
+  }
+}
+close GB;
+
+
+sub usage {
+  die
+"
+Usage: extractOrDeleteFilesFromGenbank --ifExtract[--ifDelete] --genbankFile --listFile 
+
+where
+  --genbankFile:  the genbank file that for input
+  --listFile:    the list of LOCUS ID that need to extract or delete from genbank file, one ID one line
+  --ifExtract:   if present, extract the listFile from the genbank file
+  --ifDelete:    if present, delete the listFile from the genbank file 
+";
+}
