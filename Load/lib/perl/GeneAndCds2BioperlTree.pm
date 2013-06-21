@@ -44,13 +44,14 @@ sub preprocess {
 
 	foreach my $bioperlFeatureTree (@topSeqFeatures) {
 	    my $type = $bioperlFeatureTree->primary_tag();
-	    
-	  
 
-	    if($type eq 'repeat_region' || $type eq 'gap' ){
+	    if($type eq 'repeat_region' || $type eq 'gap' || $type eq 'assembly_gap' ){
 		#if($bioperlFeatureTree->has_tag("satellite")){
 		#    $bioperlFeatureTree->primary_tag("microsatellite");
 		#}
+	        if ($type eq 'assembly_gap'){
+		  $bioperlFeatureTree->primary_tag("gap");
+	        }
 		if(!($bioperlFeatureTree->has_tag("locus_tag"))){
 		    $bioperlFeatureTree->add_tag_value("locus_tag",$bioperlSeq->accession());
 		}
