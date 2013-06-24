@@ -1,0 +1,387 @@
+#!/usr/bin/perl
+
+use strict;
+use lib "$ENV{GUS_HOME}/lib/perl";
+use Bio::SeqIO;
+#use Bio::SeqFeature::Tools::Unflattener;
+#use Bio::Tools::GFF;
+#use Bio::Seq::RichSeq;
+#use GUS::Supported::SequenceIterator;
+#use Bio::DB::GFF::Aggregator;
+use Getopt::Long;
+
+use Data::Dumper;
+use FileHandle;
+use HTTP::Date;
+
+use DBI;
+use DBD::Oracle;
+use CBIL::Util::PropertySet;
+
+my ($date, ) = split(" ", HTTP::Date::time2iso());
+$date = join("",split(/-/,$date));
+
+my ($verbose, $help, $organismAbbrev, $genomeVersion, $extDbName, $extDbRlsVer, 
+	$extDbRlsId, $reportFile);
+
+&GetOptions('verbose' => \$verbose,
+            'help|h' => \$help,
+	    'reportFile=s' => \$reportFile,
+	    'organismAbbrev=s' => \$organismAbbrev,
+            'extDbName=s' => \$extDbName,
+	    'extDbRlsVer=s' => \$extDbRlsVer,
+	    'extDbRlsId=s' => \$extDbRlsId,
+           );
+
+&usage() if($help);
+
+&usage("Missing a Required Argument --organismAbbrev") unless (defined $organismAbbrev);
+&usage("Missing Required Argument") unless (defined ($extDbName && $extDbRlsVer) );
+
+my $gusConfigFile = "$ENV{GUS_HOME}/config/gus.config";
+my @properties = ();
+my $gusconfig = CBIL::Util::PropertySet->new($gusConfigFile, \@properties, 1);
+my $u = $gusconfig->{props}->{databaseLogin}; 
+my $pw = $gusconfig->{props}->{databasePassword}; 
+my $dsn = $gusconfig->{props}->{dbiDsn}; 
+my $dbh = DBI->connect($dsn, $u, $pw) or die DBI::errstr;
+$dbh->{RaiseError} = 1;
+$dbh->{LongTruncOk} = 1;
+
+## get the extDbRlsId
+#if (!extDbRlsId) {
+my $sql = <<SQL;
+             select edr.external_database_release_id from sres.externaldatabase ed, sres.externaldatabaserelease edr 
+where ed.external_database_id=edr.external_database_id and ed.name like '$extDbName' and edr.version='$extDbRlsVer'
+SQL
+
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+($extDbRlsId) = $stmt->fetchrow_array();
+print STDERR "For $organismAbbrev, get extDbRlsId=$extDbRlsId\n";
+$stmt->finish();
+#}
+
+
+## check for if source_id is null
+my @tables = ("DOTS.genefeature",
+	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
+	      "DOTS.transcript",
+	     "DOTS.exonfeature");
+
+my %priKeys =(
+	      'DOTS.genefeature' => 'na_feature_id',
+	      'DOTS.transcript' => 'na_feature_id',
+	      'DOTS.exonfeature' => 'na_feature_id',
+	      'DOTS.translatedaafeature' => 'aa_feature_id',
+	      'DOTS.translatedaasequence' => 'aa_sequence_id',
+	      );
+
+foreach my $table (@tables) {
+  my $sql = <<SQL;
+              select $priKeys{$table} from $table 
+              where external_database_release_id=$extDbRlsId and source_id is null
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($vldtr) = $stmt->fetchrow_array();
+  if ($vldtr) {
+    die "In table $table, primaryKey = '$vldtr', source_id is NULL in extDbRlsId=$extDbRlsId found.\nDouble check the annotation file\n";
+  }
+  #print STDERR "checked table $table for source_id is not null\n";
+  $stmt->finish();
+}
+
+## check if source_id is duplicated
+my @tables = ("DOTS.genefeature",
+	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
+	      "DOTS.transcript",
+	     "DOTS.exonfeature");
+
+foreach my $table (@tables) {
+  my $sql = <<SQL;
+              select source_id, count(source_id) from $table 
+              where external_database_release_id=$extDbRlsId group by source_id having (count(source_id)>1)
+SQL
+
+  my $stmt = $dbh->prepare($sql);
+  $stmt->execute();
+  my ($vldtr, $cnt) = $stmt->fetchrow_array();
+  if ($vldtr) {
+    die "In table: $table, source_id: $vldtr is duplicated found.\nDouble check the annotation file\n";
+  }
+  #print STDERR "checked table $table for source_id is not duplicated\n";
+  $stmt->finish();
+}
+
+## check the total number of sequence
+## select * from dots.externalnasequence where external_database_release_id=358
+my $sql = <<SQL;
+  select count(*) from dots.externalnasequence where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($totalSeq) = $stmt->fetchrow_array();
+print STDERR "Total number of sequence = $totalSeq\n";
+$stmt->finish();
+
+## check the total sequence length
+my $sql = <<SQL;
+  select sum(length) from dots.externalnasequence where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($totalSeqLength) = $stmt->fetchrow_array();
+print STDERR "Total sequence length = $totalSeqLength\n";
+$stmt->finish();
+
+## check the gene number that has been loaded
+my $sql = <<SQL;
+  select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($geneCount) = $stmt->fetchrow_array();
+print STDERR "total gene has been load = $geneCount\n";
+$stmt->finish();
+
+## check the gene number that has been loaded in different charactory
+my $sql = <<SQL;
+  select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($geneType, $geneTypeCount) = $stmt->fetchrow_array()) {
+  print STDERR "  $geneType = $geneTypeCount\n";
+}
+$stmt->finish();
+
+## check the pseudogene
+my $sql = <<SQL;
+  select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_pseudo
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+print STDERR "checking if is Pseudogene...\n";
+while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
+  ($if == 1 )? print STDERR "  is pseudogene = $psdCount\n" : print STDERR "  not pseudogene = $psdCount\n";
+}
+$stmt->finish();
+
+## check if is_partial
+my $sql = <<SQL;
+  select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_partial
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+print STDERR "check if is partial gene...\n";
+while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
+  ($if == 1 )? print STDERR "  is partial gene = $ptlCount\n" : print STDERR "  not partial gene = $ptlCount\n";
+}
+$stmt->finish();
+
+## check if the translatedaasequence does not have null sequence
+my $sql = <<SQL;
+  select source_id, sequence from dots.translatedaasequence where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array();
+print STDERR "ERROR: the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
+$stmt->finish();
+
+## check the seq # in translatedaaSequence table and translatedaaFeature table
+my $sql = <<SQL;
+  select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene'
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($codingGene) = $stmt->fetchrow_array();
+$stmt->finish();
+
+my $sql = <<SQL;
+  select count(*) from dots.translatedaasequence where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($tranAaSeq) = $stmt->fetchrow_array();
+$stmt->finish();
+print STDERR "ERROR: the translated aa sequence = $tranAaSeq, which is not equal to coding_gene = $codingGene\n" unless ($tranAaSeq == $codingGene);
+
+my $sql = <<SQL;
+  select count(*) from dots.translatedaafeature where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($tranAaFeat) = $stmt->fetchrow_array();
+$stmt->finish();
+print STDERR "ERROR: the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
+
+
+### check the translatedAaFeature table if translation_start or translation_stop is null or < 0
+foreach my $column ("translation_start", "translation_stop") {
+  foreach my $exp ("is null", "< 0") {
+my $sql = <<SQL;
+  select source_id from dots.translatedaafeature where external_database_release_id=$extDbRlsId and $column $exp
+SQL
+    my $stmt = $dbh->prepare($sql);
+    $stmt->execute();
+    my ($sourceId) = $stmt->fetchrow_array();
+    print STDERR "ERROR: in the table dots.translatedaafeature, $column $exp . \n" if ($sourceId);
+    $stmt->finish();
+  }
+}
+
+### for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
+my $sql = <<SQL;
+  select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($gfName, $gfNaId, $gfSourceId, $efCodingStart, $efCodingEnd) = $stmt->fetchrow_array()) {
+  print STDERR "ERROR: found $gfName with $gfNaId with $gfSourceId has coding_start and coding_end at $efCodingStart $efCodingEnd" if ($gfName);
+}
+$stmt->finish();
+
+### check if gene location is located outside the naSequence length
+my $sql = <<SQL;
+  select ens.na_sequence_id, nl.na_feature_id, ens.source_id, ens.length, nl.end_max from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id and nl.end_max > ens.length and ens.external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($naSeqId, $nlFeatId, $naSeqSourceId, $naSeqLeng, $nlEndMax) = $stmt->fetchrow_array()) {
+  print STDERR "ERROR: $nlFeatId with $nlEndMax with is outside of the $naSeqId for $naSeqSourceId with length $naSeqLeng.\n";
+}
+$stmt->finish();
+
+### check if there is any duplicated exons since it happens in TriTryp
+my $sql = <<SQL;
+  select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and nl.na_feature_id=rfe.exon_feature_id and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array()) {
+  print STDERR "ERROR: $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
+}
+$stmt->finish();
+
+### check the dots.Miscellaneous table for example centromere
+my $sql = <<SQL;
+  select distinct name, count(*) from dots.Miscellaneous where external_database_release_id=$extDbRlsId group by name
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+while (my ($name, $count) = $stmt->fetchrow_array()) {
+  print STDERR "$name = $count\n" if ($name && $count);
+}
+$stmt->finish();
+
+### check the table dots.ScaffoldGapFeature for gap
+my $sql = <<SQL;
+  select count(*) from dots.ScaffoldGapFeature where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($gapCount) = $stmt->fetchrow_array();
+print STDERR "the number of gap = $gapCount\n" if ($gapCount);
+$stmt->finish();
+
+### check the table dots.source
+my $sql = <<SQL;
+  select count(*) from DOTS.source where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($sourceCount) = $stmt->fetchrow_array();
+print STDERR "the number of source = $sourceCount\n" if ($sourceCount);
+$stmt->finish();
+
+## check the table dots.Repeats
+my $sql = <<SQL;
+  select count(*) from dots.Repeats where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+my ($repeatsCount) = $stmt->fetchrow_array();
+print STDERR "the number of repeats = $repeatsCount\n" if ($repeatsCount);
+$stmt->finish();
+
+
+sub usage {
+  die
+"
+A script to do QA for ISF post loading, this should be done right after ISF
+Usage: postLoadIsfQA --organismAbbrev pvivSal1 --extDbName pvivSaI1_primary_genome_RSRC --extDbRlsVer 2013-05-01 --reportFile report.txt
+NOTE: the GUS_HOME should point to the instance that the annotation has been loaded
+
+where
+  --organismAbbrev: the organism Abbrev in the table apidb.organism
+  --extDbName: the external database name for loading genome and annoation
+  --extDbRlsVer: the external database release version for loading genome and annotation
+";
+}
+
+q{
+##### the list to check #########
+
+DONE -- 1. select * from dots.genefeature where external_database_release_id=374 and source_id IS NULL;
+DONE -- 2. select source_id, count(source_id) from dots.genefeature where external_database_release_id=374 group by source_id having (count(source_id)>1);
+DONE -- 3. select distinct name, count(*) from dots.genefeature where external_database_release_id=358 group by name;
+DONE -- 4. select count(*) from DOTS.genefeature where external_database_release_id=358;
+DONE -- 5. select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=358 and name like 'coding_gene' group by is_pseudo;
+DONE -- 6. select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=358 and name like 'coding_gene' group by is_partial;
+
+DONE -- 7. select * from dots.externalnasequence where external_database_release_id=358;
+DONE -- 8. select sum(length) from dots.externalnasequence where external_database_release_id=358;
+
+DONE -- 9. select * from dots.translatedaasequence where external_database_release_id=358;
+DONE -- 10. select count(*) from dots.translatedaafeature where external_database_release_id=358;
+DONE -- 12. select * from dots.translatedaafeature where external_database_release_id=358 and translation_stop is null;
+DONE -- 13. select * from dots.translatedaafeature where external_database_release_id=358 and translation_start < 0;
+
+DONE -- 14. select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf 
+where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and ef.coding_end is not null and gf.name not like 'pseudo_gene';
+
+DONE in 1 -- 15. select * from dots.translatedaafeature where external_database_release_id=358 and source_id is null;
+DONE in 1 -- 16. select * from dots.translatedaasequence where external_database_release_id=358 and source_id is null;
+
+DONE -- 17. select ens.na_sequence_id, nl.na_feature_id, ens.source_id, ens.length, nl.end_max 
+from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl 
+where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id 
+and nl.end_max > ens.length and ens.external_database_release_id=358;
+
+DONE in 1 -- 18. select * from dots.exonfeature where external_database_release_id=358 and source_id IS NULL;
+DONE in 2 -- 19. select source_id, count(source_id) from dots.exonfeature where external_database_release_id=348 group by source_id having (count(source_id)>1);
+
+DONE -- 20. select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl
+where t.na_feature_id=rfe.rna_feature_id
+and nl.na_feature_id=rfe.exon_feature_id
+group by t.source_id, nl.start_min, nl.end_max having count(*)>1;
+
+## to check if there is duplicated exons, it happens in TriTrypDB
+DONE -- 21. select gf.source_id, ef.coding_start, ef.coding_end, ef.name, ef.source_id, nl.start_min, nl.end_max 
+from dots.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl
+where gf.na_feature_id=ef.parent_id and ef.na_feature_id=nl.na_feature_id
+and gf.source_id like 'PYYM_0902200%' and gf.external_database_release_id=358;
+
+DONE -- 22. select count(*) from dots.Repeats where external_database_release_id=358;
+DONOTNEED -- 23. select distinct na_sequence_id, count(na_sequence_id) from dots.Repeats where external_database_release_id=358 group by na_sequence_id;
+
+DONE -- 24. select count(*) from dots.ScaffoldGapFeature where external_database_release_id=358;
+
+DONE -- 25. select count(*) from DOTS.source where external_database_release_id=358;
+
+DONE -- 26. select * from dots.Miscellaneous where external_database_release_id=358;
+
+TODO -- 27. check if the UTRs is inside the CDS or there is any overlapping exons for Bug #13296
+
+## to check if there is overlap exons
+28. select gf.source_id, ef.source_id, nl.start_min, nl.end_max
+from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
+where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
+and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId'
+
+};
+
+
