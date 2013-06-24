@@ -355,6 +355,24 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="ApidbTuning.OrganismAttributes">
+    <externalTuningTableDependency name="ApidbTuning.OrganismAttributes" dblink="crypto.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAttributes" dblink="giardia.tuning"/>
+    <externalTuningTableDependency name="ApidbTuning.OrganismAttributes" dblink="toxo.tuning"/>
+
+    <unionization>
+      <source dblink="crypto.tuning"/>
+      <source dblink="giardia.tuning"/>
+      <source dblink="toxo.tuning"/>
+    </unionization>
+    <sql>
+      <![CDATA[
+create unique index OrganismAttr_sourceId_idx&1 ON ApidbTuning.OrganismAttributes&1 (source_id, project_id)
+tablespace indx
+      ]]>
+    </sql>
+  </tuningTable> 
+
   <tuningTable name="ApidbTuning.IsolateAttributes">
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="crypto.tuning"/>
     <externalTuningTableDependency name="ApidbTuning.IsolateAttributes" dblink="giardia.tuning"/>
