@@ -1,4 +1,6 @@
-package binduGetData;
+#!/usr/bin/perl
+
+package getPubChemData;
 
 use HTTP::Request::Common;
 use LWP::UserAgent;
@@ -7,7 +9,9 @@ use Net::FTP;
 use strict;
 
 sub usage {
-    die "USAGE: perl getPubChemData.pl (-id <id> | -file <file>)";
+    print STDERR "\nRetrieves XML-formatted PubChem data from NCBI based on an ID or file of IDs\n\n";
+    print STDERR "   USAGE: getPubChemData.pl (-id <id> | -file <file>)\n\n";
+    exit;
 }
 
 if ($#ARGV != 1) { usage; }
@@ -23,8 +27,6 @@ elsif ($ARGV[0] eq "-file") {
 else {
     usage;
 }
-
-print "Using $inputType, $id, $fileName\n";
 
 my $req = POST 'http://pubchem.ncbi.nlm.nih.gov/pc_fetch/pc_fetch.cgi',
           'Content-Type' => 'multipart/form-data',
