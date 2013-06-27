@@ -1028,12 +1028,10 @@ sub getAllTranscriptLocations {
 #            ORDER BY nl.start_min, nl.end_max";
 
   my $sql = "SELECT gf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, DoTS.SplicedNASequence ens, Dots.GeneFeature gf
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, Dots.GeneFeature gf
              WHERE gf.na_feature_id = nl.na_feature_id
              and gf.na_feature_id = tf.parent_id
-              AND tf.na_sequence_id = ens.na_sequence_id
-              AND ens.external_database_release_id = $naExtDbRls
-              and tf.external_database_release_id = $transcriptExtDbRls
+             and tf.external_database_release_id = $transcriptExtDbRls
             ORDER BY nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
