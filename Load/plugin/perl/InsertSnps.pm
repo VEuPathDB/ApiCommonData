@@ -217,6 +217,8 @@ sub run {
   $self->{'naExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('naExternalDatabaseName'),$self->getArg('naExternalDatabaseVersion'));
   $self->{'transcriptExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('transcriptExternalDatabaseName'),$self->getArg('transcriptExternalDatabaseVersion'));
 
+  $self->{'sequencePieces'} = $self->queryForSequencePieces();
+
   my $file = $self->getArg('snpFile');
 
   my $gffIO = Bio::Tools::GFF->new(-file => $file,
@@ -229,6 +231,38 @@ sub run {
 
   return "$linesProcessed lines of SNP file $file processed\n";
 }
+
+# ----------------------------------------------------------------------
+
+sub queryForSequencePieces {
+  my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select sp.virtual_na_sequence_id
+                  , p.na_sequence_id
+                  , sp.strand_orientation
+                  , p.length
+                  , sp.distance_from_left as start_min
+                  , sp.distance_from_left + p.length as end_max
+           from dots.sequencepiece sp
+                , dots.nasequence p 
+           where  sp.piece_na_sequence_id = p.na_sequence_id";
+
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my @sequencePieces;
+
+  while(my $hash = $sh->fetchrow_hashref()) {
+    push @sequencePieces, $hash;
+  }
+
+  $sh->finish();
+
+  return \@sequencePieces;
+}
+
 
 # ----------------------------------------------------------------------
 
@@ -279,6 +313,39 @@ sub getNgsSnpExtDbRlsId {
 }
 
 
+sub primaryLocationFromVirtualLocation {
+  my ($self, $virtualSequenceId, $virtualLocation, $sequencePieces) = @_;
+
+  my $sequencePiece = $self->findSequencePiece($virtualSequenceId, $virtualLocation, $sequencePieces);
+
+  return($virtualSequenceId, $virtualLocation) unless($sequencePiece);
+
+  my $pieceId = $sequencePiece->{NA_SEQUENCE_ID};
+
+  my $pieceLoc;
+  if($sequencePiece->{STRAND_ORIENTATION} eq '-') {
+    $pieceLoc = $sequencePiece->{LENGTH} - ($virtualLocation - $sequencePiece->{START_MIN}) + 1;
+  }
+  else {
+    $pieceLoc = $virtualLocation - $sequencePiece->{START_MIN};
+  }
+
+  $self->primaryLocationFromVirtualLocation($pieceId, $pieceLoc);
+}
+
+
+sub findSequencePiece {
+  my ($self, $virtualSequenceId, $location, $sequencePieces) = @_;
+
+  foreach my $piece (@$sequencePieces) {
+    return $piece if($piece->{VIRTUAL_NA_SEQUENCE_ID} == $virtualSequenceId &&
+                     $piece->{START_MIN} <= $location &&
+                     $piece->{END_MAX} >= $location);
+  }
+  return undef;
+}
+
+
 
 sub processSnpFile{
   my ($self, $gffIO, $naSeqToLocationsHashRef) = @_;
@@ -299,11 +366,16 @@ sub processSnpFile{
     my $snpEnd = $feature->location()->end();
     
     my $naSeqId = $snpFeature->getNaSequenceId();
-    
-    my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+
+    my ($primaryNaSequenceId, $primarySnpStart) = $self->primaryLocationFromVirtualLocation($$naSeqId, $snpStart);
+    my ($skipNaSequenceId, $primarySnpEnd) = $self->primaryLocationFromVirtualLocation($$naSeqId, $snpStart);
+
+    # use mapped startEnd and nasequenceId
+    my $transcript = $self->getTranscript($primaryNaSequenceId, $primarySnpStart, $primarySnpEnd, $naSeqToLocationsHashRef);
     my $transcriptId;
     
-    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+    # use mapped startEnd
+    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $primarySnpStart, $primarySnpEnd, $transcripts);
     
     my $isCoding = $codingSequence ne $mockCodingSequence;
     
