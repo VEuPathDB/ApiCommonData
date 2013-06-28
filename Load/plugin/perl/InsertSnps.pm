@@ -314,9 +314,9 @@ sub getNgsSnpExtDbRlsId {
 
 
 sub primaryLocationFromVirtualLocation {
-  my ($self, $virtualSequenceId, $virtualLocation, $sequencePieces) = @_;
+  my ($self, $virtualSequenceId, $virtualLocation) = @_;
 
-  my $sequencePiece = $self->findSequencePiece($virtualSequenceId, $virtualLocation, $sequencePieces);
+  my $sequencePiece = $self->findSequencePiece($virtualSequenceId, $virtualLocation);
 
   return($virtualSequenceId, $virtualLocation) unless($sequencePiece);
 
@@ -335,7 +335,9 @@ sub primaryLocationFromVirtualLocation {
 
 
 sub findSequencePiece {
-  my ($self, $virtualSequenceId, $location, $sequencePieces) = @_;
+  my ($self, $virtualSequenceId, $location) = @_;
+
+  my $sequencePieces = $self->{'sequencePieces'};
 
   foreach my $piece (@$sequencePieces) {
     return $piece if($piece->{VIRTUAL_NA_SEQUENCE_ID} == $virtualSequenceId &&
