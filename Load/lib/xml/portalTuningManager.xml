@@ -353,6 +353,12 @@ CREATE INDEX ApidbTuning.GeneId_id_idx&1 ON ApidbTuning.GeneId&1 (id)
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+CREATE INDEX ApidbTuning.GeneId_lowid_idx&1 ON ApidbTuning.GeneId&1 (lower(id), gene)
+tablespace indx
+      ]]>
+    </sql>
   </tuningTable>
 
   <tuningTable name="ApidbTuning.IsolateAttributes">
