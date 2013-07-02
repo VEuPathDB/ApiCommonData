@@ -7,8 +7,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.digester.Digester;
 import org.apache.log4j.Logger;
 
-
-
 import org.gusdb.fgputil.xml.XmlParser;
 import org.gusdb.fgputil.CliUtil;
 

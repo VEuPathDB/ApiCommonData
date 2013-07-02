@@ -111,10 +111,12 @@ is
 begin
   for i in (select s.sid, s.serial#, s.osuser, s.username, s.status,
                    s.logon_time, vs.last_active_time, s.module,
-                   vs.sql_fulltext, vs.sql_text, vs.address, vs.hash_value
-            from v$session s, v$sqlArea vs, v$process vp
+                   vs.sql_fulltext, vs.sql_text,
+                   vs.address || '-' || vs.hash_value || '-' || vs.child_number as address_hash_child
+            from v$session s, v$sql vs, v$process vp
             where s.sql_address = vs.address (+)
               and s.sql_hash_value = vs.hash_value (+)
+              and s.sql_child_number = vs.child_number (+)
               and s.paddr = vp.addr
               and s.TYPE = 'USER'
               and s.username not in ('DBSNMP', 'STRMADMIN', 'SYS', 'SYSMAN', 'SYSTEM'))
@@ -128,8 +130,7 @@ begin
               dbms_output.put_line('logon_time=' || i.logon_time);
               dbms_output.put_line('last_active_time=' || i.last_active_time);
               dbms_output.put_line('module=' || i.module);
-              dbms_output.put_line('address=' || i.address);
-              dbms_output.put_line('hash_value=' || i.hash_value);
+              dbms_output.put_line('address_hash_child=' || i.address_hash_child);
               dbms_output.put_line('kill_command="execute sys_shared.SHARED_USER.kill_session(' || i.sid || ', ' || i.serial# || ')"');
               dbms_output.put_line('sql_fulltext:');
               dbms_output.put_line(i.sql_fulltext);
