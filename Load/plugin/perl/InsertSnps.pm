@@ -11,6 +11,8 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
+
+use GUS::Model::DoTS::NASequence;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
@@ -73,9 +75,9 @@ sub getArgumentsDeclaration{
 		isList => 0
 	       }),
      stringArg({name => 'seqTable',
-		descr => 'where do we find the nucleotide sequences',
+		descr => 'deprecated: where do we find the nucleotide sequences',
 		constraintFunc => undef,
-		reqd => 1,
+		reqd => 0,
 		isList => 0
 	       }),
      stringArg({name => 'organism',
@@ -369,8 +371,8 @@ sub processSnpFile{
     
     my $naSeqId = $snpFeature->getNaSequenceId();
 
-    my ($primaryNaSequenceId, $primarySnpStart) = $self->primaryLocationFromVirtualLocation($$naSeqId, $snpStart);
-    my ($skipNaSequenceId, $primarySnpEnd) = $self->primaryLocationFromVirtualLocation($$naSeqId, $snpStart);
+    my ($primaryNaSequenceId, $primarySnpStart) = $self->primaryLocationFromVirtualLocation($naSeqId, $snpStart);
+    my ($skipNaSequenceId, $primarySnpEnd) = $self->primaryLocationFromVirtualLocation($naSeqId, $snpStart);
 
     # use mapped startEnd and nasequenceId
     my $transcript = $self->getTranscript($primaryNaSequenceId, $primarySnpStart, $primarySnpEnd, $naSeqToLocationsHashRef);
@@ -777,16 +779,12 @@ sub getSoId {
 sub getNaSeq {
   my ($self, $sourceId) = @_;
 
-  my $extDbRlsId = $self->{'naExtDbRlsId'};
-
-  my ($seqTable) = $self->getArg("seqTable");
-  $seqTable = "GUS::Model::$seqTable";
-  eval "require $seqTable";
+  my $seqTable = "GUS::Model::DoTS::NASequence";
 
   my $naSeq;
-  unless($naSeq = $self->findFromNaSequences($sourceId, $extDbRlsId)) {
-    $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
-    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
+  unless($naSeq = $self->findFromNaSequences($sourceId)) {
+    $naSeq = $seqTable->new({'source_id'=>$sourceId });
+    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database uniquely\n");
 
     $self->addToNaSequences($naSeq);
   }
@@ -1116,15 +1114,14 @@ sub getCodingAndMockSequencesForTranscript {
 # ----------------------------------------------------------------------
 
 sub findFromNaSequences {
-  my ($self, $querySourceId, $queryExternalDbRlsId) = @_;
+  my ($self, $querySourceId) = @_;
 
   my $naSequences = $self->{na_sequences};
 
   foreach my $naSeq (@$naSequences) {
-    my $extDbRlsId = $naSeq->getExternalDatabaseReleaseId();
     my $sourceId = $naSeq->getSourceId();
 
-    if($queryExternalDbRlsId == $extDbRlsId && $querySourceId eq $sourceId) {
+    if($querySourceId eq $sourceId) {
       return($naSeq);
     }
   }
