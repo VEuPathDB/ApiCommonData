@@ -119,6 +119,7 @@ sub run {
               select 'CDS' as type, ef.parent_id as na_feature_id,  least(ef.coding_start, ef.coding_end) as start_min, greatest(ef.coding_start, ef.coding_end) as end_max
               from dots.ExonFeature ef, dots.nalocation el
               where ef.na_feature_id = el.na_feature_id
+              and ef.coding_start >0
               union
               select 'intron' as type, left.parent_id as na_feature_id, leftLoc.end_max + 1  as start_min, rightLoc.start_min - 1 as end_max
               from dots.ExonFeature left, dots.nalocation leftLoc,  dots.ExonFeature right, dots.nalocation rightLoc

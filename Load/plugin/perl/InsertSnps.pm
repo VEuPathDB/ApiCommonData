@@ -11,6 +11,8 @@ use GUS::Model::SRes::SequenceOntology;
 use GUS::Model::SRes::ExternalDatabase;
 use GUS::Model::SRes::ExternalDatabaseRelease;
 
+
+use GUS::Model::DoTS::NASequence;
 use GUS::Model::DoTS::SeqVariation;
 use GUS::Model::DoTS::NALocation;
 use GUS::Model::DoTS::SnpFeature;
@@ -73,9 +75,9 @@ sub getArgumentsDeclaration{
 		isList => 0
 	       }),
      stringArg({name => 'seqTable',
-		descr => 'where do we find the nucleotide sequences',
+		descr => 'deprecated: where do we find the nucleotide sequences',
 		constraintFunc => undef,
-		reqd => 1,
+		reqd => 0,
 		isList => 0
 	       }),
      stringArg({name => 'organism',
@@ -217,6 +219,8 @@ sub run {
   $self->{'naExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('naExternalDatabaseName'),$self->getArg('naExternalDatabaseVersion'));
   $self->{'transcriptExtDbRlsId'} = $self->getExtDbRlsId($self->getArg('transcriptExternalDatabaseName'),$self->getArg('transcriptExternalDatabaseVersion'));
 
+  $self->{'sequencePieces'} = $self->queryForSequencePieces();
+
   my $file = $self->getArg('snpFile');
 
   my $gffIO = Bio::Tools::GFF->new(-file => $file,
@@ -229,6 +233,38 @@ sub run {
 
   return "$linesProcessed lines of SNP file $file processed\n";
 }
+
+# ----------------------------------------------------------------------
+
+sub queryForSequencePieces {
+  my ($self) = @_;
+
+  my $dbh = $self->getQueryHandle();
+
+  my $sql = "select sp.virtual_na_sequence_id
+                  , p.na_sequence_id
+                  , sp.strand_orientation
+                  , p.length
+                  , sp.distance_from_left as start_min
+                  , sp.distance_from_left + p.length as end_max
+           from dots.sequencepiece sp
+                , dots.nasequence p 
+           where  sp.piece_na_sequence_id = p.na_sequence_id";
+
+
+  my $sh = $dbh->prepare($sql);
+  $sh->execute();
+  my @sequencePieces;
+
+  while(my $hash = $sh->fetchrow_hashref()) {
+    push @sequencePieces, $hash;
+  }
+
+  $sh->finish();
+
+  return \@sequencePieces;
+}
+
 
 # ----------------------------------------------------------------------
 
@@ -279,6 +315,41 @@ sub getNgsSnpExtDbRlsId {
 }
 
 
+sub primaryLocationFromVirtualLocation {
+  my ($self, $virtualSequenceId, $virtualLocation) = @_;
+
+  my $sequencePiece = $self->findSequencePiece($virtualSequenceId, $virtualLocation);
+
+  return($virtualSequenceId, $virtualLocation) unless($sequencePiece);
+
+  my $pieceId = $sequencePiece->{NA_SEQUENCE_ID};
+
+  my $pieceLoc;
+  if($sequencePiece->{STRAND_ORIENTATION} eq '-') {
+    $pieceLoc = $sequencePiece->{LENGTH} - ($virtualLocation - $sequencePiece->{START_MIN}) + 1;
+  }
+  else {
+    $pieceLoc = $virtualLocation - $sequencePiece->{START_MIN};
+  }
+
+  $self->primaryLocationFromVirtualLocation($pieceId, $pieceLoc);
+}
+
+
+sub findSequencePiece {
+  my ($self, $virtualSequenceId, $location) = @_;
+
+  my $sequencePieces = $self->{'sequencePieces'};
+
+  foreach my $piece (@$sequencePieces) {
+    return $piece if($piece->{VIRTUAL_NA_SEQUENCE_ID} == $virtualSequenceId &&
+                     $piece->{START_MIN} <= $location &&
+                     $piece->{END_MAX} >= $location);
+  }
+  return undef;
+}
+
+
 
 sub processSnpFile{
   my ($self, $gffIO, $naSeqToLocationsHashRef) = @_;
@@ -299,11 +370,16 @@ sub processSnpFile{
     my $snpEnd = $feature->location()->end();
     
     my $naSeqId = $snpFeature->getNaSequenceId();
-    
-    my $transcript = $self->getTranscript($naSeqId, $snpStart, $snpEnd, $naSeqToLocationsHashRef);
+
+    my ($primaryNaSequenceId, $primarySnpStart) = $self->primaryLocationFromVirtualLocation($naSeqId, $snpStart);
+    my ($skipNaSequenceId, $primarySnpEnd) = $self->primaryLocationFromVirtualLocation($naSeqId, $snpStart);
+
+    # use mapped startEnd and nasequenceId
+    my $transcript = $self->getTranscript($primaryNaSequenceId, $primarySnpStart, $primarySnpEnd, $naSeqToLocationsHashRef);
     my $transcriptId;
     
-    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $snpStart, $snpEnd, $transcripts);
+    # use mapped startEnd
+    my ($codingSequence, $mockCodingSequence) = $self->getCodingAndMockSequencesForTranscript($transcript, $primarySnpStart, $primarySnpEnd, $transcripts);
     
     my $isCoding = $codingSequence ne $mockCodingSequence;
     
@@ -703,16 +779,12 @@ sub getSoId {
 sub getNaSeq {
   my ($self, $sourceId) = @_;
 
-  my $extDbRlsId = $self->{'naExtDbRlsId'};
-
-  my ($seqTable) = $self->getArg("seqTable");
-  $seqTable = "GUS::Model::$seqTable";
-  eval "require $seqTable";
+  my $seqTable = "GUS::Model::DoTS::NASequence";
 
   my $naSeq;
-  unless($naSeq = $self->findFromNaSequences($sourceId, $extDbRlsId)) {
-    $naSeq = $seqTable->new({'source_id'=>$sourceId,'external_database_release_id'=>$extDbRlsId});
-    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database with database release = $extDbRlsId\n");
+  unless($naSeq = $self->findFromNaSequences($sourceId)) {
+    $naSeq = $seqTable->new({'source_id'=>$sourceId });
+    $naSeq->retrieveFromDB() || $self->error(" $sourceId does not exist in the database uniquely\n");
 
     $self->addToNaSequences($naSeq);
   }
@@ -956,12 +1028,10 @@ sub getAllTranscriptLocations {
 #            ORDER BY nl.start_min, nl.end_max";
 
   my $sql = "SELECT gf.na_sequence_id, tf.na_feature_id, nl.start_min, nl.end_max
-             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, DoTS.SplicedNASequence ens, Dots.GeneFeature gf
+             FROM dots.TRANSCRIPT tf, dots.NaLocation nl, Dots.GeneFeature gf
              WHERE gf.na_feature_id = nl.na_feature_id
              and gf.na_feature_id = tf.parent_id
-              AND tf.na_sequence_id = ens.na_sequence_id
-              AND ens.external_database_release_id = $naExtDbRls
-              and tf.external_database_release_id = $transcriptExtDbRls
+             and tf.external_database_release_id = $transcriptExtDbRls
             ORDER BY nl.start_min, nl.end_max";
 
   my $sh = $self->getQueryHandle()->prepare($sql);
@@ -1044,15 +1114,14 @@ sub getCodingAndMockSequencesForTranscript {
 # ----------------------------------------------------------------------
 
 sub findFromNaSequences {
-  my ($self, $querySourceId, $queryExternalDbRlsId) = @_;
+  my ($self, $querySourceId) = @_;
 
   my $naSequences = $self->{na_sequences};
 
   foreach my $naSeq (@$naSequences) {
-    my $extDbRlsId = $naSeq->getExternalDatabaseReleaseId();
     my $sourceId = $naSeq->getSourceId();
 
-    if($queryExternalDbRlsId == $extDbRlsId && $querySourceId eq $sourceId) {
+    if($querySourceId eq $sourceId) {
       return($naSeq);
     }
   }

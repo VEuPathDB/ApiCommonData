@@ -83,7 +83,23 @@ tablespace indx
 
   <tuningTable name="OrganismAttributes" prefixEnabled="true">
     <internalDependency name="GeneAttributes"/>
+    <internalDependency name="GeneId"/>
+    <internalDependency name="SequenceAttributes"/>
+    <internalDependency name="SageTagGene"/>
+    <internalDependency name="ChIPchipGene"/>
+    <internalDependency name="TFBSGene"/>
+    <internalDependency name="EstAlignmentGeneSummary"/>
+    <internalDependency name="EstAttributes"/>
     <externalDependency name="sres.TaxonName"/>
+    <externalDependency name="ApiDB.Profile"/>
+    <externalDependency name="ApiDB.ProfileSet"/>
+    <externalDependency name="ApiDB.phylogeneticprofile"/>
+    <externalDependency name="dots.GoAssociation"/>
+    <externalDependency name="apidb.massspecsummary"/>
+    <externalDependency name="dots.translatedaafeature"/>
+    <externalDependency name="dots.transcript"/>
+    <externalDependency name="dots.nasequence"/>
+    <externalDependency name="dots.snpfeature"/>
     <sql>
       <![CDATA[
 CREATE TABLE OrganismAttributes&1 NOLOGGING AS
@@ -96,6 +112,21 @@ SELECT o.project_name as project_id,
        nvl(hasArray.ct, 0) as hasArray, 
        nvl(geneArrayCount.ct, 0) as arrayGeneCount, 
        nvl(geneCount.ct, 0) as geneCount,
+       nvl(pseudoGeneCount.ct, 0) as pseudoGeneCount,
+       nvl(codingGeneCount.ct, 0) as codingGeneCount,
+       nvl(otherGeneCount.ct, 0) as otherGeneCount,
+       nvl(ecNumberCount.ct, 0) as ecNumberCount, 
+       nvl(sageTagCount.ct, 0) as sageTagCount, 
+       nvl(rnaSeqCount.ct, 0) as rnaSeqCount, 
+       nvl(chipChipGeneCount.ct, 0) as chipChipGeneCount, 
+       nvl(rtPCRCount.ct, 0) as rtPCRCount, 
+       nvl(orthologCount.ct, 0) as orthologCount, 
+       nvl(goCount.ct, 0) as goCount, 
+       nvl(tfbsCount.ct, 0) as tfbsCount, 
+       nvl(proteomicsCount.ct, 0) as proteomicsCount, 
+       nvl(estCount.ct, 0) as estCount, 
+       nvl(snpCount.ct, 0) as snpCount, 
+       nvl(communityCount.ct, 0) as communityCount, 
        nvl(hasChipChip.ct, 0) as hasChipChip,
        nvl(hasRNASeq.ct, 0) as hasRNASeq,
        nvl(hasSageTag.ct, 0) as hasSageTag,
@@ -195,19 +226,146 @@ FROM   Apidb.Organism o,
           and d.name = ds.external_database_name
           group by ds.taxon_id
        ) geneArrayCount,
-       (select taxon_id,
+       (SELECT taxon_id,
                count(*) as ct  
-        from GeneAttributes 
-        group by taxon_id 
-       ) geneCount,
-       ( SELECT taxon_id, ncbi_tax_id, to_char(sum(length)/1000000,'9999.99') as megabps 
-         FROM   ApidbTuning.SequenceAttributes 
+        FROM   GeneAttributes 
+        GROUP BY taxon_id 
+       ) geneCount, 
+       (SELECT taxon_id,
+              sum(is_pseudo) as ct
+        FROM  GeneAttributes
+        GROUP BY taxon_id
+       ) pseudoGeneCount, 
+       (SELECT taxon_id,
+               count(*) as ct
+        FROM  GeneAttributes
+        WHERE gene_type = 'protein coding'
+        GROUP BY taxon_id 
+       ) codingGeneCount, 
+       (SELECT taxon_id,
+               count(*) as ct
+        FROM  GeneAttributes
+        WHERE gene_type != 'protein coding'
+        GROUP BY taxon_id 
+       ) otherGeneCount, 
+       (SELECT taxon_id,
+               count(ec_numbers) as ct
+        FROM GeneAttributes
+        GROUP BY taxon_id 
+       ) ecNumberCount, 
+       (SELECT count (distinct ga.source_id) as ct, ga.taxon_id 
+        FROM   sagetaggene stg, geneattributes ga  
+        WHERE  ga.source_id = stg.gene_source_id 
+           AND ga.is_deprecated = 0 
+        GROUP BY ga.taxon_id
+       ) sageTagCount, 
+       (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
+        FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps  
+        WHERE ps.profile_set_id = p.profile_set_id and p.source_id = ga.source_id 
+          AND lower(ps.name) like '%rna%' 
+          AND ga.is_deprecated = 0 
+        GROUP BY ga.taxon_id 
+       ) rnaSeqCount, 
+       (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
+        FROM GeneAttributes ga, ChipChipGene ccg 
+        WHERE ccg.gene_source_id = ga.source_id 
+          AND ga.is_deprecated = 0 
+        GROUP BY ga.taxon_id
+       ) chipChipGeneCount, 
+      (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
+       FROM GeneAttributes ga, ApiDB.Profile p, ApiDB.ProfileSet ps  
+       WHERE ps.profile_set_id = p.profile_set_id 
+         AND p.source_id = ga.source_id 
+         AND lower(ps.name) like '%rt_pcr%' 
+         AND ga.is_deprecated = 0 
+        GROUP BY ga.taxon_id
+      ) rtPCRCount, 
+      (SELECT count(distinct ga.source_id) as ct , ga.taxon_id
+       FROM GeneAttributes ga,apidb.phylogeneticprofile pp  
+       WHERE ga.source_id = pp.source_id and ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id
+      ) orthologCount, 
+      (SELECT count(distinct ga.source_id) as ct , ga.taxon_id
+       FROM GeneAttributes ga, dots.GoAssociation go, 
+            dots.TranslatedAaFeature taf, dots.Transcript t 
+       WHERE ga.na_feature_id = t.parent_id   
+         AND t.na_feature_id = taf.na_feature_id  
+         AND taf.aa_sequence_id = go.row_id and ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id 
+      ) goCount, 
+      (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
+       FROM GeneAttributes ga, 
+            TFBSGene tfbs 
+       WHERE tfbs.gene_source_id = ga.source_id 
+        AND ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id    
+      ) tfbsCount, 
+      (SELECT count(distinct ga.source_id) as ct, ga.taxon_id 
+       FROM apidb.massspecsummary mss, dots.translatedaafeature taaf,    
+            dots.transcript t, GeneAttributes ga, dots.nasequence nas 
+       WHERE mss.aa_sequence_id = taaf.aa_sequence_id 
+        and taaf.na_feature_id = t.na_feature_id 
+        and t.parent_id = ga.na_feature_id 
+        and ga.na_sequence_id = nas.na_sequence_id 
+        and ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id 
+      ) proteomicsCount, 
+      (SELECT count(distinct ga.source_id) as ct , ga.taxon_id 
+       FROM ApiDBTuning.GeneAttributes ga, 
+         ( SELECT distinct s.gene as source_id 
+           FROM EstAlignmentGeneSummary s,  
+                EstAttributes e 
+           WHERE s.est_gene_overlap_length >= 100 
+             AND s.is_best_alignment in (1) 
+            AND s.percent_est_bases_aligned >= 20  
+            AND s.percent_identity >= 90  
+            AND e.best_alignment_count <= 1 
+            and e.source_id = s.accession   GROUP 
+            by s.gene HAVING count(*) >= 1) est 
+        WHERE est.source_id = ga.source_id 
+          and ga.is_deprecated = 0 
+          group by ga.taxon_id 
+      ) estCount, 
+      (SELECT count(distinct ga.source_id) as ct, ga.taxon_id 
+       FROM GeneAttributes ga, dots.snpfeature sf  
+       WHERE sf.parent_id = ga.na_feature_id 
+         AND ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id
+      ) snpCount, 
+      (SELECT count(distinct ga.source_id) as ct, ga.taxon_id 
+       FROM   GeneAttributes ga, comments2.comments@&dblink lgc, GeneId gi 
+       WHERE lgc.stable_id = gi.id  
+         AND gi.gene = ga.source_id 
+         AND ga.is_deprecated = 0 
+       GROUP BY ga.taxon_id
+      ) communityCount, 
+       ( SELECT taxon_id, 
+                CASE WHEN ncbi_tax_id > 9000000000 THEN NULL
+                     ELSE ncbi_tax_id
+                END ncbi_tax_id, 
+                to_char(sum(length)/1000000,'9999.99') as megabps 
+         FROM   SequenceAttributes 
          WHERE  is_top_level = 1
          GROUP BY taxon_id, ncbi_tax_id
        ) genomestat 
 WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = geneArrayCount.taxon_id (+)
   AND o.taxon_id = geneCount.taxon_id (+)
+  AND o.taxon_id = pseudoGeneCount.taxon_id (+)
+  AND o.taxon_id = codingGeneCount.taxon_id (+)
+  AND o.taxon_id = otherGeneCount.taxon_id (+)
+  AND o.taxon_id = ecNumberCount.taxon_id (+) 
+  AND o.taxon_id = sageTagCount.taxon_id (+) 
+  AND o.taxon_id = rnaSeqCount.taxon_id (+) 
+  AND o.taxon_id = chipChipGeneCount.taxon_id (+) 
+  AND o.taxon_id = rtPCRCount.taxon_id (+) 
+  AND o.taxon_id = orthologCount.taxon_id (+) 
+  AND o.taxon_id = goCount.taxon_id (+) 
+  AND o.taxon_id = tfbsCount.taxon_id (+) 
+  AND o.taxon_id = proteomicsCount.taxon_id (+) 
+  AND o.taxon_id = estCount.taxon_id (+) 
+  AND o.taxon_id = snpCount.taxon_id (+) 
+  AND o.taxon_id = communityCount.taxon_id (+) 
   AND o.taxon_id = isOrganellar.taxon_id (+)
   AND o.taxon_id = hasChipChip.taxon_id (+)
   AND o.taxon_id = hasRNASeq.taxon_id (+)
@@ -746,7 +904,7 @@ UNION
 CREATE TABLE &prefixNewCsi nologging as
 SELECT stable_id, comment_id, comments2.CommentStableId_pkseq.nextval@&dblink as comment_stable_id
 FROM (  SELECT gi.gene AS stable_id, ca.comment_id
-        FROM ApidbTuning.GeneId gi, &prefixCommentAssignment ca
+        FROM &prefixGeneId&1 gi, &prefixCommentAssignment ca
         WHERE gi.id = ca.stable_id
           AND gi.id != gi.gene
       MINUS
