@@ -246,12 +246,12 @@ $stmt->finish();
 
 ### check if gene location is located outside the naSequence length
 my $sql = <<SQL;
-  select ens.na_sequence_id, nl.na_feature_id, ens.source_id, ens.length, nl.end_max from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id and nl.end_max > ens.length and ens.external_database_release_id=$extDbRlsId
+  select gf.source_id, nl.start_min, nl.end_max, ens.source_id, ens.length from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id and nl.end_max > ens.length and ens.external_database_release_id=$extDbRlsId
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
-while (my ($naSeqId, $nlFeatId, $naSeqSourceId, $naSeqLeng, $nlEndMax) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: $nlFeatId with $nlEndMax with is outside of the $naSeqId for $naSeqSourceId with length $naSeqLeng.\n";
+while (my ($gfSourceId, $nlStartMin, $nlEndMax, $seqSourceId, $seqLength) = $stmt->fetchrow_array()) {
+  print STDERR "ERROR: gene $gfSourceId with $nlStartMin .. $nlEndMax, which is outside the sequence $seqSourceId 's length: $seqLength.\n";
 }
 $stmt->finish();
 
