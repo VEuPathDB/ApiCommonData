@@ -52,7 +52,8 @@ public class ResourceXmlValidator extends XmlParser {
 
         return options;
     }
-
+    
+    @Override
     protected Digester configureDigester() { return null; }
 
 
