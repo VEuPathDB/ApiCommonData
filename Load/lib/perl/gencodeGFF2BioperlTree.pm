@@ -185,7 +185,7 @@ sub traverseSeqFeatures {
         
        #print STDERR "-----------------$type----------------------\n";
 
-        if($type eq 'transcript'){
+        if($type eq 'transcript' || $type eq 'mRNA'){
 #            $type = 'coding';
             my ($geneType) = $RNA->get_tag_values("gene_type") if ($RNA->has_tag("gene_type"));
             my ($transType) = $RNA->get_tag_values("transcript_type") if ($RNA->has_tag("transcript_type"));
