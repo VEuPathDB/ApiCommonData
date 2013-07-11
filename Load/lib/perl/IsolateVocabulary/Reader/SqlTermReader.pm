@@ -92,6 +92,7 @@ sub getDotsIsolateSourceTerms {
 
 select distinct $queryField as term  from dots.$table
 where $queryField is not null 
+order by $queryField
 SQL
 
   my $sh = $dbh->prepare($sql);
