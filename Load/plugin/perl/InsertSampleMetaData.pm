@@ -380,7 +380,6 @@ sub undoTables {
   return ( 'Study.BioMaterialCharacteristic',
            'RAD.StudyBioMaterial',
            'Study.BioSample',
-		   'Study.BioSource',
      );
 }
 
