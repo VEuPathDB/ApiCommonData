@@ -31,6 +31,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="curation" handler="api" method="note"/>
     <qualifier name="cytoplasmic_polypeptide_region" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="eC_number" handler="api" method="ECNumber"/>
     <qualifier name="fasta_file" ignore="true"/>
@@ -67,14 +68,21 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="pseudo_gene" so="protein_coding">
+    <qualifier name="Alias" handler="api" method="gene"/>
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="EC_number" handler="api" method="ECNumber"/>
+    <qualifier name="Gene" ignore="true"/>
     <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="codon_start" ignore="true"/>
     <qualifier name="curation" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="function" ignore="true"/>
     <qualifier name="gene" ignore="true"/>
@@ -102,9 +110,11 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Name" handler="api" method="product"/>
     <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
@@ -121,10 +131,13 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="misc_RNA_gene" so="non_protein_coding">
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="Name" handler="api" method="gene"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="note" handler="api" method="note"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
@@ -132,14 +145,19 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="repeat_region" table="DoTS::Repeats" so="repeat_region">
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="FEAT_NAME" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Parent" ignore="true"/>
     <qualifier name="blastn_file" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="comment_Nterm" handler="api" method="commentNterm"/>
     <qualifier name="curation" handler="api" method="note"/>
+    <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="fasta_file" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="mobile_element" ignore="true"/>
@@ -155,10 +173,20 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="type" ignore="true"/>
   </feature>
 
+  <feature name="binding_site" table="DoTS::Miscellaneous" so="repeat_region">
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="ID" ignore="true"/>
+    <qualifier name="Name" column="source_id"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Parent" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
+  </feature>
+
   <feature name="direct_repeat" table="DoTS::Repeats" so="direct_repeat">
     <qualifier name="FEAT_NAME" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
+    <qualifier name="Name" column="standard_name"/>
     <qualifier name="blastn_file" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
@@ -183,6 +211,7 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="FEAT_NAME" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
+    <qualifier name="Name" column="standard_name"/>
     <qualifier name="blastn_file" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
@@ -204,9 +233,13 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="deletion" table="DoTS::Miscellaneous" so="direct_repeat">
+    <qualifier name="Alias" ignore="true"/>
     <qualifier name="FEAT_NAME" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
+    <qualifier name="Name" column="standard_name"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Parent" ignore="true"/>
     <qualifier name="blastn_file" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
@@ -228,9 +261,13 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="insertion" table="DoTS::Miscellaneous" so="direct_repeat">
+    <qualifier name="Alias" ignore="true"/>
     <qualifier name="FEAT_NAME" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
+    <qualifier name="Name" column="standard_name"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Parent" ignore="true"/>
     <qualifier name="blastn_file" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="comment" handler="api" method="note"/>
@@ -252,77 +289,94 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
-    <qualifier name="comment" ignore="true"/>
+    <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
-    <qualifier name="previous_systematic_id" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="private" ignore="true"/>
+    <qualifier name="product" handler="api" method="product"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
-    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="synonym" handler="api" method="gene"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
   </feature>
 
   <feature name="snRNA_gene" so="snRNA_encoding">
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
-    <qualifier name="comment" ignore="true"/>
+    <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
-    <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="private" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
+    <qualifier name="product" handler="api" method="product"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
-    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="synonym" handler="api" method="gene"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
   </feature>
 
   <feature name="scRNA_gene" so="scRNA_encoding">
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
-    <qualifier name="comment" ignore="true"/>
+    <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
-    <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="private" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
+    <qualifier name="product" handler="api" method="product"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
-    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="synonym" handler="api" method="gene"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
   </feature>
 
   <feature name="ncRNA_gene" so="ncRNA">
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Name" ignore="true"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
-    <qualifier name="comment" ignore="true"/>
+    <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="eMBL_qualifier" ignore="true"/>
     <qualifier name="embl_qualifier" ignore="true"/>
@@ -330,23 +384,26 @@ Last modified: edliaw 2013-07-18 -->
     <qualifier name="feature_relationship_rank" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
-    <qualifier name="previous_systematic_id" ignore="true"/>
-    <qualifier name="product" ignore="true"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="private" ignore="true"/>
+    <qualifier name="product" handler="api" method="product"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
-    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="synonym" handler="api" method="gene"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
   </feature>
 
   <feature name="source" table="DoTS::Source" so="" ignore="true">
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="cell_type" ignore="true"/>
     <qualifier name="chromosome"/>
     <qualifier name="clone" ignore="true"/>
     <qualifier name="clone_lib" ignore="true"/>
     <qualifier name="country" ignore="true"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="dev_stage"/>
     <qualifier name="haplotype" ignore="true"/>
     <qualifier name="isolate"/>
@@ -361,25 +418,30 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="tRNA_gene" so="tRNA_encoding">
-    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="Alias" handler="api" method="gene"/>
     <qualifier name="Dbxref" ignore="true"/>
+    <qualifier name="Gene" ignore="true"/>
     <qualifier name="ID" handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="Name" ignore="true"/>
-    <qualifier name="Note" ignore="true"/>
+    <qualifier name="Name" handler="api" method="product"/>
+    <qualifier name="Note" handler="api" method="note"/>
+    <qualifier name="Ontology_term" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
-    <qualifier name="comment" ignore="true"/>
+    <qualifier name="comment" handler="api" method="note"/>
     <qualifier name="db_xref" ignore="true"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="display" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
+    <qualifier name="gene" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
-    <qualifier name="note" ignore="true"/>
     <qualifier name="phase" ignore="true"/>
-    <qualifier name="previous_systematic_id" ignore="true"/>
+    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
+    <qualifier name="private" ignore="true"/>
+    <qualifier name="product" handler="api" method="product"/>
     <qualifier name="score" ignore="true"/>
     <qualifier name="selenocysteine" ignore="true"/>
     <qualifier name="seq_id" ignore="true"/>
     <qualifier name="source" ignore="true"/>
-    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="synonym" handler="api" method="gene"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="type" ignore="true"/>
   </feature>
@@ -408,6 +470,12 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="nucleotide_match" ignore="true">
+    <qualifier name="Alias" ignore="true"/>
+    <qualifier name="ID" ignore="true" />
+    <qualifier name="Name" ignore="true" />
+    <qualifier name="Note" ignore="true" />
+    <qualifier name="Parent" ignore="true" />
+    <qualifier name="dbxref" ignore="true"/>
   </feature>
 
   <feature name="match_part" ignore="true">
@@ -481,14 +549,18 @@ Last modified: edliaw 2013-07-18 -->
   </feature>
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="Name" column="source_id"/>
     <qualifier name="db_xref" handler="api" method="dbXRef"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="note" handler="api" method="note"/>
   </feature>
 
   <feature name="misc_feature_gene" so="sequence_feature">
+    <qualifier name="Dbxref" ignore="true"/>
     <qualifier name="ID" column="source_id"/>
     <qualifier name="db_xref" handler="api" method="dbXRef"/>
+    <qualifier name="dbxref" ignore="true"/>
     <qualifier name="note" handler="api" method="note"/>
     <qualifier name="previous_systematic_id" handler="api" method="gene"/>
     <qualifier name="synonym" handler="api" method="gene"/>
