@@ -2064,8 +2064,6 @@ SELECT cast(apidb.project_id(tn.name) as varchar2(20)) as project_id,
        snp.minor_allele_count,
        round(snp.minor_allele_count / (snp.major_allele_count + snp.minor_allele_count),2) as minor_allele_frequency,
        strain_info.distinct_strain_count as strain_count,
-       SUBSTR(snp.strains, 1, 1000) AS strains,
-       SUBSTR(snp.strains_revcomp, 1, 1000) AS strains_revcomp,
        gene_info.source_id AS gene_source_id,
        DECODE(gene_info.is_reversed, 0, 'forward', 1, 'reverse')
          AS gene_strand,
