@@ -31,7 +31,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="transl_except"        handler="api" method="transcriptTranslExcept"/>
     <qualifier name="translation"          handler="api" method="setProvidedTranslation"/>
     <qualifier name="transl_table" ignore="true"/> 
-   <qualifier name="GO_component" ignore="true"/>
+    <qualifier name="GO_component" ignore="true"/>
     <qualifier name="GO_process" ignore="true"/>
     <qualifier name="GO_function" ignore="true"/>
     <qualifier name="old_locus_tag" ignore="true"/> 
@@ -100,6 +100,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="domain"                 ignore="true"/>
     <qualifier name="gene" ignore="true"/>
+    <qualifier name="ncRNA_class"          ignore="true"/>
   </feature>
 
   <feature name="snoRNA_gene" so="snoRNA_encoding">
@@ -124,6 +125,7 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="culture_collection" ignore="true"/>
     <qualifier name="anamorph" ignore="true"/>
     <qualifier name="mating_type" ignore="true"/>
+    <qualifier name="transgenic" ignore="true"/>
 
     <!-- from mRNA records -->
     <qualifier name="strain"/>
@@ -165,19 +167,6 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="SRP_RNA_gene" ignore="true">
-  </feature>
-
-  <feature name="snRNA_gene" so="snRNA_encoding">
-    <qualifier name="locus_tag"        handler="api" method="sourceIdAndTranscriptSeq"/>
-    <qualifier name="previous_systematic_id" handler="api" method="gene"/>
-    <qualifier name="note"                 handler="api" method="note"/>
-    <qualifier name="curation"             handler="api" method="note"/>
-    <qualifier name="product"              ignore="true"/>
-    <qualifier name="db_xref"          ignore="true"/>
-    <qualifier name="blastn_file"          ignore="true"/>
-    <qualifier name="domain"               ignore="true"/>
-    <qualifier name="ncRNA_class"          ignore="true"/>
-
   </feature>
 
   <feature name="mRNA" ignore="true">
