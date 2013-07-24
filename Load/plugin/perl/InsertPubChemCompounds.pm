@@ -9,7 +9,7 @@ package ApiCommonData::Load::Plugin::InsertPubChemCompounds;
 use strict;
 use warnings;
 
-use XML::Twig;
+use XML::Simple;
 use GUS::PluginMgr::Plugin;
 use GUS::Model::ApiDB::PubChemCompound;
 
@@ -113,31 +113,56 @@ sub new {
 
 sub run {
   my $self = shift;
-
-  my $roots = { 'PC-Compound_id' => 1,
-		'PC-Compound_props' => 1,
-	      };
-
-  my $handlers = { 'PC-Compound_id/PC-CompoundType/PC-CompoundType_id' => \&get_ID,
-		   'PC-Compound_props/PC-InfoData' => \&get_DATA,
-		 };
-
-  my $twig = new XML::Twig(TwigRoots => $roots,
-			   TwigHandlers => $handlers);
-
   my $fileCount = 0;
   my $fileDir = $self->getArg('fileDir');
   my @fileArray = @{$self->getArg('fileNames')};
 
+  my $simple = XML::Simple->new (ForceArray => 1, KeepRoot => 1);
   foreach my $file (@fileArray){
     $fileCount++;
     $file = $fileDir. "/" . $file;
-    $twig->parsefile($file);
+     my $data    = $simple->XMLin($file);
+    $self->parseFile($data);
   }
-
   $self->insertPubChemCompound();
 
   return "Processed $fileCount files.";
+}
+
+sub parseFile {
+  my ($self, $data) = @_;
+  my $compounds = $data->{'eSummaryResult'}->[0]->{'DocSum'};
+  my @compArray = @{$compounds}; 
+
+  foreach (@compArray){  # for each compound
+    $cmpd_id = $_->{'Id'}[0];      # CID
+    my $val;
+    my $prop;
+
+    foreach my $data ( @{$_->{'Item'}}) {
+      my %hsh = %{$data};
+      foreach my $attributes (keys %hsh){
+	if ($attributes eq 'content' || $attributes eq 'Item') {
+	  $val = $hsh{$attributes};
+	} elsif ($attributes eq 'Name') {
+	  $prop = $hsh{$attributes};
+	}
+      }
+
+      if ($prop eq 'MeSHHeadingList') { 
+	my @list = @{$val};
+	$cmpd{$cmpd_id}{'Name'} = \@list;
+      } elsif ($prop eq 'SynonymList') {
+	my @list = @{$val};
+	$cmpd{$cmpd_id}{'Synonym'} = \@list;
+      } elsif  ($prop eq 'IUPACName' || $prop eq 'InChI' || $prop eq 'InChIKey' || $prop eq 'MolecularWeight' || $prop eq 'MolecularFormula' || $prop eq 'IsomericSmiles' || $prop eq 'CanonicalSmiles') {
+	$prop =~ s/(Smiles)/ $1/;
+	print"  $prop : $val\n";
+	$cmpd{$cmpd_id}{$prop} = $val;
+      }
+    }
+
+  }
 }
 
 
@@ -180,18 +205,23 @@ sub insertPubChemCompound {
       my @props = keys(%y);   # keys are inner various properties for each compound
 
       foreach my $p (@props) {
-	my ($property, $type) = split(/\|type\=/, $p);
-
-	# print "$cid, $p, " . $cmpd{$cid}{$p} . " \n";
-
-	my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
-								    property    => $property,
-								    type        => $type,
-								    value       => $cmpd{$cid}{$p}
-								  });
-	$pubChemCmpd->submit();
+	if($p eq 'Synonym' || $p eq  'Name') {
+	  my @lst = @{$cmpd{$cid}{$p}};
+	  foreach my $l (@lst) {
+	    my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
+									property    => $p,
+									value       => $l->{content}
+								      });
+	    $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
+	  }
+	} else {
+	  my $pubChemCmpd = GUS::Model::ApiDB::PubChemCompound->new({ compound_id => $cid,
+								      property    => $p,
+								      value       => $cmpd{$cid}{$p}
+								    });
+	  $pubChemCmpd->submit()  if (!$pubChemCmpd->retrieveFromDB());
+	}
       }
-
       $count++;
       $self->undefPointerCache() if $count % 100 == 0;
 
@@ -199,40 +229,7 @@ sub insertPubChemCompound {
 
     }
   }
-
 }
-
-
-
-
-sub get_ID {
-  my ($twig, $ele) = @_;
-  my $id = $ele->first_child('PC-CompoundType_id_cid')->text;
-
-  $cmpd_id = $id;
-}
-
-
-sub get_DATA {
-  my ($twig, $ele) = @_;
-  my @fields = ('IUPAC Name', 'InChI', 'InChIKey', 'Mass', 'Molecular Formula', 'Molecular Weight', 'SMILES', 'Weight');
-
-
-  my $prop = $ele->next_elt('PC-Urn_label')->text;
-  my $type = ($ele->next_elt('PC-Urn_name'))? $ele->next_elt('PC-Urn_name')->text : '';
-  my $key = $prop . "|type=". $type; # combine property and type
-
-  if ({map { $_ => 1 } @fields}->{$prop} ) {
-    my $val = $ele->first_child('PC-InfoData_value')->text;
-
-    $cmpd{$cmpd_id}{$key} = $val;
-
-  }
-
-}
-
-
-
 
 sub undoTables {
   my ($self) = @_;

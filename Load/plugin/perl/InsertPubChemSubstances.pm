@@ -141,44 +141,43 @@ sub run {
 
 sub parseFile {
   my ($self, $data) = @_;
-  my $substances = $data->{'PC-Substances'}->[0]->{'PC-Substance'};
+  my $substances = $data->{'eSummaryResult'}->[0]->{'DocSum'};
   my @substArray = @{$substances};
 
-  foreach (@substArray){
-    # SID
-    my $subst_id = $_->{'PC-Substance_sid'}->[0]->{'PC-ID'}->[0]->{'PC-ID_id'}->[0];
+  foreach (@substArray){  # for each substance
+   my $subst_id = $_->{'Id'}[0];      # SID
+    my $val;
+    my $prop;
 
-    # KEGG
-    my $dbName = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_name'}->[0];
-    my $dbValue = $_->{'PC-Substance_source'}->[0]->{'PC-Source'}->[0]->{'PC-Source_db'}->[0]->{'PC-DBTracking'}->[0]->{'PC-DBTracking_source-id'}->[0]->{'Object-id'}->[0]->{'Object-id_str'}->[0];
-    if ($dbValue){
-      $subst{$subst_id}{$dbName} = $dbValue;
-    }
+   foreach my $data ( @{$_->{'Item'}}) {
+     my %hsh = %{$data};
+     foreach my $attributes (keys %hsh){    
+       if ($attributes eq 'content' || $attributes eq 'Item') {
+	 $val = $hsh{$attributes};
+       } elsif ($attributes eq 'Name') {
+	 $prop = $hsh{$attributes};
+       }
 
-    # synonms
-    my $syns =  $_->{'PC-Substance_synonyms'}->[0]->{'PC-Substance_synonyms_E'} ;
-    if ($syns){
-      my @sArray = @{$syns};
-      $subst{$subst_id}{synonyms} = \@sArray;
-    }
+     }
+     if ($prop eq 'SynonymList' ) {
+       my @list = @{$val};
+       $subst{$subst_id}{synonyms} = \@list;
 
-    # CIDs (compound IDs)
-    my $cArrayRef =  $_->{'PC-Substance_compound'}->[0]->{'PC-Compounds'}->[0]->{'PC-Compound'};
-    if ($cArrayRef) {
-      my @cArray = @{$cArrayRef};
-      my @idAndTypeArr;
+     } elsif ($prop eq 'CompoundIDList' ) {
 
-      foreach (@cArray){
-	my $type = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_type'}->[0]->{'value'};
-	my $id = $_->{'PC-Compound_id'}->[0]->{'PC-CompoundType'}->[0]->{'PC-CompoundType_id'}->[0]->{'PC-CompoundType_id_cid'}->[0];
-	if ($id) {
-	  push (@idAndTypeArr, ($id  . "|type="  . $type) );
-	  $compoundH{$id} = 1; # to capture CIDs for output file
-	}
-      }
-      $subst{$subst_id}{CID} = \@idAndTypeArr;
-    }
-  }
+       my @list = @{$val}; 
+       foreach (@list) {
+	 my $comp = $_->{content};
+	 $compoundH{$comp} = 1; # to capture CIDs for output file
+       }
+       $subst{$subst_id}{CID} = \@list;
+
+     } elsif ($prop eq 'SourceID') {
+       $subst{$subst_id}{'KEGG'} = $val;
+     }
+   }
+
+ }
 }
 
 # get SIDs of already_loaded PubChem structures
@@ -223,13 +222,16 @@ sub insertPubChemSubstance {
 	if ($p eq 'CID'){
 	  my @cpds =  @{ $subst{$sid}{CID} };
 
+	  my $type = 'standardized';
 	  foreach my $c (@cpds) {
-	    my ($id, $type) = split(/\|type\=/, $c);  	    # break $c into cid and type
+	    ##my ($id, $type) = split(/\|type\=/, $c);  	    # break $c into cid and type
+
 	    my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									  property     => $p,
-									  value        => $id ,
+									  value        => $c->{content} ,
 									  type         => $type
 									});
+	    $type = 'component';
 	    # add entry unless it already exists in the table
 	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 	  }
@@ -237,10 +239,10 @@ sub insertPubChemSubstance {
 	  my @syns = @{ $subst{$sid}{synonyms} };
 	  foreach my $s (@syns) {
 
-	    if ($s ne $subst{$sid}{KEGG}) {    # skip KEGG_ID
+	    if ($s->{content} ne $subst{$sid}{KEGG}) {    # skip KEGG_ID
 	      my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									    property     => $p,
-									    value        => $s
+									    value        => $s->{content}
 									  });
 	      $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 	    }
