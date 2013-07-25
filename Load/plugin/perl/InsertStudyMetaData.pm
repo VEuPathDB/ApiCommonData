@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertSampleMetaData;
+package ApiCommonData::Load::Plugin::InsertStudyMetaData;
 
 @ISA = qw(GUS::PluginMgr::Plugin);
 
@@ -380,7 +380,6 @@ sub undoTables {
   return ( 'Study.BioMaterialCharacteristic',
            'RAD.StudyBioMaterial',
            'Study.BioSample',
-		   'Study.BioSource',
      );
 }
 
