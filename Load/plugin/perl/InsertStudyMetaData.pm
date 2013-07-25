@@ -134,7 +134,7 @@ sub run {
   
   if($isProfile) {
     my $profileSet;
-    my $profileSet = GUS::Model::ApiDb::ProfileSet->new({
+    my $profileSet = GUS::Model::ApiDB::ProfileSet->new({
 														external_database_release_id => $studyExtDbRlsId
 													   });
 	unless($profileSet->retrieveFromDB()) {
