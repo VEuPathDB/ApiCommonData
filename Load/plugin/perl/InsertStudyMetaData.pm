@@ -131,20 +131,13 @@ sub run {
     $self->error("Could not retrieve study $studyName from db.");   
   }
   my $profileElementNames=[];
-  
+ 
   if($isProfile) {
-    my $profileSet;
-    my $profileSet = GUS::Model::ApiDB::ProfileSet->new({
-														external_database_release_id => $studyExtDbRlsId
-													   });
-	unless($profileSet->retrieveFromDB()) {
-	 $self->error("Could not retrieve profile set for the study from the db, please verify the studyExternalDatabaseSpec");
-	}
-    my $profileSetId = $profileSet->getId();
-    my $sql = "select name from ApiDB.ProfileElementName where profile_set_id = $profileSetId";
+    my $samplesSql = "Select Distinct ps.profile_set_id, Pen.Name, Ps.Modification_Date From Apidb.Profileelementname Pen, Apidb.Profileset Ps Where 
+Ps.External_Database_Release_Id = $studyExtDbRlsId";
 
     my $dbh = $self->getQueryHandle();
-    my $stmt = $dbh->prepareAndExecute($sql);
+    my $stmt = $dbh->prepareAndExecute($samplesSql);
 
     while(my $profileElementName = $stmt->fetchrow_array()){
       push(@$profileElementNames,$profileElementName);
