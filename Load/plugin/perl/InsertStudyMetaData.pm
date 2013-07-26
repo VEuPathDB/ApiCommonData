@@ -325,28 +325,35 @@ sub makeCharacteristic {
   # }
   # else {
 
-    my $oeSql = "            Select distinct Case When (Val_Count.Count = 1)
-                        Then Oe.Ontology_Entry_Id 
-                        when (Select Oe.Ontology_Entry_Id From  
-                              Study.Ontologyentry Oe 
-                              Where Category = 'BioMaterialCharacterics'
-                              And Value = '$category') Is Not Null
-                        then (Select Oe.Ontology_Entry_Id From  
-                              Study.Ontologyentry Oe 
-                              Where Category = 'BioMaterialCharacterics'
-                              And Value = '$category')
-                        else (Select Oe.Ontology_Entry_Id From  
-                              Study.Ontologyentry Oe 
-                              Where Category != 'OntologyEntry'
-                              And Value = '$category')
-                        end as id
-            From 
-            (Select Distinct Value, Count(Value) As Count
-            From Study.Ontologyentry Oe 
-            where Value = '$category'
-            Group By Value) Val_Count,
-            Study.Ontologyentry Oe
-            Where Oe.Value = Val_Count.Value";
+    my $oeSql = "With BMCT As (
+                        Select Distance, Id, Parent_Id,Category, Value 
+                        From (
+                            Select level + 0 as distance, Oe.Ontology_Entry_Id as id, Oe.Parent_Id, Oe.Category, Oe.Value
+                            From Study.Ontologyentry oe Start With Category = 'BioMaterialCharacteristics'
+                            Connect By Prior Value = Category
+                            Order By Parent_Id, Id
+                         )
+                      ),
+                      Existing As (
+                        Select Distinct Ontology_Entry_Id As Id, Parent_Id, Category, Value 
+                        From Study.Ontologyentry
+                        Where Category = '$category'
+                        And Value = '$value'
+                      ),
+                      New_Value as (
+					    Select Distinct Id, Parent_Id, Category, Bmct.value
+						From ( select value,
+							          Max(bmct.distance) As distance
+							   From Bmct
+                               Group By Value
+					    ) Sub, Bmct
+					    Where Sub.Value='$category'
+						  And Sub.Distance = Bmct.Distance
+						  and sub.value = bmct.value
+                   )
+		   Select Distinct Nvl(Existing.Id,New_Value.Id) as id
+		     From Existing, New_Value
+                    Where New_Value.Id = Existing.Id (+)";
 
     my $dbh = $self->getQueryHandle();
     my $stmt = $dbh->prepareAndExecute($oeSql);
@@ -357,7 +364,7 @@ sub makeCharacteristic {
   $oe = GUS::Model::Study::OntologyEntry->new({ontology_entry_id => $oe_id,});
   $characteristic = GUS::Model::Study::BioMaterialCharacteristic->new({value => $value});
  
-    $oe->retrieveFromDB() or $self->error("failed on $category");
+    $oe->retrieveFromDB() or $self->error("failed for the Characteristic $category, please validate this you Sample file categories agree with the loaded ontology");
     $characteristic->setParent($oe);
 
   return $characteristic;
