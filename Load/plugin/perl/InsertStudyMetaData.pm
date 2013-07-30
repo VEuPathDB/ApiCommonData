@@ -123,7 +123,7 @@ sub run {
 	                                external_database_release_id => $studyExtDbRlsId,	
 								   }); 
   }
-  else {
+   else {
     $study = GUS::Model::Study::Study->new(
 		                           {name => $studyName
 								   }); 
@@ -326,7 +326,7 @@ sub makeCharacteristic {
   # else {
 
     my $oeSql = "With BMCT As (
-                        Select Distance, Id, Parent_Id,Category, Value 
+                        Select Distance, Id, Parent_Id,lower(Category) as category, lower(Value) as value 
                         From (
                             Select level + 0 as distance, Oe.Ontology_Entry_Id as id, Oe.Parent_Id, Oe.Category, Oe.Value
                             From Study.Ontologyentry oe Start With Category = 'BioMaterialCharacteristics'
@@ -337,8 +337,8 @@ sub makeCharacteristic {
                       Existing As (
                         Select Distinct Ontology_Entry_Id As Id, Parent_Id, Category, Value 
                         From Study.Ontologyentry
-                        Where Category = '$category'
-                        And Value = '$value'
+                        Where lower(Category) = lower('$category')
+                        And lower(Value) = lower('$value')
                       ),
                       New_Value as (
 					    Select Distinct Id, Parent_Id, Category, Bmct.value
@@ -347,7 +347,7 @@ sub makeCharacteristic {
 							   From Bmct
                                Group By Value
 					    ) Sub, Bmct
-					    Where Sub.Value='$category'
+					    Where lower(Sub.Value)=lower('$category')
 						  And Sub.Distance = Bmct.Distance
 						  and sub.value = bmct.value
                    )
