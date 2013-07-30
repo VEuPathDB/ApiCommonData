@@ -127,11 +127,18 @@ sub getXml {
   } else {
     $typeInTable = 'country' if ($type eq 'geographic_location');
   }
+
+  # parse out country name from geographic_location, and put in the reporter XML
+  my ($country, $x ) =('','');
+  if ($type eq 'geographic_location') {
+    ($country, $x ) = split (/:/, $value);
+  }
+
   my $str = <<END;
   <initial table=\"$table\" field=\"$typeInTable">
    <original>$value<\/original>
     <maps>
-      <row type=\"$type\" value=\"\" \/>
+      <row type=\"$type\" value=\"$country\" \/>
     <\/maps>
   <\/initial>
 END
