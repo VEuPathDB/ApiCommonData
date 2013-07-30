@@ -521,7 +521,7 @@ owercase_primary_identifier" --tableName "DbRefNASequence"</pluginArgs>
         <manualGet
            fileOrDir="/files/cbil/data/cbil/plasmoDB/manualDelivery/genbank/pvContigs/sequences.gb"
         />
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @downloadDir@/P.vivax_contigsGB/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "contig" --validationLog @pipelineDir@/logs/Pvivaxcontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pvivaxcontigs.bioperl</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/PlasmoDB/PvivaxGenbank2gus.xml --inputFileOrDir @downloadDir@/P.vivax_contigsGB/sequences.gb --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax Sal-1" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "contig" --validationLog @pipelineDir@/logs/Pvivaxcontigs.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pvivaxcontigs.bioperl</pluginArgs>
         <description>
             <![CDATA[
             <i>P. vivax</i> , Salvador I isolate, contig sequence and annotation obtained 
@@ -567,7 +567,7 @@ The genome of <i>Plasmodium chabaudi</i> AS was produced by the Parasite Genomic
         />
         <unpack>mkdir @downloadDir@/P.vivax_mitochondrial_fixed</unpack>
         <unpack>cat @downloadDir@/P.vivax_mitochondrial/sequences.gb | perl -pe 's/protein_id=/secondary_id=/g' > @downloadDir@/P.vivax_mitochondrial_fixed/sequences_fixed.gb</unpack>
-        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/organellarFeatures2gus.xml --inputFileOrDir @downloadDir@/P.vivax_mitochondrial_fixed --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax SaI-1" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "supercontig" --validationLog @pipelineDir@/logs/Pvivaxmito.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pvivaxmito.bioperl</pluginArgs>
+        <pluginArgs>--extDbName %EXT_DB_NAME% --extDbRlsVer %EXT_DB_RLS_VER% --mapFile @gusHome@/lib/xml/isf/organellarFeatures2gus.xml --inputFileOrDir @downloadDir@/P.vivax_mitochondrial_fixed --fileFormat genbank --soCvsVersion @soVer@ --organism "Plasmodium vivax Sal-1" --handlerExternalDbs "enzyme:enzymeDB:2009-02-11" --seqSoTerm "supercontig" --validationLog @pipelineDir@/logs/Pvivaxmito.validation.log --bioperlTreeOutput @pipelineDir@/logs/Pvivaxmito.bioperl</pluginArgs>
         <description>
             <![CDATA[
          <i>P. vivax</i> mitochondrial sequence and annotation obtained from Genbank (modification date 2005-07-12)
