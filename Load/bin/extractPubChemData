@@ -6,14 +6,15 @@ use strict;
 use LWP::Simple;
 use Getopt::Long;
 
-my ($idFile, $outFile, $db_type);
+my ($idFile, $outFile, $db_type, $property);
 &GetOptions( "idFile=s" => \$idFile,
 	     "outFile=s" => \$outFile,
 	     "type=s" => \$db_type,
+	     "property=s" => \$property,
 	   );
 
 if (!$idFile || !$outFile || !$db_type) {
-  die ' USAGE: extractPubChemData.pl -idFile <idFile>  -outFile <outFile>  -type <pcsubstance | pccompound>';
+  die ' USAGE: extractPubChemData.pl -idFile <idFile>  -outFile <outFile>  -type <pcsubstance | pccompound> (-property <CID | Synonym> )';
 }
 unless(-e $idFile) {
   print STDERR "$idFile file not found! \n";
@@ -23,11 +24,32 @@ unless($db_type eq 'pcsubstance' || $db_type eq 'pccompound') {
   print STDERR "type must be 'pcsubstance' or 'pccompound' \n";
   exit;
 }
+if ($db_type eq 'pcsubstance' ){
+    unless( $property eq 'CID' || $property eq 'Synonym' ) {
+	print STDERR "property must be 'CID ' or 'Synonym' \n";
+	exit;
+    }
+}
 
 my $num =100;  # max number of records to download at a time
-my $ct = 0;
 
-my $base_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=' . $db_type . '&id=';
+my $base_url;
+my $end_url ='';
+
+if ($db_type eq 'pccompound') {
+    $base_url = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=' . $db_type . '&id=';
+} else {
+    $base_url = 'http://pubchem.ncbi.nlm.nih.gov/rest/pug/substance/sid/';
+    if ($property eq 'CID') {
+      $end_url ='/cids/XML' ;
+    } else {
+      $end_url = '/synonyms/XML';
+    }
+    print "DEBUG $end_url\n";
+}
+
+
+my $ct = 0;
 my @idArr;
 my $resultString;
 
@@ -50,7 +72,7 @@ processResult($resultString);
 sub extractData {
   my (@ids) = @_;
   my $idList = join( ',', @ids );
-  my $efetch_url = $base_url . $idList;
+  my $efetch_url = $base_url . $idList . $end_url;
   my $efetch_out = get($efetch_url);
 
   return $efetch_out;
@@ -59,19 +81,22 @@ sub extractData {
 sub processResult { 
   my ($result) = @_;
   my @lines = split /\n/, $result;
-  my $bool = 0;
+  my $show = 1;
+  my $end_tag; 
 
   open (OUT, ">$outFile");
+
   foreach my $line (@lines) {
-    if ($line =~ /\<\?xml/ && ($bool)) {
-    } elsif  ($line =~ /\<\!DOCTYPE/ && ($bool)) {
-    } elsif ($line =~ m/\<\/eSummaryResult\>/ && !($bool)) {
-      $bool=1;
-    } elsif ($line =~ m/\<eSummaryResult\>/ && ($bool)) {
-    }
-    else {
+    if (($line =~ /\<\/InformationList\>/ || $line =~ /\<\/eSummaryResult\>/ ) && ($show)) {
+      $show =0;
+      $end_tag = $line;
+    } elsif (($line =~ /\<Information\>/ || $line =~ /\<DocSum\>/) && !($show)) {
+      $show =1;
+      print OUT $line ."\n";
+    } elsif ($show) {
       print OUT $line ."\n";
     }
   }
-  print OUT "</eSummaryResult\>\n";
+  print OUT $end_tag ."\n";
+
 }
