@@ -1,9 +1,10 @@
 create table apidb.TuningTable (
-   name       varchar2(65) primary key,
-   timestamp  date not null,
-   definition clob not null,
-   status     varchar2(20),
-   last_check date
+   name          varchar2(65) primary key,
+   timestamp     date not null,
+   definition    clob not null,
+   status        varchar2(20),
+   last_check    date,
+   check_os_user varchar2(20)
   );
 
 grant select on apidb.TuningTable to gus_r;
