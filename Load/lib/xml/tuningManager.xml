@@ -343,8 +343,8 @@ FROM   Apidb.Organism o,
       ) communityCount, 
       (SELECT distinct project_id, taxon_id,
               max(database_version) as database_version
-		   FROM   sequenceattributes
-			 GROUP BY project_id, taxon_id 
+       FROM   sequenceattributes
+       GROUP BY project_id, taxon_id 
       ) version, 
        ( SELECT taxon_id, 
                 CASE WHEN ncbi_tax_id > 9000000000 THEN NULL
