@@ -244,9 +244,10 @@ necessarily by what's defined in the input (eg. Genbank) file
      <qualifier name="pseudo" ignore="true"/>
   </feature>
 
-  <feature name="gap" so="gap" ignore="true">
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="locus_tag"     		column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
   </feature>
-
-
-
 </mapping>
