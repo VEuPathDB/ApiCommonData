@@ -90,6 +90,7 @@ tablespace indx
     <internalDependency name="TFBSGene"/>
     <internalDependency name="EstAlignmentGeneSummary"/>
     <internalDependency name="EstAttributes"/>
+    <internalDependency name="SequenceAttributes"/>
     <externalDependency name="sres.TaxonName"/>
     <externalDependency name="ApiDB.Profile"/>
     <externalDependency name="ApiDB.ProfileSet"/>
@@ -108,6 +109,7 @@ SELECT o.project_name as project_id,
        tn.name as organism_name,
        o.genome_source,
        o.strain_abbrev, 
+			 version.database_version,
        nvl(isOrganellar.ct, 0) as isOrganellar, 
        nvl(hasArray.ct, 0) as hasArray, 
        nvl(geneArrayCount.ct, 0) as arrayGeneCount, 
@@ -339,6 +341,11 @@ FROM   Apidb.Organism o,
          AND ga.is_deprecated = 0 
        GROUP BY ga.taxon_id
       ) communityCount, 
+      (SELECT distinct project_id, taxon_id,
+              max(database_version) as database_version
+		   FROM   sequenceattributes
+			 GROUP BY project_id, taxon_id 
+      ) version, 
        ( SELECT taxon_id, 
                 CASE WHEN ncbi_tax_id > 9000000000 THEN NULL
                      ELSE ncbi_tax_id
@@ -377,6 +384,7 @@ WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = hasProteomics.taxon_id (+)
   AND o.taxon_id = hasEpitope.taxon_id (+)
   AND o.taxon_id = genomestat.taxon_id (+)
+  AND o.taxon_id = version.taxon_id (+)
   AND tn.taxon_id = o.taxon_id
   AND tn.name_class = 'scientific name'
       ]]>
