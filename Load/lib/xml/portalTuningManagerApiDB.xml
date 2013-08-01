@@ -26,6 +26,105 @@
 -->
 <tuningConfig>
 
+
+
+
+
+
+  <tuningTable name="Datasource">
+    <externalDependency name="Apidb.Datasource" dblink="crypto.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="giardia.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="plasmo.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="toxo.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="tritryp.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="trich.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="amoeba.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="micro.tuning"/>
+    <externalDependency name="Apidb.Datasource" dblink="piro.tuning"/>
+
+    <unionization>
+
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@crypto.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@giardia.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@plasmo.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@toxo.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@tritryp.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@trich.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@amoeba.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@micro.tuning
+          ]]>
+        </query>
+      </source>
+      <source>
+        <query>
+          <![CDATA[select name, 'See Component Site' as version, is_species_scope, taxon_id, type, subtype, external_database_name
+                   from apidb.datasource@piro.tuning
+          ]]>
+        </query>
+      </source>
+      
+
+    </unionization>
+
+  </tuningTable>
+
+
+
+
+
+
+
+
+
+
+
+
+
   <tuningTable name="GeneGFF">
     <externalDependency name="apidb.GeneGFF" dblink="giardia.tuning"/>
     <externalDependency name="apidb.GeneGFF" dblink="plasmo.tuning"/>
