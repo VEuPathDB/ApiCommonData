@@ -78,11 +78,14 @@ sub run {
                                             external_database_release_id => $extDbRlsId,
                                            }); 
 
- $study->setParent($contact);
- $study->submit();
- 
- return("Loaded 1 Study.Study with name $studyName.")
+ unless($study->retrieveFromDB()){
+	$study->setParent($contact);
+	$study->submit();
+	return("Loaded 1 Study.Study with name $studyName.")
+ }
+ return("Study.Study with name $studyName and extDbRlsSpec $extDbRlsSpec already exists. Nothing was loaded");
 }
+	
 
 sub undoTables {
   my ($self) = @_;
