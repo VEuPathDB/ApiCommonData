@@ -182,6 +182,11 @@ sub traverseSeqFeatures {
 	    $gene->add_tag_value("ID",$geneID);
 	    $gene = &copyQualifiers($geneFeature, $gene);
             $gene = &copyQualifiers($RNA,$gene);
+
+	## add transcript_id to gene feature
+	my ($transId) = $RNA->get_tag_values('ID');
+	$gene->add_tag_value("transcript_id", $transId);
+
 	    my $transcript = &makeBioperlFeature("transcript", $RNA->location, $bioperlSeq);
   	    #$transcript = &copyQualifiers($RNA,$transcript);
 
