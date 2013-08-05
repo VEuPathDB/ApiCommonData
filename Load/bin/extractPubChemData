@@ -84,7 +84,7 @@ sub processResult {
   my $show = 1;
   my $end_tag; 
 
-  open (OUT, ">$outFile");
+  open (OUT, ">$outFile.tmp");
 
   foreach my $line (@lines) {
     if (($line =~ /\<\/InformationList\>/ || $line =~ /\<\/eSummaryResult\>/ ) && ($show)) {
@@ -98,5 +98,9 @@ sub processResult {
     }
   }
   print OUT $end_tag ."\n";
+
+  system("piconv -t UTF-8 < $outFile.tmp > $outFile");
+
+  unlink("$outFile.tmp") if (-e "$outFile") ;
 
 }
