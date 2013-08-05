@@ -217,7 +217,7 @@ sub insertPubChemSubstance {
 									});
 	    $pubChemSubst->submit() if (!$pubChemSubst->retrieveFromDB());
 	  }
-	} elsif ($p eq 'CID'){
+	} elsif ($p eq 'CID' && $subst{$sid}{$p}){
 	  my $pubChemSubst = GUS::Model::ApiDB::PubChemSubstance->new({ substance_id => $sid,
 									property     => $p,
 									value        => $subst{$sid}{$p}
