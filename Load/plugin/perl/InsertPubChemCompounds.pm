@@ -136,11 +136,11 @@ sub parseFile {
 
   foreach (@compArray){  # for each compound
     $cmpd_id = $_->{'Id'}[0];      # CID
-    my $val;
-    my $prop;
 
     foreach my $data ( @{$_->{'Item'}}) {
       my %hsh = %{$data};
+      my $val;
+      my $prop;
       foreach my $attributes (keys %hsh){
 	if ($attributes eq 'content' || $attributes eq 'Item') {
 	  $val = $hsh{$attributes};
@@ -157,8 +157,8 @@ sub parseFile {
 	$cmpd{$cmpd_id}{'Synonym'} = \@list;
       } elsif  ($prop eq 'IUPACName' || $prop eq 'InChI' || $prop eq 'InChIKey' || $prop eq 'MolecularWeight' || $prop eq 'MolecularFormula' || $prop eq 'IsomericSmiles' || $prop eq 'CanonicalSmiles') {
 	$prop =~ s/(Smiles)/ $1/;
-	print"  $prop : $val\n";
-	$cmpd{$cmpd_id}{$prop} = $val;
+
+	$cmpd{$cmpd_id}{$prop} = $val if ($val);
       }
     }
 
