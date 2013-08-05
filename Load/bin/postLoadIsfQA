@@ -266,6 +266,51 @@ while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array
 }
 $stmt->finish();
 
+### check if overlap exons which happen in TriTrypDB
+my $sql = <<SQL;
+  select source_id from DOTS.genefeature where external_database_release_id=$extDbRlsId
+SQL
+my $stmt = $dbh->prepare($sql);
+$stmt->execute();
+
+my $c = 0;
+while (my ($sourceId) = $stmt->fetchrow_array()) {
+
+  my %exonLocations;
+
+my $sqll = <<SQL;
+  select gf.source_id, ef.source_id, nl.start_min, nl.end_max
+from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
+where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
+and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId'
+SQL
+  my $stmtt = $dbh->prepare($sqll);
+  $stmtt->execute();
+
+  while (my ($gfSourceId, $efSourceId, $nlStartMin, $nlEndMax) = $stmtt->fetchrow_array() ) {
+    $exonLocations{$efSourceId} = "$nlStartMin,$nlEndMax,$gfSourceId" if ($efSourceId && $nlStartMin && $nlEndMax && $gfSourceId);
+  }
+  $stmtt->finish();
+  $c++;
+
+  my ($preStartMin, $preEndMax);
+  foreach my $k (sort keys %exonLocations) {
+    my ($start, $end, $gid) = split (/\,/, $exonLocations{$k});
+    if ($preStartMin ) {
+      if ( ( ($start > $preEndMax) && ($end > $preEndMax) ) || ( ($start < $preStartMin) && ($end < $preStartMin ) )){
+        $preStartMin = $start;
+        $preEndMax = $end;
+      } else {
+        print STDERR "double check $gid for $k with start..end at $start..$end\n";
+      }
+    } else {
+      $preStartMin = $start;
+      $preEndMax = $end;
+    }
+  }
+}
+$stmt->finish();
+
 ### check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;
   select distinct name, count(*) from dots.Miscellaneous where external_database_release_id=$extDbRlsId group by name
@@ -377,7 +422,7 @@ DONE -- 26. select * from dots.Miscellaneous where external_database_release_id=
 TODO -- 27. check if the UTRs is inside the CDS or there is any overlapping exons for Bug #13296
 
 ## to check if there is overlap exons
-28. select gf.source_id, ef.source_id, nl.start_min, nl.end_max
+DONE -- 28. select gf.source_id, ef.source_id, nl.start_min, nl.end_max
 from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
 where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
 and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId'
