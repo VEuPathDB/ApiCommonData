@@ -256,6 +256,7 @@ sub loadPathway {
         die "$imageFileDir directory does not exist" if !(-d $imageFileDir);
 
         my $imgFile = "$imageFileDir/".$pathwayObj->{image_file};
+	$imgFile =~s/ec/map/;
         if ($self->loadPathwayImage($pathwayObj->{source_id},$networkId, \$imgFile)) {
           print "Loaded Image for: $pathwayName\n";
         }
@@ -365,7 +366,7 @@ sub loadNetworkNode {
 sub loadPathwayImage{
   my($self,$pathwaySourceId,$networkId,$imgFile) = @_;
 
-  open(IMGFILE, $$imgFile);#  or die "Cannot open file $$imgFile\n";
+  open(IMGFILE, $$imgFile) or die "Cannot open file $$imgFile\n";
   binmode IMGFILE;
 
   my ($data, $buffer,$bytes);
