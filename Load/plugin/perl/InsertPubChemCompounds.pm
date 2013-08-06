@@ -149,10 +149,10 @@ sub parseFile {
 	}
       }
 
-      if ($prop eq 'MeSHHeadingList') { 
+      if ($prop eq 'MeSHHeadingList' && $val) { 
 	my @list = @{$val};
 	$cmpd{$cmpd_id}{'Name'} = \@list;
-      } elsif ($prop eq 'SynonymList') {
+      } elsif ($prop eq 'SynonymList' && $val) {
 	my @list = @{$val};
 	$cmpd{$cmpd_id}{'Synonym'} = \@list;
       } elsif  ($prop eq 'IUPACName' || $prop eq 'InChI' || $prop eq 'InChIKey' || $prop eq 'MolecularWeight' || $prop eq 'MolecularFormula' || $prop eq 'IsomericSmiles' || $prop eq 'CanonicalSmiles') {
