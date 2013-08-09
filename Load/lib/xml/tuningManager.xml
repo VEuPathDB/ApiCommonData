@@ -5731,16 +5731,19 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
       <![CDATA[
 CREATE TABLE CompoundAttributes&1 NOLOGGING AS
 SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id, 
+              nameTable.name,
               apidb.tab_to_string(set(cast(COLLECT(to_char(substTable.substance_id)) AS apidb.varchartab)), ', ') AS substance_id,
               wtTable.mol_wt, REGEXP_REPLACE(formTable.formula,'(\d)','<sub>\1</sub>') AS formula
         FROM ApiDB.PubChemCompound comp,
+                  (SELECT compound_id , value as name FROM ApiDB.PubChemCompound where property='Name') nameTable,
                   (SELECT compound_id , value as mol_wt FROM ApiDB.PubChemCompound where property='MolecularWeight') wtTable,
                   (SELECT compound_id , value as formula FROM ApiDB.PubChemCompound where property='MolecularFormula') formTable,
                   (SELECT substance_id, value as cid FROM ApiDB.PubChemSubstance where property='CID' )  substTable 
-       WHERE comp.compound_id = wtTable.compound_id
+       WHERE comp.compound_id = nameTable.compound_id (+)
+         AND comp.compound_id = wtTable.compound_id
          AND comp.compound_id = formTable.compound_id
          AND comp.compound_id = substTable.cid (+)
-      GROUP BY comp.compound_id,wtTable.mol_wt,formTable.formula
+      GROUP BY comp.compound_id,nameTable.name,wtTable.mol_wt,formTable.formula
       ]]>
     </sql>
   </tuningTable>
