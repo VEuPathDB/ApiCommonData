@@ -5815,8 +5815,7 @@ FROM   ApiDB.PubChemSubstance s1, ApiDB.PubChemSubstance s2, CompoundAttributes 
 WHERE s1.property = 'CID'
       AND  s1.value = ca.compound_id 
       AND  s1.substance_id = s2.substance_id
-       AND  s2.property ='KEGG'   
-       AND  (s2.value = x.compound)
+      AND  (s2.value = x.compound)
       ]]>
     </sql>
   </tuningTable>
