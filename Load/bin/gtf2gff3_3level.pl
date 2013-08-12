@@ -74,9 +74,7 @@ while(<>) {
     $gid = $tid if ! $gid;
     # warn("tid=$tid pid=$pid gid=$gid tname=$tname gname=$gname\n");
     if( $fix ) {
-	if( $tid =~ /(\S+)\.\d+$/) {
-	    $gid = $1;
-	}
+	$gid = $tid . "G";
     }
     if( $gname) {
 	$gene2name{$gid} = $gname;
