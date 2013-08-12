@@ -281,6 +281,11 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   <feature name="centromere" table="DoTS::Miscellaneous" so="centromere">
     <qualifier name="ID"		column="source_id"/>
+    <qualifier name="gO"        ignore="true"/>
+    <qualifier name="colour"        ignore="true"/>
+    <qualifier name="Dbxref"        ignore="true"/>
+    <qualifier name="comment"        ignore="true"/>
+    <qualifier name="history"        ignore="true"/>
     <qualifier name="feature_id"        ignore="true"/>
     <qualifier name="isObsolete"        ignore="true"/>
     <qualifier name="literature"        ignore="true"/>
@@ -476,8 +481,10 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="CodingEnd"      handler="api" method="setCodingAndTranslationStop"/>
     <qualifier name="GenePrediction" column="source_id"/>
     <qualifier name="OrderNumber"    column="order_number"/>
-    <qualifier name="type" ignore="true"/>
     <qualifier name="ID" ignore="true"/>
+    <qualifier name="type" ignore="true"/>
+    <qualifier name="synonym" ignore="true"/>
+    <qualifier name="eMBL_qualifier" ignore="true"/>
     <qualifier name="Parent" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
@@ -548,7 +555,17 @@ necessarily by what's defined in the input (eg. Genbank) file
 
   </feature>
 
- 
+  <feature name="splice_site" table="DoTS::UTRFeature" so="five_prime_UTR">
+    <qualifier name="ID" column="source_id"/>
+   <qualifier name="controlled_curation" ignore="true"/>
+   <qualifier name="note"       handler="api" method="note"/>
+    <qualifier name="timelastmodified" ignore="true"/>
+   <qualifier name="Parent"   ignore="true"/>
+   <qualifier name="feature_id" ignore="true"/>
+   <qualifier name="isObsolete" ignore="true"/>
+   <qualifier name="comment" ignore="true"/>
+    <qualifier name="history" ignore="true"/>
+  </feature> 
 
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
@@ -576,18 +593,19 @@ necessarily by what's defined in the input (eg. Genbank) file
   </feature>
 
   <feature name="repeat_unit" table="DoTS::Repeats" so="repeat_unit">
+    <qualifier name="ID" column="source_id"/>
     <qualifier name="note"                   handler="api" method="note"/>
     <qualifier name="rpt_type"/>
     <qualifier name="rpt_unit"/>
     <qualifier name="blastx_file"            ignore="true"/>
     <qualifier name="type" ignore="true"/>
-    <qualifier name="ID" column="source_id"/>
     <qualifier name="Parent" ignore="true"/>
     <qualifier name="colour" ignore="true"/>
     <qualifier name="isObsolete" ignore="true"/>
     <qualifier name="timelastmodified" ignore="true"/>
     <qualifier name="feature_id" ignore="true"/>
     <qualifier name="comment" ignore="true"/>
+    <qualifier name="previous_systematic_id" ignore="true"/>
   </feature>
 
   <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
