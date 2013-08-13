@@ -252,14 +252,14 @@ sub _getCompoundId {
 SELECT pubchem_compound_id 
 FROM ApiDB.pubchemcompound 
 WHERE TO_CHAR(compound_id)  = '$sourceId'
-AND property='Mass'
+AND property='MolecularWeight'
 UNION
 SELECT c.pubchem_compound_id
 FROM SRes.dbref r, ApiDB.dbrefcompound l, ApiDB.pubchemcompound c
 WHERE r.primary_identifier ='$sourceId'
 AND r.db_ref_id = l.db_ref_id
 AND l.compound_id = c.compound_id
-AND c.property='Mass'";
+AND c.property='MolecularWeight'";
   my $stmt = $plugin->prepareAndExecute($sql);
   my $comp_id = $stmt->fetchrow_array();
   return $comp_id;
