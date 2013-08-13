@@ -206,6 +206,7 @@ sub traverseSeqFeatures {
              'snoRNA',
              'tRNA',
              'ncRNA',
+	     'transcript',	
 	     'pseudogenic_transcript',	
              'scRNA',
 				
@@ -236,6 +237,8 @@ sub traverseSeqFeatures {
 		    $polypeptide{$rnaId}->{flag} = 1;
 		}else{
 		    print STDERR "Missing polypeptide for: $rnaId\n";
+		    $type = 'coding';
+		    $CDSLocation  = $RNA->location;
 		}
 		    
 
@@ -314,7 +317,8 @@ sub traverseSeqFeatures {
 		
 		}
 
-		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR' || $subFeature->primary_tag eq 'splice_acceptor_site'){
+		if ($subFeature->primary_tag eq 'five_prime_UTR' || $subFeature->primary_tag eq 'three_prime_UTR' 
+					|| $subFeature->primary_tag eq 'splice_acceptor_site' || $subFeature->primary_tag eq 'splice_site'){
 		    
 
 
