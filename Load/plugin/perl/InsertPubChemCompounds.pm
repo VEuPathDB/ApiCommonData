@@ -223,12 +223,13 @@ sub insertPubChemCompound {
 	}
       }
       $count++;
-      $self->undefPointerCache() if $count % 100 == 0;
-
-      $self->log("Inserted entries for $count PubChem Compounds.");
-
+      if ($count % 100 == 0) {
+	$self->undefPointerCache();
+	$self->log("Inserted entries for $count PubChem Compounds.");
+      }
     }
   }
+  $self->log("Inserted entries for $count PubChem Compounds.");
 }
 
 sub undoTables {
