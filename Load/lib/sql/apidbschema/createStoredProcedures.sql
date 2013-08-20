@@ -472,7 +472,7 @@ begin
                when 'gregarina'
                  then project := 'ToxoDB';
                when 'sarcocystis'
-                 then project := 'OrphanDB';
+                 then project := 'ToxoDB';
                when 'eimeria'
                  then project := 'ToxoDB';
                when 'gibberella'
