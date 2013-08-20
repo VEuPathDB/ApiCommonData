@@ -389,6 +389,12 @@ create unique index OrganismAttr_sourceId_idx&1 ON ApidbTuning.OrganismAttribute
 tablespace indx
       ]]>
     </sql>
+    <sql>
+      <![CDATA[
+GRANT select ON apidbtuning.organismAttributes&1  TO apidb;
+      ]]>
+    </sql>
+
   </tuningTable> 
 
   <tuningTable name="ApidbTuning.IsolateAttributes">
