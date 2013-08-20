@@ -1,4 +1,4 @@
-package ApiCommonData::Load::Plugin::InsertInterproscan5Results;
+package ApiCommonData::Load::Plugin::InsertInterproscanResultsTSV;
 @ISA = qw(GUS::PluginMgr::Plugin);
 
 use strict;
@@ -182,7 +182,7 @@ sub run {
 
   foreach my $file (@resultFiles) {
     $self->log("Processing $file");
-    open (TABFILE, "$file") || die "File not found: $file\n";
+    open (TABFILE, "$resultDir/$file") || die "File not found: $resultDir/$file\n";
     while (<TABFILE>) {
     chomp;
     my @myArray = split(/\t/, $_);
