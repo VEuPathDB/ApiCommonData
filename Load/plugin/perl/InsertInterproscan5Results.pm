@@ -221,7 +221,7 @@ sub processProteinResults {
 
   my $tableName = $self->getArg('aaSeqTable');
   my $queryTable = "GUS::Model::DoTS::$tableName";
-  my $protein_id = ($proteins->[0] =~ m/^(\S+)/);
+  my $protein_id = $1 if($proteins->[0] =~ m/^(\S+)/);
   if (!$protein_id) {
   	$self->log("Skipping: Interproscan Results file has a match with empty source ID");
 	return;
