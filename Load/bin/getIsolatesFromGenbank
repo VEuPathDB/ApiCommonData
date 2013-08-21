@@ -156,7 +156,7 @@ SQL
       if (!$ncbiTaxIdsHash{$currentTaxon}) {
 	  $ncbiTaxIdsHash{$currentTaxon} = 1;
 	  push(@{$ncbiTaxIdsBatches->[$batchIndex]}, $currentTaxon);
-	  if ($count++ == 50) {
+	  if ($count++ == 20) {
 	      $batchIndex++;
 	      $count = 0;
 	  }
