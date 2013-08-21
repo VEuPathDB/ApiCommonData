@@ -74,12 +74,13 @@ necessarily by what's defined in the input (eg. Genbank) file
      <qualifier name="note" handler="api"/>
     <qualifier name="curation" ignore="true"/>
     <qualifier name="rpt_family" 	column="rpt_family"/>
-    <qualifier name="rpt_type"		column="rpt_type"/>
+    <qualifier name="rpt_type"		handler="api" method="rptType"/>
     <qualifier name="rpt_unit_seq" handler="api" method="rptUnit"/>
     <qualifier name="satellite"  ignore="true"/>
     <qualifier name="comment_Nterm" ignore="true"/>
     <qualifier name="blastn_file"            ignore="true"/>
     <qualifier name="colour"                 ignore="true"/>
+    <qualifier name="citation"                 ignore="true"/>
     <qualifier name="fasta_file"             ignore="true"/>
     <qualifier name="FEAT_NAME"              ignore="true"/>
   </feature>
@@ -173,6 +174,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="locus_tag" column="source_id"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="db_xref"              ignore="true"/>
+  </feature>
+
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="locus_tag"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
   </feature>
   
   <feature name="polyA_site" so="polyA_site" ignore="true">
