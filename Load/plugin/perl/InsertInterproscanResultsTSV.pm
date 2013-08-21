@@ -284,7 +284,7 @@ sub buildDomainFeature {
 	  e_value => $evalue
 	});
 
-  $domainFeat->submit();
+  $domainFeat->submit() unless $domainFeat->retrieveFromDB();
 	
   my $dbRefId = $self->{$dbName}->{dbRefIds}->{$domainSourceId};
 
@@ -293,7 +293,7 @@ sub buildDomainFeature {
 	  aa_feature_id => $domainFeat->getId()
 	});
 
-  $dbRefAaFeat->submit() if $dbRefId;
+  $dbRefAaFeat->submit() if ($dbRefId && !$dbRefAaFeat->retrieveFromDB());
 
   return $domainFeat;
 }
@@ -308,7 +308,7 @@ sub buildLocation {
 	  end_max => $end,
 	  aa_feature_id => $domainFeature->getId()
 	});
-  $loc->submit();
+  $loc->submit() unless $loc->retrieveFromDB();
 }
 
 sub buildGOAssociation {
