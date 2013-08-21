@@ -165,7 +165,7 @@ SQL
 
   my @queryStrings;
   foreach my $batch (@$ncbiTaxIdsBatches) {
-      my @queries = map {"txid${_}[Organism:exp] AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes)))"} @$batch;
+      my @queries = map {"txid${_}[Organism:exp] AND (nuccore popset[filter] OR ((isolate OR strain) NOT (nuccore popset[filter] OR genome OR genomes OR (chromosome[DEFINITION] AND complete+sequence[DEFINITION]))))"} @$batch;
       my $queryString = join("OR ", @queries);
       push(@queryStrings,$queryString);
   }
