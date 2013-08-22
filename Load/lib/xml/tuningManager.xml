@@ -91,6 +91,7 @@ tablespace indx
     <internalDependency name="EstAlignmentGeneSummary"/>
     <internalDependency name="EstAttributes"/>
     <internalDependency name="SequenceAttributes"/>
+    <internalDependency name="IsolateAttributes"/>
     <externalDependency name="sres.TaxonName"/>
     <externalDependency name="ApiDB.Profile"/>
     <externalDependency name="ApiDB.ProfileSet"/>
@@ -122,6 +123,7 @@ SELECT o.project_name as project_id,
        nvl(codingGeneCount.ct, 0) as codingGeneCount,
        nvl(otherGeneCount.ct, 0) as otherGeneCount,
        nvl(ecNumberCount.ct, 0) as ecNumberCount, 
+       nvl(isolateCount.ct, 0) as isolateCount, 
        nvl(sageTagCount.ct, 0) as sageTagCount, 
        nvl(rnaSeqCount.ct, 0) as rnaSeqCount, 
        nvl(chipChipGeneCount.ct, 0) as chipChipGeneCount, 
@@ -138,8 +140,8 @@ SELECT o.project_name as project_id,
        nvl(hasSageTag.ct, 0) as hasSageTag,
        nvl(hasEST.ct, 0) as hasEST, 
        nvl(hasSNP.ct, 0) as hasSNP,
-       nvl(hasSNP.ct, 0) as hasIsolate,
-       nvl(hasSNP.ct, 0) as hasHTSIsolate,
+       nvl(hasIsolate.ct, 0) as hasIsolate,
+       nvl(hasHTSIsolate.ct, 0) as hasHTSIsolate,
        nvl(hasProteomics.ct, 0) as hasProteomics,
        nvl(hasEpitope.ct, 0) as hasEpitope,
        nvl(genomestat.megabps, 0) as megabps,
@@ -259,6 +261,39 @@ FROM   Apidb.Organism o,
         FROM GeneAttributes
         GROUP BY taxon_id 
        ) ecNumberCount, 
+       (
+        SELECT count(distinct gene.source_id) as ct, sim.taxon_id
+        FROM (
+          (SELECT i.source_id, tn.taxon_id, nas.source_id as sequence_source_id
+           FROM dots.similarity s, 
+                ApidbTuning.IsolateAttributes i,
+                core.tableinfo t, dots.nasequence nas, sres.taxonname tn
+           WHERE s.query_id = i.na_sequence_id
+             AND nas.na_sequence_id = s.subject_id
+             AND t.table_id = s.subject_table_id
+             AND t.table_id = s.query_table_id
+             AND t.name = 'ExternalNASequence'
+             AND tn.taxon_id = nas.taxon_id
+             AND tn.name_class = 'scientific name'
+             AND s.pvalue_exp <= -10
+           ) sim left join
+           (SELECT i.source_id, seq.source_id as sequence_id
+            FROM  dots.similarity s, ApidbTuning.IsolateAttributes i,
+                  ApidbTuning.GeneAttributes g, 
+                  core.tableinfo t, dots.nalocation l, dots.nasequence seq
+            WHERE s.query_id = i.na_sequence_id
+              AND s.subject_id = g.na_sequence_id
+              AND t.table_id = s.subject_table_id
+              AND t.table_id = s.query_table_id
+              AND s.min_subject_start <=  l.end_max
+              AND s.max_subject_end >= l.start_min
+              AND l.na_feature_id = g.na_feature_id
+              AND g.na_sequence_id = seq.na_sequence_id
+              AND t.name = 'ExternalNASequence'
+            ) gene
+           on gene.source_id = sim.source_id and gene.sequence_id = sim.sequence_source_id)
+         GROUP BY sim.taxon_id
+       ) isolateCount, 
        (SELECT count (distinct ga.source_id) as ct, ga.taxon_id 
         FROM   sagetaggene stg, geneattributes ga  
         WHERE  ga.source_id = stg.gene_source_id 
@@ -366,6 +401,7 @@ WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = codingGeneCount.taxon_id (+)
   AND o.taxon_id = otherGeneCount.taxon_id (+)
   AND o.taxon_id = ecNumberCount.taxon_id (+) 
+  AND o.taxon_id = isolateCount.taxon_id (+) 
   AND o.taxon_id = sageTagCount.taxon_id (+) 
   AND o.taxon_id = rnaSeqCount.taxon_id (+) 
   AND o.taxon_id = chipChipGeneCount.taxon_id (+) 
