@@ -1,3 +1,6 @@
+DROP TABLE apidb.WorkflowStepParamValue;
+DROP SEQUENCE apidb.WorkflowStepParamValue_sq;
+
 DROP TABLE apidb.WorkflowStepDependency;
 DROP SEQUENCE apidb.WorkflowStepDependency_sq;
 
