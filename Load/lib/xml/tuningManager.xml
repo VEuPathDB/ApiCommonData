@@ -1096,8 +1096,22 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="SageTagLibraryTotal">
+    <sql>
+      <![CDATA[
+        create table SageTagLibraryTotal&1 NOLOGGING as
+        select dt.analysis_id, sum(float_value) as total_count
+        from rad.DataTransformationResult dt, rad.Analysis a, rad.Protocol p
+        where dt.analysis_id = a.analysis_id
+          and a.protocol_id = p.protocol_id
+          and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
+        group by dt.analysis_id
+      ]]>
+    </sql>
+  </tuningTable>
 
   <tuningTable name="SageTagAnalysisAttributes">
+    <internalDependency name="SageTagLibraryTotal"/>
     <externalDependency name="core.TableInfo"/>
     <externalDependency name="dots.SageTagFeature"/>
     <externalDependency name="rad.Analysis"/>
@@ -1112,7 +1126,6 @@ tablespace indx
     <externalDependency name="rad.SageTagResult"/>
     <intermediateTable name="SageTagInfo"/>
     <intermediateTable name="SageTagGenomicOccurrence"/>
-    <intermediateTable name="SageTagLibraryTotal"/>
     <intermediateTable name="SageTagQuantificationTotal"/>
 
     <sql>
@@ -1132,17 +1145,6 @@ create table SageTagGenomicOccurrence NOLOGGING as
 select source_id, count(*) as occurrence
 from dots.SageTagFeature
 group by source_id
-      ]]>
-    </sql>
-    <sql>
-      <![CDATA[
-create table SageTagLibraryTotal NOLOGGING as
-select dt.analysis_id, sum(float_value) as total_count
-from rad.DataTransformationResult dt, rad.Analysis a, rad.Protocol p
-where dt.analysis_id = a.analysis_id
-  and a.protocol_id = p.protocol_id
-  and p.name = 'Normalization of SAGE tag frequencies to a target total intensity'
-group by dt.analysis_id
       ]]>
     </sql>
     <sql>
@@ -1332,6 +1334,14 @@ from
       <![CDATA[
 create index stg_ix&1
 on SageTagGene&1 (gene_source_id, direction, distance, tag_source_id, tag_feature_id, antisense)
+tablespace indx
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+create index stg_2ix&1
+on SageTagGene&1 (gene_source_id, direction, distance, library_name, tag_source_id,
+                  tag_feature_id, antisense, analysis_id, tag_count, occurrence)
 tablespace indx
       ]]>
     </sql>
