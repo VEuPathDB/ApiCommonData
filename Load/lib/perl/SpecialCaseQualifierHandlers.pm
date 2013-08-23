@@ -1432,7 +1432,11 @@ sub validateGene {
 #		last;
 	    }else{
 		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
-		    $msg = "***ERROR********* $proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
+		  $msg = "***ERROR********* ";
+		  if ($feature->getIsPseudo()){
+		    $msg .= "Pseudogene ";
+		  }
+		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
 	
 		    if($self->{plugin}->{vlFh}){
 			$self->{plugin}->{vlFh}->print("$msg\n");
