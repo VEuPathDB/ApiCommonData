@@ -282,8 +282,10 @@ my $sqll = <<SQL;
   select gf.source_id, ef.source_id, nl.start_min, nl.end_max
 from DOTS.genefeature gf, DOTS.exonfeature ef, DOTS.nalocation nl 
 where gf.na_feature_id=ef.parent_id and nl.na_feature_id=ef.na_feature_id
-and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId'
+and gf.external_database_release_id=$extDbRlsId and gf.source_id like '$sourceId' 
+order by nl.start_min
 SQL
+
   my $stmtt = $dbh->prepare($sqll);
   $stmtt->execute();
 
