@@ -1433,9 +1433,10 @@ sub validateGene {
 	    }else{
 		if($aaSeq->get('sequence') ne $translatedAAFeat->translateFeatureSequenceFromNASequence()){
 		  $msg = "***ERROR********* ";
-		  if ($feature->getIsPseudo()){
-		    $msg .= "Pseudogene ";
-		  }
+
+		  $msg .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
+		  $msg .= "Pseudogene " if ($feature->getIsPseudo());
+
 		  $msg .= "$proteinSourceId protein sequence does not match with the annotation sequence.\n The provided sequence: ".$aaSeq->get('sequence')."\n The translated sequence ".$translatedAAFeat->translateFeatureSequenceFromNASequence()."\n";
 	
 		    if($self->{plugin}->{vlFh}){
@@ -1450,10 +1451,10 @@ sub validateGene {
 	    }
 		if($aaSeq->get('sequence') =~ /(\*)/ && !($aaSeq->get('sequence') =~ /\*$/)){
 		    $warning = "***WARNING********* ";
-		    if ($feature->getIsPseudo()){
-			$warning .= "Pseudogene ";
-		    }
-		    
+
+		    $warning .= "selenoprotein gene " if ($bioperlFeature->has_tag('stop_codon_redefined_as_selenocysteine') );
+		    $warning .= "Pseudogene " if ($feature->getIsPseudo());
+
 		    $warning .= "$proteinSourceId contains internal stop codons.\n The sequence: ".$aaSeq->get('sequence')."\n";
 
 		    if($self->{plugin}->{vlFh}){
