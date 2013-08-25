@@ -19,6 +19,6 @@ WHERE table_name IN (SELECT table_name
       LIKE '%fournumbers'
   AND table_name NOT LIKE 'QUERY_RESULT_%'
   AND owner != 'SYS'
-ORDER BY table_name;
+ORDER BY owner, table_name;
 
 exit
