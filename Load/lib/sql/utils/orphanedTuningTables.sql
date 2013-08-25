@@ -5,7 +5,7 @@
 set time on timing on pagesize 50000 linesize 100
 
 SELECT 'drop table ' || owner || '.' || table_name || ';'
-       AS "orphaned tuning tables"
+       AS "-- orphaned tuning tables"
 FROM all_tables
 WHERE table_name IN (SELECT table_name
                      FROM all_tables
