@@ -243,7 +243,12 @@ sub processProteinResults {
       $self->{'interproCount'}++;
     }
 
-    $self->buildGOAssociation($aaId, $proteins->[13]) if ($proteins->[13]);
+    if ($proteins->[13]){
+	my @classificationKids = split(/\|/,($proteins->[13]);
+	foreach my $classification (@classificationKids) {
+	    $self->buildGOAssociation($aaId, $classification->id());
+	}
+    }
 
     my $childDomain;
     if (!$proteins->[11]) {
@@ -251,7 +256,7 @@ sub processProteinResults {
       } else {
 	$self->{'matchCount'}++;
       }
-      my $dbname = $proteins->[3];
+      my $dbname = uc $proteins->[3];
 
       $childDomain = $self->buildDomainFeature($proteins->[4], $aaId, $dbname,
 				  $parentId, $proteins->[8]);
