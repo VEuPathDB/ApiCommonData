@@ -81,6 +81,36 @@ tablespace indx
     </sql>
   </tuningTable>
 
+
+
+  <tuningTable name="DatasetExampleSourceId" prefixEnabled="false">
+    <externalDependency name="ApiDB.ProfileSet"/>
+    <externalDependency name="sres.externaldatabase"/>
+    <sql>
+      <![CDATA[
+CREATE TABLE DatasetExampleSourceId&1 NOLOGGING AS
+with profiles as (
+select p.source_id,
+       d.name, 
+       row_number() over(partition by d.name
+                         order by pe.value desc) as rn
+from apidb.profileset ps, apidb.profile p, APIDB.profileelement pe,
+     sres.externaldatabase d, SRES.externaldatabaserelease r
+where ps.profile_set_id = p.profile_set_id
+and ps.external_database_release_id = r.external_database_release_id
+and r.external_database_id = d.external_database_id
+and p.profile_id = pe.profile_id
+
+)
+select source_id as example_source_id, 
+       name as dataset
+from profiles p
+where p.rn = 1
+      ]]>
+    </sql>
+  </tuningTable>
+
+
   <tuningTable name="OrganismAttributes" prefixEnabled="true">
     <internalDependency name="GeneAttributes"/>
     <internalDependency name="GeneId"/>
