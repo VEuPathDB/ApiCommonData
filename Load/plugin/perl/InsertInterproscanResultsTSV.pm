@@ -244,9 +244,9 @@ sub processProteinResults {
     }
 
     if ($proteins->[13]){
-	my @classificationKids = split(/\|/,($proteins->[13]);
+	my @classificationKids = split(/\|/,$proteins->[13]);
 	foreach my $classification (@classificationKids) {
-	    $self->buildGOAssociation($aaId, $classification->id());
+	    $self->buildGOAssociation($aaId, $classification);
 	}
     }
 
