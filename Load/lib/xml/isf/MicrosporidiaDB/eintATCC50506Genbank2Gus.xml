@@ -176,6 +176,13 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="number" ignore="true"/>
   </feature>
 
+  <feature name="gap" table="DoTS::ScaffoldGapFeature" so="gap">
+    <qualifier name="locus_tag"                 column="source_id"/>
+    <qualifier name="estimated_length"  handler="api" method="gapLength"/>
+    <qualifier name="gap_type"              ignore="true"/>
+    <qualifier name="linkage_evidence"      ignore="true"/>
+    <qualifier name="note"      ignore="true"/>
+  </feature>
 
   <feature name="misc_feature" table="DoTS::Miscellaneous" so="sequence_feature">
     <qualifier name="locus_tag"		column="source_id"/>
