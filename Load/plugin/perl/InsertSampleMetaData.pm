@@ -247,7 +247,7 @@ sub processRow {
 sub makeBioSample {
   my ($self, $rowAsHash, $sampleName, $sampleExtDbRlsId, $studyExtDbRlsId, $profileElementNames ) = @_;
   
-  	if (scalar @$profileElementNames){
+  	if (defined $profileElementNames && scalar @$profileElementNames){
 	    $self->userError("No sample $sampleName found for this experiment, please check your input file.") unless ( grep( /^$sampleName$/, @$profileElementNames ) );
 	}
 
