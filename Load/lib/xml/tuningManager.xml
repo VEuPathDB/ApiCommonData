@@ -165,14 +165,8 @@ SELECT o.project_name as project_id,
        nvl(estCount.ct, 0) as estCount, 
        nvl(snpCount.ct, 0) as snpCount, 
        nvl(communityCount.ct, 0) as communityCount, 
-       nvl(hasChipChip.ct, 0) as hasChipChip,
-       nvl(hasRNASeq.ct, 0) as hasRNASeq,
-       nvl(hasSageTag.ct, 0) as hasSageTag,
-       nvl(hasEST.ct, 0) as hasEST, 
-       nvl(hasSNP.ct, 0) as hasSNP,
        nvl(hasIsolate.ct, 0) as hasIsolate,
        nvl(hasHTSIsolate.ct, 0) as hasHTSIsolate,
-       nvl(hasProteomics.ct, 0) as hasProteomics,
        nvl(hasEpitope.ct, 0) as hasEpitope,
        nvl(genomestat.megabps, 0) as megabps,
        nvl(genomestat.ncbi_tax_id, 0) as ncbi_tax_id
@@ -187,39 +181,6 @@ FROM   Apidb.Organism o,
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
         FROM   Apidb.DataSource ds
-        WHERE ds.type = 'transcript_expression'
-          AND ds.subtype = 'chip_chip'
-        GROUP BY ds.taxon_id
-       ) hasChipChip,
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
-        WHERE ds.type = 'transcript_expression'
-          AND ds.subtype = 'rnaseq'
-        GROUP BY ds.taxon_id
-       ) hasRNAseq, 
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
-        WHERE ds.type = 'transcript_expression'
-          AND ds.subtype = 'sage_tag'
-        GROUP BY ds.taxon_id
-       ) hasSageTag, 
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
-        WHERE ds.type = 'EST'
-        GROUP BY ds.taxon_id
-       ) hasEST, 
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
-        WHERE ds.type = 'SNP'
-        GROUP BY ds.taxon_id
-       ) hasSNP, 
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
         WHERE ds.type = 'isolates'
           AND ds.subtype = 'HTS_SNP'
         GROUP BY ds.taxon_id
@@ -231,12 +192,6 @@ FROM   Apidb.Organism o,
           AND ds.subtype = 'sequenceing_types'
         GROUP BY ds.taxon_id
        ) hasIsolate, 
-       (SELECT ds.taxon_id,
-               case when count(*) > 0 then 1 else 0 end as ct
-        FROM   Apidb.DataSource ds
-        WHERE ds.type = 'protein_expression'
-        GROUP BY ds.taxon_id
-       ) hasProteomics, 
        (SELECT ds.taxon_id,
                case when count(*) > 0 then 1 else 0 end as ct
         FROM   Apidb.DataSource ds
@@ -444,14 +399,8 @@ WHERE o.taxon_id = hasArray.taxon_id (+)
   AND o.taxon_id = snpCount.taxon_id (+) 
   AND o.taxon_id = communityCount.taxon_id (+) 
   AND o.taxon_id = isOrganellar.taxon_id (+)
-  AND o.taxon_id = hasChipChip.taxon_id (+)
-  AND o.taxon_id = hasRNASeq.taxon_id (+)
-  AND o.taxon_id = hasSageTag.taxon_id (+)
-  AND o.taxon_id = hasEST.taxon_id (+)
-  AND o.taxon_id = hasSNP.taxon_id (+)
   AND o.taxon_id = hasIsolate.taxon_id (+)
   AND o.taxon_id = hasHTSIsolate.taxon_id (+)
-  AND o.taxon_id = hasProteomics.taxon_id (+)
   AND o.taxon_id = hasEpitope.taxon_id (+)
   AND o.taxon_id = genomestat.taxon_id (+)
   AND o.taxon_id = version.taxon_id (+)
