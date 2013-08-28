@@ -100,7 +100,7 @@ where ps.profile_set_id = p.profile_set_id
 and ps.external_database_release_id = r.external_database_release_id
 and r.external_database_id = d.external_database_id
 and p.profile_id = pe.profile_id
-
+and pe.value is not null
 )
 select source_id as example_source_id, 
        name as dataset
