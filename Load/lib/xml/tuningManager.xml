@@ -2243,6 +2243,33 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="HtsVariant">
+    <internalDependency name="SnpAttributes"/>
+    <externalDependency name="dots.SeqVariation"/>
+    <sql>
+      <![CDATA[
+        create table HtsVariant&1 nologging as
+        select snp.na_feature_id as snp_na_feature_id, var.na_feature_id as var_na_feature_id,
+               substr(var.allele, 1, 30) as allele,
+               substr(var.product, 1, 30) as product, substr(var.strain, 1, 30) as strain,
+               substr(var.organism, 1, 50) as organism, var.coverage, var.allele_percent, var.pvalue,
+               snp.na_feature_id, snp.source_id, snp.gene_source_id, snp.start_min,
+               snp.position_in_protein
+        from dots.SeqVariation var, SnpAttributes snp
+        where var.parent_id = snp.na_feature_id
+          and snp.type = 'HTS'
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index htsvar_ix&1
+        on HtsVariant&1 (organism, strain,  -- access predicates for strain comparison
+                         coverage, allele_percent, pvalue, -- filter predicates
+                         snp_na_feature_id, start_min, allele, product, source_id, gene_source_id, position_in_protein) -- kitchen sink
+        tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
 
   <tuningTable name="OrfAttributes">
     <internalDependency name="FeatureLocation"/>
