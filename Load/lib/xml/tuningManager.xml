@@ -90,20 +90,22 @@ tablespace indx
       <![CDATA[
 CREATE TABLE DatasetExampleSourceId&1 NOLOGGING AS
 with profiles as (
+with profiles as (
 select p.source_id,
        d.name, 
        row_number() over(partition by d.name
-                         order by pe.value desc) as rn
+                         order by ga.chromosome_order_num, pe.value desc) as rn
 from apidb.profileset ps, apidb.profile p, APIDB.profileelement pe,
-     sres.externaldatabase d, SRES.externaldatabaserelease r
+     sres.externaldatabase d, SRES.externaldatabaserelease r, apidbtuning.geneattributes ga
 where ps.profile_set_id = p.profile_set_id
 and ps.external_database_release_id = r.external_database_release_id
 and r.external_database_id = d.external_database_id
 and p.profile_id = pe.profile_id
 and pe.value is not null
+and p.source_id = ga.source_id (+)
 )
-select source_id as example_source_id, 
-       name as dataset
+select p.source_id as example_source_id, 
+       p.name as dataset
 from profiles p
 where p.rn = 1
       ]]>
