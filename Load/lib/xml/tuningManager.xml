@@ -2218,10 +2218,13 @@ tablespace indx
     </sql>
     <sql>
       <![CDATA[
-        create index htsvar_ix&1
-        on HtsVariant&1 (taxon_id, strain,  -- access predicates for taxon-strain comparison
-                         snp_source_id, allele, product) -- others
-        tablespace indx
+        delete from HtsVariant&1
+        where snp_na_feature_id
+              in (select snp_na_feature_id
+                  from (select snp_na_feature_id, count(distinct allele) as allele_count
+                        from ApidbTuning.HtsVariant
+                        group by snp_na_feature_id)
+                  where allele_count = 1)
       ]]>
     </sql>
     <sql>
