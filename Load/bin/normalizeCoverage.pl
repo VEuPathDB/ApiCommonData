@@ -3,6 +3,7 @@
 use strict;
 use Getopt::Long;
 use CBIL::Util::Utils;
+use List::Util qw(min max);
 use lib "$ENV{GUS_HOME}/lib/perl";
 
 # this script loops through each experiment output directory and sums the score under each experiment. 
@@ -106,7 +107,7 @@ sub update_coverage {
       while(<F>) {
         my($chr, $start, $stop, $score) = split /\t/, $_;
 
-        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", log($score * $max_sum_coverage / $v )/log(2) );
+        my $normalized_score = $score == 0 ? 0 : sprintf ("%.2f", max((log($score * $max_sum_coverage / $v )/log(2)), 1) );
 
         print OUT "$chr\t$start\t$stop\t$normalized_score\n";
       }
