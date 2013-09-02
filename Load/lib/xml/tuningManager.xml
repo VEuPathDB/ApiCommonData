@@ -121,7 +121,6 @@ where p.rn = 1
     <internalDependency name="TFBSGene"/>
     <internalDependency name="EstAlignmentGeneSummary"/>
     <internalDependency name="EstAttributes"/>
-    <internalDependency name="SequenceAttributes"/>
     <internalDependency name="IsolateAttributes"/>
     <externalDependency name="sres.TaxonName"/>
     <externalDependency name="ApiDB.Profile"/>
@@ -2842,8 +2841,7 @@ CREATE TABLE SnpStrains&1 NOLOGGING AS
                        WHEN d.name='InsertSnps.pm NGS SNPs INTERNAL' THEN 0
                        ELSE 1 
                   END as is_queryable,
-                  d.name as extdb_name,
-                  vd.name as var_extdb_name
+                  d.name as extdb_name, vd.name as var_extdb_name, sa.taxon_id
   FROM   Dots.SnpFeature sf, 
          Dots.SeqVariation sv, 
          SequenceAttributes sa,
