@@ -2202,7 +2202,7 @@ tablespace indx
         select snp.na_feature_id as snp_na_feature_id, var.na_feature_id as var_na_feature_id,
                substr(var.allele, 1, 1) as allele,
                substr(var.product, 1, 30) as product, substr(var.strain, 1, 30) as strain,
-               t.taxon_id, -- substr(var.organism, 1, 50) as organism,
+               t.taxon_id as species_taxon_id, -- substr(var.organism, 1, 50) as organism,
                -- var.coverage, var.allele_percent, var.pvalue,
                snp.source_id as snp_source_id, snp.gene_source_id
                -- , snp.start_min, snp.position_in_protein
@@ -2230,7 +2230,7 @@ tablespace indx
     <sql>
       <![CDATA[
         create index htsvar_ix&1
-        on HtsVariant&1 (strain, taxon_id,   -- access predicates for strain comparison
+        on HtsVariant&1 (strain, species_taxon_id,   -- access predicates for strain comparison
                          snp_source_id, allele, product, gene_source_id) -- others
         tablespace indx
       ]]>
