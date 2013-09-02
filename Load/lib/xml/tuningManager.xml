@@ -2222,7 +2222,7 @@ tablespace indx
         where snp_na_feature_id
               in (select snp_na_feature_id
                   from (select snp_na_feature_id, count(distinct allele) as allele_count
-                        from ApidbTuning.HtsVariant
+                        from ApidbTuning.HtsVariant&1
                         group by snp_na_feature_id)
                   where allele_count = 1)
       ]]>
