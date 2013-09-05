@@ -51,13 +51,6 @@ while(<>) {
     if( ! $tid ) {
 	$tid = $last_tid;
     }
-#    if( ! $gid ) {
-#	$gid = $tid;
-#    }
-
-    if( defined $tid && $tid =~ /^\d+$/ ) { # JGI transcript ids are numbers only
-	$tid = "$prefix\_$tid";
-    }
 
     if( $tname ) {
 	$transcript2name{$tid} = $tname;
@@ -68,9 +61,6 @@ while(<>) {
 	die "No GID or TID invalid GTF: $line \n";
     }
     if( $pid ) {
-      if(  $pid =~ /^\d+$/ ) { # JGI transcript ids are numbers only
-	$tid = "$prefix\_$pid";
-      }
       $transcript2protein{$tid} = $pid;
     }
     $gid = $tid if ! $gid;

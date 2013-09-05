@@ -48,15 +48,12 @@ while(<>) {
     $tid = $transID if ! $tid && $transID;
     $pid = $protID  if ! $pid && $protID;
     $gid = $name    if ! $gid && $name;
+    $name = $gid    if ! $name && $gid;
 
     if( ! defined $gid ) {
-	die("no GID was found - should either be gene_id in the GTF or we use the name field\n");
+	die("no gene_id or name field was found:\n$line\n");
     }
 
-    if( ! $name ) {
-	# sanity check
-	die "cannot guess a gene name for this feature '$line'\n";
-    }
     if( $tid ) {
 	if( $tid !~ /^\d+$/ ) {
 	    # sanity check
