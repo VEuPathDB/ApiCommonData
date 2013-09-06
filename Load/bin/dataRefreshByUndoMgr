@@ -17,11 +17,14 @@ foreach (@regex){
    s/\s+$//g; # lose trailing spaces
   /^\S+$/ || die "invalid regex: '$_'\n"; 
    my $cmd="workflow -h $workflowHomeDir -s1 DONE| grep $_| workflowUndoMgr -h $workflowHomeDir -r";
+   print STDERR "Running workflow undoMgr...... \n";
    print STDERR "$cmd\n";
    system ($cmd);
    my $status = $? >>8;
    if ($status) {
-    die "Error.  Failed $cmd with status '$status': $!\n\n";
+    die "Error.  Failed $cmd with status '$status': $!\n\n
+         Check failures in log file: $workflowHomeDir/logs/controller.log\n\n
+         Fix errors and restart dataRefreshByUndoMgr\n\n";
    }else {
     print STDERR "$cmd is Done\n\n";
   }
@@ -32,7 +35,7 @@ sub usage {
 Run a series of undos.  Takes a list of commar delimited regex of steps.  Each provided
 step name will be undone.
 
-Usage: workflow -workflowHomeDir workflow_home_dir 
+Usage: dataRefreshByUndoMgr -workflowHomeDir workflow_home_dir 
                 -regexList <dbxref_gene2PubmedFromNcbi,dbxref_gene2Entrez,dbxref_gene2Uniprot,dbxref_gene2ApiLoc,
                             referenceStrain-epitope_sequences_IEDB,referenceStrain-dbEST,familyRepresentative-isolatesGenbank>
 
