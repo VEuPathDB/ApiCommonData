@@ -2236,6 +2236,52 @@ tablespace indx
     </sql>
   </tuningTable>
 
+  <tuningTable name="GoodHtsSnp">
+    <internalDependency name="HtsVariant"/>
+    <sql>
+      <![CDATA[
+        create table GoodHtsSnp&1 nologging as
+        with snp_alleles -- one row per (SNP, allele) pair
+             as (select snp_na_feature_id, max(snp_source_id) as snp_source_id, max(species_taxon_id) as taxon_id,
+                        allele, max(product) as product, count(*) as strain_count
+                 from ApidbTuning.HtsVariant
+                 group by snp_na_feature_id, allele),
+             ranked_alleles -- add ranking within SNP: 1 for major allele, 2 for silver medalist, et c.
+             as (select snp_na_feature_id, allele, snp_source_id, taxon_id, product, strain_count,
+                        row_number() over (partition by snp_na_feature_id order by strain_count desc) as ranking
+                 from snp_alleles),
+             allele_majority -- break out attributes to major_X and minor_X
+             as (select snp_na_feature_id, snp_source_id, taxon_id, strain_count,
+                        case when ranking = 1 then strain_count else 0 end as major_allele_count,
+                        case when ranking = 1 then 0 else strain_count end as minor_allele_count,
+                        case when ranking = 1 then allele else null end as major_allele,
+                        case when ranking = 1 then null else allele end as minor_allele,
+                        case when ranking = 1 then product else null end as major_product,
+                        case when ranking = 1 then null else product end as minor_product
+                 from ranked_alleles)
+        select snp_na_feature_id as na_feature_id, max(snp_source_id) as source_id, max(taxon_id) as taxon_id,
+               sum(strain_count) as strain_count,
+               substr(listagg(minor_allele, ', ') within group (order by strain_count desc), 1, 12) as minor_allele,
+               substr(listagg(major_allele, ', ') within group (order by major_allele), 1, 1) as major_allele,
+               substr(listagg(minor_product, ', ') within group (order by strain_count desc), 1, 12) as minor_product,
+               substr(listagg(major_product, ', ') within group (order by major_product), 1, 12) as major_product,
+               sum(major_allele_count) / sum(strain_count) as major_allele_frequency,
+               sum(minor_allele_count) / sum(strain_count) as minor_allele_frequency
+        from allele_majority
+        group by snp_na_feature_id
+      ]]>
+    </sql>
+    <sql>
+      <![CDATA[
+        create index goodSnp_ix&1
+        on GoodHtsSnp&1 (taxon_id, strain_count, -- access predicates
+                         minor_allele_frequency, -- filter predicates
+                         source_id, major_allele, minor_allele, major_product, minor_product) -- selectables
+        tablespace indx
+      ]]>
+    </sql>
+  </tuningTable>
+
   <tuningTable name="OrfAttributes">
     <internalDependency name="FeatureLocation"/>
     <internalDependency name="GenomicSequence"/>
