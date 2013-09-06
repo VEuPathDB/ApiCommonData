@@ -2203,7 +2203,7 @@ tablespace indx
                substr(var.product, 1, 30) as product, substr(var.strain, 1, 30) as strain,
                t.taxon_id as species_taxon_id, -- substr(var.organism, 1, 50) as organism,
                -- var.coverage, var.allele_percent, var.pvalue,
-               snp.source_id as snp_source_id, snp.gene_source_id
+               substr(snp.source_id, 1, 40) as snp_source_id, snp.gene_source_id
                -- , snp.start_min, snp.position_in_protein
         from dots.SeqVariation var, SnpAttributes snp, sres.Taxon t
         where var.parent_id = snp.na_feature_id
@@ -2230,7 +2230,7 @@ tablespace indx
       <![CDATA[
         create index htsvar_ix&1
         on HtsVariant&1 (strain, species_taxon_id,   -- access predicates for strain comparison
-                         snp_source_id, allele, product, gene_source_id) -- others
+                         snp_source_id, allele, product) -- others
         tablespace indx
       ]]>
     </sql>
