@@ -252,7 +252,7 @@ EOL
   $associated_genes =~ s/\,$//g;
   if($associated_genes) {
 
-    my @genes = split/\,/, $associated_genes;
+    my @genes = split/\,|\s/, $associated_genes;
     foreach my $gene (@genes) {
       $gene =~ s/\s+//g;
       $sql =<<EOL;
@@ -286,7 +286,7 @@ EOL
   $sql =<<EOL;
 INSERT INTO comments2.CommentReference 
         (comment_reference_id, source_id, database_name, comment_id)
-VALUES (comments2.commentReference_pkseq.nextval, $doi, 'doi', $comment_id)
+VALUES (comments2.commentReference_pkseq.nextval, '$doi', 'doi', $comment_id)
 EOL
     $userDb->do($sql) if $commit;
   }
