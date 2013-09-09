@@ -63,7 +63,7 @@ $stmt->finish();
 #}
 
 
-## check for if source_id is null
+## A. check for if source_id is null
 my @tables = ("DOTS.genefeature",
 	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
 	      "DOTS.transcript",
@@ -93,7 +93,7 @@ SQL
   $stmt->finish();
 }
 
-## check if source_id is duplicated
+## B. check if source_id is duplicated
 my @tables = ("DOTS.genefeature",
 	      "DOTS.translatedaafeature", "DOTS.translatedaasequence",
 	      "DOTS.transcript",
@@ -115,7 +115,7 @@ SQL
   $stmt->finish();
 }
 
-## check the total number of sequence
+## C. check the total number of sequence
 ## select * from dots.externalnasequence where external_database_release_id=358
 my $sql = <<SQL;
   select count(*) from dots.externalnasequence where external_database_release_id=$extDbRlsId
@@ -126,7 +126,7 @@ my ($totalSeq) = $stmt->fetchrow_array();
 print STDERR "Total number of sequence = $totalSeq\n";
 $stmt->finish();
 
-## check the total sequence length
+## D. check the total sequence length
 my $sql = <<SQL;
   select sum(length) from dots.externalnasequence where external_database_release_id=$extDbRlsId
 SQL
@@ -136,7 +136,7 @@ my ($totalSeqLength) = $stmt->fetchrow_array();
 print STDERR "Total sequence length = $totalSeqLength\n";
 $stmt->finish();
 
-## check the gene number that has been loaded
+## E. check the gene number that has been loaded
 my $sql = <<SQL;
   select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId
 SQL
@@ -146,7 +146,7 @@ my ($geneCount) = $stmt->fetchrow_array();
 print STDERR "total gene has been load = $geneCount\n";
 $stmt->finish();
 
-## check the gene number that has been loaded in different charactory
+## F. check the gene number that has been loaded in different charactory
 my $sql = <<SQL;
   select distinct name, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId group by name
 SQL
@@ -157,7 +157,7 @@ while (my ($geneType, $geneTypeCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## check the pseudogene
+## G. check the pseudogene
 my $sql = <<SQL;
   select distinct is_pseudo, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_pseudo
 SQL
@@ -169,7 +169,7 @@ while (my ($if, $psdCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## check if is_partial
+## H. check if is_partial
 my $sql = <<SQL;
   select distinct is_partial, count(*) from dots.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene' group by is_partial
 SQL
@@ -181,7 +181,7 @@ while (my ($if, $ptlCount) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-## check if the translatedaasequence does not have null sequence
+## I. check if the translatedaasequence does not have null sequence
 my $sql = <<SQL;
   select source_id, sequence from dots.translatedaasequence where external_database_release_id=$extDbRlsId
 SQL
@@ -191,7 +191,7 @@ my ($aaSourceId, $aaSeq) = $stmt->fetchrow_array();
 print STDERR "ERROR: the translatedaasequence for $aaSourceId is null. Check the mapping file if it includes the validateCodingSequenceLength validator\n" unless ($aaSeq);
 $stmt->finish();
 
-## check the seq # in translatedaaSequence table and translatedaaFeature table
+## J. check the seq # in translatedaaSequence table and translatedaaFeature table
 my $sql = <<SQL;
   select count(*) from DOTS.genefeature where external_database_release_id=$extDbRlsId and name like 'coding_gene'
 SQL
@@ -219,7 +219,7 @@ $stmt->finish();
 print STDERR "ERROR: the translated aa feature = $tranAaFeat, which is not equal to coding_gene = $codingGene\n" unless ($tranAaFeat == $codingGene);
 
 
-### check the translatedAaFeature table if translation_start or translation_stop is null or < 0
+## K. check the translatedAaFeature table if translation_start or translation_stop is null or < 0
 foreach my $column ("translation_start", "translation_stop") {
   foreach my $exp ("is null", "< 0") {
 my $sql = <<SQL;
@@ -233,7 +233,7 @@ SQL
   }
 }
 
-### for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
+## L. for all genes other than coding_gene and pseudo_gene, the coding_start and coding_end in dots.exonfeature should be always null
 my $sql = <<SQL;
   select gf.name, gf.na_feature_id, gf.source_id, ef.coding_start, ef.coding_end from dots.exonfeature ef, dots.genefeature gf where ef.parent_id=gf.na_feature_id and gf.name not like 'coding_gene' and gf.name not like 'pseudo_gene' and ef.coding_end is not null
 SQL
@@ -244,7 +244,7 @@ while (my ($gfName, $gfNaId, $gfSourceId, $efCodingStart, $efCodingEnd) = $stmt-
 }
 $stmt->finish();
 
-### check if gene location is located outside the naSequence length
+## M. check if gene location is located outside the naSequence length
 my $sql = <<SQL;
   select gf.source_id, nl.start_min, nl.end_max, ens.source_id, ens.length from dots.externalnasequence ens, dots.genefeature gf, dots.nalocation nl where gf.na_feature_id=nl.na_feature_id and gf.na_sequence_id=ens.na_sequence_id and nl.end_max > ens.length and ens.external_database_release_id=$extDbRlsId
 SQL
@@ -255,18 +255,18 @@ while (my ($gfSourceId, $nlStartMin, $nlEndMax, $seqSourceId, $seqLength) = $stm
 }
 $stmt->finish();
 
-### check if there is any duplicated exons since it happens in TriTryp
+## N. check if there is any duplicated exons since it happens in TriTryp
 my $sql = <<SQL;
   select t.source_id, nl.start_min, nl.end_max, count(*) from dots.transcript t, dots.rnafeatureexon rfe, DOTS.nalocation nl where t.na_feature_id=rfe.rna_feature_id and nl.na_feature_id=rfe.exon_feature_id and t.external_database_release_id=$extDbRlsId group by t.source_id, nl.start_min, nl.end_max having count(*)>1
 SQL
 my $stmt = $dbh->prepare($sql);
 $stmt->execute();
 while (my ($tSourceId, $nlStartMin, $nlEndMax, $nlCount) = $stmt->fetchrow_array()) {
-  print STDERR "ERROR: $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
+  print STDERR "ERROR: duplicated exons.\n  $tSourceId with start_min $nlStartMin and end_max $nlEndMax with count $nlCount .\n" if ($tSourceId);
 }
 $stmt->finish();
 
-### check if overlap exons which happen in TriTrypDB
+## O. check if overlap exons which happen in TriTrypDB
 my $sql = <<SQL;
   select source_id from DOTS.genefeature where external_database_release_id=$extDbRlsId
 SQL
@@ -303,7 +303,7 @@ SQL
         $preStartMin = $start;
         $preEndMax = $end;
       } else {
-        print STDERR "double check $gid for $k with start..end at $start..$end\n";
+        print STDERR "ERROR: overlapped exons.\n  double check $gid for $k with start..end at $start..$end\n";
       }
     } else {
       $preStartMin = $start;
@@ -313,7 +313,7 @@ SQL
 }
 $stmt->finish();
 
-### check the dots.Miscellaneous table for example centromere
+## P. check the dots.Miscellaneous table for example centromere
 my $sql = <<SQL;
   select distinct name, count(*) from dots.Miscellaneous where external_database_release_id=$extDbRlsId group by name
 SQL
@@ -324,7 +324,7 @@ while (my ($name, $count) = $stmt->fetchrow_array()) {
 }
 $stmt->finish();
 
-### check the table dots.ScaffoldGapFeature for gap
+## Q. check the table dots.ScaffoldGapFeature for gap
 my $sql = <<SQL;
   select count(*) from dots.ScaffoldGapFeature where external_database_release_id=$extDbRlsId
 SQL
@@ -334,7 +334,7 @@ my ($gapCount) = $stmt->fetchrow_array();
 print STDERR "the number of gap = $gapCount\n" if ($gapCount);
 $stmt->finish();
 
-### check the table dots.source
+## R. check the table dots.source
 my $sql = <<SQL;
   select count(*) from DOTS.source where external_database_release_id=$extDbRlsId
 SQL
@@ -344,7 +344,7 @@ my ($sourceCount) = $stmt->fetchrow_array();
 print STDERR "the number of source = $sourceCount\n" if ($sourceCount);
 $stmt->finish();
 
-## check the table dots.Repeats
+## S. check the table dots.Repeats
 my $sql = <<SQL;
   select count(*) from dots.Repeats where external_database_release_id=$extDbRlsId
 SQL
