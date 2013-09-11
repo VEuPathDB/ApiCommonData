@@ -105,7 +105,15 @@ necessarily by what's defined in the input (eg. Genbank) file
     <qualifier name="ncRNA_class"          ignore="true"/>
   </feature>
 
-  <feature name="snoRNA_gene" so="snoRNA_encoding">
+   <feature name="ncRNA_gene" so="ncRNA">
+    <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
+    <qualifier name="note"                 ignore="true"/>
+    <qualifier name="product"              ignore="true"/>
+    <qualifier name="db_xref"              ignore="true"/>
+    <qualifier name="gene"                 ignore="true"/>
+  </feature>
+
+ <feature name="snoRNA_gene" so="snoRNA_encoding">
     <qualifier name="locus_tag"            handler="api" method="sourceIdAndTranscriptSeq"/>
     <qualifier name="note"                 ignore="true"/>
     <qualifier name="product"              ignore="true"/>
