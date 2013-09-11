@@ -5837,7 +5837,7 @@ FROM (         SELECT organism,term,parentTerm, internal,project_id
       <![CDATA[
 CREATE TABLE CompoundAttributes&1 NOLOGGING AS
 SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id, 
-              nameTable.name,
+              apidb.tab_to_string(set(cast(COLLECT(to_char(nameTable.name)) AS apidb.varchartab)), ', ') AS name,
               apidb.tab_to_string(set(cast(COLLECT(to_char(substTable.substance_id)) AS apidb.varchartab)), ', ') AS substance_id,
               wtTable.mol_wt, REGEXP_REPLACE(formTable.formula,'(\d)','<sub>\1</sub>') AS formula
         FROM ApiDB.PubChemCompound comp,
@@ -5849,7 +5849,7 @@ SELECT comp.compound_id,  'CID:' || comp.compound_id AS source_id,
          AND comp.compound_id = wtTable.compound_id
          AND comp.compound_id = formTable.compound_id
          AND comp.compound_id = substTable.cid (+)
-      GROUP BY comp.compound_id,nameTable.name,wtTable.mol_wt,formTable.formula
+      GROUP BY comp.compound_id,wtTable.mol_wt,formTable.formula
       ]]>
     </sql>
   </tuningTable>
